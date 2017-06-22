@@ -33,7 +33,29 @@ which provides some helpful methods for use in more general unit tests
 but no functionality pertaining to network communication.
 
 
-## Subclassing ReplayableTest and features
+## Configuring ReplayableTest
+
+The only configuration of `ReplayableTest` that is "exposed"
+(in the sense of being accessible other than through subclassing)
+is whether tests should be run in "live" or "playback" mode.
+This can be set in the following two ways,
+of which the first takes precedence:
+* Set the environment variable `AZURE_TEST_RUN_LIVE`.
+  Any value will cause the tests to run in live mode;
+  if the variable is unset the default of playback mode will be used.
+* Specify a boolean value for `live-mode` in a configuration file,
+  the path to which must be specified by a `ReplayableTest` subclass as described below
+  (i.e. by default no config file will be read).
+  True values mean "live" mode; false ones mean "playback."
+
+"Live" and "playback" mode are actually just shorthand for recording modes
+in the underlying VCR.py package;
+they correspond to "all" and "once"
+as described in the [VCR.py documentation](http://vcrpy.readthedocs.io/en/latest/usage.html#record-modes).
+
+### Subclassing ReplayableTest and features
+
+Most customization of `ReplayableTest` is accessible only through subclassing.
 
 The two main users of `ReplayableTest` are
 [azure-cli](https://github.com/Azure/azure-cli)
@@ -43,6 +65,33 @@ and preserve backward compatibility with test code
 prior to the existence of `azure-devtools`.
 For example, azure-cli's [compatibility layer](https://github.com/Azure/azure-cli/tree/master/src/azure-cli-testsdk) 
 adds methods for running CLI commands and evaluating their output.
+
+Subclasses of `ReplayableTest` can configure its behavior
+by passing the following keyword arguments when they call
+its `__init__` method (probably using `super`):
+
+* `config_file`: Path to a configuration file.
+  It should be in the format described in Python's
+  [ConfigParser](https://docs.python.org/3/library/configparser.html) docs
+  and currently allows only the boolean option `live-mode`.
+* `recording_dir` and `recording_name`:
+  Directory path and file name, respectively,
+  for the recording that should be used for a given test case.
+  By default, the directory will be a `recordings` directory
+  in the same location as the file containing the test case,
+  and the file name will be the same as the test method name.
+  A `.yaml` extension will be appended to whatever is used for `recording_name`.
+* `recording_processors` and `replay_processors`:
+  Lists of `RecordingProcessor` instances for making changes to requests and responses
+  during test recording and test playback, respectively.
+  See [recording_processors.py](src/azure_devtools/scenario_tests/recording_processors.py)
+  for some examples and how to implement them.
+* `recording_patches` and `replay_patches`:
+  Lists of patches to apply to functions, methods, etc.
+  during test recording and playback, respectively.
+  See [patches.py](src/azure_devtools/scenario_tests/patches.py)
+  for some examples. Note the `mock_in_unit_test` function
+  which abstracts out some boilerplate for applying a patch.
 
 
 <!--
