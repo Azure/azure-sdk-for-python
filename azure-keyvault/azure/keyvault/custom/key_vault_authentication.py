@@ -12,8 +12,19 @@ from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
 
 
 class KeyVaultAuthBase(AuthBase):
+    """
+    Used for handling authentication challenges, by hooking into the request AuthBase extension model.
+    """
 
     def __init__(self, authorization_callback):
+        """
+        Creates a new KeyVaultAuthBase instance used for handling authentication challenges, by hooking into the request AuthBase
+        extension model.
+        :param authorization_callback: A callback used to provide authentication credentials to the key vault data service.  
+        This callback should take three str arguments: authorization uri, resource, and scope, and return 
+        a tuple of (token type, access token).
+                    return token['token_type'], token['access_token']
+        """
         self._callback = authorization_callback
         self._token = None
         self._thread_local = threading.local()
@@ -21,6 +32,12 @@ class KeyVaultAuthBase(AuthBase):
         self._thread_local.auth_attempted = False
 
     def __call__(self, request):
+        """
+        Called prior to requests being sent.
+        :param request: Request to be sent
+        :return: returns the original request, registering hooks on the response if it is the first time this url has been called and an 
+        auth challenge might be returned  
+        """
         # attempt to pre-fetch challenge if cached
         if self._callback:
             challenge = ChallengeCache.get_challenge_for_url(request.url)
@@ -49,13 +66,11 @@ class KeyVaultAuthBase(AuthBase):
     def handle_401(self, response, **kwargs):
         """
         Takes the response authenticates and resends if neccissary
-        
         :return: The final response to the authenticated request
         :rtype: requests.Response
         """
-        # If response is not 4xx do not auth and return response
-        # See https://github.com/kennethreitz/requests/issues/3772
-        if not 400 <= response.status_code < 500:
+        # If response is not 401 do not auth and return response
+        if not response.status_code == 401:
             self._thread_local.auth_attempted = False
             return response
 
@@ -111,8 +126,27 @@ class KeyVaultAuthBase(AuthBase):
 
 
 class KeyVaultAuthentication(Authentication):
+    """
+    Authentication class to be used as credentials for the KeyVaultClient.
+    :Example Usage:    
+            def auth_callack(server, resource, scope):
+                self.data_creds = self.data_creds or ServicePrincipalCredentials(client_id=self.config.client_id,
+                                                                                 secret=self.config.client_secret,
+                                                                                 tenant=self.config.tenant_id,
+                                                                                 resource=resource)
+                token = self.data_creds.token
+                return token['token_type'], token['access_token']
+
+            self.keyvault_data_client = KeyVaultClient(KeyVaultAuthentication(auth_callack))
+    """
 
     def __init__(self, authorization_callback):
+        """
+        Creates a new KeyVaultAuthentication instance used for authentication in the KeyVaultClient
+        :param authorization_callback: A callback used to provide authentication credentials to the key vault data service.  
+        This callback should take three str arguments: authorization uri, resource, and scope, and return 
+        a tuple of (token type, access token).
+        """
         super(KeyVaultAuthentication, self).__init__()
         self.auth = KeyVaultAuthBase(authorization_callback)
         self._callback = authorization_callback
