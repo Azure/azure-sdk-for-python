@@ -424,9 +424,10 @@
       "autorest_options": {
         "input-file": "arm-search/2015-08-19/swagger/search.json",
         "namespace": "azure.mgmt.search",
-        "PackageVersion": "0.1.0"
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-search/azure/mgmt/search"
+      "output_dir": "azure-mgmt-search/azure/mgmt/search",
+      "build_dir": "azure-mgmt-search"
     },
     "servermanager": {
       "autorest_options": {
