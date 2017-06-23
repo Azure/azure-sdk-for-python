@@ -25,6 +25,8 @@ matrix:
       language: generic
   allow_failures:
     - os: osx
+    - python: "pypy-5.7"
+    - python: "pypy3.5-5.8.0"
   fast_finish: true
 # Perform the manual steps on osx to install python3 and activate venv
 before_install:
