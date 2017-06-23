@@ -22,6 +22,7 @@ class RateCardOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2015-06-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,20 +30,21 @@ class RateCardOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-06-01-preview"
 
         self.config = config
 
     def get(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Enables you to query for the resource/meter metadata and related
-        prices used in a given subscription by Offer ID, Currency, Locale and
-        Region. The metadata associated with the billing meters, including
-        but not limited to service names, types, resources, units of measure,
-        and regions, is subject to change at any time and without notice. If
-        you intend to use this billing data in an automated fashion, please
-        use the billing meter GUID to uniquely identify each billable item.
-        If the billing meter GUID is scheduled to change due to a new billing
-        model, you will be notified in advance of the change. .
+            self, filter, custom_headers=None, raw=False, **operation_config):
+        """Enables you to query for the resource/meter metadata and related prices
+        used in a given subscription by Offer ID, Currency, Locale and Region.
+        The metadata associated with the billing meters, including but not
+        limited to service names, types, resources, units of measure, and
+        regions, is subject to change at any time and without notice. If you
+        intend to use this billing data in an automated fashion, please use the
+        billing meter GUID to uniquely identify each billable item. If the
+        billing meter GUID is scheduled to change due to a new billing model,
+        you will be notified in advance of the change. .
 
         :param filter: The filter to apply on the operation. It ONLY supports
          the 'eq' and 'and' logical operators at this time. All the 4 query
@@ -58,6 +60,8 @@ class RateCardOperations(object):
          <azure.mgmt.commerce.models.ResourceRateCardInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/RateCard'
@@ -68,9 +72,8 @@ class RateCardOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
