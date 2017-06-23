@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.2.0 (2017-06-23)
+++++++++++++++++++
+
+* Fix typo in enumeration classes
+
+This wheel package is now built with the azure wheel extension
+
 1.1.0 (2016-11-14)
 ++++++++++++++++++
 
