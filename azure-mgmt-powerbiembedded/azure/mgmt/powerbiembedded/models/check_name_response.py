@@ -25,7 +25,7 @@ class CheckNameResponse(Model):
     :param message: Message indicating an unavailable name due to a conflict,
      or a description of the naming rules that are violated.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},

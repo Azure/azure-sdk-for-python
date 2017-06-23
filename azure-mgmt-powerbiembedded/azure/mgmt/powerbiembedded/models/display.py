@@ -21,24 +21,24 @@ class Display(Model):
      services.
     :type provider: str
     :param resource: The localized friendly form of the resource type related
-     to this action/operation. This form should match the public
-     documentation for the resource provider. Use Title Casing. For examples,
-     refer to the “name” section.
+     to this action/operation. This form should match the public documentation
+     for the resource provider. Use Title Casing. For examples, refer to the
+     “name” section.
     :type resource: str
     :param operation: The localized friendly name for the operation as shown
-     to the user. This name should be concise (to fit in drop downs), but
-     clear (self-documenting). Use Title Casing and include the
-     entity/resource to which it applies.
+     to the user. This name should be concise (to fit in drop downs), but clear
+     (self-documenting). Use Title Casing and include the entity/resource to
+     which it applies.
     :type operation: str
     :param description: The localized friendly description for the operation
-     as shown to the user. This description should be thorough, yet concise.
-     It will be used in tool-tips and detailed views.
+     as shown to the user. This description should be thorough, yet concise. It
+     will be used in tool-tips and detailed views.
     :type description: str
-    :param origin: The intended executor of the operation; governs the
-     display of the operation in the RBAC UX and the audit logs UX. Default
-     value is 'user,system'
+    :param origin: The intended executor of the operation; governs the display
+     of the operation in the RBAC UX and the audit logs UX. Default value is
+     'user,system'
     :type origin: str
-    """ 
+    """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},

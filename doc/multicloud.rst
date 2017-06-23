@@ -17,18 +17,25 @@ This is a generic example:
 
 .. code:: python
 
-    from azure.common.credentials import UserPassCredentials
+    import adal
+    from msrestazure.azure_active_directory import AdalAuthentication
     from azure.mgmt.resource import ResourceManagementClient
+
+    # Service Principal
+    tenant = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    client_id = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    password = 'password
 
     # Public Azure - default values
     authentication_endpoint = 'https://login.microsoftonline.com/'
     azure_endpoint = 'https://management.azure.com/'
-    
-    credentials = UserPassCredentials(
-        'user@domain.com',
-        'my_smart_password',
-        auth_uri=authentication_endpoint,
-        resource=azure_endpoint
+        
+    context = adal.AuthenticationContext(authentication_endpoint+tenant)
+    credentials = AdalAuthentication(
+        context.acquire_token_with_client_credentials,
+        azure_endpoint,
+        client_id,
+        password
     )
     subscription_id = '33333333-3333-3333-3333-333333333333'
 
@@ -42,20 +49,27 @@ This is a generic example:
 Azure Government
 ----------------
 
-Azure Government is currently using the same authentication endpoint that public azure.
-This means that we can use the default `authentication_endpoint`.
-
 .. code:: python
 
-    from azure.common.credentials import UserPassCredentials
+    import adal
+    from msrestazure.azure_active_directory import AdalAuthentication
     from azure.mgmt.resource import ResourceManagementClient
 
-    azure_endpoint = 'https://management.usgovcloudapi.net/'
+    # Service Principal
+    tenant = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    client_id = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    password = 'password
 
-    credentials = UserPassCredentials(
-        'user@domain.com',
-        'my_smart_password',
-        resource=azure_endpoint
+    # Government
+    authentication_endpoint = 'https://login-us.microsoftonline.com/'
+    azure_endpoint = 'https://management.usgovcloudapi.net/'
+        
+    context = adal.AuthenticationContext(authentication_endpoint+tenant)
+    credentials = AdalAuthentication(
+        context.acquire_token_with_client_credentials,
+        azure_endpoint,
+        client_id,
+        password
     )
     subscription_id = '33333333-3333-3333-3333-333333333333'
 
@@ -70,17 +84,25 @@ Azure Germany
 
 .. code:: python
 
-    from azure.common.credentials import UserPassCredentials
+    import adal
+    from msrestazure.azure_active_directory import AdalAuthentication
     from azure.mgmt.resource import ResourceManagementClient
 
+    # Service Principal
+    tenant = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    client_id = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    password = 'password
+
+    # Azure Germany
     authentication_endpoint = 'https://login.microsoftonline.de/'
     azure_endpoint = 'https://management.microsoftazure.de/'
-
-    credentials = UserPassCredentials(
-        'user@domain.com',
-        'my_smart_password',
-        auth_uri=authentication_endpoint,		
-        resource=azure_endpoint
+        
+    context = adal.AuthenticationContext(authentication_endpoint+tenant)
+    credentials = AdalAuthentication(
+        context.acquire_token_with_client_credentials,
+        azure_endpoint,
+        client_id,
+        password
     )
     subscription_id = '33333333-3333-3333-3333-333333333333'
 
@@ -95,17 +117,25 @@ Azure China
 
 .. code:: python
 
-    from azure.common.credentials import UserPassCredentials
+    import adal
+    from msrestazure.azure_active_directory import AdalAuthentication
     from azure.mgmt.resource import ResourceManagementClient
 
+    # Service Principal
+    tenant = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    client_id = 'ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL'
+    password = 'password
+
+    # Azure China
     authentication_endpoint = 'https://login.chinacloudapi.cn/'
     azure_endpoint = 'https://management.chinacloudapi.cn/'
-
-    credentials = UserPassCredentials(
-        'user@domain.com',
-        'my_smart_password',
-        auth_uri=authentication_endpoint,		
-        resource=azure_endpoint
+        
+    context = adal.AuthenticationContext(authentication_endpoint+tenant)
+    credentials = AdalAuthentication(
+        context.acquire_token_with_client_credentials,
+        azure_endpoint,
+        client_id,
+        password
     )
     subscription_id = '33333333-3333-3333-3333-333333333333'
 

@@ -26,8 +26,8 @@ class UsageAggregation(Model):
     :param meter_id: Unique ID for the resource that was consumed (aka
      ResourceID).
     :type meter_id: str
-    :param usage_start_time: UTC start time for the usage bucket to which
-     this usage aggregate belongs.
+    :param usage_start_time: UTC start time for the usage bucket to which this
+     usage aggregate belongs.
     :type usage_start_time: datetime
     :param usage_end_time: UTC end time for the usage bucket to which this
      usage aggregate belongs.
@@ -49,10 +49,10 @@ class UsageAggregation(Model):
     :param info_fields: Key-value pairs of instance details (legacy format).
     :type info_fields: :class:`InfoField
      <azure.mgmt.commerce.models.InfoField>`
-    :param instance_data: Key-value pairs of instance details represented as
-     a string.
+    :param instance_data: Key-value pairs of instance details represented as a
+     string.
     :type instance_data: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
