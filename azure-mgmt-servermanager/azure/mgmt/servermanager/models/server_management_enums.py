@@ -12,19 +12,19 @@
 from enum import Enum
 
 
-class upgradeMode(Enum):
+class UpgradeMode(Enum):
 
     manual = "Manual"
     automatic = "Automatic"
 
 
-class retentionPeriod(Enum):
+class RetentionPeriod(Enum):
 
     session = "Session"
     persistent = "Persistent"
 
 
-class credentialDataFormat(Enum):
+class CredentialDataFormat(Enum):
 
     rsa_encrypted = "RsaEncrypted"
 

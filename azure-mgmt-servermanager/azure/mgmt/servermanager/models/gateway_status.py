@@ -71,7 +71,7 @@ class GatewayStatus(Model):
     :type latest_published_msi_version: str
     :param published_time_utc: Gateway install MSI published time.
     :type published_time_utc: datetime
-    """ 
+    """
 
     _validation = {
         'gateway_cpu_utilization_percent': {'maximum': 100, 'minimum': 0},

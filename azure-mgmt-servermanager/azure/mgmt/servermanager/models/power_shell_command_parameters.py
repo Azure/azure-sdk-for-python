@@ -17,7 +17,7 @@ class PowerShellCommandParameters(Model):
 
     :param command: Script to execute.
     :type command: str
-    """ 
+    """
 
     _attribute_map = {
         'command': {'key': 'properties.command', 'type': 'str'},
