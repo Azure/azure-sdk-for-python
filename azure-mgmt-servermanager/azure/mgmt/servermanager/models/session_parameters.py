@@ -21,22 +21,22 @@ class SessionParameters(Model):
     :type password: str
     :param retention_period: Session retention period. Possible values
      include: 'Session', 'Persistent'
-    :type retention_period: str or :class:`retentionPeriod
-     <azure.mgmt.servermanager.models.retentionPeriod>`
+    :type retention_period: str or :class:`RetentionPeriod
+     <azure.mgmt.servermanager.models.RetentionPeriod>`
     :param credential_data_format: Credential data format. Possible values
      include: 'RsaEncrypted'
-    :type credential_data_format: str or :class:`credentialDataFormat
-     <azure.mgmt.servermanager.models.credentialDataFormat>`
+    :type credential_data_format: str or :class:`CredentialDataFormat
+     <azure.mgmt.servermanager.models.CredentialDataFormat>`
     :param encryption_certificate_thumbprint: Encryption certificate
      thumbprint.
     :type encryption_certificate_thumbprint: str
-    """ 
+    """
 
     _attribute_map = {
         'user_name': {'key': 'properties.userName', 'type': 'str'},
         'password': {'key': 'properties.password', 'type': 'str'},
-        'retention_period': {'key': 'properties.retentionPeriod', 'type': 'retentionPeriod'},
-        'credential_data_format': {'key': 'properties.credentialDataFormat', 'type': 'credentialDataFormat'},
+        'retention_period': {'key': 'properties.retentionPeriod', 'type': 'RetentionPeriod'},
+        'credential_data_format': {'key': 'properties.credentialDataFormat', 'type': 'CredentialDataFormat'},
         'encryption_certificate_thumbprint': {'key': 'properties.EncryptionCertificateThumbprint', 'type': 'str'},
     }
 

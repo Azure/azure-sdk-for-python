@@ -18,7 +18,7 @@ class PowerShellTabCompletionResults(Model):
 
     :param results:
     :type results: list of str
-    """ 
+    """
 
     _attribute_map = {
         'results': {'key': 'results', 'type': '[str]'},
