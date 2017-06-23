@@ -56,13 +56,11 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param predefined_policy_name: Name of Ssl predefined policy.
-    :type predefined_policy_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, predefined_policy_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -70,10 +68,6 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if predefined_policy_name is None:
-            raise ValueError("Parameter 'predefined_policy_name' must not be None.")
-        if not isinstance(predefined_policy_name, str):
-            raise TypeError("Parameter 'predefined_policy_name' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -84,7 +78,6 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.predefined_policy_name = predefined_policy_name
 
 
 class NetworkManagementClient(object):
@@ -149,15 +142,13 @@ class NetworkManagementClient(object):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param predefined_policy_name: Name of Ssl predefined policy.
-    :type predefined_policy_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, predefined_policy_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, predefined_policy_name, base_url)
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
