@@ -5,36 +5,36 @@ matrix:
   include:
     - os: linux
       python: "2.7"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
     - os: linux
       python: "3.3"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
     - os: linux
       python: "3.4"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
     - os: linux
       python: "3.5"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
     - os: linux
       python: "3.6"
     - os: linux
       python: "nightly"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
     - os: linux
       python: "pypy"
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
 #    - os: linux
 #      python: "pypy3"
     - os: osx
       osx_image: xcode7.3
       language: generic
-      before_install
+      before_install:
         - if [ -z "$TRAVIS_TAG" ]; then travis_terminate 0; fi; # Tag to deploy on 3.6
   allow_failures:
     - os: osx
