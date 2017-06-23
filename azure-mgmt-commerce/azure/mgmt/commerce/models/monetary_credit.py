@@ -22,7 +22,7 @@ class MonetaryCredit(OfferTermInfo):
     :type name: str
     :param credit: The amount of credit provided under the terms of the given
      offer level.
-    :type credit: Decimal
+    :type credit: decimal.Decimal
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list of str
@@ -35,7 +35,7 @@ class MonetaryCredit(OfferTermInfo):
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'name': {'key': 'Name', 'type': 'str'},
-        'credit': {'key': 'Credit', 'type': 'Decimal'},
+        'credit': {'key': 'Credit', 'type': 'decimal'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
