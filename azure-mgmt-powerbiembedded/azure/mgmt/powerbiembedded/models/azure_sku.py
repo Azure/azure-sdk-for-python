@@ -22,7 +22,7 @@ class AzureSku(Model):
     :vartype name: str
     :ivar tier: SKU tier. Default value: "Standard" .
     :vartype tier: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True, 'constant': True},

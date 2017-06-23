@@ -281,9 +281,11 @@
     "powerbiembedded": {
       "autorest_options": {
         "input-file": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
-        "namespace": "azure.mgmt.powerbiembedded"
+        "namespace": "azure.mgmt.powerbiembedded",
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
+      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded",
+      "build_dir": "azure-mgmt-powerbiembedded"
     },
     "rdbms.mysql": {
       "autorest_options": {
