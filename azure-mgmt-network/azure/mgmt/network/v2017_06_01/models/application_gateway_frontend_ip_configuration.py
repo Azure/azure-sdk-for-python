@@ -23,13 +23,13 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param private_ip_allocation_method: PrivateIP allocation method. Possible
      values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_03_01.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2017_06_01.models.IPAllocationMethod>`
     :param subnet: Reference of the subnet resource.
     :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param public_ip_address: Reference of the PublicIP resource.
     :type public_ip_address: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param provisioning_state: Provisioning state of the public IP resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -39,6 +39,8 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -50,9 +52,10 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayFrontendIPConfiguration, self).__init__(id=id)
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
@@ -61,3 +64,4 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

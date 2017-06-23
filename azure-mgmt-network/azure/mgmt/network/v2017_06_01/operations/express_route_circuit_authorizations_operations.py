@@ -24,7 +24,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-03-01".
+    :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-06-01"
 
         self.config = config
 
@@ -134,7 +134,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -198,14 +198,14 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          update express route circuit authorization operation.
         :type authorization_parameters:
          :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitAuthorization>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -297,7 +297,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
-         <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitAuthorizationPaged>`
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitAuthorizationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

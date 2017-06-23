@@ -56,11 +56,13 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
+    :param predefined_policy_name: Name of Ssl predefined policy.
+    :type predefined_policy_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, predefined_policy_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -68,6 +70,10 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
+        if predefined_policy_name is None:
+            raise ValueError("Parameter 'predefined_policy_name' must not be None.")
+        if not isinstance(predefined_policy_name, str):
+            raise TypeError("Parameter 'predefined_policy_name' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -78,6 +84,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.predefined_policy_name = predefined_policy_name
 
 
 class NetworkManagementClient(object):
@@ -87,53 +94,53 @@ class NetworkManagementClient(object):
     :vartype config: NetworkManagementClientConfiguration
 
     :ivar application_gateways: ApplicationGateways operations
-    :vartype application_gateways: azure.mgmt.network.v2017_03_01.operations.ApplicationGatewaysOperations
+    :vartype application_gateways: azure.mgmt.network.v2017_06_01.operations.ApplicationGatewaysOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
-    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2017_03_01.operations.ExpressRouteCircuitAuthorizationsOperations
+    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitAuthorizationsOperations
     :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
-    :vartype express_route_circuit_peerings: azure.mgmt.network.v2017_03_01.operations.ExpressRouteCircuitPeeringsOperations
+    :vartype express_route_circuit_peerings: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitPeeringsOperations
     :ivar express_route_circuits: ExpressRouteCircuits operations
-    :vartype express_route_circuits: azure.mgmt.network.v2017_03_01.operations.ExpressRouteCircuitsOperations
+    :vartype express_route_circuits: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
-    :vartype express_route_service_providers: azure.mgmt.network.v2017_03_01.operations.ExpressRouteServiceProvidersOperations
+    :vartype express_route_service_providers: azure.mgmt.network.v2017_06_01.operations.ExpressRouteServiceProvidersOperations
     :ivar load_balancers: LoadBalancers operations
-    :vartype load_balancers: azure.mgmt.network.v2017_03_01.operations.LoadBalancersOperations
+    :vartype load_balancers: azure.mgmt.network.v2017_06_01.operations.LoadBalancersOperations
     :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2017_03_01.operations.NetworkInterfacesOperations
+    :vartype network_interfaces: azure.mgmt.network.v2017_06_01.operations.NetworkInterfacesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
-    :vartype network_security_groups: azure.mgmt.network.v2017_03_01.operations.NetworkSecurityGroupsOperations
+    :vartype network_security_groups: azure.mgmt.network.v2017_06_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
-    :vartype security_rules: azure.mgmt.network.v2017_03_01.operations.SecurityRulesOperations
+    :vartype security_rules: azure.mgmt.network.v2017_06_01.operations.SecurityRulesOperations
     :ivar network_watchers: NetworkWatchers operations
-    :vartype network_watchers: azure.mgmt.network.v2017_03_01.operations.NetworkWatchersOperations
+    :vartype network_watchers: azure.mgmt.network.v2017_06_01.operations.NetworkWatchersOperations
     :ivar packet_captures: PacketCaptures operations
-    :vartype packet_captures: azure.mgmt.network.v2017_03_01.operations.PacketCapturesOperations
+    :vartype packet_captures: azure.mgmt.network.v2017_06_01.operations.PacketCapturesOperations
     :ivar public_ip_addresses: PublicIPAddresses operations
-    :vartype public_ip_addresses: azure.mgmt.network.v2017_03_01.operations.PublicIPAddressesOperations
+    :vartype public_ip_addresses: azure.mgmt.network.v2017_06_01.operations.PublicIPAddressesOperations
     :ivar route_filters: RouteFilters operations
-    :vartype route_filters: azure.mgmt.network.v2017_03_01.operations.RouteFiltersOperations
+    :vartype route_filters: azure.mgmt.network.v2017_06_01.operations.RouteFiltersOperations
     :ivar route_filter_rules: RouteFilterRules operations
-    :vartype route_filter_rules: azure.mgmt.network.v2017_03_01.operations.RouteFilterRulesOperations
+    :vartype route_filter_rules: azure.mgmt.network.v2017_06_01.operations.RouteFilterRulesOperations
     :ivar route_tables: RouteTables operations
-    :vartype route_tables: azure.mgmt.network.v2017_03_01.operations.RouteTablesOperations
+    :vartype route_tables: azure.mgmt.network.v2017_06_01.operations.RouteTablesOperations
     :ivar routes: Routes operations
-    :vartype routes: azure.mgmt.network.v2017_03_01.operations.RoutesOperations
+    :vartype routes: azure.mgmt.network.v2017_06_01.operations.RoutesOperations
     :ivar bgp_service_communities: BgpServiceCommunities operations
-    :vartype bgp_service_communities: azure.mgmt.network.v2017_03_01.operations.BgpServiceCommunitiesOperations
+    :vartype bgp_service_communities: azure.mgmt.network.v2017_06_01.operations.BgpServiceCommunitiesOperations
     :ivar usages: Usages operations
-    :vartype usages: azure.mgmt.network.v2017_03_01.operations.UsagesOperations
+    :vartype usages: azure.mgmt.network.v2017_06_01.operations.UsagesOperations
     :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: azure.mgmt.network.v2017_03_01.operations.VirtualNetworksOperations
+    :vartype virtual_networks: azure.mgmt.network.v2017_06_01.operations.VirtualNetworksOperations
     :ivar subnets: Subnets operations
-    :vartype subnets: azure.mgmt.network.v2017_03_01.operations.SubnetsOperations
+    :vartype subnets: azure.mgmt.network.v2017_06_01.operations.SubnetsOperations
     :ivar virtual_network_peerings: VirtualNetworkPeerings operations
-    :vartype virtual_network_peerings: azure.mgmt.network.v2017_03_01.operations.VirtualNetworkPeeringsOperations
+    :vartype virtual_network_peerings: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkPeeringsOperations
     :ivar virtual_network_gateways: VirtualNetworkGateways operations
-    :vartype virtual_network_gateways: azure.mgmt.network.v2017_03_01.operations.VirtualNetworkGatewaysOperations
+    :vartype virtual_network_gateways: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewaysOperations
     :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
-    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_03_01.operations.VirtualNetworkGatewayConnectionsOperations
+    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
-    :vartype local_network_gateways: azure.mgmt.network.v2017_03_01.operations.LocalNetworkGatewaysOperations
+    :vartype local_network_gateways: azure.mgmt.network.v2017_06_01.operations.LocalNetworkGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -142,13 +149,15 @@ class NetworkManagementClient(object):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
+    :param predefined_policy_name: Name of Ssl predefined policy.
+    :type predefined_policy_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, predefined_policy_name, base_url=None):
 
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, predefined_policy_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -221,7 +230,7 @@ class NetworkManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>`
+         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

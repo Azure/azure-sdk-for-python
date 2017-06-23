@@ -23,7 +23,7 @@ class ExpressRouteServiceProvidersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-03-01".
+    :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class ExpressRouteServiceProvidersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-06-01"
 
         self.config = config
 
@@ -45,7 +45,7 @@ class ExpressRouteServiceProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteServiceProviderPaged
-         <azure.mgmt.network.v2017_03_01.models.ExpressRouteServiceProviderPaged>`
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteServiceProviderPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

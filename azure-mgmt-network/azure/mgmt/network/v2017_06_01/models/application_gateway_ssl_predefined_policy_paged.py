@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class BgpPeerStatusListResult(Model):
-    """Response for list BGP peer status API service call.
-
-    :param value: List of BGP peers
-    :type value: list of :class:`BgpPeerStatus
-     <azure.mgmt.network.v2017_06_01.models.BgpPeerStatus>`
+class ApplicationGatewaySslPredefinedPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of ApplicationGatewaySslPredefinedPolicy object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BgpPeerStatus]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ApplicationGatewaySslPredefinedPolicy]'}
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(ApplicationGatewaySslPredefinedPolicyPaged, self).__init__(*args, **kwargs)

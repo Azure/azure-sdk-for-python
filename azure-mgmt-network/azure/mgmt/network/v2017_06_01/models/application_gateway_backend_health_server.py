@@ -18,17 +18,17 @@ class ApplicationGatewayBackendHealthServer(Model):
     :param address: IP address or FQDN of backend server.
     :type address: str
     :param ip_configuration: Reference of IP configuration of backend server.
-    :type ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type ip_configuration: :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration>`
     :param health: Health of backend server. Possible values include:
      'Unknown', 'Up', 'Down', 'Partial', 'Draining'
     :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHealthServerHealth>`
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayBackendHealthServerHealth>`
     """
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},
-        'ip_configuration': {'key': 'ipConfiguration', 'type': 'SubResource'},
+        'ip_configuration': {'key': 'ipConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
         'health': {'key': 'health', 'type': 'str'},
     }
 

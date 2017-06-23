@@ -25,11 +25,11 @@ class ExpressRouteCircuitPeering(SubResource):
      Possible values include: 'AzurePublicPeering', 'AzurePrivatePeering',
      'MicrosoftPeering'
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringType>`
+     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringType>`
     :param state: The state of peering. Possible values are: 'Disabled' and
      'Enabled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringState>`
+     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: The Azure ASN.
     :type azure_asn: int
     :param peer_asn: The peer ASN.
@@ -48,10 +48,10 @@ class ExpressRouteCircuitPeering(SubResource):
     :type vlan_id: int
     :param microsoft_peering_config: The Microsoft peering configuration.
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringConfig>`
+     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringConfig>`
     :param stats: Gets peering stats.
     :type stats: :class:`ExpressRouteCircuitStats
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitStats>`
+     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitStats>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -62,7 +62,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :type last_modified_by: str
     :param route_filter: The reference of the RouteFilter resource.
     :type route_filter: :class:`RouteFilter
-     <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+     <azure.mgmt.network.v2017_06_01.models.RouteFilter>`
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str

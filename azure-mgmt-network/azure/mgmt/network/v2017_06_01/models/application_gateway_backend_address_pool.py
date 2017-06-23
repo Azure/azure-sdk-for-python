@@ -21,10 +21,10 @@ class ApplicationGatewayBackendAddressPool(SubResource):
      in network interfaces.
     :type backend_ip_configurations: list of
      :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_03_01.models.NetworkInterfaceIPConfiguration>`
+     <azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration>`
     :param backend_addresses: Backend addresses
     :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendAddress>`
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayBackendAddress>`
     :param provisioning_state: Provisioning state of the backend address pool
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -34,6 +34,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -43,12 +45,14 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, backend_ip_configurations=None, backend_addresses=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, backend_ip_configurations=None, backend_addresses=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayBackendAddressPool, self).__init__(id=id)
         self.backend_ip_configurations = backend_ip_configurations
         self.backend_addresses = backend_addresses
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

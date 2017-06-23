@@ -24,7 +24,7 @@ class RouteFiltersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-03-01".
+    :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class RouteFiltersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-06-01"
 
         self.config = config
 
@@ -129,7 +129,7 @@ class RouteFiltersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteFilter
-         <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilter>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -190,14 +190,14 @@ class RouteFiltersOperations(object):
         :param route_filter_parameters: Parameters supplied to the create or
          update route filter operation.
         :type route_filter_parameters: :class:`RouteFilter
-         <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilter>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RouteFilter
-         <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilter>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -285,14 +285,14 @@ class RouteFiltersOperations(object):
         :param route_filter_parameters: Parameters supplied to the update
          route filter operation.
         :type route_filter_parameters: :class:`PatchRouteFilter
-         <azure.mgmt.network.v2017_03_01.models.PatchRouteFilter>`
+         <azure.mgmt.network.v2017_06_01.models.PatchRouteFilter>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RouteFilter
-         <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilter>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -379,7 +379,7 @@ class RouteFiltersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteFilterPaged
-         <azure.mgmt.network.v2017_03_01.models.RouteFilterPaged>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilterPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -443,7 +443,7 @@ class RouteFiltersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteFilterPaged
-         <azure.mgmt.network.v2017_03_01.models.RouteFilterPaged>`
+         <azure.mgmt.network.v2017_06_01.models.RouteFilterPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
