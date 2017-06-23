@@ -20,19 +20,19 @@ class ApplicationGatewayHttpListener(SubResource):
     :param frontend_ip_configuration: Frontend IP configuration resource of an
      application gateway.
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param frontend_port: Frontend port resource of an application gateway.
     :type frontend_port: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayProtocol>`
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol>`
     :param host_name: Host name of HTTP listener.
     :type host_name: str
     :param ssl_certificate: SSL certificate resource of an application
      gateway.
     :type ssl_certificate: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param require_server_name_indication: Applicable only if protocol is
      https. Enables SNI for multi-hosting.
     :type require_server_name_indication: bool
@@ -45,6 +45,8 @@ class ApplicationGatewayHttpListener(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -58,9 +60,10 @@ class ApplicationGatewayHttpListener(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, frontend_port=None, protocol=None, host_name=None, ssl_certificate=None, require_server_name_indication=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, frontend_ip_configuration=None, frontend_port=None, protocol=None, host_name=None, ssl_certificate=None, require_server_name_indication=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayHttpListener, self).__init__(id=id)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.frontend_port = frontend_port
@@ -71,3 +74,4 @@ class ApplicationGatewayHttpListener(SubResource):
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

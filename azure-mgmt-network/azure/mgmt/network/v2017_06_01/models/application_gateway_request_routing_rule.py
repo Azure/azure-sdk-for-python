@@ -20,21 +20,25 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param rule_type: Rule type. Possible values include: 'Basic',
      'PathBasedRouting'
     :type rule_type: str or :class:`ApplicationGatewayRequestRoutingRuleType
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayRequestRoutingRuleType>`
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRequestRoutingRuleType>`
     :param backend_address_pool: Backend address pool resource of the
      application gateway.
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param backend_http_settings: Frontend port resource of the application
      gateway.
     :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param http_listener: Http listener resource of the application gateway.
     :type http_listener: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param url_path_map: URL path map resource of the application gateway.
     :type url_path_map: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :param redirect_configuration: Redirect configuration resource of the
+     application gateway.
+    :type redirect_configuration: :class:`SubResource
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param provisioning_state: Provisioning state of the request routing rule
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -44,6 +48,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -53,18 +59,22 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
         'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},
         'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource'},
+        'redirect_configuration': {'key': 'properties.redirectConfiguration', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, rule_type=None, backend_address_pool=None, backend_http_settings=None, http_listener=None, url_path_map=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, rule_type=None, backend_address_pool=None, backend_http_settings=None, http_listener=None, url_path_map=None, redirect_configuration=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayRequestRoutingRule, self).__init__(id=id)
         self.rule_type = rule_type
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings = backend_http_settings
         self.http_listener = http_listener
         self.url_path_map = url_path_map
+        self.redirect_configuration = redirect_configuration
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

@@ -41,8 +41,10 @@ from .application_gateway_frontend_ip_configuration import ApplicationGatewayFro
 from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
 from .application_gateway_http_listener import ApplicationGatewayHttpListener
 from .application_gateway_path_rule import ApplicationGatewayPathRule
+from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
 from .application_gateway_probe import ApplicationGatewayProbe
 from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
+from .application_gateway_redirect_configuration import ApplicationGatewayRedirectConfiguration
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
 from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
@@ -51,6 +53,8 @@ from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
 from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
 from .application_gateway_firewall_rule_set import ApplicationGatewayFirewallRuleSet
 from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
+from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
+from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
 from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
@@ -131,6 +135,8 @@ from .address_space import AddressSpace
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .ip_address_availability_result import IPAddressAvailabilityResult
+from .virtual_network_usage_name import VirtualNetworkUsageName
+from .virtual_network_usage import VirtualNetworkUsage
 from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
 from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
 from .vpn_client_root_certificate import VpnClientRootCertificate
@@ -150,6 +156,7 @@ from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
 from .application_gateway_paged import ApplicationGatewayPaged
+from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
@@ -168,6 +175,7 @@ from .route_paged import RoutePaged
 from .bgp_service_community_paged import BgpServiceCommunityPaged
 from .usage_paged import UsagePaged
 from .virtual_network_paged import VirtualNetworkPaged
+from .virtual_network_usage_paged import VirtualNetworkUsagePaged
 from .subnet_paged import SubnetPaged
 from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
@@ -187,7 +195,11 @@ from .network_management_client_enums import (
     ApplicationGatewaySkuName,
     ApplicationGatewayTier,
     ApplicationGatewaySslProtocol,
+    ApplicationGatewaySslPolicyType,
+    ApplicationGatewaySslPolicyName,
+    ApplicationGatewaySslCipherSuite,
     ApplicationGatewayRequestRoutingRuleType,
+    ApplicationGatewayRedirectType,
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
     AuthorizationUseStatus,
@@ -220,8 +232,10 @@ from .network_management_client_enums import (
     VpnType,
     VirtualNetworkGatewaySkuName,
     VirtualNetworkGatewaySkuTier,
+    VpnClientProtocol,
     BgpPeerState,
     ProcessorArchitecture,
+    AuthenticationMethod,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
     IpsecEncryption,
@@ -265,8 +279,10 @@ __all__ = [
     'ApplicationGatewayFrontendPort',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
+    'ApplicationGatewayProbeHealthResponseMatch',
     'ApplicationGatewayProbe',
     'ApplicationGatewayRequestRoutingRule',
+    'ApplicationGatewayRedirectConfiguration',
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
@@ -275,6 +291,8 @@ __all__ = [
     'ApplicationGatewayFirewallRuleGroup',
     'ApplicationGatewayFirewallRuleSet',
     'ApplicationGatewayAvailableWafRuleSetsResult',
+    'ApplicationGatewayAvailableSslOptions',
+    'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
     'DnsNameAvailabilityResult',
     'ExpressRouteCircuitAuthorization',
@@ -355,6 +373,8 @@ __all__ = [
     'DhcpOptions',
     'VirtualNetwork',
     'IPAddressAvailabilityResult',
+    'VirtualNetworkUsageName',
+    'VirtualNetworkUsage',
     'VirtualNetworkGatewayIPConfiguration',
     'VirtualNetworkGatewaySku',
     'VpnClientRootCertificate',
@@ -374,6 +394,7 @@ __all__ = [
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
     'ApplicationGatewayPaged',
+    'ApplicationGatewaySslPredefinedPolicyPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
@@ -392,6 +413,7 @@ __all__ = [
     'BgpServiceCommunityPaged',
     'UsagePaged',
     'VirtualNetworkPaged',
+    'VirtualNetworkUsagePaged',
     'SubnetPaged',
     'VirtualNetworkPeeringPaged',
     'VirtualNetworkGatewayPaged',
@@ -410,7 +432,11 @@ __all__ = [
     'ApplicationGatewaySkuName',
     'ApplicationGatewayTier',
     'ApplicationGatewaySslProtocol',
+    'ApplicationGatewaySslPolicyType',
+    'ApplicationGatewaySslPolicyName',
+    'ApplicationGatewaySslCipherSuite',
     'ApplicationGatewayRequestRoutingRuleType',
+    'ApplicationGatewayRedirectType',
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
     'AuthorizationUseStatus',
@@ -443,8 +469,10 @@ __all__ = [
     'VpnType',
     'VirtualNetworkGatewaySkuName',
     'VirtualNetworkGatewaySkuTier',
+    'VpnClientProtocol',
     'BgpPeerState',
     'ProcessorArchitecture',
+    'AuthenticationMethod',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
     'IpsecEncryption',

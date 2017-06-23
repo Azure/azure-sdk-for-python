@@ -18,26 +18,32 @@ class VpnClientConfiguration(Model):
     :param vpn_client_address_pool: The reference of the address space
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool: :class:`AddressSpace
-     <azure.mgmt.network.v2017_03_01.models.AddressSpace>`
+     <azure.mgmt.network.v2017_06_01.models.AddressSpace>`
     :param vpn_client_root_certificates: VpnClientRootCertificate for virtual
      network gateway.
     :type vpn_client_root_certificates: list of
      :class:`VpnClientRootCertificate
-     <azure.mgmt.network.v2017_03_01.models.VpnClientRootCertificate>`
+     <azure.mgmt.network.v2017_06_01.models.VpnClientRootCertificate>`
     :param vpn_client_revoked_certificates: VpnClientRevokedCertificate for
      Virtual network gateway.
     :type vpn_client_revoked_certificates: list of
      :class:`VpnClientRevokedCertificate
-     <azure.mgmt.network.v2017_03_01.models.VpnClientRevokedCertificate>`
+     <azure.mgmt.network.v2017_06_01.models.VpnClientRevokedCertificate>`
+    :param vpn_client_protocols: VpnClientProtocols for Virtual network
+     gateway.
+    :type vpn_client_protocols: list of str or :class:`VpnClientProtocol
+     <azure.mgmt.network.v2017_06_01.models.VpnClientProtocol>`
     """
 
     _attribute_map = {
         'vpn_client_address_pool': {'key': 'vpnClientAddressPool', 'type': 'AddressSpace'},
         'vpn_client_root_certificates': {'key': 'vpnClientRootCertificates', 'type': '[VpnClientRootCertificate]'},
         'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
+        'vpn_client_protocols': {'key': 'vpnClientProtocols', 'type': '[str]'},
     }
 
-    def __init__(self, vpn_client_address_pool=None, vpn_client_root_certificates=None, vpn_client_revoked_certificates=None):
+    def __init__(self, vpn_client_address_pool=None, vpn_client_root_certificates=None, vpn_client_revoked_certificates=None, vpn_client_protocols=None):
         self.vpn_client_address_pool = vpn_client_address_pool
         self.vpn_client_root_certificates = vpn_client_root_certificates
         self.vpn_client_revoked_certificates = vpn_client_revoked_certificates
+        self.vpn_client_protocols = vpn_client_protocols

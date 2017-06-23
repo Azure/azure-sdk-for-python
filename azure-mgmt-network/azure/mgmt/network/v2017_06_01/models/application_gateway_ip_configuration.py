@@ -21,7 +21,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
     :param subnet: Reference of the subnet resource. A subnet from where
      application gateway gets its private address.
     :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param provisioning_state: Provisioning state of the application gateway
      subnet resource. Possible values are: 'Updating', 'Deleting', and
      'Failed'.
@@ -32,6 +32,8 @@ class ApplicationGatewayIPConfiguration(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -40,11 +42,13 @@ class ApplicationGatewayIPConfiguration(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subnet=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, subnet=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayIPConfiguration, self).__init__(id=id)
         self.subnet = subnet
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

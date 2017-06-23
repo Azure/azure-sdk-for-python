@@ -24,7 +24,7 @@ class NetworkWatchersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-03-01".
+    :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class NetworkWatchersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-06-01"
 
         self.config = config
 
@@ -47,14 +47,14 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the network watcher
          resource.
         :type parameters: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_03_01.models.NetworkWatcher>`
+         <azure.mgmt.network.v2017_06_01.models.NetworkWatcher>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_03_01.models.NetworkWatcher>`
+         <azure.mgmt.network.v2017_06_01.models.NetworkWatcher>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -122,7 +122,7 @@ class NetworkWatchersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_03_01.models.NetworkWatcher>`
+         <azure.mgmt.network.v2017_06_01.models.NetworkWatcher>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -259,7 +259,7 @@ class NetworkWatchersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkWatcherPaged
-         <azure.mgmt.network.v2017_03_01.models.NetworkWatcherPaged>`
+         <azure.mgmt.network.v2017_06_01.models.NetworkWatcherPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -323,7 +323,7 @@ class NetworkWatchersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkWatcherPaged
-         <azure.mgmt.network.v2017_03_01.models.NetworkWatcherPaged>`
+         <azure.mgmt.network.v2017_06_01.models.NetworkWatcherPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -393,7 +393,7 @@ class NetworkWatchersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Topology
-         <azure.mgmt.network.v2017_03_01.models.Topology>`
+         <azure.mgmt.network.v2017_06_01.models.Topology>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -458,14 +458,14 @@ class NetworkWatchersOperations(object):
         :type network_watcher_name: str
         :param parameters: Parameters that define the IP flow to be verified.
         :type parameters: :class:`VerificationIPFlowParameters
-         <azure.mgmt.network.v2017_03_01.models.VerificationIPFlowParameters>`
+         <azure.mgmt.network.v2017_06_01.models.VerificationIPFlowParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VerificationIPFlowResult
-         <azure.mgmt.network.v2017_03_01.models.VerificationIPFlowResult>`
+         <azure.mgmt.network.v2017_06_01.models.VerificationIPFlowResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -553,14 +553,14 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the source and destination
          endpoint.
         :type parameters: :class:`NextHopParameters
-         <azure.mgmt.network.v2017_03_01.models.NextHopParameters>`
+         <azure.mgmt.network.v2017_06_01.models.NextHopParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`NextHopResult
-         <azure.mgmt.network.v2017_03_01.models.NextHopResult>`
+         <azure.mgmt.network.v2017_06_01.models.NextHopResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -654,7 +654,7 @@ class NetworkWatchersOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`SecurityGroupViewResult
-         <azure.mgmt.network.v2017_03_01.models.SecurityGroupViewResult>`
+         <azure.mgmt.network.v2017_06_01.models.SecurityGroupViewResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -744,14 +744,14 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the resource to
          troubleshoot.
         :type parameters: :class:`TroubleshootingParameters
-         <azure.mgmt.network.v2017_03_01.models.TroubleshootingParameters>`
+         <azure.mgmt.network.v2017_06_01.models.TroubleshootingParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`TroubleshootingResult
-         <azure.mgmt.network.v2017_03_01.models.TroubleshootingResult>`
+         <azure.mgmt.network.v2017_06_01.models.TroubleshootingResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -845,7 +845,7 @@ class NetworkWatchersOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`TroubleshootingResult
-         <azure.mgmt.network.v2017_03_01.models.TroubleshootingResult>`
+         <azure.mgmt.network.v2017_06_01.models.TroubleshootingResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -936,14 +936,14 @@ class NetworkWatchersOperations(object):
         :param parameters: Parameters that define the configuration of flow
          log.
         :type parameters: :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_03_01.models.FlowLogInformation>`
+         <azure.mgmt.network.v2017_06_01.models.FlowLogInformation>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_03_01.models.FlowLogInformation>`
+         <azure.mgmt.network.v2017_06_01.models.FlowLogInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1038,7 +1038,7 @@ class NetworkWatchersOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_03_01.models.FlowLogInformation>`
+         <azure.mgmt.network.v2017_06_01.models.FlowLogInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1130,17 +1130,17 @@ class NetworkWatchersOperations(object):
         :type network_watcher_name: str
         :param source:
         :type source: :class:`ConnectivitySource
-         <azure.mgmt.network.v2017_03_01.models.ConnectivitySource>`
+         <azure.mgmt.network.v2017_06_01.models.ConnectivitySource>`
         :param destination:
         :type destination: :class:`ConnectivityDestination
-         <azure.mgmt.network.v2017_03_01.models.ConnectivityDestination>`
+         <azure.mgmt.network.v2017_06_01.models.ConnectivityDestination>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ConnectivityInformation
-         <azure.mgmt.network.v2017_03_01.models.ConnectivityInformation>`
+         <azure.mgmt.network.v2017_06_01.models.ConnectivityInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

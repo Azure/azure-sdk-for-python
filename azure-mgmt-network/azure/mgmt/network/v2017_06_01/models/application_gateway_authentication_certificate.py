@@ -29,6 +29,8 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -37,11 +39,13 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, data=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, data=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayAuthenticationCertificate, self).__init__(id=id)
         self.data = data
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

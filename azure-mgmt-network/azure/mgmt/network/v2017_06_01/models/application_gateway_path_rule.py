@@ -19,14 +19,18 @@ class ApplicationGatewayPathRule(SubResource):
     :type id: str
     :param paths: Path rules of URL path map.
     :type paths: list of str
-    :param backend_address_pool: Backend address pool resource of URL path
-     map.
+    :param backend_address_pool: Backend address pool resource of URL path map
+     path rule.
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param backend_http_settings: Backend http settings resource of URL path
-     map.
+     map path rule.
     :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :param redirect_configuration: Redirect configuration resource of URL path
+     map path rule.
+    :type redirect_configuration: :class:`SubResource
+     <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :param provisioning_state: Path rule of URL path map resource. Possible
      values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -36,6 +40,8 @@ class ApplicationGatewayPathRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -43,16 +49,20 @@ class ApplicationGatewayPathRule(SubResource):
         'paths': {'key': 'properties.paths', 'type': '[str]'},
         'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
         'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
+        'redirect_configuration': {'key': 'properties.redirectConfiguration', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, redirect_configuration=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayPathRule, self).__init__(id=id)
         self.paths = paths
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings = backend_http_settings
+        self.redirect_configuration = redirect_configuration
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type

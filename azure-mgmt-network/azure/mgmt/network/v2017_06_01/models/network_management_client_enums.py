@@ -101,10 +101,60 @@ class ApplicationGatewaySslProtocol(Enum):
     tl_sv1_2 = "TLSv1_2"
 
 
+class ApplicationGatewaySslPolicyType(Enum):
+
+    predefined = "Predefined"
+    custom = "Custom"
+
+
+class ApplicationGatewaySslPolicyName(Enum):
+
+    app_gw_ssl_policy20150501 = "AppGwSslPolicy20150501"
+    app_gw_ssl_policy20170401 = "AppGwSslPolicy20170401"
+    app_gw_ssl_policy20170401_s = "AppGwSslPolicy20170401S"
+
+
+class ApplicationGatewaySslCipherSuite(Enum):
+
+    tls_ecdhe_rsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
+    tls_ecdhe_rsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+    tls_ecdhe_rsa_with_aes_256_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
+    tls_ecdhe_rsa_with_aes_128_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
+    tls_dhe_rsa_with_aes_256_gcm_sha384 = "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"
+    tls_dhe_rsa_with_aes_128_gcm_sha256 = "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+    tls_dhe_rsa_with_aes_256_cbc_sha = "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
+    tls_dhe_rsa_with_aes_128_cbc_sha = "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
+    tls_rsa_with_aes_256_gcm_sha384 = "TLS_RSA_WITH_AES_256_GCM_SHA384"
+    tls_rsa_with_aes_128_gcm_sha256 = "TLS_RSA_WITH_AES_128_GCM_SHA256"
+    tls_rsa_with_aes_256_cbc_sha256 = "TLS_RSA_WITH_AES_256_CBC_SHA256"
+    tls_rsa_with_aes_128_cbc_sha256 = "TLS_RSA_WITH_AES_128_CBC_SHA256"
+    tls_rsa_with_aes_256_cbc_sha = "TLS_RSA_WITH_AES_256_CBC_SHA"
+    tls_rsa_with_aes_128_cbc_sha = "TLS_RSA_WITH_AES_128_CBC_SHA"
+    tls_ecdhe_ecdsa_with_aes_256_gcm_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+    tls_ecdhe_ecdsa_with_aes_128_gcm_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+    tls_ecdhe_ecdsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
+    tls_ecdhe_ecdsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+    tls_ecdhe_ecdsa_with_aes_256_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
+    tls_ecdhe_ecdsa_with_aes_128_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
+    tls_dhe_dss_with_aes_256_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256"
+    tls_dhe_dss_with_aes_128_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
+    tls_dhe_dss_with_aes_256_cbc_sha = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
+    tls_dhe_dss_with_aes_128_cbc_sha = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
+    tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+
+
 class ApplicationGatewayRequestRoutingRuleType(Enum):
 
     basic = "Basic"
     path_based_routing = "PathBasedRouting"
+
+
+class ApplicationGatewayRedirectType(Enum):
+
+    permanent = "Permanent"
+    found = "Found"
+    see_other = "SeeOther"
+    temporary = "Temporary"
 
 
 class ApplicationGatewayOperationalState(Enum):
@@ -344,6 +394,12 @@ class VirtualNetworkGatewaySkuTier(Enum):
     vpn_gw3 = "VpnGw3"
 
 
+class VpnClientProtocol(Enum):
+
+    ike_v2 = "IkeV2"
+    sstp = "SSTP"
+
+
 class BgpPeerState(Enum):
 
     unknown = "Unknown"
@@ -357,6 +413,12 @@ class ProcessorArchitecture(Enum):
 
     amd64 = "Amd64"
     x86 = "X86"
+
+
+class AuthenticationMethod(Enum):
+
+    eaptls = "EAPTLS"
+    eapmscha_pv2 = "EAPMSCHAPv2"
 
 
 class VirtualNetworkGatewayConnectionStatus(Enum):

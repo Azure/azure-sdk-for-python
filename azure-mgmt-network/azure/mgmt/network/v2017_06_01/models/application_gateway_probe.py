@@ -19,7 +19,7 @@ class ApplicationGatewayProbe(SubResource):
     :type id: str
     :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayProtocol>`
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol>`
     :param host: Host name to send the probe to.
     :type host: str
     :param path: Relative path of probe. Valid path starts from '/'. Probe is
@@ -37,6 +37,15 @@ class ApplicationGatewayProbe(SubResource):
      marked down after consecutive probe failure count reaches
      UnhealthyThreshold. Acceptable values are from 1 second to 20.
     :type unhealthy_threshold: int
+    :param pick_host_name_from_backend_http_settings: Whether the host header
+     should be picked from the backend http settings. Default value is false.
+    :type pick_host_name_from_backend_http_settings: bool
+    :param min_servers: Minimum number of servers that are always marked
+     healthy. Default value is 0.
+    :type min_servers: int
+    :param match: Criterion for classifying a healthy probe response.
+    :type match: :class:`ApplicationGatewayProbeHealthResponseMatch
+     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProbeHealthResponseMatch>`
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -46,6 +55,8 @@ class ApplicationGatewayProbe(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param type: Type of the resource.
+    :type type: str
     """
 
     _attribute_map = {
@@ -56,12 +67,16 @@ class ApplicationGatewayProbe(SubResource):
         'interval': {'key': 'properties.interval', 'type': 'int'},
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int'},
+        'pick_host_name_from_backend_http_settings': {'key': 'properties.pickHostNameFromBackendHttpSettings', 'type': 'bool'},
+        'min_servers': {'key': 'properties.minServers', 'type': 'int'},
+        'match': {'key': 'properties.match', 'type': 'ApplicationGatewayProbeHealthResponseMatch'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, pick_host_name_from_backend_http_settings=None, min_servers=None, match=None, provisioning_state=None, name=None, etag=None, type=None):
         super(ApplicationGatewayProbe, self).__init__(id=id)
         self.protocol = protocol
         self.host = host
@@ -69,6 +84,10 @@ class ApplicationGatewayProbe(SubResource):
         self.interval = interval
         self.timeout = timeout
         self.unhealthy_threshold = unhealthy_threshold
+        self.pick_host_name_from_backend_http_settings = pick_host_name_from_backend_http_settings
+        self.min_servers = min_servers
+        self.match = match
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.type = type
