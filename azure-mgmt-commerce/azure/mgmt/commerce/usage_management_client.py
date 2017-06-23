@@ -30,13 +30,11 @@ class UsageManagementClientConfiguration(AzureConfiguration):
      subscription. The subscription ID forms part of the URI for every service
      call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-01-preview', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -44,8 +42,6 @@ class UsageManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -56,7 +52,6 @@ class UsageManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
 
 
 class UsageManagementClient(object):
@@ -66,9 +61,9 @@ class UsageManagementClient(object):
     :vartype config: UsageManagementClientConfiguration
 
     :ivar usage_aggregates: UsageAggregates operations
-    :vartype usage_aggregates: .operations.UsageAggregatesOperations
+    :vartype usage_aggregates: azure.mgmt.commerce.operations.UsageAggregatesOperations
     :ivar rate_card: RateCard operations
-    :vartype rate_card: .operations.RateCardOperations
+    :vartype rate_card: azure.mgmt.commerce.operations.RateCardOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -77,18 +72,17 @@ class UsageManagementClient(object):
      subscription. The subscription ID forms part of the URI for every service
      call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-01-preview', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = UsageManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
+        self.config = UsageManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2015-06-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

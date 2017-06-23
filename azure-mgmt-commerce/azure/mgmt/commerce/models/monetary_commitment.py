@@ -37,7 +37,7 @@ class MonetaryCommitment(OfferTermInfo):
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'name': {'key': 'Name', 'type': 'str'},
-        'tiered_discount': {'key': 'TieredDiscount', 'type': '{Decimal}'},
+        'tiered_discount': {'key': 'TieredDiscount', 'type': '{decimal}'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 

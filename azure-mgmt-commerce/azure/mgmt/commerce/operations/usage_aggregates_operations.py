@@ -22,6 +22,7 @@ class UsageAggregatesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2015-06-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,6 +30,7 @@ class UsageAggregatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-06-01-preview"
 
         self.config = config
 
@@ -90,7 +92,7 @@ class UsageAggregatesOperations(object):
                     query_parameters['aggregationGranularity'] = self._serialize.query("aggregation_granularity", aggregation_granularity, 'AggregationGranularity')
                 if continuation_token is not None:
                     query_parameters['continuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
