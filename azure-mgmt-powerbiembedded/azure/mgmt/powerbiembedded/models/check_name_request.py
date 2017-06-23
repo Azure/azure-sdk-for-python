@@ -20,7 +20,7 @@ class CheckNameRequest(Model):
     :param type: Resource type. Default value:
      "Microsoft.PowerBI/workspaceCollections" .
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

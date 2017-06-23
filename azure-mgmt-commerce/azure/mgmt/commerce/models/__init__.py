@@ -12,9 +12,9 @@
 from .info_field import InfoField
 from .usage_aggregation import UsageAggregation
 from .rate_card_query_parameters import RateCardQueryParameters
-from .resource_rate_card_info import ResourceRateCardInfo
 from .offer_term_info import OfferTermInfo
 from .meter_info import MeterInfo
+from .resource_rate_card_info import ResourceRateCardInfo
 from .monetary_credit import MonetaryCredit
 from .monetary_commitment import MonetaryCommitment
 from .recurring_charge import RecurringCharge
@@ -28,9 +28,9 @@ __all__ = [
     'InfoField',
     'UsageAggregation',
     'RateCardQueryParameters',
-    'ResourceRateCardInfo',
     'OfferTermInfo',
     'MeterInfo',
+    'ResourceRateCardInfo',
     'MonetaryCredit',
     'MonetaryCommitment',
     'RecurringCharge',

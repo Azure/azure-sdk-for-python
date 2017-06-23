@@ -14,13 +14,13 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Describes ehe format of Error response.
+    """Describes the format of Error response.
 
     :param code: Error code
     :type code: str
     :param message: Error message indicating why the operation failed.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

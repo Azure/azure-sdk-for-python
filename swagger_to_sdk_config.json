@@ -68,9 +68,11 @@
     "commerce": {
       "autorest_options": {
         "input-file": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
-        "namespace": "azure.mgmt.commerce"
+        "namespace": "azure.mgmt.commerce",
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
+      "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce",
+      "build_dir": "azure-mgmt-commerce"
     },
     "compute.compute.2015-06-15": {
       "autorest_options": {
@@ -279,9 +281,11 @@
     "powerbiembedded": {
       "autorest_options": {
         "input-file": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
-        "namespace": "azure.mgmt.powerbiembedded"
+        "namespace": "azure.mgmt.powerbiembedded",
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
+      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded",
+      "build_dir": "azure-mgmt-powerbiembedded"
     },
     "rdbms.mysql": {
       "autorest_options": {
