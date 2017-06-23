@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import json
 try:
     import unittest.mock as mock
 except ImportError:
@@ -10,7 +11,9 @@ except ImportError:
 import unittest
 import uuid
 
-from azure_devtools.scenario_tests.recording_processors import RecordingProcessor, SubscriptionRecordingProcessor
+from azure_devtools.scenario_tests.recording_processors import (
+    RecordingProcessor, SubscriptionRecordingProcessor, AccessTokenReplacer
+)
 
 
 class TestRecordingProcessors(unittest.TestCase):
@@ -47,6 +50,19 @@ class TestRecordingProcessors(unittest.TestCase):
 
             rp.process_request(mock_request)
             self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
+
+    def test_access_token_processor(self):
+        replaced_subscription_id = 'test_fake_token'
+        rp = AccessTokenReplacer(replaced_subscription_id)
+
+        TOKEN_STR = '{"token_type": "Bearer", "resource": "url", "access_token": "real_token"}'
+        token_response_sample = {'body': {'string': TOKEN_STR}}
+
+        self.assertEqual(json.loads(rp.process_response(token_response_sample)['body']['string'])['access_token'],
+                         replaced_subscription_id)
+
+        no_token_response_sample = {'body': {'string': '{"location": "westus"}'}}
+        self.assertDictEqual(rp.process_response(no_token_response_sample), no_token_response_sample)
 
     def test_subscription_recording_processor_for_response(self):
         replaced_subscription_id = str(uuid.uuid4())

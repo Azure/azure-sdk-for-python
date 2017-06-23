@@ -127,6 +127,22 @@ class DeploymentNameReplacer(RecordingProcessor):
         return request
 
 
+class AccessTokenReplacer(RecordingProcessor):
+    """Replace the access token for service principal authentication in a response body."""
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            body['access_token'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
+
+
 class GeneralNameReplacer(RecordingProcessor):
     def __init__(self):
         self.names_name = []
