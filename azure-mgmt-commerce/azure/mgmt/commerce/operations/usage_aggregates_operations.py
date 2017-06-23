@@ -22,6 +22,7 @@ class UsageAggregatesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2015-06-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,29 +30,37 @@ class UsageAggregatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-06-01-preview"
 
         self.config = config
 
     def list(
-            self, reportedstart_time, reported_end_time, show_details=None, aggregation_granularity="Daily", continuation_token=None, custom_headers=None, raw=False, **operation_config):
+            self, reported_start_time, reported_end_time, show_details=None, aggregation_granularity="Daily", continuation_token=None, custom_headers=None, raw=False, **operation_config):
         """Query aggregated Azure subscription consumption data for a date range.
 
-        :param reportedstart_time: The start of the time range to retrieve
+        :param reported_start_time: The start of the time range to retrieve
          data for.
-        :type reportedstart_time: datetime
+        :type reported_start_time: datetime
         :param reported_end_time: The end of the time range to retrieve data
          for.
         :type reported_end_time: datetime
-        :param show_details: When set to true (default), the aggregates are
-         broken down into the instance metadata which is more granular.
+        :param show_details: `True` returns usage data in instance-level
+         detail, `false` causes server-side aggregation with fewer details. For
+         example, if you have 3 website instances, by default you will get 3
+         line items for website consumption. If you specify showDetails =
+         false, the data will be aggregated as a single line item for website
+         consumption within the time period (for the given subscriptionId,
+         meterId, usageStartTime and usageEndTime).
         :type show_details: bool
-        :param aggregation_granularity: Value is either daily (default) or
-         hourly to tell the API how to return the results grouped by day or
-         hour. Possible values include: 'Daily', 'Hourly'
+        :param aggregation_granularity: `Daily` (default) returns the data in
+         daily granularity, `Hourly` returns the data in hourly granularity.
+         Possible values include: 'Daily', 'Hourly'
         :type aggregation_granularity: str or :class:`AggregationGranularity
          <azure.mgmt.commerce.models.AggregationGranularity>`
-        :param continuation_token: Retrieved from previous calls, this is the
-         bookmark used for progress when the responses are paged.
+        :param continuation_token: Used when a continuation token string is
+         provided in the response body of the previous call, enabling paging
+         through a large result set. If not present, the data is retrieved from
+         the beginning of the day/hour (based on the granularity) passed in.
         :type continuation_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -60,6 +69,8 @@ class UsageAggregatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsageAggregationPaged
          <azure.mgmt.commerce.models.UsageAggregationPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -73,7 +84,7 @@ class UsageAggregatesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['reportedstartTime'] = self._serialize.query("reportedstart_time", reportedstart_time, 'iso-8601')
+                query_parameters['reportedStartTime'] = self._serialize.query("reported_start_time", reported_start_time, 'iso-8601')
                 query_parameters['reportedEndTime'] = self._serialize.query("reported_end_time", reported_end_time, 'iso-8601')
                 if show_details is not None:
                     query_parameters['showDetails'] = self._serialize.query("show_details", show_details, 'bool')
@@ -81,7 +92,7 @@ class UsageAggregatesOperations(object):
                     query_parameters['aggregationGranularity'] = self._serialize.query("aggregation_granularity", aggregation_granularity, 'AggregationGranularity')
                 if continuation_token is not None:
                     query_parameters['continuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
