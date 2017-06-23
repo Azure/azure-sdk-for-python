@@ -820,9 +820,11 @@ class ApplicationGatewaysOperations(object):
         return deserialized
 
     def get_ssl_predefined_policy(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, predefined_policy_name, custom_headers=None, raw=False, **operation_config):
         """Gets Ssl predefined policy with the specified policy name.
 
+        :param predefined_policy_name: Name of Ssl predefined policy.
+        :type predefined_policy_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -838,7 +840,7 @@ class ApplicationGatewaysOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies/{predefinedPolicyName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'predefinedPolicyName': self._serialize.url("self.config.predefined_policy_name", self.config.predefined_policy_name, 'str')
+            'predefinedPolicyName': self._serialize.url("predefined_policy_name", predefined_policy_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
