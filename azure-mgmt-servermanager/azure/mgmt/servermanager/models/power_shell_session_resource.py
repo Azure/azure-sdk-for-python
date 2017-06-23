@@ -46,7 +46,7 @@ class PowerShellSessionResource(Resource):
     :type version: :class:`Version <azure.mgmt.servermanager.models.Version>`
     :param power_shell_session_resource_name: Name of the runspace.
     :type power_shell_session_resource_name: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

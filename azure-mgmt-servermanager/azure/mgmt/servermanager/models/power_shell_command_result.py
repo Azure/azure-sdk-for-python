@@ -40,7 +40,7 @@ class PowerShellCommandResult(Model):
      contains the user input.
     :type descriptions: list of :class:`PromptFieldDescription
      <azure.mgmt.servermanager.models.PromptFieldDescription>`
-    """ 
+    """
 
     _attribute_map = {
         'message_type': {'key': 'messageType', 'type': 'int'},

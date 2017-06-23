@@ -6,6 +6,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import re
+import os.path
+from io import open
 from setuptools import find_packages, setup
 try:
     from azure_bdist_wheel import cmdclass
@@ -13,13 +16,10 @@ except ImportError:
     from distutils import log as logger
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
     cmdclass = {}
-from io import open
-import re
-import os.path
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-servermanager"
-PACKAGE_PPRINT_NAME = "ServerManager Management"
+PACKAGE_PPRINT_NAME = "Server Manager Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -64,7 +64,7 @@ setup(
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -78,8 +78,8 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
-        'azure-common~=1.1.5',
-        'msrestazure~=0.4.7',
+        'msrestazure~=0.4.8',
+        'azure-common~=1.1.6',
     ],
     cmdclass=cmdclass
 )
