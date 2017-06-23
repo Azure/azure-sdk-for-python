@@ -33,13 +33,11 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
      identify a Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-01-29', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -47,8 +45,6 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,7 +55,6 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
 
 
 class PowerBIEmbeddedManagementClient(object):
@@ -69,9 +64,9 @@ class PowerBIEmbeddedManagementClient(object):
     :vartype config: PowerBIEmbeddedManagementClientConfiguration
 
     :ivar workspace_collections: WorkspaceCollections operations
-    :vartype workspace_collections: .operations.WorkspaceCollectionsOperations
+    :vartype workspace_collections: azure.mgmt.powerbiembedded.operations.WorkspaceCollectionsOperations
     :ivar workspaces: Workspaces operations
-    :vartype workspaces: .operations.WorkspacesOperations
+    :vartype workspaces: azure.mgmt.powerbiembedded.operations.WorkspacesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -80,18 +75,17 @@ class PowerBIEmbeddedManagementClient(object):
      identify a Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-01-29', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = PowerBIEmbeddedManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
+        self.config = PowerBIEmbeddedManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-01-29'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -122,7 +116,7 @@ class PowerBIEmbeddedManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
