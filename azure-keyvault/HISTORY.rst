@@ -3,9 +3,10 @@
 Release History
 ===============
 
-0.3.5 (2017-06-22)
+0.3.5 (2017-06-23)
 ++++++++++++++++++
 
+* Fix: https://github.com/Azure/azure-sdk-for-python/issues/1159
 * KeyVaultId refactoring
   - adding object specific id classes to make usage more uniform with other key vault SDKs
   - added storage account id and storage sas definition id parsing and formatting
