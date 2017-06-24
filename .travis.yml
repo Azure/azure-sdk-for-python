@@ -1,5 +1,5 @@
 dist: trusty
-sudo: false
+sudo: required
 cache: pip
 language: python
 matrix:
