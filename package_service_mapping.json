@@ -55,7 +55,7 @@
 		"service_name": "DNS",
 		"category ": "Management"
 	},
-	"azure-mgmt-documentdb": {
+	"azure-mgmt-cosmosdb": {
 		"service_name": "Cosmos DB",
 		"category ": "Management"
 	},
