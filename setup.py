@@ -12,6 +12,7 @@ import glob
 import copy
 import sys
 import runpy
+from build_package import travis_build_package
 
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
@@ -36,6 +37,8 @@ content_package.insert(0, "azure-common")
 # Package final:
 if "install" in sys.argv:
     packages = content_package
+elif "travis_deploy" in sys.argv:
+    sys.exit(travis_build_package())
 else:
     packages = nspkg_packages + content_package + meta_package
 
