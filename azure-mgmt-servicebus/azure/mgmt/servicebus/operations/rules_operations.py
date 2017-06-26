@@ -15,8 +15,8 @@ import uuid
 from .. import models
 
 
-class SubscriptionsOperations(object):
-    """SubscriptionsOperations operations.
+class RulesOperations(object):
+    """RulesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,9 +34,9 @@ class SubscriptionsOperations(object):
 
         self.config = config
 
-    def list_by_topic(
-            self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """List all the subscriptions under a specified topic.
+    def list_by_subscriptions(
+            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
+        """List all the rules within given topic-subscription.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -45,13 +45,14 @@ class SubscriptionsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
+        :param subscription_name: The subscription name.
+        :type subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBSubscriptionPaged
-         <azure.mgmt.servicebus.models.SBSubscriptionPaged>`
+        :rtype: :class:`RulePaged <azure.mgmt.servicebus.models.RulePaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -59,11 +60,12 @@ class SubscriptionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+                    'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -97,18 +99,18 @@ class SubscriptionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SBSubscriptionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.RulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SBSubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.RulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a topic subscription.
+            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates a new rule and updates an existing rule.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -119,29 +121,29 @@ class SubscriptionsOperations(object):
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
-        :param parameters: Parameters supplied to create a subscription
-         resource.
-        :type parameters: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
+        :param rule_name: The rule name.
+        :type rule_name: str
+        :param parameters: Parameters supplied to create a rule.
+        :type parameters: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
+        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -161,7 +163,7 @@ class SubscriptionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SBSubscription')
+        body_content = self._serialize.body(parameters, 'Rule')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -174,7 +176,7 @@ class SubscriptionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SBSubscription', response)
+            deserialized = self._deserialize('Rule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -183,8 +185,8 @@ class SubscriptionsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a subscription from the specified topic.
+            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing rule.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -195,6 +197,8 @@ class SubscriptionsOperations(object):
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param rule_name: The rule name.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -207,12 +211,13 @@ class SubscriptionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -243,8 +248,8 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a subscription description for the specified topic.
+            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the description for the specified rule.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -255,25 +260,27 @@ class SubscriptionsOperations(object):
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param rule_name: The rule name.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
+        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -302,7 +309,7 @@ class SubscriptionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SBSubscription', response)
+            deserialized = self._deserialize('Rule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

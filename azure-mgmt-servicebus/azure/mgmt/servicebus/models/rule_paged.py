@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class QueueResourcePaged(Paged):
+class RulePaged(Paged):
     """
-    A paging container for iterating over a list of QueueResource object
+    A paging container for iterating over a list of Rule object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[QueueResource]'}
+        'current_page': {'key': 'value', 'type': '[Rule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(QueueResourcePaged, self).__init__(*args, **kwargs)
+        super(RulePaged, self).__init__(*args, **kwargs)

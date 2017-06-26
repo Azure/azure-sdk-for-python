@@ -12,29 +12,21 @@
 from msrest.serialization import Model
 
 
-class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
-    """Parameters supplied to the Create Or Update Authorization Rules operation.
+class AuthorizationRuleProperties(Model):
+    """AuthorizationRule properties.
 
-    :param location: data center location.
-    :type location: str
-    :param name: Name of the authorization rule.
-    :type name: str
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.servicebus.models.AccessRights>`
-    """ 
+    """
 
     _validation = {
         'rights': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'rights': {'key': 'rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, rights, location=None, name=None):
-        self.location = location
-        self.name = name
+    def __init__(self, rights):
         self.rights = rights

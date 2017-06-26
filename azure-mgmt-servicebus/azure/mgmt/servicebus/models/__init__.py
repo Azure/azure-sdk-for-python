@@ -9,62 +9,84 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .tracked_resource import TrackedResource
 from .resource import Resource
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-from .sku import Sku
-from .namespace_resource import NamespaceResource
-from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-from .resource_list_keys import ResourceListKeys
-from .regenerate_keys_parameters import RegenerateKeysParameters
-from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
+from .resource_namespace_patch import ResourceNamespacePatch
+from .sb_sku import SBSku
+from .sb_namespace import SBNamespace
+from .sb_namespace_update_parameters import SBNamespaceUpdateParameters
+from .sb_authorization_rule import SBAuthorizationRule
+from .authorization_rule_properties import AuthorizationRuleProperties
+from .access_keys import AccessKeys
+from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
 from .message_count_details import MessageCountDetails
-from .queue_resource import QueueResource
-from .topic_create_or_update_parameters import TopicCreateOrUpdateParameters
-from .topic_resource import TopicResource
-from .subscription_create_or_update_parameters import SubscriptionCreateOrUpdateParameters
-from .subscription_resource import SubscriptionResource
-from .namespace_resource_paged import NamespaceResourcePaged
-from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
-from .queue_resource_paged import QueueResourcePaged
-from .topic_resource_paged import TopicResourcePaged
-from .subscription_resource_paged import SubscriptionResourcePaged
+from .sb_queue import SBQueue
+from .sb_topic import SBTopic
+from .sb_subscription import SBSubscription
+from .check_name_availability import CheckNameAvailability
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .error_response import ErrorResponse, ErrorResponseException
+from .action import Action
+from .sql_filter import SqlFilter
+from .correlation_filter import CorrelationFilter
+from .rule import Rule
+from .sql_rule_action import SqlRuleAction
+from .operation_paged import OperationPaged
+from .sb_namespace_paged import SBNamespacePaged
+from .sb_authorization_rule_paged import SBAuthorizationRulePaged
+from .sb_queue_paged import SBQueuePaged
+from .sb_topic_paged import SBTopicPaged
+from .sb_subscription_paged import SBSubscriptionPaged
+from .rule_paged import RulePaged
 from .service_bus_management_client_enums import (
     SkuName,
     SkuTier,
-    NamespaceState,
     AccessRights,
-    Policykey,
-    EntityAvailabilityStatus,
+    KeyType,
     EntityStatus,
+    UnavailableReason,
+    FilterType,
 )
 
 __all__ = [
+    'TrackedResource',
     'Resource',
-    'NamespaceCreateOrUpdateParameters',
-    'Sku',
-    'NamespaceResource',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleResource',
-    'ResourceListKeys',
-    'RegenerateKeysParameters',
-    'QueueCreateOrUpdateParameters',
+    'ResourceNamespacePatch',
+    'SBSku',
+    'SBNamespace',
+    'SBNamespaceUpdateParameters',
+    'SBAuthorizationRule',
+    'AuthorizationRuleProperties',
+    'AccessKeys',
+    'RegenerateAccessKeyParameters',
     'MessageCountDetails',
-    'QueueResource',
-    'TopicCreateOrUpdateParameters',
-    'TopicResource',
-    'SubscriptionCreateOrUpdateParameters',
-    'SubscriptionResource',
-    'NamespaceResourcePaged',
-    'SharedAccessAuthorizationRuleResourcePaged',
-    'QueueResourcePaged',
-    'TopicResourcePaged',
-    'SubscriptionResourcePaged',
+    'SBQueue',
+    'SBTopic',
+    'SBSubscription',
+    'CheckNameAvailability',
+    'CheckNameAvailabilityResult',
+    'OperationDisplay',
+    'Operation',
+    'ErrorResponse', 'ErrorResponseException',
+    'Action',
+    'SqlFilter',
+    'CorrelationFilter',
+    'Rule',
+    'SqlRuleAction',
+    'OperationPaged',
+    'SBNamespacePaged',
+    'SBAuthorizationRulePaged',
+    'SBQueuePaged',
+    'SBTopicPaged',
+    'SBSubscriptionPaged',
+    'RulePaged',
     'SkuName',
     'SkuTier',
-    'NamespaceState',
     'AccessRights',
-    'Policykey',
-    'EntityAvailabilityStatus',
+    'KeyType',
     'EntityStatus',
+    'UnavailableReason',
+    'FilterType',
 ]
