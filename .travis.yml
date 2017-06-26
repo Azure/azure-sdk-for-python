@@ -45,14 +45,12 @@ script:
   - python ./azure_nosetests.py
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-before_deploy:
-  - python ./before_deploy.py
 deploy:
   provider: pypi
   user: Laurent.Mazuel
   # password: use $PYPI_PASSWORD
   # server: $PYPI_SERVER to override PyPI (e.g. https://testpypi.python.org/)
-  distributions: check # Hack, packages will be created by "before deploy" script
+  distributions: travis_deploy # Personal step
   skip_upload_docs: true
   on:
     tags: true
