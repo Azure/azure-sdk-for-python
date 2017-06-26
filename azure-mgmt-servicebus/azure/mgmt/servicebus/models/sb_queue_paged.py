@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SharedAccessAuthorizationRuleResourcePaged(Paged):
+class SBQueuePaged(Paged):
     """
-    A paging container for iterating over a list of SharedAccessAuthorizationRuleResource object
+    A paging container for iterating over a list of SBQueue object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRuleResource]'}
+        'current_page': {'key': 'value', 'type': '[SBQueue]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SharedAccessAuthorizationRuleResourcePaged, self).__init__(*args, **kwargs)
+        super(SBQueuePaged, self).__init__(*args, **kwargs)

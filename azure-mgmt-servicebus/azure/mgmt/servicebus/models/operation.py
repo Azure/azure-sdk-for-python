@@ -12,33 +12,28 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """The Resource definition for other than namespace.
+class Operation(Model):
+    """A ServiceBus REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Operation name: {provider}/{resource}/{operation}
     :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :param display: The object that represents the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.servicebus.models.OperationDisplay>`
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self):
-        self.id = None
+    def __init__(self, display=None):
         self.name = None
-        self.type = None
+        self.display = display

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource definition for other than namespace.
+class SBAuthorizationRule(Resource):
+    """Description of a namespace authorization rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,6 +24,9 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :param rights: The rights associated with the rule.
+    :type rights: list of str or :class:`AccessRights
+     <azure.mgmt.servicebus.models.AccessRights>`
     """
 
     _validation = {
@@ -36,9 +39,9 @@ class Resource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self):
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, rights=None):
+        super(SBAuthorizationRule, self).__init__()
+        self.rights = rights

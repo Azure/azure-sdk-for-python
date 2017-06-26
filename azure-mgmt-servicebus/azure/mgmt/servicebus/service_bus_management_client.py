@@ -13,10 +13,12 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
+from .operations.rules_operations import RulesOperations
 from . import models
 
 
@@ -32,24 +34,11 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param api_version: Client API version.
-    :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-08-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -57,24 +46,16 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(ServiceBusManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(ServiceBusManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('servicebusmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class ServiceBusManagementClient(object):
@@ -83,14 +64,18 @@ class ServiceBusManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ServiceBusManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.servicebus.operations.Operations
     :ivar namespaces: Namespaces operations
-    :vartype namespaces: .operations.NamespacesOperations
+    :vartype namespaces: azure.mgmt.servicebus.operations.NamespacesOperations
     :ivar queues: Queues operations
-    :vartype queues: .operations.QueuesOperations
+    :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
-    :vartype topics: .operations.TopicsOperations
+    :vartype topics: azure.mgmt.servicebus.operations.TopicsOperations
     :ivar subscriptions: Subscriptions operations
-    :vartype subscriptions: .operations.SubscriptionsOperations
+    :vartype subscriptions: azure.mgmt.servicebus.operations.SubscriptionsOperations
+    :ivar rules: Rules operations
+    :vartype rules: azure.mgmt.servicebus.operations.RulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -99,32 +84,22 @@ class ServiceBusManagementClient(object):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param api_version: Client API version.
-    :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-08-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ServiceBusManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = ServiceBusManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2017-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
@@ -132,4 +107,6 @@ class ServiceBusManagementClient(object):
         self.topics = TopicsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscriptions = SubscriptionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rules = RulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
