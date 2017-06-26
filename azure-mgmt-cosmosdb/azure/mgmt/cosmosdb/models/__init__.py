@@ -23,7 +23,7 @@ from .database_account_connection_string import DatabaseAccountConnectionString
 from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
 from .database_account_paged import DatabaseAccountPaged
-from .document_db_enums import (
+from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,

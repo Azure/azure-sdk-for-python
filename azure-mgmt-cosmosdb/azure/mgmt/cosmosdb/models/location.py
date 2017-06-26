@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Location(Model):
-    """A region in which the Azure DocumentDB database account is deployed.
+    """A region in which the Azure Cosmos DB database account is deployed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DatabaseAccountConnectionString(Model):
-    """Connection string for the DocumentDB account.
+    """Connection string for the Cosmos DB account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

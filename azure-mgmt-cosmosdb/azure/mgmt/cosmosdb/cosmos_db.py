@@ -17,8 +17,8 @@ from .operations.database_accounts_operations import DatabaseAccountsOperations
 from . import models
 
 
-class DocumentDBConfiguration(AzureConfiguration):
-    """Configuration for DocumentDB
+class CosmosDBConfiguration(AzureConfiguration):
+    """Configuration for CosmosDB
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -42,23 +42,23 @@ class DocumentDBConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(DocumentDBConfiguration, self).__init__(base_url)
+        super(CosmosDBConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('documentdb/{}'.format(VERSION))
+        self.add_user_agent('cosmosdb/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class DocumentDB(object):
-    """Azure DocumentDB Database Service Resource Provider REST API
+class CosmosDB(object):
+    """Azure Cosmos DB Database Service Resource Provider REST API
 
     :ivar config: Configuration for client.
-    :vartype config: DocumentDBConfiguration
+    :vartype config: CosmosDBConfiguration
 
     :ivar database_accounts: DatabaseAccounts operations
-    :vartype database_accounts: azure.mgmt.documentdb.operations.DatabaseAccountsOperations
+    :vartype database_accounts: azure.mgmt.cosmodb.operations.DatabaseAccountsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -71,7 +71,7 @@ class DocumentDB(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = DocumentDBConfiguration(credentials, subscription_id, base_url)
+        self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

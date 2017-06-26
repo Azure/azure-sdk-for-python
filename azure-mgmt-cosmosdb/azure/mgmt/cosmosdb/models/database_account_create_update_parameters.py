@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class DatabaseAccountCreateUpdateParameters(Resource):
-    """Parameters to create and update DocumentDB database accounts.
+    """Parameters to create and update Cosmos DB database accounts.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -33,18 +33,18 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.documentdb.models.DatabaseAccountKind>`
-    :param consistency_policy: The consistency policy for the DocumentDB
+     <azure.mgmt.cosmodb.models.DatabaseAccountKind>`
+    :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.documentdb.models.ConsistencyPolicy>`
+     <azure.mgmt.cosmodb.models.ConsistencyPolicy>`
     :param locations: An array that contains the georeplication locations
-     enabled for the DocumentDB account.
+     enabled for the Cosmos DB account.
     :type locations: list of :class:`Location
-     <azure.mgmt.documentdb.models.Location>`
+     <azure.mgmt.cosmodb.models.Location>`
     :ivar database_account_offer_type:  Default value: "Standard" .
     :vartype database_account_offer_type: str
-    :param ip_range_filter: DocumentDB Firewall Support: This value specifies
+    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
      addresses/ranges must be comma separated and must not contain any spaces.
