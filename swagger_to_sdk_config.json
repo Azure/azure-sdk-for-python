@@ -440,11 +440,12 @@
     },
     "servicebus": {
       "autorest_options": {
-        "input-file": "arm-servicebus/2015-08-01/swagger/servicebus.json",
+        "input-file": "arm-servicebus/2017-04-01/swagger/servicebus.json",
         "namespace": "azure.mgmt.servicebus",
-        "package-version": "0.1.0"
+        "package-version": "0.2.0"
       },
-      "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus"
+      "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus",
+      "build_dir": "azure-mgmt-servicebus"
     },
     "servicefabric": {
       "autorest_options": {

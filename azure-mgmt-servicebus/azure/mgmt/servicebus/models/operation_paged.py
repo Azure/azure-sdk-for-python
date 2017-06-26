@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SubscriptionResourcePaged(Paged):
+class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of SubscriptionResource object
+    A paging container for iterating over a list of Operation object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SubscriptionResource]'}
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SubscriptionResourcePaged, self).__init__(*args, **kwargs)
+        super(OperationPaged, self).__init__(*args, **kwargs)
