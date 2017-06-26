@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
+class SBSku(Model):
     """SKU of the namespace.
 
     :param name: Name of this SKU. Possible values include: 'Basic',
@@ -21,21 +21,22 @@ class Sku(Model):
     :param tier: The billing tier of this particular SKU. Possible values
      include: 'Basic', 'Standard', 'Premium'
     :type tier: str or :class:`SkuTier <azure.mgmt.servicebus.models.SkuTier>`
-    :param capacity: The specified messaging units for the tier.
+    :param capacity: The specified messaging units for the tier. For Premium
+     tier, capacity are 1,2 and 4.
     :type capacity: int
-    """ 
+    """
 
     _validation = {
-        'tier': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'SkuName'},
+        'tier': {'key': 'tier', 'type': 'SkuTier'},
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, tier, name=None, capacity=None):
+    def __init__(self, name, tier=None, capacity=None):
         self.name = name
         self.tier = tier
         self.capacity = capacity
