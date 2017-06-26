@@ -7,19 +7,19 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.9 servicebusmanagementclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f77186ae-9c6e-11e6-bd5a-ecb1d756380e]
+      x-ms-client-request-id: [1fd5ae40-5aba-11e7-b2b4-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e?api-version=2017-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e","name":"pyarmnsdc660d4e","type":"Microsoft.ServiceBus/namespaces","location":"West
-        US","kind":"Messaging","tags":null,"properties":{"provisioningState":"Unknown","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsdc660d4e","enabled":false,"namespaceType":"Messaging","messagingSku":2}}'}
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e","name":"pyarmnsdc660d4e","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsdc660d4e","createdAt":"2017-06-26T21:55:10.613Z","updatedAt":"2017-06-26T21:55:10.613Z","serviceBusEndpoint":"https://pyarmnsdc660d4e.servicebus.windows.net:443/"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 27 Oct 2016 17:58:30 GMT']
+      Date: ['Mon, 26 Jun 2017 21:55:10 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -27,11 +27,11 @@ interactions:
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['464']
-      x-ms-correlation-request-id: [4383c87c-f8ab-4d7d-9fa4-5a915906e13b]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [4ad5f6c9-33dc-4c32-a752-5ba762844f1a_M0_M0]
-      x-ms-routing-request-id: ['WESTUS2:20161027T175830Z:4383c87c-f8ab-4d7d-9fa4-5a915906e13b']
+      content-length: ['579']
+      x-ms-correlation-request-id: [ec26f1d4-6c1c-49d0-bdf5-ec81c9bedf31]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [538016a6-cb03-4163-9b7b-1feb443e3589_M6_M6]
+      x-ms-routing-request-id: ['WESTUS2:20170626T215511Z:ec26f1d4-6c1c-49d0-bdf5-ec81c9bedf31']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -40,19 +40,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.9 servicebusmanagementclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f77186ae-9c6e-11e6-bd5a-ecb1d756380e]
+      x-ms-client-request-id: [1fd5ae40-5aba-11e7-b2b4-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e?api-version=2017-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e","name":"pyarmnsdc660d4e","type":"Microsoft.ServiceBus/namespaces","location":"West
-        US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsdc660d4e","status":"Active","createdAt":"2016-10-27T17:58:31.99Z","serviceBusEndpoint":"https://pyarmnsdc660d4e.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:58:53.823Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}'}
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e","name":"pyarmnsdc660d4e","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsdc660d4e","createdAt":"2017-06-26T21:55:10.613Z","updatedAt":"2017-06-26T21:55:33.67Z","serviceBusEndpoint":"https://pyarmnsdc660d4e.servicebus.windows.net:443/"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 27 Oct 2016 17:59:00 GMT']
+      Date: ['Mon, 26 Jun 2017 21:55:41 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -60,33 +60,33 @@ interactions:
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['730']
-      x-ms-correlation-request-id: [478c552a-dca4-4b58-996b-c532dbdc19e6]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [857c0781-a33a-4a40-963c-0dd6ef4991cc_M4_M4]
-      x-ms-routing-request-id: ['WESTUS2:20161027T175900Z:478c552a-dca4-4b58-996b-c532dbdc19e6']
+      content-length: ['580']
+      x-ms-correlation-request-id: [111ee647-5ca1-462d-88b9-2ebc733a906f]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [37d505c8-63af-4324-9b68-ab6d13439457_M4_M4]
+      x-ms-routing-request-id: ['WESTUS:20170626T215542Z:111ee647-5ca1-462d-88b9-2ebc733a906f']
     status: {code: 200, message: OK}
 - request:
-    body: '{"location": "westus"}'
+    body: '{}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['22']
+      Content-Length: ['2']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.9 servicebusmanagementclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [0a505d48-9c6f-11e6-b5f3-ecb1d756380e]
+      x-ms-client-request-id: [32b74508-5aba-11e7-a3c2-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2017-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e","name":"pyarmtopicdc660d4e","type":"Microsoft.ServiceBus/Topic","location":"West
-        US","tags":null,"properties":{"defaultMessageTimeToLive":"10675199.02:48:05.4775807","maxSizeInMegabytes":1024,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"00:10:00","enableBatchedOperations":true,"sizeInBytes":0,"filteringMessagesBeforePublishing":false,"isAnonymousAccessible":false,"status":"Active","createdAt":"2016-10-27T17:59:01.4","updatedAt":"2016-10-27T17:59:01.463","supportOrdering":true,"autoDeleteOnIdle":"10675199.02:48:05.4775807","enablePartitioning":false,"isExpress":false,"entityAvailabilityStatus":"Available","enableSubscriptionPartitioning":false,"enableExpress":false}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e","name":"pyarmtopicdc660d4e","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-06-26T21:55:44.123Z","updatedAt":"2017-06-26T21:55:44.183Z","accessedAt":"0001-01-01T00:00:00","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 27 Oct 2016 17:59:03 GMT']
+      Date: ['Mon, 26 Jun 2017 21:55:44 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -94,11 +94,11 @@ interactions:
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['903']
-      x-ms-correlation-request-id: [f793e15c-3492-4f71-82ab-d0010de96d0b]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [46233a00-632a-4474-82a6-df8c0720a6bc_M0_M0]
-      x-ms-routing-request-id: ['WESTUS2:20161027T175903Z:f793e15c-3492-4f71-82ab-d0010de96d0b']
+      content-length: ['948']
+      x-ms-correlation-request-id: [620cf402-4c12-45a4-b368-f4e2b5510e16]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [046d7c67-c1cd-49f1-9767-8c8c44756eee_M1_M1]
+      x-ms-routing-request-id: ['WESTUS:20170626T215545Z:620cf402-4c12-45a4-b368-f4e2b5510e16']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -107,19 +107,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.9 servicebusmanagementclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [0be4ed26-9c6f-11e6-8780-ecb1d756380e]
+      x-ms-client-request-id: [34aa4b94-5aba-11e7-a5ca-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2017-04-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e","name":"pyarmtopicdc660d4e","type":"Microsoft.ServiceBus/Topic","location":"West
-        US","tags":null,"properties":{"defaultMessageTimeToLive":"10675199.02:48:05.4775807","maxSizeInMegabytes":1024,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"00:10:00","enableBatchedOperations":true,"sizeInBytes":0,"filteringMessagesBeforePublishing":false,"isAnonymousAccessible":false,"status":"Active","createdAt":"2016-10-27T17:59:01.4Z","updatedAt":"2016-10-27T17:59:01.463Z","accessedAt":"0001-01-01T00:00:00Z","supportOrdering":true,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"subscriptionCount":0,"autoDeleteOnIdle":"10675199.02:48:05.4775807","enablePartitioning":false,"isExpress":false,"entityAvailabilityStatus":"Available","enableSubscriptionPartitioning":false,"enableExpress":false}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e","name":"pyarmtopicdc660d4e","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-06-26T21:55:44.123Z","updatedAt":"2017-06-26T21:55:44.183Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 27 Oct 2016 17:59:03 GMT']
+      Date: ['Mon, 26 Jun 2017 21:55:45 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -127,11 +127,11 @@ interactions:
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['1116']
-      x-ms-correlation-request-id: [edd728d1-f111-473f-9add-9fe939625ec3]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [41600d49-ee7f-49d6-b365-096e5235d77d_M7_M7]
-      x-ms-routing-request-id: ['WESTUS2:20161027T175904Z:edd728d1-f111-473f-9add-9fe939625ec3']
+      content-length: ['949']
+      x-ms-correlation-request-id: [5a9a0bf9-a0a6-400f-ab77-be8b424bab80]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [484a7e8a-2a46-4490-be32-022a4261958f_M0_M0]
+      x-ms-routing-request-id: ['WESTUS:20170626T215546Z:5a9a0bf9-a0a6-400f-ab77-be8b424bab80']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -141,26 +141,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.9 servicebusmanagementclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [0c553f0c-9c6f-11e6-bb06-ecb1d756380e]
+      x-ms-client-request-id: [35501ac8-5aba-11e7-95f3-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_topicsdc660d4e/providers/Microsoft.ServiceBus/namespaces/pyarmnsdc660d4e/topics/pyarmtopicdc660d4e?api-version=2017-04-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Thu, 27 Oct 2016 17:59:06 GMT']
+      Date: ['Mon, 26 Jun 2017 21:55:47 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
       Server-SB: [Service-Bus-Resource-Provider/SN1]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [d4f97014-b7a2-4203-a4bf-09162d9aaa37]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [d4f97014-b7a2-4203-a4bf-09162d9aaa37]
-      x-ms-routing-request-id: ['WESTUS2:20161027T175906Z:d4f97014-b7a2-4203-a4bf-09162d9aaa37']
+      x-ms-correlation-request-id: [fbec299a-0514-4d39-a631-88791207712d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [c7ae27f8-ddd1-480f-80a8-14937aea22a9_M5_M5]
+      x-ms-routing-request-id: ['WESTUS:20170626T215547Z:fbec299a-0514-4d39-a631-88791207712d']
     status: {code: 200, message: OK}
 version: 1

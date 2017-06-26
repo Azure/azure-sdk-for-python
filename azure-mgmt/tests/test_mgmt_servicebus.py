@@ -67,9 +67,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             self.group_name,
             ns_name,
             topic_name,
-            {
-                'location': self.region
-            }
+            {}
         )
         self.assertEqual(topic.name, topic_name)
     
