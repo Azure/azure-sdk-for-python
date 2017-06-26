@@ -187,7 +187,7 @@
       "autorest_options": {
         "input-file": "keyvault/2016-10-01/swagger/keyvault.json",
         "namespace": "azure.keyvault",
-        "package-version": "0.3.4"
+        "package-version": "0.3.5"
       },
       "wrapper_filesOrDirs": [
         "custom",
