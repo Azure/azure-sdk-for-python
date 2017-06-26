@@ -38,12 +38,12 @@ class DatabaseAccountsOperations(object):
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the properties of an existing Azure DocumentDB database
+        """Retrieves the properties of an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -51,7 +51,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccount
-         <azure.mgmt.documentdb.models.DatabaseAccount>`
+         <azure.mgmt.cosmodb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -101,12 +101,11 @@ class DatabaseAccountsOperations(object):
 
     def patch(
             self, resource_group_name, account_name, tags, custom_headers=None, raw=False, **operation_config):
-        """Patches the properties of an existing Azure DocumentDB database
-        account.
+        """Patches the properties of an existing Azure Cosmos DB database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param tags:
         :type tags: dict
@@ -116,7 +115,7 @@ class DatabaseAccountsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DatabaseAccount
-         <azure.mgmt.documentdb.models.DatabaseAccount>`
+         <azure.mgmt.cosmodb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -195,24 +194,24 @@ class DatabaseAccountsOperations(object):
 
     def create_or_update(
             self, resource_group_name, account_name, create_update_parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Azure DocumentDB database account.
+        """Creates or updates an Azure Cosmos DB database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param create_update_parameters: The parameters to provide for the
          current database account.
         :type create_update_parameters:
          :class:`DatabaseAccountCreateUpdateParameters
-         <azure.mgmt.documentdb.models.DatabaseAccountCreateUpdateParameters>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountCreateUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DatabaseAccount
-         <azure.mgmt.documentdb.models.DatabaseAccount>`
+         <azure.mgmt.cosmodb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -289,11 +288,11 @@ class DatabaseAccountsOperations(object):
 
     def delete(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing Azure DocumentDB database account.
+        """Deletes an existing Azure Cosmos DB database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -366,19 +365,19 @@ class DatabaseAccountsOperations(object):
 
     def failover_priority_change(
             self, resource_group_name, account_name, failover_policies=None, custom_headers=None, raw=False, **operation_config):
-        """Changes the failover priority for the Azure DocumentDB database
-        account. A failover priority of 0 indicates a write region. The maximum
-        value for a failover priority = (total number of regions - 1). Failover
+        """Changes the failover priority for the Azure Cosmos DB database account.
+        A failover priority of 0 indicates a write region. The maximum value
+        for a failover priority = (total number of regions - 1). Failover
         priority values must be unique for each of the regions in which the
         database account exists.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param failover_policies: List of failover policies.
         :type failover_policies: list of :class:`FailoverPolicy
-         <azure.mgmt.documentdb.models.FailoverPolicy>`
+         <azure.mgmt.cosmodb.models.FailoverPolicy>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -456,7 +455,7 @@ class DatabaseAccountsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the Azure DocumentDB database accounts available under the
+        """Lists all the Azure Cosmos DB database accounts available under the
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -465,7 +464,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountPaged
-         <azure.mgmt.documentdb.models.DatabaseAccountPaged>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -520,7 +519,7 @@ class DatabaseAccountsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the Azure DocumentDB database accounts available under the
+        """Lists all the Azure Cosmos DB database accounts available under the
         given resource group.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -531,7 +530,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountPaged
-         <azure.mgmt.documentdb.models.DatabaseAccountPaged>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -587,12 +586,12 @@ class DatabaseAccountsOperations(object):
 
     def list_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the access keys for the specified Azure DocumentDB database
+        """Lists the access keys for the specified Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -600,7 +599,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListKeysResult
-         <azure.mgmt.documentdb.models.DatabaseAccountListKeysResult>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -650,12 +649,12 @@ class DatabaseAccountsOperations(object):
 
     def list_connection_strings(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the connection strings for the specified Azure DocumentDB
-        database account.
+        """Lists the connection strings for the specified Azure Cosmos DB database
+        account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -663,7 +662,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListConnectionStringsResult
-         <azure.mgmt.documentdb.models.DatabaseAccountListConnectionStringsResult>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountListConnectionStringsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -713,12 +712,12 @@ class DatabaseAccountsOperations(object):
 
     def list_read_only_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the read-only access keys for the specified Azure DocumentDB
+        """Lists the read-only access keys for the specified Azure Cosmos DB
         database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -726,7 +725,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListReadOnlyKeysResult
-         <azure.mgmt.documentdb.models.DatabaseAccountListReadOnlyKeysResult>`
+         <azure.mgmt.cosmodb.models.DatabaseAccountListReadOnlyKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -776,18 +775,18 @@ class DatabaseAccountsOperations(object):
 
     def regenerate_key(
             self, resource_group_name, account_name, key_kind, custom_headers=None, raw=False, **operation_config):
-        """Regenerates an access key for the specified Azure DocumentDB database
+        """Regenerates an access key for the specified Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param key_kind: The access key to regenerate. Possible values
          include: 'primary', 'secondary', 'primaryReadonly',
          'secondaryReadonly'
         :type key_kind: str or :class:`KeyKind
-         <azure.mgmt.documentdb.models.KeyKind>`
+         <azure.mgmt.cosmodb.models.KeyKind>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -865,11 +864,11 @@ class DatabaseAccountsOperations(object):
 
     def check_name_exists(
             self, account_name, custom_headers=None, raw=False, **operation_config):
-        """Checks that the Azure DocumentDB account name already exists. A valid
+        """Checks that the Azure Cosmos DB account name already exists. A valid
         account name may contain only lowercase letters, numbers, and the '-'
         character, and must be between 3 and 50 characters.
 
-        :param account_name: DocumentDB database account name.
+        :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

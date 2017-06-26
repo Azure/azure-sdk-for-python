@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .document_db import DocumentDB
+from .cosmos_db import CosmosDB
 from .version import VERSION
 
-__all__ = ['DocumentDB']
+__all__ = ['CosmosDB']
 
 __version__ = VERSION
 

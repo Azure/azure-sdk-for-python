@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DatabaseAccountPatchParameters(Model):
-    """Parameters for patching Azure DocumentDB database account properties.
+    """Parameters for patching Azure Cosmos DB database account properties.
 
     :param tags:
     :type tags: dict

@@ -17,7 +17,7 @@ class FailoverPolicies(Model):
 
     :param failover_policies: List of failover policies.
     :type failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.documentdb.models.FailoverPolicy>`
+     <azure.mgmt.cosmodb.models.FailoverPolicy>`
     """
 
     _attribute_map = {

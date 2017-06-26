@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class DatabaseAccount(Resource):
-    """A DocumentDB database account.
+    """An Azure Cosmos DB database account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -33,19 +33,19 @@ class DatabaseAccount(Resource):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.documentdb.models.DatabaseAccountKind>`
+     <azure.mgmt.cosmodb.models.DatabaseAccountKind>`
     :param provisioning_state:
     :type provisioning_state: str
-    :ivar document_endpoint: The connection endpoint for the DocumentDB
+    :ivar document_endpoint: The connection endpoint for the Cosmos DB
      database account.
     :vartype document_endpoint: str
-    :ivar database_account_offer_type: The offer type for the DocumentDB
+    :ivar database_account_offer_type: The offer type for the Cosmos DB
      database account. Default value: Standard. Possible values include:
      'Standard'
     :vartype database_account_offer_type: str or
      :class:`DatabaseAccountOfferType
-     <azure.mgmt.documentdb.models.DatabaseAccountOfferType>`
-    :param ip_range_filter: DocumentDB Firewall Support: This value specifies
+     <azure.mgmt.cosmodb.models.DatabaseAccountOfferType>`
+    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
      addresses/ranges must be comma separated and must not contain any spaces.
@@ -55,22 +55,22 @@ class DatabaseAccount(Resource):
      Automatic failover will result in a new write region for the account and
      is chosen based on the failover priorities configured for the account.
     :type enable_automatic_failover: bool
-    :param consistency_policy: The consistency policy for the DocumentDB
+    :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
     :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.documentdb.models.ConsistencyPolicy>`
+     <azure.mgmt.cosmodb.models.ConsistencyPolicy>`
     :ivar write_locations: An array that contains the write location for the
-     DocumentDB account.
+     Cosmos DB account.
     :vartype write_locations: list of :class:`Location
-     <azure.mgmt.documentdb.models.Location>`
+     <azure.mgmt.cosmodb.models.Location>`
     :ivar read_locations: An array that contains of the read locations enabled
-     for the DocumentDB account.
+     for the Cosmos DB account.
     :vartype read_locations: list of :class:`Location
-     <azure.mgmt.documentdb.models.Location>`
+     <azure.mgmt.cosmodb.models.Location>`
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
     :vartype failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.documentdb.models.FailoverPolicy>`
+     <azure.mgmt.cosmodb.models.FailoverPolicy>`
     """
 
     _validation = {
