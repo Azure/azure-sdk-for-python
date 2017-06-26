@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .queues_operations import QueuesOperations
-from .topics_operations import TopicsOperations
-from .subscriptions_operations import SubscriptionsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'Operations',
-    'NamespacesOperations',
-    'QueuesOperations',
-    'TopicsOperations',
-    'SubscriptionsOperations',
-]
+
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of Operation object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

@@ -22,23 +22,21 @@ class SubscriptionResource(Resource):
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
+    :param location: Resource location.
+    :type location: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
-    :param accessed_at: Last time there was a receive request to this
+    :ivar accessed_at: Last time there was a receive request to this
      subscription.
-    :type accessed_at: datetime
+    :vartype accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
      is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: str
-    :param count_details:
-    :type count_details: :class:`MessageCountDetails
+    :ivar count_details:
+    :vartype count_details: :class:`MessageCountDetails
      <azure.mgmt.servicebus.models.MessageCountDetails>`
-    :param created_at: Exact time the message was created.
-    :type created_at: datetime
+    :ivar created_at: Exact time the message was created.
+    :vartype created_at: datetime
     :param default_message_time_to_live: Default message time to live value.
      This is the duration after which the message expires, starting from when
      the message is sent to Service Bus. This is the default value used when
@@ -51,8 +49,8 @@ class SubscriptionResource(Resource):
     :param dead_lettering_on_message_expiration: Value that indicates whether
      a subscription has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled.
+    :param enable_batched_operations: Value that indicates whether server-side
+     batched operations are enabled.
     :type enable_batched_operations: bool
     :param entity_availability_status: Entity availability status for the
      topic. Possible values include: 'Available', 'Limited', 'Renaming',
@@ -66,8 +64,8 @@ class SubscriptionResource(Resource):
     :type lock_duration: str
     :param max_delivery_count: Number of maximum deliveries.
     :type max_delivery_count: int
-    :param message_count: Number of messages.
-    :type message_count: long
+    :ivar message_count: Number of messages.
+    :vartype message_count: long
     :param requires_session: Value indicating if a subscription supports the
      concept of sessions.
     :type requires_session: bool
@@ -77,23 +75,26 @@ class SubscriptionResource(Resource):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
-    """ 
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'accessed_at': {'readonly': True},
+        'count_details': {'readonly': True},
+        'created_at': {'readonly': True},
+        'message_count': {'readonly': True},
+        'updated_at': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
         'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'str'},
         'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
@@ -112,12 +113,12 @@ class SubscriptionResource(Resource):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, tags=None, accessed_at=None, auto_delete_on_idle=None, count_details=None, created_at=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions=None, dead_lettering_on_message_expiration=None, enable_batched_operations=None, entity_availability_status=None, is_read_only=None, lock_duration=None, max_delivery_count=None, message_count=None, requires_session=None, status=None, updated_at=None):
-        super(SubscriptionResource, self).__init__(location=location, tags=tags)
-        self.accessed_at = accessed_at
+    def __init__(self, location=None, auto_delete_on_idle=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions=None, dead_lettering_on_message_expiration=None, enable_batched_operations=None, entity_availability_status=None, is_read_only=None, lock_duration=None, max_delivery_count=None, requires_session=None, status=None):
+        super(SubscriptionResource, self).__init__(location=location)
+        self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
-        self.count_details = count_details
-        self.created_at = created_at
+        self.count_details = None
+        self.created_at = None
         self.default_message_time_to_live = default_message_time_to_live
         self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
         self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
@@ -126,7 +127,7 @@ class SubscriptionResource(Resource):
         self.is_read_only = is_read_only
         self.lock_duration = lock_duration
         self.max_delivery_count = max_delivery_count
-        self.message_count = message_count
+        self.message_count = None
         self.requires_session = requires_session
         self.status = status
-        self.updated_at = updated_at
+        self.updated_at = None

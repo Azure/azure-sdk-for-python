@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class SubscriptionResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of SubscriptionResource object
+class NamespaceUpdateParameters(Model):
+    """Parameters supplied to the Patch Namespace operation.
+
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.servicebus.models.Sku>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SubscriptionResource]'}
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(SubscriptionResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, tags=None, sku=None):
+        self.tags = tags
+        self.sku = sku

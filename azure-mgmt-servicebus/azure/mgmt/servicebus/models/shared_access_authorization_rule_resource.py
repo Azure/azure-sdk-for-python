@@ -22,34 +22,30 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
+    :param location: Resource location.
+    :type location: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.servicebus.models.AccessRights>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'rights': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
         'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, location, rights, tags=None):
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags)
+    def __init__(self, rights, location=None):
+        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location)
         self.rights = rights
