@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleResource(Resource):
-    """Description of a namespace authorization rule.
+class AuthorizationRule(Resource):
+    """Single item in a List or Get AuthorizationRule operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,10 +24,6 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.eventhub.models.AccessRights>`
@@ -37,19 +33,15 @@ class SharedAccessAuthorizationRuleResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
-        'rights': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'rights': {'key': 'properties.rights', 'type': '[str]'},
     }
 
-    def __init__(self, location, rights, tags=None):
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags)
+    def __init__(self, rights=None):
+        super(AuthorizationRule, self).__init__()
         self.rights = rights

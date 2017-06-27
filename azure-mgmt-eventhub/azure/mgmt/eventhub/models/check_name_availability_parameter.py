@@ -9,14 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .event_hubs_operations import EventHubsOperations
-from .consumer_groups_operations import ConsumerGroupsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'Operations',
-    'NamespacesOperations',
-    'EventHubsOperations',
-    'ConsumerGroupsOperations',
-]
+
+class CheckNameAvailabilityParameter(Model):
+    """Parameter supplied to check Namespace name availability operation .
+
+    :param name: Name to check the namespace name availability
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, name):
+        self.name = name

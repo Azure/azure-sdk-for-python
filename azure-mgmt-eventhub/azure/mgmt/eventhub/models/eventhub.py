@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class EventHubResource(Resource):
-    """Description of the Event Hub resource.
+class Eventhub(Resource):
+    """Single item in List or Get Event Hub operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,55 +24,54 @@ class EventHubResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
-    :param created_at: Exact time the Event Hub was created.
-    :type created_at: datetime
+    :ivar partition_ids: Current number of shards on the Event Hub.
+    :vartype partition_ids: list of str
+    :ivar created_at: Exact time the Event Hub was created.
+    :vartype created_at: datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
     :param message_retention_in_days: Number of days to retain the events for
-     this Event Hub.
+     this Event Hub, value should be 1 to 7 days
     :type message_retention_in_days: long
-    :param partition_count: Number of partitions created for the Event Hub.
+    :param partition_count: Number of partitions created for the Event Hub,
+     allowed values are from 1 to 32 partitions.
     :type partition_count: long
-    :param partition_ids: Current number of shards on the Event Hub.
-    :type partition_ids: list of str
     :param status: Enumerates the possible values for the status of the Event
      Hub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
      'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.eventhub.models.EntityStatus>`
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'partition_ids': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'message_retention_in_days': {'maximum': 7, 'minimum': 1},
+        'partition_count': {'maximum': 32, 'minimum': 1},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'partition_ids': {'key': 'properties.partitionIds', 'type': '[str]'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'message_retention_in_days': {'key': 'properties.messageRetentionInDays', 'type': 'long'},
         'partition_count': {'key': 'properties.partitionCount', 'type': 'long'},
-        'partition_ids': {'key': 'properties.partitionIds', 'type': '[str]'},
         'status': {'key': 'properties.status', 'type': 'EntityStatus'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, tags=None, created_at=None, message_retention_in_days=None, partition_count=None, partition_ids=None, status=None, updated_at=None):
-        super(EventHubResource, self).__init__(location=location, tags=tags)
-        self.created_at = created_at
+    def __init__(self, message_retention_in_days=None, partition_count=None, status=None):
+        super(Eventhub, self).__init__()
+        self.partition_ids = None
+        self.created_at = None
+        self.updated_at = None
         self.message_retention_in_days = message_retention_in_days
         self.partition_count = partition_count
-        self.partition_ids = partition_ids
         self.status = status
-        self.updated_at = updated_at

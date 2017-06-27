@@ -13,20 +13,22 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """SKU of the namespace.
+    """SKU parameters supplied to the create namespace operation.
 
     :param name: Name of this SKU. Possible values include: 'Basic',
-     'Standard', 'Premium'
+     'Standard'
     :type name: str or :class:`SkuName <azure.mgmt.eventhub.models.SkuName>`
     :param tier: The billing tier of this particular SKU. Possible values
-     include: 'Basic', 'Standard', 'Premium'
+     include: 'Basic', 'Standard'
     :type tier: str or :class:`SkuTier <azure.mgmt.eventhub.models.SkuTier>`
-    :param capacity: The Event Hubs throughput units.
+    :param capacity: The Event Hubs throughput units, vaule should be 0 to 20
+     throughput units.
     :type capacity: int
     """
 
     _validation = {
-        'tier': {'required': True},
+        'name': {'required': True},
+        'capacity': {'maximum': 20, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -35,7 +37,7 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, tier, name=None, capacity=None):
+    def __init__(self, name, tier=None, capacity=None):
         self.name = name
         self.tier = tier
         self.capacity = capacity

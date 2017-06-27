@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class ConsumerGroupResource(Resource):
-    """Description of the consumer group resource.
+class TrackedResource(Resource):
+    """Definition of Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,21 +28,12 @@ class ConsumerGroupResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param created_at: Exact time the message was created.
-    :type created_at: datetime
-    :param event_hub_path: The path of the Event Hub.
-    :type event_hub_path: str
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
-    :param user_metadata: The user metadata.
-    :type user_metadata: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -51,15 +42,9 @@ class ConsumerGroupResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'event_hub_path': {'key': 'properties.eventHubPath', 'type': 'str'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, created_at=None, event_hub_path=None, updated_at=None, user_metadata=None):
-        super(ConsumerGroupResource, self).__init__(location=location, tags=tags)
-        self.created_at = created_at
-        self.event_hub_path = event_hub_path
-        self.updated_at = updated_at
-        self.user_metadata = user_metadata
+    def __init__(self, location=None, tags=None):
+        super(TrackedResource, self).__init__()
+        self.location = location
+        self.tags = tags
