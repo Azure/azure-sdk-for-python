@@ -67,9 +67,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             self.group_name,
             ns_name,
             eventhub_name,
-            {
-                'location': self.region
-            }
+            {}
         )
         self.assertEqual(event_hub.name, eventhub_name)
     

@@ -9,52 +9,58 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .tracked_resource import TrackedResource
 from .resource import Resource
 from .sku import Sku
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-from .namespace_resource import NamespaceResource
-from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-from .resource_list_keys import ResourceListKeys
-from .regenerate_keys_parameters import RegenerateKeysParameters
-from .event_hub_create_or_update_parameters import EventHubCreateOrUpdateParameters
-from .event_hub_resource import EventHubResource
-from .consumer_group_create_or_update_parameters import ConsumerGroupCreateOrUpdateParameters
-from .consumer_group_resource import ConsumerGroupResource
-from .namespace_resource_paged import NamespaceResourcePaged
-from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
-from .event_hub_resource_paged import EventHubResourcePaged
-from .consumer_group_resource_paged import ConsumerGroupResourcePaged
+from .eh_namespace import EHNamespace
+from .authorization_rule import AuthorizationRule
+from .access_keys import AccessKeys
+from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
+from .eventhub import Eventhub
+from .consumer_group import ConsumerGroup
+from .check_name_availability_parameter import CheckNameAvailabilityParameter
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .error_response import ErrorResponse, ErrorResponseException
+from .operation_paged import OperationPaged
+from .eh_namespace_paged import EHNamespacePaged
+from .authorization_rule_paged import AuthorizationRulePaged
+from .eventhub_paged import EventhubPaged
+from .consumer_group_paged import ConsumerGroupPaged
 from .event_hub_management_client_enums import (
     SkuName,
     SkuTier,
-    NamespaceState,
     AccessRights,
-    Policykey,
+    KeyType,
     EntityStatus,
+    UnavailableReason,
 )
 
 __all__ = [
+    'TrackedResource',
     'Resource',
     'Sku',
-    'NamespaceCreateOrUpdateParameters',
-    'NamespaceResource',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleResource',
-    'ResourceListKeys',
-    'RegenerateKeysParameters',
-    'EventHubCreateOrUpdateParameters',
-    'EventHubResource',
-    'ConsumerGroupCreateOrUpdateParameters',
-    'ConsumerGroupResource',
-    'NamespaceResourcePaged',
-    'SharedAccessAuthorizationRuleResourcePaged',
-    'EventHubResourcePaged',
-    'ConsumerGroupResourcePaged',
+    'EHNamespace',
+    'AuthorizationRule',
+    'AccessKeys',
+    'RegenerateAccessKeyParameters',
+    'Eventhub',
+    'ConsumerGroup',
+    'CheckNameAvailabilityParameter',
+    'CheckNameAvailabilityResult',
+    'OperationDisplay',
+    'Operation',
+    'ErrorResponse', 'ErrorResponseException',
+    'OperationPaged',
+    'EHNamespacePaged',
+    'AuthorizationRulePaged',
+    'EventhubPaged',
+    'ConsumerGroupPaged',
     'SkuName',
     'SkuTier',
-    'NamespaceState',
     'AccessRights',
-    'Policykey',
+    'KeyType',
     'EntityStatus',
+    'UnavailableReason',
 ]

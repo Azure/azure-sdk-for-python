@@ -152,11 +152,12 @@
     },
     "eventhub": {
       "autorest_options": {
-        "input-file": "arm-eventhub/2015-08-01/swagger/EventHub.json",
+        "input-file": "arm-eventhub/2017-04-01/swagger/EventHub.json",
         "namespace": "azure.mgmt.eventhub",
-        "package-version": "0.2.0"
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub"
+      "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub",
+      "build_dir": "azure-mgmt-eventhub"
     },
     "graphrbac": {
       "composite": "arm-graphrbac/compositeGraphRbacManagementClient.json",
