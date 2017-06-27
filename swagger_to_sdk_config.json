@@ -219,9 +219,10 @@
       "autorest_options": {
         "input-file": "arm-mediaservices/2015-10-01/swagger/media.json",
         "namespace": "azure.mgmt.media",
-        "package-version": "0.1.1"
+        "package-version": "0.1.2"
       },
-      "output_dir": "azure-mgmt-media/azure/mgmt/media"
+      "output_dir": "azure-mgmt-media/azure/mgmt/media",
+      "build_dir": "azure-mgmt-media"
     },
     "monitor.mgmt": {
       "composite": "arm-monitor/compositeMonitorManagementClient.json",
