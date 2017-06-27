@@ -144,7 +144,7 @@
     "cosmosdb": {
       "autorest_options": {
         "input-file": "arm-cosmos-db/2015-04-08/swagger/cosmos-db.json",
-        "namespace": "azure.mgmt.cosmodb",
+        "namespace": "azure.mgmt.cosmosdb",
         "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-cosmosdb/azure/mgmt/cosmosdb",
