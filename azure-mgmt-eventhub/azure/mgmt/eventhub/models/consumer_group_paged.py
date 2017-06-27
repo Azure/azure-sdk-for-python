@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ConsumerGroupResourcePaged(Paged):
+class ConsumerGroupPaged(Paged):
     """
-    A paging container for iterating over a list of ConsumerGroupResource object
+    A paging container for iterating over a list of ConsumerGroup object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ConsumerGroupResource]'}
+        'current_page': {'key': 'value', 'type': '[ConsumerGroup]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ConsumerGroupResourcePaged, self).__init__(*args, **kwargs)
+        super(ConsumerGroupPaged, self).__init__(*args, **kwargs)
