@@ -64,9 +64,12 @@ class AzureMgmtTestCase(ReplayableTest):
         self._fake_settings, self._real_settings = self._load_settings()
         self.region = 'westus'
         self.scrubber = GeneralNameReplacer()
+        config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
+        if not os.path.exists(config_file):
+            config_file = None
         super(AzureMgmtTestCase, self).__init__(
             method_name,
-            config_file=config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME),
+            config_file=config_file,
             recording_dir=recording_dir,
             recording_name=recording_name or self.qualified_test_name,
             recording_processors=recording_processors or self._get_recording_processors(),
