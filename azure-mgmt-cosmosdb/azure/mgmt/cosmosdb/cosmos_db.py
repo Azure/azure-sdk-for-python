@@ -58,7 +58,7 @@ class CosmosDB(object):
     :vartype config: CosmosDBConfiguration
 
     :ivar database_accounts: DatabaseAccounts operations
-    :vartype database_accounts: azure.mgmt.cosmodb.operations.DatabaseAccountsOperations
+    :vartype database_accounts: azure.mgmt.cosmosdb.operations.DatabaseAccountsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

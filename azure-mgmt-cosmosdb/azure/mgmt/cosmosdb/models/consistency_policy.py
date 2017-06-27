@@ -19,7 +19,7 @@ class ConsistencyPolicy(Model):
      configuration settings of the Cosmos DB account. Possible values include:
      'Eventual', 'Session', 'BoundedStaleness', 'Strong', 'ConsistentPrefix'
     :type default_consistency_level: str or :class:`DefaultConsistencyLevel
-     <azure.mgmt.cosmodb.models.DefaultConsistencyLevel>`
+     <azure.mgmt.cosmosdb.models.DefaultConsistencyLevel>`
     :param max_staleness_prefix: When used with the Bounded Staleness
      consistency level, this value represents the number of stale requests
      tolerated. Accepted range for this value is 1 – 2,147,483,647. Required

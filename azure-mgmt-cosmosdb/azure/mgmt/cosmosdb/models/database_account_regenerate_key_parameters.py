@@ -18,7 +18,7 @@ class DatabaseAccountRegenerateKeyParameters(Model):
     :param key_kind: The access key to regenerate. Possible values include:
      'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
     :type key_kind: str or :class:`KeyKind
-     <azure.mgmt.cosmodb.models.KeyKind>`
+     <azure.mgmt.cosmosdb.models.KeyKind>`
     """
 
     _validation = {
