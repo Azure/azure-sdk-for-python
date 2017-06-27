@@ -25,6 +25,7 @@ TestResults/
 # Credentials 
 credentials_real.json
 testsettings_local.json
+testsettings_local.cfg
 servicebus_settings_real.py
 storage_settings_real.py
 legacy_mgmt_settings_real.py
