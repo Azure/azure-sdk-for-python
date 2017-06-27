@@ -33,7 +33,7 @@ class DatabaseAccount(Resource):
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.cosmodb.models.DatabaseAccountKind>`
+     <azure.mgmt.cosmosdb.models.DatabaseAccountKind>`
     :param provisioning_state:
     :type provisioning_state: str
     :ivar document_endpoint: The connection endpoint for the Cosmos DB
@@ -44,7 +44,7 @@ class DatabaseAccount(Resource):
      'Standard'
     :vartype database_account_offer_type: str or
      :class:`DatabaseAccountOfferType
-     <azure.mgmt.cosmodb.models.DatabaseAccountOfferType>`
+     <azure.mgmt.cosmosdb.models.DatabaseAccountOfferType>`
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -58,19 +58,19 @@ class DatabaseAccount(Resource):
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
     :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.cosmodb.models.ConsistencyPolicy>`
+     <azure.mgmt.cosmosdb.models.ConsistencyPolicy>`
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
     :vartype write_locations: list of :class:`Location
-     <azure.mgmt.cosmodb.models.Location>`
+     <azure.mgmt.cosmosdb.models.Location>`
     :ivar read_locations: An array that contains of the read locations enabled
      for the Cosmos DB account.
     :vartype read_locations: list of :class:`Location
-     <azure.mgmt.cosmodb.models.Location>`
+     <azure.mgmt.cosmosdb.models.Location>`
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
     :vartype failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.cosmodb.models.FailoverPolicy>`
+     <azure.mgmt.cosmosdb.models.FailoverPolicy>`
     """
 
     _validation = {

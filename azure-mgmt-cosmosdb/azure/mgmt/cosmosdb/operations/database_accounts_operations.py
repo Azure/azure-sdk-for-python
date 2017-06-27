@@ -51,7 +51,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccount
-         <azure.mgmt.cosmodb.models.DatabaseAccount>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -115,7 +115,7 @@ class DatabaseAccountsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DatabaseAccount
-         <azure.mgmt.cosmodb.models.DatabaseAccount>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -204,14 +204,14 @@ class DatabaseAccountsOperations(object):
          current database account.
         :type create_update_parameters:
          :class:`DatabaseAccountCreateUpdateParameters
-         <azure.mgmt.cosmodb.models.DatabaseAccountCreateUpdateParameters>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountCreateUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DatabaseAccount
-         <azure.mgmt.cosmodb.models.DatabaseAccount>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -377,7 +377,7 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param failover_policies: List of failover policies.
         :type failover_policies: list of :class:`FailoverPolicy
-         <azure.mgmt.cosmodb.models.FailoverPolicy>`
+         <azure.mgmt.cosmosdb.models.FailoverPolicy>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -464,7 +464,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountPaged
-         <azure.mgmt.cosmodb.models.DatabaseAccountPaged>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -530,7 +530,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountPaged
-         <azure.mgmt.cosmodb.models.DatabaseAccountPaged>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -599,7 +599,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListKeysResult
-         <azure.mgmt.cosmodb.models.DatabaseAccountListKeysResult>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -662,7 +662,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListConnectionStringsResult
-         <azure.mgmt.cosmodb.models.DatabaseAccountListConnectionStringsResult>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountListConnectionStringsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -725,7 +725,7 @@ class DatabaseAccountsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DatabaseAccountListReadOnlyKeysResult
-         <azure.mgmt.cosmodb.models.DatabaseAccountListReadOnlyKeysResult>`
+         <azure.mgmt.cosmosdb.models.DatabaseAccountListReadOnlyKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -786,7 +786,7 @@ class DatabaseAccountsOperations(object):
          include: 'primary', 'secondary', 'primaryReadonly',
          'secondaryReadonly'
         :type key_kind: str or :class:`KeyKind
-         <azure.mgmt.cosmodb.models.KeyKind>`
+         <azure.mgmt.cosmosdb.models.KeyKind>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

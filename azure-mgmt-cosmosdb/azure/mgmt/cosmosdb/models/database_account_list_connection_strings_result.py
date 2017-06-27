@@ -18,7 +18,7 @@ class DatabaseAccountListConnectionStringsResult(Model):
     :param connection_strings: An array that contains the connection strings
      for the Cosmos DB account.
     :type connection_strings: list of :class:`DatabaseAccountConnectionString
-     <azure.mgmt.cosmodb.models.DatabaseAccountConnectionString>`
+     <azure.mgmt.cosmosdb.models.DatabaseAccountConnectionString>`
     """
 
     _attribute_map = {
