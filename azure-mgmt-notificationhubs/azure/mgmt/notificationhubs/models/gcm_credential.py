@@ -19,7 +19,7 @@ class GcmCredential(Model):
     :type gcm_endpoint: str
     :param google_api_key: The Google API key.
     :type google_api_key: str
-    """ 
+    """
 
     _attribute_map = {
         'gcm_endpoint': {'key': 'properties.gcmEndpoint', 'type': 'str'},
