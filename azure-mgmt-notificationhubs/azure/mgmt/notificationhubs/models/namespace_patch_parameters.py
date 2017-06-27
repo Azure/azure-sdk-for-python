@@ -19,7 +19,7 @@ class NamespacePatchParameters(Model):
     :type tags: dict
     :param sku: The sku of the created namespace
     :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    """ 
+    """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},

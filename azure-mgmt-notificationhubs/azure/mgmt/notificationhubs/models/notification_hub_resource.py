@@ -59,7 +59,7 @@ class NotificationHubResource(Resource):
      NotificationHub
     :type baidu_credential: :class:`BaiduCredential
      <azure.mgmt.notificationhubs.models.BaiduCredential>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

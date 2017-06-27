@@ -286,11 +286,12 @@
     },
     "notificationhubs": {
       "autorest_options": {
-        "input-file": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
+        "input-file": "arm-notificationhubs/2017-04-01/swagger/notificationhubs.json",
         "namespace": "azure.mgmt.notificationhubs",
-        "package-version": "0.30.0"
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
+      "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs",
+      "build_dir": "azure-mgmt-notificationhubs"
     },
     "powerbiembedded": {
       "autorest_options": {

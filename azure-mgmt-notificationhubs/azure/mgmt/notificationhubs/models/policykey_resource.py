@@ -19,7 +19,7 @@ class PolicykeyResource(Model):
      Namespace/Notification Hub Authorization Rule. The value can be Primary
      Key/Secondary Key.
     :type policy_key: str
-    """ 
+    """
 
     _attribute_map = {
         'policy_key': {'key': 'policyKey', 'type': 'str'},
