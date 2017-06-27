@@ -23,7 +23,7 @@ class ApnsCredential(Model):
     :type endpoint: str
     :param thumbprint: The Apns certificate Thumbprint
     :type thumbprint: str
-    """ 
+    """
 
     _attribute_map = {
         'apns_certificate': {'key': 'properties.apnsCertificate', 'type': 'str'},

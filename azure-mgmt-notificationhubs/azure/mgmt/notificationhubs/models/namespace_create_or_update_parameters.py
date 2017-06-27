@@ -35,11 +35,11 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :type namespace_create_or_update_parameters_name: str
     :param provisioning_state: Provisioning state of the Namespace.
     :type provisioning_state: str
-    :param region: Specifies the targeted region in which the namespace
-     should be created. It can be any of the following values: Australia
-     EastAustralia SoutheastCentral USEast USEast US 2West USNorth Central
-     USSouth Central USEast AsiaSoutheast AsiaBrazil SouthJapan EastJapan
-     WestNorth EuropeWest Europe
+    :param region: Specifies the targeted region in which the namespace should
+     be created. It can be any of the following values: Australia EastAustralia
+     SoutheastCentral USEast USEast US 2West USNorth Central USSouth Central
+     USEast AsiaSoutheast AsiaBrazil SouthJapan EastJapan WestNorth EuropeWest
+     Europe
     :type region: str
     :param status: Status of the namespace. It can be any of these values:1 =
      Created/Active2 = Creating3 = Suspended4 = Deleting
@@ -62,7 +62,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
      'Messaging', 'NotificationHub'
     :type namespace_type: str or :class:`NamespaceType
      <azure.mgmt.notificationhubs.models.NamespaceType>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
