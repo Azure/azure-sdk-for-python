@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Cosmos DB Management
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-cosmodb.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-cosmosdb.html>`__
 on readthedocs.org.
 
 
