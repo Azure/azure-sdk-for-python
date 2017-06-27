@@ -15,33 +15,39 @@ from msrest.serialization import Model
 class EventHubCreateOrUpdateParameters(Model):
     """Parameters supplied to the Create Or Update Event Hub operation.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Location of the resource.
     :type location: str
-    :param type: ARM type of the namespace.
+    :param type: ARM type of the Namespace.
     :type type: str
     :param name: Name of the Event Hub.
     :type name: str
-    :param created_at: Exact time the Event Hub was created.
-    :type created_at: datetime
+    :ivar created_at: Exact time the Event Hub was created.
+    :vartype created_at: datetime
     :param message_retention_in_days: Number of days to retain the events for
      this Event Hub.
     :type message_retention_in_days: long
     :param partition_count: Number of partitions created for the Event Hub.
     :type partition_count: long
-    :param partition_ids: Current number of shards on the Event Hub.
-    :type partition_ids: list of str
+    :ivar partition_ids: Current number of shards on the Event Hub.
+    :vartype partition_ids: list of str
     :param status: Enumerates the possible values for the status of the Event
      Hub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
      'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.eventhub.models.EntityStatus>`
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
     """
 
     _validation = {
         'location': {'required': True},
+        'created_at': {'readonly': True},
+        'partition_ids': {'readonly': True},
+        'updated_at': {'readonly': True},
     }
 
     _attribute_map = {
@@ -56,13 +62,13 @@ class EventHubCreateOrUpdateParameters(Model):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, type=None, name=None, created_at=None, message_retention_in_days=None, partition_count=None, partition_ids=None, status=None, updated_at=None):
+    def __init__(self, location, type=None, name=None, message_retention_in_days=None, partition_count=None, status=None):
         self.location = location
         self.type = type
         self.name = name
-        self.created_at = created_at
+        self.created_at = None
         self.message_retention_in_days = message_retention_in_days
         self.partition_count = partition_count
-        self.partition_ids = partition_ids
+        self.partition_ids = None
         self.status = status
-        self.updated_at = updated_at
+        self.updated_at = None

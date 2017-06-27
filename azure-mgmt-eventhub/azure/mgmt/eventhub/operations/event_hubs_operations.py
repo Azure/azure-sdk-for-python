@@ -23,6 +23,7 @@ class EventHubsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2015-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,16 +31,18 @@ class EventHubsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-08-01"
 
         self.config = config
 
     def list_all(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the Event Hubs in a namespace.
+        """Gets all the Event Hubs in a Namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,15 +59,15 @@ class EventHubsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -105,13 +108,14 @@ class EventHubsOperations(object):
     def create_or_update(
             self, resource_group_name, namespace_name, event_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a new Event Hub as a nested resource within a
-        namespace.
+        Namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param parameters: Parameters supplied to create an Event Hub
          resource.
@@ -131,16 +135,16 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -178,13 +182,14 @@ class EventHubsOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Event Hub from the specified namespace and resource group.
+        """Deletes an Event Hub from the specified Namespace and resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The name of the Event Hub to delete.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -199,16 +204,16 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -237,11 +242,12 @@ class EventHubsOperations(object):
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
         """Gets an Event Hubs description for the specified Event Hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -257,16 +263,16 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -302,11 +308,12 @@ class EventHubsOperations(object):
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
         """Gets the authorization rules for an Event Hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -323,16 +330,16 @@ class EventHubsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -372,17 +379,18 @@ class EventHubsOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an authorization rule for the specified Event Hub.
+        """Creates or updates an AuthorizationRule for the specified Event Hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
-        :param parameters: The shared access authorization rule.
+        :param parameters: The shared access AuthorizationRule.
         :type parameters:
          :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
          <azure.mgmt.eventhub.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
@@ -400,17 +408,17 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -448,13 +456,14 @@ class EventHubsOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an authorization rule for an Event Hub by rule name.
+        """Gets an AuthorizationRule for an Event Hub by rule name.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
@@ -472,17 +481,17 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -516,13 +525,14 @@ class EventHubsOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Event Hubs authorization rule.
+        """Deletes an Event Hub AuthorizationRule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
@@ -539,17 +549,17 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -578,14 +588,14 @@ class EventHubsOperations(object):
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets the ACS and SAS connection strings for the Event Hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
-        :param authorization_rule_name: The connection string of the namespace
-         for the specified authorization rule.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -601,17 +611,17 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}/ListKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -647,14 +657,14 @@ class EventHubsOperations(object):
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
         """Regenerates the ACS and SAS connection strings for the Event Hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
-        :param authorization_rule_name: The connection string of the Event Hub
-         for the specified authorization rule.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
@@ -676,17 +686,17 @@ class EventHubsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/authorizationRules/{authorizationRuleName}/regenerateKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

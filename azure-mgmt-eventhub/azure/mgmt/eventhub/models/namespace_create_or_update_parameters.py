@@ -15,57 +15,61 @@ from msrest.serialization import Model
 class NamespaceCreateOrUpdateParameters(Model):
     """Parameters supplied to the Create Or Update Namespace operation.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Namespace location.
     :type location: str
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.eventhub.models.Sku>`
     :param tags: Namespace tags.
     :type tags: dict
-    :param provisioning_state: Provisioning state of the namespace.
-    :type provisioning_state: str
-    :param status: State of the namespace. Possible values include: 'Unknown',
+    :param status: State of the Namespace. Possible values include: 'Unknown',
      'Creating', 'Created', 'Activating', 'Enabling', 'Active', 'Disabling',
      'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing', 'Removed', 'Failed'
     :type status: str or :class:`NamespaceState
      <azure.mgmt.eventhub.models.NamespaceState>`
-    :param created_at: The time the namespace was created.
+    :param provisioning_state: Provisioning state of the Namespace.
+    :type provisioning_state: str
+    :param created_at: The time the Namespace was created.
     :type created_at: datetime
-    :param updated_at: The time the namespace was updated.
+    :param updated_at: The time the Namespace was updated.
     :type updated_at: datetime
     :param service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :type service_bus_endpoint: str
-    :param create_acs_namespace: Indicates whether to create an ACS namespace.
-    :type create_acs_namespace: bool
+    :ivar metric_id: Identifier for Azure Insights metrics
+    :vartype metric_id: str
     :param enabled: Specifies whether this instance is enabled.
     :type enabled: bool
     """
 
     _validation = {
         'location': {'required': True},
+        'metric_id': {'readonly': True},
     }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'NamespaceState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'create_acs_namespace': {'key': 'properties.createACSNamespace', 'type': 'bool'},
+        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, sku=None, tags=None, provisioning_state=None, status=None, created_at=None, updated_at=None, service_bus_endpoint=None, create_acs_namespace=None, enabled=None):
+    def __init__(self, location, sku=None, tags=None, status=None, provisioning_state=None, created_at=None, updated_at=None, service_bus_endpoint=None, enabled=None):
         self.location = location
         self.sku = sku
         self.tags = tags
-        self.provisioning_state = provisioning_state
         self.status = status
+        self.provisioning_state = provisioning_state
         self.created_at = created_at
         self.updated_at = updated_at
         self.service_bus_endpoint = service_bus_endpoint
-        self.create_acs_namespace = create_acs_namespace
+        self.metric_id = None
         self.enabled = enabled

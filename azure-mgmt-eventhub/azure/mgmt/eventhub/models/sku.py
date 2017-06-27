@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """SKU of the namespace.
+    """SKU parameters supplied to the create Namespace operation.
 
     :param name: Name of this SKU. Possible values include: 'Basic',
-     'Standard', 'Premium'
+     'Standard'
     :type name: str or :class:`SkuName <azure.mgmt.eventhub.models.SkuName>`
     :param tier: The billing tier of this particular SKU. Possible values
      include: 'Basic', 'Standard', 'Premium'
