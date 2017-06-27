@@ -3,6 +3,24 @@
 Release History
 ===============
 
+1.1.0 (2017-06-27)
+++++++++++++++++++
+
+**Features**
+
+- Add list_usage in virtual networks (2017-03-01)
+
+- Add ApiVersion 2017-06-01 (new default)
+
+This new ApiVersion is for new Application Gateway features:
+
+  - ApplicationGateway Ssl Policy custom cipher suites support [new properties added to Sslpolicy Property of ApplciationGatewayPropertiesFormat]
+  - Get AvailableSslOptions api [new resource ApplicationGatewayAvailableSslOptions and child resource ApplicationGatewayPredefinedPolicy]
+  - Redirection support [new child resource ApplicationGatewayRedirectConfiguration for Application Gateway,
+    new properties in UrlPathMap, PathRules and RequestRoutingRule]
+  - Azure Websites feature support [new properties in ApplicationGatewayBackendHttpSettingsPropertiesFormat,
+    ApplicationGatewayProbePropertiesFormat, schema for property ApplicationGatewayProbeHealthResponseMatch]
+
 1.0.0 (2017-05-15)
 ++++++++++++++++++
 
