@@ -33,7 +33,7 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Resource):
     :param properties: Properties of the Namespace AuthorizationRules.
     :type properties: :class:`SharedAccessAuthorizationRuleProperties
      <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
