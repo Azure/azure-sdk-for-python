@@ -700,7 +700,7 @@ class ApplicationGatewaysOperations(object):
 
         return deserialized
 
-    def available_ssl_options(
+    def list_available_ssl_options(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists available Ssl options for configuring Ssl policy.
 

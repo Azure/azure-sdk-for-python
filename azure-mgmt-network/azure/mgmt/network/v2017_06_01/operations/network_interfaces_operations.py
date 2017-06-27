@@ -52,7 +52,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -134,7 +134,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -204,7 +204,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -291,7 +291,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.v2017_06_01.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -358,7 +358,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.v2017_06_01.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -430,7 +430,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'
@@ -517,7 +517,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-01"
+        api_version = "2017-06-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'
