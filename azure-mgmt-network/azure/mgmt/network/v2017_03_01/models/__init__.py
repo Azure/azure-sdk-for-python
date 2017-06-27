@@ -131,6 +131,8 @@ from .address_space import AddressSpace
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .ip_address_availability_result import IPAddressAvailabilityResult
+from .virtual_network_usage_name import VirtualNetworkUsageName
+from .virtual_network_usage import VirtualNetworkUsage
 from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
 from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
 from .vpn_client_root_certificate import VpnClientRootCertificate
@@ -168,6 +170,7 @@ from .route_paged import RoutePaged
 from .bgp_service_community_paged import BgpServiceCommunityPaged
 from .usage_paged import UsagePaged
 from .virtual_network_paged import VirtualNetworkPaged
+from .virtual_network_usage_paged import VirtualNetworkUsagePaged
 from .subnet_paged import SubnetPaged
 from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
@@ -355,6 +358,8 @@ __all__ = [
     'DhcpOptions',
     'VirtualNetwork',
     'IPAddressAvailabilityResult',
+    'VirtualNetworkUsageName',
+    'VirtualNetworkUsage',
     'VirtualNetworkGatewayIPConfiguration',
     'VirtualNetworkGatewaySku',
     'VpnClientRootCertificate',
@@ -392,6 +397,7 @@ __all__ = [
     'BgpServiceCommunityPaged',
     'UsagePaged',
     'VirtualNetworkPaged',
+    'VirtualNetworkUsagePaged',
     'SubnetPaged',
     'VirtualNetworkPeeringPaged',
     'VirtualNetworkGatewayPaged',
