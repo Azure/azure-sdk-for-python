@@ -21,7 +21,7 @@ class WnsCredential(Model):
     :type secret_key: str
     :param windows_live_endpoint: The Windows Live endpoint.
     :type windows_live_endpoint: str
-    """ 
+    """
 
     _attribute_map = {
         'package_sid': {'key': 'properties.packageSid', 'type': 'str'},

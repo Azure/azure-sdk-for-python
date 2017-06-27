@@ -27,7 +27,7 @@ class ResourceListKeys(Model):
     :type secondary_key: str
     :param key_name: KeyName of the created AuthorizationRule
     :type key_name: str
-    """ 
+    """
 
     _attribute_map = {
         'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
