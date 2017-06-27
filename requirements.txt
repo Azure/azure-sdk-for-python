@@ -2,6 +2,7 @@ futures
 python-dateutil
 requests
 vcrpy
+azure-devtools>=0.4.1
 coverage
 pyopenssl
 msrest>=0.4.0,<0.5.0
