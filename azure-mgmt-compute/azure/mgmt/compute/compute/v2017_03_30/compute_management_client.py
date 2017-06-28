@@ -20,11 +20,14 @@ from .operations.virtual_machine_images_operations import VirtualMachineImagesOp
 from .operations.usage_operations import UsageOperations
 from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .operations.images_operations import ImagesOperations
+from .operations.resource_skus_operations import ResourceSkusOperations
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
+from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .operations.disks_operations import DisksOperations
 from .operations.snapshots_operations import SnapshotsOperations
+from .operations.virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from . import models
 
 
@@ -71,29 +74,35 @@ class ComputeManagementClient(object):
     :vartype config: ComputeManagementClientConfiguration
 
     :ivar availability_sets: AvailabilitySets operations
-    :vartype availability_sets: azure.mgmt.compute.compute.v2016_04_30_preview.operations.AvailabilitySetsOperations
+    :vartype availability_sets: azure.mgmt.compute.compute.v2017_03_30.operations.AvailabilitySetsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
-    :vartype virtual_machine_extension_images: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineExtensionImagesOperations
+    :vartype virtual_machine_extension_images: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
-    :vartype virtual_machine_extensions: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineExtensionsOperations
+    :vartype virtual_machine_extensions: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineExtensionsOperations
     :ivar virtual_machine_images: VirtualMachineImages operations
-    :vartype virtual_machine_images: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineImagesOperations
+    :vartype virtual_machine_images: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.compute.compute.v2016_04_30_preview.operations.UsageOperations
+    :vartype usage: azure.mgmt.compute.compute.v2017_03_30.operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
-    :vartype virtual_machine_sizes: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineSizesOperations
+    :vartype virtual_machine_sizes: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineSizesOperations
     :ivar images: Images operations
-    :vartype images: azure.mgmt.compute.compute.v2016_04_30_preview.operations.ImagesOperations
+    :vartype images: azure.mgmt.compute.compute.v2017_03_30.operations.ImagesOperations
+    :ivar resource_skus: ResourceSkus operations
+    :vartype resource_skus: azure.mgmt.compute.compute.v2017_03_30.operations.ResourceSkusOperations
     :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
-    :vartype virtual_machine_scale_sets: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetsOperations
+    :vartype virtual_machine_scale_sets: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations
+    :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensions operations
+    :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetExtensionsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
-    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetVMsOperations
+    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetVMsOperations
     :ivar disks: Disks operations
-    :vartype disks: azure.mgmt.compute.compute.v2016_04_30_preview.operations.DisksOperations
+    :vartype disks: azure.mgmt.compute.compute.v2017_03_30.operations.DisksOperations
     :ivar snapshots: Snapshots operations
-    :vartype snapshots: azure.mgmt.compute.compute.v2016_04_30_preview.operations.SnapshotsOperations
+    :vartype snapshots: azure.mgmt.compute.compute.v2017_03_30.operations.SnapshotsOperations
+    :ivar virtual_machine_run_commands: VirtualMachineRunCommands operations
+    :vartype virtual_machine_run_commands: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -129,13 +138,19 @@ class ComputeManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.images = ImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.resource_skus = ResourceSkusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.disks = DisksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.snapshots = SnapshotsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -24,7 +24,7 @@ class VirtualMachineExtensionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
+    :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class VirtualMachineExtensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-30-preview"
+        self.api_version = "2017-03-30"
 
         self.config = config
 
@@ -50,14 +50,14 @@ class VirtualMachineExtensionsOperations(object):
         :param extension_parameters: Parameters supplied to the Create Virtual
          Machine Extension operation.
         :type extension_parameters: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtension>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -152,7 +152,7 @@ class VirtualMachineExtensionsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -243,7 +243,7 @@ class VirtualMachineExtensionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

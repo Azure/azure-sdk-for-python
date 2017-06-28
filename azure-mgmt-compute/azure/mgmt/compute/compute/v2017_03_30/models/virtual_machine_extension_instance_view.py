@@ -24,10 +24,10 @@ class VirtualMachineExtensionInstanceView(Model):
     :type type_handler_version: str
     :param substatuses: The resource status information.
     :type substatuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewStatus>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewStatus>`
     """
 
     _attribute_map = {

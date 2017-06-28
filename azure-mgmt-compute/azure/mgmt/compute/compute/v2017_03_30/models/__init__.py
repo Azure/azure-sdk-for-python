@@ -56,21 +56,31 @@ from .virtual_machine_agent_instance_view import VirtualMachineAgentInstanceView
 from .disk_instance_view import DiskInstanceView
 from .boot_diagnostics_instance_view import BootDiagnosticsInstanceView
 from .virtual_machine_identity import VirtualMachineIdentity
+from .maintenance_redeploy_status import MaintenanceRedeployStatus
 from .virtual_machine_instance_view import VirtualMachineInstanceView
 from .virtual_machine import VirtualMachine
 from .upgrade_policy import UpgradePolicy
+from .recovery_policy import RecoveryPolicy
 from .image_os_disk import ImageOSDisk
 from .image_data_disk import ImageDataDisk
 from .image_storage_profile import ImageStorageProfile
 from .image import Image
 from .virtual_machine_scale_set_identity import VirtualMachineScaleSetIdentity
+from .resource_sku_capacity import ResourceSkuCapacity
+from .resource_sku_costs import ResourceSkuCosts
+from .resource_sku_capabilities import ResourceSkuCapabilities
+from .resource_sku_restrictions import ResourceSkuRestrictions
+from .resource_sku import ResourceSku
 from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
 from .virtual_machine_scale_set_managed_disk_parameters import VirtualMachineScaleSetManagedDiskParameters
 from .virtual_machine_scale_set_os_disk import VirtualMachineScaleSetOSDisk
 from .virtual_machine_scale_set_data_disk import VirtualMachineScaleSetDataDisk
 from .virtual_machine_scale_set_storage_profile import VirtualMachineScaleSetStorageProfile
 from .api_entity_reference import ApiEntityReference
+from .virtual_machine_scale_set_public_ip_address_configuration_dns_settings import VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+from .virtual_machine_scale_set_public_ip_address_configuration import VirtualMachineScaleSetPublicIPAddressConfiguration
 from .virtual_machine_scale_set_ip_configuration import VirtualMachineScaleSetIPConfiguration
+from .virtual_machine_scale_set_network_configuration_dns_settings import VirtualMachineScaleSetNetworkConfigurationDnsSettings
 from .virtual_machine_scale_set_network_configuration import VirtualMachineScaleSetNetworkConfiguration
 from .virtual_machine_scale_set_network_profile import VirtualMachineScaleSetNetworkProfile
 from .virtual_machine_scale_set_extension import VirtualMachineScaleSetExtension
@@ -94,6 +104,7 @@ from .compute_long_running_operation_properties import ComputeLongRunningOperati
 from .resource import Resource
 from .sub_resource_read_only import SubResourceReadOnly
 from .operation_status_response import OperationStatusResponse
+from .disk_sku import DiskSku
 from .resource_update import ResourceUpdate
 from .image_disk_reference import ImageDiskReference
 from .creation_data import CreationData
@@ -107,16 +118,25 @@ from .grant_access_data import GrantAccessData
 from .access_uri import AccessUri
 from .snapshot import Snapshot
 from .snapshot_update import SnapshotUpdate
+from .run_command_input_parameter import RunCommandInputParameter
+from .run_command_input import RunCommandInput
+from .run_command_parameter_definition import RunCommandParameterDefinition
+from .run_command_document_base import RunCommandDocumentBase
+from .run_command_document import RunCommandDocument
+from .run_command_result import RunCommandResult
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
 from .image_paged import ImagePaged
+from .resource_sku_paged import ResourceSkuPaged
 from .virtual_machine_paged import VirtualMachinePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
+from .virtual_machine_scale_set_extension_paged import VirtualMachineScaleSetExtensionPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
 from .disk_paged import DiskPaged
 from .snapshot_paged import SnapshotPaged
+from .run_command_document_base_paged import RunCommandDocumentBasePaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
     OperatingSystemTypes,
@@ -129,8 +149,14 @@ from .compute_management_client_enums import (
     SettingNames,
     ProtocolTypes,
     ResourceIdentityType,
+    MaintenanceOperationResultCodeTypes,
     UpgradeMode,
+    RecoveryMode,
     OperatingSystemStateTypes,
+    ResourceSkuCapacityScaleType,
+    ResourceSkuRestrictionsType,
+    ResourceSkuRestrictionsReasonCode,
+    IPVersion,
     VirtualMachineScaleSetSkuScaleType,
     DiskCreateOption,
     AccessLevel,
@@ -185,21 +211,31 @@ __all__ = [
     'DiskInstanceView',
     'BootDiagnosticsInstanceView',
     'VirtualMachineIdentity',
+    'MaintenanceRedeployStatus',
     'VirtualMachineInstanceView',
     'VirtualMachine',
     'UpgradePolicy',
+    'RecoveryPolicy',
     'ImageOSDisk',
     'ImageDataDisk',
     'ImageStorageProfile',
     'Image',
     'VirtualMachineScaleSetIdentity',
+    'ResourceSkuCapacity',
+    'ResourceSkuCosts',
+    'ResourceSkuCapabilities',
+    'ResourceSkuRestrictions',
+    'ResourceSku',
     'VirtualMachineScaleSetOSProfile',
     'VirtualMachineScaleSetManagedDiskParameters',
     'VirtualMachineScaleSetOSDisk',
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetStorageProfile',
     'ApiEntityReference',
+    'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings',
+    'VirtualMachineScaleSetPublicIPAddressConfiguration',
     'VirtualMachineScaleSetIPConfiguration',
+    'VirtualMachineScaleSetNetworkConfigurationDnsSettings',
     'VirtualMachineScaleSetNetworkConfiguration',
     'VirtualMachineScaleSetNetworkProfile',
     'VirtualMachineScaleSetExtension',
@@ -223,6 +259,7 @@ __all__ = [
     'Resource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
+    'DiskSku',
     'ResourceUpdate',
     'ImageDiskReference',
     'CreationData',
@@ -236,16 +273,25 @@ __all__ = [
     'AccessUri',
     'Snapshot',
     'SnapshotUpdate',
+    'RunCommandInputParameter',
+    'RunCommandInput',
+    'RunCommandParameterDefinition',
+    'RunCommandDocumentBase',
+    'RunCommandDocument',
+    'RunCommandResult',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
     'ImagePaged',
+    'ResourceSkuPaged',
     'VirtualMachinePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
+    'VirtualMachineScaleSetExtensionPaged',
     'VirtualMachineScaleSetVMPaged',
     'DiskPaged',
     'SnapshotPaged',
+    'RunCommandDocumentBasePaged',
     'StatusLevelTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
@@ -257,8 +303,14 @@ __all__ = [
     'SettingNames',
     'ProtocolTypes',
     'ResourceIdentityType',
+    'MaintenanceOperationResultCodeTypes',
     'UpgradeMode',
+    'RecoveryMode',
     'OperatingSystemStateTypes',
+    'ResourceSkuCapacityScaleType',
+    'ResourceSkuRestrictionsType',
+    'ResourceSkuRestrictionsReasonCode',
+    'IPVersion',
     'VirtualMachineScaleSetSkuScaleType',
     'DiskCreateOption',
     'AccessLevel',
