@@ -24,7 +24,7 @@ class DisksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
+    :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class DisksOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-30-preview"
+        self.api_version = "2017-03-30"
 
         self.config = config
 
@@ -48,14 +48,14 @@ class DisksOperations(object):
         :param disk: Disk object supplied in the body of the Put disk
          operation.
         :type disk: :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.Disk>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.Disk>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -144,14 +144,14 @@ class DisksOperations(object):
         :param disk: Disk object supplied in the body of the Patch disk
          operation.
         :type disk: :class:`DiskUpdate
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskUpdate>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.DiskUpdate>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.Disk>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -243,7 +243,7 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.Disk>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -306,7 +306,7 @@ class DisksOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -389,7 +389,7 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DiskPaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskPaged>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.DiskPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -453,7 +453,7 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DiskPaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskPaged>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.DiskPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -517,7 +517,7 @@ class DisksOperations(object):
         :type disk_name: str
         :param access: Possible values include: 'None', 'Read'
         :type access: str or :class:`AccessLevel
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AccessLevel>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.AccessLevel>`
         :param duration_in_seconds: Time duration in seconds until the SAS
          access expires.
         :type duration_in_seconds: int
@@ -527,7 +527,7 @@ class DisksOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`AccessUri
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AccessUri>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.AccessUri>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -619,7 +619,7 @@ class DisksOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

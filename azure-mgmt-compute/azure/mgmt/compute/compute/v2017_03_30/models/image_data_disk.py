@@ -19,19 +19,23 @@ class ImageDataDisk(Model):
     :type lun: int
     :param snapshot: The snapshot.
     :type snapshot: :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SubResource>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
     :param managed_disk: The managedDisk.
     :type managed_disk: :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SubResource>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.CachingTypes>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.CachingTypes>`
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for existing OS and Data disks.
     :type disk_size_gb: int
+    :param storage_account_type: The Storage Account type. Possible values
+     include: 'Standard_LRS', 'Premium_LRS'
+    :type storage_account_type: str or :class:`StorageAccountTypes
+     <azure.mgmt.compute.compute.v2017_03_30.models.StorageAccountTypes>`
     """
 
     _validation = {
@@ -45,12 +49,14 @@ class ImageDataDisk(Model):
         'blob_uri': {'key': 'blobUri', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
     }
 
-    def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None):
+    def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
         self.lun = lun
         self.snapshot = snapshot
         self.managed_disk = managed_disk
         self.blob_uri = blob_uri
         self.caching = caching
         self.disk_size_gb = disk_size_gb
+        self.storage_account_type = storage_account_type

@@ -17,11 +17,16 @@ class ResourceUpdate(Model):
 
     :param tags: Resource tags
     :type tags: dict
+    :param sku:
+    :type sku: :class:`DiskSku
+     <azure.mgmt.compute.compute.v2017_03_30.models.DiskSku>`
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
 
-    def __init__(self, tags=None):
+    def __init__(self, tags=None, sku=None):
         self.tags = tags
+        self.sku = sku

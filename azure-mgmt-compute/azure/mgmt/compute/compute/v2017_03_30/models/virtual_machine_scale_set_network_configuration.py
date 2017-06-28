@@ -22,10 +22,18 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :type name: str
     :param primary: Whether this is a primary NIC on a virtual machine.
     :type primary: bool
+    :param network_security_group: The network security group.
+    :type network_security_group: :class:`SubResource
+     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
+    :param dns_settings: The dns settings to be applied on the network
+     interfaces.
+    :type dns_settings:
+     :class:`VirtualMachineScaleSetNetworkConfigurationDnsSettings
+     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings>`
     :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIPConfiguration>`
+     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetIPConfiguration>`
     """
 
     _validation = {
@@ -37,11 +45,15 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
+        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
+        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
     }
 
-    def __init__(self, name, ip_configurations, id=None, primary=None):
+    def __init__(self, name, ip_configurations, id=None, primary=None, network_security_group=None, dns_settings=None):
         super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id)
         self.name = name
         self.primary = primary
+        self.network_security_group = network_security_group
+        self.dns_settings = dns_settings
         self.ip_configurations = ip_configurations

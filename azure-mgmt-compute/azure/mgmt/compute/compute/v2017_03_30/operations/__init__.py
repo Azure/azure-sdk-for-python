@@ -16,11 +16,14 @@ from .virtual_machine_images_operations import VirtualMachineImagesOperations
 from .usage_operations import UsageOperations
 from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .images_operations import ImagesOperations
+from .resource_skus_operations import ResourceSkusOperations
 from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
+from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .disks_operations import DisksOperations
 from .snapshots_operations import SnapshotsOperations
+from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 
 __all__ = [
     'AvailabilitySetsOperations',
@@ -30,9 +33,12 @@ __all__ = [
     'UsageOperations',
     'VirtualMachineSizesOperations',
     'ImagesOperations',
+    'ResourceSkusOperations',
     'VirtualMachinesOperations',
     'VirtualMachineScaleSetsOperations',
+    'VirtualMachineScaleSetExtensionsOperations',
     'VirtualMachineScaleSetVMsOperations',
     'DisksOperations',
     'SnapshotsOperations',
+    'VirtualMachineRunCommandsOperations',
 ]
