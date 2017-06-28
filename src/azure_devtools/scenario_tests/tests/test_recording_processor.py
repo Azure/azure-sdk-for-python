@@ -49,7 +49,8 @@ class TestRecordingProcessors(unittest.TestCase):
         no_token_response_sample = {'body': {'string': '{"location": "westus"}'}}
         self.assertDictEqual(rp.process_response(no_token_response_sample), no_token_response_sample)
 
-    def _mock_subscription_request_body(self, mock_sub_id):
+    @staticmethod
+    def _mock_subscription_request_body(mock_sub_id):
         return json.dumps({
             "location": "westus",
             "properties": {
