@@ -38,9 +38,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
 install:
   - pip install -U pip
-  - pip install -r requirements.txt
+  - pip install -r azure-sdk-testutils/test-requirements.txt
   - pip install azure-storage
-  - pip install nose
   - pip uninstall -y azure-common  # Use azure-common from this repo, not the PyPI version azure-storage pulls in.
 script: 
   - python ./azure_nosetests.py */tests
