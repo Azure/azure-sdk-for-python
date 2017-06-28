@@ -50,6 +50,12 @@ class EntityStatus(Enum):
     unknown = "Unknown"
 
 
+class EncodingCaptureDescription(Enum):
+
+    avro = "Avro"
+    avro_deflate = "AvroDeflate"
+
+
 class UnavailableReason(Enum):
 
     none = "None"

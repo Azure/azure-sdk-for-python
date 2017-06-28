@@ -42,6 +42,9 @@ class Eventhub(Resource):
      'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.eventhub.models.EntityStatus>`
+    :param capture_description: Properties of capture description
+    :type capture_description: :class:`CaptureDescription
+     <azure.mgmt.eventhub.models.CaptureDescription>`
     """
 
     _validation = {
@@ -65,9 +68,10 @@ class Eventhub(Resource):
         'message_retention_in_days': {'key': 'properties.messageRetentionInDays', 'type': 'long'},
         'partition_count': {'key': 'properties.partitionCount', 'type': 'long'},
         'status': {'key': 'properties.status', 'type': 'EntityStatus'},
+        'capture_description': {'key': 'properties.captureDescription', 'type': 'CaptureDescription'},
     }
 
-    def __init__(self, message_retention_in_days=None, partition_count=None, status=None):
+    def __init__(self, message_retention_in_days=None, partition_count=None, status=None, capture_description=None):
         super(Eventhub, self).__init__()
         self.partition_ids = None
         self.created_at = None
@@ -75,3 +79,4 @@ class Eventhub(Resource):
         self.message_retention_in_days = message_retention_in_days
         self.partition_count = partition_count
         self.status = status
+        self.capture_description = capture_description

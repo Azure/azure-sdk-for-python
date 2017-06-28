@@ -16,6 +16,8 @@ from .eh_namespace import EHNamespace
 from .authorization_rule import AuthorizationRule
 from .access_keys import AccessKeys
 from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
+from .destination import Destination
+from .capture_description import CaptureDescription
 from .eventhub import Eventhub
 from .consumer_group import ConsumerGroup
 from .check_name_availability_parameter import CheckNameAvailabilityParameter
@@ -34,6 +36,7 @@ from .event_hub_management_client_enums import (
     AccessRights,
     KeyType,
     EntityStatus,
+    EncodingCaptureDescription,
     UnavailableReason,
 )
 
@@ -45,6 +48,8 @@ __all__ = [
     'AuthorizationRule',
     'AccessKeys',
     'RegenerateAccessKeyParameters',
+    'Destination',
+    'CaptureDescription',
     'Eventhub',
     'ConsumerGroup',
     'CheckNameAvailabilityParameter',
@@ -62,5 +67,6 @@ __all__ = [
     'AccessRights',
     'KeyType',
     'EntityStatus',
+    'EncodingCaptureDescription',
     'UnavailableReason',
 ]
