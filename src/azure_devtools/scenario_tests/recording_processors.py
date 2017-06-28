@@ -17,12 +17,11 @@ class RecordingProcessor(object):
 
     @classmethod
     def replace_header_fn(cls, entity, header, replace_fn):
-        try:
-            header = header.lower()
-            values = entity['headers'][header]
-            entity['headers'][header] = [replace_fn(v) for v in values]
-        except KeyError:
-            pass
+        # Loop over the headers to find the one we want case insensitively,
+        # but we don't want to modify the case of original header key.
+        for key, values in entity['headers'].items():
+            if key.lower() == header.lower():
+                entity['headers'][key] = [replace_fn(v) for v in values]
 
 
 class SubscriptionRecordingProcessor(RecordingProcessor):
@@ -31,6 +30,10 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
 
     def process_request(self, request):
         request.uri = self._replace_subscription_id(request.uri)
+
+        if request.body:
+            request.body = self._replace_subscription_id(request.body.decode()).encode()
+
         return request
 
     def process_response(self, response):
@@ -45,14 +48,16 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
     def _replace_subscription_id(self, val):
         import re
         # subscription presents in all api call
-        retval = re.sub('/subscriptions/([^/]+)/',
-                        '/subscriptions/{}/'.format(self._replacement),
-                        val)
+        retval = re.sub('/(subscriptions)/([^/]+)/',
+                        r'/\1/{}/'.format(self._replacement),
+                        val,
+                        flags=re.IGNORECASE)
 
         # subscription is also used in graph call
-        retval = re.sub('https://graph.windows.net/([^/]+)/',
-                        'https://graph.windows.net/{}/'.format(self._replacement),
-                        retval)
+        retval = re.sub('https://(graph.windows.net)/([^/]+)/',
+                        r'https://\1/{}/'.format(self._replacement),
+                        retval,
+                        flags=re.IGNORECASE)
         return retval
 
 

@@ -36,21 +36,6 @@ class TestRecordingProcessors(unittest.TestCase):
         rp.replace_header_fn(request_sample, 'beta', lambda v: 'customized')
         self.assertSequenceEqual(request_sample['headers']['beta'], ['customized', 'customized'])
 
-    def test_subscription_recording_processor_for_request(self):
-        replaced_subscription_id = str(uuid.uuid4())
-        rp = SubscriptionRecordingProcessor(replaced_subscription_id)
-
-        uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
-                         'checkNameAvailability?api-version=2017-03-01',
-                         'https://graph.windows.net/{}/applications?api-version=1.6']
-
-        for template in uri_templates:
-            mock_request = mock.Mock()
-            mock_request.uri = template.format(str(uuid.uuid4()))
-
-            rp.process_request(mock_request)
-            self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
-
     def test_access_token_processor(self):
         replaced_subscription_id = 'test_fake_token'
         rp = AccessTokenReplacer(replaced_subscription_id)
@@ -64,13 +49,47 @@ class TestRecordingProcessors(unittest.TestCase):
         no_token_response_sample = {'body': {'string': '{"location": "westus"}'}}
         self.assertDictEqual(rp.process_response(no_token_response_sample), no_token_response_sample)
 
-    def test_subscription_recording_processor_for_response(self):
+    def _mock_subscription_request_body(self, mock_sub_id):
+        return json.dumps({
+            "location": "westus",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "subnet": {"id": "/Subscriptions/{}/resourceGroups/etc".format(mock_sub_id)},
+                            "name": "azure-sample-ip-config"
+                        }
+                    },
+                ]
+            }
+        }).encode()
+
+    def test_subscription_recording_processor_for_request(self):
         replaced_subscription_id = str(uuid.uuid4())
         rp = SubscriptionRecordingProcessor(replaced_subscription_id)
 
         uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
                          'checkNameAvailability?api-version=2017-03-01',
                          'https://graph.windows.net/{}/applications?api-version=1.6']
+
+        for template in uri_templates:
+            mock_sub_id = str(uuid.uuid4())
+            mock_request = mock.Mock()
+            mock_request.uri = template.format(mock_sub_id)
+            mock_request.body = self._mock_subscription_request_body(mock_sub_id)
+
+            rp.process_request(mock_request)
+            self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
+            self.assertEqual(mock_request.body,
+                             self._mock_subscription_request_body(replaced_subscription_id))
+
+    def test_subscription_recording_processor_for_response(self):
+        replaced_subscription_id = str(uuid.uuid4())
+        rp = SubscriptionRecordingProcessor(replaced_subscription_id)
+
+        uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
+                         'checkNameAvailability?api-version=2017-03-01',
+                         'https://graph.Windows.net/{}/applications?api-version=1.6']
 
         location_header_template = 'https://graph.windows.net/{}/directoryObjects/' \
                                    'f604c53a-aa21-44d5-a41f-c1ef0b5304bd/Microsoft.DirectoryServices.Application'
@@ -89,8 +108,7 @@ class TestRecordingProcessors(unittest.TestCase):
             rp.process_response(mock_response)
             self.assertEqual(mock_response['body']['string'], template.format(replaced_subscription_id))
 
-            # TODO: Restore after issue https://github.com/Azure/azure-python-devtools/issues/16 is fixed
-            # self.assertSequenceEqual(mock_response['headers']['Location'],
-            #                          [location_header_template.format(replaced_subscription_id)])
+            self.assertSequenceEqual(mock_response['headers']['Location'],
+                                     [location_header_template.format(replaced_subscription_id)])
             self.assertSequenceEqual(mock_response['headers']['azure-asyncoperation'],
                                      [asyncoperation_header_template.format(replaced_subscription_id)])
