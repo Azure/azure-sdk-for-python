@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class VnetFirewallRule(ProxyResource):
-    """A Vnet Firewall Rule Resource.
+class ServerCommunicationLink(ProxyResource):
+    """Server communication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,23 +24,40 @@ class VnetFirewallRule(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param virtual_network_subnet_id: The VnetSubnetId
-    :type virtual_network_subnet_id: str
+    :ivar state: The state.
+    :vartype state: str
+    :param partner_server: The name of the partner server.
+    :type partner_server: str
+    :ivar location: Communication link location.
+    :vartype location: str
+    :ivar kind: Communication link kind.  This property is used for Azure
+     Portal metadata.
+    :vartype kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'state': {'readonly': True},
+        'partner_server': {'required': True},
+        'location': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'partner_server': {'key': 'properties.partnerServer', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_subnet_id=None):
-        super(VnetFirewallRule, self).__init__()
-        self.virtual_network_subnet_id = virtual_network_subnet_id
+    def __init__(self, partner_server):
+        super(ServerCommunicationLink, self).__init__()
+        self.state = None
+        self.partner_server = partner_server
+        self.location = None
+        self.kind = None
