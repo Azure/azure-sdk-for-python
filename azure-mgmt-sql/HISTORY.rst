@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.7.0 (2017-06-28)
+++++++++++++++++++
+
+**features**
+
+- Backup/Restore related: RecoverableDatabase, RestorableDroppedDatabase, BackupLongTermRetentionVault, BackupLongTermRetentionPolicy, and GeoBackupPolicy
+- Data Masking rules and policies
+- Server communication links
+
+**Breaking changes**
+
+- Renamed enum RestorePointTypes to RestorePointType
+- Renamed VnetFirewallRule and related operations to VirtualNetworkRule
+
 0.6.0 (2017-06-13)
 ++++++++++++++++++
 
