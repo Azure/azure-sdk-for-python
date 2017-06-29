@@ -29,7 +29,7 @@ CLASSIFIERS = [
 DEPENDENCIES = [
     'ConfigArgParse>=0.12.0',
     'six>=1.10.0',
-    'vcrpy>=1.11.1',
+    'vcrpy>=1.11.0',
 ]
 
 with io.open('README.rst', 'r', encoding='utf-8') as f:
