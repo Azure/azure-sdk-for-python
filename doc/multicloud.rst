@@ -4,10 +4,64 @@ Multi-cloud - use Azure on all regions
 You can use the Azure SDK for Python to connect to all regions where Azure is available
 (`list of Azure regions is available here <https://azure.microsoft.com/regions/services>`_).
 
-Use the SDK on a different region than US Azure
------------------------------------------------
-
 By default, the Azure SDK for Python is configured to connect to public Azure.
+
+Using predeclared cloud definition
+----------------------------------
+
+.. important:: The `msrestazure` package must be superior or equals to 0.4.11 for this section.
+
+You can use the `azure_cloud` module of `msrestazure`
+
+.. code:: python
+
+  from msrestazure.azure_cloud import AZURE_CHINA_CLOUD
+  from msrestazure.azure_active_directory import UserPassCredentials
+  from azure.mgmt.resource import ResourceManagementClient
+
+  credentials = UserPassCredentials(
+      login,
+      password,
+      cloud_environment=AZURE_CHINA_CLOUD
+  )
+  client = ResourceManagementClient(
+      credentials,
+      subscription_id,
+      base_url=AZURE_CHINA_CLOUD.endpoints.resource_manager
+  )
+  
+  Available cloud definition are
+  - AZURE_PUBLIC_CLOUD
+  - AZURE_CHINA_CLOUD
+  - AZURE_US_GOV_CLOUD
+  - AZURE_GERMAN_CLOUD
+
+Using your own cloud definition (e.g. Azure Stack)
+--------------------------------------------------
+
+ARM has a metadata endpoint to help you:
+
+.. code:: python
+
+  from msrestazure.azure_cloud import get_cloud_from_metadata_endpoint
+  from msrestazure.azure_active_directory import UserPassCredentials
+  from azure.mgmt.resource import ResourceManagementClient
+
+  mystack_cloud = get_cloud_from_metadata_endpoint("https://myazurestack-arm-endpoint.com")
+  credentials = UserPassCredentials(
+      login,
+      password,
+      cloud_environment=mystack_cloud
+  )
+  client = ResourceManagementClient(
+      credentials,
+      subscription_id,
+      base_url=mystack_cloud.endpoints.resource_manager
+  )
+
+Using ADAL
+----------
+
 To connect to another region, a few things have to be considered:
 
 - What is the endpoint where to ask for a token (authentication)?
@@ -47,7 +101,7 @@ This is a generic example:
 
 
 Azure Government
-----------------
+~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -80,7 +134,7 @@ Azure Government
     )
 
 Azure Germany
--------------
+~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -113,7 +167,7 @@ Azure Germany
     )
 
 Azure China
--------------
+~~~~~~~~~~~
 
 .. code:: python
 
