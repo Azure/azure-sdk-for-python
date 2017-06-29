@@ -25,4 +25,4 @@ __all__ = ['IntegrationTestBase', 'ReplayableTest', 'LiveTest',
            'AccessTokenReplacer',
            'live_only', 'record_only',
            'create_random_name', 'get_sha1_hash']
-__version__ = '0.4.3'
+__version__ = '0.5.0'
