@@ -41,6 +41,9 @@ class StorageAccountUpdateParameters(Model):
      'Hot', 'Cool'
     :type access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.v2016_12_01.models.AccessTier>`
+    :param enable_https_traffic_only: Allows https traffic only to storage
+     service if sets to true. Default value: False .
+    :type enable_https_traffic_only: bool
     """
 
     _attribute_map = {
@@ -49,11 +52,13 @@ class StorageAccountUpdateParameters(Model):
         'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
+        'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None):
+    def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False):
         self.sku = sku
         self.tags = tags
         self.custom_domain = custom_domain
         self.encryption = encryption
         self.access_tier = access_tier
+        self.enable_https_traffic_only = enable_https_traffic_only
