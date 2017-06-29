@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class RestorePointTypes(Enum):
+class RestorePointType(Enum):
 
     discrete = "DISCRETE"
     continuous = "CONTINUOUS"
@@ -37,6 +37,34 @@ class MaxSizeUnits(Enum):
 class PerformanceLevelUnit(Enum):
 
     dtu = "DTU"
+
+
+class DataMaskingState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingRuleState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingFunction(Enum):
+
+    ccn = "CCN"
+    default = "Default"
+    email = "Email"
+    number = "Number"
+    ssn = "SSN"
+    text = "Text"
+
+
+class GeoBackupPolicyState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class DatabaseEdition(Enum):
@@ -233,6 +261,12 @@ class SecurityAlertPolicyUseServerDefault(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class BackupLongTermRetentionPolicyState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class BlobAuditingPolicyState(Enum):

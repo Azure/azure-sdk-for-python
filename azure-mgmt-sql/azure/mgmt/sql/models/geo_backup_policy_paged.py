@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class VnetFirewallRulePaged(Paged):
+class GeoBackupPolicyPaged(Paged):
     """
-    A paging container for iterating over a list of VnetFirewallRule object
+    A paging container for iterating over a list of GeoBackupPolicy object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[VnetFirewallRule]'}
+        'current_page': {'key': 'value', 'type': '[GeoBackupPolicy]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(VnetFirewallRulePaged, self).__init__(*args, **kwargs)
+        super(GeoBackupPolicyPaged, self).__init__(*args, **kwargs)
