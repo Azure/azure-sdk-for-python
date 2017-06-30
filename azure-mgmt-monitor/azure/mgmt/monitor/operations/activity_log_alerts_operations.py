@@ -22,7 +22,7 @@ class ActivityLogAlertsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-03-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2017-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,7 +30,7 @@ class ActivityLogAlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2017-04-01"
 
         self.config = config
 
@@ -220,7 +220,7 @@ class ActivityLogAlertsOperations(object):
             return client_raw_response
 
     def update(
-            self, resource_group_name, activity_log_alert_name, activity_log_alert_patch, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, activity_log_alert_name, tags=None, enabled=True, custom_headers=None, raw=False, **operation_config):
         """Updates an existing ActivityLogAlertResource's tags. To update other
         fields use the CreateOrUpdate method.
 
@@ -228,9 +228,12 @@ class ActivityLogAlertsOperations(object):
         :type resource_group_name: str
         :param activity_log_alert_name: The name of the activity log alert.
         :type activity_log_alert_name: str
-        :param activity_log_alert_patch: Parameters supplied to the operation.
-        :type activity_log_alert_patch: :class:`ActivityLogAlertResourcePatch
-         <azure.mgmt.monitor.models.ActivityLogAlertResourcePatch>`
+        :param tags: Resource tags
+        :type tags: dict
+        :param enabled: Indicates whether this activity log alert is enabled.
+         If an activity log alert is not enabled, then none of its actions will
+         be activated.
+        :type enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -243,6 +246,8 @@ class ActivityLogAlertsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
+        activity_log_alert_patch = models.ActivityLogAlertPatchBody(tags=tags, enabled=enabled)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/activityLogAlerts/{activityLogAlertName}'
         path_format_arguments = {
@@ -267,7 +272,7 @@ class ActivityLogAlertsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(activity_log_alert_patch, 'ActivityLogAlertResourcePatch')
+        body_content = self._serialize.body(activity_log_alert_patch, 'ActivityLogAlertPatchBody')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)

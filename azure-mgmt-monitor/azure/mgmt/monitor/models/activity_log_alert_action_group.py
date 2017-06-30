@@ -18,7 +18,7 @@ class ActivityLogAlertActionGroup(Model):
     :param action_group_id: The resourceId of the action group. This cannot be
      null or empty.
     :type action_group_id: str
-    :param webhook_properties: The dictionary of custom properties to include
+    :param webhook_properties: the dictionary of custom properties to include
      with the post operation. These data are appended to the webhook payload.
     :type webhook_properties: dict
     """

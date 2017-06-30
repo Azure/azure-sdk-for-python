@@ -16,14 +16,14 @@ import uuid
 from .. import models
 
 
-class AlertRulesOperations(object):
-    """AlertRulesOperations operations.
+class ActionGroupsOperations(object):
+    """ActionGroupsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,38 +31,37 @@ class AlertRulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2017-04-01"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an alert rule.
+            self, resource_group_name, action_group_name, action_group, custom_headers=None, raw=False, **operation_config):
+        """Create a new action group or update an existing one.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param rule_name: The name of the rule.
-        :type rule_name: str
-        :param parameters: The parameters of the rule to create or update.
-        :type parameters: :class:`AlertRuleResource
-         <azure.mgmt.monitor.models.AlertRuleResource>`
+        :param action_group_name: The name of the action group.
+        :type action_group_name: str
+        :param action_group: The action group to create or use for the update.
+        :type action_group: :class:`ActionGroupResource
+         <azure.mgmt.monitor.models.ActionGroupResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AlertRuleResource
-         <azure.mgmt.monitor.models.AlertRuleResource>`
+        :rtype: :class:`ActionGroupResource
+         <azure.mgmt.monitor.models.ActionGroupResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
+            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -82,7 +81,7 @@ class AlertRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AlertRuleResource')
+        body_content = self._serialize.body(action_group, 'ActionGroupResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -90,14 +89,16 @@ class AlertRulesOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AlertRuleResource', response)
+            deserialized = self._deserialize('ActionGroupResource', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('AlertRuleResource', response)
+            deserialized = self._deserialize('ActionGroupResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -105,84 +106,30 @@ class AlertRulesOperations(object):
 
         return deserialized
 
-    def delete(
-            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an alert rule.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param rule_name: The name of the rule.
-        :type rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [204, 200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
     def get(
-            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an alert rule.
+            self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
+        """Get an action group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param rule_name: The name of the rule.
-        :type rule_name: str
+        :param action_group_name: The name of the action group.
+        :type action_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AlertRuleResource
-         <azure.mgmt.monitor.models.AlertRuleResource>`
+        :rtype: :class:`ActionGroupResource
+         <azure.mgmt.monitor.models.ActionGroupResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
+            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -205,7 +152,7 @@ class AlertRulesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -213,7 +160,7 @@ class AlertRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AlertRuleResource', response)
+            deserialized = self._deserialize('ActionGroupResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -221,36 +168,30 @@ class AlertRulesOperations(object):
 
         return deserialized
 
-    def update(
-            self, resource_group_name, rule_name, alert_rules_resource, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing AlertRuleResource. To update other fields use the
-        CreateOrUpdate method.
+    def delete(
+            self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
+        """Delete an action group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param rule_name: The name of the rule.
-        :type rule_name: str
-        :param alert_rules_resource: Parameters supplied to the operation.
-        :type alert_rules_resource: :class:`AlertRuleResourcePatch
-         <azure.mgmt.monitor.models.AlertRuleResourcePatch>`
+        :param action_group_name: The name of the action group.
+        :type action_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AlertRuleResource
-         <azure.mgmt.monitor.models.AlertRuleResource>`
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str')
+            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -268,31 +209,85 @@ class AlertRulesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(alert_rules_resource, 'AlertRuleResourcePatch')
-
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AlertRuleResource', response)
+        if response.status_code not in [200, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def list_by_subscription_id(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all action groups in a subscription.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ActionGroupResourcePaged
+         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/actionGroups'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List the alert rules within a resource group.
+        """Get a list of all action groups in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -301,15 +296,15 @@ class AlertRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AlertRuleResourcePaged
-         <azure.mgmt.monitor.models.AlertRuleResourcePaged>`
+        :rtype: :class:`ActionGroupResourcePaged
+         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -347,11 +342,74 @@ class AlertRulesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AlertRuleResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AlertRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+
+    def enable_receiver(
+            self, resource_group_name, action_group_name, receiver_name, custom_headers=None, raw=False, **operation_config):
+        """Enable a receiver in an action group. This changes the receiver's
+        status from Disabled to Enabled.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param action_group_name: The name of the action group.
+        :type action_group_name: str
+        :param receiver_name: The name of the receiver to resubscribe.
+        :type receiver_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        enable_request = models.EnableRequest(receiver_name=receiver_name)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}/subscribe'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(enable_request, 'EnableRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 409, 404]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response

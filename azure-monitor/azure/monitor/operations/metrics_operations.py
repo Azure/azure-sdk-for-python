@@ -36,31 +36,32 @@ class MetricsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric values for a resource.<br>The **$filter** is used to
-        reduce the set of metric data returned. Some common properties for this
-        expression will be: name.value, aggregationType, startTime, endTime,
-        timeGrain.<br>The filter expression uses these properties with
-        comparison operators (eg. eq, gt, lt) and multiple expressions can be
-        combined with parentheses and 'and/or' logical operators.<br>Some
-        example filter expressions are:<br>- $filter=(name.value eq
-        'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
-        2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-        duration'PT1M',<br>- $filter=(name.value eq 'RunsSucceeded') and
-        (aggregationType eq 'Total' or aggregationType eq 'Average') and
-        startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-        duration'PT1H',<br>- $filter=(name.value eq 'ActionsCompleted' or
-        name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or
-        aggregationType eq 'Average') and startTime eq 2016-02-20 and endTime
-        eq 2016-02-21 and timeGrain eq duration'PT1M'.<br><br> >**NOTE**: When
-        a metrics query comes in with multiple metrics, but with no aggregation
-        types defined, the service will pick the Primary aggregation type of
-        the first metrics to be used as the default aggregation type for all
-        the metrics.
+        """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: Reduces the set of data collected. The syntax allowed
-         depends on the operation. See the operation's description for details.
+        :param filter: Reduces the set of data collected.<br>The filter is
+         optional. If present it must contain a list of metric names to
+         retrieve of the form: *(name.value eq 'metricName' [or name.value eq
+         'metricName' or ...])*. Optionally, the filter can contain conditions
+         for the following attributes *aggregationType*, *startTime*,
+         *endTime*, and *timeGrain* of the form *attributeName operator value*.
+         Where operator is one of *ne*, *eq*, *gt*, *lt*.<br>Several conditions
+         can be combined with parentheses and logical operators, e.g: *and*,
+         *or*.<br>Some example filter expressions are:<br>- $filter=(name.value
+         eq 'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
+         2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+         duration'PT1M',<br>- $filter=(name.value eq 'RunsSucceeded') and
+         (aggregationType eq 'Total' or aggregationType eq 'Average') and
+         startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+         duration'PT1H',<br>- $filter=(name.value eq 'ActionsCompleted' or
+         name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or
+         aggregationType eq 'Average') and startTime eq 2016-02-20 and endTime
+         eq 2016-02-21 and timeGrain eq duration'PT1M'.<br><br>**NOTE**: When a
+         metrics query comes in with multiple metrics, but with no aggregation
+         types defined, the service will pick the Primary aggregation type of
+         the first metrics to be used as the default aggregation type for all
+         the metrics.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -170,8 +170,8 @@ class ServiceDiagnosticSettingsOperations(object):
         :param service_diagnostic_settings_resource: Parameters supplied to
          the operation.
         :type service_diagnostic_settings_resource:
-         :class:`ServiceDiagnosticSettingsResource
-         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource>`
+         :class:`ServiceDiagnosticSettingsResourcePatch
+         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResourcePatch>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -206,7 +206,7 @@ class ServiceDiagnosticSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(service_diagnostic_settings_resource, 'ServiceDiagnosticSettingsResource')
+        body_content = self._serialize.body(service_diagnostic_settings_resource, 'ServiceDiagnosticSettingsResourcePatch')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
