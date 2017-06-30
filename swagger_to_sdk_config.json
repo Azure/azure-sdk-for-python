@@ -248,9 +248,10 @@
       "composite": "monitor/compositeMonitorClient.json",
       "autorest_options": {
         "namespace": "azure.monitor",
-        "package-version": "0.3.0"
+        "package-version": "0.4.0"
       },
       "output_dir": "azure-monitor/azure/monitor",
+      "build_dir": "azure-monitor",
       "generated_relative_base_directory": "azure/monitor"
     },
     "network.2015-06-15": {
