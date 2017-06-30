@@ -101,7 +101,7 @@ class ProfilesOperations(object):
 
         return deserialized
 
-    def list_by_in_resource_group(
+    def list_all_in_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all Traffic Manager profiles within a resource group.
 
