@@ -21,6 +21,8 @@ from .registry_update_parameters import RegistryUpdateParameters
 from .registry_password import RegistryPassword
 from .registry_list_credentials_result import RegistryListCredentialsResult
 from .regenerate_credential_parameters import RegenerateCredentialParameters
+from .registry_usage import RegistryUsage
+from .registry_usage_list_result import RegistryUsageListResult
 from .replication import Replication
 from .webhook import Webhook
 from .webhook_create_parameters import WebhookCreateParameters
@@ -46,6 +48,7 @@ from .container_registry_management_client_enums import (
     SkuTier,
     ProvisioningState,
     PasswordName,
+    RegistryUsageUnit,
     WebhookStatus,
     WebhookAction,
 )
@@ -63,6 +66,8 @@ __all__ = [
     'RegistryPassword',
     'RegistryListCredentialsResult',
     'RegenerateCredentialParameters',
+    'RegistryUsage',
+    'RegistryUsageListResult',
     'Replication',
     'Webhook',
     'WebhookCreateParameters',
@@ -87,6 +92,7 @@ __all__ = [
     'SkuTier',
     'ProvisioningState',
     'PasswordName',
+    'RegistryUsageUnit',
     'WebhookStatus',
     'WebhookAction',
 ]
