@@ -30,7 +30,7 @@ You can use the `azure_cloud` module of `msrestazure`
       base_url=AZURE_CHINA_CLOUD.endpoints.resource_manager
   )
   
-  Available cloud definition are
+Available cloud definition are
   - AZURE_PUBLIC_CLOUD
   - AZURE_CHINA_CLOUD
   - AZURE_US_GOV_CLOUD
