@@ -80,7 +80,7 @@ class AzureMgmtTestCase(ReplayableTest):
 
     @property
     def settings(self):
-        if self.in_recording:
+        if self.is_live:
             if self._real_settings:
                 return self._real_settings
             else:
