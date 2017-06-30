@@ -522,11 +522,12 @@
     },
     "trafficmanager": {
       "autorest_options": {
-        "input-file": "arm-trafficmanager/2017-03-01/swagger/trafficmanager.json",
+        "input-file": "arm-trafficmanager/2017-05-01/swagger/trafficmanager.json",
         "namespace": "azure.mgmt.trafficmanager",
-        "package-version": "0.30.0"
+        "package-version": "0.40.0"
       },
-      "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager"
+      "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager",
+      "build_dir": "azure-mgmt-trafficmanager"
     },
     "web": {
       "composite": "arm-web/compositeWebAppClient.json",
