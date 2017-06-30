@@ -22,6 +22,7 @@ from .email_notification import EmailNotification
 from .webhook_notification import WebhookNotification
 from .autoscale_notification import AutoscaleNotification
 from .autoscale_setting_resource import AutoscaleSettingResource
+from .autoscale_setting_resource_patch import AutoscaleSettingResourcePatch
 from .error_response import ErrorResponse, ErrorResponseException
 from .rule_data_source import RuleDataSource
 from .rule_condition import RuleCondition
@@ -36,6 +37,7 @@ from .rule_action import RuleAction
 from .rule_email_action import RuleEmailAction
 from .rule_webhook_action import RuleWebhookAction
 from .alert_rule_resource import AlertRuleResource
+from .alert_rule_resource_patch import AlertRuleResourcePatch
 from .incident import Incident
 from .activity_log_alert_leaf_condition import ActivityLogAlertLeafCondition
 from .activity_log_alert_all_of_condition import ActivityLogAlertAllOfCondition
@@ -45,9 +47,11 @@ from .activity_log_alert_resource import ActivityLogAlertResource
 from .activity_log_alert_patch_body import ActivityLogAlertPatchBody
 from .retention_policy import RetentionPolicy
 from .log_profile_resource import LogProfileResource
+from .log_profile_resource_patch import LogProfileResourcePatch
 from .metric_settings import MetricSettings
 from .log_settings import LogSettings
 from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
+from .service_diagnostic_settings_resource_patch import ServiceDiagnosticSettingsResourcePatch
 from .email_receiver import EmailReceiver
 from .sms_receiver import SmsReceiver
 from .webhook_receiver import WebhookReceiver
@@ -85,6 +89,7 @@ __all__ = [
     'WebhookNotification',
     'AutoscaleNotification',
     'AutoscaleSettingResource',
+    'AutoscaleSettingResourcePatch',
     'ErrorResponse', 'ErrorResponseException',
     'RuleDataSource',
     'RuleCondition',
@@ -99,6 +104,7 @@ __all__ = [
     'RuleEmailAction',
     'RuleWebhookAction',
     'AlertRuleResource',
+    'AlertRuleResourcePatch',
     'Incident',
     'ActivityLogAlertLeafCondition',
     'ActivityLogAlertAllOfCondition',
@@ -108,9 +114,11 @@ __all__ = [
     'ActivityLogAlertPatchBody',
     'RetentionPolicy',
     'LogProfileResource',
+    'LogProfileResourcePatch',
     'MetricSettings',
     'LogSettings',
     'ServiceDiagnosticSettingsResource',
+    'ServiceDiagnosticSettingsResourcePatch',
     'EmailReceiver',
     'SmsReceiver',
     'WebhookReceiver',

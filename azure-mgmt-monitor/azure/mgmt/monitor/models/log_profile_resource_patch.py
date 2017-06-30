@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class LogProfileResource(Resource):
-    """The log profile resource.
+class LogProfileResourcePatch(Model):
+    """The log profile resource for patch operations.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Azure resource Id
-    :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
-    :ivar type: Azure resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
     :param tags: Resource tags
     :type tags: dict
     :param storage_account_id: the resource id of the storage account to which
@@ -50,20 +39,12 @@ class LogProfileResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
         'locations': {'required': True},
         'categories': {'required': True},
         'retention_policy': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
@@ -72,8 +53,8 @@ class LogProfileResource(Resource):
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, location, locations, categories, retention_policy, tags=None, storage_account_id=None, service_bus_rule_id=None):
-        super(LogProfileResource, self).__init__(location=location, tags=tags)
+    def __init__(self, locations, categories, retention_policy, tags=None, storage_account_id=None, service_bus_rule_id=None):
+        self.tags = tags
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.locations = locations

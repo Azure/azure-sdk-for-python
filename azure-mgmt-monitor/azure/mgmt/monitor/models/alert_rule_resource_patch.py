@@ -9,27 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class AlertRuleResource(Resource):
-    """The alert rule resource.
+class AlertRuleResourcePatch(Model):
+    """The alert rule object for patch operations.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource Id
-    :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
-    :ivar type: Azure resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param alert_rule_resource_name: the name of the alert rule.
-    :type alert_rule_resource_name: str
+    :param name: the name of the alert rule.
+    :type name: str
     :param description: the description of the alert rule that will be
      included in the alert email.
     :type description: str
@@ -49,23 +41,15 @@ class AlertRuleResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'alert_rule_resource_name': {'required': True},
+        'name': {'required': True},
         'is_enabled': {'required': True},
         'condition': {'required': True},
         'last_updated_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'alert_rule_resource_name': {'key': 'properties.name', 'type': 'str'},
+        'name': {'key': 'properties.name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
         'condition': {'key': 'properties.condition', 'type': 'RuleCondition'},
@@ -73,9 +57,9 @@ class AlertRuleResource(Resource):
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, alert_rule_resource_name, is_enabled, condition, tags=None, description=None, actions=None):
-        super(AlertRuleResource, self).__init__(location=location, tags=tags)
-        self.alert_rule_resource_name = alert_rule_resource_name
+    def __init__(self, name, is_enabled, condition, tags=None, description=None, actions=None):
+        self.tags = tags
+        self.name = name
         self.description = description
         self.is_enabled = is_enabled
         self.condition = condition
