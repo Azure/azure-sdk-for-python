@@ -3,6 +3,38 @@
 Release History
 ===============
 
+2.0.0 (2017-06-29)
+++++++++++++++++++
+
+**Features**
+
+Compute default Api Version is now 2017-03-01.
+
+New operation groups:
+- resources_skus
+- virtual_machine_scale_set_extensions
+- virtual_machine_run_commands
+
+New methods in VM:
+- perform_maintenance
+- run_command
+
+Several improvements and modifications in Managed Disks.
+
+**Breaking changes**
+
+- ContainerService: fixed typo in class name (ContainerServiceOchestratorTypes is now ContainerServiceOrchestratorTypes)
+
+- Compute: breaking changes in Managed Disk API:
+
+  - Managed field removed from Create AV Set API
+  - Account Type replaced with SKU in PUT and GET Managed Disk Create API
+  - OwnerId replaced by ManagedBy in GET Managed Disk API
+
+Note that you can get the behavior of v1.0.0 by forcing the Api Version to "2016-04-30-preview" to update your package but not the code:
+
+ComputeManagementClient(credentials, subscription_id, api_version="2016-04-30-preview")
+
 1.0.0 (2017-05-15)
 ++++++++++++++++++
 
