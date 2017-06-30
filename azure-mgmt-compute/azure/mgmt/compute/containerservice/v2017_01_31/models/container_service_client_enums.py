@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class ContainerServiceOchestratorTypes(Enum):
+class ContainerServiceOrchestratorTypes(Enum):
 
     swarm = "Swarm"
     dcos = "DCOS"

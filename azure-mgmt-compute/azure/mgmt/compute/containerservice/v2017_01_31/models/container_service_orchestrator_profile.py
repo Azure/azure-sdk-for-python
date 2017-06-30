@@ -18,8 +18,8 @@ class ContainerServiceOrchestratorProfile(Model):
     :param orchestrator_type: The orchestrator to use to manage container
      service cluster resources. Valid values are Swarm, DCOS, and Custom.
      Possible values include: 'Swarm', 'DCOS', 'Custom', 'Kubernetes'
-    :type orchestrator_type: str or :class:`ContainerServiceOchestratorTypes
-     <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerServiceOchestratorTypes>`
+    :type orchestrator_type: str or :class:`ContainerServiceOrchestratorTypes
+     <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerServiceOrchestratorTypes>`
     """
 
     _validation = {
@@ -27,7 +27,7 @@ class ContainerServiceOrchestratorProfile(Model):
     }
 
     _attribute_map = {
-        'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOchestratorTypes'},
+        'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOrchestratorTypes'},
     }
 
     def __init__(self, orchestrator_type):
