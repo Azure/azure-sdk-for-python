@@ -86,7 +86,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             )
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2016,11,17)
+        today = datetime.date(2016, 11, 17)
         yesterday = today - datetime.timedelta(days=1)
 
         filter = " and ".join([
@@ -96,7 +96,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "endTime eq {}".format(today),
             "timeGrain eq duration'PT1H'"
         ])
-        
+
         metrics = list(self.data_client.metrics.list(
             resource_id,
             filter=filter
@@ -114,7 +114,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             for data in item.data:
                 print("{}: {}".format(data.time_stamp, data.total))
 
-    @ResourceGroupPreparer()
     def test_alert_rules(self, resource_group, location):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
@@ -125,23 +124,23 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
         # I need a subclass of "RuleDataSource"
         data_source = RuleMetricDataSource(
-            resource_uri = resource_id,
-            metric_name = 'Percentage CPU'
+            resource_uri=resource_id,
+            metric_name='Percentage CPU'
         )
 
         # I need a subclasses of "RuleCondition"
         rule_condition = ThresholdRuleCondition(
-            data_source = data_source,
-            operator = 'GreaterThanOrEqual',
-            threshold = 90,
-            window_size = 'PT5M',
-            time_aggregation = 'Average'
+            data_source=data_source,
+            operator='GreaterThanOrEqual',
+            threshold=90,
+            window_size='PT5M',
+            time_aggregation='Average'
         )
 
         # I need a subclass of "RuleAction"
         rule_action = RuleEmailAction(
-            send_to_service_owners = True,
-            custom_emails = [
+            send_to_service_owners=True,
+            custom_emails=[
                 'monitoringemail@microsoft.com'
             ]
         )
