@@ -114,6 +114,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             for data in item.data:
                 print("{}: {}".format(data.time_stamp, data.total))
 
+    @ResourceGroupPreparer()
     def test_alert_rules(self, resource_group, location):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
