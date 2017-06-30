@@ -55,7 +55,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
             azure.mgmt.sql.SqlManagementClient
         )
 
-    @ResourceGroupPreparer(name_prefix='testsqlservergroup')
+    @ResourceGroupPreparer()
     def test_server(self, resource_group, location):
         server_name = self.get_resource_name('tstpysqlserver')
 
@@ -86,7 +86,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         firewall_rule_name = self.get_resource_name('firewallrule')
         firewall_rule = self.client.firewall_rules.create_or_update(
-            self.group_name,
+            resource_group.name,
             server_name,
             firewall_rule_name,
             "123.123.123.123",
@@ -98,7 +98,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         self.client.servers.delete(resource_group.name, server_name)
 
-    @ResourceGroupPreparer(name_prefix='testsqldbgroup')
+    @ResourceGroupPreparer()
     @SqlServerPreparer()
     def test_database(self, resource_group, location, server):
         db_name = self.get_resource_name('pyarmdb')
