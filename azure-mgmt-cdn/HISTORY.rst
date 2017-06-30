@@ -3,6 +3,19 @@
 Release History
 ===============
 
+1.0.0 (2017-06-30)
+++++++++++++++++++
+
+**Features**
+
+- Add disable_custom_https and enable_custom_https
+
+**Breaking changes**
+
+- Rename check_resource_usage to list_resource_usage
+- list EdgeNode now returns an iterator of EdgeNode, 
+  not a EdgenodeResult instance with an attribute "value" being a list of EdgeNode
+
 0.30.3 (2017-05-15)
 +++++++++++++++++++
 

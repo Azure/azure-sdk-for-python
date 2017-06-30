@@ -45,9 +45,10 @@
       "autorest_options": {
         "input-file": "arm-cdn/2016-10-02/swagger/cdn.json",
         "namespace": "azure.mgmt.cdn",
-        "package-version": "0.30.3"
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
+      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn",
+      "build_dir": "azure-mgmt-cdn"
     },
     "consumption": {
       "autorest_options": {
