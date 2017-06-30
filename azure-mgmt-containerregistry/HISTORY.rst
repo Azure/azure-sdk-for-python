@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.3.1 (2017-06-30)
+++++++++++++++++++
+
+- support for registry SKU update (2017-06-01-preview)
+- new listUsages API to get the quota usages for a container registry (2017-06-01-preview)
+
 0.3.0 (2017-06-15)
 ++++++++++++++++++
 
