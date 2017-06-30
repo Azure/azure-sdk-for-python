@@ -239,9 +239,10 @@
       "composite": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
         "namespace": "azure.mgmt.monitor",
-        "package-version": "0.2.0"
+        "package-version": "0.3.0"
       },
-      "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
+      "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor",
+      "build_dir": "azure-mgmt-monitor"
     },
     "monitor.data": {
       "composite": "monitor/compositeMonitorClient.json",

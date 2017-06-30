@@ -63,17 +63,17 @@ class MonitorClient(object):
     :vartype config: MonitorClientConfiguration
 
     :ivar usage_metrics: UsageMetrics operations
-    :vartype usage_metrics: .operations.UsageMetricsOperations
+    :vartype usage_metrics: azure.monitor.operations.UsageMetricsOperations
     :ivar event_categories: EventCategories operations
-    :vartype event_categories: .operations.EventCategoriesOperations
+    :vartype event_categories: azure.monitor.operations.EventCategoriesOperations
     :ivar activity_logs: ActivityLogs operations
-    :vartype activity_logs: .operations.ActivityLogsOperations
+    :vartype activity_logs: azure.monitor.operations.ActivityLogsOperations
     :ivar tenant_activity_logs: TenantActivityLogs operations
-    :vartype tenant_activity_logs: .operations.TenantActivityLogsOperations
+    :vartype tenant_activity_logs: azure.monitor.operations.TenantActivityLogsOperations
     :ivar metric_definitions: MetricDefinitions operations
-    :vartype metric_definitions: .operations.MetricDefinitionsOperations
+    :vartype metric_definitions: azure.monitor.operations.MetricDefinitionsOperations
     :ivar metrics: Metrics operations
-    :vartype metrics: .operations.MetricsOperations
+    :vartype metrics: azure.monitor.operations.MetricsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

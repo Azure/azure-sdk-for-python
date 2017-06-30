@@ -36,36 +36,35 @@ class ActivityLogsOperations(object):
 
     def list(
             self, filter=None, select=None, custom_headers=None, raw=False, **operation_config):
-        """Provides the list of records from the activity logs.<br>The **$filter**
-        is very restricted and allows only the following patterns.<br>- List
-        events for a resource group: $filter=eventTimestamp ge '<Start Time>'
-        and eventTimestamp le '<End Time>' and eventChannels eq 'Admin,
-        Operation' and resourceGroupName eq '<ResourceGroupName>'.<br>- List
-        events for resource: $filter=eventTimestamp ge '<Start Time>' and
-        eventTimestamp le '<End Time>' and eventChannels eq 'Admin, Operation'
-        and resourceUri eq '<ResourceURI>'.<br>- List events for a
-        subscription: $filter=eventTimestamp ge '<Start Time>' and
-        eventTimestamp le '<End Time>' and eventChannels eq 'Admin,
-        Operation'.<br>-List events for a resource provider:
-        $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation' and resourceProvider eq
-        '<ResourceProviderName>'.<br>- List events for a correlation Id:
-        api-version=2014-04-01&$filter=eventTimestamp ge
-        '2014-07-16T04:36:37.6407898Z' and eventTimestamp le
-        '2014-07-20T04:36:37.6407898Z' and eventChannels eq 'Admin, Operation'
-        and correlationId eq '<CorrelationID>'.<br><br>**NOTE**: No other
-        syntax is allowed.
+        """Provides the list of records from the activity logs.
 
-        :param filter: Reduces the set of data collected. The syntax allowed
-         depends on the operation. See the operation's description for details.
+        :param filter: Reduces the set of data collected.<br>The **$filter**
+         argument is very restricted and allows only the following
+         patterns.<br>- *List events for a resource group*:
+         $filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
+         eventTimestamp le '2014-07-20T04:36:37.6407898Z' and resourceGroupName
+         eq 'resourceGroupName'.<br>- *List events for resource*:
+         $filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
+         eventTimestamp le '2014-07-20T04:36:37.6407898Z' and resourceUri eq
+         'resourceURI'.<br>- *List events for a subscription in a time range*:
+         $filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
+         eventTimestamp le '2014-07-20T04:36:37.6407898Z'.<br>- *List events
+         for a resource provider*: $filter=eventTimestamp ge
+         '2014-07-16T04:36:37.6407898Z' and eventTimestamp le
+         '2014-07-20T04:36:37.6407898Z' and resourceProvider eq
+         'resourceProviderName'.<br>- *List events for a correlation Id*:
+         $filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
+         eventTimestamp le '2014-07-20T04:36:37.6407898Z' and correlationId eq
+         'correlationID'.<br><br>**NOTE**: No other syntax is allowed.
         :type filter: str
-        :param select: Used to fetch events with only the given properties.
-         The filter is a comma separated list of property names to be returned.
-         Possible values are: authorization, channels, claims, correlationId,
-         description, eventDataId, eventName, eventTimestamp, httpRequest,
-         level, operationId, operationName, properties, resourceGroupName,
-         resourceProviderName, resourceId, status, submissionTimestamp,
-         subStatus, subscriptionId
+        :param select: Used to fetch events with only the given
+         properties.<br>The **$select** argument is a comma separated list of
+         property names to be returned. Possible values are: *authorization*,
+         *claims*, *correlationId*, *description*, *eventDataId*, *eventName*,
+         *eventTimestamp*, *httpRequest*, *level*, *operationId*,
+         *operationName*, *properties*, *resourceGroupName*,
+         *resourceProviderName*, *resourceId*, *status*, *submissionTimestamp*,
+         *subStatus*, *subscriptionId*
         :type select: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

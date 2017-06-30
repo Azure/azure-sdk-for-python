@@ -36,18 +36,17 @@ class MetricDefinitionsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric definitions for the resource.<br>The **$filter**
-        parameter is optional, and can be used to only retrieve certain metric
-        definitions.<br>For example, get just the definition for the CPU
-        percentage counter: $filter=name.value eq '\Processor(_Total)\%
-        Processor Time'.<br>This **$filter** is very restricted and allows only
-        clauses of the form **'name eq <value>'** separated by **or** logical
-        operators.<br>**NOTE**: No other syntax is allowed.
+        """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: Reduces the set of data collected. The syntax allowed
-         depends on the operation. See the operation's description for details.
+        :param filter: Reduces the set of data collected by retrieving
+         particular metric definitions from all the definitions available for
+         the resource.<br>For example, to get just the definition for the 'CPU
+         percentage' counter: $filter=name.value eq '\\Processor(_Total)\\%
+         Processor Time'.<br>Multiple metrics can be retrieved by joining
+         together *'name eq <value>'* clauses separated by *or* logical
+         operators.<br>**NOTE**: No other syntax is allowed.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
