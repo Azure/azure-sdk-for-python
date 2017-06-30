@@ -315,9 +315,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         with self.recording():
             storage_profile = self.get_storage_profile(os_vhd_uri)
             storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
-                publisher='MicrosoftWindowsServerEssentials',
-                offer='WindowsServerEssentials',
-                sku='WindowsServerEssentials',
+                publisher='MicrosoftWindowsServer',
+                offer='WindowsServer',
+                sku='2016-Datacenter',
                 version='latest'
             )
 

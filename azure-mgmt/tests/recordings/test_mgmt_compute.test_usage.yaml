@@ -6,88 +6,115 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
-          msrest_azure/0.4.7 computemanagementclient/0.33.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [df12cb68-e1ca-11e6-bb3a-ecb1d756380e]
+      x-ms-client-request-id: [abd6fd24-5d31-11e7-9da7-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2016-04-30-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2017-03-30
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"unit\": \"Count\",\r\n
-        \     \"currentValue\": 1,\r\n      \"limit\": 2000,\r\n      \"name\": {\r\n
-        \       \"value\": \"availabilitySets\",\r\n        \"localizedValue\": \"Availability
-        Sets\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\":
-        4,\r\n      \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"cores\",\r\n
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"limit\": 2000,\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\": {\r\n        \"value\":
+        \"availabilitySets\",\r\n        \"localizedValue\": \"Availability Sets\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"limit\": 10,\r\n      \"unit\": \"Count\",\r\n
+        \     \"currentValue\": 5,\r\n      \"name\": {\r\n        \"value\": \"cores\",\r\n
         \       \"localizedValue\": \"Total Regional Cores\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 3,\r\n      \"limit\":
-        10000,\r\n      \"name\": {\r\n        \"value\": \"virtualMachines\",\r\n
-        \       \"localizedValue\": \"Virtual Machines\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
-        2000,\r\n      \"name\": {\r\n        \"value\": \"virtualMachineScaleSets\",\r\n
-        \       \"localizedValue\": \"Virtual Machine Scale Sets\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n
-        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"basicAFamily\",\r\n
-        \       \"localizedValue\": \"Basic A Family Cores\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"limit\":
-        10,\r\n      \"name\": {\r\n        \"value\": \"standardA0_A7Family\",\r\n
-        \       \"localizedValue\": \"Standard A0-A7 Family Cores\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 2,\r\n
-        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"standardDv2Family\",\r\n
-        \       \"localizedValue\": \"Standard Dv2 Family Cores\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
-        10,\r\n      \"name\": {\r\n        \"value\": \"standardA8_A11Family\",\r\n
-        \       \"localizedValue\": \"Standard A8-A11 Family Cores\"\r\n      }\r\n
-        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n
-        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"standardDFamily\",\r\n
-        \       \"localizedValue\": \"Standard D Family Cores\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
-        10,\r\n      \"name\": {\r\n        \"value\": \"standardGFamily\",\r\n        \"localizedValue\":
-        \"Standard G Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \   {\r\n      \"limit\": 10000,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\":
+        4,\r\n      \"name\": {\r\n        \"value\": \"virtualMachines\",\r\n        \"localizedValue\":
+        \"Virtual Machines\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\": 2000,\r\n
+        \     \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\":
+        {\r\n        \"value\": \"virtualMachineScaleSets\",\r\n        \"localizedValue\":
+        \"Virtual Machine Scale Sets\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\":
+        {\r\n        \"value\": \"basicAFamily\",\r\n        \"localizedValue\": \"Basic
+        A Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\": 10,\r\n
+        \     \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\":
+        {\r\n        \"value\": \"standardA0_A7Family\",\r\n        \"localizedValue\":
+        \"Standard A0-A7 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\":
         {\r\n        \"value\": \"standardDSFamily\",\r\n        \"localizedValue\":
-        \"Standard DS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard DS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 2,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDv2Family\",\r\n        \"localizedValue\":
+        \"Standard Dv2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardA8_A11Family\",\r\n        \"localizedValue\":
+        \"Standard A8-A11 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDFamily\",\r\n        \"localizedValue\":
+        \"Standard D Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardGFamily\",\r\n        \"localizedValue\":
+        \"Standard G Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardDSv2Family\",\r\n        \"localizedValue\":
-        \"Standard DSv2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard DSv2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardGSFamily\",\r\n        \"localizedValue\":
-        \"Standard GS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard GS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardFFamily\",\r\n        \"localizedValue\":
-        \"Standard F Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard F Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardFSFamily\",\r\n        \"localizedValue\":
-        \"Standard FS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 12,\r\n      \"name\":
+        \"Standard FS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        12,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardNVFamily\",\r\n        \"localizedValue\":
-        \"Standard NV Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 12,\r\n      \"name\":
+        \"Standard NV Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        12,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardNCFamily\",\r\n        \"localizedValue\":
-        \"Standard NC Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 8,\r\n      \"name\":
+        \"Standard NC Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        8,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardHFamily\",\r\n        \"localizedValue\":
-        \"Standard H Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard H Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardAv2Family\",\r\n        \"localizedValue\":
-        \"Standard Av2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
-        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        \"Standard Av2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardLSFamily\",\r\n        \"localizedValue\":
-        \"Standard LS Family Cores\"\r\n      }\r\n    }\r\n  ]\r\n}"}
+        \"Standard LS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDv2PromoFamily\",\r\n        \"localizedValue\":
+        \"Standard Dv2 Promo Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDSv2PromoFamily\",\r\n        \"localizedValue\":
+        \"Standard DSv2 Promo Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        0,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardMSFamily\",\r\n        \"localizedValue\":
+        \"Standard MS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDv3Family\",\r\n        \"localizedValue\":
+        \"Standard Dv3 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDSv3Family\",\r\n        \"localizedValue\":
+        \"Standard DSv3 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardEv3Family\",\r\n        \"localizedValue\":
+        \"Standard Ev3 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardESv3Family\",\r\n        \"localizedValue\":
+        \"Standard ESv3 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10000,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"StandardDiskCount\",\r\n        \"localizedValue\":
+        \"Standard Storage Managed Disks\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        10000,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"PremiumDiskCount\",\r\n        \"localizedValue\":
+        \"Premium Storage Managed Disks\"\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 24 Jan 2017 00:20:12 GMT']
+      Date: ['Fri, 30 Jun 2017 01:15:57 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['4072']
-      x-ms-correlation-request-id: [62cfbc46-5bb8-4af5-9d72-070627a2a4dc]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [32fd84cd-acd6-48d9-a996-f743ab9ab05e]
-      x-ms-routing-request-id: ['WESTUS2:20170124T002012Z:62cfbc46-5bb8-4af5-9d72-070627a2a4dc']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
+      content-length: ['5956']
+      x-ms-correlation-request-id: [107fdd26-a990-411f-9074-d2863922f6f7]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [1980fe51-20ec-41d2-a37d-d4198e41a9a9]
+      x-ms-routing-request-id: ['WESTUS2:20170630T011557Z:107fdd26-a990-411f-9074-d2863922f6f7']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131282043969998685]
     status: {code: 200, message: OK}
 version: 1
