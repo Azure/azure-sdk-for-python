@@ -62,9 +62,10 @@
       "autorest_options": {
         "input-file": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
         "namespace": "azure.mgmt.cognitiveservices",
-        "package-version": "1.0.0"
+        "package-version": "1.0.1"
       },
-      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices",
+      "build_dir": "azure-mgmt-cognitiveservices"
     },
     "commerce": {
       "autorest_options": {
