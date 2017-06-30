@@ -9,26 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class TrafficManagerGeographicHierarchy(Resource):
+class TrafficManagerGeographicHierarchy(ProxyResource):
     """Class representing the Geographic hierarchy used with the Geographic
     traffic routing method.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param geographic_hierarchy: The region at the root of the hierarchy from
      all the regions in the hierarchy can be retrieved.
     :type geographic_hierarchy: :class:`Region
@@ -45,11 +43,9 @@ class TrafficManagerGeographicHierarchy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'geographic_hierarchy': {'key': 'properties.geographicHierarchy', 'type': 'Region'},
     }
 
-    def __init__(self, location=None, tags=None, geographic_hierarchy=None):
-        super(TrafficManagerGeographicHierarchy, self).__init__(location=location, tags=tags)
+    def __init__(self, geographic_hierarchy=None):
+        super(TrafficManagerGeographicHierarchy, self).__init__()
         self.geographic_hierarchy = geographic_hierarchy

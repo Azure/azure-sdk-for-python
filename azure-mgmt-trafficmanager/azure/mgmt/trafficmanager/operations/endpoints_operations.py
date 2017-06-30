@@ -23,7 +23,7 @@ class EndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-05-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class EndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-05-01"
 
         self.config = config
 
@@ -324,8 +324,6 @@ class EndpointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DeleteOperationResult', response)
-        if response.status_code == 204:
             deserialized = self._deserialize('DeleteOperationResult', response)
 
         if raw:
