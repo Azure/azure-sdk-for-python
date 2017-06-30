@@ -39,6 +39,13 @@ class PerformanceLevelUnit(Enum):
     dtu = "DTU"
 
 
+class ServerConnectionType(Enum):
+
+    default = "Default"
+    proxy = "Proxy"
+    redirect = "Redirect"
+
+
 class DataMaskingState(Enum):
 
     disabled = "Disabled"
