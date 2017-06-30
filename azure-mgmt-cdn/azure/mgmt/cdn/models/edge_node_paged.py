@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class EdgenodeResult(Model):
-    """Result of the request to list CDN edgenodes. It contains a list of ip
-    address group and a URL link to get the next set of results.
-
-    :param value: Edge node of CDN service.
-    :type value: list of :class:`EdgeNode <azure.mgmt.cdn.models.EdgeNode>`
+class EdgeNodePaged(Paged):
+    """
+    A paging container for iterating over a list of EdgeNode object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EdgeNode]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EdgeNode]'}
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(EdgeNodePaged, self).__init__(*args, **kwargs)
