@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.3.0 (2017-06-30)
+++++++++++++++++++
+
+**Features**
+
+- Add action_groups operation group
+- Add alert_rules.update method
+- Add autoscale_settings.update method
+- Add log_profiles.update method
+
+**Breaking changes**
+
+- activity_log_alerts.update has now flatten parameters "tags/enabled"
+
 0.2.1 (2017-04-26)
 ++++++++++++++++++
 
