@@ -62,11 +62,11 @@ class TrafficManagerManagementClient(object):
     :vartype config: TrafficManagerManagementClientConfiguration
 
     :ivar endpoints: Endpoints operations
-    :vartype endpoints: .operations.EndpointsOperations
+    :vartype endpoints: azure.mgmt.trafficmanager.operations.EndpointsOperations
     :ivar profiles: Profiles operations
-    :vartype profiles: .operations.ProfilesOperations
+    :vartype profiles: azure.mgmt.trafficmanager.operations.ProfilesOperations
     :ivar geographic_hierarchies: GeographicHierarchies operations
-    :vartype geographic_hierarchies: .operations.GeographicHierarchiesOperations
+    :vartype geographic_hierarchies: azure.mgmt.trafficmanager.operations.GeographicHierarchiesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
