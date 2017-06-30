@@ -30,10 +30,7 @@ class SqlServerPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(
-                azure.mgmt.sql.SqlManagementClient
-            )
-            async_server_create = self.client.servers.create_or_update(
+            async_server_create = self.test_class_instance.client.servers.create_or_update(
                 kwargs['resource_group'],
                 name,
                 get_server_params(kwargs['location'])
@@ -108,7 +105,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
             server.name,
             db_name,
             {
-                'location': self.region
+                'location': location
             }
         )
         database = async_db_create.result() # Wait for completion and return created object
