@@ -206,7 +206,7 @@ class AzureMgmtPreparer(AbstractPreparer):
 
     @property
     def is_live(self):
-        return self.test_class_instance.in_recording
+        return self.test_class_instance.is_live
 
     def create_random_name(self):
         return self.test_class_instance.get_preparer_resource_name(self.name_prefix)
