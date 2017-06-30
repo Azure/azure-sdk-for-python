@@ -35,6 +35,12 @@ class CustomDomain(Resource):
      values include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or :class:`CustomDomainResourceState
      <azure.mgmt.cdn.models.CustomDomainResourceState>`
+    :ivar custom_https_provisioning_state: Provisioning state of Custom Https
+     of the custom domain. Possible values include: 'Enabling', 'Enabled',
+     'Disabling', 'Disabled', 'Failed'
+    :vartype custom_https_provisioning_state: str or
+     :class:`CustomHttpsProvisioningState
+     <azure.mgmt.cdn.models.CustomHttpsProvisioningState>`
     :param validation_data: Special validation or data may be required when
      delivering CDN to some regions due to local compliance reasons. E.g. ICP
      license number of a custom domain is required to deliver content in China.
@@ -50,6 +56,7 @@ class CustomDomain(Resource):
         'location': {'required': True},
         'host_name': {'required': True},
         'resource_state': {'readonly': True},
+        'custom_https_provisioning_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -61,6 +68,7 @@ class CustomDomain(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
         'validation_data': {'key': 'properties.validationData', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -69,5 +77,6 @@ class CustomDomain(Resource):
         super(CustomDomain, self).__init__(location=location, tags=tags)
         self.host_name = host_name
         self.resource_state = None
+        self.custom_https_provisioning_state = None
         self.validation_data = validation_data
         self.provisioning_state = None
