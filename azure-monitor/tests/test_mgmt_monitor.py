@@ -11,13 +11,16 @@ import datetime
 import azure.mgmt.monitor
 import azure.monitor
 from msrest.version import msrest_version
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
 from azure.mgmt.monitor.models import (
     ThresholdRuleCondition,
     RuleEmailAction,
     RuleMetricDataSource
+)
+
+from devtools_testutils import (
+    AzureMgmtTestCase, ResourceGroupPreparer,
+    StorageAccountPreparer, FakeStorageAccount,
 )
 
 
@@ -31,11 +34,9 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.data_client = self.create_mgmt_client(
             azure.monitor.MonitorClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_activity_log(self):
+    @ResourceGroupPreparer()
+    def test_activity_log(self, resource_group):
 
         # RBAC for this test (CLI command)
         # > azure role assignment create 
@@ -52,7 +53,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "eventChannels eq 'Admin, Operation'"
         ])
         select = "eventName,operationName"
-        filter = filter.format(self.group_name)
+        filter = filter.format(resource_group.name)
         activity_logs = list(self.data_client.activity_logs.list(
             filter=filter,
             select=select
