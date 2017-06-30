@@ -80,7 +80,7 @@ class AzureMgmtTestCase(ReplayableTest):
 
     @property
     def settings(self):
-        if self.is_live:
+        if self.in_recording:
             if self._real_settings:
                 return self._real_settings
             else:
@@ -206,7 +206,7 @@ class AzureMgmtPreparer(AbstractPreparer):
 
     @property
     def is_live(self):
-        return self.test_class_instance.is_live
+        return self.test_class_instance.in_recording
 
     def create_random_name(self):
         return self.test_class_instance.get_preparer_resource_name(self.name_prefix)
