@@ -10,7 +10,6 @@ import datetime
 
 import azure.mgmt.monitor
 import azure.monitor
-from msrest.version import msrest_version
 
 from azure.mgmt.monitor.models import (
     ThresholdRuleCondition,
@@ -20,7 +19,6 @@ from azure.mgmt.monitor.models import (
 
 from devtools_testutils import (
     AzureMgmtTestCase, ResourceGroupPreparer,
-    StorageAccountPreparer, FakeStorageAccount,
 )
 
 
@@ -225,17 +223,17 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                 "storage_account_id": "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest",
             #    "service_bus_rule_id": "/subscriptions/6983c752-c9b8-48dd-b4d4-da739beb7e98/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/myNamespace/RootManageSharedAccessKey",
                 "locations": [
-                  "eastus",
-                  "westus"
+                    "eastus",
+                    "westus"
                 ],
                 "categories": [
-                  "Write",
-                  "Delete",
-                  "Action"
+                    "Write",
+                    "Delete",
+                    "Action"
                 ],
                 "retention_policy": {
-                  "enabled": True,
-                  "days": 1
+                    "enabled": True,
+                    "days": 1
                 }
             }
         )
@@ -274,19 +272,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                     },
                     'rules': [{
                         "metric_trigger": {
-                          "metric_name": "Percentage CPU",
-                          "metric_resource_uri": resource_id,
-                          "time_grain": "PT5M",
-                          "statistic": "Average",
-                          "time_window": "PT45M",
-                          "time_aggregation": "Average",
-                          "operator": "GreaterThanOrEqual",
-                          "threshold": 60
+                            "metric_name": "Percentage CPU",
+                            "metric_resource_uri": resource_id,
+                            "time_grain": "PT5M",
+                            "statistic": "Average",
+                            "time_window": "PT45M",
+                            "time_aggregation": "Average",
+                            "operator": "GreaterThanOrEqual",
+                            "threshold": 60
                         },
                         "scale_action": {
-                          "direction": "Increase",
-                          "value": "2",
-                          "cooldown": "PT20M"
+                            "direction": "Increase",
+                            "value": "2",
+                            "cooldown": "PT20M"
                         }
                     }]
                 }]
