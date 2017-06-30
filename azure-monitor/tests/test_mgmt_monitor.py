@@ -67,8 +67,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(log.event_name.localized_value)
             self.assertIsNotNone(log.operation_name.localized_value)
 
-
-    @record
     def test_metrics(self):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
@@ -118,8 +116,8 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             for data in item.data:
                 print("{}: {}".format(data.time_stamp, data.total))
 
-    @record
-    def test_alert_rules(self):
+    @ResourceGroupPreparer()
+    def test_alert_rules(self, resource_group, location):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
             "subscriptions/{}/"
@@ -152,10 +150,10 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
         rule_name = 'MyPyTestAlertRule'
         my_alert = self.mgmt_client.alert_rules.create_or_update(
-            self.group_name,
+            resource_group.name,
             rule_name,
             {
-                'location': self.region,
+                'location': location,
                 'alert_rule_resource_name': rule_name,
                 'description': 'Testing Alert rule creation',
                 'is_enabled': True,
@@ -167,27 +165,24 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         )
 
         my_alert = self.mgmt_client.alert_rules.get(
-            self.group_name,
+            resource_group.name,
             rule_name
         )
 
         my_alerts = list(self.mgmt_client.alert_rules.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
 
         self.mgmt_client.alert_rules.delete(
-            self.group_name,
+            resource_group.name,
             rule_name
         )
 
 
     @unittest.skip("Known bug")
-    @record
     def test_tenants_event(self):
-
         tenant_events = list(self.data_client.tenant_events.list())
 
-    @record
     def test_event_categories(self):
         event_categories = list(self.data_client.event_categories.list())
 
@@ -198,7 +193,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(cat.localized_value)
 
     @unittest.skip("Deprecated. Monitor team stopped support")
-    @record
     def test_usage_metrics(self):
         # Get the DocDB or your resource and use "id" attribute, or build the id yourself from RG and name
         # Usage metric is rare, DocDb and WebPlan are good example.
@@ -222,7 +216,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(item.name)
 
     @unittest.skip("Known bug")
-    @record
     def test_log_profile(self):
         profile_name = self.get_resource_name('pyprofile')
 
@@ -259,16 +252,16 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.mgmt_client.log_profiles.delete(profile_name)
 
     @unittest.skip("Known bug")
-    @record    
-    def test_autoscale_settings(self):
+    @ResourceGroupPreparer()
+    def test_autoscale_settings(self, resource_group, location):
         as_name = "setting1"
         resource_id = "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest/"
 
         as_obj = self.mgmt_client.autoscale_settings.create_or_update(
-            self.group_name,
+            resource_group.name,
             as_name,
             {
-                'location': self.region,
+                'location': location,
                 'autoscale_setting_resource_name': as_name, # Name as to be written again
                 'enabled': False,
                 'target_resource_uri': resource_id,
@@ -302,19 +295,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.assertEqual(as_obj.name, as_name)
 
         as_obj = self.mgmt_client.autoscale_settings.get(
-            self.group_name,
+            resource_group.name,
             as_name
         )
         self.assertEqual(as_obj.name, as_name)
 
         ass = list(self.mgmt_client.autoscale_settings.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(ass), 1)
         self.assertEqual(ass[0].name, as_name)
 
         self.mgmt_client.autoscale_settings.delete(
-            self.group_name,
+            resource_group.name,
             as_name
         )
 
