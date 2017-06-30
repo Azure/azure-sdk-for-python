@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.7.1 (2017-06-30)
+++++++++++++++++++
+
+- Added support for server connection policies
+- Fixed error in databases_operations.create_or_update_threat_detection_policy
+
 0.7.0 (2017-06-28)
 ++++++++++++++++++
 
