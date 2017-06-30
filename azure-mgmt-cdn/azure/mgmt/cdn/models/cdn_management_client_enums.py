@@ -67,6 +67,15 @@ class CustomDomainResourceState(Enum):
     deleting = "Deleting"
 
 
+class CustomHttpsProvisioningState(Enum):
+
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    failed = "Failed"
+
+
 class ResourceType(Enum):
 
     microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"
