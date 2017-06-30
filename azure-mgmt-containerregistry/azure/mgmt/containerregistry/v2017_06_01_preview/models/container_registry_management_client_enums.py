@@ -42,6 +42,12 @@ class PasswordName(Enum):
     password2 = "password2"
 
 
+class RegistryUsageUnit(Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+
+
 class WebhookStatus(Enum):
 
     enabled = "enabled"
