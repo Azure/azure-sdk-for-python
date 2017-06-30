@@ -17,10 +17,10 @@ from .operations.databases_operations import DatabasesOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
+from .operations.servers_operations import ServersOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.operations import Operations
-from .operations.servers_operations import ServersOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .operations.server_communication_links_operations import ServerCommunicationLinksOperations
@@ -79,14 +79,14 @@ class SqlManagementClient(object):
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
     :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
@@ -127,13 +127,13 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)

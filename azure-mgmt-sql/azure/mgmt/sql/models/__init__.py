@@ -24,6 +24,7 @@ from .elastic_pool_dtu_capability import ElasticPoolDtuCapability
 from .elastic_pool_edition_capability import ElasticPoolEditionCapability
 from .server_version_capability import ServerVersionCapability
 from .location_capabilities import LocationCapabilities
+from .server_connection_policy import ServerConnectionPolicy
 from .data_masking_policy import DataMaskingPolicy
 from .data_masking_rule import DataMaskingRule
 from .sub_resource import SubResource
@@ -87,14 +88,14 @@ from .transparent_data_encryption_activity_paged import TransparentDataEncryptio
 from .database_usage_paged import DatabaseUsagePaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
-from .firewall_rule_paged import FirewallRulePaged
-from .elastic_pool_paged import ElasticPoolPaged
-from .elastic_pool_activity_paged import ElasticPoolActivityPaged
-from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .service_objective_paged import ServiceObjectivePaged
 from .server_usage_paged import ServerUsagePaged
 from .server_paged import ServerPaged
 from .encryption_protector_paged import EncryptionProtectorPaged
+from .firewall_rule_paged import FirewallRulePaged
+from .elastic_pool_paged import ElasticPoolPaged
+from .elastic_pool_activity_paged import ElasticPoolActivityPaged
+from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
 from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
@@ -107,6 +108,7 @@ from .sql_management_client_enums import (
     CapabilityStatus,
     MaxSizeUnits,
     PerformanceLevelUnit,
+    ServerConnectionType,
     DataMaskingState,
     DataMaskingRuleState,
     DataMaskingFunction,
@@ -159,6 +161,7 @@ __all__ = [
     'ElasticPoolEditionCapability',
     'ServerVersionCapability',
     'LocationCapabilities',
+    'ServerConnectionPolicy',
     'DataMaskingPolicy',
     'DataMaskingRule',
     'SubResource',
@@ -222,14 +225,14 @@ __all__ = [
     'DatabaseUsagePaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
-    'FirewallRulePaged',
-    'ElasticPoolPaged',
-    'ElasticPoolActivityPaged',
-    'ElasticPoolDatabaseActivityPaged',
     'ServiceObjectivePaged',
     'ServerUsagePaged',
     'ServerPaged',
     'EncryptionProtectorPaged',
+    'FirewallRulePaged',
+    'ElasticPoolPaged',
+    'ElasticPoolActivityPaged',
+    'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
     'ServerAzureADAdministratorPaged',
@@ -241,6 +244,7 @@ __all__ = [
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
+    'ServerConnectionType',
     'DataMaskingState',
     'DataMaskingRuleState',
     'DataMaskingFunction',

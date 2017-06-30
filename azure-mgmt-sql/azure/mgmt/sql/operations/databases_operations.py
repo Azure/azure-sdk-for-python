@@ -2484,7 +2484,8 @@ class DatabasesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

@@ -13,10 +13,10 @@ from .databases_operations import DatabasesOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
+from .servers_operations import ServersOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .operations import Operations
-from .servers_operations import ServersOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .server_communication_links_operations import ServerCommunicationLinksOperations
@@ -29,10 +29,10 @@ __all__ = [
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
     'CapabilitiesOperations',
+    'ServersOperations',
     'FirewallRulesOperations',
     'ElasticPoolsOperations',
     'Operations',
-    'ServersOperations',
     'RecommendedElasticPoolsOperations',
     'ServerAzureADAdministratorsOperations',
     'ServerCommunicationLinksOperations',
