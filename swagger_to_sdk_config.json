@@ -105,6 +105,7 @@
         "namespace": "azure.mgmt.compute.containerservice.v2017_01_31"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
       "generated_relative_base_directory": "azure/mgmt/compute/containerservice/v2017_01_31"
     },
     "containerregistry.2017-03-01": {
