@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.2.0 (2017-07-03)
+++++++++++++++++++
+
+**Features**
+
+Adding the following features to both 2017-03-01 and 2017-06-01:
+
+- express route ipv6
+- VMSS Network (get, list, etc.)
+- VMSS Public IP (get, list, etc.)
+
 1.1.0 (2017-06-27)
 ++++++++++++++++++
 
