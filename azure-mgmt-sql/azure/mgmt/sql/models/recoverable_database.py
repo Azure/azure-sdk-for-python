@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class RecoverableDatabase(ProxyResource):
-    """Represents a recoverable database.
+    """A recoverable database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
