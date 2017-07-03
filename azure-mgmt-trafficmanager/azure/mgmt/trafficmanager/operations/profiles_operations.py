@@ -23,7 +23,7 @@ class ProfilesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-05-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class ProfilesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-05-01"
 
         self.config = config
 
@@ -39,9 +39,9 @@ class ProfilesOperations(object):
             self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Checks the availability of a Traffic Manager Relative DNS name.
 
-        :param name: Gets or sets the name of the resource.
+        :param name: The name of the resource.
         :type name: str
-        :param type: Gets or sets the type of the resource.
+        :param type: The type of the resource.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -58,10 +58,6 @@ class ProfilesOperations(object):
 
         # Construct URL
         url = '/providers/Microsoft.Network/checkTrafficManagerNameAvailability'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -101,7 +97,7 @@ class ProfilesOperations(object):
 
         return deserialized
 
-    def list_by_in_resource_group(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all Traffic Manager profiles within a resource group.
 
@@ -168,7 +164,7 @@ class ProfilesOperations(object):
 
         return deserialized
 
-    def list_all(
+    def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all Traffic Manager profiles within a subscription.
 
@@ -421,8 +417,6 @@ class ProfilesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DeleteOperationResult', response)
-        if response.status_code == 204:
             deserialized = self._deserialize('DeleteOperationResult', response)
 
         if raw:

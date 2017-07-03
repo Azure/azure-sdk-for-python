@@ -15,20 +15,27 @@ from msrest.serialization import Model
 class DnsConfig(Model):
     """Class containing DNS settings in a Traffic Manager profile.
 
-    :param relative_name: Gets or sets the relative DNS name provided by this
-     Traffic Manager profile.  This value is combined with the DNS domain name
-     used by Azure Traffic Manager to form the fully-qualified domain name
-     (FQDN) of the profile.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param relative_name: The relative DNS name provided by this Traffic
+     Manager profile. This value is combined with the DNS domain name used by
+     Azure Traffic Manager to form the fully-qualified domain name (FQDN) of
+     the profile.
     :type relative_name: str
-    :param fqdn: Gets or sets the fully-qualified domain name (FQDN) of the
-     Traffic Manager profile.  This is formed from the concatenation of the
-     RelativeName with the DNS domain used by Azure Traffic Manager.
-    :type fqdn: str
-    :param ttl: Gets or sets the DNS Ttime-To-Live (TTL), in seconds.  This
-     informs the local DNS resolvers and DNS clients how long to cache DNS
-     responses provided by this Traffic Manager profile.
+    :ivar fqdn: The fully-qualified domain name (FQDN) of the Traffic Manager
+     profile. This is formed from the concatenation of the RelativeName with
+     the DNS domain used by Azure Traffic Manager.
+    :vartype fqdn: str
+    :param ttl: The DNS Time-To-Live (TTL), in seconds. This informs the local
+     DNS resolvers and DNS clients how long to cache DNS responses provided by
+     this Traffic Manager profile.
     :type ttl: long
     """
+
+    _validation = {
+        'fqdn': {'readonly': True},
+    }
 
     _attribute_map = {
         'relative_name': {'key': 'relativeName', 'type': 'str'},
@@ -36,7 +43,7 @@ class DnsConfig(Model):
         'ttl': {'key': 'ttl', 'type': 'long'},
     }
 
-    def __init__(self, relative_name=None, fqdn=None, ttl=None):
+    def __init__(self, relative_name=None, ttl=None):
         self.relative_name = relative_name
-        self.fqdn = fqdn
+        self.fqdn = None
         self.ttl = ttl

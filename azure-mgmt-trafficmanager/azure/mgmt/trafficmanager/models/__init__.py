@@ -19,7 +19,17 @@ from .traffic_manager_name_availability import TrafficManagerNameAvailability
 from .region import Region
 from .traffic_manager_geographic_hierarchy import TrafficManagerGeographicHierarchy
 from .resource import Resource
+from .tracked_resource import TrackedResource
+from .proxy_resource import ProxyResource
 from .profile_paged import ProfilePaged
+from .traffic_manager_management_client_enums import (
+    EndpointStatus,
+    EndpointMonitorStatus,
+    ProfileMonitorStatus,
+    MonitorProtocol,
+    ProfileStatus,
+    TrafficRoutingMethod,
+)
 
 __all__ = [
     'DeleteOperationResult',
@@ -32,5 +42,13 @@ __all__ = [
     'Region',
     'TrafficManagerGeographicHierarchy',
     'Resource',
+    'TrackedResource',
+    'ProxyResource',
     'ProfilePaged',
+    'EndpointStatus',
+    'EndpointMonitorStatus',
+    'ProfileMonitorStatus',
+    'MonitorProtocol',
+    'ProfileStatus',
+    'TrafficRoutingMethod',
 ]
