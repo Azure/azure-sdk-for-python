@@ -9,56 +9,68 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Endpoint(Model):
+class Endpoint(ProxyResource):
     """Class representing a Traffic Manager endpoint.
 
-    :param id: Gets or sets the ID of the Traffic Manager endpoint.
-    :type id: str
-    :param name: Gets or sets the name of the Traffic Manager endpoint.
-    :type name: str
-    :param type: Gets or sets the endpoint type of the Traffic Manager
-     endpoint.
-    :type type: str
-    :param target_resource_id: Gets or sets the Azure Resource URI of the of
-     the endpoint.  Not applicable to endpoints of type 'ExternalEndpoints'.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficmanagerProfiles.
+    :vartype type: str
+    :param target_resource_id: The Azure Resource URI of the of the endpoint.
+     Not applicable to endpoints of type 'ExternalEndpoints'.
     :type target_resource_id: str
-    :param target: Gets or sets the fully-qualified DNS name of the endpoint.
-     Traffic Manager returns this value in DNS responses to direct traffic to
-     this endpoint.
+    :param target: The fully-qualified DNS name of the endpoint. Traffic
+     Manager returns this value in DNS responses to direct traffic to this
+     endpoint.
     :type target: str
-    :param endpoint_status: Gets or sets the status of the endpoint..  If the
-     endpoint is Enabled, it is probed for endpoint health and is included in
-     the traffic routing method.  Possible values are 'Enabled' and 'Disabled'.
-    :type endpoint_status: str
-    :param weight: Gets or sets the weight of this endpoint when using the
-     'Weighted' traffic routing method. Possible values are from 1 to 1000.
+    :param endpoint_status: The status of the endpoint. If the endpoint is
+     Enabled, it is probed for endpoint health and is included in the traffic
+     routing method. Possible values include: 'Enabled', 'Disabled'
+    :type endpoint_status: str or :class:`EndpointStatus
+     <azure.mgmt.trafficmanager.models.EndpointStatus>`
+    :param weight: The weight of this endpoint when using the 'Weighted'
+     traffic routing method. Possible values are from 1 to 1000.
     :type weight: long
-    :param priority: Gets or sets the priority of this endpoint when using the
-     ‘Priority’ traffic routing method. Possible values are from 1 to 1000,
-     lower values represent higher priority. This is an optional parameter.  If
-     specified, it must be specified on all endpoints, and no two endpoints can
-     share the same priority value.
+    :param priority: The priority of this endpoint when using the ‘Priority’
+     traffic routing method. Possible values are from 1 to 1000, lower values
+     represent higher priority. This is an optional parameter.  If specified,
+     it must be specified on all endpoints, and no two endpoints can share the
+     same priority value.
     :type priority: long
     :param endpoint_location: Specifies the location of the external or nested
      endpoints when using the ‘Performance’ traffic routing method.
     :type endpoint_location: str
-    :param endpoint_monitor_status: Gets or sets the monitoring status of the
-     endpoint.
-    :type endpoint_monitor_status: str
-    :param min_child_endpoints: Gets or sets the minimum number of endpoints
-     that must be available in the child profile in order for the parent
-     profile to be considered available. Only applicable to endpoint of type
+    :param endpoint_monitor_status: The monitoring status of the endpoint.
+     Possible values include: 'CheckingEndpoint', 'Online', 'Degraded',
+     'Disabled', 'Inactive', 'Stopped'
+    :type endpoint_monitor_status: str or :class:`EndpointMonitorStatus
+     <azure.mgmt.trafficmanager.models.EndpointMonitorStatus>`
+    :param min_child_endpoints: The minimum number of endpoints that must be
+     available in the child profile in order for the parent profile to be
+     considered available. Only applicable to endpoint of type
      'NestedEndpoints'.
     :type min_child_endpoints: long
-    :param geo_mapping: Gets or sets the list of countries/regions mapped to
-     this endpoint when using the ‘Geographic’ traffic routing method. Please
-     consult Traffic Manager Geographic documentation for a full list of
-     accepted values.
+    :param geo_mapping: The list of countries/regions mapped to this endpoint
+     when using the ‘Geographic’ traffic routing method. Please consult Traffic
+     Manager Geographic documentation for a full list of accepted values.
     :type geo_mapping: list of str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -75,10 +87,8 @@ class Endpoint(Model):
         'geo_mapping': {'key': 'properties.geoMapping', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, target_resource_id=None, target=None, endpoint_status=None, weight=None, priority=None, endpoint_location=None, endpoint_monitor_status=None, min_child_endpoints=None, geo_mapping=None):
-        self.id = id
-        self.name = name
-        self.type = type
+    def __init__(self, target_resource_id=None, target=None, endpoint_status=None, weight=None, priority=None, endpoint_location=None, endpoint_monitor_status=None, min_child_endpoints=None, geo_mapping=None):
+        super(Endpoint, self).__init__()
         self.target_resource_id = target_resource_id
         self.target = target
         self.endpoint_status = endpoint_status

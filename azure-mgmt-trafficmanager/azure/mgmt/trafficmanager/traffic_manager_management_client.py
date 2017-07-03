@@ -62,11 +62,11 @@ class TrafficManagerManagementClient(object):
     :vartype config: TrafficManagerManagementClientConfiguration
 
     :ivar endpoints: Endpoints operations
-    :vartype endpoints: .operations.EndpointsOperations
+    :vartype endpoints: azure.mgmt.trafficmanager.operations.EndpointsOperations
     :ivar profiles: Profiles operations
-    :vartype profiles: .operations.ProfilesOperations
+    :vartype profiles: azure.mgmt.trafficmanager.operations.ProfilesOperations
     :ivar geographic_hierarchies: GeographicHierarchies operations
-    :vartype geographic_hierarchies: .operations.GeographicHierarchiesOperations
+    :vartype geographic_hierarchies: azure.mgmt.trafficmanager.operations.GeographicHierarchiesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,7 +85,7 @@ class TrafficManagerManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-03-01'
+        self.api_version = '2017-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(Model):
     """Parameters supplied to check Traffic Manager name operation.
 
-    :param name: Gets or sets the name of the resource.
+    :param name: The name of the resource.
     :type name: str
-    :param type: Gets or sets the type of the resource.
+    :param type: The type of the resource.
     :type type: str
     """
 

@@ -15,17 +15,32 @@ from msrest.serialization import Model
 class MonitorConfig(Model):
     """Class containing endpoint monitoring settings in a Traffic Manager profile.
 
-    :param profile_monitor_status: Gets or sets the profile-level monitoring
-     status of the Traffic Manager profile.
-    :type profile_monitor_status: str
-    :param protocol: Gets or sets the protocol (HTTP or HTTPS) used to probe
-     for endpoint health.
-    :type protocol: str
-    :param port: Gets or sets the TCP port used to probe for endpoint health.
+    :param profile_monitor_status: The profile-level monitoring status of the
+     Traffic Manager profile. Possible values include: 'CheckingEndpoints',
+     'Online', 'Degraded', 'Disabled', 'Inactive'
+    :type profile_monitor_status: str or :class:`ProfileMonitorStatus
+     <azure.mgmt.trafficmanager.models.ProfileMonitorStatus>`
+    :param protocol: The protocol (HTTP, HTTPS or TCP) used to probe for
+     endpoint health. Possible values include: 'HTTP', 'HTTPS', 'TCP'
+    :type protocol: str or :class:`MonitorProtocol
+     <azure.mgmt.trafficmanager.models.MonitorProtocol>`
+    :param port: The TCP port used to probe for endpoint health.
     :type port: long
-    :param path: Gets or sets the path relative to the endpoint domain name
-     used to probe for endpoint health.
+    :param path: The path relative to the endpoint domain name used to probe
+     for endpoint health.
     :type path: str
+    :param interval_in_seconds: The monitor interval for endpoints in this
+     profile. This is the interval at which Traffic Manager will check the
+     health of each endpoint in this profile.
+    :type interval_in_seconds: long
+    :param timeout_in_seconds: The monitor timeout for endpoints in this
+     profile. This is the time that Traffic Manager allows endpoints in this
+     profile to response to the health check.
+    :type timeout_in_seconds: long
+    :param tolerated_number_of_failures: The number of consecutive failed
+     health check that Traffic Manager tolerates before declaring an endpoint
+     in this profile Degraded after the next failed health check.
+    :type tolerated_number_of_failures: long
     """
 
     _attribute_map = {
@@ -33,10 +48,16 @@ class MonitorConfig(Model):
         'protocol': {'key': 'protocol', 'type': 'str'},
         'port': {'key': 'port', 'type': 'long'},
         'path': {'key': 'path', 'type': 'str'},
+        'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'long'},
+        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
+        'tolerated_number_of_failures': {'key': 'toleratedNumberOfFailures', 'type': 'long'},
     }
 
-    def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None):
+    def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None):
         self.profile_monitor_status = profile_monitor_status
         self.protocol = protocol
         self.port = port
         self.path = path
+        self.interval_in_seconds = interval_in_seconds
+        self.timeout_in_seconds = timeout_in_seconds
+        self.tolerated_number_of_failures = tolerated_number_of_failures
