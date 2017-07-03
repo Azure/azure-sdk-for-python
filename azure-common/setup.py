@@ -53,8 +53,8 @@ setup(
     ],
     extras_require={
         'autorest':[
-            'msrestazure>=0.4.0,<0.5.0',
-            'msrest>=0.4.0,<0.5.0'
+            'msrestazure>=0.4.9,<0.5.0',
+            'msrest>=0.4.8,<0.5.0'
         ]
     }
 )
