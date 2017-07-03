@@ -37,8 +37,8 @@ class RecoverableDatabasesOperations(object):
 
     def get(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a Recoverable Database, which is a resource representing a
-        database's Geo backup.
+        """Gets a recoverable database, which is a resource representing a
+        database's geo backup.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -105,7 +105,7 @@ class RecoverableDatabasesOperations(object):
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of Recoverable Databases.
+        """Gets a list of recoverable databases.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

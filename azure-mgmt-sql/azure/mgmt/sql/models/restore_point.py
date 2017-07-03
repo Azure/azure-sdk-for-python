@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class RestorePoint(ProxyResource):
-    """Represents a database restore point.
+    """A database restore point.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
