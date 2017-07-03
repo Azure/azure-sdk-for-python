@@ -105,7 +105,7 @@ class RestorableDroppedDatabasesOperations(object):
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Get a list of deleted database that can be restored.
+        """Gets a list of deleted databases that can be restored.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

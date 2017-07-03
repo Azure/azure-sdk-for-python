@@ -48,7 +48,7 @@ class DatabasesOperations(object):
 
     def list_restore_points(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of database restore points.
+        """Gets a list of database restore points.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -56,8 +56,8 @@ class DatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database from which to retrieve
-         available restore points.
+        :param database_name: The name of the database to get available
+         restore points.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
