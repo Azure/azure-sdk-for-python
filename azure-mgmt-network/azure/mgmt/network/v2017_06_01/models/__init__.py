@@ -59,10 +59,11 @@ from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
-from .express_route_circuit_stats import ExpressRouteCircuitStats
 from .route_filter_rule import RouteFilterRule
+from .express_route_circuit_stats import ExpressRouteCircuitStats
 from .express_route_circuit_peering import ExpressRouteCircuitPeering
 from .route_filter import RouteFilter
+from .ipv6_express_route_circuit_peering_config import Ipv6ExpressRouteCircuitPeeringConfig
 from .express_route_circuit_sku import ExpressRouteCircuitSku
 from .express_route_circuit_service_provider_properties import ExpressRouteCircuitServiceProviderProperties
 from .express_route_circuit import ExpressRouteCircuit
@@ -204,9 +205,9 @@ from .network_management_client_enums import (
     ApplicationGatewayFirewallMode,
     AuthorizationUseStatus,
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
+    Access,
     ExpressRouteCircuitPeeringType,
     ExpressRouteCircuitPeeringState,
-    Access,
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
@@ -297,10 +298,11 @@ __all__ = [
     'DnsNameAvailabilityResult',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
-    'ExpressRouteCircuitStats',
     'RouteFilterRule',
+    'ExpressRouteCircuitStats',
     'ExpressRouteCircuitPeering',
     'RouteFilter',
+    'Ipv6ExpressRouteCircuitPeeringConfig',
     'ExpressRouteCircuitSku',
     'ExpressRouteCircuitServiceProviderProperties',
     'ExpressRouteCircuit',
@@ -441,9 +443,9 @@ __all__ = [
     'ApplicationGatewayFirewallMode',
     'AuthorizationUseStatus',
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
+    'Access',
     'ExpressRouteCircuitPeeringType',
     'ExpressRouteCircuitPeeringState',
-    'Access',
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',

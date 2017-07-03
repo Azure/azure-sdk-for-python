@@ -28,10 +28,10 @@ class ExpressRouteCircuitPeeringConfig(Model):
     :type advertised_public_prefixes_state: str or
      :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
      <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
-    :param customer_asn: The CustomerASN of the peering.
-    :type customer_asn: int
     :param legacy_mode: The legacy mode of the peering.
     :type legacy_mode: int
+    :param customer_asn: The CustomerASN of the peering.
+    :type customer_asn: int
     :param routing_registry_name: The RoutingRegistryName of the
      configuration.
     :type routing_registry_name: str
@@ -41,15 +41,15 @@ class ExpressRouteCircuitPeeringConfig(Model):
         'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
         'advertised_communities': {'key': 'advertisedCommunities', 'type': '[str]'},
         'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'str'},
-        'customer_asn': {'key': 'customerASN', 'type': 'int'},
         'legacy_mode': {'key': 'legacyMode', 'type': 'int'},
+        'customer_asn': {'key': 'customerASN', 'type': 'int'},
         'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
     }
 
-    def __init__(self, advertised_public_prefixes=None, advertised_communities=None, advertised_public_prefixes_state=None, customer_asn=None, legacy_mode=None, routing_registry_name=None):
+    def __init__(self, advertised_public_prefixes=None, advertised_communities=None, advertised_public_prefixes_state=None, legacy_mode=None, customer_asn=None, routing_registry_name=None):
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_communities = advertised_communities
         self.advertised_public_prefixes_state = advertised_public_prefixes_state
-        self.customer_asn = customer_asn
         self.legacy_mode = legacy_mode
+        self.customer_asn = customer_asn
         self.routing_registry_name = routing_registry_name
