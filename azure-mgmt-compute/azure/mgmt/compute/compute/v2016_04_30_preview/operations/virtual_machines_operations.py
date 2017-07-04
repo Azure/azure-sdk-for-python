@@ -52,12 +52,11 @@ class VirtualMachinesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineCaptureResult
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineCaptureResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineCaptureResult>` or 
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if raw=true
+        :rtype: :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>` or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
