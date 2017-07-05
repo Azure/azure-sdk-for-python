@@ -3,7 +3,8 @@
 
 **Disclaimer**
 
-Starting with this release, we fixed several packaging issues to improve our package generation system
+Starting with this release, we fixed several packaging issues to improve our package generation system:
+
 - Uninstalling of packages using "pip uninstall" now works properly (#1150)
 - setuptools install of "azure" works properly (#728)
 
