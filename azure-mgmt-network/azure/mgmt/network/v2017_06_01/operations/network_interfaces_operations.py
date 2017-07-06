@@ -606,7 +606,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.v2017_06_01.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-09-01"
+        api_version = "2017-03-30"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -679,7 +679,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.v2017_06_01.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-09-01"
+        api_version = "2017-03-30"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -759,7 +759,7 @@ class NetworkInterfacesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-09-01"
+        api_version = "2017-03-30"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}'
