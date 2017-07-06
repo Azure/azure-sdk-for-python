@@ -18,6 +18,7 @@ from .network_interface import NetworkInterface
 from .network_security_group import NetworkSecurityGroup
 from .route import Route
 from .route_table import RouteTable
+from .private_access_service_properties_format import PrivateAccessServicePropertiesFormat
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .public_ip_address import PublicIPAddress
 from .ip_configuration import IPConfiguration
@@ -156,6 +157,7 @@ from .ipsec_policy import IpsecPolicy
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
+from .private_access_service_result import PrivateAccessServiceResult
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
@@ -182,6 +184,7 @@ from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
+from .private_access_service_result_paged import PrivateAccessServiceResultPaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -257,6 +260,7 @@ __all__ = [
     'NetworkSecurityGroup',
     'Route',
     'RouteTable',
+    'PrivateAccessServicePropertiesFormat',
     'PublicIPAddressDnsSettings',
     'PublicIPAddress',
     'IPConfiguration',
@@ -395,6 +399,7 @@ __all__ = [
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
+    'PrivateAccessServiceResult',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ExpressRouteCircuitAuthorizationPaged',
@@ -421,6 +426,7 @@ __all__ = [
     'VirtualNetworkGatewayPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
+    'PrivateAccessServiceResultPaged',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',

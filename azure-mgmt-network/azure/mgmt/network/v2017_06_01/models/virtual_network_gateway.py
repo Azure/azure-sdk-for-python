@@ -64,6 +64,12 @@ class VirtualNetworkGateway(Resource):
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: :class:`BgpSettings
      <azure.mgmt.network.v2017_06_01.models.BgpSettings>`
+    :param radius_server: The radius server address property of the
+     VirtualNetworkGateway resource for vpn client connection.
+    :type radius_server: str
+    :param radius_secret: The radius secret property of the
+     VirtualNetworkGateway resource for vpn client connection.
+    :type radius_secret: str
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
     :type resource_guid: str
@@ -97,12 +103,14 @@ class VirtualNetworkGateway(Resource):
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
         'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
         'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
+        'radius_server': {'key': 'properties.radiusServer', 'type': 'str'},
+        'radius_secret': {'key': 'properties.radiusSecret', 'type': 'str'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, radius_server=None, radius_secret=None, resource_guid=None, etag=None):
         super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -113,6 +121,8 @@ class VirtualNetworkGateway(Resource):
         self.sku = sku
         self.vpn_client_configuration = vpn_client_configuration
         self.bgp_settings = bgp_settings
+        self.radius_server = radius_server
+        self.radius_secret = radius_secret
         self.resource_guid = resource_guid
         self.provisioning_state = None
         self.etag = etag
