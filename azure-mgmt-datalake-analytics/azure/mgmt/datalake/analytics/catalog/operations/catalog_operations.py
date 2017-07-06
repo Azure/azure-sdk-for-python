@@ -1205,7 +1205,8 @@ class CatalogOperations(object):
         :param basic: The basic switch indicates what level of information to
          return when listing tables. When basic is true, only database_name,
          schema_name, table_name and version are returned for each table,
-         otherwise all table metadata is returned. By default, it is false
+         otherwise all table metadata is returned. By default, it is false.
+         Optional.
         :type basic: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
