@@ -56,6 +56,7 @@ from .recommended_elastic_pool import RecommendedElasticPool
 from .elastic_pool import ElasticPool
 from .elastic_pool_activity import ElasticPoolActivity
 from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
+from .transparent_data_encryption_list_result import TransparentDataEncryptionListResult
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .server_azure_ad_administrator import ServerAzureADAdministrator
 from .sql_sub_resource import SqlSubResource
@@ -193,6 +194,7 @@ __all__ = [
     'ElasticPool',
     'ElasticPoolActivity',
     'ElasticPoolDatabaseActivity',
+    'TransparentDataEncryptionListResult',
     'TransparentDataEncryptionActivity',
     'ServerAzureADAdministrator',
     'SqlSubResource',
