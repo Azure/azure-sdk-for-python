@@ -257,7 +257,8 @@ class ServerAzureADAdministratorsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str')
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
