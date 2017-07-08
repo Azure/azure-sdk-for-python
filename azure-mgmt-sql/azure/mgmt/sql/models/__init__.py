@@ -54,8 +54,10 @@ from .recommended_index import RecommendedIndex
 from .database import Database
 from .recommended_elastic_pool import RecommendedElasticPool
 from .elastic_pool import ElasticPool
+from .elastic_pool_update import ElasticPoolUpdate
 from .elastic_pool_activity import ElasticPoolActivity
 from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
+from .database_update import DatabaseUpdate
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .server_azure_ad_administrator import ServerAzureADAdministrator
 from .sql_sub_resource import SqlSubResource
@@ -191,8 +193,10 @@ __all__ = [
     'Database',
     'RecommendedElasticPool',
     'ElasticPool',
+    'ElasticPoolUpdate',
     'ElasticPoolActivity',
     'ElasticPoolDatabaseActivity',
+    'DatabaseUpdate',
     'TransparentDataEncryptionActivity',
     'ServerAzureADAdministrator',
     'SqlSubResource',
