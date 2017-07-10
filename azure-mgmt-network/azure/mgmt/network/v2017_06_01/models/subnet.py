@@ -29,6 +29,11 @@ class Subnet(SubResource):
     :param route_table: The reference of the RouteTable resource.
     :type route_table: :class:`RouteTable
      <azure.mgmt.network.v2017_06_01.models.RouteTable>`
+    :param private_access_services: An array of private access services
+     values.
+    :type private_access_services: list of
+     :class:`PrivateAccessServicePropertiesFormat
+     <azure.mgmt.network.v2017_06_01.models.PrivateAccessServicePropertiesFormat>`
     :ivar ip_configurations: Gets an array of references to the network
      interface IP configurations using subnet.
     :vartype ip_configurations: list of :class:`IPConfiguration
@@ -56,6 +61,7 @@ class Subnet(SubResource):
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
+        'private_access_services': {'key': 'properties.privateAccessServices', 'type': '[PrivateAccessServicePropertiesFormat]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -63,11 +69,12 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, resource_navigation_links=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, private_access_services=None, resource_navigation_links=None, provisioning_state=None, name=None, etag=None):
         super(Subnet, self).__init__(id=id)
         self.address_prefix = address_prefix
         self.network_security_group = network_security_group
         self.route_table = route_table
+        self.private_access_services = private_access_services
         self.ip_configurations = None
         self.resource_navigation_links = resource_navigation_links
         self.provisioning_state = provisioning_state
