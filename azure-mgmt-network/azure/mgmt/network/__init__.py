@@ -177,6 +177,18 @@ class NetworkManagementClient(object):
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
+    def available_private_access_services(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01: :class:`AvailablePrivateAccessServicesOperations<azure.mgmt.network.v2017_06_01.operations.AvailablePrivateAccessServicesOperations>`
+        """
+        if self.api_version == '2017-06-01':
+            from .v2017_06_01.operations import AvailablePrivateAccessServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
     def bgp_service_communities(self):
         """Instance depends on the API version:
 
