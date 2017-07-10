@@ -41,6 +41,7 @@ from .operations.virtual_network_peerings_operations import VirtualNetworkPeerin
 from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
+from .operations.available_private_access_services_operations import AvailablePrivateAccessServicesOperations
 from . import models
 
 
@@ -134,6 +135,8 @@ class NetworkManagementClient(object):
     :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
     :vartype local_network_gateways: azure.mgmt.network.v2017_06_01.operations.LocalNetworkGatewaysOperations
+    :ivar available_private_access_services: AvailablePrivateAccessServices operations
+    :vartype available_private_access_services: azure.mgmt.network.v2017_06_01.operations.AvailablePrivateAccessServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -202,6 +205,8 @@ class NetworkManagementClient(object):
         self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.local_network_gateways = LocalNetworkGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_private_access_services = AvailablePrivateAccessServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
