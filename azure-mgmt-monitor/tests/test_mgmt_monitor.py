@@ -10,14 +10,15 @@ import datetime
 
 import azure.mgmt.monitor
 import azure.monitor
-from msrest.version import msrest_version
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
 from azure.mgmt.monitor.models import (
     ThresholdRuleCondition,
     RuleEmailAction,
     RuleMetricDataSource
+)
+
+from devtools_testutils import (
+    AzureMgmtTestCase, ResourceGroupPreparer,
 )
 
 
@@ -31,11 +32,9 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.data_client = self.create_mgmt_client(
             azure.monitor.MonitorClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_activity_log(self):
+    @ResourceGroupPreparer()
+    def test_activity_log(self, resource_group):
 
         # RBAC for this test (CLI command)
         # > azure role assignment create 
@@ -52,7 +51,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "eventChannels eq 'Admin, Operation'"
         ])
         select = "eventName,operationName"
-        filter = filter.format(self.group_name)
+        filter = filter.format(resource_group.name)
         activity_logs = list(self.data_client.activity_logs.list(
             filter=filter,
             select=select
@@ -66,8 +65,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(log.event_name.localized_value)
             self.assertIsNotNone(log.operation_name.localized_value)
 
-
-    @record
     def test_metrics(self):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
@@ -89,7 +86,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             )
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2016,11,17)
+        today = datetime.date(2016, 11, 17)
         yesterday = today - datetime.timedelta(days=1)
 
         filter = " and ".join([
@@ -99,7 +96,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "endTime eq {}".format(today),
             "timeGrain eq duration'PT1H'"
         ])
-        
+
         metrics = list(self.data_client.metrics.list(
             resource_id,
             filter=filter
@@ -117,8 +114,8 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             for data in item.data:
                 print("{}: {}".format(data.time_stamp, data.total))
 
-    @record
-    def test_alert_rules(self):
+    @ResourceGroupPreparer()
+    def test_alert_rules(self, resource_group, location):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
             "subscriptions/{}/"
@@ -128,33 +125,33 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
         # I need a subclass of "RuleDataSource"
         data_source = RuleMetricDataSource(
-            resource_uri = resource_id,
-            metric_name = 'Percentage CPU'
+            resource_uri=resource_id,
+            metric_name='Percentage CPU'
         )
 
         # I need a subclasses of "RuleCondition"
         rule_condition = ThresholdRuleCondition(
-            data_source = data_source,
-            operator = 'GreaterThanOrEqual',
-            threshold = 90,
-            window_size = 'PT5M',
-            time_aggregation = 'Average'
+            data_source=data_source,
+            operator='GreaterThanOrEqual',
+            threshold=90,
+            window_size='PT5M',
+            time_aggregation='Average'
         )
 
         # I need a subclass of "RuleAction"
         rule_action = RuleEmailAction(
-            send_to_service_owners = True,
-            custom_emails = [
+            send_to_service_owners=True,
+            custom_emails=[
                 'monitoringemail@microsoft.com'
             ]
         )
 
         rule_name = 'MyPyTestAlertRule'
         my_alert = self.mgmt_client.alert_rules.create_or_update(
-            self.group_name,
+            resource_group.name,
             rule_name,
             {
-                'location': self.region,
+                'location': location,
                 'alert_rule_resource_name': rule_name,
                 'description': 'Testing Alert rule creation',
                 'is_enabled': True,
@@ -166,27 +163,24 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         )
 
         my_alert = self.mgmt_client.alert_rules.get(
-            self.group_name,
+            resource_group.name,
             rule_name
         )
 
         my_alerts = list(self.mgmt_client.alert_rules.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
 
         self.mgmt_client.alert_rules.delete(
-            self.group_name,
+            resource_group.name,
             rule_name
         )
 
 
     @unittest.skip("Known bug")
-    @record
     def test_tenants_event(self):
-
         tenant_events = list(self.data_client.tenant_events.list())
 
-    @record
     def test_event_categories(self):
         event_categories = list(self.data_client.event_categories.list())
 
@@ -197,7 +191,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(cat.localized_value)
 
     @unittest.skip("Deprecated. Monitor team stopped support")
-    @record
     def test_usage_metrics(self):
         # Get the DocDB or your resource and use "id" attribute, or build the id yourself from RG and name
         # Usage metric is rare, DocDb and WebPlan are good example.
@@ -221,7 +214,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(item.name)
 
     @unittest.skip("Known bug")
-    @record
     def test_log_profile(self):
         profile_name = self.get_resource_name('pyprofile')
 
@@ -231,17 +223,17 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                 "storage_account_id": "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest",
             #    "service_bus_rule_id": "/subscriptions/6983c752-c9b8-48dd-b4d4-da739beb7e98/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/myNamespace/RootManageSharedAccessKey",
                 "locations": [
-                  "eastus",
-                  "westus"
+                    "eastus",
+                    "westus"
                 ],
                 "categories": [
-                  "Write",
-                  "Delete",
-                  "Action"
+                    "Write",
+                    "Delete",
+                    "Action"
                 ],
                 "retention_policy": {
-                  "enabled": True,
-                  "days": 1
+                    "enabled": True,
+                    "days": 1
                 }
             }
         )
@@ -258,16 +250,16 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.mgmt_client.log_profiles.delete(profile_name)
 
     @unittest.skip("Known bug")
-    @record    
-    def test_autoscale_settings(self):
+    @ResourceGroupPreparer()
+    def test_autoscale_settings(self, resource_group, location):
         as_name = "setting1"
         resource_id = "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest/"
 
         as_obj = self.mgmt_client.autoscale_settings.create_or_update(
-            self.group_name,
+            resource_group.name,
             as_name,
             {
-                'location': self.region,
+                'location': location,
                 'autoscale_setting_resource_name': as_name, # Name as to be written again
                 'enabled': False,
                 'target_resource_uri': resource_id,
@@ -280,19 +272,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                     },
                     'rules': [{
                         "metric_trigger": {
-                          "metric_name": "Percentage CPU",
-                          "metric_resource_uri": resource_id,
-                          "time_grain": "PT5M",
-                          "statistic": "Average",
-                          "time_window": "PT45M",
-                          "time_aggregation": "Average",
-                          "operator": "GreaterThanOrEqual",
-                          "threshold": 60
+                            "metric_name": "Percentage CPU",
+                            "metric_resource_uri": resource_id,
+                            "time_grain": "PT5M",
+                            "statistic": "Average",
+                            "time_window": "PT45M",
+                            "time_aggregation": "Average",
+                            "operator": "GreaterThanOrEqual",
+                            "threshold": 60
                         },
                         "scale_action": {
-                          "direction": "Increase",
-                          "value": "2",
-                          "cooldown": "PT20M"
+                            "direction": "Increase",
+                            "value": "2",
+                            "cooldown": "PT20M"
                         }
                     }]
                 }]
@@ -301,19 +293,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.assertEqual(as_obj.name, as_name)
 
         as_obj = self.mgmt_client.autoscale_settings.get(
-            self.group_name,
+            resource_group.name,
             as_name
         )
         self.assertEqual(as_obj.name, as_name)
 
         ass = list(self.mgmt_client.autoscale_settings.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(ass), 1)
         self.assertEqual(ass[0].name, as_name)
 
         self.mgmt_client.autoscale_settings.delete(
-            self.group_name,
+            resource_group.name,
             as_name
         )
 
