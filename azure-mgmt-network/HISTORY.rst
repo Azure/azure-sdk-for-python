@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.3.0 (2017-07-10)
+++++++++++++++++++
+
+**Features**
+
+- Adding "available_private_access_services" operation group (2017-06-01)
+- Adding "radius_secret" in Virtual Network Gateway
+
+**Bug Fixes**
+
+- VMSS Network ApiVersion fix in 2017-06-01 (point to 2017-03-30)
+
 1.2.0 (2017-07-03)
 ++++++++++++++++++
 
