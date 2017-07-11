@@ -9,6 +9,7 @@
 
 import unittest
 import tempfile
+import json
 from io import open
 
 from azure.common.client_factory import *
@@ -23,17 +24,18 @@ class TestCommon(unittest.TestCase):
 
     def test_get_client_from_auth_file(self):
 
-        configuration=b"""
-# sample management library properties file
-subscription=15dbcfa8-4b93-4c9a-881c-6189d39f04d4
-client=a2ab11af-01aa-4759-8345-7803287dbd39
-key=password
-tenant=43413cc1-5886-4711-9804-8cfea3d1c3ee
-managementURI=https://management.core.windows.net/
-baseURL=https://management.azure.com/
-authURL=https://login.windows.net/
-graphURL=https://graph.windows.net/
-"""
+        configuration = {
+            "clientId": "a2ab11af-01aa-4759-8345-7803287dbd39",
+            "clientSecret": "password",
+            "subscriptionId": "15dbcfa8-4b93-4c9a-881c-6189d39f04d4",
+            "tenantId": "c81da1d8-65ca-11e7-b1d1-ecb1d756380e",
+            "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+            "resourceManagerEndpointUrl": "https://management.azure.com/",
+            "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+            "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+            "galleryEndpointUrl": "https://gallery.azure.com/",
+            "managementEndpointUrl": "https://management.core.windows.net/"
+        }
 
         class FakeClient(object):
             def __init__(self, credentials, subscription_id, base_url):
@@ -42,12 +44,12 @@ graphURL=https://graph.windows.net/
                 self.base_url = base_url
 
         temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_auth_file.write(configuration)
+        temp_auth_file.write(json.dumps(configuration).encode())
         temp_auth_file.close()
 
         client = get_client_from_auth_file(FakeClient, temp_auth_file.name)
-        self.assertEquals('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
-        self.assertEquals('https://management.azure.com/', client.base_url)
+        self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
+        self.assertEqual('https://management.azure.com/', client.base_url)
         self.assertTupleEqual(client.credentials._args, (
             'https://management.core.windows.net/', 
             'a2ab11af-01aa-4759-8345-7803287dbd39',
@@ -55,8 +57,8 @@ graphURL=https://graph.windows.net/
         ))
 
         client = get_client_from_auth_file(FakeClient, temp_auth_file.name, subscription_id='fakesubid')
-        self.assertEquals('fakesubid', client.subscription_id)
-        self.assertEquals('https://management.azure.com/', client.base_url)
+        self.assertEqual('fakesubid', client.subscription_id)
+        self.assertEqual('https://management.azure.com/', client.base_url)
         self.assertTupleEqual(client.credentials._args, (
             'https://management.core.windows.net/', 
             'a2ab11af-01aa-4759-8345-7803287dbd39',
@@ -65,9 +67,22 @@ graphURL=https://graph.windows.net/
 
         credentials_instance = "Fake credentials class as a string"
         client = get_client_from_auth_file(FakeClient, temp_auth_file.name, credentials=credentials_instance)
-        self.assertEquals('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
-        self.assertEquals('https://management.azure.com/', client.base_url)
-        self.assertEquals(credentials_instance, client.credentials)
+        self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
+        self.assertEqual('https://management.azure.com/', client.base_url)
+        self.assertEqual(credentials_instance, client.credentials)
+
+        class FakeSubscriptionClient(object):
+            def __init__(self, credentials, base_url):
+                self.credentials = credentials
+                self.base_url = base_url
+
+        client = get_client_from_auth_file(FakeSubscriptionClient, temp_auth_file.name)
+        self.assertEqual('https://management.azure.com/', client.base_url)
+        self.assertTupleEqual(client.credentials._args, (
+            'https://management.core.windows.net/', 
+            'a2ab11af-01aa-4759-8345-7803287dbd39',
+            'password'
+        ))
 
         os.unlink(temp_auth_file.name)
         
