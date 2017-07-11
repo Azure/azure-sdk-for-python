@@ -6,7 +6,7 @@ ServiceBus Queues
 
 ServiceBus Queues are an alternative to Storage Queues that might be
 useful in scenarios where more advanced messaging features are needed
-(larger message sizes, message ordering, single-operaiton destructive
+(larger message sizes, message ordering, single-operation destructive
 reads, scheduled delivery) using push-style delivery (using long
 polling).
 
