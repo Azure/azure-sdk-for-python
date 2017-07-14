@@ -114,7 +114,7 @@
     "compute.containerservice.2017-01-31": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-compute-2017-03"
+        "tag": "package-container-service-2017-01"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
