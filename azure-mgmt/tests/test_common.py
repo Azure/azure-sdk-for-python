@@ -7,9 +7,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import unittest
-import tempfile
 import json
+import tempfile
+import unittest
 from io import open
 
 from azure.common.client_factory import *
@@ -43,48 +43,50 @@ class TestCommon(unittest.TestCase):
                 self.subscription_id = subscription_id
                 self.base_url = base_url
 
-        temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_auth_file.write(json.dumps(configuration).encode())
-        temp_auth_file.close()
-
-        client = get_client_from_auth_file(FakeClient, temp_auth_file.name)
-        self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
-        self.assertEqual('https://management.azure.com/', client.base_url)
-        self.assertTupleEqual(client.credentials._args, (
-            'https://management.core.windows.net/', 
-            'a2ab11af-01aa-4759-8345-7803287dbd39',
-            'password'
-        ))
-
-        client = get_client_from_auth_file(FakeClient, temp_auth_file.name, subscription_id='fakesubid')
-        self.assertEqual('fakesubid', client.subscription_id)
-        self.assertEqual('https://management.azure.com/', client.base_url)
-        self.assertTupleEqual(client.credentials._args, (
-            'https://management.core.windows.net/', 
-            'a2ab11af-01aa-4759-8345-7803287dbd39',
-            'password'
-        ))
-
-        credentials_instance = "Fake credentials class as a string"
-        client = get_client_from_auth_file(FakeClient, temp_auth_file.name, credentials=credentials_instance)
-        self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
-        self.assertEqual('https://management.azure.com/', client.base_url)
-        self.assertEqual(credentials_instance, client.credentials)
-
         class FakeSubscriptionClient(object):
             def __init__(self, credentials, base_url):
                 self.credentials = credentials
                 self.base_url = base_url
 
-        client = get_client_from_auth_file(FakeSubscriptionClient, temp_auth_file.name)
-        self.assertEqual('https://management.azure.com/', client.base_url)
-        self.assertTupleEqual(client.credentials._args, (
-            'https://management.core.windows.net/', 
-            'a2ab11af-01aa-4759-8345-7803287dbd39',
-            'password'
-        ))
+        for encoding in ['utf-8', 'utf-8-sig', 'ascii']:
 
-        os.unlink(temp_auth_file.name)
+            temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_auth_file.write(json.dumps(configuration).encode(encoding))
+            temp_auth_file.close()
+
+            client = get_client_from_auth_file(FakeClient, temp_auth_file.name)
+            self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
+            self.assertEqual('https://management.azure.com/', client.base_url)
+            self.assertTupleEqual(client.credentials._args, (
+                'https://management.core.windows.net/', 
+                'a2ab11af-01aa-4759-8345-7803287dbd39',
+                'password'
+            ))
+
+            client = get_client_from_auth_file(FakeClient, temp_auth_file.name, subscription_id='fakesubid')
+            self.assertEqual('fakesubid', client.subscription_id)
+            self.assertEqual('https://management.azure.com/', client.base_url)
+            self.assertTupleEqual(client.credentials._args, (
+                'https://management.core.windows.net/', 
+                'a2ab11af-01aa-4759-8345-7803287dbd39',
+                'password'
+            ))
+
+            credentials_instance = "Fake credentials class as a string"
+            client = get_client_from_auth_file(FakeClient, temp_auth_file.name, credentials=credentials_instance)
+            self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
+            self.assertEqual('https://management.azure.com/', client.base_url)
+            self.assertEqual(credentials_instance, client.credentials)
+
+            client = get_client_from_auth_file(FakeSubscriptionClient, temp_auth_file.name)
+            self.assertEqual('https://management.azure.com/', client.base_url)
+            self.assertTupleEqual(client.credentials._args, (
+                'https://management.core.windows.net/', 
+                'a2ab11af-01aa-4759-8345-7803287dbd39',
+                'password'
+            ))
+
+            os.unlink(temp_auth_file.name)
         
 
 #------------------------------------------------------------------------------

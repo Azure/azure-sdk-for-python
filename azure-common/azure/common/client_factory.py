@@ -5,25 +5,30 @@
 #--------------------------------------------------------------------------
 
 import io
-import os
-import adal
-import inspect
 import json
+import os
+try:
+    from inspect import getfullargspec as get_arg_spec
+except ImportError:
+    from inspect import getargspec as get_arg_spec
+
+import adal
 from msrestazure.azure_active_directory import AdalAuthentication
 
-from .credentials import get_azure_cli_credentials, get_cli_profile
+from .credentials import get_azure_cli_credentials
 from .cloud import get_cli_active_cloud
 
-def _instanciate_client(clientclass, **kwargs):
-    """Instanciate client from kwargs, remove parameters not needed by the Client.
+
+def _instantiate_client(client_class, **kwargs):
+    """Instantiate a client from kwargs, removing the subscription_id argument if unsupported.
     """
-    args = inspect.getargspec(clientclass.__init__).args
+    args = get_arg_spec(client_class.__init__).args
     if 'subscription_id' not in args:
         del kwargs['subscription_id']
-    return clientclass(**kwargs)
+    return client_class(**kwargs)
 
 
-def get_client_from_cli_profile(clientclass, **kwargs):
+def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
     This method will fill automatically the following client parameters:
@@ -43,7 +48,7 @@ def get_client_from_cli_profile(clientclass, **kwargs):
 
     .. versionadded:: 1.1.6
 
-    :param clientclass: A SDK client class
+    :param client_class: A SDK client class
     :return: An instanciated client
     :raises: ImportError if azure-cli-core package is not available
     """
@@ -60,9 +65,9 @@ def get_client_from_cli_profile(clientclass, **kwargs):
         # api_version_profile = cloud.profile # TBC using _shared
         parameters['base_url'] = cloud.endpoints.resource_manager
     parameters.update(kwargs)
-    return _instanciate_client(clientclass, **parameters)
+    return _instantiate_client(client_class, **parameters)
 
-def get_client_from_json_dict(clientclass, config_dict, **kwargs):
+def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
 
     The easiest way to obtain this content is to call the following CLI commands:
@@ -100,7 +105,7 @@ def get_client_from_json_dict(clientclass, config_dict, **kwargs):
 
     .. versionadded:: 1.1.7
 
-    :param clientclass: A SDK client class
+    :param client_class: A SDK client class
     :param dict config_dict: A config dict.
     :return: An instanciated client
     """
@@ -121,9 +126,9 @@ def get_client_from_json_dict(clientclass, config_dict, **kwargs):
         )
 
     parameters.update(kwargs)
-    return _instanciate_client(clientclass, **parameters)
+    return _instantiate_client(client_class, **parameters)
 
-def get_client_from_auth_file(clientclass, auth_path=None, **kwargs):
+def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     """Return a SDK client initialized with auth file.
 
     The easiest way to obtain this file is to call the following CLI commands:
@@ -169,7 +174,7 @@ def get_client_from_auth_file(clientclass, auth_path=None, **kwargs):
 
     .. versionadded:: 1.1.7
 
-    :param clientclass: A SDK client class
+    :param client_class: A SDK client class
     :param str auth_path: Path to the file.
     :return: An instanciated client
     :raises: KeyError if AZURE_AUTH_LOCATION is not an environment variable and no path is provided
@@ -179,6 +184,6 @@ def get_client_from_auth_file(clientclass, auth_path=None, **kwargs):
     """
     auth_path = auth_path or os.environ['AZURE_AUTH_LOCATION']
 
-    with io.open(auth_path, 'r', encoding='utf-8') as auth_fd:
+    with io.open(auth_path, 'r', encoding='utf-8-sig') as auth_fd:
         config_dict = json.load(auth_fd)
-    return get_client_from_json_dict(clientclass, config_dict, **kwargs)
+    return get_client_from_json_dict(client_class, config_dict, **kwargs)
