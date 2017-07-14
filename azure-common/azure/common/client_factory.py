@@ -120,7 +120,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         context = adal.AuthenticationContext(authority_url, api_version=None)
         parameters['credentials'] = AdalAuthentication(
             context.acquire_token_with_client_credentials,
-            config_dict['managementEndpointUrl'],
+            config_dict['resourceManagerEndpointUrl'],
             config_dict['clientId'],
             config_dict['clientSecret']
         )
