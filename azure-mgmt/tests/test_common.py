@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 #-------------------------------------------------------------------------
@@ -58,7 +57,7 @@ class TestCommon(unittest.TestCase):
             self.assertEqual('15dbcfa8-4b93-4c9a-881c-6189d39f04d4', client.subscription_id)
             self.assertEqual('https://management.azure.com/', client.base_url)
             self.assertTupleEqual(client.credentials._args, (
-                'https://management.core.windows.net/', 
+                'https://management.azure.com/', 
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             ))
@@ -67,7 +66,7 @@ class TestCommon(unittest.TestCase):
             self.assertEqual('fakesubid', client.subscription_id)
             self.assertEqual('https://management.azure.com/', client.base_url)
             self.assertTupleEqual(client.credentials._args, (
-                'https://management.core.windows.net/', 
+                'https://management.azure.com/',
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             ))
@@ -81,7 +80,7 @@ class TestCommon(unittest.TestCase):
             client = get_client_from_auth_file(FakeSubscriptionClient, temp_auth_file.name)
             self.assertEqual('https://management.azure.com/', client.base_url)
             self.assertTupleEqual(client.credentials._args, (
-                'https://management.core.windows.net/', 
+                'https://management.azure.com/',
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             ))
