@@ -285,15 +285,13 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bbc.create_blob_from_bytes(
+        self.bbc.create_blob_from_bytes(
             container_name, blob_name, blob_data)
-        self.assertIsNone(resp)
 
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.create_blob_from_bytes(container_name, blob_name, b'')
-        self.assertIsNone(resp)
+        self.bc.create_blob_from_bytes(container_name, blob_name, b'')
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
