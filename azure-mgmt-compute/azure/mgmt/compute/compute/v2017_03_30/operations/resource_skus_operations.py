@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -45,6 +45,8 @@ class ResourceSkusOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ResourceSku
+         <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSku>`
         :rtype: :class:`ResourceSkuPaged
          <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSkuPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -17,6 +17,9 @@ class RunCommandInput(Model):
 
     :param command_id: The run command id.
     :type command_id: str
+    :param script: Optional. The script to be executed.  When this value is
+     given, the given script will override the default script of the command.
+    :type script: list of str
     :param parameters: The run command parameters.
     :type parameters: list of :class:`RunCommandInputParameter
      <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandInputParameter>`
@@ -28,9 +31,11 @@ class RunCommandInput(Model):
 
     _attribute_map = {
         'command_id': {'key': 'commandId', 'type': 'str'},
+        'script': {'key': 'script', 'type': '[str]'},
         'parameters': {'key': 'parameters', 'type': '[RunCommandInputParameter]'},
     }
 
-    def __init__(self, command_id, parameters=None):
+    def __init__(self, command_id, script=None, parameters=None):
         self.command_id = command_id
+        self.script = script
         self.parameters = parameters

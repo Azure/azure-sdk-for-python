@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -52,10 +52,13 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`AvailabilitySet
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`AvailabilitySet
          <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -118,10 +121,13 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`OperationStatusResponse
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`OperationStatusResponse
          <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -180,10 +186,13 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`AvailabilitySet
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`AvailabilitySet
          <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -240,6 +249,8 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`AvailabilitySet
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
         :rtype: :class:`AvailabilitySetPaged
          <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySetPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -309,6 +320,8 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`VirtualMachineSize
+         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineSize>`
         :rtype: :class:`VirtualMachineSizePaged
          <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineSizePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
