@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ComputePolicyPaged(Paged):
     """
-    A paging container for iterating over a list of ComputePolicy object
+    A paging container for iterating over a list of :class:`ComputePolicy <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` object
     """
 
     _attribute_map = {

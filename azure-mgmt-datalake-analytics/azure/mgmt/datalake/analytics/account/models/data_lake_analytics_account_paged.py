@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DataLakeAnalyticsAccountPaged(Paged):
     """
-    A paging container for iterating over a list of DataLakeAnalyticsAccount object
+    A paging container for iterating over a list of :class:`DataLakeAnalyticsAccount <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>` object
     """
 
     _attribute_map = {

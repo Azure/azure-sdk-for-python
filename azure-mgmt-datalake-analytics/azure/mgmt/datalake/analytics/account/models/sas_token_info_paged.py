@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SasTokenInfoPaged(Paged):
     """
-    A paging container for iterating over a list of SasTokenInfo object
+    A paging container for iterating over a list of :class:`SasTokenInfo <azure.mgmt.datalake.analytics.account.models.SasTokenInfo>` object
     """
 
     _attribute_map = {
