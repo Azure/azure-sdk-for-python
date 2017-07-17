@@ -319,7 +319,7 @@
     },
     "rdbms.mysql": {
       "autorest_options": {
-        "input-file": "arm-rdbms/2017-04-30-preview/swagger/Rdms.MySQL.json",
+        "input-file": "specification/mysql/resource-manager/Microsoft.DBforMySQL/2017-04-30-preview/mysql.json",
         "namespace": "azure.mgmt.rdbms.mysql",
         "package-version": "0.1.0"
       },
@@ -328,7 +328,7 @@
     },
     "rdbms.postgres": {
       "autorest_options": {
-        "input-file": "arm-rdbms/2017-04-30-preview/swagger/Rdms.PostgreSQL.json",
+        "input-file": "specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/2017-04-30-preview/postgresql.json",
         "namespace": "azure.mgmt.rdbms.postgresql",
         "package-version": "0.1.0"
       },
