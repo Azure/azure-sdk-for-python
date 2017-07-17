@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -35,99 +35,39 @@ class StorageAccountsOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified Azure Storage account linked to the given Data Lake
-        Analytics account.
-
-        :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Analytics account.
-        :type resource_group_name: str
-        :param account_name: The name of the Data Lake Analytics account from
-         which to retrieve Azure storage account details.
-        :type account_name: str
-        :param storage_account_name: The name of the Azure Storage account for
-         which to retrieve the details.
-        :type storage_account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('StorageAccountInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete(
-            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """Updates the specified Data Lake Analytics account to remove an Azure
+    def add(
+            self, resource_group_name, account_name, storage_account_name, access_key, suffix=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the specified Data Lake Analytics account to add an Azure
         Storage account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Analytics account from
-         which to remove the Azure Storage account.
+        :param account_name: The name of the Data Lake Analytics account to
+         which to add the Azure Storage account.
         :type account_name: str
         :param storage_account_name: The name of the Azure Storage account to
-         remove
+         add
         :type storage_account_name: str
+        :param access_key: the access key associated with this Azure Storage
+         account that will be used to connect to it.
+        :type access_key: str
+        :param suffix: the optional suffix for the storage account.
+        :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.AddStorageAccountParameters(access_key=access_key, suffix=suffix)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
         path_format_arguments = {
@@ -152,9 +92,13 @@ class StorageAccountsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AddStorageAccountParameters')
+
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -188,9 +132,11 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -241,37 +187,32 @@ class StorageAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def add(
-            self, resource_group_name, account_name, storage_account_name, access_key, suffix=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the specified Data Lake Analytics account to add an Azure
+    def delete(
+            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Updates the specified Data Lake Analytics account to remove an Azure
         Storage account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Analytics account to
-         which to add the Azure Storage account.
+        :param account_name: The name of the Data Lake Analytics account from
+         which to remove the Azure Storage account.
         :type account_name: str
         :param storage_account_name: The name of the Azure Storage account to
-         add
+         remove
         :type storage_account_name: str
-        :param access_key: the access key associated with this Azure Storage
-         account that will be used to connect to it.
-        :type access_key: str
-        :param suffix: the optional suffix for the storage account.
-        :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.AddStorageAccountParameters(access_key=access_key, suffix=suffix)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
         path_format_arguments = {
@@ -296,13 +237,9 @@ class StorageAccountsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'AddStorageAccountParameters')
-
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -312,6 +249,78 @@ class StorageAccountsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def get(
+            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified Azure Storage account linked to the given Data Lake
+        Analytics account.
+
+        :param resource_group_name: The name of the Azure resource group that
+         contains the Data Lake Analytics account.
+        :type resource_group_name: str
+        :param account_name: The name of the Data Lake Analytics account from
+         which to retrieve Azure storage account details.
+        :type account_name: str
+        :param storage_account_name: The name of the Azure Storage account for
+         which to retrieve the details.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`StorageAccountInfo
+         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`StorageAccountInfo
+         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageAccountInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def get_storage_container(
             self, resource_group_name, account_name, storage_account_name, container_name, custom_headers=None, raw=False, **operation_config):
@@ -335,10 +344,13 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`StorageContainer
+         <azure.mgmt.datalake.analytics.account.models.StorageContainer>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`StorageContainer
-         <azure.mgmt.datalake.analytics.account.models.StorageContainer>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.account.models.StorageContainer>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -406,6 +418,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`StorageContainer
+         <azure.mgmt.datalake.analytics.account.models.StorageContainer>`
         :rtype: :class:`StorageContainerPaged
          <azure.mgmt.datalake.analytics.account.models.StorageContainerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -485,6 +499,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`SasTokenInfo
+         <azure.mgmt.datalake.analytics.account.models.SasTokenInfo>`
         :rtype: :class:`SasTokenInfoPaged
          <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -580,6 +596,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`StorageAccountInfo
+         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
         :rtype: :class:`StorageAccountInfoPaged
          <azure.mgmt.datalake.analytics.account.models.StorageAccountInfoPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
