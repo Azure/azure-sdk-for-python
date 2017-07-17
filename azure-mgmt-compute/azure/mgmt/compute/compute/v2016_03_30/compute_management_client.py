@@ -62,7 +62,7 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
 
 
 class ComputeManagementClient(object):
-    """The Compute Management Client.
+    """Compute Client
 
     :ivar config: Configuration for client.
     :vartype config: ComputeManagementClientConfiguration

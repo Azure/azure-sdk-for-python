@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ImagePaged(Paged):
     """
-    A paging container for iterating over a list of Image object
+    A paging container for iterating over a list of :class:`Image <azure.mgmt.compute.compute.v2016_04_30_preview.models.Image>` object
     """
 
     _attribute_map = {
