@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -53,10 +53,13 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RecommendedElasticPool
+         <azure.mgmt.sql.models.RecommendedElasticPool>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RecommendedElasticPool
-         <azure.mgmt.sql.models.RecommendedElasticPool>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.RecommendedElasticPool>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -123,9 +126,11 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Database <azure.mgmt.sql.models.Database>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Database <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Database <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -188,6 +193,8 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RecommendedElasticPool
+         <azure.mgmt.sql.models.RecommendedElasticPool>`
         :rtype: :class:`RecommendedElasticPoolPaged
          <azure.mgmt.sql.models.RecommendedElasticPoolPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -262,6 +269,8 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Database
+         <azure.mgmt.sql.models.Database>`
         :rtype: :class:`DatabasePaged <azure.mgmt.sql.models.DatabasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -336,6 +345,9 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`RecommendedElasticPoolMetric
+         <azure.mgmt.sql.models.RecommendedElasticPoolMetric>`
         :rtype: :class:`RecommendedElasticPoolMetricPaged
          <azure.mgmt.sql.models.RecommendedElasticPoolMetricPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -10,33 +10,33 @@
 # --------------------------------------------------------------------------
 
 from .databases_operations import DatabasesOperations
+from .servers_operations import ServersOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
-from .servers_operations import ServersOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .operations import Operations
-from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .server_communication_links_operations import ServerCommunicationLinksOperations
+from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .failover_groups_operations import FailoverGroupsOperations
-from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .server_keys_operations import ServerKeysOperations
+from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 
 __all__ = [
     'DatabasesOperations',
+    'ServersOperations',
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
     'CapabilitiesOperations',
-    'ServersOperations',
     'FirewallRulesOperations',
     'ElasticPoolsOperations',
     'Operations',
-    'RecommendedElasticPoolsOperations',
     'ServerAzureADAdministratorsOperations',
     'ServerCommunicationLinksOperations',
+    'RecommendedElasticPoolsOperations',
     'FailoverGroupsOperations',
-    'VirtualNetworkRulesOperations',
     'ServerKeysOperations',
+    'VirtualNetworkRulesOperations',
 ]

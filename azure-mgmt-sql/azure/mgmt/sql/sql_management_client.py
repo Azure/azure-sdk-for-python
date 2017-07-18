@@ -14,19 +14,19 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.databases_operations import DatabasesOperations
+from .operations.servers_operations import ServersOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
-from .operations.servers_operations import ServersOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.operations import Operations
-from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .operations.server_communication_links_operations import ServerCommunicationLinksOperations
+from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
-from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.server_keys_operations import ServerKeysOperations
+from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from . import models
 
 
@@ -73,32 +73,32 @@ class SqlManagementClient(object):
 
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.sql.operations.DatabasesOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
-    :ivar recommended_elastic_pools: RecommendedElasticPools operations
-    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
     :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar server_communication_links: ServerCommunicationLinks operations
     :vartype server_communication_links: azure.mgmt.sql.operations.ServerCommunicationLinksOperations
+    :ivar recommended_elastic_pools: RecommendedElasticPools operations
+    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar failover_groups: FailoverGroups operations
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
-    :ivar virtual_network_rules: VirtualNetworkRules operations
-    :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar server_keys: ServerKeys operations
     :vartype server_keys: azure.mgmt.sql.operations.ServerKeysOperations
+    :ivar virtual_network_rules: VirtualNetworkRules operations
+    :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -121,13 +121,13 @@ class SqlManagementClient(object):
 
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -135,15 +135,15 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_communication_links = ServerCommunicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_rules = VirtualNetworkRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.server_keys = ServerKeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
