@@ -3,12 +3,20 @@
 Release History
 ===============
 
+2.1.0 (2017-07-19)
+++++++++++++++++++
+
+**Features in 2017-03-30**
+
+- Expose 'enableAcceleratedNetworking' for virtual machine and virtual machine SS. Windows GA, Linux in preview.
+- Expose 'forceUpdateTag' to ensure extension gets reinstalled even there are no configuration change.
+
 2.0.0 (2017-06-29)
 ++++++++++++++++++
 
 **Features**
 
-Compute default Api Version is now 2017-03-01.
+Compute default Api Version is now 2017-03-30.
 
 New operation groups:
 
