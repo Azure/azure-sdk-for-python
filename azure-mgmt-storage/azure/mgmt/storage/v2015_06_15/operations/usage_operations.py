@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -45,6 +45,8 @@ class UsageOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Usage
+         <azure.mgmt.storage.v2015_06_15.models.Usage>`
         :rtype: :class:`UsagePaged
          <azure.mgmt.storage.v2015_06_15.models.UsagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
