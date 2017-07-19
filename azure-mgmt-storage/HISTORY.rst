@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.2.0 (2017-07-19)
+++++++++++++++++++
+
+**Features**
+
+- Api version 2017-06-01 is now the default
+- This API version adds Network ACLs objects
+
 1.1.0 (2017-06-28)
 ++++++++++++++++++
 
