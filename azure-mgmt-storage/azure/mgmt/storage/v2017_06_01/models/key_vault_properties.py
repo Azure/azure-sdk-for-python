@@ -12,20 +12,24 @@
 from msrest.serialization import Model
 
 
-class StorageAccountRegenerateKeyParameters(Model):
-    """The parameters used to regenerate the storage account key.
+class KeyVaultProperties(Model):
+    """Properties of key vault.
 
-    :param key_name:
+    :param key_name: The name of KeyVault key.
     :type key_name: str
+    :param key_version: The version of KeyVault key.
+    :type key_version: str
+    :param key_vault_uri: The Uri of KeyVault.
+    :type key_vault_uri: str
     """
 
-    _validation = {
-        'key_name': {'required': True},
-    }
-
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_name': {'key': 'keyname', 'type': 'str'},
+        'key_version': {'key': 'keyversion', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyvaulturi', 'type': 'str'},
     }
 
-    def __init__(self, key_name):
+    def __init__(self, key_name=None, key_version=None, key_vault_uri=None):
         self.key_name = key_name
+        self.key_version = key_version
+        self.key_vault_uri = key_vault_uri

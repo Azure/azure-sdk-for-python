@@ -12,24 +12,17 @@
 from msrest.serialization import Model
 
 
-class ListServiceSasResponse(Model):
-    """The List service SAS credentials operation response.
+class ServiceSpecification(Model):
+    """One property of operation, include metric specifications.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar service_sas_token: List service SAS credentials of speicific
-     resource.
-    :vartype service_sas_token: str
+    :param metric_specifications: Metric specifications of operation.
+    :type metric_specifications: list of :class:`MetricSpecification
+     <azure.mgmt.storage.v2017_06_01.models.MetricSpecification>`
     """
 
-    _validation = {
-        'service_sas_token': {'readonly': True},
-    }
-
     _attribute_map = {
-        'service_sas_token': {'key': 'serviceSasToken', 'type': 'str'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
     }
 
-    def __init__(self):
-        self.service_sas_token = None
+    def __init__(self, metric_specifications=None):
+        self.metric_specifications = metric_specifications

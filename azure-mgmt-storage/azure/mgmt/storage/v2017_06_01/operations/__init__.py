@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .storage_accounts_operations import StorageAccountsOperations
 from .usage_operations import UsageOperations
 
 __all__ = [
+    'Operations',
     'StorageAccountsOperations',
     'UsageOperations',
 ]

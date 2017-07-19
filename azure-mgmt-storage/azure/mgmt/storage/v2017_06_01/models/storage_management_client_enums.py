@@ -33,6 +33,40 @@ class SkuTier(Enum):
     premium = "Premium"
 
 
+class KeySource(Enum):
+
+    microsoft_storage = "Microsoft.Storage"
+    microsoft_keyvault = "Microsoft.Keyvault"
+
+
+class Action(Enum):
+
+    allow = "Allow"
+
+
+class State(Enum):
+
+    provisioning = "provisioning"
+    deprovisioning = "deprovisioning"
+    succeeded = "succeeded"
+    failed = "failed"
+    network_source_deleted = "networkSourceDeleted"
+
+
+class Bypass(Enum):
+
+    none = "None"
+    logging = "Logging"
+    metrics = "Metrics"
+    azure_services = "AzureServices"
+
+
+class DefaultAction(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class AccessTier(Enum):
 
     hot = "Hot"
@@ -74,7 +108,42 @@ class UsageUnit(Enum):
     bytes_per_second = "BytesPerSecond"
 
 
+class Services(Enum):
+
+    b = "b"
+    q = "q"
+    t = "t"
+    f = "f"
+
+
+class SignedResourceTypes(Enum):
+
+    s = "s"
+    c = "c"
+    o = "o"
+
+
+class Permissions(Enum):
+
+    r = "r"
+    d = "d"
+    w = "w"
+    l = "l"
+    a = "a"
+    c = "c"
+    u = "u"
+    p = "p"
+
+
 class HttpProtocol(Enum):
 
     httpshttp = "https,http"
     https = "https"
+
+
+class SignedResource(Enum):
+
+    b = "b"
+    c = "c"
+    f = "f"
+    s = "s"

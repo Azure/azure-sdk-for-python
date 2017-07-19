@@ -15,7 +15,8 @@ from msrest.serialization import Model
 class StorageAccountRegenerateKeyParameters(Model):
     """The parameters used to regenerate the storage account key.
 
-    :param key_name:
+    :param key_name: The name of storage keys that want to be regenerated,
+     possible vaules are key1, key2.
     :type key_name: str
     """
 

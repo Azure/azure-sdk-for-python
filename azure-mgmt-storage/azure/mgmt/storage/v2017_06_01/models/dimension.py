@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class StorageAccountPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`StorageAccount <azure.mgmt.storage.v2016_12_01.models.StorageAccount>` object
+class Dimension(Model):
+    """Dimensions.
+
+    :param name: Display name of dimension.
+    :type name: str
+    :param display_name: Display name of dimension.
+    :type display_name: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[StorageAccount]'}
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(StorageAccountPaged, self).__init__(*args, **kwargs)
+    def __init__(self, name=None, display_name=None):
+        self.name = name
+        self.display_name = display_name

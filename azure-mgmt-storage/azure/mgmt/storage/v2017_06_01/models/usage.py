@@ -22,7 +22,7 @@ class Usage(Model):
      'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
      'BytesPerSecond'
     :vartype unit: str or :class:`UsageUnit
-     <azure.mgmt.storage.v2016_12_01.models.UsageUnit>`
+     <azure.mgmt.storage.v2017_06_01.models.UsageUnit>`
     :ivar current_value: Gets the current count of the allocated resources in
      the subscription.
     :vartype current_value: int
@@ -31,7 +31,7 @@ class Usage(Model):
     :vartype limit: int
     :ivar name: Gets the name of the type of usage.
     :vartype name: :class:`UsageName
-     <azure.mgmt.storage.v2016_12_01.models.UsageName>`
+     <azure.mgmt.storage.v2017_06_01.models.UsageName>`
     """
 
     _validation = {

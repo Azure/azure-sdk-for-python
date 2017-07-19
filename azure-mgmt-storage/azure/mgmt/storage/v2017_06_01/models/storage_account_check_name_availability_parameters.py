@@ -18,9 +18,10 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name:
+    :param name: The storage account name.
     :type name: str
-    :ivar type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts.
+     Default value: "Microsoft.Storage/storageAccounts" .
     :vartype type: str
     """
 
