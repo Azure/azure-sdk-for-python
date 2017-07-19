@@ -17,6 +17,9 @@ class DiskInstanceView(Model):
 
     :param name: The disk name.
     :type name: str
+    :param encryption_settings: The encryption settings of the disk.
+    :type encryption_settings: list of :class:`DiskEncryptionSettings
+     <azure.mgmt.compute.compute.v2017_03_30.models.DiskEncryptionSettings>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewStatus>`
@@ -24,9 +27,11 @@ class DiskInstanceView(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'encryption_settings': {'key': 'encryptionSettings', 'type': '[DiskEncryptionSettings]'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, statuses=None):
+    def __init__(self, name=None, encryption_settings=None, statuses=None):
         self.name = name
+        self.encryption_settings = encryption_settings
         self.statuses = statuses

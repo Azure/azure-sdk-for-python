@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -39,7 +39,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, type, version, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual machine extension image.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -52,10 +52,13 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`VirtualMachineExtensionImage
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`VirtualMachineExtensionImage
          <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -107,7 +110,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine extension image types.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -116,10 +119,13 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`VirtualMachineExtensionImage
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`VirtualMachineExtensionImage
          <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -169,7 +175,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine extension image versions.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -186,10 +192,13 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`VirtualMachineExtensionImage
+         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`VirtualMachineExtensionImage
          <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

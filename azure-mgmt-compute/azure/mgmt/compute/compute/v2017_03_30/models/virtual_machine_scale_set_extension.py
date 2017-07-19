@@ -22,6 +22,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :vartype id: str
     :param name: The name of the extension.
     :type name: str
+    :param force_update_tag: If a value is provided and is different from the
+     previous value, the extension handler will be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
     :param type: The type of the extension handler.
@@ -49,6 +53,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
@@ -58,9 +63,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None):
+    def __init__(self, name=None, force_update_tag=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None):
         super(VirtualMachineScaleSetExtension, self).__init__()
         self.name = name
+        self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type = type
         self.type_handler_version = type_handler_version

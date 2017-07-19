@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SnapshotPaged(Paged):
     """
-    A paging container for iterating over a list of Snapshot object
+    A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.compute.compute.v2016_04_30_preview.models.Snapshot>` object
     """
 
     _attribute_map = {
