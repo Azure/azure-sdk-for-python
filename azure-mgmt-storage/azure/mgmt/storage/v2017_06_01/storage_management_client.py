@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.usage_operations import UsageOperations
 from . import models
@@ -60,10 +61,12 @@ class StorageManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.storage.v2017_06_01.operations.Operations
     :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.storage.v2016_12_01.operations.StorageAccountsOperations
+    :vartype storage_accounts: azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.storage.v2016_12_01.operations.UsageOperations
+    :vartype usage: azure.mgmt.storage.v2017_06_01.operations.UsageOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,10 +85,12 @@ class StorageManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-12-01'
+        self.api_version = '2017-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(

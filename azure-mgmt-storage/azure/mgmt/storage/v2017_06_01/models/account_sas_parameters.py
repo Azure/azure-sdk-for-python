@@ -18,28 +18,28 @@ class AccountSasParameters(Model):
     :param services: The signed services accessible with the account SAS.
      Possible values include: Blob (b), Queue (q), Table (t), File (f).
      Possible values include: 'b', 'q', 't', 'f'
-    :type services: str or :class:`enum
-     <azure.mgmt.storage.v2016_12_01.models.enum>`
+    :type services: str or :class:`Services
+     <azure.mgmt.storage.v2017_06_01.models.Services>`
     :param resource_types: The signed resource types that are accessible with
      the account SAS. Service (s): Access to service-level APIs; Container (c):
      Access to container-level APIs; Object (o): Access to object-level APIs
      for blobs, queue messages, table entities, and files. Possible values
      include: 's', 'c', 'o'
-    :type resource_types: str or :class:`enum
-     <azure.mgmt.storage.v2016_12_01.models.enum>`
+    :type resource_types: str or :class:`SignedResourceTypes
+     <azure.mgmt.storage.v2017_06_01.models.SignedResourceTypes>`
     :param permissions: The signed permissions for the account SAS. Possible
      values include: Read (r), Write (w), Delete (d), List (l), Add (a), Create
      (c), Update (u) and Process (p). Possible values include: 'r', 'd', 'w',
      'l', 'a', 'c', 'u', 'p'
-    :type permissions: str or :class:`enum
-     <azure.mgmt.storage.v2016_12_01.models.enum>`
+    :type permissions: str or :class:`Permissions
+     <azure.mgmt.storage.v2017_06_01.models.Permissions>`
     :param ip_address_or_range: An IP address or a range of IP addresses from
      which to accept requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the
      account SAS. Possible values include: 'https,http', 'https'
     :type protocols: str or :class:`HttpProtocol
-     <azure.mgmt.storage.v2016_12_01.models.HttpProtocol>`
+     <azure.mgmt.storage.v2017_06_01.models.HttpProtocol>`
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: datetime
     :param shared_access_expiry_time: The time at which the shared access

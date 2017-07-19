@@ -12,29 +12,34 @@
 from msrest.serialization import Model
 
 
-class StorageAccountCheckNameAvailabilityParameters(Model):
-    """The parameters used to check the availabity of the storage account name.
+class Identity(Model):
+    """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name:
-    :type name: str
-    :ivar type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: The identity type. Default value: "SystemAssigned" .
     :vartype type: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
         'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "Microsoft.Storage/storageAccounts"
+    type = "SystemAssigned"
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
+        self.principal_id = None
+        self.tenant_id = None
