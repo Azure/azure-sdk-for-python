@@ -6,31 +6,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
-          msrest_azure/0.4.6 storagemanagementclient/0.31.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.11 storagemanagementclient/1.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ce7d6f98-de77-11e6-9b53-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/usages?api-version=2016-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/usages?api-version=2017-06-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"unit\": \"Count\",\r\n
-        \     \"currentValue\": 8,\r\n      \"limit\": 250,\r\n      \"name\": {\r\n
+        \     \"currentValue\": 17,\r\n      \"limit\": 250,\r\n      \"name\": {\r\n
         \       \"value\": \"StorageAccounts\",\r\n        \"localizedValue\": \"Storage
         Accounts\"\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json]
-      Date: ['Thu, 19 Jan 2017 18:48:03 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['217']
-      x-ms-correlation-request-id: [f2daa9e1-292b-4afb-8044-65b5211c1690]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [f2daa9e1-292b-4afb-8044-65b5211c1690]
-      x-ms-routing-request-id: ['WESTUS2:20170119T184803Z:f2daa9e1-292b-4afb-8044-65b5211c1690']
+      cache-control: [no-cache]
+      content-length: ['218']
+      content-type: [application/json]
+      date: ['Wed, 19 Jul 2017 23:19:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
     status: {code: 200, message: OK}
 version: 1

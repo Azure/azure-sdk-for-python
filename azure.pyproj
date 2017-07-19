@@ -22,7 +22,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\;azure-mgmt-devtestlabs\;azure-mgmt-servermanager\;..\msrest-for-python\;..\msrestazure-for-python\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store;azure-mgmt-eventhub\;azure-mgmt-servicebus\;azure-monitor\;azure-mgmt-monitor\;azure-mgmt-sql\;azure-mgmt-media\;azure-mgmt-search\;azure-keyvault\;azure-mgmt-documentdb\;azure-mgmt-containerregistry\;azure-mgmt-recoveryservicesbackup\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\;azure-mgmt-devtestlabs\;azure-mgmt-servermanager\;..\msrest-for-python\;..\msrestazure-for-python\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store;azure-mgmt-eventhub\;azure-mgmt-servicebus\;azure-monitor\;azure-mgmt-monitor\;azure-mgmt-sql\;azure-mgmt-media\;azure-mgmt-search\;azure-keyvault\;azure-mgmt-documentdb\;azure-mgmt-containerregistry\;azure-mgmt-recoveryservicesbackup\;azure-mgmt-cosmosdb;azure-sdk-testutils</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -1594,6 +1594,7 @@
     <Compile Include="azure-mgmt-servermanager\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-servermanager\azure\__init__.py" />
     <Compile Include="azure-mgmt-servermanager\setup.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\models.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2015_06_15\models\check_name_availability_result.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2015_06_15\models\custom_domain.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2015_06_15\models\endpoints.py" />
@@ -1674,9 +1675,54 @@
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\storage_management_client.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\version.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\__init__.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\account_sas_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\check_name_availability_result.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\custom_domain.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\dimension.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\encryption.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\encryption_service.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\encryption_services.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\endpoints.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\identity.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\ip_rule.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\key_vault_properties.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\list_account_sas_response.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\list_service_sas_response.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\metric_specification.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\operation.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\operation_display.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\operation_paged.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\resource.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\service_sas_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\service_specification.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\sku.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_check_name_availability_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_create_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_key.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_list_keys_result.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_paged.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_regenerate_key_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_account_update_parameters.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_management_client_enums.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\storage_network_acls.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\usage.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\usage_name.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\usage_paged.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\virtual_network_rule.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\__init__.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\operations.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\storage_accounts_operations.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\usage_operations.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\__init__.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\storage_management_client.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\version.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\__init__.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="azure-mgmt-storage\tests\test_mgmt_storage.py" />
+    <Compile Include="azure-mgmt-storage\tests\__init__.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\check_traffic_manager_relative_dns_name_availability_parameters.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\dns_config.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\endpoint.py" />
@@ -1882,6 +1928,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_consumption.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_containerregistry.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_cosmosdb.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_datalake_analytics.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_datalake_store.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_devtestlabs.py" />
@@ -1913,6 +1960,14 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_trafficmanager.py" />
     <Compile Include="azure-mgmt\tests\__init__.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\config.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\mgmt_settings_fake.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\mgmt_settings_real.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\mgmt_testcase.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\resource_testcase.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\setup.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\storage_testcase.py" />
+    <Compile Include="azure-sdk-testutils\devtools_testutils\__init__.py" />
     <Compile Include="azure-servicebus\azure\servicebus\constants.py">
       <SubType>Code</SubType>
     </Compile>
@@ -2197,6 +2252,11 @@
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\models\__pycache__\" />
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\operations\" />
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\operations\__pycache__\" />
+    <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\" />
+    <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\models\" />
+    <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\" />
+    <Folder Include="azure-mgmt-storage\tests\" />
+    <Folder Include="azure-mgmt-storage\tests\recordings\" />
     <Folder Include="azure-mgmt-trafficmanager\" />
     <Folder Include="azure-mgmt-trafficmanager\azure\" />
     <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\" />
@@ -2217,6 +2277,8 @@
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\" />
     <Folder Include="azure-mgmt\tests\" />
     <Folder Include="azure-mgmt\tests\recordings\" />
+    <Folder Include="azure-sdk-testutils\" />
+    <Folder Include="azure-sdk-testutils\devtools_testutils\" />
     <Folder Include="azure-servicebus\tests\" />
     <Folder Include="azure-servicebus\tests\recordings\" />
     <Folder Include="azure-servicemanagement-legacy\" />
@@ -2412,6 +2474,7 @@
     <Content Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\operations\__pycache__\storage_accounts_operations.cpython-35.pyc" />
     <Content Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\operations\__pycache__\usage_operations.cpython-35.pyc" />
     <Content Include="azure-mgmt-storage\azure\mgmt\storage\v2016_12_01\operations\__pycache__\__init__.cpython-35.pyc" />
+    <Content Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\build.json" />
     <Content Include="azure-mgmt-storage\MANIFEST.in" />
     <Content Include="azure-mgmt-storage\README.rst" />
     <Content Include="azure-mgmt-storage\setup.cfg" />
@@ -2465,6 +2528,7 @@
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_scheduler.test_scheduler.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
+    <Content Include="azure-sdk-testutils\devtools_testutils\testsettings_local.cfg" />
     <Content Include="azure-servicebus\MANIFEST.in" />
     <Content Include="azure-servicebus\README.rst" />
     <Content Include="azure-servicebus\setup.cfg" />
