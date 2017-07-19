@@ -28,6 +28,9 @@ class Snapshot(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :ivar managed_by: A relative URI containing the ID of the VM that has the
+     disk attached.
+    :vartype managed_by: str
     :param sku:
     :type sku: :class:`DiskSku
      <azure.mgmt.compute.compute.v2017_03_30.models.DiskSku>`
@@ -59,6 +62,7 @@ class Snapshot(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'managed_by': {'readonly': True},
         'time_created': {'readonly': True},
         'creation_data': {'required': True},
         'provisioning_state': {'readonly': True},
@@ -70,6 +74,7 @@ class Snapshot(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'DiskSku'},
         'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
@@ -81,6 +86,7 @@ class Snapshot(Resource):
 
     def __init__(self, location, creation_data, tags=None, sku=None, os_type=None, disk_size_gb=None, encryption_settings=None):
         super(Snapshot, self).__init__(location=location, tags=tags)
+        self.managed_by = None
         self.sku = sku
         self.time_created = None
         self.os_type = os_type

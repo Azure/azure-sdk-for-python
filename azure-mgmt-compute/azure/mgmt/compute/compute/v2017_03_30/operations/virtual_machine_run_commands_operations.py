@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -46,6 +46,8 @@ class VirtualMachineRunCommandsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RunCommandDocumentBase
+         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocumentBase>`
         :rtype: :class:`RunCommandDocumentBasePaged
          <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocumentBasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -56,7 +58,7 @@ class VirtualMachineRunCommandsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands'
                 path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str', pattern='^[-\w\._]+$'),
+                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -114,16 +116,19 @@ class VirtualMachineRunCommandsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RunCommandDocument
+         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocument>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RunCommandDocument
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocument>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocument>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands/{commandId}'
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str', pattern='^[-\w\._]+$'),
+            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'commandId': self._serialize.url("command_id", command_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
