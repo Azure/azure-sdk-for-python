@@ -68,7 +68,7 @@ class MgmtRecoveryServicesTestHelper(object):
     def create_or_update_vault_extended_info(self, vault):
         params_ext_info = VaultExtendedInfoResource(
             algorithm= "None",
-            integrity_key= TestUtilities.generate_random_key(self)
+            integrity_key= self.generate_random_key()
         )
         return self.client.vault_extended_info.create_or_update(self.resource_group, vault.name, params_ext_info)
 
@@ -93,8 +93,6 @@ class MgmtRecoveryServicesTestHelper(object):
     def update_storage_config(self, vault_name, backup_storage_config):
         return self.client.backup_storage_configs.update(vault_name, backup_storage_config)
 
-
-class TestUtilities(object):
-
     def generate_random_key(self):
         return base64.b64encode(bytearray(random.getrandbits(8) for i in range(16)))
+
