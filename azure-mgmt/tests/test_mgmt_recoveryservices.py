@@ -30,7 +30,9 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
         self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
                                                                         self.group_name)
         self.test_helper = MgmtRecoveryServicesTestHelper(self)
-        self.create_resource_group()
+
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def can_create_get_list_delete_vault_test(self):
