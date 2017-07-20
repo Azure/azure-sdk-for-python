@@ -1,4 +1,25 @@
 {
+	"azure-batch": {
+		"service_name": "Batch",
+		"category ": "Client"
+	},
+	"azure-graphrbac": {
+		"service_name": "Active Directory",
+		"category ": "Client"
+	},
+	"azure-keyvault": {
+		"service_name": "Key Vault",
+		"category ": "Client"
+	},
+	"azure-monitor": {
+		"service_name": "Monitoring",
+		"category ": "Client"
+	},
+	"azure-servicebus": {
+		"service_name": "Service Bus",
+		"category ": "Client"
+	},
+
 	"azure-mgmt-authorization": {
 		"service_name": "Authorization",
 		"category ": "Management"
@@ -96,12 +117,12 @@
 		"category ": "Management"
 	},
  	"azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
-    		"service_name": "MySQL",
-   		 "category ": "Management"
+    	"service_name": "MySQL",
+   		"category ": "Management"
  	 },
 	 "azure-mgmt-rdbms/azure.mgmt.rdbms.postgresql": {
-    		"service_name": "PostgreSQL",
-   		 "category ": "Management"
+    	"service_name": "PostgreSQL",
+   		"category ": "Management"
  	 },
   	"azure-mgmt-recoveryservices": {
    		"service_name": "Recovery Services",
