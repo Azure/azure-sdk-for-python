@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class BatchAccountPaged(Paged):
     """
-    A paging container for iterating over a list of BatchAccount object
+    A paging container for iterating over a list of :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>` object
     """
 
     _attribute_map = {
