@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+from io import open
 from setuptools import setup
 import sys
 try:
@@ -31,11 +32,16 @@ try:
 except ImportError:
     pass
 
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-common',
-    version='1.1.6',
+    version='1.1.7',
     description='Microsoft Azure Client Library for Python (Common)',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
