@@ -103,7 +103,11 @@
     		"service_name": "PostgreSQL",
    		 "category ": "Management"
  	 },
-  	"azure-mgmt-recoveryservicesbackup": {
+  	"azure-mgmt-recoveryservices": {
+   		"service_name": "Recovery Services",
+		"category":  "Management"
+	},
+	"azure-mgmt-recoveryservicesbackup": {
    		 "service_name": "Recovery Services Backup",
     		"category":  "Management"
  	 },
