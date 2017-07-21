@@ -27,10 +27,26 @@ class EffectiveNetworkSecurityRule(Model):
     :type source_port_range: str
     :param destination_port_range: The destination port or range.
     :type destination_port_range: str
+    :param source_port_ranges: The source port ranges. Expected values include
+     a single integer between 0 and 65535, a range using '-' as seperator (e.g.
+     100-400), or an asterix (*)
+    :type source_port_ranges: list of str
+    :param destination_port_ranges: The destination port ranges. Expected
+     values include a single integer between 0 and 65535, a range using '-' as
+     seperator (e.g. 100-400), or an asterix (*)
+    :type destination_port_ranges: list of str
     :param source_address_prefix: The source address prefix.
     :type source_address_prefix: str
     :param destination_address_prefix: The destination address prefix.
     :type destination_address_prefix: str
+    :param source_address_prefixes: The source address prefixes. Expected
+     values include CIDR IP ranges, Default Tags (VirtualNetwork,
+     AureLoadBalancer, Internet), System Tags, and the asterix (*).
+    :type source_address_prefixes: list of str
+    :param destination_address_prefixes: The destination address prefixes.
+     Expected values include CIDR IP ranges, Default Tags (VirtualNetwork,
+     AureLoadBalancer, Internet), System Tags, and the asterix (*).
+    :type destination_address_prefixes: list of str
     :param expanded_source_address_prefix: The expanded source address prefix.
     :type expanded_source_address_prefix: list of str
     :param expanded_destination_address_prefix: Expanded destination address
@@ -53,8 +69,12 @@ class EffectiveNetworkSecurityRule(Model):
         'protocol': {'key': 'protocol', 'type': 'str'},
         'source_port_range': {'key': 'sourcePortRange', 'type': 'str'},
         'destination_port_range': {'key': 'destinationPortRange', 'type': 'str'},
+        'source_port_ranges': {'key': 'sourcePortRanges', 'type': '[str]'},
+        'destination_port_ranges': {'key': 'destinationPortRanges', 'type': '[str]'},
         'source_address_prefix': {'key': 'sourceAddressPrefix', 'type': 'str'},
         'destination_address_prefix': {'key': 'destinationAddressPrefix', 'type': 'str'},
+        'source_address_prefixes': {'key': 'sourceAddressPrefixes', 'type': '[str]'},
+        'destination_address_prefixes': {'key': 'destinationAddressPrefixes', 'type': '[str]'},
         'expanded_source_address_prefix': {'key': 'expandedSourceAddressPrefix', 'type': '[str]'},
         'expanded_destination_address_prefix': {'key': 'expandedDestinationAddressPrefix', 'type': '[str]'},
         'access': {'key': 'access', 'type': 'str'},
@@ -62,13 +82,17 @@ class EffectiveNetworkSecurityRule(Model):
         'direction': {'key': 'direction', 'type': 'str'},
     }
 
-    def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_address_prefix=None, destination_address_prefix=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
+    def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_port_ranges=None, destination_port_ranges=None, source_address_prefix=None, destination_address_prefix=None, source_address_prefixes=None, destination_address_prefixes=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
         self.name = name
         self.protocol = protocol
         self.source_port_range = source_port_range
         self.destination_port_range = destination_port_range
+        self.source_port_ranges = source_port_ranges
+        self.destination_port_ranges = destination_port_ranges
         self.source_address_prefix = source_address_prefix
         self.destination_address_prefix = destination_address_prefix
+        self.source_address_prefixes = source_address_prefixes
+        self.destination_address_prefixes = destination_address_prefixes
         self.expanded_source_address_prefix = expanded_source_address_prefix
         self.expanded_destination_address_prefix = expanded_destination_address_prefix
         self.access = access

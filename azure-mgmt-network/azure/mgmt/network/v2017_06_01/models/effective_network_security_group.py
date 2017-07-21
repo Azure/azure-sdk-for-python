@@ -26,15 +26,20 @@ class EffectiveNetworkSecurityGroup(Model):
     :type effective_security_rules: list of
      :class:`EffectiveNetworkSecurityRule
      <azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityRule>`
+    :param tag_map: Mapping of tags to list of IP Addresses included within
+     the tag.
+    :type tag_map: dict
     """
 
     _attribute_map = {
         'network_security_group': {'key': 'networkSecurityGroup', 'type': 'SubResource'},
         'association': {'key': 'association', 'type': 'EffectiveNetworkSecurityGroupAssociation'},
         'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
+        'tag_map': {'key': 'tagMap', 'type': '{[str]}'},
     }
 
-    def __init__(self, network_security_group=None, association=None, effective_security_rules=None):
+    def __init__(self, network_security_group=None, association=None, effective_security_rules=None, tag_map=None):
         self.network_security_group = network_security_group
         self.association = association
         self.effective_security_rules = effective_security_rules
+        self.tag_map = tag_map
