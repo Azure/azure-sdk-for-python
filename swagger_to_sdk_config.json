@@ -338,7 +338,7 @@
     "recoveryservices": {
       "markdown": "specification/recoveryservices/resource-manager/readme.md",
       "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservices",
-      "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservices"
+      "output_dir":  "azure-mgmt-recoveryservices/azure/mgmt/recoveryservices"
     },
     "recoveryservicesbackup": {
       "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md",
