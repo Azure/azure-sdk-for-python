@@ -3,7 +3,7 @@
 Release History
 ===============
 
-4.1.0 (2017-07-21)
+4.1.0 (2017-07-24)
 ++++++++++++++++++
 
 - New operation to check the availability and validity of a Batch account name.
