@@ -3,6 +3,11 @@
 Release History
 ===============
 
+4.1.0 (2017-07-21)
+++++++++++++++++++
+
+- New operation to check the availability and validity of a Batch account name.
+
 4.0.0 (2017-05-10)
 ++++++++++++++++++
 
@@ -15,7 +20,7 @@ Release History
 3.0.1 (2017-04-19)
 ++++++++++++++++++
 
-This wheel package is now built with the azure wheel extension
+- This wheel package is now built with the azure wheel extension
 
 3.0.0 (2017-03-07)
 ++++++++++++++++++
@@ -40,4 +45,4 @@ This wheel package is now built with the azure wheel extension
 1.0.0 (2016-08-09)
 ++++++++++++++++++
 
-* Initial Release
+- Initial Release

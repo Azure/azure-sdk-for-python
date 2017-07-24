@@ -347,7 +347,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         _m = "Test List Batch Operations"
         LOG.debug(_m)
         operations = self.assertList(_e, _m, self.batch_mgmt_client.operations.list)
-        self.assertEqual(_e, _m, len(operations), 19)
+        self.assertEqual(_e, _m, len(operations), 20)
         self.assertEqual(_e, _m, operations[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(_e, _m, operations[0].origin, 'system')
         self.assertEqual(_e, _m, operations[0].display.provider, 'Microsoft Batch')
@@ -361,16 +361,43 @@ class BatchMgmtTestCase(RecordingTestCase):
         if quotas:
             self.assertEqual(_e, _m, quotas.account_quota, 1)
 
+        _m = "Test Invalid Account Name"
+        LOG.debug(_m)
+        availability = self.assertRuns(_e, _m, self.batch_mgmt_client.location.check_name_availability,
+                                       AZURE_LOCATION, "randombatchaccount@5^$g9873495873")
+        self.assertTrue(_e, _m, isinstance(availability, azure.mgmt.batch.models.CheckNameAvailabilityResult))
+        if availability:
+            self.assertEqual(_e, _m, availability.name_available, False)
+            self.assertEqual(_e, _m, availability.reason, azure.mgmt.batch.models.NameAvailabilityReason.invalid)
+
+        _m = "Test Unvailable Account Name"
+        LOG.debug(_m)
+        availability = self.assertRuns(_e, _m, self.batch_mgmt_client.location.check_name_availability,
+                                       AZURE_LOCATION, AZURE_BATCH_ACCOUNT)
+        self.assertTrue(_e, _m, isinstance(availability, azure.mgmt.batch.models.CheckNameAvailabilityResult))
+        if availability:
+            self.assertEqual(_e, _m, availability.name_available, False)
+            self.assertEqual(_e, _m, availability.reason, azure.mgmt.batch.models.NameAvailabilityReason.already_exists)
+
+        _m = "Test Available Account Name"
+        LOG.debug(_m)
+        availability = self.assertRuns(_e, _m, self.batch_mgmt_client.location.check_name_availability,
+                                       'eastus2', 'batchpythonaccounttest')
+        self.assertTrue(_e, _m, isinstance(availability, azure.mgmt.batch.models.CheckNameAvailabilityResult))
+        if availability:
+            self.assertTrue(_e, _m, availability.name_available)
+
         _m = "Test Create BYOS Account"
         LOG.debug(_m)
         batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
                 location='eastus2',
                 pool_allocation_mode=azure.mgmt.batch.models.PoolAllocationMode.user_subscription)
         try:
-            self.batch_mgmt_client.batch_account.create(
+            creating = self.batch_mgmt_client.batch_account.create(
                 AZURE_RESOURCE_GROUP,
                 'batchpythonaccounttest',
                 batch_account)
+            creating.result()
             _e[_m] = "Expected CloudError to be raised."
         except Exception as error:
             # TODO: Figure out why this deserializes to HTTPError rather than CloudError
