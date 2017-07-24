@@ -22,7 +22,7 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-05-01.5.0".
+    :ivar api_version: Client API Version. Constant value: "2017-06-01.5.1".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,7 +30,7 @@ class JobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01.5.0"
+        self.api_version = "2017-06-01.5.1"
 
         self.config = config
 
@@ -1324,6 +1324,101 @@ class JobOperations(object):
         if raw:
             header_dict = {}
             client_raw_response = models.JobPreparationAndReleaseTaskExecutionInformationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get_task_counts(
+            self, job_id, job_get_task_counts_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the task counts for the specified job.
+
+        Task counts provide a count of the tasks by active, running or
+        completed task state, and a count of tasks which succeeded or failed.
+        Tasks in the preparing state are counted as running. If the
+        validationStatus is unvalidated, then the Batch service has not been
+        able to check state counts against the task states as reported in the
+        List Tasks API. The validationStatus may be unvalidated if the job
+        contains more than 200,000 tasks.
+
+        :param job_id: The ID of the job.
+        :type job_id: str
+        :param job_get_task_counts_options: Additional parameters for the
+         operation
+        :type job_get_task_counts_options: :class:`JobGetTaskCountsOptions
+         <azure.batch.models.JobGetTaskCountsOptions>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`TaskCounts <azure.batch.models.TaskCounts>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
+        """
+        timeout = None
+        if job_get_task_counts_options is not None:
+            timeout = job_get_task_counts_options.timeout
+        client_request_id = None
+        if job_get_task_counts_options is not None:
+            client_request_id = job_get_task_counts_options.client_request_id
+        return_client_request_id = None
+        if job_get_task_counts_options is not None:
+            return_client_request_id = job_get_task_counts_options.return_client_request_id
+        ocp_date = None
+        if job_get_task_counts_options is not None:
+            ocp_date = job_get_task_counts_options.ocp_date
+
+        # Construct URL
+        url = '/jobs/{jobId}/taskcounts'
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if client_request_id is not None:
+            header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
+        if return_client_request_id is not None:
+            header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
+        if ocp_date is not None:
+            header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.BatchErrorException(self._deserialize, response)
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TaskCounts', response)
+            header_dict = {
+                'client-request-id': 'str',
+                'request-id': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

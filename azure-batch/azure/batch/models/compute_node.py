@@ -110,6 +110,10 @@ class ComputeNode(Model):
     :param is_dedicated: Whether this compute node is a dedicated node. If
      false, the node is a low-priority node.
     :type is_dedicated: bool
+    :param endpoint_configuration: The endpoint configuration for the compute
+     node.
+    :type endpoint_configuration: :class:`ComputeNodeEndpointConfiguration
+     <azure.batch.models.ComputeNodeEndpointConfiguration>`
     """
 
     _attribute_map = {
@@ -132,9 +136,10 @@ class ComputeNode(Model):
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
         'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
+        'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None):
+    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None, endpoint_configuration=None):
         self.id = id
         self.url = url
         self.state = state
@@ -154,3 +159,4 @@ class ComputeNode(Model):
         self.certificate_references = certificate_references
         self.errors = errors
         self.is_dedicated = is_dedicated
+        self.endpoint_configuration = endpoint_configuration
