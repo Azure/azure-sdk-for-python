@@ -781,6 +781,10 @@ class BatchMgmtTestCase(RecordingTestCase):
                 pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
                 self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
                 if pool:
+                    while pool.allocation_state != batch.models.AllocationState.steady and self.live:
+                        print("Waiting for pool state to become steady")
+                        time.sleep(20)
+                        pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
                     self.assertEqual(_e, _m, pool.target_dedicated_nodes, 0)
                     self.assertEqual(_e, _m, pool.target_low_priority_nodes, 2)
                 params = batch.models.PoolResizeParameter(target_dedicated_nodes=3, target_low_priority_nodes=0)
@@ -794,7 +798,11 @@ class BatchMgmtTestCase(RecordingTestCase):
                 pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
                 self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
                 if pool:
-                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 3)
+                    while pool.allocation_state != batch.models.AllocationState.steady and self.live:
+                        print("Waiting for pool state to become steady")
+                        time.sleep(20)
+                        pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
+                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 0)
                     self.assertEqual(_e, _m, pool.target_low_priority_nodes, 2)  # TODO: Why?
 
                 _m = "Test Get All Pools Lifetime Statistics"
@@ -804,10 +812,10 @@ class BatchMgmtTestCase(RecordingTestCase):
                 if stats:
                     self.assertEqual(_e, _m, stats.url, "https://{}.{}.batch.azure.com/lifetimepoolstats".format(
                         AZURE_BATCH_ACCOUNT, AZURE_LOCATION))
-                    self.assertEqual(_e, _m, stats.resource_stats.avg_cpu_percentage, 0.0)
-                    self.assertEqual(_e, _m, stats.resource_stats.network_read_gi_b, 0.0)
-                    self.assertEqual(_e, _m, stats.resource_stats.disk_write_gi_b, 0.0)
-                    self.assertEqual(_e, _m, stats.resource_stats.peak_disk_gi_b, 0.0)
+                    self.assertTrue(_e, _m, stats.resource_stats.avg_cpu_percentage > 0.0)
+                    self.assertTrue(_e, _m, stats.resource_stats.network_read_gi_b > 0.0)
+                    self.assertTrue(_e, _m, stats.resource_stats.disk_write_gi_b > 0.0)
+                    self.assertTrue(_e, _m, stats.resource_stats.peak_disk_gi_b > 0.0)
 
                 _m = "Test Get Pool Usage Info"  #TODO: Test with real usage metrics
                 LOG.debug('TODO: ' + _m)
@@ -837,6 +845,49 @@ class BatchMgmtTestCase(RecordingTestCase):
                 self.assertEqual(_e, _m, node.state, batch.models.ComputeNodeState.idle)
                 self.assertEqual(_e, _m, node.scheduling_state, batch.models.SchedulingState.enabled)
                 self.assertTrue(_e, _m, node.is_dedicated)
+
+            _m = "Test a Pool with Inbound Endpoint Configuration"
+            LOG.debug(_m)
+            network_config = batch.models.NetworkConfiguration(
+                endpoint_configuration=batch.models.PoolEndpointConfiguration(
+                    inbound_nat_pools=[
+                        batch.models.InboundNATPool(
+                            name="TestEndpointConfig",
+                            protocol=batch.models.InboundEndpointProtocol.udp,
+                            backend_port=64444,
+                            frontend_port_range_start=60000,
+                            frontend_port_range_end=61000,
+                            network_security_group_rules=[
+                                batch.models.NetworkSecurityGroupRule(
+                                    priority=150,
+                                    access=batch.models.NetworkSecurityGroupRuleAccess.allow,
+                                    source_address_prefix='*'
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+            virtual_machine_config = batch.models.VirtualMachineConfiguration(
+                node_agent_sku_id="batch.node.ubuntu 16.04",
+                image_reference=batch.models.ImageReference(
+                    publisher="Canonical",
+                    offer="UbuntuServer",
+                    sku="16.04-LTS")
+            )
+            with BatchPool(self.live,
+                           self.batch_client_sk,
+                           'python_test_pool_4',
+                           target_dedicated_nodes=1,
+                           virtual_machine_configuration=virtual_machine_config,
+                           network_configuration=network_config) as network_pool_id:
+                nodes = self.assertList(_e, _m, self.batch_client_sk.compute_node.list, network_pool_id)
+                self.assertEqual(_e, _m, len(nodes), 1)
+                if nodes:
+                    self.assertTrue(_e, _m, isinstance(nodes[0], batch.models.ComputeNode))
+                    self.assertEqual(_e, _m, len(nodes[0].endpoint_configuration.inbound_endpoints), 1)
+                    self.assertEqual(_e, _m, nodes[0].endpoint_configuration.inbound_endpoints[0].name, 'TestEndpointConfig.0')
+                    self.assertEqual(_e, _m, nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
 
             _m = "Test Add User"
             LOG.debug(_m)
@@ -952,7 +1003,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_4',
-                       virtual_machine=image,
+                       virtual_machine_configuration=image,
                        target_dedicated_nodes=1, user_accounts=users) as pool_id:
 
             _m = "Test Create Job"
@@ -1162,6 +1213,15 @@ class BatchMgmtTestCase(RecordingTestCase):
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.add_collection, 'python_test_job', tasks)
             self.assertTrue(_e, _m, isinstance(response, batch.models.TaskAddCollectionResult))
 
+            _m = "Test Count Tasks"
+            LOG.debug(_m)
+            task_counts = self.assertRuns(_e, _m, self.batch_client_sk.job.get_task_counts, 'python_test_job')
+            self.assertTrue(_e, _m, isinstance(task_counts, batch.models.TaskCounts))
+            if task_counts:
+                self.assertTrue(_e, _m, task_counts.completed > 0)
+                self.assertTrue(_e, _m, task_counts.succeeded > 0)
+                self.assertEqual(_e, _m, task_counts.validation_status, batch.models.TaskCountValidationStatus.validated)
+
             _m = "Test List Tasks"
             LOG.debug(_m)
             tasks = self.assertList(_e, _m, self.batch_client_sk.task.list, 'python_test_job')
@@ -1339,7 +1399,7 @@ class BatchPool(object):
         if self.live:
             try:
                 try:
-                    pool_config = self.kwargs.pop("virtual_machine")
+                    pool_config = self.kwargs.pop("virtual_machine_configuration")
                     pool = batch.models.PoolAddParameter(self.id, 'standard_a1', virtual_machine_configuration=pool_config, **self.kwargs)
                 except KeyError:
                     pool_config = batch.models.CloudServiceConfiguration('4')
@@ -1353,7 +1413,7 @@ class BatchPool(object):
                     options = batch.models.ComputeNodeListOptions(select='id,state')
                     while len(ready_nodes) != self.nodes:
                         if datetime.datetime.now() > self.timeout:
-                            raise AssertionError("Nodes failed to become idle in 15 minutes")
+                            raise AssertionError("Nodes failed to become idle in 20 minutes")
 
                         LOG.debug("    waiting for {} nodes to be ready...".format(self.nodes))
                         nodes = self.client.compute_node.list(self.id, options)
