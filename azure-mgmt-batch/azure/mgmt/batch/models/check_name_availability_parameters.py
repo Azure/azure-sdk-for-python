@@ -12,24 +12,31 @@
 from msrest.serialization import Model
 
 
-class BatchLocationQuota(Model):
-    """Quotas associated with a Batch region for a particular subscription.
+class CheckNameAvailabilityParameters(Model):
+    """Parameters for a check name availability request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar account_quota: The number of Batch accounts that may be created
-     under the subscription in the specified region.
-    :vartype account_quota: int
+    :param name: The name to check for availability
+    :type name: str
+    :ivar type: The resource type. Must be set to
+     Microsoft.Batch/batchAccounts. Default value:
+     "Microsoft.Batch/batchAccounts" .
+    :vartype type: str
     """
 
     _validation = {
-        'account_quota': {'readonly': True},
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'account_quota': {'key': 'accountQuota', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.account_quota = None
+    type = "Microsoft.Batch/batchAccounts"
+
+    def __init__(self, name):
+        self.name = name
