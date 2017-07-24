@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServerCommunicationLinkPaged(Paged):
     """
-    A paging container for iterating over a list of ServerCommunicationLink object
+    A paging container for iterating over a list of :class:`ServerCommunicationLink <azure.mgmt.sql.models.ServerCommunicationLink>` object
     """
 
     _attribute_map = {
