@@ -94,6 +94,18 @@ class CachingType(Enum):
     read_write = "readWrite"
 
 
+class InboundEndpointProtocol(Enum):
+
+    tcp = "tcp"
+    udp = "udp"
+
+
+class NetworkSecurityGroupRuleAccess(Enum):
+
+    allow = "allow"
+    deny = "deny"
+
+
 class PoolLifetimeOption(Enum):
 
     job_schedule = "jobSchedule"
@@ -154,6 +166,12 @@ class JobReleaseTaskState(Enum):
 
     running = "running"
     completed = "completed"
+
+
+class TaskCountValidationStatus(Enum):
+
+    validated = "validated"
+    unvalidated = "unvalidated"
 
 
 class PoolState(Enum):
