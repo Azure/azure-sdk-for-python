@@ -53,6 +53,9 @@ from .cloud_service_configuration import CloudServiceConfiguration
 from .os_disk import OSDisk
 from .windows_configuration import WindowsConfiguration
 from .virtual_machine_configuration import VirtualMachineConfiguration
+from .network_security_group_rule import NetworkSecurityGroupRule
+from .inbound_nat_pool import InboundNATPool
+from .pool_endpoint_configuration import PoolEndpointConfiguration
 from .network_configuration import NetworkConfiguration
 from .pool_specification import PoolSpecification
 from .auto_pool_specification import AutoPoolSpecification
@@ -71,6 +74,7 @@ from .task_failure_information import TaskFailureInformation
 from .job_preparation_task_execution_information import JobPreparationTaskExecutionInformation
 from .job_release_task_execution_information import JobReleaseTaskExecutionInformation
 from .job_preparation_and_release_task_execution_information import JobPreparationAndReleaseTaskExecutionInformation
+from .task_counts import TaskCounts
 from .auto_scale_run_error import AutoScaleRunError
 from .auto_scale_run import AutoScaleRun
 from .resize_error import ResizeError
@@ -96,6 +100,8 @@ from .cloud_task_list_subtasks_result import CloudTaskListSubtasksResult
 from .task_information import TaskInformation
 from .start_task_information import StartTaskInformation
 from .compute_node_error import ComputeNodeError
+from .inbound_endpoint import InboundEndpoint
+from .compute_node_endpoint_configuration import ComputeNodeEndpointConfiguration
 from .compute_node import ComputeNode
 from .compute_node_user import ComputeNodeUser
 from .compute_node_get_remote_login_settings_result import ComputeNodeGetRemoteLoginSettingsResult
@@ -148,6 +154,7 @@ from .job_add_options import JobAddOptions
 from .job_list_options import JobListOptions
 from .job_list_from_job_schedule_options import JobListFromJobScheduleOptions
 from .job_list_preparation_and_release_task_status_options import JobListPreparationAndReleaseTaskStatusOptions
+from .job_get_task_counts_options import JobGetTaskCountsOptions
 from .certificate_add_options import CertificateAddOptions
 from .certificate_list_options import CertificateListOptions
 from .certificate_cancel_deletion_options import CertificateCancelDeletionOptions
@@ -216,6 +223,8 @@ from .batch_service_client_enums import (
     CertificateStoreLocation,
     CertificateVisibility,
     CachingType,
+    InboundEndpointProtocol,
+    NetworkSecurityGroupRuleAccess,
     PoolLifetimeOption,
     OnAllTasksComplete,
     OnTaskFailure,
@@ -225,6 +234,7 @@ from .batch_service_client_enums import (
     JobPreparationTaskState,
     TaskExecutionResult,
     JobReleaseTaskState,
+    TaskCountValidationStatus,
     PoolState,
     AllocationState,
     TaskState,
@@ -285,6 +295,9 @@ __all__ = [
     'OSDisk',
     'WindowsConfiguration',
     'VirtualMachineConfiguration',
+    'NetworkSecurityGroupRule',
+    'InboundNATPool',
+    'PoolEndpointConfiguration',
     'NetworkConfiguration',
     'PoolSpecification',
     'AutoPoolSpecification',
@@ -303,6 +316,7 @@ __all__ = [
     'JobPreparationTaskExecutionInformation',
     'JobReleaseTaskExecutionInformation',
     'JobPreparationAndReleaseTaskExecutionInformation',
+    'TaskCounts',
     'AutoScaleRunError',
     'AutoScaleRun',
     'ResizeError',
@@ -328,6 +342,8 @@ __all__ = [
     'TaskInformation',
     'StartTaskInformation',
     'ComputeNodeError',
+    'InboundEndpoint',
+    'ComputeNodeEndpointConfiguration',
     'ComputeNode',
     'ComputeNodeUser',
     'ComputeNodeGetRemoteLoginSettingsResult',
@@ -380,6 +396,7 @@ __all__ = [
     'JobListOptions',
     'JobListFromJobScheduleOptions',
     'JobListPreparationAndReleaseTaskStatusOptions',
+    'JobGetTaskCountsOptions',
     'CertificateAddOptions',
     'CertificateListOptions',
     'CertificateCancelDeletionOptions',
@@ -447,6 +464,8 @@ __all__ = [
     'CertificateStoreLocation',
     'CertificateVisibility',
     'CachingType',
+    'InboundEndpointProtocol',
+    'NetworkSecurityGroupRuleAccess',
     'PoolLifetimeOption',
     'OnAllTasksComplete',
     'OnTaskFailure',
@@ -456,6 +475,7 @@ __all__ = [
     'JobPreparationTaskState',
     'TaskExecutionResult',
     'JobReleaseTaskState',
+    'TaskCountValidationStatus',
     'PoolState',
     'AllocationState',
     'TaskState',

@@ -22,23 +22,30 @@ class NetworkConfiguration(Model):
      Azure Batch account. The specified subnet should have enough free IP
      addresses to accommodate the number of nodes in the pool. If the subnet
      doesn't have enough free IP addresses, the pool will partially allocate
-     compute nodes, and a resize error will occur. The Batch service principal,
-     named 'Microsoft Azure Batch' or 'MicrosoftAzureBatch', must have the
-     'Classic Virtual Machine Contributor' Role-Based Access Control (RBAC)
-     role for the specified VNet. The specified subnet must allow communication
-     from the Azure Batch service to be able to schedule tasks on the compute
-     nodes. This can be verified by checking if the specified VNet has any
-     associated Network Security Groups (NSG). If communication to the compute
-     nodes in the specified subnet is denied by an NSG, then the Batch service
-     will set the state of the compute nodes to unusable. For pools created via
-     virtualMachineConfiguration the Batch account must have poolAllocationMode
-     userSubscription in order to use a VNet.
+     compute nodes, and a resize error will occur. The 'MicrosoftAzureBatch'
+     service principal must have the 'Classic Virtual Machine Contributor'
+     Role-Based Access Control (RBAC) role for the specified VNet. The
+     specified subnet must allow communication from the Azure Batch service to
+     be able to schedule tasks on the compute nodes. This can be verified by
+     checking if the specified VNet has any associated Network Security Groups
+     (NSG). If communication to the compute nodes in the specified subnet is
+     denied by an NSG, then the Batch service will set the state of the compute
+     nodes to unusable. For pools created via virtualMachineConfiguration the
+     Batch account must have poolAllocationMode userSubscription in order to
+     use a VNet.
     :type subnet_id: str
+    :param endpoint_configuration: The configuration for endpoints on compute
+     nodes in the Batch pool. Pool endpoint configuration is only supported on
+     pools with the virtualMachineConfiguration property.
+    :type endpoint_configuration: :class:`PoolEndpointConfiguration
+     <azure.batch.models.PoolEndpointConfiguration>`
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
     }
 
-    def __init__(self, subnet_id=None):
+    def __init__(self, subnet_id=None, endpoint_configuration=None):
         self.subnet_id = subnet_id
+        self.endpoint_configuration = endpoint_configuration

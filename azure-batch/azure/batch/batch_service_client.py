@@ -90,7 +90,7 @@ class BatchServiceClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-05-01.5.0'
+        self.api_version = '2017-06-01.5.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
