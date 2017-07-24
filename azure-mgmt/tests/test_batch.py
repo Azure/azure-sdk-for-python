@@ -860,7 +860,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                             network_security_group_rules=[
                                 batch.models.NetworkSecurityGroupRule(
                                     priority=150,
-                                    access='allow',
+                                    access=batch.models.NetworkSecurityGroupRuleAccess.allow,
                                     source_address_prefix='*'
                                 )
                             ]
@@ -1220,6 +1220,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             if task_counts:
                 self.assertTrue(_e, _m, task_counts.completed > 0)
                 self.assertTrue(_e, _m, task_counts.succeeded > 0)
+                self.assertEqual(_e, _m, task_counts.validation_status, batch.models.TaskCountValidationStatus.validated)
 
             _m = "Test List Tasks"
             LOG.debug(_m)
