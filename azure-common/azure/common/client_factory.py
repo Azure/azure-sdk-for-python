@@ -7,6 +7,7 @@
 import io
 import json
 import os
+import sys
 try:
     from inspect import getfullargspec as get_arg_spec
 except ImportError:
@@ -25,7 +26,7 @@ def _instantiate_client(client_class, **kwargs):
     args = get_arg_spec(client_class.__init__).args
     if 'subscription_id' not in args:
         del kwargs['subscription_id']
-    elif isinstance( kwargs['subscription_id'], unicode ):
+    elif sys.version_info < (3, 0) and isinstance( kwargs['subscription_id'], unicode ):
         kwargs['subscription_id'] = str( kwargs['subscription_id'] )
     return client_class(**kwargs)
 
