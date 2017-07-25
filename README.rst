@@ -65,17 +65,21 @@ If you want to install all packages of the repo from source::
 Usage
 =====
 
-For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__.
+For detailed documentation, please view our `documentation on docs.microsoft.com <https://docs.microsoft.com/python/azure/>`__. 
+However, we are migrating content from our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__ and you might still find useful information there.
 
-For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
-or the `Azure Samples website <https://azure.microsoft.com/en-us/resources/samples/?platform=python>`__.
+For further samples please visit the `Azure Samples website <https://azure.microsoft.com/en-us/resources/samples/?platform=python>`__.
 
+Tests
+=====
+
+For detailed documentation about our test framework, please visit this `Azure SDK test turorial <https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests>`__.
 
 Need Help?
 ==========
 
 Be sure to check out the Microsoft Azure `Developer Forums on Stack Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__
-if you have trouble with the provided code.
+if you have trouble with the provided code. Most questions are tagged `azure and python <https://stackoverflow.com/questions/tagged/azure+python>`__.
 
 
 Contribute Code or Provide Feedback
