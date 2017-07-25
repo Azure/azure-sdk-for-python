@@ -25,6 +25,8 @@ def _instantiate_client(client_class, **kwargs):
     args = get_arg_spec(client_class.__init__).args
     if 'subscription_id' not in args:
         del kwargs['subscription_id']
+    elif isinstance( kwargs['subscription_id'], unicode ):
+        kwargs['subscription_id'] = str( kwargs['subscription_id'] )
     return client_class(**kwargs)
 
 
