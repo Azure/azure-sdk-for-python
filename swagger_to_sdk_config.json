@@ -574,7 +574,7 @@
     },
     "datalake.analytics.catalog": {
       "autorest_options": {
-        "input-file": "specification/datalake-analytics/resource-manager/Microsoft.DataLakeAnalytics/2016-11-01/catalog.json",
+        "input-file": "specification/datalake-analytics/data-plane/Microsoft.DataLakeAnalytics/2016-11-01/catalog.json",
         "namespace": "azure.mgmt.datalake.analytics.catalog",
         "package-version": "0.1.6"
       },
@@ -583,7 +583,7 @@
     },
     "datalake.analytics.job": {
       "autorest_options": {
-        "input-file": "specification/datalake-analytics/resource-manager/Microsoft.DataLakeAnalytics/2016-11-01/job.json",
+        "input-file": "specification/datalake-analytics/data-plane/Microsoft.DataLakeAnalytics/2016-11-01/job.json",
         "namespace": "azure.mgmt.datalake.analytics.job",
         "package-version": "0.1.6"
       },

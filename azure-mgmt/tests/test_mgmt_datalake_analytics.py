@@ -229,11 +229,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     def run_job_to_completion(self, adla_account_name, job_id, script_to_run, job_params=None):
         if not job_params:
-            job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
+            job_params = azure.mgmt.datalake.analytics.job.models.CreateJobParameters(
                 name = self.get_resource_name('testjob'),
                 type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
                 degree_of_parallelism = 2,
-                properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
+                properties = azure.mgmt.datalake.analytics.job.models.CreateUSqlJobProperties(
                     script = script_to_run,
                 )
             )
@@ -267,11 +267,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     def test_adla_jobs(self):
         self.run_prereqs(create_job_acct= True, create_catalog = False)
         # define some static GUIDs
-        job_to_submit = azure.mgmt.datalake.analytics.job.models.JobInformation(
+        job_to_submit = azure.mgmt.datalake.analytics.job.models.CreateJobParameters(
             name = 'azure python sdk job test',
             degree_of_parallelism = 2,
             type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
-            properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
+            properties = azure.mgmt.datalake.analytics.job.models.CreateUSqlJobProperties(
                 script = 'DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;'
             ),
             related = azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties(
@@ -352,13 +352,22 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         pipeline_list = list(pipeline_list)
         self.assertEqual(1, len(pipeline_list))
 
+        # create a job to build
+        job_to_build = azure.mgmt.datalake.analytics.job.models.BuildJobParameters(
+            name = 'azure python sdk job test',
+            type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
+            properties = azure.mgmt.datalake.analytics.job.models.CreateUSqlJobProperties(
+                script = 'DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;'
+            )
+        )
+
         # compile a job
-        compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_submit)
+        compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_build)
         self.assertIsNotNone(compile_response)
 
         # now compile a broken job and validate diagnostics.
-        job_to_submit.properties.script = 'DROP DATABASE IF EXIST FOO; CREATE DATABASE FOO;'
-        compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_submit)
+        job_to_build.properties.script = 'DROP DATABASE IF EXIST FOO; CREATE DATABASE FOO;'
+        compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_build)
         self.assertIsNotNone(compile_response)
 
         self.assertEqual(1, len(list(compile_response.properties.diagnostics)))

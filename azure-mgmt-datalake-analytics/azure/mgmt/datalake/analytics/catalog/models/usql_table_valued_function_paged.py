@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class USqlTableValuedFunctionPaged(Paged):
     """
-    A paging container for iterating over a list of USqlTableValuedFunction object
+    A paging container for iterating over a list of :class:`USqlTableValuedFunction <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>` object
     """
 
     _attribute_map = {

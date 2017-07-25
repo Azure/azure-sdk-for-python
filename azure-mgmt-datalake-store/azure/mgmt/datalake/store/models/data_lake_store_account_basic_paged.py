@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class DataLakeAnalyticsAccountPaged(Paged):
+class DataLakeStoreAccountBasicPaged(Paged):
     """
-    A paging container for iterating over a list of DataLakeAnalyticsAccount object
+    A paging container for iterating over a list of :class:`DataLakeStoreAccountBasic <azure.mgmt.datalake.store.models.DataLakeStoreAccountBasic>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DataLakeAnalyticsAccount]'}
+        'current_page': {'key': 'value', 'type': '[DataLakeStoreAccountBasic]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(DataLakeAnalyticsAccountPaged, self).__init__(*args, **kwargs)
+        super(DataLakeStoreAccountBasicPaged, self).__init__(*args, **kwargs)

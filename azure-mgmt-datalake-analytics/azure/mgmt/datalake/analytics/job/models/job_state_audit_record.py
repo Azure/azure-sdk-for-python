@@ -25,7 +25,7 @@ class JobStateAuditRecord(Model):
     :vartype time_stamp: datetime
     :ivar requested_by_user: the user who requests the change.
     :vartype requested_by_user: str
-    :ivar details:  the details of the audit log.
+    :ivar details: the details of the audit log.
     :vartype details: str
     """
 

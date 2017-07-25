@@ -18,10 +18,10 @@ class StorageContainer(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of the blob container.
-    :vartype name: str
     :ivar id: the unique identifier of the blob container.
     :vartype id: str
+    :ivar name: the name of the blob container.
+    :vartype name: str
     :ivar type: the type of the blob container.
     :vartype type: str
     :ivar last_modified_time: the last modified time of the blob container.
@@ -29,21 +29,21 @@ class StorageContainer(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'last_modified_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
     }
 
     def __init__(self):
-        self.name = None
         self.id = None
+        self.name = None
         self.type = None
         self.last_modified_time = None
