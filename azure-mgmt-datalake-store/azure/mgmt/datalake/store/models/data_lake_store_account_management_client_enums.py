@@ -18,25 +18,6 @@ class EncryptionConfigType(Enum):
     service_managed = "ServiceManaged"
 
 
-class DataLakeStoreAccountStatus(Enum):
-
-    failed = "Failed"
-    creating = "Creating"
-    running = "Running"
-    succeeded = "Succeeded"
-    patching = "Patching"
-    suspending = "Suspending"
-    resuming = "Resuming"
-    deleting = "Deleting"
-    deleted = "Deleted"
-
-
-class DataLakeStoreAccountState(Enum):
-
-    active = "Active"
-    suspended = "Suspended"
-
-
 class EncryptionState(Enum):
 
     enabled = "Enabled"
@@ -76,3 +57,22 @@ class FirewallAllowAzureIpsState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class DataLakeStoreAccountStatus(Enum):
+
+    failed = "Failed"
+    creating = "Creating"
+    running = "Running"
+    succeeded = "Succeeded"
+    patching = "Patching"
+    suspending = "Suspending"
+    resuming = "Resuming"
+    deleting = "Deleting"
+    deleted = "Deleted"
+
+
+class DataLakeStoreAccountState(Enum):
+
+    active = "Active"
+    suspended = "Suspended"

@@ -12,25 +12,6 @@
 from enum import Enum
 
 
-class DataLakeAnalyticsAccountStatus(Enum):
-
-    failed = "Failed"
-    creating = "Creating"
-    running = "Running"
-    succeeded = "Succeeded"
-    patching = "Patching"
-    suspending = "Suspending"
-    resuming = "Resuming"
-    deleting = "Deleting"
-    deleted = "Deleted"
-
-
-class DataLakeAnalyticsAccountState(Enum):
-
-    active = "Active"
-    suspended = "Suspended"
-
-
 class TierType(Enum):
 
     consumption = "Consumption"
@@ -61,3 +42,22 @@ class AADObjectType(Enum):
     user = "User"
     group = "Group"
     service_principal = "ServicePrincipal"
+
+
+class DataLakeAnalyticsAccountStatus(Enum):
+
+    failed = "Failed"
+    creating = "Creating"
+    running = "Running"
+    succeeded = "Succeeded"
+    patching = "Patching"
+    suspending = "Suspending"
+    resuming = "Resuming"
+    deleting = "Deleting"
+    deleted = "Deleted"
+
+
+class DataLakeAnalyticsAccountState(Enum):
+
+    active = "Active"
+    suspended = "Suspended"
