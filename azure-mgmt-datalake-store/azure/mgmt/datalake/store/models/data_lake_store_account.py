@@ -31,18 +31,24 @@ class DataLakeStoreAccount(Resource):
     :param identity: The Key Vault encryption identity, if any.
     :type identity: :class:`EncryptionIdentity
      <azure.mgmt.datalake.store.models.EncryptionIdentity>`
-    :ivar provisioning_state: the status of the Data Lake Store account while
-     being provisioned. Possible values include: 'Failed', 'Creating',
-     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
-     'Deleted'
+    :ivar provisioning_state: the provisioning status of the Data Lake Store
+     account. Possible values include: 'Failed', 'Creating', 'Running',
+     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted'
     :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
      <azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus>`
-    :ivar state: the status of the Data Lake Store account after provisioning
-     has completed. Possible values include: 'Active', 'Suspended'
+    :ivar state: the state of the Data Lake Store account. Possible values
+     include: 'Active', 'Suspended'
     :vartype state: str or :class:`DataLakeStoreAccountState
      <azure.mgmt.datalake.store.models.DataLakeStoreAccountState>`
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
+    :ivar last_modified_time: the account last modified time.
+    :vartype last_modified_time: datetime
+    :ivar endpoint: the full CName endpoint for this account.
+    :vartype endpoint: str
+    :ivar account_id: The unique identifier associated with this Data Lake
+     Store account.
+    :vartype account_id: str
     :param encryption_state: The current state of encryption for this Data
      Lake store account. Possible values include: 'Enabled', 'Disabled'
     :type encryption_state: str or :class:`EncryptionState
@@ -74,10 +80,6 @@ class DataLakeStoreAccount(Resource):
      associated with this Data Lake store account.
     :type trusted_id_providers: list of :class:`TrustedIdProvider
      <azure.mgmt.datalake.store.models.TrustedIdProvider>`
-    :ivar last_modified_time: the account last modified time.
-    :vartype last_modified_time: datetime
-    :ivar endpoint: the gateway host.
-    :vartype endpoint: str
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
@@ -108,9 +110,10 @@ class DataLakeStoreAccount(Resource):
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'creation_time': {'readonly': True},
-        'encryption_provisioning_state': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'endpoint': {'readonly': True},
+        'account_id': {'readonly': True},
+        'encryption_provisioning_state': {'readonly': True},
         'current_tier': {'readonly': True},
     }
 
@@ -124,6 +127,9 @@ class DataLakeStoreAccount(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'DataLakeStoreAccountStatus'},
         'state': {'key': 'properties.state', 'type': 'DataLakeStoreAccountState'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'encryption_state': {'key': 'properties.encryptionState', 'type': 'EncryptionState'},
         'encryption_provisioning_state': {'key': 'properties.encryptionProvisioningState', 'type': 'EncryptionProvisioningState'},
         'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
@@ -131,8 +137,6 @@ class DataLakeStoreAccount(Resource):
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
         'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
         'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[TrustedIdProvider]'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
@@ -145,6 +149,9 @@ class DataLakeStoreAccount(Resource):
         self.provisioning_state = None
         self.state = None
         self.creation_time = None
+        self.last_modified_time = None
+        self.endpoint = None
+        self.account_id = None
         self.encryption_state = encryption_state
         self.encryption_provisioning_state = None
         self.encryption_config = encryption_config
@@ -152,8 +159,6 @@ class DataLakeStoreAccount(Resource):
         self.firewall_rules = firewall_rules
         self.trusted_id_provider_state = trusted_id_provider_state
         self.trusted_id_providers = trusted_id_providers
-        self.last_modified_time = None
-        self.endpoint = None
         self.default_group = default_group
         self.new_tier = new_tier
         self.current_tier = None

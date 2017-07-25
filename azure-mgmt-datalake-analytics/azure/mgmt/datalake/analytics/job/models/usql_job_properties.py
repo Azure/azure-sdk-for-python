@@ -13,7 +13,7 @@ from .job_properties import JobProperties
 
 
 class USqlJobProperties(JobProperties):
-    """U-SQL job properties used when submitting and retrieving U-SQL jobs.
+    """U-SQL job properties used when retrieving U-SQL jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,17 +25,17 @@ class USqlJobProperties(JobProperties):
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str
-    :param resources: the list of resources that are required by the job
-    :type resources: list of :class:`JobResource
+    :ivar resources: the list of resources that are required by the job
+    :vartype resources: list of :class:`JobResource
      <azure.mgmt.datalake.analytics.job.models.JobResource>`
-    :param statistics: the job specific statistics.
-    :type statistics: :class:`JobStatistics
+    :ivar statistics: the job specific statistics.
+    :vartype statistics: :class:`JobStatistics
      <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
-    :param debug_data: the job specific debug data locations.
-    :type debug_data: :class:`JobDataPath
+    :ivar debug_data: the job specific debug data locations.
+    :vartype debug_data: :class:`JobDataPath
      <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
-    :param diagnostics: the diagnostics for the job.
-    :type diagnostics: list of :class:`Diagnostics
+    :ivar diagnostics: the diagnostics for the job.
+    :vartype diagnostics: list of :class:`Diagnostics
      <azure.mgmt.datalake.analytics.job.models.Diagnostics>`
     :ivar algebra_file_path: the algebra file path after the job has completed
     :vartype algebra_file_path: str
@@ -63,17 +63,21 @@ class USqlJobProperties(JobProperties):
      application executing the job. This value should not be set by the user
      and will be ignored if it is.
     :vartype yarn_application_time_stamp: long
-    :param compile_mode: Optionally enforces a specific compilation mode for
-     the job during execution. If this is not specified during submission, the
-     server will determine the optimal compilation mode. Possible values
-     include: 'Semantic', 'Full', 'SingleBox'
-    :type compile_mode: str or :class:`CompileMode
+    :ivar compile_mode: the specific compilation mode for the job used during
+     execution. If this is not specified during submission, the server will
+     determine the optimal compilation mode. Possible values include:
+     'Semantic', 'Full', 'SingleBox'
+    :vartype compile_mode: str or :class:`CompileMode
      <azure.mgmt.datalake.analytics.job.models.CompileMode>`
     """
 
     _validation = {
         'script': {'required': True},
         'type': {'required': True},
+        'resources': {'readonly': True},
+        'statistics': {'readonly': True},
+        'debug_data': {'readonly': True},
+        'diagnostics': {'readonly': True},
         'algebra_file_path': {'readonly': True},
         'total_compilation_time': {'readonly': True},
         'total_pause_time': {'readonly': True},
@@ -82,6 +86,7 @@ class USqlJobProperties(JobProperties):
         'root_process_node_id': {'readonly': True},
         'yarn_application_id': {'readonly': True},
         'yarn_application_time_stamp': {'readonly': True},
+        'compile_mode': {'readonly': True},
     }
 
     _attribute_map = {
@@ -103,12 +108,12 @@ class USqlJobProperties(JobProperties):
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, resources=None, statistics=None, debug_data=None, diagnostics=None, compile_mode=None):
+    def __init__(self, script, runtime_version=None):
         super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
-        self.resources = resources
-        self.statistics = statistics
-        self.debug_data = debug_data
-        self.diagnostics = diagnostics
+        self.resources = None
+        self.statistics = None
+        self.debug_data = None
+        self.diagnostics = None
         self.algebra_file_path = None
         self.total_compilation_time = None
         self.total_pause_time = None
@@ -117,5 +122,5 @@ class USqlJobProperties(JobProperties):
         self.root_process_node_id = None
         self.yarn_application_id = None
         self.yarn_application_time_stamp = None
-        self.compile_mode = compile_mode
+        self.compile_mode = None
         self.type = 'USql'

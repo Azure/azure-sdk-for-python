@@ -20,22 +20,23 @@ from .update_key_vault_meta_info import UpdateKeyVaultMetaInfo
 from .update_encryption_config import UpdateEncryptionConfig
 from .data_lake_store_account_update_parameters import DataLakeStoreAccountUpdateParameters
 from .data_lake_store_account import DataLakeStoreAccount
+from .data_lake_store_account_basic import DataLakeStoreAccountBasic
 from .error_details import ErrorDetails
 from .resource import Resource
 from .sub_resource import SubResource
 from .firewall_rule_paged import FirewallRulePaged
 from .trusted_id_provider_paged import TrustedIdProviderPaged
-from .data_lake_store_account_paged import DataLakeStoreAccountPaged
+from .data_lake_store_account_basic_paged import DataLakeStoreAccountBasicPaged
 from .data_lake_store_account_management_client_enums import (
     EncryptionConfigType,
-    DataLakeStoreAccountStatus,
-    DataLakeStoreAccountState,
     EncryptionState,
     EncryptionProvisioningState,
     FirewallState,
     TrustedIdProviderState,
     TierType,
     FirewallAllowAzureIpsState,
+    DataLakeStoreAccountStatus,
+    DataLakeStoreAccountState,
 )
 
 __all__ = [
@@ -50,19 +51,20 @@ __all__ = [
     'UpdateEncryptionConfig',
     'DataLakeStoreAccountUpdateParameters',
     'DataLakeStoreAccount',
+    'DataLakeStoreAccountBasic',
     'ErrorDetails',
     'Resource',
     'SubResource',
     'FirewallRulePaged',
     'TrustedIdProviderPaged',
-    'DataLakeStoreAccountPaged',
+    'DataLakeStoreAccountBasicPaged',
     'EncryptionConfigType',
-    'DataLakeStoreAccountStatus',
-    'DataLakeStoreAccountState',
     'EncryptionState',
     'EncryptionProvisioningState',
     'FirewallState',
     'TrustedIdProviderState',
     'TierType',
     'FirewallAllowAzureIpsState',
+    'DataLakeStoreAccountStatus',
+    'DataLakeStoreAccountState',
 ]

@@ -24,8 +24,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\;azure-mgmt-devtestlabs\;azure-mgmt-servermanager\;..\msrest-for-python\;..\msrestazure-for-python\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store;azure-mgmt-eventhub\;azure-mgmt-servicebus\;azure-monitor\;azure-mgmt-monitor\;azure-mgmt-sql\;azure-mgmt-media\;azure-mgmt-search\;azure-keyvault\;azure-mgmt-documentdb\;azure-mgmt-containerregistry\;azure-mgmt-recoveryservicesbackup\;azure-mgmt-cosmosdb;azure-sdk-testutils</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <InterpreterId>
-    </InterpreterId>
+    <InterpreterId>MSBuild|myEnv|$(MSBuildProjectFullPath)</InterpreterId>
     <InterpreterVersion>
     </InterpreterVersion>
   </PropertyGroup>
@@ -2884,6 +2883,17 @@
     <Content Include="requirements.txt" />
     <Content Include="setup.cfg" />
     <Content Include="swagger_to_sdk_config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="myEnv\">
+      <Id>myEnv</Id>
+      <Version>3.6</Version>
+      <Description>myEnv (Python 3.6 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
