@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class StorageAccountInfoPaged(Paged):
     """
-    A paging container for iterating over a list of StorageAccountInfo object
+    A paging container for iterating over a list of :class:`StorageAccountInfo <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>` object
     """
 
     _attribute_map = {
