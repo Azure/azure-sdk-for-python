@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class FirewallRule(SubResource):
+class FirewallRule(ProxyResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar kind: Kind of server that contains this firewall rule.
     :vartype kind: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
-    :ivar type: Type of resource this is.
-    :vartype type: str
     :param start_ip_address: The start IP address of the firewall rule. Must
      be IPv4 format. Use value '0.0.0.0' to represent all Azure-internal IP
      addresses.
@@ -39,21 +39,21 @@ class FirewallRule(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'readonly': True},
         'location': {'readonly': True},
-        'type': {'readonly': True},
         'start_ip_address': {'required': True},
         'end_ip_address': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
@@ -62,6 +62,5 @@ class FirewallRule(SubResource):
         super(FirewallRule, self).__init__()
         self.kind = None
         self.location = None
-        self.type = None
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
