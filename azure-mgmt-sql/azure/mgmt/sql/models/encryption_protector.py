@@ -25,9 +25,8 @@ class EncryptionProtector(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param kind: Kind of encryption protector. This is metadata used for the
-     Azure portal experience. Possible values include: '', 'azurekeyvault',
-     'servicemanaged'
-    :type kind: str or :class:`enum <azure.mgmt.sql.models.enum>`
+     Azure portal experience.
+    :type kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
@@ -51,6 +50,7 @@ class EncryptionProtector(ProxyResource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
+        'server_key_type': {'required': True},
         'uri': {'readonly': True},
         'thumbprint': {'readonly': True},
     }
@@ -68,7 +68,7 @@ class EncryptionProtector(ProxyResource):
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, server_key_name=None, server_key_type=None):
+    def __init__(self, server_key_type, kind=None, server_key_name=None):
         super(EncryptionProtector, self).__init__()
         self.kind = kind
         self.location = None

@@ -25,9 +25,8 @@ class ServerKey(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param kind: Kind of encryption protector. This is metadata used for the
-     Azure portal experience. Possible values include: '', 'azurekeyvault',
-     'servicemanaged'
-    :type kind: str or :class:`enum <azure.mgmt.sql.models.enum>`
+     Azure portal experience.
+    :type kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the server key.
@@ -51,6 +50,7 @@ class ServerKey(ProxyResource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
+        'server_key_type': {'required': True},
     }
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class ServerKey(ProxyResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, kind=None, server_key_type=None, uri=None, thumbprint=None, creation_date=None):
+    def __init__(self, server_key_type, kind=None, uri=None, thumbprint=None, creation_date=None):
         super(ServerKey, self).__init__()
         self.kind = kind
         self.location = None
