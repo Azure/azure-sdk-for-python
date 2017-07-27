@@ -35,7 +35,7 @@ class ContainerGroupsOperations(object):
 
         self.config = config
 
-    def list_all(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Get the list of container groups in a given subscription.
 
@@ -100,7 +100,7 @@ class ContainerGroupsOperations(object):
 
         return deserialized
 
-    def list(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get the list of container groups in a given resource group.
 

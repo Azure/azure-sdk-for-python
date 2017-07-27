@@ -47,7 +47,7 @@ class ContainerLogsOperations(object):
         :type container_group_name: str
         :param tail: Only show this number of log lines. If not provided, all
          available logs are shown.
-        :type tail: str
+        :type tail: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -74,7 +74,7 @@ class ContainerLogsOperations(object):
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if tail is not None:
-            query_parameters['tail'] = self._serialize.query("tail", tail, 'str')
+            query_parameters['tail'] = self._serialize.query("tail", tail, 'int')
 
         # Construct headers
         header_parameters = {}
