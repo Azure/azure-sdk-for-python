@@ -120,6 +120,16 @@
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
       "generated_relative_base_directory": "python/azure/mgmt/compute/containerservice/v2017_01_31"
     },
+    "containerinstance": {
+      "markdown": "specification/containerinstance/resource-manager/readme.md",
+      "autorest_options": {
+        "namespace": "azure.mgmt.containerinstance",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-containerinstance/azure/mgmt/containerinstance",
+      "build_dir": "azure-mgmt-containerinstance",
+      "generated_relative_base_directory": "python/azure/mgmt/containerinstance"
+    },
     "containerregistry.2017-03-01": {
       "autorest_options": {
         "input-file": "specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/2017-03-01/containerregistry.json",
