@@ -37,14 +37,16 @@ class PublicIPAddress(Resource):
      values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or :class:`IPVersion
      <azure.mgmt.network.v2017_06_01.models.IPVersion>`
-    :ivar ip_configuration:
+    :ivar ip_configuration: The IP configuration associated with the public IP
+     address.
     :vartype ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.v2017_06_01.models.IPConfiguration>`
     :param dns_settings: The FQDN of the DNS record associated with the public
      IP address.
     :type dns_settings: :class:`PublicIPAddressDnsSettings
      <azure.mgmt.network.v2017_06_01.models.PublicIPAddressDnsSettings>`
-    :param ip_address:
+    :param ip_address: The IP address associated with the public IP address
+     resource.
     :type ip_address: str
     :param idle_timeout_in_minutes: The idle timeout of the public IP address.
     :type idle_timeout_in_minutes: int
