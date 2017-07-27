@@ -56,6 +56,10 @@
 		"service_name": "Consumption",
 		"category ": "Management"
 	},
+	"azure-mgmt-containerinstance": {
+		"service_name": "Container Instance",
+		"category ": "Management"
+	},
 	"azure-mgmt-containerregistry": {
 		"service_name": "Container Registry",
 		"category ": "Management"
