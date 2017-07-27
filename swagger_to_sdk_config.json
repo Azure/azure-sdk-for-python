@@ -124,7 +124,7 @@
       "markdown": "specification/containerinstance/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.containerinstance",
-        "title": "ContainerInstanceManagementClient"
+        "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-containerinstance/azure/mgmt/containerinstance",
       "build_dir": "azure-mgmt-containerinstance",
