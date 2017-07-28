@@ -19,10 +19,10 @@ class EffectiveNetworkSecurityRule(Model):
      created by the user).
     :type name: str
     :param protocol: The network protocol this rule applies to. Possible
-     values are: 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp',
-     '*'
-    :type protocol: str or :class:`SecurityRuleProtocol
-     <azure.mgmt.network.v2017_06_01.models.SecurityRuleProtocol>`
+     values are: 'Tcp', 'Udp', and 'All'. Possible values include: 'Tcp',
+     'Udp', 'All'
+    :type protocol: str or :class:`EffectiveSecurityRuleProtocol
+     <azure.mgmt.network.v2017_06_01.models.EffectiveSecurityRuleProtocol>`
     :param source_port_range: The source port or range.
     :type source_port_range: str
     :param destination_port_range: The destination port or range.

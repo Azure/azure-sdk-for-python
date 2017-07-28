@@ -19,7 +19,7 @@ class EffectiveNetworkSecurityGroup(Model):
      applied.
     :type network_security_group: :class:`SubResource
      <azure.mgmt.network.v2017_06_01.models.SubResource>`
-    :param association:
+    :param association: Associated resources.
     :type association: :class:`EffectiveNetworkSecurityGroupAssociation
      <azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityGroupAssociation>`
     :param effective_security_rules: A collection of effective security rules.
