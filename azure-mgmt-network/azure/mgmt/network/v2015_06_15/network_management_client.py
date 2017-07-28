@@ -18,23 +18,23 @@ from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
-from .operations.route_tables_operations import RouteTablesOperations
-from .operations.routes_operations import RoutesOperations
-from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
-from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
-from .operations.security_rules_operations import SecurityRulesOperations
-from .operations.load_balancers_operations import LoadBalancersOperations
-from .operations.virtual_networks_operations import VirtualNetworksOperations
-from .operations.subnets_operations import SubnetsOperations
-from .operations.network_interfaces_operations import NetworkInterfacesOperations
-from .operations.usages_operations import UsagesOperations
-from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from .operations.load_balancers_operations import LoadBalancersOperations
+from .operations.network_interfaces_operations import NetworkInterfacesOperations
+from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
+from .operations.security_rules_operations import SecurityRulesOperations
+from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
+from .operations.route_tables_operations import RouteTablesOperations
+from .operations.routes_operations import RoutesOperations
+from .operations.usages_operations import UsagesOperations
+from .operations.virtual_networks_operations import VirtualNetworksOperations
+from .operations.subnets_operations import SubnetsOperations
+from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
+from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
+from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
 from . import models
 
 
@@ -75,39 +75,13 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
 
 class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+    """Network Client
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
 
     :ivar application_gateways: ApplicationGateways operations
     :vartype application_gateways: azure.mgmt.network.v2015_06_15.operations.ApplicationGatewaysOperations
-    :ivar route_tables: RouteTables operations
-    :vartype route_tables: azure.mgmt.network.v2015_06_15.operations.RouteTablesOperations
-    :ivar routes: Routes operations
-    :vartype routes: azure.mgmt.network.v2015_06_15.operations.RoutesOperations
-    :ivar public_ip_addresses: PublicIPAddresses operations
-    :vartype public_ip_addresses: azure.mgmt.network.v2015_06_15.operations.PublicIPAddressesOperations
-    :ivar network_security_groups: NetworkSecurityGroups operations
-    :vartype network_security_groups: azure.mgmt.network.v2015_06_15.operations.NetworkSecurityGroupsOperations
-    :ivar security_rules: SecurityRules operations
-    :vartype security_rules: azure.mgmt.network.v2015_06_15.operations.SecurityRulesOperations
-    :ivar load_balancers: LoadBalancers operations
-    :vartype load_balancers: azure.mgmt.network.v2015_06_15.operations.LoadBalancersOperations
-    :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: azure.mgmt.network.v2015_06_15.operations.VirtualNetworksOperations
-    :ivar subnets: Subnets operations
-    :vartype subnets: azure.mgmt.network.v2015_06_15.operations.SubnetsOperations
-    :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2015_06_15.operations.NetworkInterfacesOperations
-    :ivar usages: Usages operations
-    :vartype usages: azure.mgmt.network.v2015_06_15.operations.UsagesOperations
-    :ivar virtual_network_gateways: VirtualNetworkGateways operations
-    :vartype virtual_network_gateways: azure.mgmt.network.v2015_06_15.operations.VirtualNetworkGatewaysOperations
-    :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
-    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2015_06_15.operations.VirtualNetworkGatewayConnectionsOperations
-    :ivar local_network_gateways: LocalNetworkGateways operations
-    :vartype local_network_gateways: azure.mgmt.network.v2015_06_15.operations.LocalNetworkGatewaysOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
     :vartype express_route_circuit_authorizations: azure.mgmt.network.v2015_06_15.operations.ExpressRouteCircuitAuthorizationsOperations
     :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
@@ -116,6 +90,32 @@ class NetworkManagementClient(object):
     :vartype express_route_circuits: azure.mgmt.network.v2015_06_15.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
     :vartype express_route_service_providers: azure.mgmt.network.v2015_06_15.operations.ExpressRouteServiceProvidersOperations
+    :ivar load_balancers: LoadBalancers operations
+    :vartype load_balancers: azure.mgmt.network.v2015_06_15.operations.LoadBalancersOperations
+    :ivar network_interfaces: NetworkInterfaces operations
+    :vartype network_interfaces: azure.mgmt.network.v2015_06_15.operations.NetworkInterfacesOperations
+    :ivar network_security_groups: NetworkSecurityGroups operations
+    :vartype network_security_groups: azure.mgmt.network.v2015_06_15.operations.NetworkSecurityGroupsOperations
+    :ivar security_rules: SecurityRules operations
+    :vartype security_rules: azure.mgmt.network.v2015_06_15.operations.SecurityRulesOperations
+    :ivar public_ip_addresses: PublicIPAddresses operations
+    :vartype public_ip_addresses: azure.mgmt.network.v2015_06_15.operations.PublicIPAddressesOperations
+    :ivar route_tables: RouteTables operations
+    :vartype route_tables: azure.mgmt.network.v2015_06_15.operations.RouteTablesOperations
+    :ivar routes: Routes operations
+    :vartype routes: azure.mgmt.network.v2015_06_15.operations.RoutesOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.network.v2015_06_15.operations.UsagesOperations
+    :ivar virtual_networks: VirtualNetworks operations
+    :vartype virtual_networks: azure.mgmt.network.v2015_06_15.operations.VirtualNetworksOperations
+    :ivar subnets: Subnets operations
+    :vartype subnets: azure.mgmt.network.v2015_06_15.operations.SubnetsOperations
+    :ivar virtual_network_gateways: VirtualNetworkGateways operations
+    :vartype virtual_network_gateways: azure.mgmt.network.v2015_06_15.operations.VirtualNetworkGatewaysOperations
+    :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
+    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2015_06_15.operations.VirtualNetworkGatewayConnectionsOperations
+    :ivar local_network_gateways: LocalNetworkGateways operations
+    :vartype local_network_gateways: azure.mgmt.network.v2015_06_15.operations.LocalNetworkGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -134,36 +134,11 @@ class NetworkManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2015-06-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.application_gateways = ApplicationGatewaysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.route_tables = RouteTablesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.public_ip_addresses = PublicIPAddressesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_security_groups = NetworkSecurityGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.security_rules = SecurityRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.load_balancers = LoadBalancersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_networks = VirtualNetworksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.subnets = SubnetsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.local_network_gateways = LocalNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -172,6 +147,32 @@ class NetworkManagementClient(object):
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_security_groups = NetworkSecurityGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.security_rules = SecurityRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_tables = RouteTablesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.routes = RoutesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_networks = VirtualNetworksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subnets = SubnetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.local_network_gateways = LocalNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
@@ -190,14 +191,15 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.v2015_06_15.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2015_06_15.models.DnsNameAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.network.v2015_06_15.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2015-06-15"
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'
         path_format_arguments = {
@@ -210,7 +212,7 @@ class NetworkManagementClient(object):
         query_parameters = {}
         if domain_name_label is not None:
             query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
