@@ -27,7 +27,7 @@ def _instantiate_client(client_class, **kwargs):
     if 'subscription_id' not in args:
         del kwargs['subscription_id']
     elif sys.version_info < (3, 0) and isinstance(kwargs['subscription_id'], unicode):
-        kwargs['subscription_id'] = kwargs['subscription_id'].encode('utf8')
+        kwargs['subscription_id'] = kwargs['subscription_id'].encode('utf-8')
     return client_class(**kwargs)
 
 
