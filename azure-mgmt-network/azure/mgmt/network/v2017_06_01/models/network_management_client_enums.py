@@ -244,6 +244,13 @@ class NetworkOperationStatus(Enum):
     failed = "Failed"
 
 
+class EffectiveSecurityRuleProtocol(Enum):
+
+    tcp = "Tcp"
+    udp = "Udp"
+    all = "All"
+
+
 class EffectiveRouteSource(Enum):
 
     unknown = "Unknown"
