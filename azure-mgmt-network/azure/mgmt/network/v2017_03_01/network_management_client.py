@@ -81,7 +81,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
 
 class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+    """Network Client
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
@@ -220,10 +220,13 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-01"

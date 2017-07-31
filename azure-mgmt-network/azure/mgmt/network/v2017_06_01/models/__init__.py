@@ -18,7 +18,6 @@ from .network_interface import NetworkInterface
 from .network_security_group import NetworkSecurityGroup
 from .route import Route
 from .route_table import RouteTable
-from .private_access_service_properties_format import PrivateAccessServicePropertiesFormat
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .public_ip_address import PublicIPAddress
 from .ip_configuration import IPConfiguration
@@ -88,9 +87,7 @@ from .azure_async_operation_result import AzureAsyncOperationResult
 from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
 from .effective_network_security_rule import EffectiveNetworkSecurityRule
 from .effective_network_security_group import EffectiveNetworkSecurityGroup
-from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
 from .effective_route import EffectiveRoute
-from .effective_route_list_result import EffectiveRouteListResult
 from .network_watcher import NetworkWatcher
 from .topology_parameters import TopologyParameters
 from .topology_association import TopologyAssociation
@@ -152,12 +149,12 @@ from .vpn_client_parameters import VpnClientParameters
 from .bgp_peer_status_list_result import BgpPeerStatusListResult
 from .gateway_route_list_result import GatewayRouteListResult
 from .tunnel_connection_health import TunnelConnectionHealth
-from .local_network_gateway import LocalNetworkGateway
+from .gateway_reference import GatewayReference
 from .ipsec_policy import IpsecPolicy
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
-from .private_access_service_result import PrivateAccessServiceResult
+from .local_network_gateway import LocalNetworkGateway
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
@@ -165,7 +162,15 @@ from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .load_balancer_paged import LoadBalancerPaged
+from .backend_address_pool_paged import BackendAddressPoolPaged
+from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
+from .inbound_nat_rule_paged import InboundNatRulePaged
+from .load_balancing_rule_paged import LoadBalancingRulePaged
 from .network_interface_paged import NetworkInterfacePaged
+from .probe_paged import ProbePaged
+from .effective_route_paged import EffectiveRoutePaged
+from .effective_network_security_group_paged import EffectiveNetworkSecurityGroupPaged
+from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
@@ -184,7 +189,6 @@ from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
-from .private_access_service_result_paged import PrivateAccessServiceResultPaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -217,6 +221,7 @@ from .network_management_client_enums import (
     LoadDistribution,
     ProbeProtocol,
     NetworkOperationStatus,
+    EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
     EffectiveRouteState,
     ProvisioningState,
@@ -260,7 +265,6 @@ __all__ = [
     'NetworkSecurityGroup',
     'Route',
     'RouteTable',
-    'PrivateAccessServicePropertiesFormat',
     'PublicIPAddressDnsSettings',
     'PublicIPAddress',
     'IPConfiguration',
@@ -330,9 +334,7 @@ __all__ = [
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
     'EffectiveNetworkSecurityGroup',
-    'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
-    'EffectiveRouteListResult',
     'NetworkWatcher',
     'TopologyParameters',
     'TopologyAssociation',
@@ -394,12 +396,12 @@ __all__ = [
     'BgpPeerStatusListResult',
     'GatewayRouteListResult',
     'TunnelConnectionHealth',
-    'LocalNetworkGateway',
+    'GatewayReference',
     'IpsecPolicy',
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
-    'PrivateAccessServiceResult',
+    'LocalNetworkGateway',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ExpressRouteCircuitAuthorizationPaged',
@@ -407,7 +409,15 @@ __all__ = [
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'LoadBalancerPaged',
+    'BackendAddressPoolPaged',
+    'FrontendIPConfigurationPaged',
+    'InboundNatRulePaged',
+    'LoadBalancingRulePaged',
     'NetworkInterfacePaged',
+    'ProbePaged',
+    'EffectiveRoutePaged',
+    'EffectiveNetworkSecurityGroupPaged',
+    'NetworkInterfaceIPConfigurationPaged',
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkWatcherPaged',
@@ -426,7 +436,6 @@ __all__ = [
     'VirtualNetworkGatewayPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
-    'PrivateAccessServiceResultPaged',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',
@@ -458,6 +467,7 @@ __all__ = [
     'LoadDistribution',
     'ProbeProtocol',
     'NetworkOperationStatus',
+    'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',
     'EffectiveRouteState',
     'ProvisioningState',

@@ -30,15 +30,18 @@ class VirtualNetworkGatewayConnection(Resource):
     :type tags: dict
     :param authorization_key: The authorizationKey.
     :type authorization_key: str
-    :param virtual_network_gateway1:
-    :type virtual_network_gateway1: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
-    :param virtual_network_gateway2:
-    :type virtual_network_gateway2: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
-    :param local_network_gateway2:
-    :type local_network_gateway2: :class:`LocalNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>`
+    :param virtual_network_gateway1: The reference to virtual network gateway
+     resource.
+    :type virtual_network_gateway1: :class:`GatewayReference
+     <azure.mgmt.network.v2017_06_01.models.GatewayReference>`
+    :param virtual_network_gateway2: The reference to virtual network gateway
+     resource.
+    :type virtual_network_gateway2: :class:`GatewayReference
+     <azure.mgmt.network.v2017_06_01.models.GatewayReference>`
+    :param local_network_gateway2: The reference to local network gateway
+     resource.
+    :type local_network_gateway2: :class:`GatewayReference
+     <azure.mgmt.network.v2017_06_01.models.GatewayReference>`
     :param connection_type: Gateway connection type. Possible values are:
      'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
@@ -108,9 +111,9 @@ class VirtualNetworkGatewayConnection(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
+        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'GatewayReference'},
+        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'GatewayReference'},
+        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'GatewayReference'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
