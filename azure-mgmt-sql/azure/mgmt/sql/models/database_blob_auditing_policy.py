@@ -58,6 +58,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'readonly': True},
+        'state': {'required': True},
     }
 
     _attribute_map = {
@@ -74,7 +75,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
     }
 
-    def __init__(self, state=None, storage_endpoint=None, storage_account_access_key=None, retention_days=None, audit_actions_and_groups=None, storage_account_subscription_id=None, is_storage_secondary_key_in_use=None):
+    def __init__(self, state, storage_endpoint=None, storage_account_access_key=None, retention_days=None, audit_actions_and_groups=None, storage_account_subscription_id=None, is_storage_secondary_key_in_use=None):
         super(DatabaseBlobAuditingPolicy, self).__init__()
         self.kind = None
         self.state = state
