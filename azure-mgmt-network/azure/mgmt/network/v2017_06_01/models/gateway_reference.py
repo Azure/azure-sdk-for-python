@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """Error details properties.
+class GatewayReference(Model):
+    """A reference to VirtualNetworkGateway or LocalNetworkGateway resource.
 
-    :param code:
-    :type code: str
-    :param target:
-    :type target: str
-    :param message:
-    :type message: str
+    :param id: The ID of VirtualNetworkGateway or LocalNetworkGateway
+     resource.
+    :type id: str
     """
 
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'id': {'required': True},
     }
 
-    def __init__(self, code=None, target=None, message=None):
-        self.code = code
-        self.target = target
-        self.message = message
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id):
+        self.id = id
