@@ -20,14 +20,14 @@ class CustomHostnameAnalysisResult(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar is_hostname_already_verified: <code>true</code> if hostname is
@@ -67,7 +67,9 @@ class CustomHostnameAnalysisResult(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'is_hostname_already_verified': {'readonly': True},
         'custom_domain_verification_test': {'readonly': True},
         'custom_domain_verification_failure_info': {'readonly': True},
@@ -96,8 +98,8 @@ class CustomHostnameAnalysisResult(Resource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
-        super(CustomHostnameAnalysisResult, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
+        super(CustomHostnameAnalysisResult, self).__init__(kind=kind, location=location, tags=tags)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None

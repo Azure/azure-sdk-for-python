@@ -20,14 +20,14 @@ class Usage(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar display_name: Friendly name shown in the UI.
@@ -54,7 +54,9 @@ class Usage(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'display_name': {'readonly': True},
         'usage_name': {'readonly': True},
         'resource_name': {'readonly': True},
@@ -84,8 +86,8 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(Usage, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None):
+        super(Usage, self).__init__(kind=kind, location=location, tags=tags)
         self.display_name = None
         self.usage_name = None
         self.resource_name = None

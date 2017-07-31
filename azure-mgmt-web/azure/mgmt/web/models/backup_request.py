@@ -20,14 +20,14 @@ class BackupRequest(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param backup_request_name: Name of the backup.
@@ -45,14 +45,16 @@ class BackupRequest(Resource):
     :type databases: list of :class:`DatabaseBackupSetting
      <azure.mgmt.web.models.DatabaseBackupSetting>`
     :param backup_request_type: Type of the backup. Possible values include:
-     'Default', 'Clone', 'Relocation'
+     'Default', 'Clone', 'Relocation', 'Snapshot'
     :type backup_request_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,8 +72,8 @@ class BackupRequest(Resource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
-        super(BackupRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+        super(BackupRequest, self).__init__(kind=kind, location=location, tags=tags)
         self.backup_request_name = backup_request_name
         self.enabled = enabled
         self.storage_account_url = storage_account_url

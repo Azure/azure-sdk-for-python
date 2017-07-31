@@ -20,14 +20,14 @@ class MigrateMySqlStatus(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar migration_operation_status: Status of the migration task. Possible
@@ -42,7 +42,9 @@ class MigrateMySqlStatus(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'migration_operation_status': {'readonly': True},
         'operation_id': {'readonly': True},
         'local_my_sql_enabled': {'readonly': True},
@@ -60,8 +62,8 @@ class MigrateMySqlStatus(Resource):
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(MigrateMySqlStatus, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None):
+        super(MigrateMySqlStatus, self).__init__(kind=kind, location=location, tags=tags)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None

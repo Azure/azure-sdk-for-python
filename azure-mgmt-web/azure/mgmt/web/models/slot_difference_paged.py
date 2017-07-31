@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SlotDifferencePaged(Paged):
     """
-    A paging container for iterating over a list of SlotDifference object
+    A paging container for iterating over a list of :class:`SlotDifference <azure.mgmt.web.models.SlotDifference>` object
     """
 
     _attribute_map = {

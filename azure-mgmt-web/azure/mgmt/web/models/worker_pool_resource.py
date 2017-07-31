@@ -20,14 +20,14 @@ class WorkerPoolResource(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param worker_size_id: Worker size ID for referencing this worker pool.
@@ -49,7 +49,9 @@ class WorkerPoolResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'instance_names': {'readonly': True},
     }
 
@@ -68,8 +70,8 @@ class WorkerPoolResource(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, sku=None):
-        super(WorkerPoolResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, sku=None):
+        super(WorkerPoolResource, self).__init__(kind=kind, location=location, tags=tags)
         self.worker_size_id = worker_size_id
         self.compute_mode = compute_mode
         self.worker_size = worker_size

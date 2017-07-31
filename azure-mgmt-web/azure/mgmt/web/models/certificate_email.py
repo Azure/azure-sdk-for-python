@@ -20,14 +20,14 @@ class CertificateEmail(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param email_id: Email id.
@@ -38,7 +38,9 @@ class CertificateEmail(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -52,7 +54,7 @@ class CertificateEmail(Resource):
         'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, email_id=None, time_stamp=None):
-        super(CertificateEmail, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, email_id=None, time_stamp=None):
+        super(CertificateEmail, self).__init__(kind=kind, location=location, tags=tags)
         self.email_id = email_id
         self.time_stamp = time_stamp
