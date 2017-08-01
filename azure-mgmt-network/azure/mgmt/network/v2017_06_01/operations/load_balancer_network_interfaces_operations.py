@@ -9,15 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
 
-class AvailablePrivateAccessServicesOperations(object):
-    """AvailablePrivateAccessServicesOperations operations.
+class LoadBalancerNetworkInterfacesOperations(object):
+    """LoadBalancerNetworkInterfacesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,28 +36,32 @@ class AvailablePrivateAccessServicesOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """List what values of private access services are available for use.
+            self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
+        """Gets associated load balancer network interfaces.
 
-        :param location: The location to check available private access
-         values.
-        :type location: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param load_balancer_name: The name of the load balancer.
+        :type load_balancer_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PrivateAccessServiceResultPaged
-         <azure.mgmt.network.v2017_06_01.models.PrivateAccessServiceResultPaged>`
+        :return: An iterator like instance of :class:`NetworkInterface
+         <azure.mgmt.network.v2017_06_01.models.NetworkInterface>`
+        :rtype: :class:`NetworkInterfacePaged
+         <azure.mgmt.network.v2017_06_01.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/privateAccessServices'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/networkInterfaces'
                 path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -93,11 +97,11 @@ class AvailablePrivateAccessServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PrivateAccessServiceResultPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.NetworkInterfacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PrivateAccessServiceResultPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.NetworkInterfacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

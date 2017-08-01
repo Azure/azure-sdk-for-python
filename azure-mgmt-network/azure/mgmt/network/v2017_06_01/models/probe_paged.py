@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PrivateAccessServiceResultPaged(Paged):
+class ProbePaged(Paged):
     """
-    A paging container for iterating over a list of PrivateAccessServiceResult object
+    A paging container for iterating over a list of :class:`Probe <azure.mgmt.network.v2017_06_01.models.Probe>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PrivateAccessServiceResult]'}
+        'current_page': {'key': 'value', 'type': '[Probe]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PrivateAccessServiceResultPaged, self).__init__(*args, **kwargs)
+        super(ProbePaged, self).__init__(*args, **kwargs)
