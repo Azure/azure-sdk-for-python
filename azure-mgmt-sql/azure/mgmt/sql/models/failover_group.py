@@ -55,8 +55,10 @@ class FailoverGroup(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
+        'read_write_endpoint': {'required': True},
         'replication_role': {'readonly': True},
         'replication_state': {'readonly': True},
+        'partner_servers': {'required': True},
     }
 
     _attribute_map = {
@@ -73,7 +75,7 @@ class FailoverGroup(ProxyResource):
         'databases': {'key': 'properties.databases', 'type': '[str]'},
     }
 
-    def __init__(self, tags=None, read_write_endpoint=None, read_only_endpoint=None, partner_servers=None, databases=None):
+    def __init__(self, read_write_endpoint, partner_servers, tags=None, read_only_endpoint=None, databases=None):
         super(FailoverGroup, self).__init__()
         self.location = None
         self.tags = tags
