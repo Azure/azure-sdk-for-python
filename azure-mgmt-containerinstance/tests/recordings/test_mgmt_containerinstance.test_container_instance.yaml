@@ -1,0 +1,79 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {"containers": [{"name": "pycontainer26441510",
+      "properties": {"image": "alpine:latest", "resources": {"requests": {"memoryInGB":
+      1.0, "cpu": 1.0}}}}], "osType": "Linux"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['208']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.0 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.11
+          msrest_azure/0.4.11 containerinstancemanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2017-08-01-preview
+  response:
+    body: {string: '{"properties":{"provisioningState":"Creating","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}}}}],"osType":"Linux"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['550']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 Aug 2017 20:58:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.0 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.11
+          msrest_azure/0.4.11 containerinstancemanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510?api-version=2017-08-01-preview
+  response:
+    body: {string: '{"properties":{"provisioningState":"Creating","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}}}}],"osType":"Linux"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['550']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 Aug 2017 20:58:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.0 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.11
+          msrest_azure/0.4.11 containerinstancemanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups?api-version=2017-08-01-preview
+  response:
+    body: {string: '{"value":[{"properties":{"provisioningState":"Creating","containers":[{"name":"pycontainer26441510","properties":{"image":"alpine:latest","ports":[],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.0,"cpu":1.0}}}}],"osType":"Linux"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerinstance_test_container_instance26441510/providers/Microsoft.ContainerInstance/containerGroups/pycontainer26441510","name":"pycontainer26441510","type":"Microsoft.ContainerInstance/containerGroups","location":"westus"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['562']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 02 Aug 2017 20:58:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+    status: {code: 200, message: OK}
+version: 1
