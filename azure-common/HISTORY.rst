@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.1.8 (2017-07-28)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix get_client_from_auth_file and get_client_from_json_dict on Python 2.7
+
+Thank you to @jayden-at-arista for the contribution.
+
 1.1.7 (2017-07-19)
 ++++++++++++++++++
 

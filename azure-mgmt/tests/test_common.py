@@ -38,12 +38,26 @@ class TestCommon(unittest.TestCase):
 
         class FakeClient(object):
             def __init__(self, credentials, subscription_id, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if subscription_id is None:
+                    raise ValueError("Parameter 'subscription_id' must not be None.")
+                if not isinstance(subscription_id, str):
+                    raise TypeError("Parameter 'subscription_id' must be str.")
+                if not base_url:
+                    base_url = 'https://management.azure.com'
+
                 self.credentials = credentials
                 self.subscription_id = subscription_id
                 self.base_url = base_url
 
         class FakeSubscriptionClient(object):
             def __init__(self, credentials, base_url):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+                if not base_url:
+                    base_url = 'https://management.azure.com'
+
                 self.credentials = credentials
                 self.base_url = base_url
 
