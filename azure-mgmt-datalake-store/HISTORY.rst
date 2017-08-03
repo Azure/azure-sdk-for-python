@@ -12,15 +12,18 @@ Release History
 **Notes**
 
 * When getting a list of accounts, the account information for each account now includes a strict subset of the account information that is returned when getting a single account
+  
   * There are two ways to get a list of accounts: List and ListByResource methods
   * The following fields are included in the account information when getting a list of accounts, which is less than the account information retrieved for a single account:
-    * provisioningState
+    
+	* provisioningState
 	* state
 	* creationTime
 	* lastModifiedTime
 	* endpoint
 	
 * When retrieving account information, an account id field called "accountId" is now included.
+  
   * accountId's description: The unique identifier associated with this Data Lake Analytics account.
 
 0.1.6 (2017-06-19)
