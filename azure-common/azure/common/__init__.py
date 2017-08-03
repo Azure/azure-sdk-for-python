@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '1.1.5'
+__version__ = '1.1.8'
 
 
 class AzureException(Exception):
