@@ -9,7 +9,7 @@ Release History
 
 * Revised the inheritance structure for objects dealing with job creation and building.
 
-  * NOTE: Only U-SQL is supported in this change; therefore, Hive is no supported.
+  * NOTE: Only U-SQL is supported in this change; therefore, Hive is not supported.
   * When submitting jobs, change JobInformation objects to CreateJobParameters.
   
     * When setting the properties for the CreateJobParameters object, be sure to change the USqlJobProperties object to a CreateUSqlJobProperties object.
