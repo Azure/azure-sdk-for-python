@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class UsageAggregationPaged(Paged):
     """
-    A paging container for iterating over a list of UsageAggregation object
+    A paging container for iterating over a list of :class:`UsageAggregation <azure.mgmt.commerce.models.UsageAggregation>` object
     """
 
     _attribute_map = {

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -67,6 +67,8 @@ class UsageAggregatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`UsageAggregation
+         <azure.mgmt.commerce.models.UsageAggregation>`
         :rtype: :class:`UsageAggregationPaged
          <azure.mgmt.commerce.models.UsageAggregationPaged>`
         :raises:
