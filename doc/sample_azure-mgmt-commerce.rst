@@ -50,7 +50,8 @@ Get Usage
     from datetime import date, timedelta
 
     # Takes onky dates in full ISO8601 with 'T00:00:00Z'
-    usage_list = commerce_client.usage_aggregates.list(
+    # Return an iterator like object: https://docs.python.org/3/library/stdtypes.html#iterator-types
+    usage_iterator = commerce_client.usage_aggregates.list(
         str(date.today() - timedelta(days=1))+'T00:00:00Z',
         str(date.today())+'T00:00:00Z'
     )
