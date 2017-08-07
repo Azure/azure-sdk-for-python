@@ -498,6 +498,15 @@
       "output_dir": "azure-servicefabric/azure/servicefabric",
       "generated_relative_base_directory": "azure/servicefabric"
     },
+    "servicefabric.mgmt": {
+      "autorest_options": {
+        "input-file": "specification/servicefabric/resource-manager/Microsoft.ServiceFabric/2016-09-01/servicefabric.json",
+        "namespace": "azure.mgmt.servicefabric",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-servicefabric/azure/mgmt/servicefabric",
+      "build_dir": "azure-mgmt-servicefabric"
+    },
     "scheduler": {
       "autorest_options": {
         "input-file": "specification/scheduler/resource-manager/Microsoft.Scheduler/2016-03-01/scheduler.json",
