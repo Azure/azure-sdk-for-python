@@ -7,6 +7,7 @@ Release History
 
 **Breaking change**
 
+* When getting a list of accounts, the object type that is returned is DataLakeAnalyticsAccountBasic and not DataLakeAnalyticsAccount (more information on the difference is below in the Notes section)
 * Standardized the parameter name for file paths in the url (e.g. fileDestination to path)
 
 **Notes**
