@@ -12,7 +12,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from ..version import VERSION
+from .version import VERSION
 
 
 class ComputeManagementClientConfiguration(AzureConfiguration):
