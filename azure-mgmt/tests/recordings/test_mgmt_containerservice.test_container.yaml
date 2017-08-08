@@ -17,10 +17,10 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2017-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-01-31
   response:
-    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
-        \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
+    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\",\r\n
+        \ \"name\": \"pycontainer665810f8\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Creating\",\r\n    \"orchestratorProfile\": {\r\n      \"orchestratorType\":
         \"DCOS\"\r\n    },\r\n    \"masterProfile\": {\r\n      \"count\": 1,\r\n
@@ -1349,10 +1349,10 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2017-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-01-31
   response:
-    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
-        \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
+    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\",\r\n
+        \ \"name\": \"pycontainer665810f8\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"orchestratorProfile\": {\r\n      \"orchestratorType\":
         \"DCOS\"\r\n    },\r\n    \"masterProfile\": {\r\n      \"count\": 1,\r\n
@@ -1396,10 +1396,10 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cb4b9ea2-a1e6-11e6-8892-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2017-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-01-31
   response:
-    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
-        \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
+    body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\",\r\n
+        \ \"name\": \"pycontainer665810f8\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
         \ \"location\": \"westus\",\r\n  \"properties\": {\r\n    \"provisioningState\":
         \"Succeeded\",\r\n    \"orchestratorProfile\": {\r\n      \"orchestratorType\":
         \"DCOS\"\r\n    },\r\n    \"masterProfile\": {\r\n      \"count\": 1,\r\n
@@ -1443,10 +1443,10 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cbb77b7a-a1e6-11e6-9117-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices?api-version=2017-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices?api-version=2017-01-31
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_TEST_CONTAINERDB8C0D41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
-        \     \"name\": \"pycontainerdb8c0d41\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\",\r\n
+        \     \"name\": \"pycontainer665810f8\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
         \     \"location\": \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\":
         \"Succeeded\",\r\n        \"orchestratorProfile\": {\r\n          \"orchestratorType\":
         \"DCOS\"\r\n        },\r\n        \"masterProfile\": {\r\n          \"count\":
@@ -1494,8 +1494,8 @@ interactions:
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/containerServices?api-version=2017-01-31
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_TEST_CONTAINERDB8C0D41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
-        \     \"name\": \"pycontainerdb8c0d41\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\",\r\n
+        \     \"name\": \"pycontainer665810f8\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
         \     \"location\": \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\":
         \"Succeeded\",\r\n        \"orchestratorProfile\": {\r\n          \"orchestratorType\":
         \"DCOS\"\r\n        },\r\n        \"masterProfile\": {\r\n          \"count\":
@@ -1542,7 +1542,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cc8661d0-a1e6-11e6-bccd-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2017-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-01-31
   response:
     body: {string: ''}
     headers:
