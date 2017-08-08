@@ -22,8 +22,8 @@ class ContainerServiceWindowsProfile(Model):
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': '^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},
-        'admin_password': {'required': True, 'pattern': '^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%\^&\*\(\)])[a-zA-Z\d!@#$%\^&\*\(\)]{12,123}$'},
+        'admin_username': {'required': True, 'pattern': r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},
+        'admin_password': {'required': True, 'pattern': r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%\^&\*\(\)])[a-zA-Z\d!@#$%\^&\*\(\)]{12,123}$'},
     }
 
     _attribute_map = {
