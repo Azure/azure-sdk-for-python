@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ContainerServicePaged(Paged):
     """
-    A paging container for iterating over a list of ContainerService object
+    A paging container for iterating over a list of :class:`ContainerService <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerService>` object
     """
 
     _attribute_map = {
