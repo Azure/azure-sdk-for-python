@@ -112,9 +112,11 @@
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2017_03_30"
     },
     "compute.containerservice.2017-01-31": {
+      "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/compute/resource-manager/Microsoft.ContainerService/2017-01-31/containerService.json",
-        "namespace": "azure.mgmt.compute.containerservice.v2017_01_31"
+        "tag": "package-container-service-2017-01",
+        "title": "ContainerServiceClient",
+        "description": "The Container Service Client."
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
