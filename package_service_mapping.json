@@ -84,11 +84,11 @@
 			"azure.mgmt.compute.compute.v2017_03_30"
 		]
 	},
-	"azure-mgmt-compute/azure.mgmt.compute.containerservice": {
+	"azure-mgmt-containerservice": {
 		"service_name": "Container Service",
 		"category ": "Management",
 		"namespaces": [
-			"azure.mgmt.compute.containerservice.v2017_01_31"
+			"azure.mgmt.containerservice"
 		]
 	},
 	"azure-mgmt-consumption": {
