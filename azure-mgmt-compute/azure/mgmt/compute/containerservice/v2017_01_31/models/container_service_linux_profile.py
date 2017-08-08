@@ -23,7 +23,7 @@ class ContainerServiceLinuxProfile(Model):
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': '^[a-z][a-z0-9_-]*$'},
+        'admin_username': {'required': True, 'pattern': r'^[a-z][a-z0-9_-]*$'},
         'ssh': {'required': True},
     }
 
