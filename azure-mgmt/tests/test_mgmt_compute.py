@@ -28,9 +28,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.compute_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        self.cs_client = self.create_mgmt_client(
-            azure.mgmt.compute.ContainerServiceClient
-        )
 
         self.linux_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
         self.windows_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
@@ -521,61 +518,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         virtual_machine_sizes = list(virtual_machine_sizes)
         self.assertGreater(len(virtual_machine_sizes), 0)
-
-    @record
-    def test_container(self):
-        container_name = self.get_resource_name('pycontainer')
-        
-        # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = self.cs_client.container_services.create_or_update(
-            self.group_name,
-            container_name,
-            {
-                'location': self.region,
-                "orchestrator_profile": {
-                    "orchestrator_type": "DCOS"
-                },
-                "master_profile": {
-                    "count": 1,
-                    "dns_prefix": "MasterPrefixTest"
-                },
-                "agent_pool_profiles": [{
-                    "name": "AgentPool1",
-                    "count": 3,
-                    "vm_size": "Standard_A1",
-                        "dns_prefix": "AgentPrefixTest"
-                }],
-                "linux_profile": {
-                    "admin_username": "acslinuxadmin",
-                    "ssh": {
-                       "public_keys": [{
-                            "key_data": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ== azureuser@linuxvm"
-                       }]
-                    }
-                },
-            },
-            retries=0
-        )
-        container = async_create.result()
-
-        container = self.cs_client.container_services.get(
-            self.group_name,
-            container.name
-        )
-
-        containers = list(self.cs_client.container_services.list_by_resource_group(
-            self.group_name
-        ))
-        self.assertEqual(len(containers), 1)
-
-        containers = list(self.cs_client.container_services.list())
-        self.assertEqual(len(containers), 1)
-
-        async_delete = self.cs_client.container_services.delete(
-            self.group_name,
-            container.name
-        )
-        async_delete.wait()
 
 
 #------------------------------------------------------------------------------

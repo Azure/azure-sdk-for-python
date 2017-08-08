@@ -111,16 +111,18 @@
       "generated_relative_base_directory": "python/azure/mgmt/compute/compute/v2017_03_30",
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2017_03_30"
     },
-    "compute.containerservice.2017-01-31": {
+    "containerservice": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
         "tag": "package-container-service-2017-01",
         "title": "ContainerServiceClient",
-        "description": "The Container Service Client."
+        "description": "The Container Service Client.",
+        "namespace": "azure.mgmt.containerservice",
+        "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/containerservice/v2017_01_31"
+      "output_dir": "azure-mgmt-containerservice/azure/mgmt/containerservice",
+      "build_dir": "azure-mgmt-containerservice",
+      "generated_relative_base_directory": "python/azure/mgmt/containerservice"
     },
     "containerinstance": {
       "markdown": "specification/containerinstance/resource-manager/readme.md",
