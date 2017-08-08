@@ -79,38 +79,42 @@
     "compute.compute.2015-06-15": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-compute-2015-06"
+        "tag": "package-compute-2015-06",
+        "namespace": "azure.mgmt.compute.v2015_06_15"
       },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/compute/v2015_06_15",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15"
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2015_06_15",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15"
     },
     "compute.compute.2016-03-30": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-compute-2016-03"
+        "tag": "package-compute-2016-03",
+        "namespace": "azure.mgmt.compute.v2016_03_30"
       },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/compute/v2016_03_30"
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_03_30"
     },
     "compute.compute.2016-04-30-preview": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-compute-2016-04-preview"
+        "tag": "package-compute-2016-04-preview",
+        "namespace": "azure.mgmt.compute.v2016_04_30_preview"
       },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_04_30_preview",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/compute/v2016_04_30_preview",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_04_30_preview"
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_04_30_preview",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview"
     },
     "compute.compute.2017-03-30": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-compute-2017-03"
+        "tag": "package-compute-2017-03",
+        "namespace": "azure.mgmt.compute.v2017_03_30"
       },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2017_03_30",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/compute/v2017_03_30",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2017_03_30"
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2017_03_30",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30"
     },
     "containerservice": {
       "markdown": "specification/compute/resource-manager/readme.md",
