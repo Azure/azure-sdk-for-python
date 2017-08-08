@@ -23,8 +23,8 @@ class EmailReceiver(Model):
     :type name: str
     :param email_address: The email address of this receiver.
     :type email_address: str
-    :ivar status: Possible values include: 'NotSpecified', 'Enabled',
-     'Disabled'
+    :ivar status: The receiver status of the e-mail. Possible values include:
+     'NotSpecified', 'Enabled', 'Disabled'
     :vartype status: str or :class:`ReceiverStatus
      <azure.mgmt.monitor.models.ReceiverStatus>`
     """
