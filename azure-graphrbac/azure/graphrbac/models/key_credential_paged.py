@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class KeyCredentialPaged(Paged):
     """
-    A paging container for iterating over a list of KeyCredential object
+    A paging container for iterating over a list of :class:`KeyCredential <azure.graphrbac.models.KeyCredential>` object
     """
 
     _attribute_map = {

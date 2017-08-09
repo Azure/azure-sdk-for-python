@@ -29,6 +29,11 @@ class User(Model):
     :type mail: str
     :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
+    :param usage_location: A two letter country code (ISO standard 3166).
+     Required for users that will be assigned licenses due to legal requirement
+     to check for availability of services in countries. Examples include:
+     "US", "JP", and "GB".
+    :type usage_location: str
     """
 
     _attribute_map = {
@@ -39,9 +44,10 @@ class User(Model):
         'sign_in_name': {'key': 'signInName', 'type': 'str'},
         'mail': {'key': 'mail', 'type': 'str'},
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
+        'usage_location': {'key': 'usageLocation', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, mail_nickname=None):
+    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, mail_nickname=None, usage_location=None):
         self.object_id = object_id
         self.object_type = object_type
         self.user_principal_name = user_principal_name
@@ -49,3 +55,4 @@ class User(Model):
         self.sign_in_name = sign_in_name
         self.mail = mail
         self.mail_nickname = mail_nickname
+        self.usage_location = usage_location

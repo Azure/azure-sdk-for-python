@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ApplicationPaged(Paged):
+class DomainPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Application <azure.graphrbac.models.Application>` object
+    A paging container for iterating over a list of :class:`Domain <azure.graphrbac.models.Domain>` object
     """
 
     _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Application]'}
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Domain]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ApplicationPaged, self).__init__(*args, **kwargs)
+        super(DomainPaged, self).__init__(*args, **kwargs)

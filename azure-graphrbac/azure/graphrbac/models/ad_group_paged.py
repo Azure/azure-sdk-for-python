@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ADGroupPaged(Paged):
     """
-    A paging container for iterating over a list of ADGroup object
+    A paging container for iterating over a list of :class:`ADGroup <azure.graphrbac.models.ADGroup>` object
     """
 
     _attribute_map = {

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AADObjectPaged(Paged):
     """
-    A paging container for iterating over a list of AADObject object
+    A paging container for iterating over a list of :class:`AADObject <azure.graphrbac.models.AADObject>` object
     """
 
     _attribute_map = {
