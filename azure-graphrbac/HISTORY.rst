@@ -3,6 +3,13 @@
 Release History
 ===============
 
+Unreleased (2017-XX-XX)
++++++++++++++++++++++++
+
+- Add domains operation
+- Add usage locations
+- Add several new attributes to AADObject
+
 0.30.0 (2017-04-20)
 +++++++++++++++++++
 
