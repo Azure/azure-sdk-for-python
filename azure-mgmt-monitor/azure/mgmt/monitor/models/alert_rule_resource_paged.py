@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AlertRuleResourcePaged(Paged):
     """
-    A paging container for iterating over a list of AlertRuleResource object
+    A paging container for iterating over a list of :class:`AlertRuleResource <azure.mgmt.monitor.models.AlertRuleResource>` object
     """
 
     _attribute_map = {

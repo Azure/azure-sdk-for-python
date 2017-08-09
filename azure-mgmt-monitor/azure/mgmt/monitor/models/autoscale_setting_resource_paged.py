@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AutoscaleSettingResourcePaged(Paged):
     """
-    A paging container for iterating over a list of AutoscaleSettingResource object
+    A paging container for iterating over a list of :class:`AutoscaleSettingResource <azure.mgmt.monitor.models.AutoscaleSettingResource>` object
     """
 
     _attribute_map = {
