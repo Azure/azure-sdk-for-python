@@ -52,6 +52,9 @@ for package_list in [nspkg_packages, content_packages]:
 # install test requirements
 exec_command('pip install -r azure-sdk-testutils/test-requirements.txt')
 
+# isntall packaging requirements
+exec_command('pip install -r scripts/packaging_requirements.txt')
+
 # install storage for tests
 exec_command('pip install azure-storage')
 
