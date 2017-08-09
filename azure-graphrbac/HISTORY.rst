@@ -3,11 +3,11 @@
 Release History
 ===============
 
-Unreleased (2017-XX-XX)
-+++++++++++++++++++++++
+0.31.0 (2017-08-09)
++++++++++++++++++++
 
-- Add domains operation
-- Add usage locations
+- Add domains operation group
+- Add usage locations to user
 - Add several new attributes to AADObject
 
 0.30.0 (2017-04-20)
