@@ -7,9 +7,9 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
-          msrest_azure/0.4.7 azure-mgmt-recoveryservicesbackup/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.7 recoveryservicesbackupclient/0.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44a58962-46cd-11e7-a366-480fcf586696]
+      x-ms-client-request-id: [e7d326cc-7778-11e7-af33-480fcf586696]
     method: GET
     uri: https://management.azure.com/providers/Microsoft.RecoveryServices/operations?api-version=2016-08-10
   response:
@@ -257,7 +257,9 @@ interactions:
         Backup Reporting Data","blobDuration":"PT1H"},{"name":"AzureSiteRecoveryJobs","displayName":"Azure
         Site Recovery Jobs","blobDuration":"PT1H"},{"name":"AzureSiteRecoveryEvents","displayName":"Azure
         Site Recovery Events","blobDuration":"PT1H"},{"name":"AzureSiteRecoveryReplicatedItems","displayName":"Azure
-        Site Recovery Replicated Items","blobDuration":"PT1H"}]}}},{"Name":"Microsoft.RecoveryServices/Vaults/providers/Microsoft.Insights/metricDefinitions/read","Display":{"Provider":"Microsoft.RecoveryServices","Resource":"Vaults","Operation":"Azure
+        Site Recovery Replicated Items","blobDuration":"PT1H"},{"name":"AzureSiteRecoveryReplicationStats","displayName":"Azure
+        Site Recovery Replication Stats","blobDuration":"PT1H"},{"name":"AzureSiteRecoveryRecoveryPoints","displayName":"Azure
+        Site Recovery Recovery Points","blobDuration":"PT1H"}]}}},{"Name":"Microsoft.RecoveryServices/Vaults/providers/Microsoft.Insights/metricDefinitions/read","Display":{"Provider":"Microsoft.RecoveryServices","Resource":"Vaults","Operation":"Azure
         Backup Metrics","Description":"Azure Backup Metrics"},"Origin":"system"},{"Name":"Microsoft.RecoveryServices/Vaults/providers/Microsoft.Insights/diagnosticSettings/read","Display":{"Provider":"Microsoft.RecoveryServices","Resource":"Vaults","Operation":"Azure
         Backup Diagnostics","Description":"Azure Backup Diagnostics"},"Origin":"system"},{"Name":"Microsoft.RecoveryServices/Vaults/providers/Microsoft.Insights/diagnosticSettings/write","Display":{"Provider":"Microsoft.RecoveryServices","Resource":"Vaults","Operation":"Azure
         Backup Diagnostics","Description":"Azure Backup Diagnostics"},"Origin":"system"},{"Name":"Microsoft.RecoveryServices/Vaults/write","Display":{"Provider":"Microsoft.RecoveryServices","Resource":"Vaults","Operation":"Create
@@ -279,18 +281,18 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json]
-      Date: ['Thu, 01 Jun 2017 13:21:49 GMT']
+      Date: ['Wed, 02 Aug 2017 11:51:23 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['38185']
-      x-ms-client-request-id: [44a58962-46cd-11e7-a366-480fcf586696]
-      x-ms-correlation-request-id: [a6418344-c87d-4d75-bc16-f8987d3600d0]
+      content-length: ['38423']
+      x-ms-client-request-id: [e7d326cc-7778-11e7-af33-480fcf586696]
+      x-ms-correlation-request-id: [219317ba-bc16-423a-ac29-34a70907f291]
       x-ms-ratelimit-remaining-tenant-reads: ['14999']
-      x-ms-request-id: [a6418344-c87d-4d75-bc16-f8987d3600d0]
-      x-ms-routing-request-id: ['CENTRALINDIA:20170601T132150Z:a6418344-c87d-4d75-bc16-f8987d3600d0']
+      x-ms-request-id: [219317ba-bc16-423a-ac29-34a70907f291]
+      x-ms-routing-request-id: ['CENTRALINDIA:20170802T115124Z:219317ba-bc16-423a-ac29-34a70907f291']
     status: {code: 200, message: OK}
 version: 1
