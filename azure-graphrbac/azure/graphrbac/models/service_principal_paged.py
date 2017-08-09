@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServicePrincipalPaged(Paged):
     """
-    A paging container for iterating over a list of ServicePrincipal object
+    A paging container for iterating over a list of :class:`ServicePrincipal <azure.graphrbac.models.ServicePrincipal>` object
     """
 
     _attribute_map = {

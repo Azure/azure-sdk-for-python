@@ -18,6 +18,7 @@ from .operations.applications_operations import ApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
+from .operations.domains_operations import DomainsOperations
 from . import models
 
 
@@ -56,7 +57,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
 
 class GraphRbacManagementClient(object):
-    """Composite Swagger specification for Azure Active Directory Graph RBAC management client.
+    """The Graph RBAC Management Client
 
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
@@ -71,6 +72,8 @@ class GraphRbacManagementClient(object):
     :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
     :ivar users: Users operations
     :vartype users: azure.graphrbac.operations.UsersOperations
+    :ivar domains: Domains operations
+    :vartype domains: azure.graphrbac.operations.DomainsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,6 +90,7 @@ class GraphRbacManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '1.6'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -99,4 +103,6 @@ class GraphRbacManagementClient(object):
         self.service_principals = ServicePrincipalsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
