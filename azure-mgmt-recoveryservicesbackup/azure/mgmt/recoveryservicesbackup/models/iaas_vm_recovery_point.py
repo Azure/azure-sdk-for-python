@@ -45,6 +45,8 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type is_managed_virtual_machine: bool
     :param virtual_machine_size: Virtual Machine Size
     :type virtual_machine_size: str
+    :param original_storage_account_option: Original SA Option
+    :type original_storage_account_option: bool
     """
 
     _validation = {
@@ -63,9 +65,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
         'is_managed_virtual_machine': {'key': 'isManagedVirtualMachine', 'type': 'bool'},
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
+        'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
     }
 
-    def __init__(self, recovery_point_type=None, recovery_point_time=None, recovery_point_additional_info=None, source_vm_storage_type=None, is_source_vm_encrypted=None, key_and_secret=None, is_instant_ilr_session_active=None, recovery_point_tier_details=None, is_managed_virtual_machine=None, virtual_machine_size=None):
+    def __init__(self, recovery_point_type=None, recovery_point_time=None, recovery_point_additional_info=None, source_vm_storage_type=None, is_source_vm_encrypted=None, key_and_secret=None, is_instant_ilr_session_active=None, recovery_point_tier_details=None, is_managed_virtual_machine=None, virtual_machine_size=None, original_storage_account_option=None):
         super(IaasVMRecoveryPoint, self).__init__()
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
@@ -77,4 +80,5 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.recovery_point_tier_details = recovery_point_tier_details
         self.is_managed_virtual_machine = is_managed_virtual_machine
         self.virtual_machine_size = virtual_machine_size
+        self.original_storage_account_option = original_storage_account_option
         self.object_type = 'IaasVMRecoveryPoint'

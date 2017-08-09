@@ -19,6 +19,69 @@ class JobSupportedAction(Enum):
     retriable = "Retriable"
 
 
+class BackupManagementType(Enum):
+
+    invalid = "Invalid"
+    azure_iaas_vm = "AzureIaasVM"
+    mab = "MAB"
+    dpm = "DPM"
+    azure_backup_server = "AzureBackupServer"
+    azure_sql = "AzureSql"
+
+
+class JobStatus(Enum):
+
+    invalid = "Invalid"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+    completed_with_warnings = "CompletedWithWarnings"
+    cancelled = "Cancelled"
+    cancelling = "Cancelling"
+
+
+class JobOperationType(Enum):
+
+    invalid = "Invalid"
+    register = "Register"
+    un_register = "UnRegister"
+    configure_backup = "ConfigureBackup"
+    backup = "Backup"
+    restore = "Restore"
+    disable_backup = "DisableBackup"
+    delete_backup_data = "DeleteBackupData"
+
+
+class MabServerType(Enum):
+
+    invalid = "Invalid"
+    unknown = "Unknown"
+    iaas_vm_container = "IaasVMContainer"
+    iaas_vm_service_container = "IaasVMServiceContainer"
+    dpm_container = "DPMContainer"
+    azure_backup_server_container = "AzureBackupServerContainer"
+    mab_container = "MABContainer"
+    cluster = "Cluster"
+    azure_sql_container = "AzureSqlContainer"
+    windows = "Windows"
+    vcenter = "VCenter"
+
+
+class WorkloadType(Enum):
+
+    invalid = "Invalid"
+    vm = "VM"
+    file_folder = "FileFolder"
+    azure_sql_db = "AzureSqlDb"
+    sqldb = "SQLDB"
+    exchange = "Exchange"
+    sharepoint = "Sharepoint"
+    vmware_vm = "VMwareVM"
+    system_state = "SystemState"
+    client = "Client"
+    generic_data_source = "GenericDataSource"
+
+
 class ProtectionState(Enum):
 
     invalid = "Invalid"
@@ -45,16 +108,6 @@ class ProtectedItemState(Enum):
     protection_error = "ProtectionError"
     protection_stopped = "ProtectionStopped"
     protection_paused = "ProtectionPaused"
-
-
-class BackupManagementType(Enum):
-
-    invalid = "Invalid"
-    azure_iaas_vm = "AzureIaasVM"
-    mab = "MAB"
-    dpm = "DPM"
-    azure_backup_server = "AzureBackupServer"
-    azure_sql = "AzureSql"
 
 
 class UsagesUnit(Enum):
@@ -142,29 +195,6 @@ class RecoveryType(Enum):
     restore_disks = "RestoreDisks"
 
 
-class JobStatus(Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    completed = "Completed"
-    failed = "Failed"
-    completed_with_warnings = "CompletedWithWarnings"
-    cancelled = "Cancelled"
-    cancelling = "Cancelling"
-
-
-class JobOperationType(Enum):
-
-    invalid = "Invalid"
-    register = "Register"
-    un_register = "UnRegister"
-    configure_backup = "ConfigureBackup"
-    backup = "Backup"
-    restore = "Restore"
-    disable_backup = "DisableBackup"
-    delete_backup_data = "DeleteBackupData"
-
-
 class DayOfWeek(Enum):
 
     sunday = "Sunday"
@@ -210,36 +240,6 @@ class MonthOfYear(Enum):
 
 
 class BackupItemType(Enum):
-
-    invalid = "Invalid"
-    vm = "VM"
-    file_folder = "FileFolder"
-    azure_sql_db = "AzureSqlDb"
-    sqldb = "SQLDB"
-    exchange = "Exchange"
-    sharepoint = "Sharepoint"
-    vmware_vm = "VMwareVM"
-    system_state = "SystemState"
-    client = "Client"
-    generic_data_source = "GenericDataSource"
-
-
-class MabServerType(Enum):
-
-    invalid = "Invalid"
-    unknown = "Unknown"
-    iaas_vm_container = "IaasVMContainer"
-    iaas_vm_service_container = "IaasVMServiceContainer"
-    dpm_container = "DPMContainer"
-    azure_backup_server_container = "AzureBackupServerContainer"
-    mab_container = "MABContainer"
-    cluster = "Cluster"
-    azure_sql_container = "AzureSqlContainer"
-    windows = "Windows"
-    vcenter = "VCenter"
-
-
-class WorkloadType(Enum):
 
     invalid = "Invalid"
     vm = "VM"

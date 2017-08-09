@@ -60,6 +60,8 @@ class IaasVMRestoreRequest(RestoreRequest):
      while restoring the VM. If this is false, VM will be restored to the same
      cloud service as it was at the time of backup.
     :type create_new_cloud_service: bool
+    :param original_storage_account_option:
+    :type original_storage_account_option: bool
     :param encryption_details: Details needed if the VM was encrypted at the
      time of backup.
     :type encryption_details: :class:`EncryptionDetails
@@ -84,10 +86,11 @@ class IaasVMRestoreRequest(RestoreRequest):
         'region': {'key': 'region', 'type': 'str'},
         'affinity_group': {'key': 'affinityGroup', 'type': 'str'},
         'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
+        'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
     }
 
-    def __init__(self, recovery_point_id=None, recovery_type=None, source_resource_id=None, target_virtual_machine_id=None, target_resource_group_id=None, storage_account_id=None, virtual_network_id=None, subnet_id=None, target_domain_name_id=None, region=None, affinity_group=None, create_new_cloud_service=None, encryption_details=None):
+    def __init__(self, recovery_point_id=None, recovery_type=None, source_resource_id=None, target_virtual_machine_id=None, target_resource_group_id=None, storage_account_id=None, virtual_network_id=None, subnet_id=None, target_domain_name_id=None, region=None, affinity_group=None, create_new_cloud_service=None, original_storage_account_option=None, encryption_details=None):
         super(IaasVMRestoreRequest, self).__init__()
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -101,5 +104,6 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.region = region
         self.affinity_group = affinity_group
         self.create_new_cloud_service = create_new_cloud_service
+        self.original_storage_account_option = original_storage_account_option
         self.encryption_details = encryption_details
         self.object_type = 'IaasVMRestoreRequest'

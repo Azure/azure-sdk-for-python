@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .backup_jobs_operations import BackupJobsOperations
+from .job_details_operations import JobDetailsOperations
 from .backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from .backup_engines_operations import BackupEnginesOperations
 from .protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
@@ -21,8 +23,6 @@ from .protected_item_operation_statuses_operations import ProtectedItemOperation
 from .recovery_points_operations import RecoveryPointsOperations
 from .item_level_recovery_connections_operations import ItemLevelRecoveryConnectionsOperations
 from .restores_operations import RestoresOperations
-from .backup_jobs_operations import BackupJobsOperations
-from .job_details_operations import JobDetailsOperations
 from .job_cancellations_operations import JobCancellationsOperations
 from .job_operation_results_operations import JobOperationResultsOperations
 from .export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
@@ -42,6 +42,8 @@ from .backup_usage_summaries_operations import BackupUsageSummariesOperations
 from .operations import Operations
 
 __all__ = [
+    'BackupJobsOperations',
+    'JobDetailsOperations',
     'BackupResourceVaultConfigsOperations',
     'BackupEnginesOperations',
     'ProtectionContainerRefreshOperationResultsOperations',
@@ -54,8 +56,6 @@ __all__ = [
     'RecoveryPointsOperations',
     'ItemLevelRecoveryConnectionsOperations',
     'RestoresOperations',
-    'BackupJobsOperations',
-    'JobDetailsOperations',
     'JobCancellationsOperations',
     'JobOperationResultsOperations',
     'ExportJobsOperationResultsOperations',
