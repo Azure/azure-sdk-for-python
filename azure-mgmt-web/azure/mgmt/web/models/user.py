@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class User(Resource):
+class User(ProxyOnlyResource):
     """User crendentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class User(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param user_name: Username
     :type user_name: str
     :param publishing_user_name: Username used for publishing.
@@ -45,16 +41,15 @@ class User(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
@@ -62,8 +57,8 @@ class User(Resource):
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
-        super(User, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
+        super(User, self).__init__(kind=kind)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
