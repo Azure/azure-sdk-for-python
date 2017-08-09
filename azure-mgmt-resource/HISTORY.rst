@@ -3,6 +3,13 @@
 Release History
 ===============
 
+Unreleased (2017-XX-XX)
++++++++++++++++++++++++
+
+**Bug fixes**
+
+- Do not fail on 204 when deleting a policy assignment (2016-12-01)
+
 1.1.0 (2017-05-15)
 ++++++++++++++++++
 
