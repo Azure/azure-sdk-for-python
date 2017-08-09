@@ -32,6 +32,7 @@ from .user_update_parameters import UserUpdateParameters
 from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
 from .get_objects_parameters import GetObjectsParameters
+from .domain import Domain
 from .aad_object_paged import AADObjectPaged
 from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
@@ -40,6 +41,7 @@ from .ad_group_paged import ADGroupPaged
 from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
+from .domain_paged import DomainPaged
 
 __all__ = [
     'GraphError', 'GraphErrorException',
@@ -65,6 +67,7 @@ __all__ = [
     'User',
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
+    'Domain',
     'AADObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
@@ -73,4 +76,5 @@ __all__ = [
     'StrPaged',
     'ServicePrincipalPaged',
     'UserPaged',
+    'DomainPaged',
 ]
