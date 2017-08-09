@@ -9,11 +9,9 @@ environment:
 
 install:
   - "%PYTHON%\\python.exe -m pip install -U pip"
-  - "%PYTHON%\\python.exe -m pip install -r azure-sdk-testutils\\test-requirements.txt"
-  - "%PYTHON%\\python.exe -m pip install azure-storage"
-  - "%PYTHON%\\python.exe -m pip uninstall -y azure-common"
+  - "%PYTHON%\\python.exe scripts/dev_setup.py"
 
 build: off
 
 test_script:
-  - ps: & ${env:PYTHON}/python.exe ./azure_nosetests.py azure-mgmt/tests azure-mgmt-media/tests
+  - ps: & ${env:PYTHON}/python.exe -m pytest
