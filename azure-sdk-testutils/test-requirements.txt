@@ -1,6 +1,6 @@
 -r ../requirements.txt
 
-coverage
-nose
+pytest-cov
+pytest>=3.2.0
 azure-devtools>=0.4.1
 vcrpy
