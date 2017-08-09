@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ProtectionPolicyResourcePaged(Paged):
     """
-    A paging container for iterating over a list of ProtectionPolicyResource object
+    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
     """
 
     _attribute_map = {

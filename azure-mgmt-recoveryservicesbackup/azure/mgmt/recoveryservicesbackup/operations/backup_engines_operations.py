@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -54,6 +54,8 @@ class BackupEnginesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`BackupEngineBaseResource
+         <azure.mgmt.recoveryservicesbackup.models.BackupEngineBaseResource>`
         :rtype: :class:`BackupEngineBaseResourcePaged
          <azure.mgmt.recoveryservicesbackup.models.BackupEngineBaseResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -134,10 +136,13 @@ class BackupEnginesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`BackupEngineBaseResource
+         <azure.mgmt.recoveryservicesbackup.models.BackupEngineBaseResource>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`BackupEngineBaseResource
          <azure.mgmt.recoveryservicesbackup.models.BackupEngineBaseResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

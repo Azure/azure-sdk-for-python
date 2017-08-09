@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -52,6 +52,8 @@ class BackupPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ProtectionPolicyResource
+         <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>`
         :rtype: :class:`ProtectionPolicyResourcePaged
          <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
