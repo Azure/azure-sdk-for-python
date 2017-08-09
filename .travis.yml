@@ -38,14 +38,9 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
 install:
   - pip install -U pip
-  - pip install -r azure-sdk-testutils/test-requirements.txt
-  - pip install azure-storage
-  - pip uninstall -y azure-common  # Use azure-common from this repo, not the PyPI version azure-storage pulls in.
+  - python scripts/dev_setup.py
 script: 
-  - python ./azure_nosetests.py */tests
-  # If you get "argument list too long" you have to switch to this:
-  # find azure-* -name tests | xargs python ./azure_nosetests.py
-  # coverage combine
+  - pytest
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
