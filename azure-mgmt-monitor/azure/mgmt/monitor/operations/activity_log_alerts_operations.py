@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -51,10 +51,13 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ActivityLogAlertResource
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ActivityLogAlertResource
-         <azure.mgmt.monitor.models.ActivityLogAlertResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -118,10 +121,13 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ActivityLogAlertResource
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ActivityLogAlertResource
-         <azure.mgmt.monitor.models.ActivityLogAlertResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -179,9 +185,11 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -239,10 +247,13 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ActivityLogAlertResource
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ActivityLogAlertResource
-         <azure.mgmt.monitor.models.ActivityLogAlertResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -302,6 +313,8 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ActivityLogAlertResource
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>`
         :rtype: :class:`ActivityLogAlertResourcePaged
          <azure.mgmt.monitor.models.ActivityLogAlertResourcePaged>`
         :raises:
@@ -366,6 +379,8 @@ class ActivityLogAlertsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ActivityLogAlertResource
+         <azure.mgmt.monitor.models.ActivityLogAlertResource>`
         :rtype: :class:`ActivityLogAlertResourcePaged
          <azure.mgmt.monitor.models.ActivityLogAlertResourcePaged>`
         :raises:

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,9 +50,11 @@ class AlertRuleIncidentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Incident <azure.mgmt.monitor.models.Incident>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Incident <azure.mgmt.monitor.models.Incident>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Incident <azure.mgmt.monitor.models.Incident>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -111,6 +113,8 @@ class AlertRuleIncidentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Incident
+         <azure.mgmt.monitor.models.Incident>`
         :rtype: :class:`IncidentPaged
          <azure.mgmt.monitor.models.IncidentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
