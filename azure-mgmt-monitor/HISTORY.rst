@@ -3,6 +3,13 @@
 Release History
 ===============
 
+unreleased (2017-XX-XX)
++++++++++++++++++++++++
+
+**Bug fixes**
+
+- Improving HTTP status code check for better exception
+
 0.3.0 (2017-06-30)
 ++++++++++++++++++
 
