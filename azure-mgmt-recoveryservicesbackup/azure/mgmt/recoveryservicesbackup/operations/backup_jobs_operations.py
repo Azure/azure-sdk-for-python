@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -23,7 +23,7 @@ class BackupJobsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class BackupJobsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
@@ -53,6 +53,8 @@ class BackupJobsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`JobResource
+         <azure.mgmt.recoveryservicesbackup.models.JobResource>`
         :rtype: :class:`JobResourcePaged
          <azure.mgmt.recoveryservicesbackup.models.JobResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
