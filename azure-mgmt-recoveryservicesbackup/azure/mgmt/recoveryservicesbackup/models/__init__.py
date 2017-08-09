@@ -9,6 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .azure_iaa_svm_error_info import AzureIaaSVMErrorInfo
+from .azure_iaa_svm_job_task_details import AzureIaaSVMJobTaskDetails
+from .azure_iaa_svm_job_extended_info import AzureIaaSVMJobExtendedInfo
+from .azure_iaa_svm_job import AzureIaaSVMJob
+from .dpm_error_info import DpmErrorInfo
+from .dpm_job_task_details import DpmJobTaskDetails
+from .dpm_job_extended_info import DpmJobExtendedInfo
+from .dpm_job import DpmJob
+from .job import Job
+from .job_query_object import JobQueryObject
+from .job_resource import JobResource
+from .mab_error_info import MabErrorInfo
+from .mab_job_task_details import MabJobTaskDetails
+from .mab_job_extended_info import MabJobExtendedInfo
+from .mab_job import MabJob
+from .resource import Resource
+from .resource_list import ResourceList
 from .dpm_container_extended_info import DPMContainerExtendedInfo
 from .azure_backup_server_container import AzureBackupServerContainer
 from .azure_backup_server_engine import AzureBackupServerEngine
@@ -18,11 +35,7 @@ from .azure_iaa_sclassic_compute_vm_protected_item import AzureIaaSClassicComput
 from .azure_iaa_scompute_vm_container import AzureIaaSComputeVMContainer
 from .azure_iaa_scompute_vm_protectable_item import AzureIaaSComputeVMProtectableItem
 from .azure_iaa_scompute_vm_protected_item import AzureIaaSComputeVMProtectedItem
-from .azure_iaa_svm_error_info import AzureIaaSVMErrorInfo
 from .azure_iaa_svm_health_details import AzureIaaSVMHealthDetails
-from .azure_iaa_svm_job_task_details import AzureIaaSVMJobTaskDetails
-from .azure_iaa_svm_job_extended_info import AzureIaaSVMJobExtendedInfo
-from .azure_iaa_svm_job import AzureIaaSVMJob
 from .azure_iaa_svm_protected_item_extended_info import AzureIaaSVMProtectedItemExtendedInfo
 from .azure_iaa_svm_protected_item import AzureIaaSVMProtectedItem
 from .schedule_policy import SchedulePolicy
@@ -57,10 +70,6 @@ from .retention_duration import RetentionDuration
 from .daily_retention_schedule import DailyRetentionSchedule
 from .dpm_backup_engine import DpmBackupEngine
 from .dpm_container import DpmContainer
-from .dpm_error_info import DpmErrorInfo
-from .dpm_job_task_details import DpmJobTaskDetails
-from .dpm_job_extended_info import DpmJobExtendedInfo
-from .dpm_job import DpmJob
 from .dpm_protected_item_extended_info import DPMProtectedItemExtendedInfo
 from .dpm_protected_item import DPMProtectedItem
 from .encryption_details import EncryptionDetails
@@ -79,9 +88,6 @@ from .iaas_vm_restore_request import IaasVMRestoreRequest
 from .ilr_request import ILRRequest
 from .ilr_request_resource import ILRRequestResource
 from .instant_item_recovery_target import InstantItemRecoveryTarget
-from .job import Job
-from .job_query_object import JobQueryObject
-from .job_resource import JobResource
 from .weekly_retention_schedule import WeeklyRetentionSchedule
 from .weekly_retention_format import WeeklyRetentionFormat
 from .monthly_retention_schedule import MonthlyRetentionSchedule
@@ -90,12 +96,8 @@ from .long_term_retention_policy import LongTermRetentionPolicy
 from .long_term_schedule_policy import LongTermSchedulePolicy
 from .mab_container_extended_info import MabContainerExtendedInfo
 from .mab_container import MabContainer
-from .mab_error_info import MabErrorInfo
 from .mab_file_folder_protected_item_extended_info import MabFileFolderProtectedItemExtendedInfo
 from .mab_file_folder_protected_item import MabFileFolderProtectedItem
-from .mab_job_task_details import MabJobTaskDetails
-from .mab_job_extended_info import MabJobExtendedInfo
-from .mab_job import MabJob
 from .mab_protection_policy import MabProtectionPolicy
 from .operation_result_info import OperationResultInfo
 from .operation_result_info_base import OperationResultInfoBase
@@ -117,8 +119,6 @@ from .protection_policy_query_object import ProtectionPolicyQueryObject
 from .protection_policy_resource import ProtectionPolicyResource
 from .recovery_point import RecoveryPoint
 from .recovery_point_resource import RecoveryPointResource
-from .resource import Resource
-from .resource_list import ResourceList
 from .restore_request import RestoreRequest
 from .restore_request_resource import RestoreRequestResource
 from .simple_retention_policy import SimpleRetentionPolicy
@@ -131,9 +131,9 @@ from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecifi
 from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
 from .client_discovery_for_properties import ClientDiscoveryForProperties
 from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
+from .job_resource_paged import JobResourcePaged
 from .backup_engine_base_resource_paged import BackupEngineBaseResourcePaged
 from .recovery_point_resource_paged import RecoveryPointResourcePaged
-from .job_resource_paged import JobResourcePaged
 from .protection_policy_resource_paged import ProtectionPolicyResourcePaged
 from .workload_protectable_item_resource_paged import WorkloadProtectableItemResourcePaged
 from .protected_item_resource_paged import ProtectedItemResourcePaged
@@ -142,10 +142,14 @@ from .backup_management_usage_paged import BackupManagementUsagePaged
 from .client_discovery_value_for_single_api_paged import ClientDiscoveryValueForSingleApiPaged
 from .recovery_services_backup_client_enums import (
     JobSupportedAction,
+    BackupManagementType,
+    JobStatus,
+    JobOperationType,
+    MabServerType,
+    WorkloadType,
     ProtectionState,
     HealthStatus,
     ProtectedItemState,
-    BackupManagementType,
     UsagesUnit,
     StorageType,
     StorageTypeState,
@@ -156,15 +160,11 @@ from .recovery_services_backup_client_enums import (
     RecoveryPointTierType,
     RecoveryPointTierStatus,
     RecoveryType,
-    JobStatus,
-    JobOperationType,
     DayOfWeek,
     RetentionScheduleFormat,
     WeekOfMonth,
     MonthOfYear,
     BackupItemType,
-    MabServerType,
-    WorkloadType,
     OperationStatusValues,
     HttpStatusCode,
     DataSourceType,
@@ -174,6 +174,23 @@ from .recovery_services_backup_client_enums import (
 )
 
 __all__ = [
+    'AzureIaaSVMErrorInfo',
+    'AzureIaaSVMJobTaskDetails',
+    'AzureIaaSVMJobExtendedInfo',
+    'AzureIaaSVMJob',
+    'DpmErrorInfo',
+    'DpmJobTaskDetails',
+    'DpmJobExtendedInfo',
+    'DpmJob',
+    'Job',
+    'JobQueryObject',
+    'JobResource',
+    'MabErrorInfo',
+    'MabJobTaskDetails',
+    'MabJobExtendedInfo',
+    'MabJob',
+    'Resource',
+    'ResourceList',
     'DPMContainerExtendedInfo',
     'AzureBackupServerContainer',
     'AzureBackupServerEngine',
@@ -183,11 +200,7 @@ __all__ = [
     'AzureIaaSComputeVMContainer',
     'AzureIaaSComputeVMProtectableItem',
     'AzureIaaSComputeVMProtectedItem',
-    'AzureIaaSVMErrorInfo',
     'AzureIaaSVMHealthDetails',
-    'AzureIaaSVMJobTaskDetails',
-    'AzureIaaSVMJobExtendedInfo',
-    'AzureIaaSVMJob',
     'AzureIaaSVMProtectedItemExtendedInfo',
     'AzureIaaSVMProtectedItem',
     'SchedulePolicy',
@@ -222,10 +235,6 @@ __all__ = [
     'DailyRetentionSchedule',
     'DpmBackupEngine',
     'DpmContainer',
-    'DpmErrorInfo',
-    'DpmJobTaskDetails',
-    'DpmJobExtendedInfo',
-    'DpmJob',
     'DPMProtectedItemExtendedInfo',
     'DPMProtectedItem',
     'EncryptionDetails',
@@ -244,9 +253,6 @@ __all__ = [
     'ILRRequest',
     'ILRRequestResource',
     'InstantItemRecoveryTarget',
-    'Job',
-    'JobQueryObject',
-    'JobResource',
     'WeeklyRetentionSchedule',
     'WeeklyRetentionFormat',
     'MonthlyRetentionSchedule',
@@ -255,12 +261,8 @@ __all__ = [
     'LongTermSchedulePolicy',
     'MabContainerExtendedInfo',
     'MabContainer',
-    'MabErrorInfo',
     'MabFileFolderProtectedItemExtendedInfo',
     'MabFileFolderProtectedItem',
-    'MabJobTaskDetails',
-    'MabJobExtendedInfo',
-    'MabJob',
     'MabProtectionPolicy',
     'OperationResultInfo',
     'OperationResultInfoBase',
@@ -282,8 +284,6 @@ __all__ = [
     'ProtectionPolicyResource',
     'RecoveryPoint',
     'RecoveryPointResource',
-    'Resource',
-    'ResourceList',
     'RestoreRequest',
     'RestoreRequestResource',
     'SimpleRetentionPolicy',
@@ -296,9 +296,9 @@ __all__ = [
     'ClientDiscoveryForServiceSpecification',
     'ClientDiscoveryForProperties',
     'ClientDiscoveryValueForSingleApi',
+    'JobResourcePaged',
     'BackupEngineBaseResourcePaged',
     'RecoveryPointResourcePaged',
-    'JobResourcePaged',
     'ProtectionPolicyResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectedItemResourcePaged',
@@ -306,10 +306,14 @@ __all__ = [
     'BackupManagementUsagePaged',
     'ClientDiscoveryValueForSingleApiPaged',
     'JobSupportedAction',
+    'BackupManagementType',
+    'JobStatus',
+    'JobOperationType',
+    'MabServerType',
+    'WorkloadType',
     'ProtectionState',
     'HealthStatus',
     'ProtectedItemState',
-    'BackupManagementType',
     'UsagesUnit',
     'StorageType',
     'StorageTypeState',
@@ -320,15 +324,11 @@ __all__ = [
     'RecoveryPointTierType',
     'RecoveryPointTierStatus',
     'RecoveryType',
-    'JobStatus',
-    'JobOperationType',
     'DayOfWeek',
     'RetentionScheduleFormat',
     'WeekOfMonth',
     'MonthOfYear',
     'BackupItemType',
-    'MabServerType',
-    'WorkloadType',
     'OperationStatusValues',
     'HttpStatusCode',
     'DataSourceType',

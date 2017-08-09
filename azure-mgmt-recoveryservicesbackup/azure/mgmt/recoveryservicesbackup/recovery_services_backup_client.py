@@ -13,6 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.backup_jobs_operations import BackupJobsOperations
+from .operations.job_details_operations import JobDetailsOperations
 from .operations.backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from .operations.backup_engines_operations import BackupEnginesOperations
 from .operations.protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
@@ -25,8 +27,6 @@ from .operations.protected_item_operation_statuses_operations import ProtectedIt
 from .operations.recovery_points_operations import RecoveryPointsOperations
 from .operations.item_level_recovery_connections_operations import ItemLevelRecoveryConnectionsOperations
 from .operations.restores_operations import RestoresOperations
-from .operations.backup_jobs_operations import BackupJobsOperations
-from .operations.job_details_operations import JobDetailsOperations
 from .operations.job_cancellations_operations import JobCancellationsOperations
 from .operations.job_operation_results_operations import JobOperationResultsOperations
 from .operations.export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
@@ -74,7 +74,7 @@ class RecoveryServicesBackupClientConfiguration(AzureConfiguration):
 
         super(RecoveryServicesBackupClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-recoveryservicesbackup/{}'.format(VERSION))
+        self.add_user_agent('recoveryservicesbackupclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -87,6 +87,10 @@ class RecoveryServicesBackupClient(object):
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar backup_jobs: BackupJobs operations
+    :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
+    :ivar job_details: JobDetails operations
+    :vartype job_details: azure.mgmt.recoveryservicesbackup.operations.JobDetailsOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar backup_engines: BackupEngines operations
@@ -111,10 +115,6 @@ class RecoveryServicesBackupClient(object):
     :vartype item_level_recovery_connections: azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations
     :ivar restores: Restores operations
     :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
-    :ivar backup_jobs: BackupJobs operations
-    :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
-    :ivar job_details: JobDetails operations
-    :vartype job_details: azure.mgmt.recoveryservicesbackup.operations.JobDetailsOperations
     :ivar job_cancellations: JobCancellations operations
     :vartype job_cancellations: azure.mgmt.recoveryservicesbackup.operations.JobCancellationsOperations
     :ivar job_operation_results: JobOperationResults operations
@@ -168,6 +168,10 @@ class RecoveryServicesBackupClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.backup_jobs = BackupJobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_details = JobDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_engines = BackupEnginesOperations(
@@ -191,10 +195,6 @@ class RecoveryServicesBackupClient(object):
         self.item_level_recovery_connections = ItemLevelRecoveryConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restores = RestoresOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_jobs = BackupJobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_details = JobDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_cancellations = JobCancellationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

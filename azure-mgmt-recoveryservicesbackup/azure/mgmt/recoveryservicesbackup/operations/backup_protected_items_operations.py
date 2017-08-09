@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -37,8 +37,8 @@ class BackupProtectedItemsOperations(object):
 
     def list(
             self, vault_name, resource_group_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Provides a pageable list of all items that can be backed up within a
-        subscription.
+        """Provides a pageable list of all items that are backed up within a
+        vault.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
@@ -54,6 +54,8 @@ class BackupProtectedItemsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ProtectedItemResource
+         <azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource>`
         :rtype: :class:`ProtectedItemResourcePaged
          <azure.mgmt.recoveryservicesbackup.models.ProtectedItemResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
