@@ -6,11 +6,42 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 
+from .key_vault_authentication import KeyVaultAuthBase, KeyVaultAuthentication
 from ..key_vault_client import KeyVaultClient as KeyVaultClientBase
 from ..models import KeyVaultErrorException
+from msrestazure.azure_active_directory import AADTokenCredentials
 
 
 class CustomKeyVaultClient(KeyVaultClientBase):
+
+    def __init__(self, credentials):
+        """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
+
+        :ivar config: Configuration for client.
+        :vartype config: KeyVaultClientConfiguration
+
+        :param credentials: Credentials needed for the client to connect to Azure.
+        :type credentials: :mod:`A msrestazure Credentials
+         object<msrestazure.azure_active_directory>` or :mod:`A KeyVaultAuthentication
+         object<key_vault_authentication>` 
+        """
+        self._inner_creds = None
+
+        # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AADTokenCredentials instance
+        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, AADTokenCredentials):
+
+            # create a callback which authenticates with the supplied credentials instance
+            self._inner_creds = credentials
+
+            def auth_callback(server, resource, scope):
+                self._inner_creds.resource = resource
+                token = self._inner_creds.token
+                return token['token_type'], token['access_token']
+
+            # swap the supplied credentials with a KeyVaultAuthentication instance using the created callback
+            credentials = KeyVaultAuthentication(auth_callback)
+
+        super(CustomKeyVaultClient, self).__init__(credentials)
 
     def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Base64 pending certificate signing request (PKCS-10).
