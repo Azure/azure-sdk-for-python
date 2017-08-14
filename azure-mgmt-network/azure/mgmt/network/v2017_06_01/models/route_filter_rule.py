@@ -33,9 +33,9 @@ class RouteFilterRule(SubResource):
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
-    :ivar name: The name of the resource that is unique within a resource
+    :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
-    :vartype name: str
+    :type name: str
     :param location: Resource location.
     :type location: str
     :ivar etag: A unique read-only string that changes whenever the resource
@@ -50,7 +50,6 @@ class RouteFilterRule(SubResource):
         'route_filter_rule_type': {'required': True, 'constant': True},
         'communities': {'required': True},
         'provisioning_state': {'readonly': True},
-        'name': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -68,12 +67,12 @@ class RouteFilterRule(SubResource):
 
     route_filter_rule_type = "Community"
 
-    def __init__(self, access, communities, id=None, location=None, tags=None):
+    def __init__(self, access, communities, id=None, name=None, location=None, tags=None):
         super(RouteFilterRule, self).__init__(id=id)
         self.access = access
         self.communities = communities
         self.provisioning_state = None
-        self.name = None
+        self.name = name
         self.location = location
         self.etag = None
         self.tags = tags

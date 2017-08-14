@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AppServiceCertificateResourcePaged(Paged):
     """
-    A paging container for iterating over a list of AppServiceCertificateResource object
+    A paging container for iterating over a list of :class:`AppServiceCertificateResource <azure.mgmt.web.models.AppServiceCertificateResource>` object
     """
 
     _attribute_map = {

@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class PrivateAccessServiceResultPaged(Paged):
-    """
-    A paging container for iterating over a list of PrivateAccessServiceResult object
+class MetricAvailability(Model):
+    """MetricAvailability.
+
+    :param time_grain:
+    :type time_grain: str
+    :param blob_duration:
+    :type blob_duration: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PrivateAccessServiceResult]'}
+        'time_grain': {'key': 'timeGrain', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(PrivateAccessServiceResultPaged, self).__init__(*args, **kwargs)
+    def __init__(self, time_grain=None, blob_duration=None):
+        self.time_grain = time_grain
+        self.blob_duration = blob_duration

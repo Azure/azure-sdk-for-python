@@ -12,22 +12,13 @@
 from enum import Enum
 
 
-class TransportProtocol(Enum):
+class RouteNextHopType(Enum):
 
-    udp = "Udp"
-    tcp = "Tcp"
-
-
-class IPAllocationMethod(Enum):
-
-    static = "Static"
-    dynamic = "Dynamic"
-
-
-class IPVersion(Enum):
-
-    ipv4 = "IPv4"
-    ipv6 = "IPv6"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    none = "None"
 
 
 class SecurityRuleProtocol(Enum):
@@ -49,13 +40,22 @@ class SecurityRuleDirection(Enum):
     outbound = "Outbound"
 
 
-class RouteNextHopType(Enum):
+class TransportProtocol(Enum):
 
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    none = "None"
+    udp = "Udp"
+    tcp = "Tcp"
+
+
+class IPAllocationMethod(Enum):
+
+    static = "Static"
+    dynamic = "Dynamic"
+
+
+class IPVersion(Enum):
+
+    ipv4 = "IPv4"
+    ipv6 = "IPv6"
 
 
 class ApplicationGatewayProtocol(Enum):

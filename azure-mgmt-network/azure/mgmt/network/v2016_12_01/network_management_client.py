@@ -17,13 +17,13 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
+from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
-from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.network_watchers_operations import NetworkWatchersOperations
@@ -81,11 +81,13 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
 
 class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+    """Network Client
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
 
+    :ivar network_interfaces: NetworkInterfaces operations
+    :vartype network_interfaces: azure.mgmt.network.v2016_12_01.operations.NetworkInterfacesOperations
     :ivar application_gateways: ApplicationGateways operations
     :vartype application_gateways: azure.mgmt.network.v2016_12_01.operations.ApplicationGatewaysOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
@@ -98,8 +100,6 @@ class NetworkManagementClient(object):
     :vartype express_route_service_providers: azure.mgmt.network.v2016_12_01.operations.ExpressRouteServiceProvidersOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2016_12_01.operations.LoadBalancersOperations
-    :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2016_12_01.operations.NetworkInterfacesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
     :vartype network_security_groups: azure.mgmt.network.v2016_12_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
@@ -152,9 +152,12 @@ class NetworkManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.application_gateways = ApplicationGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
@@ -166,8 +169,6 @@ class NetworkManagementClient(object):
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -220,14 +221,15 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-12-01"
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'
         path_format_arguments = {
@@ -240,7 +242,7 @@ class NetworkManagementClient(object):
         query_parameters = {}
         if domain_name_label is not None:
             query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

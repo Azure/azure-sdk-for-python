@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NetworkSecurityGroupPaged(Paged):
     """
-    A paging container for iterating over a list of NetworkSecurityGroup object
+    A paging container for iterating over a list of :class:`NetworkSecurityGroup <azure.mgmt.network.v2016_09_01.models.NetworkSecurityGroup>` object
     """
 
     _attribute_map = {
