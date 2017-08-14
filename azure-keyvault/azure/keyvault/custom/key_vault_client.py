@@ -9,7 +9,7 @@ from msrest.pipeline import ClientRawResponse
 from .key_vault_authentication import KeyVaultAuthBase, KeyVaultAuthentication
 from ..key_vault_client import KeyVaultClient as KeyVaultClientBase
 from ..models import KeyVaultErrorException
-from msrestazure.azure_active_directory import AADTokenCredentials
+from msrestazure.azure_active_directory import AADMixin
 
 
 class CustomKeyVaultClient(KeyVaultClientBase):
@@ -25,21 +25,12 @@ class CustomKeyVaultClient(KeyVaultClientBase):
          object<msrestazure.azure_active_directory>` or :mod:`A KeyVaultAuthentication
          object<key_vault_authentication>` 
         """
-        self._inner_creds = None
 
-        # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AADTokenCredentials instance
-        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, AADTokenCredentials):
+        # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AAD credential type
+        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, AADMixin):
 
-            # create a callback which authenticates with the supplied credentials instance
-            self._inner_creds = credentials
-
-            def auth_callback(server, resource, scope):
-                self._inner_creds.resource = resource
-                token = self._inner_creds.token
-                return token['token_type'], token['access_token']
-
-            # swap the supplied credentials with a KeyVaultAuthentication instance using the created callback
-            credentials = KeyVaultAuthentication(auth_callback)
+            # wrap the supplied credentials with a KeyVaultAuthentication instance. Use that for the credentials supplied to the base client
+            credentials = KeyVaultAuthentication(credentials=credentials)
 
         super(CustomKeyVaultClient, self).__init__(credentials)
 
