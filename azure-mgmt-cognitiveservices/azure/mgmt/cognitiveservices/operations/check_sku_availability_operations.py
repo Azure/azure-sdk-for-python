@@ -36,11 +36,9 @@ class CheckSkuAvailabilityOperations(object):
         self.config = config
 
     def list(
-            self, location, skus, kind, type, custom_headers=None, raw=False, **operation_config):
+            self, skus, kind, type, custom_headers=None, raw=False, **operation_config):
         """Check available SKUs.
 
-        :param location: Resource location.
-        :type location: str
         :param skus: The SKU of the resource.
         :type skus: list of str or :class:`SkuName
          <azure.mgmt.cognitiveservices.models.SkuName>`
@@ -74,7 +72,7 @@ class CheckSkuAvailabilityOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'location': self._serialize.url("location", location, 'str')
+            'location': self._serialize.url("self.config.location", self.config.location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

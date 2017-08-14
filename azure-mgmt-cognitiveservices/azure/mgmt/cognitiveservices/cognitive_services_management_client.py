@@ -30,11 +30,13 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param location: Resource location.
+    :type location: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, location, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -42,6 +44,10 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
+        if location is None:
+            raise ValueError("Parameter 'location' must not be None.")
+        if not isinstance(location, str):
+            raise TypeError("Parameter 'location' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -52,6 +58,7 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.location = location
 
 
 class CognitiveServicesManagementClient(object):
@@ -74,13 +81,15 @@ class CognitiveServicesManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param location: Resource location.
+    :type location: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, location, base_url=None):
 
-        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, location, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
