@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class VnetRoute(Resource):
+class VnetRoute(ProxyOnlyResource):
     """Virtual Network route contract used to pass routing information for a
     Virtual Network.
 
@@ -21,16 +21,12 @@ class VnetRoute(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param vnet_route_name: The name of this route. This is only returned by
      the server and does not need to be set by the client.
     :type vnet_route_name: str
@@ -54,24 +50,23 @@ class VnetRoute(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vnet_route_name': {'key': 'properties.name', 'type': 'str'},
         'start_address': {'key': 'properties.startAddress', 'type': 'str'},
         'end_address': {'key': 'properties.endAddress', 'type': 'str'},
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
-        super(VnetRoute, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+        super(VnetRoute, self).__init__(kind=kind)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address

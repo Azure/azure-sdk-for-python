@@ -9,24 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class PrivateAccessServiceResult(SubResource):
-    """Private access service.
+class ProxyOnlyResource(Model):
+    """Azure proxy only resource. This resource is not tracked by Azure Resource
+    Manager.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
-    :ivar name: Name of the private access value.
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
     :vartype name: str
-    :ivar type: Type of the private access value.
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
     :vartype type: str
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -34,10 +38,12 @@ class PrivateAccessServiceResult(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(PrivateAccessServiceResult, self).__init__(id=id)
+    def __init__(self, kind=None):
+        self.id = None
         self.name = None
+        self.kind = kind
         self.type = None

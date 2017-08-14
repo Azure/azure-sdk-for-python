@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SourceControlPaged(Paged):
     """
-    A paging container for iterating over a list of SourceControl object
+    A paging container for iterating over a list of :class:`SourceControl <azure.mgmt.web.models.SourceControl>` object
     """
 
     _attribute_map = {

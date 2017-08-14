@@ -20,14 +20,14 @@ class Certificate(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar friendly_name: Friendly name of the certificate.
@@ -86,7 +86,9 @@ class Certificate(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'friendly_name': {'readonly': True},
         'subject_name': {'readonly': True},
         'site_name': {'readonly': True},
@@ -134,8 +136,8 @@ class Certificate(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
-        super(Certificate, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+        super(Certificate, self).__init__(kind=kind, location=location, tags=tags)
         self.friendly_name = None
         self.subject_name = None
         self.host_names = host_names
