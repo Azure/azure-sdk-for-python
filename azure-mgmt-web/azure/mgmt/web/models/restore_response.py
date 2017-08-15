@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class RestoreResponse(Resource):
+class RestoreResponse(ProxyOnlyResource):
     """Response for an app restore request.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class RestoreResponse(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar operation_id: When server starts the restore process, it will return
      an operation ID identifying that particular restore operation.
     :vartype operation_id: str
@@ -37,7 +33,8 @@ class RestoreResponse(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'operation_id': {'readonly': True},
     }
 
@@ -45,12 +42,10 @@ class RestoreResponse(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(RestoreResponse, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(RestoreResponse, self).__init__(kind=kind)
         self.operation_id = None

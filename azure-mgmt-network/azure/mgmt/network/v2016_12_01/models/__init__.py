@@ -9,23 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
-from .backend_address_pool import BackendAddressPool
-from .inbound_nat_rule import InboundNatRule
-from .security_rule import SecurityRule
+from .resource import Resource
 from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-from .network_interface import NetworkInterface
-from .network_security_group import NetworkSecurityGroup
-from .route import Route
-from .route_table import RouteTable
+from .sub_resource import SubResource
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-from .public_ip_address import PublicIPAddress
-from .ip_configuration import IPConfiguration
 from .resource_navigation_link import ResourceNavigationLink
-from .subnet import Subnet
-from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
+from .route import Route
+from .security_rule import SecurityRule
 from .application_gateway_backend_address import ApplicationGatewayBackendAddress
 from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
+from .backend_address_pool import BackendAddressPool
+from .inbound_nat_rule import InboundNatRule
+from .ip_configuration import IPConfiguration
+from .public_ip_address import PublicIPAddress
+from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
+from .network_interface import NetworkInterface
+from .network_security_group import NetworkSecurityGroup
+from .route_table import RouteTable
+from .subnet import Subnet
 from .application_gateway_connection_draining import ApplicationGatewayConnectionDraining
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
@@ -46,7 +47,6 @@ from .application_gateway_request_routing_rule import ApplicationGatewayRequestR
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
-from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
@@ -137,13 +137,13 @@ from .local_network_gateway import LocalNetworkGateway
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
+from .network_interface_paged import NetworkInterfacePaged
 from .application_gateway_paged import ApplicationGatewayPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .load_balancer_paged import LoadBalancerPaged
-from .network_interface_paged import NetworkInterfacePaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
@@ -162,13 +162,13 @@ from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .network_management_client_enums import (
-    TransportProtocol,
-    IPAllocationMethod,
-    IPVersion,
+    RouteNextHopType,
     SecurityRuleProtocol,
     SecurityRuleAccess,
     SecurityRuleDirection,
-    RouteNextHopType,
+    TransportProtocol,
+    IPAllocationMethod,
+    IPVersion,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
@@ -211,23 +211,24 @@ from .network_management_client_enums import (
 )
 
 __all__ = [
-    'SubResource',
-    'BackendAddressPool',
-    'InboundNatRule',
-    'SecurityRule',
+    'Resource',
     'NetworkInterfaceDnsSettings',
-    'NetworkInterface',
-    'NetworkSecurityGroup',
-    'Route',
-    'RouteTable',
+    'SubResource',
     'PublicIPAddressDnsSettings',
-    'PublicIPAddress',
-    'IPConfiguration',
     'ResourceNavigationLink',
-    'Subnet',
-    'NetworkInterfaceIPConfiguration',
+    'Route',
+    'SecurityRule',
     'ApplicationGatewayBackendAddress',
     'ApplicationGatewayBackendAddressPool',
+    'BackendAddressPool',
+    'InboundNatRule',
+    'IPConfiguration',
+    'PublicIPAddress',
+    'NetworkInterfaceIPConfiguration',
+    'NetworkInterface',
+    'NetworkSecurityGroup',
+    'RouteTable',
+    'Subnet',
     'ApplicationGatewayConnectionDraining',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayBackendHealthServer',
@@ -248,7 +249,6 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
-    'Resource',
     'DnsNameAvailabilityResult',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
@@ -339,13 +339,13 @@ __all__ = [
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
+    'NetworkInterfacePaged',
     'ApplicationGatewayPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'LoadBalancerPaged',
-    'NetworkInterfacePaged',
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkWatcherPaged',
@@ -363,13 +363,13 @@ __all__ = [
     'VirtualNetworkGatewayPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
-    'TransportProtocol',
-    'IPAllocationMethod',
-    'IPVersion',
+    'RouteNextHopType',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
     'SecurityRuleDirection',
-    'RouteNextHopType',
+    'TransportProtocol',
+    'IPAllocationMethod',
+    'IPVersion',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',

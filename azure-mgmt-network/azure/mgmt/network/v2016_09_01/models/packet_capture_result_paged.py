@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PacketCaptureResultPaged(Paged):
     """
-    A paging container for iterating over a list of PacketCaptureResult object
+    A paging container for iterating over a list of :class:`PacketCaptureResult <azure.mgmt.network.v2016_09_01.models.PacketCaptureResult>` object
     """
 
     _attribute_map = {
