@@ -15,11 +15,15 @@ from msrest.serialization import Model
 class KeyCreateParameters(Model):
     """The key create parameters.
 
-    :param kty: The type of key to create. For valid key types, see
-     JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic Curve,
-     RSA, HSM, Octet. Possible values include: 'EC', 'RSA', 'RSA-HSM', 'oct'
+    :param kty: The type of key to create. For valid values, see
+     JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM',
+     'oct'
     :type kty: str or :class:`JsonWebKeyType
      <azure.keyvault.models.JsonWebKeyType>`
+    :param curve: Elliptic curve name. For valid values, see JsonWebKeyECName.
+     Possible values include: 'P-256', 'P-384', 'P-521', 'SECP256K1'
+    :type curve: str or :class:`JsonWebKeyECName
+     <azure.keyvault.models.JsonWebKeyECName>`
     :param key_size: The key size in bytes. For example, 1024 or 2048.
     :type key_size: int
     :param key_ops:
@@ -38,14 +42,16 @@ class KeyCreateParameters(Model):
 
     _attribute_map = {
         'kty': {'key': 'kty', 'type': 'str'},
+        'curve': {'key': 'crv', 'type': 'str'},
         'key_size': {'key': 'key_size', 'type': 'int'},
         'key_ops': {'key': 'key_ops', 'type': '[str]'},
         'key_attributes': {'key': 'attributes', 'type': 'KeyAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, kty, key_size=None, key_ops=None, key_attributes=None, tags=None):
+    def __init__(self, kty, curve=None, key_size=None, key_ops=None, key_attributes=None, tags=None):
         self.kty = kty
+        self.curve = curve
         self.key_size = key_size
         self.key_ops = key_ops
         self.key_attributes = key_attributes

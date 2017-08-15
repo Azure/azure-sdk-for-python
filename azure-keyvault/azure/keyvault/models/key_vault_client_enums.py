@@ -15,9 +15,18 @@ from enum import Enum
 class JsonWebKeyType(Enum):
 
     ec = "EC"
+    ec_hsm = "EC-HSM"
     rsa = "RSA"
     rsa_hsm = "RSA-HSM"
     oct = "oct"
+
+
+class JsonWebKeyECName(Enum):
+
+    p_256 = "P-256"
+    p_384 = "P-384"
+    p_521 = "P-521"
+    secp256_k1 = "SECP256K1"
 
 
 class DeletionRecoveryLevel(Enum):
@@ -73,3 +82,7 @@ class JsonWebKeySignatureAlgorithm(Enum):
     rs384 = "RS384"
     rs512 = "RS512"
     rsnull = "RSNULL"
+    es256 = "ES256"
+    es384 = "ES384"
+    es512 = "ES512"
+    ecdsa256 = "ECDSA256"
