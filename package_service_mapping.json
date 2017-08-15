@@ -117,7 +117,9 @@
 		"service_name": "Data Lake Analytics",
 		"category ": "Management",
 		"namespaces": [
-			"azure.mgmt.datalake.analytics"
+			"azure.mgmt.datalake.analytics.account",
+			"azure.mgmt.datalake.analytics.catalog",
+			"azure.mgmt.datalake.analytics.job"
 		]
 	},
 	"azure-mgmt-datalake-store": {
