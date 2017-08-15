@@ -186,5 +186,5 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         :rtype: requests.Session.
         """
         if self._credentials:
-            self._credentials.refresh_session()
+            return self._credentials.refresh_session()
         return self.signed_session()
