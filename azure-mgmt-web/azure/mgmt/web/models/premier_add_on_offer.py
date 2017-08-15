@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class PremierAddOnOffer(Resource):
+class PremierAddOnOffer(ProxyOnlyResource):
     """Premier add-on offer.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class PremierAddOnOffer(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param sku: SKU.
     :type sku: str
     :param product: Product.
@@ -61,16 +57,15 @@ class PremierAddOnOffer(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
@@ -84,8 +79,8 @@ class PremierAddOnOffer(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOnOffer, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
+        super(PremierAddOnOffer, self).__init__(kind=kind)
         self.sku = sku
         self.product = product
         self.vendor = vendor

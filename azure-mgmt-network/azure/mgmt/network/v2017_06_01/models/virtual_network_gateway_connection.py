@@ -30,13 +30,16 @@ class VirtualNetworkGatewayConnection(Resource):
     :type tags: dict
     :param authorization_key: The authorizationKey.
     :type authorization_key: str
-    :param virtual_network_gateway1:
+    :param virtual_network_gateway1: The reference to virtual network gateway
+     resource.
     :type virtual_network_gateway1: :class:`VirtualNetworkGateway
      <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
-    :param virtual_network_gateway2:
+    :param virtual_network_gateway2: The reference to virtual network gateway
+     resource.
     :type virtual_network_gateway2: :class:`VirtualNetworkGateway
      <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
-    :param local_network_gateway2:
+    :param local_network_gateway2: The reference to local network gateway
+     resource.
     :type local_network_gateway2: :class:`LocalNetworkGateway
      <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>`
     :param connection_type: Gateway connection type. Possible values are:

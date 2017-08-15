@@ -35,11 +35,20 @@ class SecurityRule(SubResource):
      'VirtualNetwork', 'AzureLoadBalancer' and 'Internet' can also be used. If
      this is an ingress rule, specifies where network traffic originates from.
     :type source_address_prefix: str
+    :param source_address_prefixes: The CIDR or source IP ranges.
+    :type source_address_prefixes: list of str
     :param destination_address_prefix: The destination address prefix. CIDR or
-     source IP range. Asterix '*' can also be used to match all source IPs.
-     Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and 'Internet'
-     can also be used.
+     destination IP range. Asterix '*' can also be used to match all source
+     IPs. Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and
+     'Internet' can also be used.
     :type destination_address_prefix: str
+    :param destination_address_prefixes: The destination address prefixes.
+     CIDR or destination IP ranges.
+    :type destination_address_prefixes: list of str
+    :param source_port_ranges: The source port ranges.
+    :type source_port_ranges: list of str
+    :param destination_port_ranges: The destination port ranges.
+    :type destination_port_ranges: list of str
     :param access: The network traffic is allowed or denied. Possible values
      are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
     :type access: str or :class:`SecurityRuleAccess
@@ -81,7 +90,11 @@ class SecurityRule(SubResource):
         'source_port_range': {'key': 'properties.sourcePortRange', 'type': 'str'},
         'destination_port_range': {'key': 'properties.destinationPortRange', 'type': 'str'},
         'source_address_prefix': {'key': 'properties.sourceAddressPrefix', 'type': 'str'},
+        'source_address_prefixes': {'key': 'properties.sourceAddressPrefixes', 'type': '[str]'},
         'destination_address_prefix': {'key': 'properties.destinationAddressPrefix', 'type': 'str'},
+        'destination_address_prefixes': {'key': 'properties.destinationAddressPrefixes', 'type': '[str]'},
+        'source_port_ranges': {'key': 'properties.sourcePortRanges', 'type': '[str]'},
+        'destination_port_ranges': {'key': 'properties.destinationPortRanges', 'type': '[str]'},
         'access': {'key': 'properties.access', 'type': 'str'},
         'priority': {'key': 'properties.priority', 'type': 'int'},
         'direction': {'key': 'properties.direction', 'type': 'str'},
@@ -90,14 +103,18 @@ class SecurityRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, priority=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, source_address_prefixes=None, destination_address_prefixes=None, source_port_ranges=None, destination_port_ranges=None, priority=None, provisioning_state=None, name=None, etag=None):
         super(SecurityRule, self).__init__(id=id)
         self.description = description
         self.protocol = protocol
         self.source_port_range = source_port_range
         self.destination_port_range = destination_port_range
         self.source_address_prefix = source_address_prefix
+        self.source_address_prefixes = source_address_prefixes
         self.destination_address_prefix = destination_address_prefix
+        self.destination_address_prefixes = destination_address_prefixes
+        self.source_port_ranges = source_port_ranges
+        self.destination_port_ranges = destination_port_ranges
         self.access = access
         self.priority = priority
         self.direction = direction

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class CustomHostnameAnalysisResult(Resource):
+class CustomHostnameAnalysisResult(ProxyOnlyResource):
     """Custom domain analysis.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class CustomHostnameAnalysisResult(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar is_hostname_already_verified: <code>true</code> if hostname is
      already verified; otherwise, <code>false</code>.
     :vartype is_hostname_already_verified: bool
@@ -67,7 +63,8 @@ class CustomHostnameAnalysisResult(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'is_hostname_already_verified': {'readonly': True},
         'custom_domain_verification_test': {'readonly': True},
         'custom_domain_verification_failure_info': {'readonly': True},
@@ -80,9 +77,7 @@ class CustomHostnameAnalysisResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'is_hostname_already_verified': {'key': 'properties.isHostnameAlreadyVerified', 'type': 'bool'},
         'custom_domain_verification_test': {'key': 'properties.customDomainVerificationTest', 'type': 'DnsVerificationTestResult'},
         'custom_domain_verification_failure_info': {'key': 'properties.customDomainVerificationFailureInfo', 'type': 'ErrorEntity'},
@@ -96,8 +91,8 @@ class CustomHostnameAnalysisResult(Resource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
-        super(CustomHostnameAnalysisResult, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
+        super(CustomHostnameAnalysisResult, self).__init__(kind=kind)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None
