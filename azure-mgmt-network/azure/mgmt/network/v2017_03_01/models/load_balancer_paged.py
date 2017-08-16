@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LoadBalancerPaged(Paged):
     """
-    A paging container for iterating over a list of LoadBalancer object
+    A paging container for iterating over a list of :class:`LoadBalancer <azure.mgmt.network.v2017_03_01.models.LoadBalancer>` object
     """
 
     _attribute_map = {
