@@ -6,11 +6,33 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 
+from .key_vault_authentication import KeyVaultAuthBase, KeyVaultAuthentication
 from ..key_vault_client import KeyVaultClient as KeyVaultClientBase
 from ..models import KeyVaultErrorException
+from msrestazure.azure_active_directory import AADMixin
 
 
 class CustomKeyVaultClient(KeyVaultClientBase):
+
+    def __init__(self, credentials):
+        """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
+
+        :ivar config: Configuration for client.
+        :vartype config: KeyVaultClientConfiguration
+
+        :param credentials: Credentials needed for the client to connect to Azure.
+        :type credentials: :mod:`A msrestazure Credentials
+         object<msrestazure.azure_active_directory>` or :mod:`A KeyVaultAuthentication
+         object<key_vault_authentication>` 
+        """
+
+        # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AAD credential type
+        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, AADMixin):
+
+            # wrap the supplied credentials with a KeyVaultAuthentication instance. Use that for the credentials supplied to the base client
+            credentials = KeyVaultAuthentication(credentials=credentials)
+
+        super(CustomKeyVaultClient, self).__init__(credentials)
 
     def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Base64 pending certificate signing request (PKCS-10).

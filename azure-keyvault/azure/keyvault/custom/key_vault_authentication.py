@@ -4,11 +4,12 @@
 #---------------------------------------------------------------------------------------------
 
 import threading
+import requests
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
-from msrest.authentication import Authentication
 from azure.keyvault import HttpBearerChallenge
 from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
+from msrest.authentication import OAuthTokenAuthentication
 
 
 class KeyVaultAuthBase(AuthBase):
@@ -125,7 +126,7 @@ class KeyVaultAuthBase(AuthBase):
         request.headers['Authorization'] = '{} {}'.format(auth[0], auth[1])
 
 
-class KeyVaultAuthentication(Authentication):
+class KeyVaultAuthentication(OAuthTokenAuthentication):
     """
     Authentication class to be used as credentials for the KeyVaultClient.
     :Example Usage:    
@@ -140,18 +141,47 @@ class KeyVaultAuthentication(Authentication):
             self.keyvault_data_client = KeyVaultClient(KeyVaultAuthentication(auth_callack))
     """
 
-    def __init__(self, authorization_callback):
+    def __init__(self, authorization_callback=None, credentials=None):
         """
         Creates a new KeyVaultAuthentication instance used for authentication in the KeyVaultClient
         :param authorization_callback: A callback used to provide authentication credentials to the key vault data service.  
         This callback should take three str arguments: authorization uri, resource, and scope, and return 
         a tuple of (token type, access token).
+        :param credentials:: Credentials needed for the client to connect to Azure.
+        :type credentials: :mod:`A msrestazure Credentials
+         object<msrestazure.azure_active_directory>`
         """
-        super(KeyVaultAuthentication, self).__init__()
+        if not authorization_callback and not credentials:
+            raise ValueError("Either parameter 'authorization_callback' or parameter 'credentials' must be specified.")
+
+        # super(KeyVaultAuthentication, self).__init__()
+
+        self._credentials = credentials
+
+        if not authorization_callback:
+            def auth_callback(server, resource, scope):
+                if self._credentials.resource != resource:
+                    self._credentials.resource = resource
+                    self._credentials.set_token()
+                token = self._credentials.token
+                return token['token_type'], token['access_token']
+
+            authorization_callback = auth_callback
+
         self.auth = KeyVaultAuthBase(authorization_callback)
         self._callback = authorization_callback
         
     def signed_session(self):
-        session = super(KeyVaultAuthentication, self).signed_session()
+        session = requests.Session()
         session.auth = self.auth
         return session
+
+    def refresh_session(self):
+        """Return updated session if token has expired, attempts to
+        refresh using refresh token.
+
+        :rtype: requests.Session.
+        """
+        if self._credentials:
+            self._credentials.refresh_session()
+        return self.signed_session()
