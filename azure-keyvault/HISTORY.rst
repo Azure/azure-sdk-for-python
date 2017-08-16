@@ -2,6 +2,10 @@
 
 Release History
 ===============
+0.3.6 (2017-08-16)
+++++++++++++++++++
+
+* Updated KeyVaultClient to accept both KeyVaultAuthentication and azure.common.credentials instances for authentication
 
 0.3.5 (2017-06-23)
 ++++++++++++++++++

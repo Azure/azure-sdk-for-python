@@ -215,7 +215,7 @@
       "autorest_options": {
         "input-file": "specification/keyvault/data-plane/Microsoft.KeyVault/2016-10-01/keyvault.json",
         "namespace": "azure.keyvault",
-        "package-version": "0.3.5"
+        "package-version": "0.3.6"
       },
       "wrapper_filesOrDirs": [
         "custom",
