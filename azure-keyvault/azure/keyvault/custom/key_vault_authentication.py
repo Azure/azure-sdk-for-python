@@ -4,6 +4,7 @@
 #---------------------------------------------------------------------------------------------
 
 import threading
+import requests
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
 from azure.keyvault import HttpBearerChallenge
@@ -171,12 +172,8 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         self._callback = authorization_callback
         
     def signed_session(self):
-        session = None
-        if self._credentials:
-            session = self._credentials.signed_session()
-        else:
-            session = super(KeyVaultAuthentication, self).signed_session()
-            session.auth = self.auth
+        session = requests.Session()
+        session.auth = self.auth
         return session
 
     def refresh_session(self):
@@ -186,5 +183,5 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         :rtype: requests.Session.
         """
         if self._credentials:
-            return self._credentials.refresh_session()
+            self._credentials.refresh_session()
         return self.signed_session()
