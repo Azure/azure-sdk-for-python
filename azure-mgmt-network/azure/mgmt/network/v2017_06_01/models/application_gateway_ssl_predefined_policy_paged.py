@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ApplicationGatewaySslPredefinedPolicyPaged(Paged):
     """
-    A paging container for iterating over a list of ApplicationGatewaySslPredefinedPolicy object
+    A paging container for iterating over a list of :class:`ApplicationGatewaySslPredefinedPolicy <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPredefinedPolicy>` object
     """
 
     _attribute_map = {

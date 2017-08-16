@@ -15,18 +15,25 @@ from msrest.serialization import Model
 class EffectiveNetworkSecurityGroupListResult(Model):
     """Response for list effective network security groups API service call.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param value: A list of effective network security groups.
     :type value: list of :class:`EffectiveNetworkSecurityGroup
      <azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityGroup>`
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[EffectiveNetworkSecurityGroup]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None):
+    def __init__(self, value=None):
         self.value = value
-        self.next_link = next_link
+        self.next_link = None
