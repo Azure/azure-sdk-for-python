@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -46,6 +46,8 @@ class UsagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Usage
+         <azure.mgmt.network.v2016_12_01.models.Usage>`
         :rtype: :class:`UsagePaged
          <azure.mgmt.network.v2016_12_01.models.UsagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -56,7 +58,7 @@ class UsagesOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/usages'
                 path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str', pattern='^[-\w\._]+$'),
+                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
