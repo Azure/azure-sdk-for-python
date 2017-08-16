@@ -6,9 +6,9 @@
 import threading
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
-from msrest.authentication import OAuthTokenAuthentication
 from azure.keyvault import HttpBearerChallenge
 from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
+from msrest.authentication import OAuthTokenAuthentication
 
 
 class KeyVaultAuthBase(AuthBase):
@@ -153,7 +153,7 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         if not authorization_callback and not credentials:
             raise ValueError("Either parameter 'authorization_callback' or parameter 'credentials' must not be None.")
 
-        super(KeyVaultAuthentication, self).__init__()
+        # super(KeyVaultAuthentication, self).__init__()
 
         self._credentials = credentials
 
