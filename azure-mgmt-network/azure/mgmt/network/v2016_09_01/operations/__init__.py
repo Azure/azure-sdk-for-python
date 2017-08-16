@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .network_interfaces_operations import NetworkInterfacesOperations
 from .application_gateways_operations import ApplicationGatewaysOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .load_balancers_operations import LoadBalancersOperations
-from .network_interfaces_operations import NetworkInterfacesOperations
 from .network_security_groups_operations import NetworkSecurityGroupsOperations
 from .security_rules_operations import SecurityRulesOperations
 from .network_watchers_operations import NetworkWatchersOperations
@@ -32,13 +32,13 @@ from .virtual_network_gateway_connections_operations import VirtualNetworkGatewa
 from .local_network_gateways_operations import LocalNetworkGatewaysOperations
 
 __all__ = [
+    'NetworkInterfacesOperations',
     'ApplicationGatewaysOperations',
     'ExpressRouteCircuitAuthorizationsOperations',
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
     'LoadBalancersOperations',
-    'NetworkInterfacesOperations',
     'NetworkSecurityGroupsOperations',
     'SecurityRulesOperations',
     'NetworkWatchersOperations',
