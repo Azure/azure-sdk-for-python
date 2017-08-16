@@ -152,7 +152,7 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
          object<msrestazure.azure_active_directory>`
         """
         if not authorization_callback and not credentials:
-            raise ValueError("Either parameter 'authorization_callback' or parameter 'credentials' must not be None.")
+            raise ValueError("Either parameter 'authorization_callback' or parameter 'credentials' must be specified.")
 
         # super(KeyVaultAuthentication, self).__init__()
 
@@ -162,7 +162,7 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
             def auth_callback(server, resource, scope):
                 if self._credentials.resource != resource:
                     self._credentials.resource = resource
-                    token = self._credentials.set_token()
+                    self._credentials.set_token()
                 token = self._credentials.token
                 return token['token_type'], token['access_token']
 
