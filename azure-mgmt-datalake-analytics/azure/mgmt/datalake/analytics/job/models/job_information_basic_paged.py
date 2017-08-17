@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class JobInformationPaged(Paged):
+class JobInformationBasicPaged(Paged):
     """
-    A paging container for iterating over a list of JobInformation object
+    A paging container for iterating over a list of :class:`JobInformationBasic <azure.mgmt.datalake.analytics.job.models.JobInformationBasic>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JobInformation]'}
+        'current_page': {'key': 'value', 'type': '[JobInformationBasic]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(JobInformationPaged, self).__init__(*args, **kwargs)
+        super(JobInformationBasicPaged, self).__init__(*args, **kwargs)

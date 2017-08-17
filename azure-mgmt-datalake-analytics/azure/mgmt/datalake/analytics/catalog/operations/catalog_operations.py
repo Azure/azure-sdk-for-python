@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -59,9 +59,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
@@ -130,9 +132,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
@@ -178,6 +182,68 @@ class CatalogOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def delete_secret(
+            self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified secret in the specified database. This is
+        deprecated and will be removed in the next release. Please use
+        DeleteCredential instead.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the secret.
+        :type database_name: str
+        :param secret_name: The name of the secret to delete
+        :type secret_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def get_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
         """Gets the specified secret in the specified database. This is deprecated
@@ -196,10 +262,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlSecret
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -246,66 +315,6 @@ class CatalogOperations(object):
 
         return deserialized
 
-    def delete_secret(
-            self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified secret in the specified database. This is
-        deprecated and will be removed in the next release. Please use
-        DeleteCredential instead.
-
-        :param account_name: The Azure Data Lake Analytics account upon which
-         to execute catalog operations.
-        :type account_name: str
-        :param database_name: The name of the database containing the secret.
-        :type database_name: str
-        :param secret_name: The name of the secret to delete
-        :type secret_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'secretName': self._serialize.url("secret_name", secret_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
     def delete_all_secrets(
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Deletes all secrets in the specified database. This is deprecated and
@@ -322,9 +331,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -388,9 +399,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -457,9 +470,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -503,73 +518,6 @@ class CatalogOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get_credential(
-            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the specified credential from the Data Lake Analytics
-        catalog.
-
-        :param account_name: The Azure Data Lake Analytics account upon which
-         to execute catalog operations.
-        :type account_name: str
-        :param database_name: The name of the database containing the schema.
-        :type database_name: str
-        :param credential_name: The name of the credential.
-        :type credential_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlCredential', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def delete_credential(
             self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified credential in the specified database.
@@ -596,9 +544,11 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -651,6 +601,76 @@ class CatalogOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def get_credential(
+            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the specified credential from the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the schema.
+        :type database_name: str
+        :param credential_name: The name of the credential.
+        :type credential_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlCredential
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`USqlCredential
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlCredential', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_credentials(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of credentials from the Data Lake Analytics catalog.
@@ -685,6 +705,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlCredential
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
         :rtype: :class:`USqlCredentialPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -772,10 +794,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlExternalDataSource
+         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlExternalDataSource
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -858,6 +883,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlExternalDataSource
+         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
         :rtype: :class:`USqlExternalDataSourcePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -945,10 +972,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlProcedure
+         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlProcedure
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1033,6 +1063,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlProcedure
+         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
         :rtype: :class:`USqlProcedurePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1120,10 +1152,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlTable
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1213,6 +1248,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTable
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
         :rtype: :class:`USqlTablePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1322,6 +1359,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableStatistics
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`USqlTableStatisticsPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1411,10 +1450,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlTableType
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlTableType
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1499,6 +1541,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableType
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>`
         :rtype: :class:`USqlTableTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableTypePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1586,10 +1630,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlPackage
+         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlPackage
-         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1674,6 +1721,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlPackage
+         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>`
         :rtype: :class:`USqlPackagePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlPackagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1761,10 +1810,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlView
+         <azure.mgmt.datalake.analytics.catalog.models.USqlView>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlView>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1848,6 +1900,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlView
+         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
         :rtype: :class:`USqlViewPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1939,10 +1993,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlTableStatistics
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2031,6 +2088,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableStatistics
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`USqlTableStatisticsPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2123,10 +2182,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlTablePartition
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlTablePartition
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2215,6 +2277,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTablePartition
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>`
         :rtype: :class:`USqlTablePartitionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2322,6 +2386,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlType
+         <azure.mgmt.datalake.analytics.catalog.models.USqlType>`
         :rtype: :class:`USqlTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2413,10 +2479,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlTableValuedFunction
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlTableValuedFunction
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2503,6 +2572,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableValuedFunction
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
         :rtype: :class:`USqlTableValuedFunctionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2589,10 +2660,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlAssembly
+         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlAssembly
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2674,6 +2748,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlAssemblyClr
+         <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClr>`
         :rtype: :class:`USqlAssemblyClrPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2758,10 +2834,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlSchema
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlSchema
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2842,6 +2921,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlSchema
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
         :rtype: :class:`USqlSchemaPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2946,6 +3027,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableStatistics
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`USqlTableStatisticsPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -3054,6 +3137,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTable
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
         :rtype: :class:`USqlTablePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -3160,6 +3245,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlTableValuedFunction
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
         :rtype: :class:`USqlTableValuedFunctionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -3263,6 +3350,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlView
+         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
         :rtype: :class:`USqlViewPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -3345,10 +3434,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`USqlDatabase
+         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`USqlDatabase
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3426,6 +3518,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`USqlDatabase
+         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
         :rtype: :class:`USqlDatabasePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

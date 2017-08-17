@@ -39,6 +39,15 @@ class DataLakeAnalyticsAccount(Resource):
      include: 'Active', 'Suspended'
     :vartype state: str or :class:`DataLakeAnalyticsAccountState
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
+    :ivar creation_time: the account creation time.
+    :vartype creation_time: datetime
+    :ivar last_modified_time: the account last modified time.
+    :vartype last_modified_time: datetime
+    :ivar endpoint: the full CName endpoint for this account.
+    :vartype endpoint: str
+    :ivar account_id: The unique identifier associated with this Data Lake
+     Analytics account.
+    :vartype account_id: str
     :param default_data_lake_store_account: the default data lake storage
      account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str
@@ -67,12 +76,6 @@ class DataLakeAnalyticsAccount(Resource):
      associated with this account.
     :type storage_accounts: list of :class:`StorageAccountInfo
      <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
-    :ivar creation_time: the account creation time.
-    :vartype creation_time: datetime
-    :ivar last_modified_time: the account last modified time.
-    :vartype last_modified_time: datetime
-    :ivar endpoint: the full CName endpoint for this account.
-    :vartype endpoint: str
     :param new_tier: the commitment tier for the next month. Possible values
      include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
      'Commitment_1000AUHours', 'Commitment_5000AUHours',
@@ -123,6 +126,10 @@ class DataLakeAnalyticsAccount(Resource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'endpoint': {'readonly': True},
+        'account_id': {'readonly': True},
         'default_data_lake_store_account': {'required': True},
         'max_degree_of_parallelism': {'minimum': 1},
         'query_store_retention': {'maximum': 180, 'minimum': 1},
@@ -130,9 +137,6 @@ class DataLakeAnalyticsAccount(Resource):
         'system_max_degree_of_parallelism': {'readonly': True},
         'system_max_job_count': {'readonly': True},
         'data_lake_store_accounts': {'required': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
         'current_tier': {'readonly': True},
         'max_degree_of_parallelism_per_job': {'minimum': 1},
         'min_priority_per_job': {'minimum': 1},
@@ -146,6 +150,10 @@ class DataLakeAnalyticsAccount(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'DataLakeAnalyticsAccountStatus'},
         'state': {'key': 'properties.state', 'type': 'DataLakeAnalyticsAccountState'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'default_data_lake_store_account': {'key': 'properties.defaultDataLakeStoreAccount', 'type': 'str'},
         'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
@@ -154,9 +162,6 @@ class DataLakeAnalyticsAccount(Resource):
         'system_max_job_count': {'key': 'properties.systemMaxJobCount', 'type': 'int'},
         'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInfo]'},
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccountInfo]'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
@@ -171,6 +176,10 @@ class DataLakeAnalyticsAccount(Resource):
         super(DataLakeAnalyticsAccount, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.state = None
+        self.creation_time = None
+        self.last_modified_time = None
+        self.endpoint = None
+        self.account_id = None
         self.default_data_lake_store_account = default_data_lake_store_account
         self.max_degree_of_parallelism = max_degree_of_parallelism
         self.query_store_retention = query_store_retention
@@ -179,9 +188,6 @@ class DataLakeAnalyticsAccount(Resource):
         self.system_max_job_count = None
         self.data_lake_store_accounts = data_lake_store_accounts
         self.storage_accounts = storage_accounts
-        self.creation_time = None
-        self.last_modified_time = None
-        self.endpoint = None
         self.new_tier = new_tier
         self.current_tier = None
         self.firewall_state = firewall_state

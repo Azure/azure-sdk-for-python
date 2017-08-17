@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -55,6 +55,8 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`JobRecurrenceInformation
+         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
         :rtype: :class:`JobRecurrenceInformationPaged
          <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -136,10 +138,13 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`JobRecurrenceInformation
+         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`JobRecurrenceInformation
          <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

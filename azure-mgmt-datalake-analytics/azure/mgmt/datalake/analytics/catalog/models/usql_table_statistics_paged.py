@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class USqlTableStatisticsPaged(Paged):
     """
-    A paging container for iterating over a list of USqlTableStatistics object
+    A paging container for iterating over a list of :class:`USqlTableStatistics <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>` object
     """
 
     _attribute_map = {
