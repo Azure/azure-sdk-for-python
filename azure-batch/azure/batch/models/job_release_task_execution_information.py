@@ -16,17 +16,19 @@ class JobReleaseTaskExecutionInformation(Model):
     """Contains information about the execution of a Job Release task on a compute
     node.
 
-    :param start_time: The time at which the task started running. Note that
-     every time the task is restarted, this value is updated.
+    :param start_time: The time at which the task started running. If the task
+     has been restarted or retried, this is the most recent time at which the
+     task started running.
     :type start_time: datetime
     :param end_time: The time at which the Job Release task completed. This
      property is set only if the task is in the Completed state.
     :type end_time: datetime
     :param state: The current state of the Job Release task on the compute
-     node. running - the task is currently running (including retrying).
+     node. Values are:
+     running - the task is currently running (including retrying).
      completed - the task has exited, or the Batch service was unable to start
-     the task due to scheduling errors. Possible values include: 'running',
-     'completed'
+     the task due to task preparation errors (such as resource file download
+     failures). Possible values include: 'running', 'completed'
     :type state: str or :class:`JobReleaseTaskState
      <azure.batch.models.JobReleaseTaskState>`
     :param task_root_directory: The root directory of the Job Release task on

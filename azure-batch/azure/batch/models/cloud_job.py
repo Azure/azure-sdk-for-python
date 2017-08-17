@@ -16,14 +16,13 @@ class CloudJob(Model):
     """An Azure Batch job.
 
     :param id: A string that uniquely identifies the job within the account.
-     The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. It is
-     common to use a GUID for the id.
+     The ID is case-preserving and case-insensitive (that is, you may not have
+     two IDs within an account that differ only by case).
     :type id: str
     :param display_name: The display name for the job.
     :type display_name: str
-    :param uses_task_dependencies: The flag that determines if this job will
-     use tasks with dependencies.
+    :param uses_task_dependencies: Whether tasks in the job can define
+     dependencies on each other. The default is false.
     :type uses_task_dependencies: bool
     :param url: The URL of the job.
     :type url: str
@@ -80,7 +79,8 @@ class CloudJob(Model):
     :param common_environment_settings: The list of common environment
      variable settings. These environment variables are set for all tasks in
      the job (including the Job Manager, Job Preparation and Job Release
-     tasks).
+     tasks). Individual tasks can override an environment setting specified
+     here by specifying the same setting name with a different value.
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
     :param pool_info: The pool settings associated with the job.
@@ -95,13 +95,15 @@ class CloudJob(Model):
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
     :param on_task_failure: The action the Batch service should take when any
-     task in the job fails. A task is considered to have failed if it completes
-     with a non-zero exit code and has exhausted its retry count, or if it had
-     a scheduling error. noAction - do nothing. performExitOptionsJobAction -
-     take the action associated with the task exit condition in the task's
-     exitConditions collection. (This may still result in no action being
-     taken, if that is what the task specifies.) The default is noAction.
-     Possible values include: 'noAction', 'performExitOptionsJobAction'
+     task in the job fails. A task is considered to have failed if has a
+     failureInfo. A failureInfo is set if the task completes with a non-zero
+     exit code after exhausting its retry count, or if there was an error
+     starting the task, for example due to a resource file download error.
+     noAction - do nothing. performExitOptionsJobAction - take the action
+     associated with the task exit condition in the task's exitConditions
+     collection. (This may still result in no action being taken, if that is
+     what the task specifies.) The default is noAction. Possible values
+     include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or :class:`OnTaskFailure
      <azure.batch.models.OnTaskFailure>`
     :param metadata: A list of name-value pairs associated with the job as

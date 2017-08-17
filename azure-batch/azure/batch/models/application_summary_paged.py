@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ApplicationSummaryPaged(Paged):
     """
-    A paging container for iterating over a list of ApplicationSummary object
+    A paging container for iterating over a list of :class:`ApplicationSummary <azure.batch.models.ApplicationSummary>` object
     """
 
     _attribute_map = {

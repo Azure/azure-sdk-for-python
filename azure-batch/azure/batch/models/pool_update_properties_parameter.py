@@ -21,7 +21,8 @@ class PoolUpdatePropertiesParameter(Model):
      task. If omitted, any existing start task is removed from the pool.
     :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
     :param certificate_references: A list of certificates to be installed on
-     each compute node in the pool. If you specify an empty collection, any
+     each compute node in the pool. This list replaces any existing certificate
+     references configured on the pool. If you specify an empty collection, any
      existing certificate references are removed from the pool. For Windows
      compute nodes, the Batch service installs the certificates to the
      specified certificate store and location. For Linux compute nodes, the
@@ -34,12 +35,13 @@ class PoolUpdatePropertiesParameter(Model):
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: A list of application packages to
-     be installed on each compute node in the pool. Changes to application
-     package references affect all new compute nodes joining the pool, but do
-     not affect compute nodes that are already in the pool until they are
-     rebooted or reimaged. The list replaces any existing application package
-     references. If omitted, or if you specify an empty collection, any
-     existing application packages references are removed from the pool.
+     be installed on each compute node in the pool. The list replaces any
+     existing application package references on the pool. Changes to
+     application package references affect all new compute nodes joining the
+     pool, but do not affect compute nodes that are already in the pool until
+     they are rebooted or reimaged. If omitted, or if you specify an empty
+     collection, any existing application packages references are removed from
+     the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`

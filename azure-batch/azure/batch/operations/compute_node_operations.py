@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -58,9 +58,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -153,9 +155,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -220,7 +224,7 @@ class ComputeNodeOperations(object):
 
     def update_user(
             self, pool_id, node_id, user_name, node_update_user_parameter, compute_node_update_user_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the password or expiration time of a user account on the
+        """Updates the password and expiration time of a user account on the
         specified compute node.
 
         This operation replaces of all the updateable properties of the
@@ -249,9 +253,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -339,9 +345,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ComputeNode <azure.batch.models.ComputeNode>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`ComputeNode <azure.batch.models.ComputeNode>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`ComputeNode <azure.batch.models.ComputeNode>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -434,9 +442,21 @@ class ComputeNodeOperations(object):
         :type compute_node_reboot_options: :class:`ComputeNodeRebootOptions
          <azure.batch.models.ComputeNodeRebootOptions>`
         :param node_reboot_option: When to reboot the compute node and what to
-         do with currently running tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskCompletion',
-         'retainedData'
+         do with currently running tasks. Values are:
+         requeue - Terminate running task processes and requeue the tasks. The
+         tasks will run again when a node is available. Restart the node as
+         soon as tasks have been terminated.
+         terminate - Terminate running tasks. The tasks will not run again.
+         Restart the node as soon as tasks have been terminated.
+         taskcompletion - Allow currently running tasks to complete. Schedule
+         no new tasks while waiting. Restart the node when all tasks have
+         completed.
+         retaineddata - Allow currently running tasks to complete, then wait
+         for all task data retention periods to expire. Schedule no new tasks
+         while waiting. Restart the node when all task retention periods have
+         expired.
+         The default value is requeue. Possible values include: 'requeue',
+         'terminate', 'taskCompletion', 'retainedData'
         :type node_reboot_option: str or :class:`ComputeNodeRebootOption
          <azure.batch.models.ComputeNodeRebootOption>`
         :param dict custom_headers: headers that will be added to the request
@@ -444,9 +464,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -538,9 +560,21 @@ class ComputeNodeOperations(object):
         :type compute_node_reimage_options: :class:`ComputeNodeReimageOptions
          <azure.batch.models.ComputeNodeReimageOptions>`
         :param node_reimage_option: When to reimage the compute node and what
-         to do with currently running tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskCompletion',
-         'retainedData'
+         to do with currently running tasks. Values are:
+         requeue - Terminate running task processes and requeue the tasks. The
+         tasks will run again when a node is available. Reimage the node as
+         soon as tasks have been terminated.
+         terminate - Terminate running tasks. The tasks will not run again.
+         Reimage the node as soon as tasks have been terminated.
+         taskcompletion - Allow currently running tasks to complete. Schedule
+         no new tasks while waiting. Reimage the node when all tasks have
+         completed.
+         retaineddata - Allow currently running tasks to complete, then wait
+         for all task data retention periods to expire. Schedule no new tasks
+         while waiting. Reimage the node when all task retention periods have
+         expired.
+         The default value is requeue. Possible values include: 'requeue',
+         'terminate', 'taskCompletion', 'retainedData'
         :type node_reimage_option: str or :class:`ComputeNodeReimageOption
          <azure.batch.models.ComputeNodeReimageOption>`
         :param dict custom_headers: headers that will be added to the request
@@ -548,9 +582,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -629,6 +665,9 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
         """Disables task scheduling on the specified compute node.
 
+        You can disable task scheduling on a node only if its current
+        scheduling state is enabled.
+
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
         :param node_id: The ID of the compute node on which you want to
@@ -640,8 +679,18 @@ class ComputeNodeOperations(object):
          :class:`ComputeNodeDisableSchedulingOptions
          <azure.batch.models.ComputeNodeDisableSchedulingOptions>`
         :param node_disable_scheduling_option: What to do with currently
-         running tasks when disabling task scheduling on the compute node. The
-         default value is requeue. Possible values include: 'requeue',
+         running tasks when disabling task scheduling on the compute node.
+         Values are:
+         requeue - Terminate running task processes and requeue the tasks. The
+         tasks may run again on other compute nodes, or when task scheduling is
+         re-enabled on this node. Enter offline state as soon as tasks have
+         been terminated.
+         terminate - Terminate running tasks. The tasks will not run again.
+         Enter offline state as soon as tasks have been terminated.
+         taskcompletion - Allow currently running tasks to complete. Schedule
+         no new tasks while waiting. Enter offline state when all tasks have
+         completed.
+         The default value is requeue. Possible values include: 'requeue',
          'terminate', 'taskCompletion'
         :type node_disable_scheduling_option: str or
          :class:`DisableComputeNodeSchedulingOption
@@ -651,9 +700,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -732,6 +783,9 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables task scheduling on the specified compute node.
 
+        You can enable task scheduling on a node only if its current scheduling
+        state is disabled.
+
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
         :param node_id: The ID of the compute node on which you want to enable
@@ -747,9 +801,11 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -821,7 +877,8 @@ class ComputeNodeOperations(object):
         Before you can remotely login to a node using the remote login
         settings, you must create a user account on the node. This API can be
         invoked only on pools created with the virtual machine configuration
-        property.
+        property. For pools created with a cloud service configuration, see the
+        GetRemoteDesktop API.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
@@ -838,10 +895,13 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ComputeNodeGetRemoteLoginSettingsResult
+         <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ComputeNodeGetRemoteLoginSettingsResult
-         <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -920,7 +980,8 @@ class ComputeNodeOperations(object):
 
         Before you can access a node by using the RDP file, you must create a
         user account on the node. This API can only be invoked on pools created
-        with the cloud service configuration property.
+        with a cloud service configuration. For pools created with a virtual
+        machine configuration, see the GetRemoteLoginSettings API.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
@@ -942,9 +1003,11 @@ class ComputeNodeOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1032,6 +1095,8 @@ class ComputeNodeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ComputeNode
+         <azure.batch.models.ComputeNode>`
         :rtype: :class:`ComputeNodePaged
          <azure.batch.models.ComputeNodePaged>`
         :raises:

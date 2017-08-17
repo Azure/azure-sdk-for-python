@@ -17,7 +17,7 @@ class ComputeNodeInformation(Model):
 
     :param affinity_id: An identifier for the compute node on which the task
      ran, which can be passed when adding a task to request that the task be
-     scheduled close to this compute node.
+     scheduled on this compute node.
     :type affinity_id: str
     :param node_url: The URL of the node on which the task ran. .
     :type node_url: str

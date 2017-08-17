@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CertificatePaged(Paged):
     """
-    A paging container for iterating over a list of Certificate object
+    A paging container for iterating over a list of :class:`Certificate <azure.batch.models.Certificate>` object
     """
 
     _attribute_map = {

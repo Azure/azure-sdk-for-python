@@ -18,10 +18,11 @@ class ApplicationPackageReference(Model):
     :param application_id: The ID of the application to deploy.
     :type application_id: str
     :param version: The version of the application to deploy. If omitted, the
-     default version is deployed. If this is omitted, and no default version is
-     specified for this application, the request fails with the error code
-     InvalidApplicationPackageReferences. If you are calling the REST API
-     directly, the HTTP status code is 409.
+     default version is deployed. If this is omitted on a pool, and no default
+     version is specified for this application, the request fails with the
+     error code InvalidApplicationPackageReferences and HTTP status code 409.
+     If this is omitted on a task, and no default version is specified for this
+     application, the task fails with a pre-processing error.
     :type version: str
     """
 

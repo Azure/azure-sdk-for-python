@@ -32,7 +32,14 @@ class NetworkConfiguration(Model):
      denied by an NSG, then the Batch service will set the state of the compute
      nodes to unusable. For pools created via virtualMachineConfiguration the
      Batch account must have poolAllocationMode userSubscription in order to
-     use a VNet.
+     use a VNet. If the specified VNet has any associated Network Security
+     Groups (NSG), then a few reserved system ports must be enabled for inbound
+     communication. For pools created with a virtual machine configuration,
+     enable ports 29876 and 29877, as well as port 22 for Linux and port 3389
+     for Windows. For pools created with a cloud service configuration, enable
+     ports 10100, 20100, and 30100. Also enable outbound connections to Azure
+     Storage on port 443. For more details see:
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     :param endpoint_configuration: The configuration for endpoints on compute
      nodes in the Batch pool. Pool endpoint configuration is only supported on

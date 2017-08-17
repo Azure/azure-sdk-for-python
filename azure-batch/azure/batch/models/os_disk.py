@@ -25,11 +25,12 @@ class OSDisk(Model):
      URIs, the pool will partially allocate compute nodes, and a resize error
      will occur.
     :type image_uris: list of str
-    :param caching: The type of caching to enable for the OS disk. none - The
-     caching mode for the disk is not enabled. readOnly - The caching mode for
-     the disk is read only. readWrite - The caching mode for the disk is read
-     and write. The default value for caching is none. For information about
-     the caching options see:
+    :param caching: The type of caching to enable for the OS disk. Values are:
+     none - The caching mode for the disk is not enabled.
+     readOnly - The caching mode for the disk is read only.
+     readWrite - The caching mode for the disk is read and write.
+     The default value for caching is none. For information about the caching
+     options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
     :type caching: str or :class:`CachingType

@@ -131,8 +131,8 @@ class PoolAddParameter(Model):
      The maximum value of this setting depends on the size of the compute nodes
      in the pool (the vmSize setting).
     :type max_tasks_per_node: int
-    :param task_scheduling_policy: How the Batch service distributes tasks
-     between compute nodes in the pool.
+    :param task_scheduling_policy: How tasks are distributed across compute
+     nodes in a pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
     :param user_accounts: The list of user accounts to be created on each node

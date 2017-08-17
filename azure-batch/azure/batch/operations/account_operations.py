@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -48,6 +48,8 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`NodeAgentSku
+         <azure.batch.models.NodeAgentSku>`
         :rtype: :class:`NodeAgentSkuPaged
          <azure.batch.models.NodeAgentSkuPaged>`
         :raises:

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PoolUsageMetricsPaged(Paged):
     """
-    A paging container for iterating over a list of PoolUsageMetrics object
+    A paging container for iterating over a list of :class:`PoolUsageMetrics <azure.batch.models.PoolUsageMetrics>` object
     """
 
     _attribute_map = {

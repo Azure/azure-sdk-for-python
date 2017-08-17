@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CloudPoolPaged(Paged):
     """
-    A paging container for iterating over a list of CloudPool object
+    A paging container for iterating over a list of :class:`CloudPool <azure.batch.models.CloudPool>` object
     """
 
     _attribute_map = {
