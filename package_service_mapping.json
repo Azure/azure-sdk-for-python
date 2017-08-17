@@ -150,6 +150,13 @@
 			"azure.mgmt.cosmosdb"
 		]
 	},
+	"azure-mgmt-eventgrid": {
+		"service_name": "Event Grid",
+		"category ": "Management",
+		"namespaces": [
+			"azure.mgmt.eventgrid"
+		]
+	},
 	"azure-mgmt-eventhub": {
 		"service_name": "Event Hubs",
 		"category ": "Management",
