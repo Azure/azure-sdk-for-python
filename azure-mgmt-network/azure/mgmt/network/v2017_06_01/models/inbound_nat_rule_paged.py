@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SubResource(Model):
-    """Reference to another subresource.
-
-    :param id: Resource ID.
-    :type id: str
+class InboundNatRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`InboundNatRule <azure.mgmt.network.v2017_06_01.models.InboundNatRule>` object
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[InboundNatRule]'}
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, *args, **kwargs):
+
+        super(InboundNatRulePaged, self).__init__(*args, **kwargs)

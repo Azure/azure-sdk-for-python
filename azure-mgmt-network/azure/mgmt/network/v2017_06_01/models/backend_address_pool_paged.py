@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SubResource(Model):
-    """Reference to another subresource.
-
-    :param id: Resource ID.
-    :type id: str
+class BackendAddressPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BackendAddressPool <azure.mgmt.network.v2017_06_01.models.BackendAddressPool>` object
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BackendAddressPool]'}
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, *args, **kwargs):
+
+        super(BackendAddressPoolPaged, self).__init__(*args, **kwargs)
