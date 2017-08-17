@@ -16,18 +16,20 @@ class JobPreparationTaskExecutionInformation(Model):
     """Contains information about the execution of a Job Preparation task on a
     compute node.
 
-    :param start_time: The time at which the task started running. Note that
-     every time the task is restarted, this value is updated.
+    :param start_time: The time at which the task started running. If the task
+     has been restarted or retried, this is the most recent time at which the
+     task started running.
     :type start_time: datetime
     :param end_time: The time at which the Job Preparation task completed.
      This property is set only if the task is in the Completed state.
     :type end_time: datetime
     :param state: The current state of the Job Preparation task on the compute
-     node. running - the task is currently running (including retrying).
+     node. Values are:
+     running - the task is currently running (including retrying).
      completed - the task has exited with exit code 0, or the task has
      exhausted its retry limit, or the Batch service was unable to start the
-     task due to scheduling errors. Possible values include: 'running',
-     'completed'
+     task due to task preparation errors (such as resource file download
+     failures). Possible values include: 'running', 'completed'
     :type state: str or :class:`JobPreparationTaskState
      <azure.batch.models.JobPreparationTaskState>`
     :param task_root_directory: The root directory of the Job Preparation task
@@ -55,7 +57,10 @@ class JobPreparationTaskExecutionInformation(Model):
      Batch service. Task application failures (non-zero exit code) are retried,
      pre-processing errors (the task could not be run) and file upload errors
      are not retried. The Batch service will retry the task up to the limit
-     specified by the constraints.
+     specified by the constraints. Task application failures (non-zero exit
+     code) are retried, pre-processing errors (the task could not be run) and
+     file upload errors are not retried. The Batch service will retry the task
+     up to the limit specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the Job
      Preparation task started running. This property is set only if the task

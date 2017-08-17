@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -43,7 +43,8 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The ID of the task whose file you want to delete.
         :type task_id: str
-        :param file_path: The path to the task file that you want to delete.
+        :param file_path: The path to the task file or directory that you want
+         to delete.
         :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
          filePath parameter represents a directory instead of a file, you can
@@ -60,9 +61,11 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -152,9 +155,11 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -271,9 +276,11 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -363,7 +370,8 @@ class FileOperations(object):
         :param node_id: The ID of the compute node from which you want to
          delete the file.
         :type node_id: str
-        :param file_path: The path to the file that you want to delete.
+        :param file_path: The path to the file or directory that you want to
+         delete.
         :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
          filePath parameter represents a directory instead of a file, you can
@@ -381,9 +389,11 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -474,9 +484,11 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: Generator or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -592,9 +604,11 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -683,7 +697,7 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The ID of the task whose files you want to list.
         :type task_id: str
-        :param recursive: Whether to list children of a directory. This
+        :param recursive: Whether to list children of the task directory. This
          parameter can be used in combination with the filter parameter to list
          specific type of files.
         :type recursive: bool
@@ -696,6 +710,8 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`NodeFile
+         <azure.batch.models.NodeFile>`
         :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -804,6 +820,8 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`NodeFile
+         <azure.batch.models.NodeFile>`
         :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`

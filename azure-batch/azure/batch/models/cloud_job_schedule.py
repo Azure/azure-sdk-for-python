@@ -17,7 +17,7 @@ class CloudJobSchedule(Model):
     and a specification used to create each job.
 
     :param id: A string that uniquely identifies the schedule within the
-     account. It is common to use a GUID for the id.
+     account.
     :type id: str
     :param display_name: The display name for the schedule.
     :type display_name: str

@@ -19,8 +19,8 @@ class JobScheduleAddParameter(Model):
     :param id: A string that uniquely identifies the schedule within the
      account. The ID can contain any combination of alphanumeric characters
      including hyphens and underscores, and cannot contain more than 64
-     characters. The id is case-preserving and case-insensitive (that is, you
-     may not have two ids within an account that differ only by case).
+     characters. The ID is case-preserving and case-insensitive (that is, you
+     may not have two IDs within an account that differ only by case).
     :type id: str
     :param display_name: The display name for the schedule. The display name
      need not be unique and can contain any Unicode characters up to a maximum

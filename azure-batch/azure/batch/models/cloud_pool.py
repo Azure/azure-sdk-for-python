@@ -17,8 +17,9 @@ class CloudPool(Model):
 
     :param id: A string that uniquely identifies the pool within the account.
      The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. It is
-     common to use a GUID for the id.
+     hyphens and underscores, and cannot contain more than 64 characters. The
+     ID is case-preserving and case-insensitive (that is, you may not have two
+     IDs within an account that differ only by case).
     :type id: str
     :param display_name: The display name for the pool. The display name need
      not be unique and can contain any Unicode characters up to a maximum
@@ -39,28 +40,30 @@ class CloudPool(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: The current state of the pool. active - The pool is
-     available to run tasks subject to the availability of compute nodes.
+    :param state: The current state of the pool. Values are:
+     active - The pool is available to run tasks subject to the availability of
+     compute nodes.
      deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed. upgrading - The user has requested that
-     the operating system of the pool's nodes be upgraded, but the upgrade
-     operation has not yet completed (that is, some nodes in the pool have not
-     yet been upgraded). While upgrading, the pool may be able to run tasks
-     (with reduced capacity) but this is not guaranteed. Possible values
-     include: 'active', 'deleting', 'upgrading'
+     operation has not yet completed.
+     upgrading - The user has requested that the operating system of the pool's
+     nodes be upgraded, but the upgrade operation has not yet completed (that
+     is, some nodes in the pool have not yet been upgraded). While upgrading,
+     the pool may be able to run tasks (with reduced capacity) but this is not
+     guaranteed. Possible values include: 'active', 'deleting', 'upgrading'
     :type state: str or :class:`PoolState <azure.batch.models.PoolState>`
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
-    :param allocation_state: Whether the pool is resizing. steady - The pool
-     is not resizing. There are no changes to the number of nodes in the pool
-     in progress. A pool enters this state when it is created and when no
-     operations are being performed on the pool to change the number of
-     dedicated nodes. resizing - The pool is resizing; that is, compute nodes
-     are being added to or removed from the pool. stopping - The pool was
-     resizing, but the user has requested that the resize be stopped, but the
-     stop request has not yet been completed. Possible values include:
-     'steady', 'resizing', 'stopping'
+    :param allocation_state: Whether the pool is resizing. Values are:
+     steady - The pool is not resizing. There are no changes to the number of
+     nodes in the pool in progress. A pool enters this state when it is created
+     and when no operations are being performed on the pool to change the
+     number of dedicated nodes.
+     resizing - The pool is resizing; that is, compute nodes are being added to
+     or removed from the pool.
+     stopping - The pool was resizing, but the user has requested that the
+     resize be stopped, but the stop request has not yet been completed.
+     Possible values include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str or :class:`AllocationState
      <azure.batch.models.AllocationState>`
     :param allocation_state_transition_time: The time at which the pool
@@ -173,8 +176,8 @@ class CloudPool(Model):
     :param max_tasks_per_node: The maximum number of tasks that can run
      concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
-    :param task_scheduling_policy: How the Batch service distributes tasks
-     between compute nodes in the pool.
+    :param task_scheduling_policy: How tasks are distributed across compute
+     nodes in a pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
     :param user_accounts: The list of user accounts to be created on each node

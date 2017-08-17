@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ComputeNodePaged(Paged):
     """
-    A paging container for iterating over a list of ComputeNode object
+    A paging container for iterating over a list of :class:`ComputeNode <azure.batch.models.ComputeNode>` object
     """
 
     _attribute_map = {
