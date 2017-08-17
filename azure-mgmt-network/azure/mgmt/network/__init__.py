@@ -207,6 +207,18 @@ class NetworkManagementClient(object):
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
+    def default_security_rules(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_06_01.operations.DefaultSecurityRulesOperations>`
+        """
+        if self.api_version == '2017-06-01':
+            from .v2017_06_01.operations import DefaultSecurityRulesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
     def express_route_circuit_authorizations(self):
         """Instance depends on the API version:
 
@@ -298,6 +310,18 @@ class NetworkManagementClient(object):
             from .v2017_03_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         elif self.api_version == '2017-06-01':
             from .v2017_06_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def inbound_nat_rules(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_06_01.operations.InboundNatRulesOperations>`
+        """
+        if self.api_version == '2017-06-01':
+            from .v2017_06_01.operations import InboundNatRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

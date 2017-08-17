@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PrivateAccessServiceResultPaged(Paged):
     """
-    A paging container for iterating over a list of PrivateAccessServiceResult object
+    A paging container for iterating over a list of :class:`PrivateAccessServiceResult <azure.mgmt.network.v2017_06_01.models.PrivateAccessServiceResult>` object
     """
 
     _attribute_map = {

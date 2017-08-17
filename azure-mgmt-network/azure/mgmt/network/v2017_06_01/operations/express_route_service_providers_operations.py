@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -44,6 +44,9 @@ class ExpressRouteServiceProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`ExpressRouteServiceProvider
+         <azure.mgmt.network.v2017_06_01.models.ExpressRouteServiceProvider>`
         :rtype: :class:`ExpressRouteServiceProviderPaged
          <azure.mgmt.network.v2017_06_01.models.ExpressRouteServiceProviderPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
