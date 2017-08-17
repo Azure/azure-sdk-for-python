@@ -17,7 +17,7 @@ class ApplicationGatewayAvailableWafRuleSetsResult(Model):
 
     :param value: The list of application gateway rule sets.
     :type value: list of :class:`ApplicationGatewayFirewallRuleSet
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallRuleSet>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleSet>`
     """
 
     _attribute_map = {

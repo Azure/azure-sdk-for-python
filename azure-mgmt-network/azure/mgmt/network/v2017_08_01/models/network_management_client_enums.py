@@ -58,6 +58,12 @@ class RouteNextHopType(Enum):
     none = "None"
 
 
+class PublicIPAddressSkuName(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
 class ApplicationGatewayProtocol(Enum):
 
     http = "Http"
@@ -222,6 +228,12 @@ class ServiceProviderProvisioningState(Enum):
     provisioning = "Provisioning"
     provisioned = "Provisioned"
     deprovisioning = "Deprovisioning"
+
+
+class LoadBalancerSkuName(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
 
 
 class LoadDistribution(Enum):

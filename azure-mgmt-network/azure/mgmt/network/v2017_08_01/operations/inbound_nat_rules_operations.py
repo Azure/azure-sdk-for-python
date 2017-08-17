@@ -24,7 +24,7 @@ class InboundNatRulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-06-01".
+    :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class InboundNatRulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01"
+        self.api_version = "2017-08-01"
 
         self.config = config
 
@@ -50,9 +50,9 @@ class InboundNatRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`InboundNatRule
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRule>`
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRule>`
         :rtype: :class:`InboundNatRulePaged
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRulePaged>`
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -208,11 +208,11 @@ class InboundNatRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`InboundNatRule
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRule>` or
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRule>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`InboundNatRule
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRule>` or
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRule>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -275,14 +275,14 @@ class InboundNatRulesOperations(object):
         :param inbound_nat_rule_parameters: Parameters supplied to the create
          or update inbound nat rule operation.
         :type inbound_nat_rule_parameters: :class:`InboundNatRule
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRule>`
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`InboundNatRule
-         <azure.mgmt.network.v2017_06_01.models.InboundNatRule>` or
+         <azure.mgmt.network.v2017_08_01.models.InboundNatRule>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:

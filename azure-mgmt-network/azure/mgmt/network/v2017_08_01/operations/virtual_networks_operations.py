@@ -24,7 +24,7 @@ class VirtualNetworksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-06-01".
+    :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class VirtualNetworksOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01"
+        self.api_version = "2017-08-01"
 
         self.config = config
 
@@ -132,11 +132,11 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>` or
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>` or
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -196,14 +196,14 @@ class VirtualNetworksOperations(object):
         :param parameters: Parameters supplied to the create or update virtual
          network operation
         :type parameters: :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>` or
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -293,9 +293,9 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>`
         :rtype: :class:`VirtualNetworkPaged
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetworkPaged>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -360,9 +360,9 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualNetwork
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetwork>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetwork>`
         :rtype: :class:`VirtualNetworkPaged
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetworkPaged>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -432,11 +432,11 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`IPAddressAvailabilityResult
-         <azure.mgmt.network.v2017_06_01.models.IPAddressAvailabilityResult>`
+         <azure.mgmt.network.v2017_08_01.models.IPAddressAvailabilityResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`IPAddressAvailabilityResult
-         <azure.mgmt.network.v2017_06_01.models.IPAddressAvailabilityResult>`
+         <azure.mgmt.network.v2017_08_01.models.IPAddressAvailabilityResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -499,9 +499,9 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualNetworkUsage
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetworkUsage>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkUsage>`
         :rtype: :class:`VirtualNetworkUsagePaged
-         <azure.mgmt.network.v2017_06_01.models.VirtualNetworkUsagePaged>`
+         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkUsagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

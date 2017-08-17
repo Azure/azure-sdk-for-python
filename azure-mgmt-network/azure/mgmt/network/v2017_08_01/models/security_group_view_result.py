@@ -17,7 +17,7 @@ class SecurityGroupViewResult(Model):
 
     :param network_interfaces: List of network interfaces on the specified VM.
     :type network_interfaces: list of :class:`SecurityGroupNetworkInterface
-     <azure.mgmt.network.v2017_06_01.models.SecurityGroupNetworkInterface>`
+     <azure.mgmt.network.v2017_08_01.models.SecurityGroupNetworkInterface>`
     """
 
     _attribute_map = {

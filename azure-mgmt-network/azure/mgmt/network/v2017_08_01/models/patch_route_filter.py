@@ -23,11 +23,11 @@ class PatchRouteFilter(SubResource):
     :param rules: Collection of RouteFilterRules contained within a route
      filter.
     :type rules: list of :class:`RouteFilterRule
-     <azure.mgmt.network.v2017_06_01.models.RouteFilterRule>`
+     <azure.mgmt.network.v2017_08_01.models.RouteFilterRule>`
     :param peerings: A collection of references to express route circuit
      peerings.
     :type peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeering>`
+     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>`
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str

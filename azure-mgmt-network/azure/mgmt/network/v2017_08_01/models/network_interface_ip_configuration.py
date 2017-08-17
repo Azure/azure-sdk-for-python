@@ -21,38 +21,38 @@ class NetworkInterfaceIPConfiguration(SubResource):
      ApplicationGatewayBackendAddressPool resource.
     :type application_gateway_backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayBackendAddressPool>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendAddressPool>`
     :param load_balancer_backend_address_pools: The reference of
      LoadBalancerBackendAddressPool resource.
     :type load_balancer_backend_address_pools: list of
      :class:`BackendAddressPool
-     <azure.mgmt.network.v2017_06_01.models.BackendAddressPool>`
+     <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>`
     :param load_balancer_inbound_nat_rules: A list of references of
      LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.v2017_06_01.models.InboundNatRule>`
+     <azure.mgmt.network.v2017_08_01.models.InboundNatRule>`
     :param private_ip_address: Private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: Defines how a private IP address is
      assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
      include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_06_01.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2017_08_01.models.IPAllocationMethod>`
     :param private_ip_address_version: Available from Api-Version 2016-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.v2017_06_01.models.IPVersion>`
+     <azure.mgmt.network.v2017_08_01.models.IPVersion>`
     :param subnet: Subnet bound to the IP configuration.
     :type subnet: :class:`Subnet
-     <azure.mgmt.network.v2017_06_01.models.Subnet>`
+     <azure.mgmt.network.v2017_08_01.models.Subnet>`
     :param primary: Gets whether this is a primary customer address on the
      network interface.
     :type primary: bool
     :param public_ip_address: Public IP address bound to the IP configuration.
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+     <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
     :param provisioning_state: The provisioning state of the network interface
      IP configuration. Possible values are: 'Updating', 'Deleting', and
      'Failed'.

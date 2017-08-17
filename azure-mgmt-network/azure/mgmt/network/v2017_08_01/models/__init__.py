@@ -19,6 +19,7 @@ from .network_security_group import NetworkSecurityGroup
 from .route import Route
 from .route_table import RouteTable
 from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
+from .public_ip_address_sku import PublicIPAddressSku
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .public_ip_address import PublicIPAddress
 from .ip_configuration import IPConfiguration
@@ -77,6 +78,7 @@ from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoute
 from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
+from .load_balancer_sku import LoadBalancerSku
 from .frontend_ip_configuration import FrontendIPConfiguration
 from .load_balancing_rule import LoadBalancingRule
 from .probe import Probe
@@ -202,6 +204,7 @@ from .network_management_client_enums import (
     SecurityRuleAccess,
     SecurityRuleDirection,
     RouteNextHopType,
+    PublicIPAddressSkuName,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
@@ -223,6 +226,7 @@ from .network_management_client_enums import (
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
+    LoadBalancerSkuName,
     LoadDistribution,
     ProbeProtocol,
     NetworkOperationStatus,
@@ -271,6 +275,7 @@ __all__ = [
     'Route',
     'RouteTable',
     'ServiceEndpointPropertiesFormat',
+    'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
     'PublicIPAddress',
     'IPConfiguration',
@@ -329,6 +334,7 @@ __all__ = [
     'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
+    'LoadBalancerSku',
     'FrontendIPConfiguration',
     'LoadBalancingRule',
     'Probe',
@@ -453,6 +459,7 @@ __all__ = [
     'SecurityRuleAccess',
     'SecurityRuleDirection',
     'RouteNextHopType',
+    'PublicIPAddressSkuName',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',
@@ -474,6 +481,7 @@ __all__ = [
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
+    'LoadBalancerSkuName',
     'LoadDistribution',
     'ProbeProtocol',
     'NetworkOperationStatus',

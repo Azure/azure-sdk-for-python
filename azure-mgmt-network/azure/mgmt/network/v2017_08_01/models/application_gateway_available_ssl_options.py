@@ -30,21 +30,21 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     :type tags: dict
     :param predefined_policies: List of available Ssl predefined policy.
     :type predefined_policies: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+     <azure.mgmt.network.v2017_08_01.models.SubResource>`
     :param default_policy: Name of the Ssl predefined policy applied by
      default to application gateway. Possible values include:
      'AppGwSslPolicy20150501', 'AppGwSslPolicy20170401',
      'AppGwSslPolicy20170401S'
     :type default_policy: str or :class:`ApplicationGatewaySslPolicyName
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyName>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyName>`
     :param available_cipher_suites: List of available Ssl cipher suites.
     :type available_cipher_suites: list of str or
      :class:`ApplicationGatewaySslCipherSuite
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslCipherSuite>`
     :param available_protocols: List of available Ssl protocols.
     :type available_protocols: list of str or
      :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol>`
     """
 
     _validation = {

@@ -24,7 +24,7 @@ class ExpressRouteCircuitsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-06-01".
+    :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class ExpressRouteCircuitsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01"
+        self.api_version = "2017-08-01"
 
         self.config = config
 
@@ -130,11 +130,11 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -192,14 +192,14 @@ class ExpressRouteCircuitsOperations(object):
         :param parameters: Parameters supplied to the create or update express
          route circuit operation.
         :type parameters: :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -298,7 +298,7 @@ class ExpressRouteCircuitsOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitsArpTableListResult
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitsArpTableListResult>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitsArpTableListResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -394,7 +394,7 @@ class ExpressRouteCircuitsOperations(object):
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns
          :class:`ExpressRouteCircuitsRoutesTableListResult
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitsRoutesTableListResult>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitsRoutesTableListResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -490,7 +490,7 @@ class ExpressRouteCircuitsOperations(object):
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns
          :class:`ExpressRouteCircuitsRoutesTableSummaryListResult
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -580,11 +580,11 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ExpressRouteCircuitStats
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitStats>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitStats>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ExpressRouteCircuitStats
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitStats>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitStats>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -647,11 +647,11 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ExpressRouteCircuitStats
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitStats>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitStats>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ExpressRouteCircuitStats
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitStats>` or
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitStats>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -711,9 +711,9 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>`
         :rtype: :class:`ExpressRouteCircuitPaged
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -777,9 +777,9 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuit>`
         :rtype: :class:`ExpressRouteCircuitPaged
-         <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

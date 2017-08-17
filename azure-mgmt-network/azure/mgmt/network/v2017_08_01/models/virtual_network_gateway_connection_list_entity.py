@@ -34,22 +34,22 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      resource.
     :type virtual_network_gateway1:
      :class:`VirtualNetworkConnectionGatewayReference
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkConnectionGatewayReference>`
     :param virtual_network_gateway2: The reference to virtual network gateway
      resource.
     :type virtual_network_gateway2:
      :class:`VirtualNetworkConnectionGatewayReference
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkConnectionGatewayReference>`
     :param local_network_gateway2: The reference to local network gateway
      resource.
     :type local_network_gateway2:
      :class:`VirtualNetworkConnectionGatewayReference
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkConnectionGatewayReference>`
     :param connection_type: Gateway connection type. Possible values are:
      'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or :class:`VirtualNetworkGatewayConnectionType
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionType>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnectionType>`
     :param routing_weight: The routing weight.
     :type routing_weight: int
     :param shared_key: The IPSec shared key.
@@ -60,11 +60,11 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
      'Connected', 'NotConnected'
     :vartype connection_status: str or
      :class:`VirtualNetworkGatewayConnectionStatus
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnectionStatus>`
     :ivar tunnel_connection_status: Collection of all tunnels' connection
      health status.
     :vartype tunnel_connection_status: list of :class:`TunnelConnectionHealth
-     <azure.mgmt.network.v2017_06_01.models.TunnelConnectionHealth>`
+     <azure.mgmt.network.v2017_08_01.models.TunnelConnectionHealth>`
     :ivar egress_bytes_transferred: The egress bytes transferred in this
      connection.
     :vartype egress_bytes_transferred: long
@@ -73,7 +73,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :vartype ingress_bytes_transferred: long
     :param peer: The reference to peerings resource.
     :type peer: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+     <azure.mgmt.network.v2017_08_01.models.SubResource>`
     :param enable_bgp: EnableBgp flag
     :type enable_bgp: bool
     :param use_policy_based_traffic_selectors: Enable policy-based traffic
@@ -82,7 +82,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :param ipsec_policies: The IPSec Policies to be considered by this
      connection.
     :type ipsec_policies: list of :class:`IpsecPolicy
-     <azure.mgmt.network.v2017_06_01.models.IpsecPolicy>`
+     <azure.mgmt.network.v2017_08_01.models.IpsecPolicy>`
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGatewayConnection resource.
     :type resource_guid: str

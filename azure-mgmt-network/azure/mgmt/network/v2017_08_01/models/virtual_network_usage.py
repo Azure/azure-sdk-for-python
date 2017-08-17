@@ -26,7 +26,7 @@ class VirtualNetworkUsage(Model):
     :vartype limit: float
     :ivar name: The name containing common and localized value for usage.
     :vartype name: :class:`VirtualNetworkUsageName
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkUsageName>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkUsageName>`
     :ivar unit: Usage units. Returns 'Count'
     :vartype unit: str
     """

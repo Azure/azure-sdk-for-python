@@ -55,7 +55,7 @@ class PublicIPAddressesOperations(object):
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -132,15 +132,15 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>` or
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>` or
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -198,14 +198,14 @@ class PublicIPAddressesOperations(object):
         :param parameters: Parameters supplied to the create or update public
          IP address operation.
         :type parameters: :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>` or
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -213,7 +213,7 @@ class PublicIPAddressesOperations(object):
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -297,12 +297,12 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
         :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddressPaged>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddressPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -366,12 +366,12 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
         :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddressPaged>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddressPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -440,9 +440,9 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
         :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddressPaged>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddressPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-30"
@@ -521,9 +521,9 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
         :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddressPaged>`
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddressPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-30"
@@ -608,11 +608,11 @@ class PublicIPAddressesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>` or
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`PublicIPAddress
-         <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>` or
+         <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

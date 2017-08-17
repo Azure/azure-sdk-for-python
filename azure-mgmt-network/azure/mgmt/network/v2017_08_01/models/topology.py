@@ -27,7 +27,7 @@ class Topology(Model):
     :vartype last_modified: datetime
     :param resources:
     :type resources: list of :class:`TopologyResource
-     <azure.mgmt.network.v2017_06_01.models.TopologyResource>`
+     <azure.mgmt.network.v2017_08_01.models.TopologyResource>`
     """
 
     _validation = {
