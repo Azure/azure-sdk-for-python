@@ -18,16 +18,22 @@ from .diagnostics import Diagnostics
 from .usql_job_properties import USqlJobProperties
 from .hive_job_properties import HiveJobProperties
 from .job_properties import JobProperties
+from .create_usql_job_properties import CreateUSqlJobProperties
+from .create_job_properties import CreateJobProperties
 from .job_inner_error import JobInnerError
 from .job_error_details import JobErrorDetails
 from .job_relationship_properties import JobRelationshipProperties
 from .job_pipeline_run_information import JobPipelineRunInformation
 from .job_pipeline_information import JobPipelineInformation
 from .job_recurrence_information import JobRecurrenceInformation
+from .create_job_parameters import CreateJobParameters
+from .build_job_parameters import BuildJobParameters
+from .base_job_parameters import BaseJobParameters
+from .job_information_basic import JobInformationBasic
 from .job_information import JobInformation
 from .job_pipeline_information_paged import JobPipelineInformationPaged
 from .job_recurrence_information_paged import JobRecurrenceInformationPaged
-from .job_information_paged import JobInformationPaged
+from .job_information_basic_paged import JobInformationBasicPaged
 from .data_lake_analytics_job_management_client_enums import (
     JobResourceType,
     SeverityTypes,
@@ -47,16 +53,22 @@ __all__ = [
     'USqlJobProperties',
     'HiveJobProperties',
     'JobProperties',
+    'CreateUSqlJobProperties',
+    'CreateJobProperties',
     'JobInnerError',
     'JobErrorDetails',
     'JobRelationshipProperties',
     'JobPipelineRunInformation',
     'JobPipelineInformation',
     'JobRecurrenceInformation',
+    'CreateJobParameters',
+    'BuildJobParameters',
+    'BaseJobParameters',
+    'JobInformationBasic',
     'JobInformation',
     'JobPipelineInformationPaged',
     'JobRecurrenceInformationPaged',
-    'JobInformationPaged',
+    'JobInformationBasicPaged',
     'JobResourceType',
     'SeverityTypes',
     'CompileMode',

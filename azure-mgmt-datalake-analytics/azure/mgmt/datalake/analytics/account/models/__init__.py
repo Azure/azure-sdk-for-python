@@ -21,6 +21,8 @@ from .add_storage_account_parameters import AddStorageAccountParameters
 from .update_storage_account_parameters import UpdateStorageAccountParameters
 from .compute_policy_create_or_update_parameters import ComputePolicyCreateOrUpdateParameters
 from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
+from .data_lake_analytics_account_properties_basic import DataLakeAnalyticsAccountPropertiesBasic
+from .data_lake_analytics_account_basic import DataLakeAnalyticsAccountBasic
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
 from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
 from .resource import Resource
@@ -32,14 +34,14 @@ from .storage_container_paged import StorageContainerPaged
 from .sas_token_info_paged import SasTokenInfoPaged
 from .storage_account_info_paged import StorageAccountInfoPaged
 from .data_lake_store_account_info_paged import DataLakeStoreAccountInfoPaged
-from .data_lake_analytics_account_paged import DataLakeAnalyticsAccountPaged
+from .data_lake_analytics_account_basic_paged import DataLakeAnalyticsAccountBasicPaged
 from .data_lake_analytics_account_management_client_enums import (
-    DataLakeAnalyticsAccountStatus,
-    DataLakeAnalyticsAccountState,
     TierType,
     FirewallState,
     FirewallAllowAzureIpsState,
     AADObjectType,
+    DataLakeAnalyticsAccountStatus,
+    DataLakeAnalyticsAccountState,
 )
 
 __all__ = [
@@ -55,6 +57,8 @@ __all__ = [
     'UpdateStorageAccountParameters',
     'ComputePolicyCreateOrUpdateParameters',
     'DataLakeAnalyticsAccountUpdateParameters',
+    'DataLakeAnalyticsAccountPropertiesBasic',
+    'DataLakeAnalyticsAccountBasic',
     'DataLakeAnalyticsAccount',
     'UpdateFirewallRuleParameters',
     'Resource',
@@ -66,11 +70,11 @@ __all__ = [
     'SasTokenInfoPaged',
     'StorageAccountInfoPaged',
     'DataLakeStoreAccountInfoPaged',
-    'DataLakeAnalyticsAccountPaged',
-    'DataLakeAnalyticsAccountStatus',
-    'DataLakeAnalyticsAccountState',
+    'DataLakeAnalyticsAccountBasicPaged',
     'TierType',
     'FirewallState',
     'FirewallAllowAzureIpsState',
     'AADObjectType',
+    'DataLakeAnalyticsAccountStatus',
+    'DataLakeAnalyticsAccountState',
 ]
