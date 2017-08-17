@@ -28,6 +28,7 @@ from .operations.network_security_groups_operations import NetworkSecurityGroups
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.network_watchers_operations import NetworkWatchersOperations
 from .operations.packet_captures_operations import PacketCapturesOperations
+from .operations.available_private_access_services_operations import AvailablePrivateAccessServicesOperations
 from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
 from .operations.route_filters_operations import RouteFiltersOperations
 from .operations.route_filter_rules_operations import RouteFilterRulesOperations
@@ -41,7 +42,6 @@ from .operations.virtual_network_peerings_operations import VirtualNetworkPeerin
 from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
-from .operations.available_private_access_services_operations import AvailablePrivateAccessServicesOperations
 from . import models
 
 
@@ -82,7 +82,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
 
 class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+    """Network Client
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
@@ -109,6 +109,8 @@ class NetworkManagementClient(object):
     :vartype network_watchers: azure.mgmt.network.v2017_06_01.operations.NetworkWatchersOperations
     :ivar packet_captures: PacketCaptures operations
     :vartype packet_captures: azure.mgmt.network.v2017_06_01.operations.PacketCapturesOperations
+    :ivar available_private_access_services: AvailablePrivateAccessServices operations
+    :vartype available_private_access_services: azure.mgmt.network.v2017_06_01.operations.AvailablePrivateAccessServicesOperations
     :ivar public_ip_addresses: PublicIPAddresses operations
     :vartype public_ip_addresses: azure.mgmt.network.v2017_06_01.operations.PublicIPAddressesOperations
     :ivar route_filters: RouteFilters operations
@@ -135,8 +137,6 @@ class NetworkManagementClient(object):
     :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
     :vartype local_network_gateways: azure.mgmt.network.v2017_06_01.operations.LocalNetworkGatewaysOperations
-    :ivar available_private_access_services: AvailablePrivateAccessServices operations
-    :vartype available_private_access_services: azure.mgmt.network.v2017_06_01.operations.AvailablePrivateAccessServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -180,6 +180,8 @@ class NetworkManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.packet_captures = PacketCapturesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.available_private_access_services = AvailablePrivateAccessServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.public_ip_addresses = PublicIPAddressesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.route_filters = RouteFiltersOperations(
@@ -206,8 +208,6 @@ class NetworkManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.local_network_gateways = LocalNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.available_private_access_services = AvailablePrivateAccessServicesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
             self, location, domain_name_label=None, custom_headers=None, raw=False, **operation_config):
@@ -225,10 +225,13 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-06-01"
