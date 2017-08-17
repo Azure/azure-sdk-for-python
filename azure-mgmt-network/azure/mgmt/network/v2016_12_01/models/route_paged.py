@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RoutePaged(Paged):
     """
-    A paging container for iterating over a list of Route object
+    A paging container for iterating over a list of :class:`Route <azure.mgmt.network.v2016_12_01.models.Route>` object
     """
 
     _attribute_map = {

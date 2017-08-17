@@ -32,9 +32,9 @@ class RouteFilter(Resource):
      filter.
     :type rules: list of :class:`RouteFilterRule
      <azure.mgmt.network.v2017_06_01.models.RouteFilterRule>`
-    :ivar peerings: A collection of references to express route circuit
+    :param peerings: A collection of references to express route circuit
      peerings.
-    :vartype peerings: list of :class:`ExpressRouteCircuitPeering
+    :type peerings: list of :class:`ExpressRouteCircuitPeering
      <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeering>`
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
@@ -47,7 +47,6 @@ class RouteFilter(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'peerings': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -64,9 +63,9 @@ class RouteFilter(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, rules=None):
+    def __init__(self, id=None, location=None, tags=None, rules=None, peerings=None):
         super(RouteFilter, self).__init__(id=id, location=location, tags=tags)
         self.rules = rules
-        self.peerings = None
+        self.peerings = peerings
         self.provisioning_state = None
         self.etag = None
