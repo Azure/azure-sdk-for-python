@@ -17,17 +17,19 @@ class PoolPatchParameter(Model):
 
     :param start_task: A task to run on each compute node as it joins the
      pool. The task runs when the node is added to the pool or when the node is
-     restarted. If omitted, any existing start task is left unchanged.
+     restarted. If this element is present, it overwrites any existing start
+     task. If omitted, any existing start task is left unchanged.
     :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
     :param certificate_references: A list of certificates to be installed on
-     each compute node in the pool. If omitted, any existing certificate
-     references are left unchanged. For Windows compute nodes, the Batch
-     service installs the certificates to the specified certificate store and
-     location. For Linux compute nodes, the certificates are stored in a
-     directory inside the task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
-     location. For certificates with visibility of 'remoteUser', a 'certs'
-     directory is created in the user's home directory (e.g.,
+     each compute node in the pool. If this element is present, it replaces any
+     existing certificate references configured on the pool. If omitted, any
+     existing certificate references are left unchanged. For Windows compute
+     nodes, the Batch service installs the certificates to the specified
+     certificate store and location. For Linux compute nodes, the certificates
+     are stored in a directory inside the task working directory and an
+     environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the task to
+     query for this location. For certificates with visibility of 'remoteUser',
+     a 'certs' directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -51,9 +51,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -139,6 +141,8 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CloudTask
+         <azure.batch.models.CloudTask>`
         :rtype: :class:`CloudTaskPaged <azure.batch.models.CloudTaskPaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -243,13 +247,20 @@ class TaskOperations(object):
         processed, or not at all. In such cases, the user should re-issue the
         request. Note that it is up to the user to correctly handle failures
         when re-issuing a request. For example, you should use the same task
-        ids during a retry so that if the prior operation succeeded, the retry
-        will not create extra tasks unexpectedly.
+        IDs during a retry so that if the prior operation succeeded, the retry
+        will not create extra tasks unexpectedly. If the response contains any
+        tasks which failed to add, a client can retry the request. In a retry,
+        it is most efficient to resubmit only tasks that failed to add, and to
+        omit tasks that were successfully added on the first attempt.
 
         :param job_id: The ID of the job to which the task collection is to be
          added.
         :type job_id: str
-        :param value: The collection of tasks to add.
+        :param value: The collection of tasks to add. The total serialized
+         size of this collection must be less than 4MB. If it is greater than
+         4MB (for example if each task has 100's of resource files or
+         environment variables), the request will fail with code
+         'RequestBodyTooLarge' and should be retried again with fewer tasks.
         :type value: list of :class:`TaskAddParameter
          <azure.batch.models.TaskAddParameter>`
         :param task_add_collection_options: Additional parameters for the
@@ -261,10 +272,13 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`TaskAddCollectionResult
+         <azure.batch.models.TaskAddCollectionResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`TaskAddCollectionResult
-         <azure.batch.models.TaskAddCollectionResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.batch.models.TaskAddCollectionResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -361,9 +375,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -465,9 +481,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudTask <azure.batch.models.CloudTask>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`CloudTask <azure.batch.models.CloudTask>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`CloudTask <azure.batch.models.CloudTask>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -583,7 +601,9 @@ class TaskOperations(object):
         :type task_update_options: :class:`TaskUpdateOptions
          <azure.batch.models.TaskUpdateOptions>`
         :param constraints: Constraints that apply to this task. If omitted,
-         the task is given the default constraints.
+         the task is given the default constraints. For multi-instance tasks,
+         updating the retention time applies only to the primary task and not
+         subtasks.
         :type constraints: :class:`TaskConstraints
          <azure.batch.models.TaskConstraints>`
         :param dict custom_headers: headers that will be added to the request
@@ -591,9 +611,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -704,10 +726,13 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`CloudTaskListSubtasksResult
+         <azure.batch.models.CloudTaskListSubtasksResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`CloudTaskListSubtasksResult
-         <azure.batch.models.CloudTaskListSubtasksResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.batch.models.CloudTaskListSubtasksResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -806,9 +831,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -895,14 +922,16 @@ class TaskOperations(object):
 
     def reactivate(
             self, job_id, task_id, task_reactivate_options=None, custom_headers=None, raw=False, **operation_config):
-        """Reactivates the specified task.
+        """Reactivates a task, allowing it to run again even if its retry count
+        has been exhausted.
 
         Reactivation makes a task eligible to be retried again up to its
         maximum retry count. The task's state is changed to active. As the task
-        is no longer in the completed state, any previous exit code or
-        scheduling error is no longer available after reactivation. This will
-        fail for tasks that are not completed or that previously completed
-        successfully (with an exit code of 0). Additionally, this will fail if
+        is no longer in the completed state, any previous exit code or failure
+        information is no longer available after reactivation. Each time a task
+        is reactivated, its retry count is reset to 0. Reactivation will fail
+        for tasks that are not completed or that previously completed
+        successfully (with an exit code of 0). Additionally, it will fail if
         the job has completed (or is terminating or deleting).
 
         :param job_id: The ID of the job containing the task.
@@ -918,9 +947,11 @@ class TaskOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

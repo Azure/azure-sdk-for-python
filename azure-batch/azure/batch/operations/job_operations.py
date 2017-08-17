@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -53,9 +53,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobStatistics <azure.batch.models.JobStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`JobStatistics <azure.batch.models.JobStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`JobStatistics <azure.batch.models.JobStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -131,7 +133,11 @@ class JobOperations(object):
         all job statistics. This also overrides the retention period for task
         data; that is, if the job contains tasks which are still retained on
         compute nodes, the Batch services deletes those tasks' working
-        directories and all their contents.
+        directories and all their contents.  When a Delete Job request is
+        received, the Batch service sets the job to the deleting state. All
+        update operations on a job that is in deleting state will fail with
+        status code 409 (Conflict), with additional information indicating that
+        the job is being deleted.
 
         :param job_id: The ID of the job to delete.
         :type job_id: str
@@ -143,9 +149,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -240,9 +248,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudJob <azure.batch.models.CloudJob>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`CloudJob <azure.batch.models.CloudJob>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`CloudJob <azure.batch.models.CloudJob>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -365,9 +375,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -477,9 +489,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -584,11 +598,12 @@ class JobOperations(object):
         :param job_id: The ID of the job to disable.
         :type job_id: str
         :param disable_tasks: What to do with active tasks associated with the
-         job. requeue - Terminate running tasks and requeue them. The tasks
-         will run again when the job is enabled. terminate - Terminate running
-         tasks. The tasks will not run again. wait - Allow currently running
-         tasks to complete. Possible values include: 'requeue', 'terminate',
-         'wait'
+         job. Values are:
+         requeue - Terminate running tasks and requeue them. The tasks will run
+         again when the job is enabled.
+         terminate - Terminate running tasks. The tasks will not run again.
+         wait - Allow currently running tasks to complete. Possible values
+         include: 'requeue', 'terminate', 'wait'
         :type disable_tasks: str or :class:`DisableJobOption
          <azure.batch.models.DisableJobOption>`
         :param job_disable_options: Additional parameters for the operation
@@ -599,9 +614,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -711,9 +728,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -819,9 +838,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -941,9 +962,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1019,6 +1042,8 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CloudJob
+         <azure.batch.models.CloudJob>`
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -1125,6 +1150,8 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CloudJob
+         <azure.batch.models.CloudJob>`
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -1225,7 +1252,10 @@ class JobOperations(object):
 
         This API returns the Job Preparation and Job Release task status on all
         compute nodes that have run the Job Preparation or Job Release task.
-        This includes nodes which have since been removed from the pool. .
+        This includes nodes which have since been removed from the pool. If
+        this API is invoked on a job which has no Job Preparation or Job
+        Release task, the Batch service returns HTTP status code 409 (Conflict)
+        with an error code of JobPreparationTaskNotSpecified.
 
         :param job_id: The ID of the job.
         :type job_id: str
@@ -1239,6 +1269,9 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`JobPreparationAndReleaseTaskExecutionInformation
+         <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>`
         :rtype: :class:`JobPreparationAndReleaseTaskExecutionInformationPaged
          <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformationPaged>`
         :raises:
@@ -1351,9 +1384,11 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TaskCounts <azure.batch.models.TaskCounts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`TaskCounts <azure.batch.models.TaskCounts>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`TaskCounts <azure.batch.models.TaskCounts>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

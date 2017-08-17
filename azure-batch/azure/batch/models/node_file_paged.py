@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NodeFilePaged(Paged):
     """
-    A paging container for iterating over a list of NodeFile object
+    A paging container for iterating over a list of :class:`NodeFile <azure.batch.models.NodeFile>` object
     """
 
     _attribute_map = {

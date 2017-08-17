@@ -42,8 +42,7 @@ class TaskExecutionInformation(Model):
     :type failure_info: :class:`TaskFailureInformation
      <azure.batch.models.TaskFailureInformation>`
     :param retry_count: The number of times the task has been retried by the
-     Batch service. The number of times the task has been retried by the Batch
-     service. Task application failures (non-zero exit code) are retried,
+     Batch service. Task application failures (non-zero exit code) are retried,
      pre-processing errors (the task could not be run) and file upload errors
      are not retried. The Batch service will retry the task up to the limit
      specified by the constraints.

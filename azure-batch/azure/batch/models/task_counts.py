@@ -27,7 +27,7 @@ class TaskCounts(Model):
     :param failed: The number of tasks which failed. A task fails if its
      result (found in the executionInfo property) is 'failure'.
     :type failed: int
-    :param validation_status: Whether the task counts have been validated.  If
+    :param validation_status: Whether the task counts have been validated. If
      the validationStatus is unvalidated, then the Batch service has not been
      able to check state counts against the task states as reported in the List
      Tasks API. The validationStatus may be unvalidated if the job contains

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -41,7 +41,10 @@ class PoolOperations(object):
 
         If you do not specify a $filter clause including a poolId, the response
         includes all pools that existed in the account in the time range of the
-        returned aggregation intervals.
+        returned aggregation intervals. If you do not specify a $filter clause
+        including a startTime or endTime these filters default to the start and
+        end times of the last aggregation interval currently available; that
+        is, only the last aggregation interval is returned.
 
         :param pool_list_usage_metrics_options: Additional parameters for the
          operation
@@ -53,6 +56,8 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`PoolUsageMetrics
+         <azure.batch.models.PoolUsageMetrics>`
         :rtype: :class:`PoolUsageMetricsPaged
          <azure.batch.models.PoolUsageMetricsPaged>`
         :raises:
@@ -162,9 +167,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -251,9 +258,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -329,6 +338,8 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CloudPool
+         <azure.batch.models.CloudPool>`
         :rtype: :class:`CloudPoolPaged <azure.batch.models.CloudPoolPaged>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -446,9 +457,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -543,9 +556,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: bool
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: bool or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: bool or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -644,9 +659,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudPool <azure.batch.models.CloudPool>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`CloudPool <azure.batch.models.CloudPool>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`CloudPool <azure.batch.models.CloudPool>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -770,9 +787,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -877,9 +896,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -987,9 +1008,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1083,7 +1106,8 @@ class PoolOperations(object):
         """Gets the result of evaluating an automatic scaling formula on the pool.
 
         This API is primarily for validating an autoscale formula, as it simply
-        returns the result without applying the formula to the pool.
+        returns the result without applying the formula to the pool. The pool
+        must have auto scaling enabled in order to evaluate a formula.
 
         :param pool_id: The ID of the pool on which to evaluate the automatic
          scaling formula.
@@ -1106,9 +1130,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1212,9 +1238,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1308,9 +1336,12 @@ class PoolOperations(object):
 
         This does not restore the pool to its previous state before the resize
         operation: it only stops any further changes being made, and the pool
-        maintains its current state. A resize operation need not be an explicit
-        resize pool request; this API can also be used to halt the initial
-        sizing of the pool when it is created.
+        maintains its current state. After stopping, the pool stabilizes at the
+        number of nodes it was at when the stop operation was done. During the
+        stop operation, the pool allocation state changes first to stopping and
+        then to steady. A resize operation need not be an explicit resize pool
+        request; this API can also be used to halt the initial sizing of the
+        pool when it is created.
 
         :param pool_id: The ID of the pool whose resizing you want to stop.
         :type pool_id: str
@@ -1323,9 +1354,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1435,9 +1468,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1520,7 +1555,13 @@ class PoolOperations(object):
         (particularly on small pools); therefore, the pool may be temporarily
         unavailable to run tasks. When this operation runs, the pool state
         changes to upgrading. When all compute nodes have finished upgrading,
-        the pool state returns to active.
+        the pool state returns to active. While the upgrade is in progress, the
+        pool's currentOSVersion reflects the OS version that nodes are
+        upgrading from, and targetOSVersion reflects the OS version that nodes
+        are upgrading to. Once the upgrade is complete, currentOSVersion is
+        updated to reflect the OS version now running on all nodes. This
+        operation can only be invoked on pools created with the
+        cloudServiceConfiguration property.
 
         :param pool_id: The ID of the pool to upgrade.
         :type pool_id: str
@@ -1536,9 +1577,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1650,9 +1693,11 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

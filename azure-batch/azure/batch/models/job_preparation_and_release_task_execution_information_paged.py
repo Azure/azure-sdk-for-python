@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
     """
-    A paging container for iterating over a list of JobPreparationAndReleaseTaskExecutionInformation object
+    A paging container for iterating over a list of :class:`JobPreparationAndReleaseTaskExecutionInformation <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>` object
     """
 
     _attribute_map = {

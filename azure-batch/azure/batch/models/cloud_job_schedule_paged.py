@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CloudJobSchedulePaged(Paged):
     """
-    A paging container for iterating over a list of CloudJobSchedule object
+    A paging container for iterating over a list of :class:`CloudJobSchedule <azure.batch.models.CloudJobSchedule>` object
     """
 
     _attribute_map = {
