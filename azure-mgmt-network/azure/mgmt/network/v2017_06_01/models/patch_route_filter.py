@@ -24,9 +24,9 @@ class PatchRouteFilter(SubResource):
      filter.
     :type rules: list of :class:`RouteFilterRule
      <azure.mgmt.network.v2017_06_01.models.RouteFilterRule>`
-    :ivar peerings: A collection of references to express route circuit
+    :param peerings: A collection of references to express route circuit
      peerings.
-    :vartype peerings: list of :class:`ExpressRouteCircuitPeering
+    :type peerings: list of :class:`ExpressRouteCircuitPeering
      <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeering>`
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
@@ -44,7 +44,6 @@ class PatchRouteFilter(SubResource):
     """
 
     _validation = {
-        'peerings': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'name': {'readonly': True},
         'etag': {'readonly': True},
@@ -62,10 +61,10 @@ class PatchRouteFilter(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, rules=None, tags=None):
+    def __init__(self, id=None, rules=None, peerings=None, tags=None):
         super(PatchRouteFilter, self).__init__(id=id)
         self.rules = rules
-        self.peerings = None
+        self.peerings = peerings
         self.provisioning_state = None
         self.name = None
         self.etag = None

@@ -20,6 +20,7 @@ from .network_security_groups_operations import NetworkSecurityGroupsOperations
 from .security_rules_operations import SecurityRulesOperations
 from .network_watchers_operations import NetworkWatchersOperations
 from .packet_captures_operations import PacketCapturesOperations
+from .available_private_access_services_operations import AvailablePrivateAccessServicesOperations
 from .public_ip_addresses_operations import PublicIPAddressesOperations
 from .route_filters_operations import RouteFiltersOperations
 from .route_filter_rules_operations import RouteFilterRulesOperations
@@ -33,7 +34,6 @@ from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperation
 from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .local_network_gateways_operations import LocalNetworkGatewaysOperations
-from .available_private_access_services_operations import AvailablePrivateAccessServicesOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
@@ -47,6 +47,7 @@ __all__ = [
     'SecurityRulesOperations',
     'NetworkWatchersOperations',
     'PacketCapturesOperations',
+    'AvailablePrivateAccessServicesOperations',
     'PublicIPAddressesOperations',
     'RouteFiltersOperations',
     'RouteFilterRulesOperations',
@@ -60,5 +61,4 @@ __all__ = [
     'VirtualNetworkGatewaysOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
-    'AvailablePrivateAccessServicesOperations',
 ]
