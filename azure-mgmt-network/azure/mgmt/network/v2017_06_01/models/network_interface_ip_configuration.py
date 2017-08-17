@@ -31,7 +31,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
      LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
      <azure.mgmt.network.v2017_06_01.models.InboundNatRule>`
-    :param private_ip_address:
+    :param private_ip_address: Private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: Defines how a private IP address is
      assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
@@ -44,16 +44,18 @@ class NetworkInterfaceIPConfiguration(SubResource):
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
      <azure.mgmt.network.v2017_06_01.models.IPVersion>`
-    :param subnet:
+    :param subnet: Subnet bound to the IP configuration.
     :type subnet: :class:`Subnet
      <azure.mgmt.network.v2017_06_01.models.Subnet>`
     :param primary: Gets whether this is a primary customer address on the
      network interface.
     :type primary: bool
-    :param public_ip_address:
+    :param public_ip_address: Public IP address bound to the IP configuration.
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.v2017_06_01.models.PublicIPAddress>`
-    :param provisioning_state:
+    :param provisioning_state: The provisioning state of the network interface
+     IP configuration. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.

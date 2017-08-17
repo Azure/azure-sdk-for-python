@@ -13,7 +13,7 @@ from .sub_resource import SubResource
 
 
 class IPConfiguration(SubResource):
-    """IPConfiguration.
+    """IP configuration.
 
     :param id: Resource ID.
     :type id: str
