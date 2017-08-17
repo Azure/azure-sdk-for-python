@@ -6,6 +6,10 @@ Release History
 Unreleased (2017-XX-XX)
 +++++++++++++++++++++++
 
+**Features**
+
+- Add validate_move_resources
+
 **Bug fixes**
 
 - Do not fail on 204 when deleting a policy assignment (2016-12-01)
