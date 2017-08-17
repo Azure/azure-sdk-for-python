@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -44,6 +44,8 @@ class BgpServiceCommunitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`BgpServiceCommunity
+         <azure.mgmt.network.v2016_12_01.models.BgpServiceCommunity>`
         :rtype: :class:`BgpServiceCommunityPaged
          <azure.mgmt.network.v2016_12_01.models.BgpServiceCommunityPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
