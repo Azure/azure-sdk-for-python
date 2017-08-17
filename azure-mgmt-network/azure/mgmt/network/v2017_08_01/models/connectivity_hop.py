@@ -30,7 +30,7 @@ class ConnectivityHop(Model):
     :vartype next_hop_ids: list of str
     :ivar issues: List of issues.
     :vartype issues: list of :class:`ConnectivityIssue
-     <azure.mgmt.network.v2017_06_01.models.ConnectivityIssue>`
+     <azure.mgmt.network.v2017_08_01.models.ConnectivityIssue>`
     """
 
     _validation = {

@@ -23,7 +23,7 @@ class ApplicationGatewayFirewallRuleGroup(Model):
     :type description: str
     :param rules: The rules of the web application firewall rule group.
     :type rules: list of :class:`ApplicationGatewayFirewallRule
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallRule>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRule>`
     """
 
     _validation = {

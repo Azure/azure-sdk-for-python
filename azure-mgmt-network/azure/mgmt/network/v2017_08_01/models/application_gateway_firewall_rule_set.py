@@ -39,7 +39,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :param rule_groups: The rule groups of the web application firewall rule
      set.
     :type rule_groups: list of :class:`ApplicationGatewayFirewallRuleGroup
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallRuleGroup>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleGroup>`
     """
 
     _validation = {

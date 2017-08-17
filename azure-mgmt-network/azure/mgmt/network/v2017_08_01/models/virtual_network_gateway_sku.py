@@ -19,12 +19,12 @@ class VirtualNetworkGatewaySku(Model):
      'HighPerformance', 'Standard', 'UltraPerformance', 'VpnGw1', 'VpnGw2',
      'VpnGw3'
     :type name: str or :class:`VirtualNetworkGatewaySkuName
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuName>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewaySkuName>`
     :param tier: Gateway SKU tier. Possible values include: 'Basic',
      'HighPerformance', 'Standard', 'UltraPerformance', 'VpnGw1', 'VpnGw2',
      'VpnGw3'
     :type tier: str or :class:`VirtualNetworkGatewaySkuTier
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuTier>`
+     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewaySkuTier>`
     :param capacity: The capacity.
     :type capacity: int
     """

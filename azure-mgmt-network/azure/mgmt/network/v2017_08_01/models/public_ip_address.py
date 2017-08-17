@@ -28,23 +28,26 @@ class PublicIPAddress(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
+    :param sku: The public IP address SKU.
+    :type sku: :class:`PublicIPAddressSku
+     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressSku>`
     :param public_ip_allocation_method: The public IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
     :type public_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_06_01.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2017_08_01.models.IPAllocationMethod>`
     :param public_ip_address_version: The public IP address version. Possible
      values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.v2017_06_01.models.IPVersion>`
+     <azure.mgmt.network.v2017_08_01.models.IPVersion>`
     :ivar ip_configuration: The IP configuration associated with the public IP
      address.
     :vartype ip_configuration: :class:`IPConfiguration
-     <azure.mgmt.network.v2017_06_01.models.IPConfiguration>`
+     <azure.mgmt.network.v2017_08_01.models.IPConfiguration>`
     :param dns_settings: The FQDN of the DNS record associated with the public
      IP address.
     :type dns_settings: :class:`PublicIPAddressDnsSettings
-     <azure.mgmt.network.v2017_06_01.models.PublicIPAddressDnsSettings>`
+     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressDnsSettings>`
     :param ip_address: The IP address associated with the public IP address
      resource.
     :type ip_address: str
@@ -73,6 +76,7 @@ class PublicIPAddress(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'PublicIPAddressSku'},
         'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
@@ -84,8 +88,9 @@ class PublicIPAddress(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, sku=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
         super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags)
+        self.sku = sku
         self.public_ip_allocation_method = public_ip_allocation_method
         self.public_ip_address_version = public_ip_address_version
         self.ip_configuration = None

@@ -23,7 +23,7 @@ class LoadBalancerProbesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-06-01".
+    :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class LoadBalancerProbesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01"
+        self.api_version = "2017-08-01"
 
         self.config = config
 
@@ -49,9 +49,9 @@ class LoadBalancerProbesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Probe
-         <azure.mgmt.network.v2017_06_01.models.Probe>`
+         <azure.mgmt.network.v2017_08_01.models.Probe>`
         :rtype: :class:`ProbePaged
-         <azure.mgmt.network.v2017_06_01.models.ProbePaged>`
+         <azure.mgmt.network.v2017_08_01.models.ProbePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -121,10 +121,10 @@ class LoadBalancerProbesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Probe <azure.mgmt.network.v2017_06_01.models.Probe>`
+        :return: :class:`Probe <azure.mgmt.network.v2017_08_01.models.Probe>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Probe <azure.mgmt.network.v2017_06_01.models.Probe>`
+        :rtype: :class:`Probe <azure.mgmt.network.v2017_08_01.models.Probe>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

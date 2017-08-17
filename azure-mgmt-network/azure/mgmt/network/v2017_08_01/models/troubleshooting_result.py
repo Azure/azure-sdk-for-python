@@ -23,7 +23,7 @@ class TroubleshootingResult(Model):
     :type code: str
     :param results: Information from troubleshooting.
     :type results: list of :class:`TroubleshootingDetails
-     <azure.mgmt.network.v2017_06_01.models.TroubleshootingDetails>`
+     <azure.mgmt.network.v2017_08_01.models.TroubleshootingDetails>`
     """
 
     _attribute_map = {

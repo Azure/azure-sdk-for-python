@@ -20,7 +20,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     :param firewall_mode: Web application firewall mode. Possible values
      include: 'Detection', 'Prevention'
     :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallMode>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallMode>`
     :param rule_set_type: The type of the web application firewall rule set.
      Possible values are: 'OWASP'.
     :type rule_set_type: str
@@ -29,7 +29,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     :param disabled_rule_groups: The disabled rule groups.
     :type disabled_rule_groups: list of
      :class:`ApplicationGatewayFirewallDisabledRuleGroup
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallDisabledRuleGroup>`
+     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallDisabledRuleGroup>`
     """
 
     _validation = {

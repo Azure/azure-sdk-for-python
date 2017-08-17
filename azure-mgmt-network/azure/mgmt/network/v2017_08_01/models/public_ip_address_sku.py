@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class FrontendIPConfigurationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`FrontendIPConfiguration <azure.mgmt.network.v2017_08_01.models.FrontendIPConfiguration>` object
+class PublicIPAddressSku(Model):
+    """SKU of a public IP address.
+
+    :param name: Name of a public IP address SKU. Possible values include:
+     'Basic', 'Standard'
+    :type name: str or :class:`PublicIPAddressSkuName
+     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressSkuName>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[FrontendIPConfiguration]'}
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(FrontendIPConfigurationPaged, self).__init__(*args, **kwargs)
+    def __init__(self, name=None):
+        self.name = name

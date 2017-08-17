@@ -23,7 +23,7 @@ class NetworkInterfaceLoadBalancersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-06-01".
+    :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class NetworkInterfaceLoadBalancersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01"
+        self.api_version = "2017-08-01"
 
         self.config = config
 
@@ -49,9 +49,9 @@ class NetworkInterfaceLoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`LoadBalancer
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancer>`
+         <azure.mgmt.network.v2017_08_01.models.LoadBalancer>`
         :rtype: :class:`LoadBalancerPaged
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancerPaged>`
+         <azure.mgmt.network.v2017_08_01.models.LoadBalancerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

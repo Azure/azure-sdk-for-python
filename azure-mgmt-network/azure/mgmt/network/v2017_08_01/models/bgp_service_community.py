@@ -32,7 +32,7 @@ class BgpServiceCommunity(Resource):
     :type service_name: str
     :param bgp_communities: Get a list of bgp communities.
     :type bgp_communities: list of :class:`BGPCommunity
-     <azure.mgmt.network.v2017_06_01.models.BGPCommunity>`
+     <azure.mgmt.network.v2017_08_01.models.BGPCommunity>`
     """
 
     _validation = {

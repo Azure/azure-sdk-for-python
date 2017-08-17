@@ -97,73 +97,73 @@ class NetworkManagementClient(object):
     :vartype config: NetworkManagementClientConfiguration
 
     :ivar application_gateways: ApplicationGateways operations
-    :vartype application_gateways: azure.mgmt.network.v2017_06_01.operations.ApplicationGatewaysOperations
+    :vartype application_gateways: azure.mgmt.network.v2017_08_01.operations.ApplicationGatewaysOperations
     :ivar available_endpoint_services: AvailableEndpointServices operations
-    :vartype available_endpoint_services: azure.mgmt.network.v2017_06_01.operations.AvailableEndpointServicesOperations
+    :vartype available_endpoint_services: azure.mgmt.network.v2017_08_01.operations.AvailableEndpointServicesOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
-    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitAuthorizationsOperations
+    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2017_08_01.operations.ExpressRouteCircuitAuthorizationsOperations
     :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
-    :vartype express_route_circuit_peerings: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitPeeringsOperations
+    :vartype express_route_circuit_peerings: azure.mgmt.network.v2017_08_01.operations.ExpressRouteCircuitPeeringsOperations
     :ivar express_route_circuits: ExpressRouteCircuits operations
-    :vartype express_route_circuits: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitsOperations
+    :vartype express_route_circuits: azure.mgmt.network.v2017_08_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
-    :vartype express_route_service_providers: azure.mgmt.network.v2017_06_01.operations.ExpressRouteServiceProvidersOperations
+    :vartype express_route_service_providers: azure.mgmt.network.v2017_08_01.operations.ExpressRouteServiceProvidersOperations
     :ivar load_balancers: LoadBalancers operations
-    :vartype load_balancers: azure.mgmt.network.v2017_06_01.operations.LoadBalancersOperations
+    :vartype load_balancers: azure.mgmt.network.v2017_08_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
-    :vartype load_balancer_backend_address_pools: azure.mgmt.network.v2017_06_01.operations.LoadBalancerBackendAddressPoolsOperations
+    :vartype load_balancer_backend_address_pools: azure.mgmt.network.v2017_08_01.operations.LoadBalancerBackendAddressPoolsOperations
     :ivar load_balancer_frontend_ip_configurations: LoadBalancerFrontendIPConfigurations operations
-    :vartype load_balancer_frontend_ip_configurations: azure.mgmt.network.v2017_06_01.operations.LoadBalancerFrontendIPConfigurationsOperations
+    :vartype load_balancer_frontend_ip_configurations: azure.mgmt.network.v2017_08_01.operations.LoadBalancerFrontendIPConfigurationsOperations
     :ivar inbound_nat_rules: InboundNatRules operations
-    :vartype inbound_nat_rules: azure.mgmt.network.v2017_06_01.operations.InboundNatRulesOperations
+    :vartype inbound_nat_rules: azure.mgmt.network.v2017_08_01.operations.InboundNatRulesOperations
     :ivar load_balancer_load_balancing_rules: LoadBalancerLoadBalancingRules operations
-    :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2017_06_01.operations.LoadBalancerLoadBalancingRulesOperations
+    :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2017_08_01.operations.LoadBalancerLoadBalancingRulesOperations
     :ivar load_balancer_network_interfaces: LoadBalancerNetworkInterfaces operations
-    :vartype load_balancer_network_interfaces: azure.mgmt.network.v2017_06_01.operations.LoadBalancerNetworkInterfacesOperations
+    :vartype load_balancer_network_interfaces: azure.mgmt.network.v2017_08_01.operations.LoadBalancerNetworkInterfacesOperations
     :ivar load_balancer_probes: LoadBalancerProbes operations
-    :vartype load_balancer_probes: azure.mgmt.network.v2017_06_01.operations.LoadBalancerProbesOperations
+    :vartype load_balancer_probes: azure.mgmt.network.v2017_08_01.operations.LoadBalancerProbesOperations
     :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2017_06_01.operations.NetworkInterfacesOperations
+    :vartype network_interfaces: azure.mgmt.network.v2017_08_01.operations.NetworkInterfacesOperations
     :ivar network_interface_ip_configurations: NetworkInterfaceIPConfigurations operations
-    :vartype network_interface_ip_configurations: azure.mgmt.network.v2017_06_01.operations.NetworkInterfaceIPConfigurationsOperations
+    :vartype network_interface_ip_configurations: azure.mgmt.network.v2017_08_01.operations.NetworkInterfaceIPConfigurationsOperations
     :ivar network_interface_load_balancers: NetworkInterfaceLoadBalancers operations
-    :vartype network_interface_load_balancers: azure.mgmt.network.v2017_06_01.operations.NetworkInterfaceLoadBalancersOperations
+    :vartype network_interface_load_balancers: azure.mgmt.network.v2017_08_01.operations.NetworkInterfaceLoadBalancersOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
-    :vartype network_security_groups: azure.mgmt.network.v2017_06_01.operations.NetworkSecurityGroupsOperations
+    :vartype network_security_groups: azure.mgmt.network.v2017_08_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
-    :vartype security_rules: azure.mgmt.network.v2017_06_01.operations.SecurityRulesOperations
+    :vartype security_rules: azure.mgmt.network.v2017_08_01.operations.SecurityRulesOperations
     :ivar default_security_rules: DefaultSecurityRules operations
-    :vartype default_security_rules: azure.mgmt.network.v2017_06_01.operations.DefaultSecurityRulesOperations
+    :vartype default_security_rules: azure.mgmt.network.v2017_08_01.operations.DefaultSecurityRulesOperations
     :ivar network_watchers: NetworkWatchers operations
-    :vartype network_watchers: azure.mgmt.network.v2017_06_01.operations.NetworkWatchersOperations
+    :vartype network_watchers: azure.mgmt.network.v2017_08_01.operations.NetworkWatchersOperations
     :ivar packet_captures: PacketCaptures operations
-    :vartype packet_captures: azure.mgmt.network.v2017_06_01.operations.PacketCapturesOperations
+    :vartype packet_captures: azure.mgmt.network.v2017_08_01.operations.PacketCapturesOperations
     :ivar public_ip_addresses: PublicIPAddresses operations
-    :vartype public_ip_addresses: azure.mgmt.network.v2017_06_01.operations.PublicIPAddressesOperations
+    :vartype public_ip_addresses: azure.mgmt.network.v2017_08_01.operations.PublicIPAddressesOperations
     :ivar route_filters: RouteFilters operations
-    :vartype route_filters: azure.mgmt.network.v2017_06_01.operations.RouteFiltersOperations
+    :vartype route_filters: azure.mgmt.network.v2017_08_01.operations.RouteFiltersOperations
     :ivar route_filter_rules: RouteFilterRules operations
-    :vartype route_filter_rules: azure.mgmt.network.v2017_06_01.operations.RouteFilterRulesOperations
+    :vartype route_filter_rules: azure.mgmt.network.v2017_08_01.operations.RouteFilterRulesOperations
     :ivar route_tables: RouteTables operations
-    :vartype route_tables: azure.mgmt.network.v2017_06_01.operations.RouteTablesOperations
+    :vartype route_tables: azure.mgmt.network.v2017_08_01.operations.RouteTablesOperations
     :ivar routes: Routes operations
-    :vartype routes: azure.mgmt.network.v2017_06_01.operations.RoutesOperations
+    :vartype routes: azure.mgmt.network.v2017_08_01.operations.RoutesOperations
     :ivar bgp_service_communities: BgpServiceCommunities operations
-    :vartype bgp_service_communities: azure.mgmt.network.v2017_06_01.operations.BgpServiceCommunitiesOperations
+    :vartype bgp_service_communities: azure.mgmt.network.v2017_08_01.operations.BgpServiceCommunitiesOperations
     :ivar usages: Usages operations
-    :vartype usages: azure.mgmt.network.v2017_06_01.operations.UsagesOperations
+    :vartype usages: azure.mgmt.network.v2017_08_01.operations.UsagesOperations
     :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: azure.mgmt.network.v2017_06_01.operations.VirtualNetworksOperations
+    :vartype virtual_networks: azure.mgmt.network.v2017_08_01.operations.VirtualNetworksOperations
     :ivar subnets: Subnets operations
-    :vartype subnets: azure.mgmt.network.v2017_06_01.operations.SubnetsOperations
+    :vartype subnets: azure.mgmt.network.v2017_08_01.operations.SubnetsOperations
     :ivar virtual_network_peerings: VirtualNetworkPeerings operations
-    :vartype virtual_network_peerings: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkPeeringsOperations
+    :vartype virtual_network_peerings: azure.mgmt.network.v2017_08_01.operations.VirtualNetworkPeeringsOperations
     :ivar virtual_network_gateways: VirtualNetworkGateways operations
-    :vartype virtual_network_gateways: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewaysOperations
+    :vartype virtual_network_gateways: azure.mgmt.network.v2017_08_01.operations.VirtualNetworkGatewaysOperations
     :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
-    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_06_01.operations.VirtualNetworkGatewayConnectionsOperations
+    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2017_08_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
-    :vartype local_network_gateways: azure.mgmt.network.v2017_06_01.operations.LocalNetworkGatewaysOperations
+    :vartype local_network_gateways: azure.mgmt.network.v2017_08_01.operations.LocalNetworkGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -271,15 +271,15 @@ class NetworkManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2017_08_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_06_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2017_08_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-06-01"
+        api_version = "2017-08-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'

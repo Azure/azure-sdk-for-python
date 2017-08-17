@@ -20,11 +20,11 @@ class ExpressRouteCircuitSku(Model):
     :param tier: The tier of the SKU. Possible values are 'Standard' and
      'Premium'. Possible values include: 'Standard', 'Premium'
     :type tier: str or :class:`ExpressRouteCircuitSkuTier
-     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuTier>`
+     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitSkuTier>`
     :param family: The family of the SKU. Possible values are: 'UnlimitedData'
      and 'MeteredData'. Possible values include: 'UnlimitedData', 'MeteredData'
     :type family: str or :class:`ExpressRouteCircuitSkuFamily
-     <azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuFamily>`
+     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitSkuFamily>`
     """
 
     _attribute_map = {

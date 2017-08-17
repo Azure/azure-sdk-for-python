@@ -34,7 +34,7 @@ class NetworkWatcher(Resource):
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.network.v2017_06_01.models.ProvisioningState>`
+     <azure.mgmt.network.v2017_08_01.models.ProvisioningState>`
     """
 
     _validation = {

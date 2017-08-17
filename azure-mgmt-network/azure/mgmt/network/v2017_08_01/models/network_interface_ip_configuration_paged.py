@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NetworkInterfaceIPConfigurationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`NetworkInterfaceIPConfiguration <azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration>` object
+    A paging container for iterating over a list of :class:`NetworkInterfaceIPConfiguration <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>` object
     """
 
     _attribute_map = {
