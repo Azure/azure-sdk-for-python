@@ -68,13 +68,13 @@ class CognitiveServicesManagementClient(object):
     :vartype config: CognitiveServicesManagementClientConfiguration
 
     :ivar cognitive_services_accounts: CognitiveServicesAccounts operations
-    :vartype cognitive_services_accounts: .operations.CognitiveServicesAccountsOperations
+    :vartype cognitive_services_accounts: azure.mgmt.cognitiveservices.operations.CognitiveServicesAccountsOperations
     :ivar accounts: Accounts operations
-    :vartype accounts: .operations.AccountsOperations
+    :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
     :ivar check_sku_availability: CheckSkuAvailability operations
-    :vartype check_sku_availability: .operations.CheckSkuAvailabilityOperations
+    :vartype check_sku_availability: azure.mgmt.cognitiveservices.operations.CheckSkuAvailabilityOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -362,7 +362,7 @@ class CognitiveServicesAccountsOperations(object):
         return deserialized
 
     def regenerate_key(
-            self, resource_group_name, account_name, key_name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
         """Regenerates the specified account key for the specified Cognitive
         Services account.
 
