@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class TagDetailsPaged(Paged):
     """
-    A paging container for iterating over a list of TagDetails object
+    A paging container for iterating over a list of :class:`TagDetails <azure.mgmt.resource.resources.v2017_05_10.models.TagDetails>` object
     """
 
     _attribute_map = {
