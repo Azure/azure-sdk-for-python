@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NodeAgentSkuPaged(Paged):
     """
-    A paging container for iterating over a list of NodeAgentSku object
+    A paging container for iterating over a list of :class:`NodeAgentSku <azure.batch.models.NodeAgentSku>` object
     """
 
     _attribute_map = {

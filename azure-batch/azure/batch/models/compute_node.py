@@ -22,17 +22,41 @@ class ComputeNode(Model):
     :type id: str
     :param url: The URL of the compute node.
     :type url: str
-    :param state: The current state of the compute node. Possible values
-     include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
-     'creating', 'starting', 'waitingForStartTask', 'startTaskFailed',
-     'unknown', 'leavingPool', 'offline', 'preempted'
+    :param state: The current state of the compute node. Values are:
+     idle - The node is not currently running a task.
+     rebooting - The node is rebooting.
+     reimaging - The node is reimaging.
+     running - The node is running one or more tasks (other than a start task).
+     unusable - The node cannot be used for task execution due to errors.
+     creating - The Batch service has obtained the underlying virtual machine
+     from Azure Compute, but it has not yet started to join the pool.
+     starting - the Batch service is starting on the underlying virtual
+     machine.
+     waitingforstarttask - The start task has started running on the compute
+     node, but waitForSuccess is set and the start task has not yet completed.
+     starttaskfailed - The start task has failed on the compute node (and
+     exhausted all retries), and waitForSuccess is set. The node is not usable
+     for running tasks.
+     unknown - The Batch service has lost contact with the node, and does not
+     know its true state.
+     leavingpool - The node is leaving the pool, either because the user
+     explicitly removed it or because the pool is resizing or autoscaling down.
+     offline - The node is not currently running a task, and scheduling of new
+     tasks to the node is disabled.
+     preempted - The low-priority node has been preempted. Tasks which were
+     running on the node when it was pre-empted will be rescheduled when
+     another node becomes available. Possible values include: 'idle',
+     'rebooting', 'reimaging', 'running', 'unusable', 'creating', 'starting',
+     'waitingForStartTask', 'startTaskFailed', 'unknown', 'leavingPool',
+     'offline', 'preempted'
     :type state: str or :class:`ComputeNodeState
      <azure.batch.models.ComputeNodeState>`
     :param scheduling_state: Whether the compute node is available for task
-     scheduling. enabled - Tasks can be scheduled on the node. disabled - No
-     new tasks will be scheduled on the node. Tasks already running on the node
-     may still run to completion. All nodes start with scheduling enabled.
-     Possible values include: 'enabled', 'disabled'
+     scheduling. Values are:
+     enabled - Tasks can be scheduled on the node.
+     disabled - No new tasks will be scheduled on the node. Tasks already
+     running on the node may still run to completion. All nodes start with
+     scheduling enabled. Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or :class:`SchedulingState
      <azure.batch.models.SchedulingState>`
     :param state_transition_time: The time at which the compute node entered
@@ -51,7 +75,9 @@ class ComputeNode(Model):
      be reused for new nodes.
     :type ip_address: str
     :param affinity_id: An identifier which can be passed when adding a task
-     to request that the task be scheduled close to this compute node.
+     to request that the task be scheduled on this node. Note that this is just
+     a soft affinity. If the target node is busy or unavailable at the time the
+     task is scheduled, then the task will be scheduled elsewhere.
     :type affinity_id: str
     :param vm_size: The size of the virtual machine hosting the compute node.
      For information about available sizes of virtual machines for Cloud
@@ -81,8 +107,9 @@ class ComputeNode(Model):
      includes Job Preparation, Job Release, and Job Manager tasks, but not the
      pool start task.
     :type total_tasks_succeeded: int
-    :param recent_tasks: The list of tasks that are currently running on the
-     compute node.
+    :param recent_tasks: A list of tasks whose state has recently changed.
+     This property is present only if at least one task has run on this node
+     since it was assigned to the pool.
     :type recent_tasks: list of :class:`TaskInformation
      <azure.batch.models.TaskInformation>`
     :param start_task: The task specified to run on the compute node as it

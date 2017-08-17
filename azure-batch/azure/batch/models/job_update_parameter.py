@@ -40,7 +40,13 @@ class JobUpdateParameter(Model):
      when all tasks in the job are in the completed state. If omitted, the
      completion behavior is set to noAction. If the current value is
      terminateJob, this is an error because a job's completion behavior may not
-     be changed from terminateJob to noAction. Possible values include:
+     be changed from terminateJob to noAction. You may not change the value
+     from terminatejob to noaction - that is, once you have engaged automatic
+     job termination, you cannot turn it off again. If you try to do this, the
+     request fails and Batch returns status code 400 (Bad Request) and an
+     'invalid property value' error response. If you do not specify this
+     element in a PUT request, it is equivalent to passing noaction. This is an
+     error if the current value is terminatejob. Possible values include:
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`

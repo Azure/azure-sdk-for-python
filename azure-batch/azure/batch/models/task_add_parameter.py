@@ -83,7 +83,12 @@ class TaskAddParameter(Model):
      <azure.batch.models.TaskDependencies>`
     :param application_package_references: A list of application packages that
      the Batch service will deploy to the compute node before running the
-     command line.
+     command line. Application packages are downloaded and deployed to a shared
+     directory, not the task working directory. Therefore, if a referenced
+     package is already on the compute node, and is up to date, then it is not
+     re-downloaded; the existing copy on the compute node is used. If a
+     referenced application package cannot be installed, for example because
+     the package has been deleted or because download failed, the task fails.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`

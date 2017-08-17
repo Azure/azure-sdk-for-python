@@ -57,8 +57,8 @@ class PoolSpecification(Model):
      The maximum value of this setting depends on the size of the compute nodes
      in the pool (the vmSize setting).
     :type max_tasks_per_node: int
-    :param task_scheduling_policy: How tasks are distributed among compute
-     nodes in the pool.
+    :param task_scheduling_policy: How tasks are distributed across compute
+     nodes in a pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
     :param resize_timeout: The timeout for allocation of compute nodes to the

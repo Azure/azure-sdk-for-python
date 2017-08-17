@@ -30,7 +30,10 @@ class MultiInstanceSettings(Model):
      download before running the coordination command line. The difference
      between common resource files and task resource files is that common
      resource files are downloaded for all subtasks including the primary,
-     whereas task resource files are downloaded only for the primary.
+     whereas task resource files are downloaded only for the primary. Also note
+     that these resource files are not downloaded to the task working
+     directory, but instead are downloaded to the task root directory (one
+     directory above the working directory).
     :type common_resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
     """

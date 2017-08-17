@@ -16,7 +16,8 @@ class TaskUpdateParameter(Model):
     """The set of changes to be made to a task.
 
     :param constraints: Constraints that apply to this task. If omitted, the
-     task is given the default constraints.
+     task is given the default constraints. For multi-instance tasks, updating
+     the retention time applies only to the primary task and not subtasks.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
     """

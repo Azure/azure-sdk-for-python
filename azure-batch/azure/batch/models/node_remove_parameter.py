@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class NodeRemoveParameter(Model):
     """Options for removing compute nodes from a pool.
 
-    :param node_list: A list containing the ids of the compute nodes to be
+    :param node_list: A list containing the IDs of the compute nodes to be
      removed from the specified pool.
     :type node_list: list of str
     :param resize_timeout: The timeout for removal of compute nodes to the

@@ -15,7 +15,11 @@ from msrest.serialization import Model
 class TaskAddCollectionParameter(Model):
     """A collection of Azure Batch tasks to add.
 
-    :param value: The collection of tasks to add.
+    :param value: The collection of tasks to add. The total serialized size of
+     this collection must be less than 4MB. If it is greater than 4MB (for
+     example if each task has 100's of resource files or environment
+     variables), the request will fail with code 'RequestBodyTooLarge' and
+     should be retried again with fewer tasks.
     :type value: list of :class:`TaskAddParameter
      <azure.batch.models.TaskAddParameter>`
     """

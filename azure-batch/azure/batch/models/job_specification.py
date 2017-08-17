@@ -26,8 +26,8 @@ class JobSpecification(Model):
      schedule. The name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024.
     :type display_name: str
-    :param uses_task_dependencies: The flag that determines if this job will
-     use tasks with dependencies.
+    :param uses_task_dependencies: Whether tasks in the job can define
+     dependencies on each other. The default is false.
     :type uses_task_dependencies: bool
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in a job created under this schedule are in the completed
@@ -42,9 +42,11 @@ class JobSpecification(Model):
      <azure.batch.models.OnAllTasksComplete>`
     :param on_task_failure: The action the Batch service should take when any
      task fails in a job created under this schedule. A task is considered to
-     have failed if it completes with a non-zero exit code and has exhausted
-     its retry count, or if it had a scheduling error. The default is noAction.
-     Possible values include: 'noAction', 'performExitOptionsJobAction'
+     have failed if it have failed if has a failureInfo. A failureInfo is set
+     if the task completes with a non-zero exit code after exhausting its retry
+     count, or if there was an error starting the task, for example due to a
+     resource file download error. The default is noAction. Possible values
+     include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or :class:`OnTaskFailure
      <azure.batch.models.OnTaskFailure>`
     :param constraints: The execution constraints for jobs created under this
