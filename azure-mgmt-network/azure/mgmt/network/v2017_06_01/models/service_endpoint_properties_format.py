@@ -12,10 +12,10 @@
 from msrest.serialization import Model
 
 
-class PrivateAccessServicePropertiesFormat(Model):
-    """The private access service properties.
+class ServiceEndpointPropertiesFormat(Model):
+    """The service endpoint properties.
 
-    :param service: The type of the private access.
+    :param service: The type of the endpoint service.
     :type service: str
     :param locations: A list of locations.
     :type locations: list of str

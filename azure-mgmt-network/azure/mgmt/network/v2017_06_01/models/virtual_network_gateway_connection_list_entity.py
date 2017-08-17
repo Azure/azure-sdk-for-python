@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class VirtualNetworkGatewayConnection(Resource):
+class VirtualNetworkGatewayConnectionListEntity(Resource):
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when
@@ -32,16 +32,19 @@ class VirtualNetworkGatewayConnection(Resource):
     :type authorization_key: str
     :param virtual_network_gateway1: The reference to virtual network gateway
      resource.
-    :type virtual_network_gateway1: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
+    :type virtual_network_gateway1:
+     :class:`VirtualNetworkConnectionGatewayReference
+     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
     :param virtual_network_gateway2: The reference to virtual network gateway
      resource.
-    :type virtual_network_gateway2: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGateway>`
+    :type virtual_network_gateway2:
+     :class:`VirtualNetworkConnectionGatewayReference
+     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
     :param local_network_gateway2: The reference to local network gateway
      resource.
-    :type local_network_gateway2: :class:`LocalNetworkGateway
-     <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>`
+    :type local_network_gateway2:
+     :class:`VirtualNetworkConnectionGatewayReference
+     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference>`
     :param connection_type: Gateway connection type. Possible values are:
      'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
@@ -111,9 +114,9 @@ class VirtualNetworkGatewayConnection(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
+        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkConnectionGatewayReference'},
+        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
+        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'VirtualNetworkConnectionGatewayReference'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
@@ -131,7 +134,7 @@ class VirtualNetworkGatewayConnection(Resource):
     }
 
     def __init__(self, virtual_network_gateway1, connection_type, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, use_policy_based_traffic_selectors=None, ipsec_policies=None, resource_guid=None, etag=None):
-        super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags)
+        super(VirtualNetworkGatewayConnectionListEntity, self).__init__(id=id, location=location, tags=tags)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
         self.virtual_network_gateway2 = virtual_network_gateway2

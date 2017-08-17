@@ -12,16 +12,21 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """Reference to another subresource.
+class VirtualNetworkConnectionGatewayReference(Model):
+    """A reference to VirtualNetworkGateway or LocalNetworkGateway resource.
 
-    :param id: Resource ID.
+    :param id: The ID of VirtualNetworkGateway or LocalNetworkGateway
+     resource.
     :type id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id):
         self.id = id

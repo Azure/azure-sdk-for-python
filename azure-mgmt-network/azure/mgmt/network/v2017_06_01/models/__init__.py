@@ -18,7 +18,7 @@ from .network_interface import NetworkInterface
 from .network_security_group import NetworkSecurityGroup
 from .route import Route
 from .route_table import RouteTable
-from .private_access_service_properties_format import PrivateAccessServicePropertiesFormat
+from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .public_ip_address import PublicIPAddress
 from .ip_configuration import IPConfiguration
@@ -58,6 +58,7 @@ from .application_gateway_available_ssl_options import ApplicationGatewayAvailab
 from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
 from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
+from .endpoint_service_result import EndpointServiceResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
 from .route_filter_rule import RouteFilterRule
@@ -126,7 +127,6 @@ from .connectivity_parameters import ConnectivityParameters
 from .connectivity_issue import ConnectivityIssue
 from .connectivity_hop import ConnectivityHop
 from .connectivity_information import ConnectivityInformation
-from .private_access_service_result import PrivateAccessServiceResult
 from .patch_route_filter_rule import PatchRouteFilterRule
 from .patch_route_filter import PatchRouteFilter
 from .bgp_community import BGPCommunity
@@ -158,19 +158,27 @@ from .ipsec_policy import IpsecPolicy
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
+from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
+from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
+from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .load_balancer_paged import LoadBalancerPaged
+from .backend_address_pool_paged import BackendAddressPoolPaged
+from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
+from .inbound_nat_rule_paged import InboundNatRulePaged
+from .load_balancing_rule_paged import LoadBalancingRulePaged
 from .network_interface_paged import NetworkInterfacePaged
+from .probe_paged import ProbePaged
+from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
 from .packet_capture_result_paged import PacketCaptureResultPaged
-from .private_access_service_result_paged import PrivateAccessServiceResultPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_filter_paged import RouteFilterPaged
 from .route_filter_rule_paged import RouteFilterRulePaged
@@ -183,6 +191,7 @@ from .virtual_network_usage_paged import VirtualNetworkUsagePaged
 from .subnet_paged import SubnetPaged
 from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
+from .virtual_network_gateway_connection_list_entity_paged import VirtualNetworkGatewayConnectionListEntityPaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .network_management_client_enums import (
@@ -217,6 +226,7 @@ from .network_management_client_enums import (
     LoadDistribution,
     ProbeProtocol,
     NetworkOperationStatus,
+    EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
     EffectiveRouteState,
     ProvisioningState,
@@ -260,7 +270,7 @@ __all__ = [
     'NetworkSecurityGroup',
     'Route',
     'RouteTable',
-    'PrivateAccessServicePropertiesFormat',
+    'ServiceEndpointPropertiesFormat',
     'PublicIPAddressDnsSettings',
     'PublicIPAddress',
     'IPConfiguration',
@@ -300,6 +310,7 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
     'DnsNameAvailabilityResult',
+    'EndpointServiceResult',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
     'RouteFilterRule',
@@ -368,7 +379,6 @@ __all__ = [
     'ConnectivityIssue',
     'ConnectivityHop',
     'ConnectivityInformation',
-    'PrivateAccessServiceResult',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -400,19 +410,27 @@ __all__ = [
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
+    'VirtualNetworkConnectionGatewayReference',
+    'VirtualNetworkGatewayConnectionListEntity',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
+    'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'LoadBalancerPaged',
+    'BackendAddressPoolPaged',
+    'FrontendIPConfigurationPaged',
+    'InboundNatRulePaged',
+    'LoadBalancingRulePaged',
     'NetworkInterfacePaged',
+    'ProbePaged',
+    'NetworkInterfaceIPConfigurationPaged',
     'NetworkSecurityGroupPaged',
     'SecurityRulePaged',
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
-    'PrivateAccessServiceResultPaged',
     'PublicIPAddressPaged',
     'RouteFilterPaged',
     'RouteFilterRulePaged',
@@ -425,6 +443,7 @@ __all__ = [
     'SubnetPaged',
     'VirtualNetworkPeeringPaged',
     'VirtualNetworkGatewayPaged',
+    'VirtualNetworkGatewayConnectionListEntityPaged',
     'VirtualNetworkGatewayConnectionPaged',
     'LocalNetworkGatewayPaged',
     'TransportProtocol',
@@ -458,6 +477,7 @@ __all__ = [
     'LoadDistribution',
     'ProbeProtocol',
     'NetworkOperationStatus',
+    'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',
     'EffectiveRouteState',
     'ProvisioningState',

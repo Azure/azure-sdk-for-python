@@ -12,17 +12,17 @@
 from .sub_resource import SubResource
 
 
-class PrivateAccessServiceResult(SubResource):
-    """Private access service.
+class EndpointServiceResult(SubResource):
+    """Endpoint service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param id: Resource ID.
     :type id: str
-    :ivar name: Name of the private access value.
+    :ivar name: Name of the endpoint service.
     :vartype name: str
-    :ivar type: Type of the private access value.
+    :ivar type: Type of the endpoint service.
     :vartype type: str
     """
 
@@ -38,6 +38,6 @@ class PrivateAccessServiceResult(SubResource):
     }
 
     def __init__(self, id=None):
-        super(PrivateAccessServiceResult, self).__init__(id=id)
+        super(EndpointServiceResult, self).__init__(id=id)
         self.name = None
         self.type = None
