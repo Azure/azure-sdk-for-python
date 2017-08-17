@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -53,10 +53,13 @@ class RecoverableDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RecoverableDatabase
+         <azure.mgmt.sql.models.RecoverableDatabase>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RecoverableDatabase
-         <azure.mgmt.sql.models.RecoverableDatabase>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.RecoverableDatabase>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -118,6 +121,8 @@ class RecoverableDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RecoverableDatabase
+         <azure.mgmt.sql.models.RecoverableDatabase>`
         :rtype: :class:`RecoverableDatabasePaged
          <azure.mgmt.sql.models.RecoverableDatabasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

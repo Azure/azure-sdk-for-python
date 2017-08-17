@@ -32,9 +32,8 @@ class Server(TrackedResource):
     :type identity: :class:`ResourceIdentity
      <azure.mgmt.sql.models.ResourceIdentity>`
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
-     experience. Possible values include: '', 'v2.0', 'v12.0', 'user',
-     'system', 'datawarehouse'
-    :vartype kind: str or :class:`enum <azure.mgmt.sql.models.enum>`
+     experience.
+    :vartype kind: str
     :param administrator_login: Administrator username for the server. Once
      created it cannot be changed.
     :type administrator_login: str

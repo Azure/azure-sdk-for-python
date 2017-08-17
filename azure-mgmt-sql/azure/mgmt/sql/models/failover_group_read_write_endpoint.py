@@ -16,19 +16,27 @@ class FailoverGroupReadWriteEndpoint(Model):
     """Read-write endpoint of the failover group instance.
 
     :param failover_policy: Failover policy of the read-write endpoint for the
-     failover group. Possible values include: 'Manual', 'Automatic'
+     failover group. If failoverPolicy is Automatic then
+     failoverWithDataLossGracePeriodMinutes is required. Possible values
+     include: 'Manual', 'Automatic'
     :type failover_policy: str or :class:`ReadWriteEndpointFailoverPolicy
      <azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy>`
     :param failover_with_data_loss_grace_period_minutes: Grace period before
-     failover with data loss is attempted for the read-write endpoint.
+     failover with data loss is attempted for the read-write endpoint. If
+     failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is
+     required.
     :type failover_with_data_loss_grace_period_minutes: int
     """
+
+    _validation = {
+        'failover_policy': {'required': True},
+    }
 
     _attribute_map = {
         'failover_policy': {'key': 'failoverPolicy', 'type': 'str'},
         'failover_with_data_loss_grace_period_minutes': {'key': 'failoverWithDataLossGracePeriodMinutes', 'type': 'int'},
     }
 
-    def __init__(self, failover_policy=None, failover_with_data_loss_grace_period_minutes=None):
+    def __init__(self, failover_policy, failover_with_data_loss_grace_period_minutes=None):
         self.failover_policy = failover_policy
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RestorePointPaged(Paged):
     """
-    A paging container for iterating over a list of RestorePoint object
+    A paging container for iterating over a list of :class:`RestorePoint <azure.mgmt.sql.models.RestorePoint>` object
     """
 
     _attribute_map = {

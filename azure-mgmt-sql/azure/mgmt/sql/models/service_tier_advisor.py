@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class ServiceTierAdvisor(SubResource):
+class ServiceTierAdvisor(ProxyResource):
     """Represents a Service Tier Advisor.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar observation_period_start: The observation period start (ISO8601
      format).
     :vartype observation_period_start: datetime
@@ -83,8 +85,9 @@ class ServiceTierAdvisor(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'observation_period_start': {'readonly': True},
         'observation_period_end': {'readonly': True},
         'active_time_ratio': {'readonly': True},
@@ -107,8 +110,9 @@ class ServiceTierAdvisor(SubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'observation_period_start': {'key': 'properties.observationPeriodStart', 'type': 'iso-8601'},
         'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
         'active_time_ratio': {'key': 'properties.activeTimeRatio', 'type': 'float'},
