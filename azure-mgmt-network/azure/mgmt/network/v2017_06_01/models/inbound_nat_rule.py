@@ -25,7 +25,7 @@ class InboundNatRule(SubResource):
      <azure.mgmt.network.v2017_06_01.models.SubResource>`
     :ivar backend_ip_configuration: A reference to a private IP address
      defined on a network interface of a VM. Traffic sent to the frontend port
-     of each of the frontend IP configurations is forwarded to the backed IP.
+     of each of the frontend IP configurations is forwarded to the backend IP.
     :vartype backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration>`
     :param protocol: The transport protocol for the endpoint. Possible values
