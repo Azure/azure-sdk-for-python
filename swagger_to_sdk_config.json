@@ -177,6 +177,15 @@
       "output_dir": "azure-mgmt-cosmosdb/azure/mgmt/cosmosdb",
       "build_dir": "azure-mgmt-cosmosdb"
     },
+    "eventgrid": {
+      "autorest_options": {
+        "input-file": "specification/eventgrid/resource-manager/Microsoft.EventGrid/2017-06-15-preview/EventGrid.json",
+        "namespace": "azure.mgmt.eventgrid",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-eventgrid/azure/mgmt/eventgrid",
+      "build_dir": "azure-mgmt-eventgrid"
+    },
     "eventhub": {
       "autorest_options": {
         "input-file": "specification/eventhub/resource-manager/Microsoft.EventHub/2017-04-01/EventHub.json",
