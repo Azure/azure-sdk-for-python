@@ -6,7 +6,6 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
-raise unittest.SkipTest("Skipping all tests")
 
 import azure.mgmt.eventgrid.models
 from azure.common.credentials import ServicePrincipalCredentials
