@@ -106,7 +106,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             before_record_request=self._process_request_recording,
             before_record_response=self._process_response_recording,
             decode_compressed_response=True,
-            record_mode=self.config.record_mode,
+            record_mode='once' if not self.is_live else 'all',
             filter_headers=self.FILTER_HEADERS
         )
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
