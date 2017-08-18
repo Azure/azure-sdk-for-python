@@ -29,8 +29,8 @@ class TestScenarioConfig(unittest.TestCase):
     def test_env_var(self):
         with mock.patch.dict('os.environ', {ENV_LIVE_TEST: 'yes'}):
             config = TestConfig()
-        self.assertTrue(config.record_mode)
+        self.assertIs(config.record_mode, True)
 
     def test_config_file(self):
         config = TestConfig(config_file=self.cfgfile)
-        self.assertTrue(config.record_mode)
+        self.assertIs(config.record_mode, True)
