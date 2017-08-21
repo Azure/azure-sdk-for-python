@@ -55,7 +55,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         es_result_delete = self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name)
 
         # Delete the topic
-        self.eventgrid_client.topics.delete(resource_group.name, topic_name)
+        self.eventgrid_client.topics.delete(resource_group.name, topic_name, raw=True)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
