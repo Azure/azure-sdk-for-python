@@ -204,8 +204,8 @@
       "generated_relative_base_directory": "python/azure/graphrbac"
     },
     "iothub": {
+      "markdown": "specification/iothub/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/iothub/resource-manager/Microsoft.Devices/2017-01-19/iothub.json",
         "namespace": "azure.mgmt.iothub",
         "package-version": "0.3.0"
       },
