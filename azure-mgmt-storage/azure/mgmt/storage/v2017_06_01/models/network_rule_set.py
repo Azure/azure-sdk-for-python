@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class StorageNetworkAcls(Model):
-    """Network ACL.
+class NetworkRuleSet(Model):
+    """Network rule set.
 
     :param bypass: Specifies whether traffic is bypassed for
      Logging/Metrics/AzureServices. Possible values are any combination of
@@ -22,7 +22,7 @@ class StorageNetworkAcls(Model):
      'Logging', 'Metrics', 'AzureServices'. Default value: "AzureServices" .
     :type bypass: str or :class:`Bypass
      <azure.mgmt.storage.v2017_06_01.models.Bypass>`
-    :param virtual_network_rules: Sets the virtual network ACL rules
+    :param virtual_network_rules: Sets the virtual network rules
     :type virtual_network_rules: list of :class:`VirtualNetworkRule
      <azure.mgmt.storage.v2017_06_01.models.VirtualNetworkRule>`
     :param ip_rules: Sets the IP ACL rules
