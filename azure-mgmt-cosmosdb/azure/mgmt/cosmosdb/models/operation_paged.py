@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class DatabaseAccountPatchParameters(Model):
-    """Parameters for patching Azure Cosmos DB database account properties.
-
-    :param tags:
-    :type tags: dict
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.cosmosdb.models.Operation>` object
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
-    def __init__(self, tags=None):
-        self.tags = tags
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
