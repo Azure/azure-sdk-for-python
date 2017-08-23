@@ -6,14 +6,14 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.1 msrest/0.4.13
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [9dafb002-5b52-11e7-b596-ecb1d756380e]
+      x-ms-client-request-id: [a7a4cd94-8795-11e7-acf4-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2017-08-01
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 4.0,\r\n
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 1.0,\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\",\r\n
         \     \"limit\": 50.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Virtual Networks\",\r\n        \"value\": \"VirtualNetworks\"\r\n      },\r\n
@@ -22,18 +22,18 @@ interactions:
         \     \"limit\": 20.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Static Public IP Addresses\",\r\n        \"value\": \"StaticPublicIPAddresses\"\r\n
         \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":
-        2.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\",\r\n
+        0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\",\r\n
         \     \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Network Security Groups\",\r\n        \"value\": \"NetworkSecurityGroups\"\r\n
         \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":
-        4.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\",\r\n
+        0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\",\r\n
         \     \"limit\": 60.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Public IP Addresses\",\r\n        \"value\": \"PublicIPAddresses\"\r\n      },\r\n
-        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 3.0,\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\",\r\n
         \     \"limit\": 350.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Network Interfaces\",\r\n        \"value\": \"NetworkInterfaces\"\r\n      },\r\n
-        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 3.0,\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\",\r\n
         \     \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\":
         \"Load Balancers\",\r\n        \"value\": \"LoadBalancers\"\r\n      },\r\n
@@ -61,7 +61,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:06:44 GMT']
+      Date: ['Tue, 22 Aug 2017 23:57:28 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -69,9 +69,9 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['3741']
-      x-ms-correlation-request-id: [ce12484d-8f97-43ca-b9bb-93f04ade425e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [7df1a88e-dc86-4191-ad34-90a199b7e7f8]
-      x-ms-routing-request-id: ['WESTUS:20170627T160645Z:ce12484d-8f97-43ca-b9bb-93f04ade425e']
+      x-ms-correlation-request-id: [c5ae542a-77e1-4c2a-a1aa-49e7119aef0e]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [70c67796-ec4d-4cd2-b0ee-e526381b5c37]
+      x-ms-routing-request-id: ['WESTUS:20170822T235729Z:c5ae542a-77e1-4c2a-a1aa-49e7119aef0e']
     status: {code: 200, message: OK}
 version: 1

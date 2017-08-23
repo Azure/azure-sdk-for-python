@@ -6,12 +6,12 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.1 msrest/0.4.13
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [5d9cd09a-5b57-11e7-a44b-ecb1d756380e]
+      x-ms-client-request-id: [12a5a028-8795-11e7-b138-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"AARNet\",\r\n
         \     \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
@@ -132,6 +132,21 @@ interactions:
         Kong\",\r\n          \"Silicon Valley\",\r\n          \"Singapore\",\r\n          \"Sydney\",\r\n
         \         \"Tokyo\",\r\n          \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
         [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"C3ntro\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Miami\"\r\n        ],\r\n        \"bandwidthsOffered\": [\r\n
+        \         {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
         \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
@@ -321,7 +336,7 @@ interactions:
         \"GlobalcloudXchange\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
-        [\r\n          \"Chennai\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          \"Chennai\",\r\n          \"Mumbai\"\r\n        ],\r\n        \"bandwidthsOffered\":
         [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
@@ -444,43 +459,43 @@ interactions:
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
         [\r\n          \"Amsterdam\",\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n
-        \         \"London\",\r\n          \"Seattle\",\r\n          \"Silicon Valley\",\r\n
-        \         \"Singapore\",\r\n          \"Washington DC\"\r\n        ],\r\n
-        \       \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
-        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
-        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
-        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
-        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
-        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
-        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n
-        \     }\r\n    },\r\n    {\r\n      \"name\": \"Level 3 Communications - IPVPN\",\r\n
-        \     \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \         \"Las Vegas\",\r\n          \"London\",\r\n          \"Sao Paulo\",\r\n
+        \         \"Seattle\",\r\n          \"Silicon Valley\",\r\n          \"Singapore\",\r\n
+        \         \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Level 3 Communications - IPVPN\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
         [\r\n          \"Amsterdam\",\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n
-        \         \"London\",\r\n          \"Seattle\",\r\n          \"Silicon Valley\",\r\n
-        \         \"Singapore\",\r\n          \"Washington DC\"\r\n        ],\r\n
-        \       \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
-        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
-        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
-        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
-        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
-        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
-        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n
-        \     }\r\n    },\r\n    {\r\n      \"name\": \"LG CNS\",\r\n      \"id\":
-        \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \         \"Las Vegas\",\r\n          \"London\",\r\n          \"Sao Paulo\",\r\n
+        \         \"Seattle\",\r\n          \"Silicon Valley\",\r\n          \"Singapore\",\r\n
+        \         \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"LG CNS\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
-        [\r\n          \"Busan\"\r\n        ],\r\n        \"bandwidthsOffered\": [\r\n
-        \         {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        [\r\n          \"Busan\",\r\n          \"Seoul\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
         \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
@@ -497,11 +512,12 @@ interactions:
         [\r\n          \"Amsterdam\",\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n
         \         \"Hong Kong\",\r\n          \"Las Vegas\",\r\n          \"London\",\r\n
         \         \"Los Angeles\",\r\n          \"Melbourne\",\r\n          \"Miami\",\r\n
-        \         \"New York\",\r\n          \"Quebec City\",\r\n          \"Seattle\",\r\n
-        \         \"Silicon Valley\",\r\n          \"Singapore\",\r\n          \"Sydney\",\r\n
-        \         \"Toronto\",\r\n          \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
-        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
-        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \         \"New York\",\r\n          \"Quebec City\",\r\n          \"San Antonio\",\r\n
+        \         \"Seattle\",\r\n          \"Silicon Valley\",\r\n          \"Singapore\",\r\n
+        \         \"Sydney\",\r\n          \"Toronto\",\r\n          \"Washington
+        DC\"\r\n        ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n
+        \           \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
         \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
         \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
@@ -515,6 +531,21 @@ interactions:
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
         [\r\n          \"London\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Neutrona Networks\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Miami\",\r\n          \"Sao Paulo\"\r\n        ],\r\n        \"bandwidthsOffered\":
         [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
@@ -653,7 +684,7 @@ interactions:
         \"SIFY\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
-        [\r\n          \"Chennai\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          \"Chennai\",\r\n          \"Mumbai2\"\r\n        ],\r\n        \"bandwidthsOffered\":
         [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
@@ -820,13 +851,28 @@ interactions:
         \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
         \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
         \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"UOLDIVEO\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Sao Paulo\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
         \"Verizon\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
         [\r\n          \"Amsterdam\",\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n
-        \         \"Hong Kong\",\r\n          \"London\",\r\n          \"Silicon Valley\",\r\n
-        \         \"Singapore\",\r\n          \"Sydney\",\r\n          \"Tokyo\",\r\n
-        \         \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        \         \"Hong Kong\",\r\n          \"London\",\r\n          \"Mumbai\",\r\n
+        \         \"Silicon Valley\",\r\n          \"Singapore\",\r\n          \"Sydney\",\r\n
+        \         \"Tokyo\",\r\n          \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
         [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
         50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
         \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
@@ -856,22 +902,22 @@ interactions:
         \"Zayo\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
-        [\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n          \"London\",\r\n
-        \         \"Los Angeles\",\r\n          \"New York\",\r\n          \"Silicon
-        Valley\",\r\n          \"Toronto\",\r\n          \"Washington DC\"\r\n        ],\r\n
-        \       \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
-        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
-        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
-        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
-        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
-        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
-        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
-        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
-        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n
-        \     }\r\n    },\r\n    {\r\n      \"name\": \"Zayo Group\",\r\n      \"id\":
-        \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        [\r\n          \"Amsterdam\",\r\n          \"Chicago\",\r\n          \"Dallas\",\r\n
+        \         \"London\",\r\n          \"Los Angeles\",\r\n          \"New York\",\r\n
+        \         \"Silicon Valley\",\r\n          \"Toronto\",\r\n          \"Washington
+        DC\"\r\n        ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n
+        \           \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Zayo Group\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
         \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
         [\r\n          \"Chicago\",\r\n          \"Los Angeles\",\r\n          \"New
@@ -891,17 +937,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:47 GMT']
+      Date: ['Tue, 22 Aug 2017 23:53:22 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['67318']
-      x-ms-correlation-request-id: [a7c92fba-0baf-499f-bf84-9982680877e1]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [6ac2e392-eb4a-4b7e-bdc2-ee0c0c84717a]
-      x-ms-routing-request-id: ['WESTUS:20170627T164048Z:a7c92fba-0baf-499f-bf84-9982680877e1']
+      content-length: ['71051']
+      x-ms-correlation-request-id: [c3ba4d63-6a5a-43a3-8540-ed83091335b9]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [77db6a02-b6aa-4be2-8527-9fc0b85fff13]
+      x-ms-routing-request-id: ['WESTUS2:20170822T235323Z:c3ba4d63-6a5a-43a3-8540-ed83091335b9']
     status: {code: 200, message: OK}
 version: 1

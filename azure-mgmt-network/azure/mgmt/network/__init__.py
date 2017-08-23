@@ -71,7 +71,7 @@ class NetworkManagementClient(object):
     :param str base_url: Service URL
     """
 
-    DEFAULT_API_VERSION='2017-06-01'
+    DEFAULT_API_VERSION='2017-08-01'
 
     def __init__(
             self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
