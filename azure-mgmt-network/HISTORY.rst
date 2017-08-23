@@ -2,14 +2,52 @@
 
 Release History
 ===============
-
-1.3.0 (2017-07-10)
+1.4.0 (2017-08-23)
 ++++++++++++++++++
 
 **Features**
 
-- Adding "available_private_access_services" operation group (2017-06-01)
-- Adding "radius_secret" in Virtual Network Gateway
+- Add ApiVersion 2017-08-01 (new default)
+- Added in both 2017-08-01 and 2017-06-01:
+
+  - virtual_network_gateways.list_connections method
+  - default_security_rules operations group
+  - inbound_nat_rules operations group
+  - load_balancer_backend_address_pools operations group
+  - load_balancer_frontend_ip_configurations operations group
+  - load_balancer_load_balancing_rules operations group
+  - load_balancer_network_interfaces operations group
+  - load_balancer_probes operations group
+  - network_interface_ip_configurations operations group
+  - network_interface_load_balancers operations group
+  - EffectiveNetworkSecurityGroup.tag_map attribute
+  - EffectiveNetworkSecurityRule.source_port_ranges attribute
+  - EffectiveNetworkSecurityRule.destination_port_ranges attribute
+  - EffectiveNetworkSecurityRule.source_address_prefixes attribute
+  - EffectiveNetworkSecurityRule.destination_address_prefixes attribute
+  - SecurityRule.source_port_ranges attribute
+  - SecurityRule.destination_port_ranges attribute
+  - SecurityRule.source_address_prefixes attribute
+  - SecurityRule.destination_address_prefixes attribute
+
+- Added in 2017-08-01 only
+
+  - PublicIPAddress.sku
+  - LoadBalancer.sku
+
+**Changes on preview**
+
+  - "available_private_access_services" is renamed "available_endpoint_services"
+  - "radius_secret" parsing fix (was unable to work in 1.3.0)
+
+
+1.3.0 (2017-07-10)
+++++++++++++++++++
+
+**Preview features**
+
+- Adding "available_private_access_services" operation group (preview)
+- Adding "radius_secret" in Virtual Network Gateway (preview)
 
 **Bug Fixes**
 
