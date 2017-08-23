@@ -1,31 +1,31 @@
 interactions:
 - request:
     body: '{"properties": {"securityRules": [{"name": "pysecgrouprulec575136b", "properties":
-      {"priority": 500, "protocol": "Tcp", "sourceAddressPrefix": "*", "direction":
-      "Inbound", "destinationAddressPrefix": "*", "access": "Allow", "sourcePortRange":
-      "655", "description": "Test security rule", "destinationPortRange": "123-3500"}}]},
-      "location": "westus"}'
+      {"access": "Allow", "priority": 500, "protocol": "Tcp", "destinationPortRange":
+      "123-3500", "sourceAddressPrefix": "*", "direction": "Inbound", "description":
+      "Test security rule", "sourcePortRange": "655", "destinationAddressPrefix":
+      "*"}}]}, "location": "westus"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['348']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [3c9a95a4-5b57-11e7-8a81-ecb1d756380e]
+      x-ms-client-request-id: [29b05014-881f-11e7-a99e-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pysecgroupc575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
-        \ \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n  \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
-        \"466648ba-d44e-400c-a5c5-d5b4ae7f9e7d\",\r\n    \"securityRules\": [\r\n
+        \"f5551072-b68c-4884-aedc-382efbe4827d\",\r\n    \"securityRules\": [\r\n
         \     {\r\n        \"name\": \"pysecgrouprulec575136b\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Test security rule\",\r\n          \"protocol\":
         \"Tcp\",\r\n          \"sourcePortRange\": \"655\",\r\n          \"destinationPortRange\":
@@ -36,7 +36,7 @@ interactions:
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      }\r\n
         \   ],\r\n    \"defaultSecurityRules\": [\r\n      {\r\n        \"name\":
         \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -47,7 +47,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -58,7 +58,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllInBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Deny all inbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -68,7 +68,7 @@ interactions:
         \         \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\":
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      },\r\n
         \     {\r\n        \"name\": \"AllowVnetOutBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to all VMs
         in VNET\",\r\n          \"protocol\": \"*\",\r\n          \"sourcePortRange\":
@@ -79,7 +79,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -90,7 +90,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \       \"etag\": \"W/\\\"e197498b-b4f7-4813-ac77-2569fac21a9b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"452301cc-fd3a-4126-9672-28ccb4bc5c1d\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Deny all outbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -101,20 +101,20 @@ interactions:
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      }\r\n
         \   ]\r\n  }\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/675ef024-cdbc-411b-8537-67fa23ea219d?api-version=2017-06-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c69b4daf-2bf9-4d27-97e3-34df1f394162?api-version=2017-08-01']
       Cache-Control: [no-cache]
       Content-Length: ['7357']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:39:50 GMT']
+      Date: ['Wed, 23 Aug 2017 16:21:48 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [4967fea7-eec1-4f12-8a29-fd927ddf6f89]
+      x-ms-correlation-request-id: [da0da03b-7b7b-404c-bcc9-2e86c637caef]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [675ef024-cdbc-411b-8537-67fa23ea219d]
-      x-ms-routing-request-id: ['WESTUS2:20170627T163950Z:4967fea7-eec1-4f12-8a29-fd927ddf6f89']
+      x-ms-request-id: [c69b4daf-2bf9-4d27-97e3-34df1f394162]
+      x-ms-routing-request-id: ['WESTUS:20170823T162149Z:da0da03b-7b7b-404c-bcc9-2e86c637caef']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -123,18 +123,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [3c9a95a4-5b57-11e7-8a81-ecb1d756380e]
+      x-ms-client-request-id: [29b05014-881f-11e7-a99e-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/675ef024-cdbc-411b-8537-67fa23ea219d?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c69b4daf-2bf9-4d27-97e3-34df1f394162?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:01 GMT']
+      Date: ['Wed, 23 Aug 2017 16:21:59 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -142,10 +142,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [b52d319e-41be-472b-a53e-8efa2f26cfdc]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [83ba0e11-e9c8-4ac0-b2bc-51d34fc9dc48]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164001Z:b52d319e-41be-472b-a53e-8efa2f26cfdc']
+      x-ms-correlation-request-id: [1312e18c-8c68-48f7-ba23-0dcc20d1d312]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [83f67c5f-d25c-48b8-b395-aae3b5934335]
+      x-ms-routing-request-id: ['WESTUS:20170823T162200Z:1312e18c-8c68-48f7-ba23-0dcc20d1d312']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -154,21 +154,21 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [3c9a95a4-5b57-11e7-8a81-ecb1d756380e]
+      x-ms-client-request-id: [29b05014-881f-11e7-a99e-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pysecgroupc575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
-        \ \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n  \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"466648ba-d44e-400c-a5c5-d5b4ae7f9e7d\",\r\n    \"securityRules\": [\r\n
+        \"f5551072-b68c-4884-aedc-382efbe4827d\",\r\n    \"securityRules\": [\r\n
         \     {\r\n        \"name\": \"pysecgrouprulec575136b\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Test security rule\",\r\n          \"protocol\":
         \"Tcp\",\r\n          \"sourcePortRange\": \"655\",\r\n          \"destinationPortRange\":
@@ -179,7 +179,7 @@ interactions:
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      }\r\n
         \   ],\r\n    \"defaultSecurityRules\": [\r\n      {\r\n        \"name\":
         \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -190,7 +190,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -201,7 +201,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all inbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -211,7 +211,7 @@ interactions:
         \         \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\":
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      },\r\n
         \     {\r\n        \"name\": \"AllowVnetOutBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to all VMs
         in VNET\",\r\n          \"protocol\": \"*\",\r\n          \"sourcePortRange\":
@@ -222,7 +222,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -233,7 +233,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all outbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -246,8 +246,8 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:00 GMT']
-      ETag: [W/"802d2fa1-4dbd-444a-a53a-b53d19411b88"]
+      Date: ['Wed, 23 Aug 2017 16:21:59 GMT']
+      ETag: [W/"6a7c2a55-e604-4d85-bd83-4f2d15312d06"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -255,10 +255,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['7365']
-      x-ms-correlation-request-id: [4e682505-4b3a-43f7-aa03-7c1caeb09f10]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [9df25cdc-58e0-4cbf-8557-69d4cc585511]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164001Z:4e682505-4b3a-43f7-aa03-7c1caeb09f10']
+      x-ms-correlation-request-id: [74a55f62-dc18-47c0-9cf9-4e4deb224ba8]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [d300c791-3dcb-4a9a-9e8e-a21d7bd2813e]
+      x-ms-routing-request-id: ['WESTUS:20170823T162200Z:74a55f62-dc18-47c0-9cf9-4e4deb224ba8']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -267,21 +267,21 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [43b3fe8a-5b57-11e7-9e9e-ecb1d756380e]
+      x-ms-client-request-id: [311ff650-881f-11e7-9ae9-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pysecgroupc575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
-        \ \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n  \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"466648ba-d44e-400c-a5c5-d5b4ae7f9e7d\",\r\n    \"securityRules\": [\r\n
+        \"f5551072-b68c-4884-aedc-382efbe4827d\",\r\n    \"securityRules\": [\r\n
         \     {\r\n        \"name\": \"pysecgrouprulec575136b\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Test security rule\",\r\n          \"protocol\":
         \"Tcp\",\r\n          \"sourcePortRange\": \"655\",\r\n          \"destinationPortRange\":
@@ -292,7 +292,7 @@ interactions:
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      }\r\n
         \   ],\r\n    \"defaultSecurityRules\": [\r\n      {\r\n        \"name\":
         \"AllowVnetInBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -303,7 +303,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -314,7 +314,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllInBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all inbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -324,7 +324,7 @@ interactions:
         \         \"destinationPortRanges\": [],\r\n          \"sourceAddressPrefixes\":
         [],\r\n          \"destinationAddressPrefixes\": []\r\n        }\r\n      },\r\n
         \     {\r\n        \"name\": \"AllowVnetOutBound\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to all VMs
         in VNET\",\r\n          \"protocol\": \"*\",\r\n          \"sourcePortRange\":
@@ -335,7 +335,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -346,7 +346,7 @@ interactions:
         [],\r\n          \"sourceAddressPrefixes\": [],\r\n          \"destinationAddressPrefixes\":
         []\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \       \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \       \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all outbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -359,8 +359,8 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:01 GMT']
-      ETag: [W/"802d2fa1-4dbd-444a-a53a-b53d19411b88"]
+      Date: ['Wed, 23 Aug 2017 16:22:01 GMT']
+      ETag: [W/"6a7c2a55-e604-4d85-bd83-4f2d15312d06"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -368,10 +368,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['7365']
-      x-ms-correlation-request-id: [edae58f4-68df-4d0a-bfc0-59495e7f9650]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [e6933ea9-1820-49bd-b44b-084494f6a9c2]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164001Z:edae58f4-68df-4d0a-bfc0-59495e7f9650']
+      x-ms-correlation-request-id: [fa2247b9-45de-4b91-8111-6f5c318dce42]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [15519053-a826-4b9b-be87-78a68ffb2488]
+      x-ms-routing-request-id: ['WESTUS:20170823T162201Z:fa2247b9-45de-4b91-8111-6f5c318dce42']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -380,22 +380,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [43f8f6e2-5b57-11e7-a857-ecb1d756380e]
+      x-ms-client-request-id: [3183aef8-881f-11e7-b3df-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pysecgroupc575136b\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
-        \     \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n      \"type\":
+        \     \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n      \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n      \"location\": \"westus\",\r\n
         \     \"properties\": {\r\n        \"provisioningState\": \"Succeeded\",\r\n
-        \       \"resourceGuid\": \"466648ba-d44e-400c-a5c5-d5b4ae7f9e7d\",\r\n        \"securityRules\":
+        \       \"resourceGuid\": \"f5551072-b68c-4884-aedc-382efbe4827d\",\r\n        \"securityRules\":
         [\r\n          {\r\n            \"name\": \"pysecgrouprulec575136b\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Test security rule\",\r\n              \"protocol\":
         \"Tcp\",\r\n              \"sourcePortRange\": \"655\",\r\n              \"destinationPortRange\":
@@ -406,7 +406,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         }\r\n        ],\r\n        \"defaultSecurityRules\": [\r\n          {\r\n
         \           \"name\": \"AllowVnetInBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -418,7 +418,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -430,7 +430,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"DenyAllInBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Deny all inbound traffic\",\r\n              \"protocol\":
         \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
@@ -441,7 +441,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowVnetOutBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow outbound traffic from all VMs to all
         VMs in VNET\",\r\n              \"protocol\": \"*\",\r\n              \"sourcePortRange\":
@@ -453,7 +453,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowInternetOutBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -464,7 +464,7 @@ interactions:
         [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
         []\r\n            }\r\n          },\r\n          {\r\n            \"name\":
         \"DenyAllOutBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Deny all outbound traffic\",\r\n              \"protocol\":
         \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
@@ -477,7 +477,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:01 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:01 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -485,10 +485,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['8038']
-      x-ms-correlation-request-id: [434518bc-ab27-4361-b223-9b0be239e5dd]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [bd7f905e-a8b6-4420-a440-d0737e6a57a8]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164002Z:434518bc-ab27-4361-b223-9b0be239e5dd']
+      x-ms-correlation-request-id: [fa3c86e4-07f9-4c04-b3b8-318facde35ff]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [d03df9a9-7829-4923-8750-c9aef3e8afad]
+      x-ms-routing-request-id: ['WESTUS:20170823T162201Z:fa3c86e4-07f9-4c04-b3b8-318facde35ff']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -497,208 +497,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4423dc14-5b57-11e7-acc7-ecb1d756380e]
+      x-ms-client-request-id: [31cc4694-881f-11e7-b9aa-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/networkSecurityGroups?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/networkSecurityGroups?api-version=2017-08-01
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"UbuntuServerDoNotDelete\",\r\n
-        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete\",\r\n
-        \     \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n      \"type\":
-        \"Microsoft.Network/networkSecurityGroups\",\r\n      \"location\": \"westus\",\r\n
-        \     \"tags\": {},\r\n      \"properties\": {\r\n        \"provisioningState\":
-        \"Succeeded\",\r\n        \"resourceGuid\": \"a024c352-ede3-46a7-9183-5e75100ea0b8\",\r\n
-        \       \"securityRules\": [\r\n          {\r\n            \"name\": \"default-allow-ssh\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/securityRules/default-allow-ssh\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"protocol\": \"Tcp\",\r\n              \"sourcePortRange\":
-        \"*\",\r\n              \"destinationPortRange\": \"22\",\r\n              \"sourceAddressPrefix\":
-        \"*\",\r\n              \"destinationAddressPrefix\": \"*\",\r\n              \"access\":
-        \"Allow\",\r\n              \"priority\": 1000,\r\n              \"direction\":
-        \"Inbound\",\r\n              \"sourcePortRanges\": [],\r\n              \"destinationPortRanges\":
-        [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
-        []\r\n            }\r\n          },\r\n          {\r\n            \"name\":
-        \"PypiServer\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/securityRules/PypiServer\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"8080\",\r\n              \"sourceAddressPrefix\":
-        \"*\",\r\n              \"destinationAddressPrefix\": \"*\",\r\n              \"access\":
-        \"Allow\",\r\n              \"priority\": 1100,\r\n              \"direction\":
-        \"Inbound\",\r\n              \"sourcePortRanges\": [],\r\n              \"destinationPortRanges\":
-        [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
-        []\r\n            }\r\n          }\r\n        ],\r\n        \"defaultSecurityRules\":
-        [\r\n          {\r\n            \"name\": \"AllowVnetInBound\",\r\n            \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"VirtualNetwork\",\r\n              \"destinationAddressPrefix\": \"VirtualNetwork\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65000,\r\n
-        \             \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"AzureLoadBalancer\",\r\n              \"destinationAddressPrefix\": \"*\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65001,\r\n
-        \             \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"DenyAllInBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/DenyAllInBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Deny all inbound traffic\",\r\n              \"protocol\":
-        \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
-        \"*\",\r\n              \"sourceAddressPrefix\": \"*\",\r\n              \"destinationAddressPrefix\":
-        \"*\",\r\n              \"access\": \"Deny\",\r\n              \"priority\":
-        65500,\r\n              \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowVnetOutBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow outbound traffic from all VMs to all
-        VMs in VNET\",\r\n              \"protocol\": \"*\",\r\n              \"sourcePortRange\":
-        \"*\",\r\n              \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"VirtualNetwork\",\r\n              \"destinationAddressPrefix\": \"VirtualNetwork\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65000,\r\n
-        \             \"direction\": \"Outbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowInternetOutBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"*\",\r\n              \"destinationAddressPrefix\": \"Internet\",\r\n              \"access\":
-        \"Allow\",\r\n              \"priority\": 65001,\r\n              \"direction\":
-        \"Outbound\",\r\n              \"sourcePortRanges\": [],\r\n              \"destinationPortRanges\":
-        [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
-        []\r\n            }\r\n          },\r\n          {\r\n            \"name\":
-        \"DenyAllOutBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkSecurityGroups/UbuntuServerDoNotDelete/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \           \"etag\": \"W/\\\"139d1848-1c88-48c7-9882-43c4ed9d1505\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Deny all outbound traffic\",\r\n              \"protocol\":
-        \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
-        \"*\",\r\n              \"sourceAddressPrefix\": \"*\",\r\n              \"destinationAddressPrefix\":
-        \"*\",\r\n              \"access\": \"Deny\",\r\n              \"priority\":
-        65500,\r\n              \"direction\": \"Outbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         }\r\n        ],\r\n        \"networkInterfaces\": [\r\n          {\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Network/networkInterfaces/ubuntuserverdonotdel378\"\r\n
-        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"MonitorTest-nsg\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg\",\r\n
-        \     \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n      \"type\":
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pysecgroupc575136b\",\r\n
+        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
+        \     \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n      \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n      \"location\": \"westus\",\r\n
         \     \"properties\": {\r\n        \"provisioningState\": \"Succeeded\",\r\n
-        \       \"resourceGuid\": \"c1cc1e8d-1e33-4421-b508-5196683a155e\",\r\n        \"securityRules\":
-        [\r\n          {\r\n            \"name\": \"default-allow-rdp\",\r\n            \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/securityRules/default-allow-rdp\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"protocol\": \"TCP\",\r\n              \"sourcePortRange\":
-        \"*\",\r\n              \"destinationPortRange\": \"3389\",\r\n              \"sourceAddressPrefix\":
-        \"*\",\r\n              \"destinationAddressPrefix\": \"*\",\r\n              \"access\":
-        \"Allow\",\r\n              \"priority\": 1000,\r\n              \"direction\":
-        \"Inbound\",\r\n              \"sourcePortRanges\": [],\r\n              \"destinationPortRanges\":
-        [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
-        []\r\n            }\r\n          }\r\n        ],\r\n        \"defaultSecurityRules\":
-        [\r\n          {\r\n            \"name\": \"AllowVnetInBound\",\r\n            \"id\":
-        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"VirtualNetwork\",\r\n              \"destinationAddressPrefix\": \"VirtualNetwork\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65000,\r\n
-        \             \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"AzureLoadBalancer\",\r\n              \"destinationAddressPrefix\": \"*\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65001,\r\n
-        \             \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"DenyAllInBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/DenyAllInBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Deny all inbound traffic\",\r\n              \"protocol\":
-        \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
-        \"*\",\r\n              \"sourceAddressPrefix\": \"*\",\r\n              \"destinationAddressPrefix\":
-        \"*\",\r\n              \"access\": \"Deny\",\r\n              \"priority\":
-        65500,\r\n              \"direction\": \"Inbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowVnetOutBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow outbound traffic from all VMs to all
-        VMs in VNET\",\r\n              \"protocol\": \"*\",\r\n              \"sourcePortRange\":
-        \"*\",\r\n              \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"VirtualNetwork\",\r\n              \"destinationAddressPrefix\": \"VirtualNetwork\",\r\n
-        \             \"access\": \"Allow\",\r\n              \"priority\": 65000,\r\n
-        \             \"direction\": \"Outbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         },\r\n          {\r\n            \"name\": \"AllowInternetOutBound\",\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
-        \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
-        \             \"destinationPortRange\": \"*\",\r\n              \"sourceAddressPrefix\":
-        \"*\",\r\n              \"destinationAddressPrefix\": \"Internet\",\r\n              \"access\":
-        \"Allow\",\r\n              \"priority\": 65001,\r\n              \"direction\":
-        \"Outbound\",\r\n              \"sourcePortRanges\": [],\r\n              \"destinationPortRanges\":
-        [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
-        []\r\n            }\r\n          },\r\n          {\r\n            \"name\":
-        \"DenyAllOutBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkSecurityGroups/MonitorTest-nsg/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \           \"etag\": \"W/\\\"d1704dbc-7cf4-48d8-ab28-cd09e3ed2dbf\\\"\",\r\n
-        \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
-        \             \"description\": \"Deny all outbound traffic\",\r\n              \"protocol\":
-        \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
-        \"*\",\r\n              \"sourceAddressPrefix\": \"*\",\r\n              \"destinationAddressPrefix\":
-        \"*\",\r\n              \"access\": \"Deny\",\r\n              \"priority\":
-        65500,\r\n              \"direction\": \"Outbound\",\r\n              \"sourcePortRanges\":
-        [],\r\n              \"destinationPortRanges\": [],\r\n              \"sourceAddressPrefixes\":
-        [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
-        \         }\r\n        ],\r\n        \"networkInterfaces\": [\r\n          {\r\n
-        \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Network/networkInterfaces/monitortest686\"\r\n
-        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
-        \"pysecgroupc575136b\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b\",\r\n
-        \     \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n      \"type\":
-        \"Microsoft.Network/networkSecurityGroups\",\r\n      \"location\": \"westus\",\r\n
-        \     \"properties\": {\r\n        \"provisioningState\": \"Succeeded\",\r\n
-        \       \"resourceGuid\": \"466648ba-d44e-400c-a5c5-d5b4ae7f9e7d\",\r\n        \"securityRules\":
+        \       \"resourceGuid\": \"f5551072-b68c-4884-aedc-382efbe4827d\",\r\n        \"securityRules\":
         [\r\n          {\r\n            \"name\": \"pysecgrouprulec575136b\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Test security rule\",\r\n              \"protocol\":
         \"Tcp\",\r\n              \"sourcePortRange\": \"655\",\r\n              \"destinationPortRange\":
@@ -709,7 +523,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         }\r\n        ],\r\n        \"defaultSecurityRules\": [\r\n          {\r\n
         \           \"name\": \"AllowVnetInBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -721,7 +535,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -733,7 +547,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"DenyAllInBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllInBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Deny all inbound traffic\",\r\n              \"protocol\":
         \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
@@ -744,7 +558,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowVnetOutBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow outbound traffic from all VMs to all
         VMs in VNET\",\r\n              \"protocol\": \"*\",\r\n              \"sourcePortRange\":
@@ -756,7 +570,7 @@ interactions:
         [],\r\n              \"destinationAddressPrefixes\": []\r\n            }\r\n
         \         },\r\n          {\r\n            \"name\": \"AllowInternetOutBound\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \             \"protocol\": \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n
@@ -767,7 +581,7 @@ interactions:
         [],\r\n              \"sourceAddressPrefixes\": [],\r\n              \"destinationAddressPrefixes\":
         []\r\n            }\r\n          },\r\n          {\r\n            \"name\":
         \"DenyAllOutBound\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \           \"etag\": \"W/\\\"802d2fa1-4dbd-444a-a53a-b53d19411b88\\\"\",\r\n
+        \           \"etag\": \"W/\\\"6a7c2a55-e604-4d85-bd83-4f2d15312d06\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"description\": \"Deny all outbound traffic\",\r\n              \"protocol\":
         \"*\",\r\n              \"sourcePortRange\": \"*\",\r\n              \"destinationPortRange\":
@@ -780,39 +594,39 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:02 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:02 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      content-length: ['24824']
-      x-ms-correlation-request-id: [6a0d5dfa-ed12-4b96-9074-08ad244a6b74]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [fc9c5d43-5a43-406a-8bd1-e376945ad9e3]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164002Z:6a0d5dfa-ed12-4b96-9074-08ad244a6b74']
+      content-length: ['8038']
+      x-ms-correlation-request-id: [9f715f22-9ef9-4b55-9437-abcc41dda391]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [a8fcc1cd-68c3-4767-af9a-f8fe475bef32]
+      x-ms-routing-request-id: ['WESTUS:20170823T162202Z:9f715f22-9ef9-4b55-9437-abcc41dda391']
     status: {code: 200, message: OK}
 - request:
-    body: '{"properties": {"priority": 400, "protocol": "Tcp", "sourceAddressPrefix":
-      "*", "direction": "Outbound", "destinationAddressPrefix": "*", "access": "Allow",
-      "sourcePortRange": "655", "description": "New Test security rule", "destinationPortRange":
-      "123-3500"}}'
+    body: '{"properties": {"access": "Allow", "priority": 400, "protocol": "Tcp",
+      "destinationPortRange": "123-3500", "sourceAddressPrefix": "*", "direction":
+      "Outbound", "description": "New Test security rule", "sourcePortRange": "655",
+      "destinationAddressPrefix": "*"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['260']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44651d54-5b57-11e7-ae4f-ecb1d756380e]
+      x-ms-client-request-id: [322e81ba-881f-11e7-b677-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pynewrulec575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b\",\r\n
-        \ \"etag\": \"W/\\\"7e9dd163-71a3-4c4b-8aaa-451bebcb48b7\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"32465628-e69a-4d56-9c7e-4b1183510c56\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Updating\",\r\n    \"description\": \"New
         Test security rule\",\r\n    \"protocol\": \"Tcp\",\r\n    \"sourcePortRange\":
         \"655\",\r\n    \"destinationPortRange\": \"123-3500\",\r\n    \"sourceAddressPrefix\":
@@ -821,20 +635,20 @@ interactions:
         [],\r\n    \"destinationPortRanges\": [],\r\n    \"sourceAddressPrefixes\":
         [],\r\n    \"destinationAddressPrefixes\": []\r\n  }\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e3c5dddb-adfa-4bc3-a090-99794812e547?api-version=2017-06-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/01ac7e24-f480-422a-963c-2290ca30760d?api-version=2017-08-01']
       Cache-Control: [no-cache]
       Content-Length: ['814']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:02 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:03 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e98efe64-c8de-4764-95ca-8c3043055608]
+      x-ms-correlation-request-id: [c98ad7ed-86d8-4e5b-bbde-1db14bc43d2b]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [e3c5dddb-adfa-4bc3-a090-99794812e547]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164003Z:e98efe64-c8de-4764-95ca-8c3043055608']
+      x-ms-request-id: [01ac7e24-f480-422a-963c-2290ca30760d]
+      x-ms-routing-request-id: ['WESTUS:20170823T162203Z:c98ad7ed-86d8-4e5b-bbde-1db14bc43d2b']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -843,18 +657,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44651d54-5b57-11e7-ae4f-ecb1d756380e]
+      x-ms-client-request-id: [322e81ba-881f-11e7-b677-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e3c5dddb-adfa-4bc3-a090-99794812e547?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/01ac7e24-f480-422a-963c-2290ca30760d?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:12 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:13 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -862,10 +676,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [fc34c4a1-f17f-42f9-9d81-339350e72337]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [b922650d-3cc7-41bc-8ab3-7b9ff846d69d]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164013Z:fc34c4a1-f17f-42f9-9d81-339350e72337']
+      x-ms-correlation-request-id: [b5bedf7c-4bb8-437f-ba1b-8905edda1496]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [e4844725-5d96-4500-949c-68299f246d14]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162214Z:b5bedf7c-4bb8-437f-ba1b-8905edda1496']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -874,15 +688,15 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44651d54-5b57-11e7-ae4f-ecb1d756380e]
+      x-ms-client-request-id: [322e81ba-881f-11e7-b677-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pynewrulec575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b\",\r\n
-        \ \"etag\": \"W/\\\"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"52f7e914-bb5b-40c3-916f-b24be9386e98\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"description\": \"New
         Test security rule\",\r\n    \"protocol\": \"Tcp\",\r\n    \"sourcePortRange\":
         \"655\",\r\n    \"destinationPortRange\": \"123-3500\",\r\n    \"sourceAddressPrefix\":
@@ -893,8 +707,8 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:13 GMT']
-      ETag: [W/"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f"]
+      Date: ['Wed, 23 Aug 2017 16:22:14 GMT']
+      ETag: [W/"52f7e914-bb5b-40c3-916f-b24be9386e98"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -902,10 +716,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['815']
-      x-ms-correlation-request-id: [3acf4587-afe1-4d85-96e5-04a2d80aeb43]
-      x-ms-ratelimit-remaining-subscription-reads: ['14993']
-      x-ms-request-id: [c82c12d2-b587-415f-babd-73774a8956c0]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164014Z:3acf4587-afe1-4d85-96e5-04a2d80aeb43']
+      x-ms-correlation-request-id: [40e089e1-1d1a-43b5-9c5d-8b38c4ce1a33]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [276bb902-e299-473d-9839-0f4535f912c0]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162214Z:40e089e1-1d1a-43b5-9c5d-8b38c4ce1a33']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -914,15 +728,15 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4b44721e-5b57-11e7-a4be-ecb1d756380e]
+      x-ms-client-request-id: [399690b6-881f-11e7-a1ec-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"name\": \"pynewrulec575136b\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b\",\r\n
-        \ \"etag\": \"W/\\\"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f\\\"\",\r\n  \"properties\":
+        \ \"etag\": \"W/\\\"52f7e914-bb5b-40c3-916f-b24be9386e98\\\"\",\r\n  \"properties\":
         {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"description\": \"New
         Test security rule\",\r\n    \"protocol\": \"Tcp\",\r\n    \"sourcePortRange\":
         \"655\",\r\n    \"destinationPortRange\": \"123-3500\",\r\n    \"sourceAddressPrefix\":
@@ -933,8 +747,8 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:13 GMT']
-      ETag: [W/"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f"]
+      Date: ['Wed, 23 Aug 2017 16:22:14 GMT']
+      ETag: [W/"52f7e914-bb5b-40c3-916f-b24be9386e98"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -942,10 +756,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['815']
-      x-ms-correlation-request-id: [81ac6ef2-2ff2-45a9-8184-bddb0f6a6a1f]
-      x-ms-ratelimit-remaining-subscription-reads: ['14991']
-      x-ms-request-id: [72548b42-2091-4478-a621-7b561ae8a0cb]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164014Z:81ac6ef2-2ff2-45a9-8184-bddb0f6a6a1f']
+      x-ms-correlation-request-id: [4e940f24-b14c-44cc-8c08-b9115805acf5]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [f153a930-507a-4693-aeb2-b35ff295cfda]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162215Z:4e940f24-b14c-44cc-8c08-b9115805acf5']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -954,16 +768,16 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4b7f5d2c-5b57-11e7-84cf-ecb1d756380e]
+      x-ms-client-request-id: [39e9c6ae-881f-11e7-aab9-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pysecgrouprulec575136b\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pysecgrouprulec575136b\",\r\n
-        \     \"etag\": \"W/\\\"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f\\\"\",\r\n      \"properties\":
+        \     \"etag\": \"W/\\\"52f7e914-bb5b-40c3-916f-b24be9386e98\\\"\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"description\":
         \"Test security rule\",\r\n        \"protocol\": \"Tcp\",\r\n        \"sourcePortRange\":
         \"655\",\r\n        \"destinationPortRange\": \"123-3500\",\r\n        \"sourceAddressPrefix\":
@@ -973,7 +787,7 @@ interactions:
         \       \"sourceAddressPrefixes\": [],\r\n        \"destinationAddressPrefixes\":
         []\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"pynewrulec575136b\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b\",\r\n
-        \     \"etag\": \"W/\\\"ee60f143-74cb-4e5b-a3e6-8c123bc09d3f\\\"\",\r\n      \"properties\":
+        \     \"etag\": \"W/\\\"52f7e914-bb5b-40c3-916f-b24be9386e98\\\"\",\r\n      \"properties\":
         {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"description\":
         \"New Test security rule\",\r\n        \"protocol\": \"Tcp\",\r\n        \"sourcePortRange\":
         \"655\",\r\n        \"destinationPortRange\": \"123-3500\",\r\n        \"sourceAddressPrefix\":
@@ -985,7 +799,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:14 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:15 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -993,10 +807,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['1831']
-      x-ms-correlation-request-id: [780eabfb-5fe5-44a5-9544-e24fd680486d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [4bd8f97d-58d0-4b35-8c7e-1cb093b0d30d]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164014Z:780eabfb-5fe5-44a5-9544-e24fd680486d']
+      x-ms-correlation-request-id: [b45c6c8f-8c12-4d06-b834-1e75f2e2e8c6]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [97139eee-35e2-4ea2-80c2-cb160f0601d9]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162216Z:b45c6c8f-8c12-4d06-b834-1e75f2e2e8c6']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1006,29 +820,29 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4bbdeca8-5b57-11e7-b35f-ecb1d756380e]
+      x-ms-client-request-id: [3a503094-881f-11e7-b323-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b/securityRules/pynewrulec575136b?api-version=2017-08-01
   response:
     body: {string: ''}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/664d2bad-9daf-4945-bcbd-40429cf154c4?api-version=2017-06-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5db62b3a-a408-4106-b511-cd175974f996?api-version=2017-08-01']
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 27 Jun 2017 16:40:15 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:17 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/664d2bad-9daf-4945-bcbd-40429cf154c4?api-version=2017-06-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/5db62b3a-a408-4106-b511-cd175974f996?api-version=2017-08-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [3071cbc3-e31d-46e4-aeb5-5173f28463b4]
+      x-ms-correlation-request-id: [bf24d739-2de0-4ee3-8d3d-3967b89f5d71]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [664d2bad-9daf-4945-bcbd-40429cf154c4]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164015Z:3071cbc3-e31d-46e4-aeb5-5173f28463b4']
+      x-ms-request-id: [5db62b3a-a408-4106-b511-cd175974f996]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162217Z:bf24d739-2de0-4ee3-8d3d-3967b89f5d71']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -1037,18 +851,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4bbdeca8-5b57-11e7-b35f-ecb1d756380e]
+      x-ms-client-request-id: [3a503094-881f-11e7-b323-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/664d2bad-9daf-4945-bcbd-40429cf154c4?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5db62b3a-a408-4106-b511-cd175974f996?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:29 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:27 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -1056,10 +870,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [afe47f96-bf2d-4c24-80a8-4b07a2cedd29]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [b5055057-489f-4683-ad80-1ff0aa127437]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164029Z:afe47f96-bf2d-4c24-80a8-4b07a2cedd29']
+      x-ms-correlation-request-id: [0deb7f09-e013-4eed-8097-c25d78b79748]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [9d35371f-d345-4a99-b3e1-957e5efabbad]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162227Z:0deb7f09-e013-4eed-8097-c25d78b79748']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1069,29 +883,29 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [544a00e4-5b57-11e7-a9b6-ecb1d756380e]
+      x-ms-client-request-id: [414f70ac-881f-11e7-b1bc-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_network_security_groupsc575136b/providers/Microsoft.Network/networkSecurityGroups/pysecgroupc575136b?api-version=2017-08-01
   response:
     body: {string: ''}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0873eda6-6f37-447a-b6d1-c1b201abe070?api-version=2017-06-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/6c6f4a00-eba8-45c0-ad8d-859e89b2f300?api-version=2017-08-01']
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 27 Jun 2017 16:40:29 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:28 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/0873eda6-6f37-447a-b6d1-c1b201abe070?api-version=2017-06-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/6c6f4a00-eba8-45c0-ad8d-859e89b2f300?api-version=2017-08-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ac7b23c3-6d92-4423-9677-8da231c98535]
+      x-ms-correlation-request-id: [6877745e-418c-49a3-a54f-625adf9f8514]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [0873eda6-6f37-447a-b6d1-c1b201abe070]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164029Z:ac7b23c3-6d92-4423-9677-8da231c98535']
+      x-ms-request-id: [6c6f4a00-eba8-45c0-ad8d-859e89b2f300]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162228Z:6877745e-418c-49a3-a54f-625adf9f8514']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -1100,18 +914,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0a1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [544a00e4-5b57-11e7-a9b6-ecb1d756380e]
+      x-ms-client-request-id: [414f70ac-881f-11e7-b1bc-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0873eda6-6f37-447a-b6d1-c1b201abe070?api-version=2017-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/6c6f4a00-eba8-45c0-ad8d-859e89b2f300?api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:40:39 GMT']
+      Date: ['Wed, 23 Aug 2017 16:22:38 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -1119,9 +933,9 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [a2c991b7-c78c-4ec3-a8ec-3e124dc4edcb]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [f23be275-c74b-4160-a2ee-2f9c506e1b67]
-      x-ms-routing-request-id: ['WESTUS2:20170627T164040Z:a2c991b7-c78c-4ec3-a8ec-3e124dc4edcb']
+      x-ms-correlation-request-id: [34467623-8859-4489-b60c-0587e2f654eb]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [17725fdd-1b64-4a34-bdbe-23ad5662aa12]
+      x-ms-routing-request-id: ['WESTUS2:20170823T162239Z:34467623-8859-4489-b60c-0587e2f654eb']
     status: {code: 200, message: OK}
 version: 1

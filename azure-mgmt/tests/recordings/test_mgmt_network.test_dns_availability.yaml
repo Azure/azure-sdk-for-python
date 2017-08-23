@@ -6,18 +6,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
-          msrest_azure/0.4.9 networkmanagementclient/ Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.18.1 msrest/0.4.13
+          msrest_azure/0.4.11 networkmanagementclient/ Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [bd99a842-5b52-11e7-976f-ecb1d756380e]
+      x-ms-client-request-id: [63c78682-8794-11e7-b43a-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2017-06-01&domainNameLabel=pydomain
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2017-08-01
   response:
     body: {string: "{\r\n  \"available\": true\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 27 Jun 2017 16:07:38 GMT']
+      Date: ['Tue, 22 Aug 2017 23:48:26 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -25,9 +25,9 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['25']
-      x-ms-correlation-request-id: [4ab2ee4e-0c12-4e65-9b42-307c45801e4d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [399da0a6-0d08-4da8-a9b3-4ea5685235f4]
-      x-ms-routing-request-id: ['WESTUS:20170627T160739Z:4ab2ee4e-0c12-4e65-9b42-307c45801e4d']
+      x-ms-correlation-request-id: [d730fc1d-fe78-4e1c-8f8c-14314da27b6f]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [5a8cf477-3f18-4a91-8bd2-3ea9cab9cbd9]
+      x-ms-routing-request-id: ['WESTUS2:20170822T234826Z:d730fc1d-fe78-4e1c-8f8c-14314da27b6f']
     status: {code: 200, message: OK}
 version: 1
