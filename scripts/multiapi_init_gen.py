@@ -7,7 +7,11 @@ from pathlib import Path
 sdk_root = Path(__file__).parents[1]
 
 package_name = sys.argv[1]
+split_package_name = package_name.split('#')
+package_name = split_package_name[0]
 module_name = package_name.replace("-", ".")
+if len(split_package_name) >= 2:
+    module_name = ".".join([module_name, split_package_name[1]])
 
 sys.path.append(str((sdk_root / package_name).resolve()))
 
