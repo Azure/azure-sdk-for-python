@@ -17,10 +17,10 @@ class VirtualMachineExtensionInstanceView(Model):
 
     :param name: The virtual machine extension name.
     :type name: str
-    :param type: The full type of the extension handler which includes both
-     publisher and type.
+    :param type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
     :type type: str
-    :param type_handler_version: The type version of the extension handler.
+    :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param substatuses: The resource status information.
     :type substatuses: list of :class:`InstanceViewStatus

@@ -17,7 +17,8 @@ class DiskInstanceView(Model):
 
     :param name: The disk name.
     :type name: str
-    :param encryption_settings: The encryption settings of the disk.
+    :param encryption_settings: Specifies the encryption settings for the OS
+     Disk. <br><br> Minimum api-version: 2015-06-15
     :type encryption_settings: list of :class:`DiskEncryptionSettings
      <azure.mgmt.compute.compute.v2017_03_30.models.DiskEncryptionSettings>`
     :param statuses: The resource status information.

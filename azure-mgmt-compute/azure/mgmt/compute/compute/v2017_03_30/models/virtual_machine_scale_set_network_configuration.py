@@ -20,7 +20,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :type id: str
     :param name: The network configuration name.
     :type name: str
-    :param primary: Whether this is a primary NIC on a virtual machine.
+    :param primary: Specifies the primary network interface in case the
+     virtual machine has more than 1 network interface.
     :type primary: bool
     :param enable_accelerated_networking: Specifies whether the network
      interface is accelerated networking-enabled.
@@ -33,7 +34,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :type dns_settings:
      :class:`VirtualMachineScaleSetNetworkConfigurationDnsSettings
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings>`
-    :param ip_configurations: The virtual machine scale set IP Configuration.
+    :param ip_configurations: Specifies the IP configurations of the network
+     interface.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetIPConfiguration>`

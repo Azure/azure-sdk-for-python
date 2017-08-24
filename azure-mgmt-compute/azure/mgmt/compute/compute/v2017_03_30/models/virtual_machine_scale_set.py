@@ -31,8 +31,13 @@ class VirtualMachineScaleSet(Resource):
     :param sku: The virtual machine scale set sku.
     :type sku: :class:`Sku
      <azure.mgmt.compute.compute.v2017_03_30.models.Sku>`
-    :param plan: The purchase plan when deploying a virtual machine scale set
-     from VM Marketplace images.
+    :param plan: Specifies information about the marketplace image used to
+     create the virtual machine. This element is only used for marketplace
+     images. Before you can use a marketplace image from an API, you must
+     enable the image for programmatic use.  In the Azure portal, find the
+     marketplace image that you want to use and then click **Want to deploy
+     programmatically, Get Started ->**. Enter any required information and
+     then click **Save**.
     :type plan: :class:`Plan
      <azure.mgmt.compute.compute.v2017_03_30.models.Plan>`
     :param upgrade_policy: The upgrade policy.
