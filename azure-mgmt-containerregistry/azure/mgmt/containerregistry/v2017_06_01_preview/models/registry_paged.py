@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RegistryPaged(Paged):
     """
-    A paging container for iterating over a list of Registry object
+    A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2017_06_01_preview.models.Registry>` object
     """
 
     _attribute_map = {

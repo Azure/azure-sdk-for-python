@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class WebhookPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Webhook <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>` object
+class ReplicationUpdateParameters(Model):
+    """The parameters for updating a replication.
+
+    :param tags: The tags for the replication.
+    :type tags: dict
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Webhook]'}
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(WebhookPaged, self).__init__(*args, **kwargs)
+    def __init__(self, tags=None):
+        self.tags = tags

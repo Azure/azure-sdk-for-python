@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ReplicationPaged(Paged):
     """
-    A paging container for iterating over a list of Replication object
+    A paging container for iterating over a list of :class:`Replication <azure.mgmt.containerregistry.v2017_06_01_preview.models.Replication>` object
     """
 
     _attribute_map = {
