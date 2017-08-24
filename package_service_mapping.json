@@ -341,5 +341,12 @@
 	},
 	"azure-servicemanagement-legacy": {
 		"service_name": "Other"
+	},
+	"azure-mgmt-servicefabric": {
+		"service_name": "Service Fabric",
+		"category ": "Management",
+		"namespaces": [
+			"azure.mgmt.servicefabric"
+		]
 	}
 }
