@@ -20,7 +20,8 @@ class PurchasePlan(Model):
     :type publisher: str
     :param name: The plan ID.
     :type name: str
-    :param product: The product ID.
+    :param product: Specifies the product of the image from the marketplace.
+     This is the same value as Offer under the imageReference element.
     :type product: str
     """
 

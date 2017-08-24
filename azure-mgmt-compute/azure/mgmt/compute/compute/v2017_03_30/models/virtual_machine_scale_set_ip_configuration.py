@@ -19,11 +19,11 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :type id: str
     :param name: The IP configuration name.
     :type name: str
-    :param subnet: The subnet.
+    :param subnet: Specifies the identifier of the subnet.
     :type subnet: :class:`ApiEntityReference
      <azure.mgmt.compute.compute.v2017_03_30.models.ApiEntityReference>`
-    :param primary: Specifies the primary IP Configuration in case the network
-     interface has more than one IP Configuration.
+    :param primary: Specifies the primary network interface in case the
+     virtual machine has more than 1 network interface.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
@@ -35,17 +35,23 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
      <azure.mgmt.compute.compute.v2017_03_30.models.IPVersion>`
-    :param application_gateway_backend_address_pools: The application gateway
-     backend address pools.
+    :param application_gateway_backend_address_pools: Specifies an array of
+     references to backend address pools of application gateways. A scale set
+     can reference backend address pools of multiple application gateways.
+     Multiple scale sets cannot use the same application gateway.
     :type application_gateway_backend_address_pools: list of
      :class:`SubResource
      <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
-    :param load_balancer_backend_address_pools: The load balancer backend
-     address pools.
+    :param load_balancer_backend_address_pools: Specifies an array of
+     references to backend address pools of load balancers. A scale set can
+     reference backend address pools of one public and one internal load
+     balancer. Multiple scale sets cannot use the same load balancer.
     :type load_balancer_backend_address_pools: list of :class:`SubResource
      <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
-    :param load_balancer_inbound_nat_pools: The load balancer inbound nat
-     pools.
+    :param load_balancer_inbound_nat_pools: Specifies an array of references
+     to inbound Nat pools of the load balancers. A scale set can reference
+     inbound nat pools of one public and one internal load balancer. Multiple
+     scale sets cannot use the same load balancer
     :type load_balancer_inbound_nat_pools: list of :class:`SubResource
      <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
     """

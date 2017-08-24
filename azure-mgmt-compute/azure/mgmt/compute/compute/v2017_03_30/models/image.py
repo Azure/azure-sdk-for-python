@@ -13,7 +13,9 @@ from .resource import Resource
 
 
 class Image(Resource):
-    """Describes an Image.
+    """The source user image virtual hard disk. The virtual hard disk will be
+    copied before being attached to the virtual machine. If SourceImage is
+    provided, the destination virtual hard drive must not exist.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -32,7 +34,8 @@ class Image(Resource):
      is created.
     :type source_virtual_machine: :class:`SubResource
      <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
-    :param storage_profile: The storage profile.
+    :param storage_profile: Specifies the storage settings for the virtual
+     machine disks.
     :type storage_profile: :class:`ImageStorageProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.ImageStorageProfile>`
     :ivar provisioning_state: The provisioning state.
