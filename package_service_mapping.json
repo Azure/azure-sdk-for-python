@@ -31,6 +31,13 @@
 		"service_name": "Service Bus",
 		"category ": "Client"
 	},
+	"azure-servicefabric": {
+		"service_name": "Service Fabric",
+		"category ": "Client",
+		"namespaces": [
+			"azure.servicefabric"
+		]
+	},	
 
 	"azure-mgmt-authorization": {
 		"service_name": "Authorization",
@@ -306,6 +313,13 @@
 			"azure.mgmt.servicebus"
 		]
 	},
+	"azure-mgmt-servicefabric": {
+		"service_name": "Service Fabric",
+		"category ": "Management",
+		"namespaces": [
+			"azure.mgmt.servicefabric"
+		]
+	},	
 	"azure-mgmt-sql": {
 		"service_name": "SQL",
 		"category ": "Management",
@@ -341,12 +355,5 @@
 	},
 	"azure-servicemanagement-legacy": {
 		"service_name": "Other"
-	},
-	"azure-mgmt-servicefabric": {
-		"service_name": "Service Fabric",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.servicefabric"
-		]
 	}
 }
