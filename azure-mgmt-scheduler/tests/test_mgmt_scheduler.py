@@ -8,9 +8,10 @@
 import unittest
 
 import azure.mgmt.scheduler
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
+from devtools_testutils import (
+    AzureMgmtTestCase, ResourceGroupPreparer,
+)
 
 class MgmtSchedulerTest(AzureMgmtTestCase):
 
@@ -19,19 +20,15 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
         self.scheduler_client = self.create_mgmt_client(
             azure.mgmt.scheduler.SchedulerManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_scheduler(self):
-        account_name = self.get_resource_name('pyarmscheduler')
-
+    @ResourceGroupPreparer()
+    def test_scheduler(self, resource_group, location):
         jobcollection_name = "myjobcollection"
         self.scheduler_client.job_collections.create_or_update(
-            self.group_name,
+            resource_group.name,
             jobcollection_name,
             azure.mgmt.scheduler.models.JobCollectionDefinition(
-                location="West US",
+                location=location,
                 properties=azure.mgmt.scheduler.models.JobCollectionProperties(
                     sku=azure.mgmt.scheduler.models.Sku(name="Free")
                 )
@@ -39,7 +36,7 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
         )
 
         result = self.scheduler_client.job_collections.get(
-            self.group_name, 
+            resource_group.name, 
             jobcollection_name,
         )
         self.assertEqual(result.name, jobcollection_name)
