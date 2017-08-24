@@ -23,7 +23,7 @@ class VirtualMachineScaleSetSku(Model):
     :ivar sku: The Sku.
     :vartype sku: :class:`Sku
      <azure.mgmt.compute.compute.v2017_03_30.models.Sku>`
-    :ivar capacity: Available scaling information.
+    :ivar capacity: Specifies the number of virtual machines in the scale set.
     :vartype capacity: :class:`VirtualMachineScaleSetSkuCapacity
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetSkuCapacity>`
     """

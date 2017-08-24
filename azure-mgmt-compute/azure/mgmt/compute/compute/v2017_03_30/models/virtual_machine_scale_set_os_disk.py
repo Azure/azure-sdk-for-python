@@ -17,24 +17,33 @@ class VirtualMachineScaleSetOSDisk(Model):
 
     :param name: The disk name.
     :type name: str
-    :param caching: The caching type. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
+    :param caching: Specifies the caching requirements. <br><br> Possible
+     values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
+     <br><br> Default: **None for Standard storage. ReadOnly for Premium
+     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
      <azure.mgmt.compute.compute.v2017_03_30.models.CachingTypes>`
-    :param create_option: The create option. Possible values include:
-     'fromImage', 'empty', 'attach'
+    :param create_option: Specifies how the virtual machines in the scale set
+     should be created.<br><br> The only allowed value is: **FromImage**
+     \\u2013 This value is used when you are using an image to create the
+     virtual machine. If you are using a platform image, you also use the
+     imageReference element described above. If you are using a marketplace
+     image, you  also use the plan element previously described. Possible
+     values include: 'fromImage', 'empty', 'attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.compute.v2017_03_30.models.DiskCreateOptionTypes>`
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
+    :param os_type: This property allows you to specify the type of the OS
+     that is included in the disk if creating a VM from user-image or a
+     specialized VHD. <br><br> Possible values are: <br><br> **Windows**
+     <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.compute.v2017_03_30.models.OperatingSystemTypes>`
-    :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
-     will be copied before using it to attach to the Virtual Machine. If
-     SourceImage is provided, the destination VirtualHardDisk should not exist.
+    :param image: Specifies information about the unmanaged user image to base
+     the scale set on.
     :type image: :class:`VirtualHardDisk
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualHardDisk>`
-    :param vhd_containers: The list of virtual hard disk container uris.
+    :param vhd_containers: Specifies the container urls that are used to store
+     operating system disks for the scale set.
     :type vhd_containers: list of str
     :param managed_disk: The managed disk parameters.
     :type managed_disk: :class:`VirtualMachineScaleSetManagedDiskParameters
