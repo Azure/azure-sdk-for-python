@@ -15,24 +15,35 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMProfile(Model):
     """Describes a virtual machine scale set virtual machine profile.
 
-    :param os_profile: The virtual machine scale set OS profile.
+    :param os_profile: Specifies the operating system settings for the virtual
+     machines in the scale set.
     :type os_profile: :class:`VirtualMachineScaleSetOSProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetOSProfile>`
-    :param storage_profile: The virtual machine scale set storage profile.
+    :param storage_profile: Specifies the storage settings for the virtual
+     machine disks.
     :type storage_profile: :class:`VirtualMachineScaleSetStorageProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetStorageProfile>`
-    :param network_profile: The virtual machine scale set network profile.
+    :param network_profile: Specifies properties of the network interfaces of
+     the virtual machines in the scale set.
     :type network_profile: :class:`VirtualMachineScaleSetNetworkProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkProfile>`
-    :param diagnostics_profile: The virtual machine scale set diagnostics
-     profile.
+    :param diagnostics_profile: Specifies the boot diagnostic settings state.
+     <br><br>Minimum api-version: 2015-06-15.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.DiagnosticsProfile>`
-    :param extension_profile: The virtual machine scale set extension profile.
+    :param extension_profile: Specifies a collection of settings for
+     extensions installed on virtual machines in the scale set.
     :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionProfile>`
-    :param license_type: The license type, which is for bring your own license
-     scenario.
+    :param license_type: Specifies that the image or disk that is being used
+     was licensed on-premises. This element is only used for images that
+     contain the Windows Server operating system. <br><br> Possible values are:
+     <br><br> Windows_Client <br><br> Windows_Server <br><br> If this element
+     is included in a request for an update, the value must match the initial
+     value. This value cannot be updated. <br><br> For more information, see
+     [Azure Hybrid Use Benefit for Windows
+     Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
+     <br><br> Minimum api-version: 2015-06-15
     :type license_type: str
     """
 

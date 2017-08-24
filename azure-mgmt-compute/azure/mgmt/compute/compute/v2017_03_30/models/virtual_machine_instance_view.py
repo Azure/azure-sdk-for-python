@@ -36,7 +36,11 @@ class VirtualMachineInstanceView(Model):
     :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView>`
-    :param boot_diagnostics: The boot diagnostics.
+    :param boot_diagnostics: Boot Diagnostics is a debugging feature which
+     allows you to view Console Output and Screenshot to diagnose VM status.
+     <br><br> For Linux Virtual Machines, you can easily view the output of
+     your console log. <br><br> For both Windows and Linux virtual machines,
+     Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
      <azure.mgmt.compute.compute.v2017_03_30.models.BootDiagnosticsInstanceView>`
     :param statuses: The resource status information.

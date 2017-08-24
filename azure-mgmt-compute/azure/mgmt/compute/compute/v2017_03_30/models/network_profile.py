@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class NetworkProfile(Model):
-    """Describes a network profile.
+    """Specifies the network interfaces of the virtual machine.
 
-    :param network_interfaces: Specifies the list of resource IDs for the
+    :param network_interfaces: Specifies the list of resource Ids for the
      network interfaces associated with the virtual machine.
     :type network_interfaces: list of :class:`NetworkInterfaceReference
      <azure.mgmt.compute.compute.v2017_03_30.models.NetworkInterfaceReference>`

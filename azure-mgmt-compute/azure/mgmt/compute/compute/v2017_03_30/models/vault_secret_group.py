@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class VaultSecretGroup(Model):
     """Describes a set of certificates which are all in the same Key Vault.
 
-    :param source_vault: The Relative URL of the Key Vault containing all of
+    :param source_vault: The relative URL of the Key Vault containing all of
      the certificates in VaultCertificates.
     :type source_vault: :class:`SubResource
      <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`

@@ -22,7 +22,8 @@ class ResourceSku(Model):
     :vartype resource_type: str
     :ivar name: The name of SKU.
     :vartype name: str
-    :ivar tier: The tier of this particular SKU.
+    :ivar tier: Specifies the tier of virtual machines in a scale set.<br
+     /><br /> Possible Values:<br /><br /> **Standard**<br /><br /> **Basic**
     :vartype tier: str
     :ivar size: The Size of the SKU.
     :vartype size: str
@@ -30,7 +31,7 @@ class ResourceSku(Model):
     :vartype family: str
     :ivar kind: The Kind of resources that are supported in this SKU.
     :vartype kind: str
-    :ivar capacity: Available scaling information.
+    :ivar capacity: Specifies the number of virtual machines in the scale set.
     :vartype capacity: :class:`ResourceSkuCapacity
      <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSkuCapacity>`
     :ivar locations: The set of locations that the SKU is available.
