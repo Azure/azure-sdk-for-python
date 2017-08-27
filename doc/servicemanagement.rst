@@ -62,7 +62,7 @@ the path to the .pem file.
 
     from azure.servicemanagement import ServiceManagementService
     subscription_id = '00000000-0000-0000-0000-000000000000'
-    cert_file = 'mycert.pem'
+    cert_file = 'mycert.pem'  # May also be a string
     sms = ServiceManagementService(subscription_id, cert_file)
 
 List Available Locations
