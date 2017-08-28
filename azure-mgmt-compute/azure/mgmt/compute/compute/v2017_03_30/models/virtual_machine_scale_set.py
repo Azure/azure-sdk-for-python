@@ -43,9 +43,6 @@ class VirtualMachineScaleSet(Resource):
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: :class:`UpgradePolicy
      <azure.mgmt.compute.compute.v2017_03_30.models.UpgradePolicy>`
-    :param recovery_policy: The recovery policy.
-    :type recovery_policy: :class:`RecoveryPolicy
-     <azure.mgmt.compute.compute.v2017_03_30.models.RecoveryPolicy>`
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
      <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetVMProfile>`
@@ -85,7 +82,6 @@ class VirtualMachineScaleSet(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
-        'recovery_policy': {'key': 'properties.recoveryPolicy', 'type': 'RecoveryPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
@@ -94,12 +90,11 @@ class VirtualMachineScaleSet(Resource):
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, recovery_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
+    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.plan = plan
         self.upgrade_policy = upgrade_policy
-        self.recovery_policy = recovery_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
         self.overprovision = overprovision
