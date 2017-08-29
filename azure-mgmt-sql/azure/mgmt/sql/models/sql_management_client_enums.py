@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class BackupLongTermRetentionPolicyState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
 class RestorePointType(Enum):
 
     discrete = "DISCRETE"
@@ -46,6 +52,25 @@ class ServerConnectionType(Enum):
     redirect = "Redirect"
 
 
+class SecurityAlertPolicyState(Enum):
+
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyEmailAccountAdmins(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyUseServerDefault(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class DataMaskingState(Enum):
 
     disabled = "Disabled"
@@ -60,8 +85,8 @@ class DataMaskingRuleState(Enum):
 
 class DataMaskingFunction(Enum):
 
-    ccn = "CCN"
     default = "Default"
+    ccn = "CCN"
     email = "Email"
     number = "Number"
     ssn = "SSN"
@@ -251,35 +276,16 @@ class TransparentDataEncryptionActivityStatus(Enum):
     decrypting = "Decrypting"
 
 
-class SecurityAlertPolicyState(Enum):
-
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyUseServerDefault(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class BackupLongTermRetentionPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class BlobAuditingPolicyState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ServerKeyType(Enum):
+
+    service_managed = "ServiceManaged"
+    azure_key_vault = "AzureKeyVault"
 
 
 class ReadWriteEndpointFailoverPolicy(Enum):
@@ -300,12 +306,77 @@ class FailoverGroupReplicationRole(Enum):
     secondary = "Secondary"
 
 
+class OperationOrigin(Enum):
+
+    user = "user"
+    system = "system"
+
+
 class IdentityType(Enum):
 
     system_assigned = "SystemAssigned"
 
 
-class ServerKeyType(Enum):
+class SyncAgentState(Enum):
 
-    service_managed = "ServiceManaged"
-    azure_key_vault = "AzureKeyVault"
+    online = "Online"
+    offline = "Offline"
+    never_connected = "NeverConnected"
+
+
+class SyncMemberDbType(Enum):
+
+    azure_sql_database = "AzureSqlDatabase"
+    sql_server_database = "SqlServerDatabase"
+
+
+class SyncGroupLogType(Enum):
+
+    all = "All"
+    error = "Error"
+    warning = "Warning"
+    success = "Success"
+
+
+class SyncConflictResolutionPolicy(Enum):
+
+    hub_win = "HubWin"
+    member_win = "MemberWin"
+
+
+class SyncGroupState(Enum):
+
+    not_ready = "NotReady"
+    error = "Error"
+    warning = "Warning"
+    progressing = "Progressing"
+    good = "Good"
+
+
+class SyncDirection(Enum):
+
+    bidirectional = "Bidirectional"
+    one_way_member_to_hub = "OneWayMemberToHub"
+    one_way_hub_to_member = "OneWayHubToMember"
+
+
+class SyncMemberState(Enum):
+
+    sync_in_progress = "SyncInProgress"
+    sync_succeeded = "SyncSucceeded"
+    sync_failed = "SyncFailed"
+    disabled_tombstone_cleanup = "DisabledTombstoneCleanup"
+    disabled_backup_restore = "DisabledBackupRestore"
+    sync_succeeded_with_warnings = "SyncSucceededWithWarnings"
+    sync_cancelling = "SyncCancelling"
+    sync_cancelled = "SyncCancelled"
+    un_provisioned = "UnProvisioned"
+    provisioning = "Provisioning"
+    provisioned = "Provisioned"
+    provision_failed = "ProvisionFailed"
+    de_provisioning = "DeProvisioning"
+    de_provisioned = "DeProvisioned"
+    de_provision_failed = "DeProvisionFailed"
+    reprovisioning = "Reprovisioning"
+    reprovision_failed = "ReprovisionFailed"
+    un_reprovisioned = "UnReprovisioned"
