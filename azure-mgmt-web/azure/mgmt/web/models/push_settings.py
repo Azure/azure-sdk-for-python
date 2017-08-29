@@ -9,12 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class PushSettings(Model):
+class PushSettings(ProxyOnlyResource):
     """Push settings for the App.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param is_push_enabled: Gets or sets a flag indicating whether the Push
      endpoint is enabled.
     :type is_push_enabled: bool
@@ -32,21 +43,54 @@ class PushSettings(Model):
      dynamic tags that will be evaluated from user claims in the push
      registration endpoint.
     :type dynamic_tags_json: str
+    :param is_push_enabled1: Gets or sets a flag indicating whether the Push
+     endpoint is enabled.
+    :type is_push_enabled1: bool
+    :param tag_whitelist_json1: Gets or sets a JSON string containing a list
+     of tags that are whitelisted for use by the push registration endpoint.
+    :type tag_whitelist_json1: str
+    :param tags_requiring_auth1: Gets or sets a JSON string containing a list
+     of tags that require user authentication to be used in the push
+     registration endpoint.
+     Tags can consist of alphanumeric characters and the following:
+     '_', '@', '#', '.', ':', '-'.
+     Validation should be performed at the PushRequestHandler.
+    :type tags_requiring_auth1: str
+    :param dynamic_tags_json1: Gets or sets a JSON string containing a list of
+     dynamic tags that will be evaluated from user claims in the push
+     registration endpoint.
+    :type dynamic_tags_json1: str
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'is_push_enabled': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'tag_whitelist_json': {'key': 'tagWhitelistJson', 'type': 'str'},
         'tags_requiring_auth': {'key': 'tagsRequiringAuth', 'type': 'str'},
         'dynamic_tags_json': {'key': 'dynamicTagsJson', 'type': 'str'},
+        'is_push_enabled1': {'key': 'properties.isPushEnabled', 'type': 'bool'},
+        'tag_whitelist_json1': {'key': 'properties.tagWhitelistJson', 'type': 'str'},
+        'tags_requiring_auth1': {'key': 'properties.tagsRequiringAuth', 'type': 'str'},
+        'dynamic_tags_json1': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, is_push_enabled, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
+    def __init__(self, is_push_enabled, kind=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None, is_push_enabled1=None, tag_whitelist_json1=None, tags_requiring_auth1=None, dynamic_tags_json1=None):
+        super(PushSettings, self).__init__(kind=kind)
         self.is_push_enabled = is_push_enabled
         self.tag_whitelist_json = tag_whitelist_json
         self.tags_requiring_auth = tags_requiring_auth
         self.dynamic_tags_json = dynamic_tags_json
+        self.is_push_enabled1 = is_push_enabled1
+        self.tag_whitelist_json1 = tag_whitelist_json1
+        self.tags_requiring_auth1 = tags_requiring_auth1
+        self.dynamic_tags_json1 = dynamic_tags_json1

@@ -20,14 +20,14 @@ class DeletedSite(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar deleted_timestamp: Time in UTC when the app was deleted.
@@ -140,7 +140,9 @@ class DeletedSite(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'deleted_timestamp': {'readonly': True},
         'state': {'readonly': True},
         'host_names': {'readonly': True},
@@ -203,8 +205,8 @@ class DeletedSite(Resource):
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="WebSites", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
-        super(DeletedSite, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="WebSites", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
+        super(DeletedSite, self).__init__(kind=kind, location=location, tags=tags)
         self.deleted_timestamp = None
         self.state = None
         self.host_names = None
