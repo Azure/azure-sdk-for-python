@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_sub_resource import SqlSubResource
+from .proxy_resource import ProxyResource
 
 
-class ServerAzureADAdministrator(SqlSubResource):
+class ServerAzureADAdministrator(ProxyResource):
     """An server Active Directory Administrator.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar administrator_type: The type of administrator. Default value:
      "ActiveDirectory" .
     :vartype administrator_type: str
@@ -34,8 +36,9 @@ class ServerAzureADAdministrator(SqlSubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
@@ -43,8 +46,9 @@ class ServerAzureADAdministrator(SqlSubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'administrator_type': {'key': 'properties.administratorType', 'type': 'str'},
         'login': {'key': 'properties.login', 'type': 'str'},
         'sid': {'key': 'properties.sid', 'type': 'str'},
