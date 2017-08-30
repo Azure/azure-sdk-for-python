@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteInstance(Resource):
+class SiteInstance(ProxyOnlyResource):
     """Instance of an app.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,23 +20,20 @@ class SiteInstance(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar site_instance_name: Name of instance.
     :vartype site_instance_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'site_instance_name': {'readonly': True},
     }
 
@@ -44,12 +41,10 @@ class SiteInstance(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'site_instance_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(SiteInstance, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(SiteInstance, self).__init__(kind=kind)
         self.site_instance_name = None

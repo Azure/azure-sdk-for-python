@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class TopLevelDomain(Resource):
+class TopLevelDomain(ProxyOnlyResource):
     """A top level domain object.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class TopLevelDomain(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar domain_name: Name of the top level domain.
     :vartype domain_name: str
     :param privacy: If <code>true</code>, then the top level domain supports
@@ -39,7 +35,8 @@ class TopLevelDomain(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'domain_name': {'readonly': True},
     }
 
@@ -47,14 +44,12 @@ class TopLevelDomain(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'domain_name': {'key': 'properties.name', 'type': 'str'},
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, privacy=None):
-        super(TopLevelDomain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, privacy=None):
+        super(TopLevelDomain, self).__init__(kind=kind)
         self.domain_name = None
         self.privacy = privacy
