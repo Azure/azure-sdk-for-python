@@ -9,15 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class VnetInfo(Model):
+class VnetInfo(ProxyOnlyResource):
     """Virtual Network information contract.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param vnet_resource_id: The Virtual Network's resource ID.
     :type vnet_resource_id: str
     :ivar cert_thumbprint: The client certificate thumbprint.
@@ -38,21 +46,29 @@ class VnetInfo(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'cert_thumbprint': {'readonly': True},
         'routes': {'readonly': True},
         'resync_required': {'readonly': True},
     }
 
     _attribute_map = {
-        'vnet_resource_id': {'key': 'vnetResourceId', 'type': 'str'},
-        'cert_thumbprint': {'key': 'certThumbprint', 'type': 'str'},
-        'cert_blob': {'key': 'certBlob', 'type': 'str'},
-        'routes': {'key': 'routes', 'type': '[VnetRoute]'},
-        'resync_required': {'key': 'resyncRequired', 'type': 'bool'},
-        'dns_servers': {'key': 'dnsServers', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
+        'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
+        'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
+        'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
+        'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
+        'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
     }
 
-    def __init__(self, vnet_resource_id=None, cert_blob=None, dns_servers=None):
+    def __init__(self, kind=None, vnet_resource_id=None, cert_blob=None, dns_servers=None):
+        super(VnetInfo, self).__init__(kind=kind)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = None
         self.cert_blob = cert_blob
