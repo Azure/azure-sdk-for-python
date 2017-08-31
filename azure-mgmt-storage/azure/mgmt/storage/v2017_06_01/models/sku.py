@@ -28,18 +28,51 @@ class Sku(Model):
      values include: 'Standard', 'Premium'
     :vartype tier: str or :class:`SkuTier
      <azure.mgmt.storage.v2017_06_01.models.SkuTier>`
+    :ivar resource_type: The type of the resource, usually it is
+     'storageAccounts'.
+    :vartype resource_type: str
+    :ivar kind: Indicates the type of storage account. Possible values
+     include: 'Storage', 'BlobStorage'
+    :vartype kind: str or :class:`Kind
+     <azure.mgmt.storage.v2017_06_01.models.Kind>`
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list of str
+    :ivar capabilities: The capability information in the specified sku,
+     including file encryption, network acls, change notification, etc.
+    :vartype capabilities: list of :class:`SKUCapability
+     <azure.mgmt.storage.v2017_06_01.models.SKUCapability>`
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions: list of :class:`Restriction
+     <azure.mgmt.storage.v2017_06_01.models.Restriction>`
     """
 
     _validation = {
         'name': {'required': True},
         'tier': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'kind': {'readonly': True},
+        'locations': {'readonly': True},
+        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},
         'tier': {'key': 'tier', 'type': 'SkuTier'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'Kind'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
     }
 
-    def __init__(self, name):
+    def __init__(self, name, restrictions=None):
         self.name = name
         self.tier = None
+        self.resource_type = None
+        self.kind = None
+        self.locations = None
+        self.capabilities = None
+        self.restrictions = restrictions

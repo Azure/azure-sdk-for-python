@@ -47,9 +47,9 @@ class StorageAccountUpdateParameters(Model):
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true. Default value: False .
     :type enable_https_traffic_only: bool
-    :param network_acls: Network ACL
-    :type network_acls: :class:`StorageNetworkAcls
-     <azure.mgmt.storage.v2017_06_01.models.StorageNetworkAcls>`
+    :param network_rule_set: Network rule set
+    :type network_rule_set: :class:`NetworkRuleSet
+     <azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet>`
     """
 
     _attribute_map = {
@@ -60,10 +60,10 @@ class StorageAccountUpdateParameters(Model):
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
-        'network_acls': {'key': 'properties.networkAcls', 'type': 'StorageNetworkAcls'},
+        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False, network_acls=None):
+    def __init__(self, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False, network_rule_set=None):
         self.sku = sku
         self.tags = tags
         self.identity = identity
@@ -71,4 +71,4 @@ class StorageAccountUpdateParameters(Model):
         self.encryption = encryption
         self.access_tier = access_tier
         self.enable_https_traffic_only = enable_https_traffic_only
-        self.network_acls = network_acls
+        self.network_rule_set = network_rule_set

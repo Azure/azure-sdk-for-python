@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .sk_us_operations import SKUsOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usage_operations import UsageOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'Operations',
-    'SKUsOperations',
-    'StorageAccountsOperations',
-    'UsageOperations',
-]
+
+class SkuPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Sku <azure.mgmt.storage.v2017_06_01.models.Sku>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Sku]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SkuPaged, self).__init__(*args, **kwargs)

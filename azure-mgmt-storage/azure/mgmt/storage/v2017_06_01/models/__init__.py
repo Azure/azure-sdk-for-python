@@ -15,8 +15,10 @@ from .metric_specification import MetricSpecification
 from .service_specification import ServiceSpecification
 from .operation import Operation
 from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
-from .check_name_availability_result import CheckNameAvailabilityResult
+from .sku_capability import SKUCapability
+from .restriction import Restriction
 from .sku import Sku
+from .check_name_availability_result import CheckNameAvailabilityResult
 from .custom_domain import CustomDomain
 from .encryption_service import EncryptionService
 from .encryption_services import EncryptionServices
@@ -24,7 +26,7 @@ from .key_vault_properties import KeyVaultProperties
 from .encryption import Encryption
 from .virtual_network_rule import VirtualNetworkRule
 from .ip_rule import IPRule
-from .storage_network_acls import StorageNetworkAcls
+from .network_rule_set import NetworkRuleSet
 from .identity import Identity
 from .storage_account_create_parameters import StorageAccountCreateParameters
 from .endpoints import Endpoints
@@ -41,19 +43,21 @@ from .list_account_sas_response import ListAccountSasResponse
 from .service_sas_parameters import ServiceSasParameters
 from .list_service_sas_response import ListServiceSasResponse
 from .operation_paged import OperationPaged
+from .sku_paged import SkuPaged
 from .storage_account_paged import StorageAccountPaged
 from .usage_paged import UsagePaged
 from .storage_management_client_enums import (
-    Reason,
+    ReasonCode,
     SkuName,
     SkuTier,
+    Kind,
+    Reason,
     KeySource,
     Action,
     State,
     Bypass,
     DefaultAction,
     AccessTier,
-    Kind,
     ProvisioningState,
     AccountStatus,
     KeyPermission,
@@ -72,8 +76,10 @@ __all__ = [
     'ServiceSpecification',
     'Operation',
     'StorageAccountCheckNameAvailabilityParameters',
-    'CheckNameAvailabilityResult',
+    'SKUCapability',
+    'Restriction',
     'Sku',
+    'CheckNameAvailabilityResult',
     'CustomDomain',
     'EncryptionService',
     'EncryptionServices',
@@ -81,7 +87,7 @@ __all__ = [
     'Encryption',
     'VirtualNetworkRule',
     'IPRule',
-    'StorageNetworkAcls',
+    'NetworkRuleSet',
     'Identity',
     'StorageAccountCreateParameters',
     'Endpoints',
@@ -98,18 +104,20 @@ __all__ = [
     'ServiceSasParameters',
     'ListServiceSasResponse',
     'OperationPaged',
+    'SkuPaged',
     'StorageAccountPaged',
     'UsagePaged',
-    'Reason',
+    'ReasonCode',
     'SkuName',
     'SkuTier',
+    'Kind',
+    'Reason',
     'KeySource',
     'Action',
     'State',
     'Bypass',
     'DefaultAction',
     'AccessTier',
-    'Kind',
     'ProvisioningState',
     'AccountStatus',
     'KeyPermission',

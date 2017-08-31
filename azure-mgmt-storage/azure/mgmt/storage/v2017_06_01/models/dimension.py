@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Dimension(Model):
-    """Dimensions.
+    """Dimension of blobs, possiblly be blob type or access tier.
 
     :param name: Display name of dimension.
     :type name: str
