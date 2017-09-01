@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -45,6 +45,8 @@ class EventCategoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`LocalizableString
+         <azure.monitor.models.LocalizableString>`
         :rtype: :class:`LocalizableStringPaged
          <azure.monitor.models.LocalizableStringPaged>`
         :raises:

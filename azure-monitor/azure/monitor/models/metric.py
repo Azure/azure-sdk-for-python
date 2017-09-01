@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class Metric(Model):
-    """A set of metric values in a time range.
+    """The result data of a query.
 
-    :param id: the id, resourceId, of the metric.
+    :param id: the metric Id.
     :type id: str
     :param type: the resource type of the metric resource.
     :type type: str
@@ -27,15 +27,18 @@ class Metric(Model):
      'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent',
      'MilliSeconds'
     :type unit: str or :class:`Unit <azure.monitor.models.Unit>`
-    :param data: Array of data points representing the metric values.
-    :type data: list of :class:`MetricValue
-     <azure.monitor.models.MetricValue>`
+    :param timeseries: the time series returned when a data query is
+     performed.
+    :type timeseries: list of :class:`TimeSeriesElement
+     <azure.monitor.models.TimeSeriesElement>`
     """
 
     _validation = {
+        'id': {'required': True},
+        'type': {'required': True},
         'name': {'required': True},
         'unit': {'required': True},
-        'data': {'required': True},
+        'timeseries': {'required': True},
     }
 
     _attribute_map = {
@@ -43,12 +46,12 @@ class Metric(Model):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
         'unit': {'key': 'unit', 'type': 'Unit'},
-        'data': {'key': 'data', 'type': '[MetricValue]'},
+        'timeseries': {'key': 'timeseries', 'type': '[TimeSeriesElement]'},
     }
 
-    def __init__(self, name, unit, data, id=None, type=None):
+    def __init__(self, id, type, name, unit, timeseries):
         self.id = id
         self.type = type
         self.name = name
         self.unit = unit
-        self.data = data
+        self.timeseries = timeseries

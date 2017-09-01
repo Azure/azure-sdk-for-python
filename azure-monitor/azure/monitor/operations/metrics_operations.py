@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,7 +22,7 @@ class MetricsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-09-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,94 +30,115 @@ class MetricsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2017-05-01-preview"
 
         self.config = config
 
     def list(
-            self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric values for a resource.
+            self, resource_uri, timespan=None, interval=None, metric=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, custom_headers=None, raw=False, **operation_config):
+        """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: Reduces the set of data collected.<br>The filter is
-         optional. If present it must contain a list of metric names to
-         retrieve of the form: *(name.value eq 'metricName' [or name.value eq
-         'metricName' or ...])*. Optionally, the filter can contain conditions
-         for the following attributes *aggregationType*, *startTime*,
-         *endTime*, and *timeGrain* of the form *attributeName operator value*.
-         Where operator is one of *ne*, *eq*, *gt*, *lt*.<br>Several conditions
-         can be combined with parentheses and logical operators, e.g: *and*,
-         *or*.<br>Some example filter expressions are:<br>- $filter=(name.value
-         eq 'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
-         2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-         duration'PT1M',<br>- $filter=(name.value eq 'RunsSucceeded') and
-         (aggregationType eq 'Total' or aggregationType eq 'Average') and
-         startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-         duration'PT1H',<br>- $filter=(name.value eq 'ActionsCompleted' or
-         name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or
-         aggregationType eq 'Average') and startTime eq 2016-02-20 and endTime
-         eq 2016-02-21 and timeGrain eq duration'PT1M'.<br><br>**NOTE**: When a
-         metrics query comes in with multiple metrics, but with no aggregation
-         types defined, the service will pick the Primary aggregation type of
-         the first metrics to be used as the default aggregation type for all
-         the metrics.
+        :param timespan: The timespan of the query. It is a string with the
+         following format 'startDateTime_ISO/endDateTime_ISO'.
+        :type timespan: str
+        :param interval: The interval (i.e. timegrain) of the query.
+        :type interval: timedelta
+        :param metric: The name of the metric to retrieve.
+        :type metric: str
+        :param aggregation: The list of aggregation types (comma separated) to
+         retrieve.
+        :type aggregation: str
+        :param top: The maximum number of records to retrieve.
+         Valid only if $filter is specified.
+         Defaults to 10.
+        :type top: float
+        :param orderby: The aggregation to use for sorting results and the
+         direction of the sort.
+         Only one order can be specified.
+         Examples: sum asc.
+        :type orderby: str
+        :param filter: The **$filter** is used to reduce the set of metric
+         data returned.<br>Example:<br>Metric contains metadata A, B and
+         C.<br>- Return all time series of C where A = a1 and B = b1 or
+         b2<br>**$filter=A eq ‘a1’ and B eq ‘b1’ or B eq ‘b2’ and C eq
+         ‘*’**<br>- Invalid variant:<br>**$filter=A eq ‘a1’ and B eq ‘b1’ and C
+         eq ‘*’ or B = ‘b2’**<br>This is invalid because the logical or
+         operator cannot separate two different metadata names.<br>- Return all
+         time series where A = a1, B = b1 and C = c1:<br>**$filter=A eq ‘a1’
+         and B eq ‘b1’ and C eq ‘c1’**<br>- Return all time series where A =
+         a1<br>**$filter=A eq ‘a1’ and B eq ‘*’ and C eq ‘*’**.
         :type filter: str
+        :param result_type: Reduces the set of data collected. The syntax
+         allowed depends on the operation. See the operation's description for
+         details. Possible values include: 'Data', 'Metadata'
+        :type result_type: str or :class:`ResultType
+         <azure.monitor.models.ResultType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`MetricPaged <azure.monitor.models.MetricPaged>`
+        :return: :class:`Response <azure.monitor.models.Response>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Response <azure.monitor.models.Response>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/{resourceUri}/providers/microsoft.insights/metrics'
+        path_format_arguments = {
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/{resourceUri}/providers/microsoft.insights/metrics'
-                path_format_arguments = {
-                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        if timespan is not None:
+            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
+        if interval is not None:
+            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
+        if metric is not None:
+            query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
+        if aggregation is not None:
+            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'float')
+        if orderby is not None:
+            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        if result_type is not None:
+            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.MetricPaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Response', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.MetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
