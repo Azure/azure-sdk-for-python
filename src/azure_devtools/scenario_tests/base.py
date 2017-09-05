@@ -12,6 +12,7 @@ import shutil
 import logging
 import six
 import vcr
+import re
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
@@ -142,6 +143,11 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         os.environ = self.original_env
 
     def _process_request_recording(self, request):
+        # URL parsing fix to account for '//' vs '/' in different versions of python
+        # - Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
+        # - Python 3.5 (...Microsoft.Compute/availabilitySets...)
+        request.uri = re.sub('(?<!:)//', '/', request.uri)
+
         if self.disable_recording:
             return None
 
