@@ -13,32 +13,23 @@ from msrest.serialization import Model
 
 
 class ClientDiscoveryForLogSpecification(Model):
-    """Log specification for the operation.
+    """Class to represent shoebox log specification in json client discovery.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Name of the log.
-    :vartype name: str
-    :ivar display_name: Localized display name.
-    :vartype display_name: str
-    :ivar blob_duration: Blob duration.
-    :vartype blob_duration: datetime
+    :param name: Name of the log.
+    :type name: str
+    :param display_name: Localized display name
+    :type display_name: str
+    :param blob_duration: Blobs created in customer storage account per hour
+    :type blob_duration: str
     """
-
-    _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'blob_duration': {'readonly': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'iso-8601'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.name = None
-        self.display_name = None
-        self.blob_duration = None
+    def __init__(self, name=None, display_name=None, blob_duration=None):
+        self.name = name
+        self.display_name = display_name
+        self.blob_duration = blob_duration

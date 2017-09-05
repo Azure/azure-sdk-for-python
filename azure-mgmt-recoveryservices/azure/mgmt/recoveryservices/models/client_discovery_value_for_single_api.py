@@ -15,39 +15,29 @@ from msrest.serialization import Model
 class ClientDiscoveryValueForSingleApi(Model):
     """Available operation details.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Name of the operation.
-    :vartype name: str
-    :ivar display: Contains the localized display information for this
-     particular operation.
-    :vartype display: :class:`ClientDiscoveryDisplay
+    :param name: Name of the operation
+    :type name: str
+    :param display: Contains the localized display information for this
+     particular operation
+    :type display: :class:`ClientDiscoveryDisplay
      <azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay>`
-    :ivar origin: The intended executor of the operation.
-    :vartype origin: str
-    :ivar service_specification: Operation properties.
-    :vartype service_specification:
-     :class:`ClientDiscoveryForServiceSpecification
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification>`
+    :param origin: The intended executor of the operation;governs the display
+     of the operation in the RBAC UX and the audit logs UX
+    :type origin: str
+    :param properties: Properties
+    :type properties: :class:`ClientDiscoveryForProperties
+     <azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties>`
     """
-
-    _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
-        'origin': {'readonly': True},
-        'service_specification': {'readonly': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'display': {'key': 'Display', 'type': 'ClientDiscoveryDisplay'},
         'origin': {'key': 'Origin', 'type': 'str'},
-        'service_specification': {'key': 'Properties.serviceSpecification', 'type': 'ClientDiscoveryForServiceSpecification'},
+        'properties': {'key': 'Properties', 'type': 'ClientDiscoveryForProperties'},
     }
 
-    def __init__(self):
-        self.name = None
-        self.display = None
-        self.origin = None
-        self.service_specification = None
+    def __init__(self, name=None, display=None, origin=None, properties=None):
+        self.name = name
+        self.display = display
+        self.origin = origin
+        self.properties = properties
