@@ -78,8 +78,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         self.assertTrue(len(my_servers) >= 1)
         self.assertTrue(any(server.name == server_name for server in my_servers))
 
-        usages = list(self.client.servers.list_usages(resource_group.name, server_name))
-        # FIXME test content of "usages", not just the call
+        usages = list(self.client.server_usages.list_by_server(resource_group.name, server_name))
+        self.assertTrue(any(usage.name == 'server_dtu_quota' for usage in usages))
 
         firewall_rule_name = self.get_resource_name('firewallrule')
         firewall_rule = self.client.firewall_rules.create_or_update(
@@ -124,8 +124,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         self.assertTrue(any(db.name == 'master' for db in my_dbs))
         self.assertTrue(any(db.name == db_name for db in my_dbs))
 
-        usages = list(self.client.databases.list_usages(resource_group.name, server.name, db_name))
-        # FIXME test content of "usages", not just the call
+        usages = list(self.client.database_usages.list_by_database(resource_group.name, server.name, db_name))
+        self.assertTrue(any(usage.name == 'database_size' for usage in usages))
 
         self.client.databases.delete(resource_group.name, server.name, db_name)
 
