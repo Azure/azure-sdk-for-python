@@ -10,9 +10,9 @@ import inspect
 import tempfile
 import shutil
 import logging
+import re
 import six
 import vcr
-import re
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
