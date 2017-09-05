@@ -23,7 +23,10 @@ def patch_long_run_operation_delay(unit_test):
 
 
 def mock_in_unit_test(unit_test, target, replacement):
-    import mock
+    try:
+        import unittest.mock as mock
+    except ImportError:
+        import mock
     import unittest
 
     if not isinstance(unit_test, unittest.TestCase):
