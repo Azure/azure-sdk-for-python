@@ -177,7 +177,7 @@ class GeneralNameReplacer(RecordingProcessor):
         return response
 
 
-class SlashReplacer(RecordingProcessor):
+class RequestUrlNormalizer(RecordingProcessor):
     """URL parsing fix to account for '//' vs '/' in different versions of python"""
     def process_request(self, request):
         import re
