@@ -175,3 +175,11 @@ class GeneralNameReplacer(RecordingProcessor):
             self.replace_header(response, 'azure-asyncoperation', old, new)
 
         return response
+
+
+class SlashReplacer(RecordingProcessor):
+    """URL parsing fix to account for '//' vs '/' in different versions of python"""
+    def process_request(self, request):
+        import re
+        request.uri = re.sub('(?<!:)//', '/', request.uri)
+        return request
