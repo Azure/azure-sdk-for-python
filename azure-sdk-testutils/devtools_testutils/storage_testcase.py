@@ -24,10 +24,12 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                  sku='Standard_LRS', location='westus', kind='storage',
                  parameter_name='storage_account',
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-                 disable_recording=True, playback_fake_resource=None):
+                 disable_recording=True, playback_fake_resource=None,
+                 client_kwargs=None):
         super(StorageAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
-                                                     playback_fake_resource=playback_fake_resource)
+                                                     playback_fake_resource=playback_fake_resource,
+                                                     client_kwargs=client_kwargs)
         self.location = location
         self.sku = sku
         self.kind = kind
