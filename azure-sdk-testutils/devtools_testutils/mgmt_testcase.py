@@ -198,11 +198,13 @@ class AzureMgmtTestCase(ReplayableTest):
 class AzureMgmtPreparer(AbstractPreparer):
     def __init__(self, name_prefix, random_name_length,
                  disable_recording=True,
-                 playback_fake_resource=None):
+                 playback_fake_resource=None,
+                 client_kwargs=None):
         super(AzureMgmtPreparer, self).__init__(name_prefix, random_name_length,
                                                 disable_recording=disable_recording)
         self.client = None
         self.resource = playback_fake_resource
+        self.client_kwargs = client_kwargs or {}
 
     @property
     def is_live(self):
@@ -227,9 +229,9 @@ class AzureMgmtPreparer(AbstractPreparer):
             self.resource_moniker = self.random_name
         return self.resource_moniker
 
-    def create_mgmt_client(self, client_class, **kwargs):
+    def create_mgmt_client(self, client_class):
         return client_class(
             credentials=self.test_class_instance.settings.get_credentials(),
             subscription_id=self.test_class_instance.settings.SUBSCRIPTION_ID,
-            **kwargs
+            **self.client_kwargs
         )
