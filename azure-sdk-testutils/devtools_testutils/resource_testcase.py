@@ -22,10 +22,12 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                  random_name_length=75,
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
-                 disable_recording=True, playback_fake_resource=None):
+                 disable_recording=True, playback_fake_resource=None,
+                 client_kwargs=None):
         super(ResourceGroupPreparer, self).__init__(name_prefix, random_name_length,
                                                     disable_recording=disable_recording,
-                                                    playback_fake_resource=playback_fake_resource)
+                                                    playback_fake_resource=playback_fake_resource,
+                                                    client_kwargs=client_kwargs)
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
