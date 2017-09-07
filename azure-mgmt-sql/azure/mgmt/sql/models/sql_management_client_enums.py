@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class BackupLongTermRetentionPolicyState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
 class RestorePointType(Enum):
 
     discrete = "DISCRETE"
@@ -46,6 +52,25 @@ class ServerConnectionType(Enum):
     redirect = "Redirect"
 
 
+class SecurityAlertPolicyState(Enum):
+
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyEmailAccountAdmins(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyUseServerDefault(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class DataMaskingState(Enum):
 
     disabled = "Disabled"
@@ -60,8 +85,8 @@ class DataMaskingRuleState(Enum):
 
 class DataMaskingFunction(Enum):
 
-    ccn = "CCN"
     default = "Default"
+    ccn = "CCN"
     email = "Email"
     number = "Number"
     ssn = "SSN"
@@ -251,35 +276,16 @@ class TransparentDataEncryptionActivityStatus(Enum):
     decrypting = "Decrypting"
 
 
-class SecurityAlertPolicyState(Enum):
-
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyUseServerDefault(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class BackupLongTermRetentionPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class BlobAuditingPolicyState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ServerKeyType(Enum):
+
+    service_managed = "ServiceManaged"
+    azure_key_vault = "AzureKeyVault"
 
 
 class ReadWriteEndpointFailoverPolicy(Enum):
@@ -303,9 +309,3 @@ class FailoverGroupReplicationRole(Enum):
 class IdentityType(Enum):
 
     system_assigned = "SystemAssigned"
-
-
-class ServerKeyType(Enum):
-
-    service_managed = "ServiceManaged"
-    azure_key_vault = "AzureKeyVault"
