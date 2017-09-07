@@ -24,7 +24,8 @@ class FileSystemHttpLogsConfig(Model):
      Remove files older than X days.
      0 or lower means no retention.
     :type retention_in_days: int
-    :param enabled: Enabled.
+    :param enabled: True if configuration is enabled, false if it is disabled
+     and null if configuration is not set.
     :type enabled: bool
     """
 

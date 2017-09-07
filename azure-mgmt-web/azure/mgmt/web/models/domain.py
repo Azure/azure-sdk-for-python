@@ -20,14 +20,14 @@ class Domain(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param contact_admin: Administrative contact.
@@ -93,7 +93,9 @@ class Domain(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'name_servers': {'readonly': True},
@@ -135,8 +137,8 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
-        super(Domain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
+        super(Domain, self).__init__(kind=kind, location=location, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

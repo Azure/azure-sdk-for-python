@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SlotConfigNamesResource(Resource):
+class SlotConfigNamesResource(ProxyOnlyResource):
     """Slot Config names azure resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class SlotConfigNamesResource(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param connection_string_names: List of connection string names.
     :type connection_string_names: list of str
     :param app_setting_names: List of application settings names.
@@ -38,21 +34,20 @@ class SlotConfigNamesResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, connection_string_names=None, app_setting_names=None):
-        super(SlotConfigNamesResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, connection_string_names=None, app_setting_names=None):
+        super(SlotConfigNamesResource, self).__init__(kind=kind)
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names
