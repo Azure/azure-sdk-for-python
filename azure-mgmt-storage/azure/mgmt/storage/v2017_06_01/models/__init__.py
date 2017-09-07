@@ -24,7 +24,7 @@ from .key_vault_properties import KeyVaultProperties
 from .encryption import Encryption
 from .virtual_network_rule import VirtualNetworkRule
 from .ip_rule import IPRule
-from .storage_network_acls import StorageNetworkAcls
+from .network_rule_set import NetworkRuleSet
 from .identity import Identity
 from .storage_account_create_parameters import StorageAccountCreateParameters
 from .endpoints import Endpoints
@@ -81,7 +81,7 @@ __all__ = [
     'Encryption',
     'VirtualNetworkRule',
     'IPRule',
-    'StorageNetworkAcls',
+    'NetworkRuleSet',
     'Identity',
     'StorageAccountCreateParameters',
     'Endpoints',

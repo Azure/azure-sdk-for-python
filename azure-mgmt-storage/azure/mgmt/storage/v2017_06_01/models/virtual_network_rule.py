@@ -18,11 +18,11 @@ class VirtualNetworkRule(Model):
     :param virtual_network_resource_id: A URL of vnet, subnet, classicVnet or
      classicSubnet.
     :type virtual_network_resource_id: str
-    :param action: The action of virtual network ACL rule. Possible values
+    :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
     :type action: str or :class:`Action
      <azure.mgmt.storage.v2017_06_01.models.Action>`
-    :param state: Gets the state of virtual network ACL rule. Possible values
+    :param state: Gets the state of virtual network rule. Possible values
      include: 'provisioning', 'deprovisioning', 'succeeded', 'failed',
      'networkSourceDeleted'
     :type state: str or :class:`State

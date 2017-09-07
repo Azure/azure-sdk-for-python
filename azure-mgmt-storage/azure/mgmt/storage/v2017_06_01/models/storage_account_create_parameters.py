@@ -47,9 +47,9 @@ class StorageAccountCreateParameters(Model):
      default setting is unencrypted.
     :type encryption: :class:`Encryption
      <azure.mgmt.storage.v2017_06_01.models.Encryption>`
-    :param network_acls: Network ACL
-    :type network_acls: :class:`StorageNetworkAcls
-     <azure.mgmt.storage.v2017_06_01.models.StorageNetworkAcls>`
+    :param network_rule_set: Network rule set
+    :type network_rule_set: :class:`NetworkRuleSet
+     <azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet>`
     :param access_tier: Required for storage accounts where kind =
      BlobStorage. The access tier used for billing. Possible values include:
      'Hot', 'Cool'
@@ -74,12 +74,12 @@ class StorageAccountCreateParameters(Model):
         'identity': {'key': 'identity', 'type': 'Identity'},
         'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'network_acls': {'key': 'properties.networkAcls', 'type': 'StorageNetworkAcls'},
+        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, sku, kind, location, tags=None, identity=None, custom_domain=None, encryption=None, network_acls=None, access_tier=None, enable_https_traffic_only=False):
+    def __init__(self, sku, kind, location, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, enable_https_traffic_only=False):
         self.sku = sku
         self.kind = kind
         self.location = location
@@ -87,6 +87,6 @@ class StorageAccountCreateParameters(Model):
         self.identity = identity
         self.custom_domain = custom_domain
         self.encryption = encryption
-        self.network_acls = network_acls
+        self.network_rule_set = network_rule_set
         self.access_tier = access_tier
         self.enable_https_traffic_only = enable_https_traffic_only
