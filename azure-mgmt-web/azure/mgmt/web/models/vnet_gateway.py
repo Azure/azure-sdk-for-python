@@ -21,14 +21,14 @@ class VnetGateway(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param vnet_name: The Virtual Network name.
@@ -39,7 +39,9 @@ class VnetGateway(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -53,7 +55,7 @@ class VnetGateway(Resource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
-        super(VnetGateway, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, vnet_name=None, vpn_package_uri=None):
+        super(VnetGateway, self).__init__(kind=kind, location=location, tags=tags)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

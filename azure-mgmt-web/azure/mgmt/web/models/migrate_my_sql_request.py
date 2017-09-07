@@ -20,24 +20,29 @@ class MigrateMySqlRequest(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
-    :param connection_string: Connection string to the remote MySQL database
-     to which data should be migrated.
+    :param connection_string: Connection string to the remote MySQL database.
     :type connection_string: str
+    :param migration_type: The type of migration operation to be done.
+     Possible values include: 'LocalToRemote', 'RemoteToLocal'
+    :type migration_type: str or :class:`MySqlMigrationType
+     <azure.mgmt.web.models.MySqlMigrationType>`
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -48,8 +53,10 @@ class MigrateMySqlRequest(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
+        'migration_type': {'key': 'properties.migrationType', 'type': 'MySqlMigrationType'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, connection_string=None):
-        super(MigrateMySqlRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, connection_string=None, migration_type=None):
+        super(MigrateMySqlRequest, self).__init__(kind=kind, location=location, tags=tags)
         self.connection_string = connection_string
+        self.migration_type = migration_type

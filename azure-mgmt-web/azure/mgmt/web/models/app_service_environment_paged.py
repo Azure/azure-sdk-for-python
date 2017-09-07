@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AppServiceEnvironmentPaged(Paged):
     """
-    A paging container for iterating over a list of AppServiceEnvironment object
+    A paging container for iterating over a list of :class:`AppServiceEnvironment <azure.mgmt.web.models.AppServiceEnvironment>` object
     """
 
     _attribute_map = {

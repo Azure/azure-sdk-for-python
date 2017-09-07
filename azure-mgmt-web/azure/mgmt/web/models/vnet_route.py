@@ -21,14 +21,14 @@ class VnetRoute(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param vnet_route_name: The name of this route. This is only returned by
@@ -54,7 +54,9 @@ class VnetRoute(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,8 +72,8 @@ class VnetRoute(Resource):
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
-        super(VnetRoute, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+        super(VnetRoute, self).__init__(kind=kind, location=location, tags=tags)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address

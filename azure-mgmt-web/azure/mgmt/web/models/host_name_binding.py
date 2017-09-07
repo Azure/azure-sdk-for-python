@@ -20,14 +20,14 @@ class HostNameBinding(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param host_name_binding_name: Hostname.
@@ -63,7 +63,9 @@ class HostNameBinding(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -85,8 +87,8 @@ class HostNameBinding(Resource):
         'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None, virtual_ip=None):
-        super(HostNameBinding, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None, virtual_ip=None):
+        super(HostNameBinding, self).__init__(kind=kind, location=location, tags=tags)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name
         self.domain_id = domain_id

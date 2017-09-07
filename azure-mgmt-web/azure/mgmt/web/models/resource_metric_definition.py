@@ -20,14 +20,14 @@ class ResourceMetricDefinition(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar resource_metric_definition_name: Name of the metric.
@@ -51,7 +51,9 @@ class ResourceMetricDefinition(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'resource_metric_definition_name': {'readonly': True},
         'unit': {'readonly': True},
         'primary_aggregation_type': {'readonly': True},
@@ -77,8 +79,8 @@ class ResourceMetricDefinition(Resource):
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(ResourceMetricDefinition, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None):
+        super(ResourceMetricDefinition, self).__init__(kind=kind, location=location, tags=tags)
         self.resource_metric_definition_name = None
         self.unit = None
         self.primary_aggregation_type = None

@@ -20,14 +20,14 @@ class RestoreRequest(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param storage_account_url: SAS URL to the container.
@@ -50,8 +50,11 @@ class RestoreRequest(Resource):
      the app's object when it is being restored, but that might fail due to
      conflicts during the operation. Default value: False .
     :type ignore_conflicting_host_names: bool
+    :param ignore_databases: Ignore the databases and only restore the site
+     content. Default value: False .
+    :type ignore_databases: bool
     :param operation_type: Operation type. Possible values include: 'Default',
-     'Clone', 'Relocation'. Default value: "Default" .
+     'Clone', 'Relocation', 'Snapshot'. Default value: "Default" .
     :type operation_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
     :param adjust_connection_strings: <code>true</code> if
@@ -65,7 +68,9 @@ class RestoreRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -81,19 +86,21 @@ class RestoreRequest(Resource):
         'site_name': {'key': 'properties.siteName', 'type': 'str'},
         'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
         'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
+        'ignore_databases': {'key': 'properties.ignoreDatabases', 'type': 'bool'},
         'operation_type': {'key': 'properties.operationType', 'type': 'BackupRestoreOperationType'},
         'adjust_connection_strings': {'key': 'properties.adjustConnectionStrings', 'type': 'bool'},
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
-        super(RestoreRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
+        super(RestoreRequest, self).__init__(kind=kind, location=location, tags=tags)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.overwrite = overwrite
         self.site_name = site_name
         self.databases = databases
         self.ignore_conflicting_host_names = ignore_conflicting_host_names
+        self.ignore_databases = ignore_databases
         self.operation_type = operation_type
         self.adjust_connection_strings = adjust_connection_strings
         self.hosting_environment = hosting_environment

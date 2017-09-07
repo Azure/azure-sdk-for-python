@@ -20,14 +20,14 @@ class StorageMigrationOptions(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param azurefiles_connection_string: AzureFiles connection string.
@@ -45,7 +45,9 @@ class StorageMigrationOptions(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -61,8 +63,8 @@ class StorageMigrationOptions(Resource):
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
-        super(StorageMigrationOptions, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
+        super(StorageMigrationOptions, self).__init__(kind=kind, location=location, tags=tags)
         self.azurefiles_connection_string = azurefiles_connection_string
         self.azurefiles_share = azurefiles_share
         self.switch_site_after_migration = switch_site_after_migration
