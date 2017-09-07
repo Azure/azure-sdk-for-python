@@ -27,6 +27,7 @@ class DatabasesOperations(object):
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     :ivar geo_backup_policy_name: The name of the geo backup policy. Constant value: "Default".
     :ivar extension_name: The name of the operation to perform. Constant value: "import".
+    :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     :ivar security_alert_policy_name: The name of the security alert policy. Constant value: "default".
     :ivar backup_long_term_retention_policy_name: The name of the backup long term retention policy. Constant value: "Default".
     :ivar blob_auditing_policy_name: The name of the blob auditing policy. Constant value: "default".
@@ -40,6 +41,7 @@ class DatabasesOperations(object):
         self.data_masking_policy_name = "Default"
         self.geo_backup_policy_name = "Default"
         self.extension_name = "import"
+        self.transparent_data_encryption_name = "current"
         self.security_alert_policy_name = "default"
         self.backup_long_term_retention_policy_name = "Default"
         self.blob_auditing_policy_name = "default"
@@ -2182,12 +2184,13 @@ class DatabasesOperations(object):
         api_version = "2014-04-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2258,12 +2261,13 @@ class DatabasesOperations(object):
         api_version = "2014-04-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2329,12 +2333,13 @@ class DatabasesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current/operationResults'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}/operationResults'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
