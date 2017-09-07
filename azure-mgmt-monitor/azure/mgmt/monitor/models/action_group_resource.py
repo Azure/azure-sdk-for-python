@@ -32,7 +32,7 @@ class ActionGroupResource(Resource):
      used in SMS messages.
     :type group_short_name: str
     :param enabled: Indicates whether this action group is enabled. If an
-     action group is not enabled, then none of its receviers will receive
+     action group is not enabled, then none of its receivers will receive
      communications. Default value: True .
     :type enabled: bool
     :param email_receivers: The list of email receivers that are part of this

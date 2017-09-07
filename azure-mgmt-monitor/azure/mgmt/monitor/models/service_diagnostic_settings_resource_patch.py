@@ -26,7 +26,7 @@ class ServiceDiagnosticSettingsResourcePatch(Model):
      ID}/authorizationrules/{key name}'.
     :type service_bus_rule_id: str
     :param event_hub_authorization_rule_id: The resource Id for the event hub
-     authorization rule.
+     namespace authorization rule.
     :type event_hub_authorization_rule_id: str
     :param metrics: the list of metric settings.
     :type metrics: list of :class:`MetricSettings
