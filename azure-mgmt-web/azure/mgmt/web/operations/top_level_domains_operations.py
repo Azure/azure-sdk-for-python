@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -46,6 +46,8 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`TopLevelDomain
+         <azure.mgmt.web.models.TopLevelDomain>`
         :rtype: :class:`TopLevelDomainPaged
          <azure.mgmt.web.models.TopLevelDomainPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -113,9 +115,12 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`TopLevelDomain
+         <azure.mgmt.web.models.TopLevelDomain>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -183,6 +188,8 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`TldLegalAgreement
+         <azure.mgmt.web.models.TldLegalAgreement>`
         :rtype: :class:`TldLegalAgreementPaged
          <azure.mgmt.web.models.TldLegalAgreementPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class RelayServiceConnectionEntity(Resource):
+class RelayServiceConnectionEntity(ProxyOnlyResource):
     """Hybrid Connection for an App Service app.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class RelayServiceConnectionEntity(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param entity_name:
     :type entity_name: str
     :param entity_connection_string:
@@ -48,16 +44,15 @@ class RelayServiceConnectionEntity(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'entity_name': {'key': 'properties.entityName', 'type': 'str'},
         'entity_connection_string': {'key': 'properties.entityConnectionString', 'type': 'str'},
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
@@ -67,8 +62,8 @@ class RelayServiceConnectionEntity(Resource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
-        super(RelayServiceConnectionEntity, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
+        super(RelayServiceConnectionEntity, self).__init__(kind=kind)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string
         self.resource_type = resource_type
