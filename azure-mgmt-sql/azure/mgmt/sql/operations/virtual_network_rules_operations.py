@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -54,10 +54,13 @@ class VirtualNetworkRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`VirtualNetworkRule
+         <azure.mgmt.sql.models.VirtualNetworkRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.VirtualNetworkRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -105,7 +108,7 @@ class VirtualNetworkRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, ignore_vnet_private_access_configuration=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an existing virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -117,21 +120,27 @@ class VirtualNetworkRulesOperations(object):
         :param virtual_network_rule_name: The name of the virtual network
          rule.
         :type virtual_network_rule_name: str
-        :param virtual_network_subnet_id: The resource ID of the virtual
-         network subnet
+        :param virtual_network_subnet_id: The ARM resource id of the virtual
+         network subnet.
         :type virtual_network_subnet_id: str
+        :param ignore_vnet_private_access_configuration: Create firewall rule
+         before the virtual network has private access enabled.
+        :type ignore_vnet_private_access_configuration: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.VirtualNetworkRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id)
+        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id, ignore_vnet_private_access_configuration=ignore_vnet_private_access_configuration)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{virtualNetworkRuleName}'
@@ -222,11 +231,14 @@ class VirtualNetworkRulesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -304,6 +316,8 @@ class VirtualNetworkRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`VirtualNetworkRule
+         <azure.mgmt.sql.models.VirtualNetworkRule>`
         :rtype: :class:`VirtualNetworkRulePaged
          <azure.mgmt.sql.models.VirtualNetworkRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -29,6 +29,7 @@ class PartnerInfo(Model):
     """
 
     _validation = {
+        'id': {'required': True},
         'location': {'readonly': True},
         'replication_role': {'readonly': True},
     }
@@ -39,7 +40,7 @@ class PartnerInfo(Model):
         'replication_role': {'key': 'replicationRole', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id):
         self.id = id
         self.location = None
         self.replication_role = None
