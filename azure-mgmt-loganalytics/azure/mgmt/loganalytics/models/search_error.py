@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .log_analytics_management_client import LogAnalyticsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['LogAnalyticsManagementClient']
 
-__version__ = VERSION
+class SearchError(Model):
+    """Details for a search error.
 
+    :param type: The error type.
+    :type type: str
+    :param message: The error message.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, type=None, message=None):
+        self.type = type
+        self.message = message

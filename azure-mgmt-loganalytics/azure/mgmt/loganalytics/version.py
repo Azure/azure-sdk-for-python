@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .log_analytics_management_client import LogAnalyticsManagementClient
-from .version import VERSION
-
-__all__ = ['LogAnalyticsManagementClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 
