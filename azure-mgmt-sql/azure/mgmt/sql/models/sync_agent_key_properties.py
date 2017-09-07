@@ -12,28 +12,23 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """Subresource properties.
+class SyncAgentKeyProperties(Model):
+    """Properties of an Azure SQL Database sync agent key.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
-    :vartype id: str
+    :ivar sync_agent_key: Key of sync agent.
+    :vartype sync_agent_key: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        'sync_agent_key': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'sync_agent_key': {'key': 'syncAgentKey', 'type': 'str'},
     }
 
     def __init__(self):
-        self.name = None
-        self.id = None
+        self.sync_agent_key = None

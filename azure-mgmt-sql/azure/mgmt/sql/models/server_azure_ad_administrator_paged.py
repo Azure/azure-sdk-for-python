@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServerAzureADAdministratorPaged(Paged):
     """
-    A paging container for iterating over a list of ServerAzureADAdministrator object
+    A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
     """
 
     _attribute_map = {

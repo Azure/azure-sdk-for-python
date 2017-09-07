@@ -12,28 +12,29 @@
 from msrest.serialization import Model
 
 
-class SqlSubResource(Model):
-    """Subresource properties.
+class SyncFullSchemaProperties(Model):
+    """Properties of the database full schema.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource Id
-    :vartype id: str
+    :ivar tables: List of tables in the database full schema.
+    :vartype tables: list of :class:`SyncFullSchemaTable
+     <azure.mgmt.sql.models.SyncFullSchemaTable>`
+    :ivar last_update_time: Last update time of the database schema.
+    :vartype last_update_time: datetime
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
+        'tables': {'readonly': True},
+        'last_update_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'tables': {'key': 'tables', 'type': '[SyncFullSchemaTable]'},
+        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
     }
 
     def __init__(self):
-        self.name = None
-        self.id = None
+        self.tables = None
+        self.last_update_time = None

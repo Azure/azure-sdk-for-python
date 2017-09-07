@@ -9,19 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class MetricValue(SubResource):
+class MetricValue(Model):
     """Represents database metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
-    :vartype id: str
     :ivar count: The number of values for the metric.
     :vartype count: float
     :ivar average: The average value of the metric.
@@ -37,8 +33,6 @@ class MetricValue(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
         'count': {'readonly': True},
         'average': {'readonly': True},
         'maximum': {'readonly': True},
@@ -48,8 +42,6 @@ class MetricValue(SubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
         'count': {'key': 'count', 'type': 'float'},
         'average': {'key': 'average', 'type': 'float'},
         'maximum': {'key': 'maximum', 'type': 'float'},
@@ -59,7 +51,6 @@ class MetricValue(SubResource):
     }
 
     def __init__(self):
-        super(MetricValue, self).__init__()
         self.count = None
         self.average = None
         self.maximum = None
