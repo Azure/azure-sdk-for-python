@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DeletedSitePaged(Paged):
     """
-    A paging container for iterating over a list of DeletedSite object
+    A paging container for iterating over a list of :class:`DeletedSite <azure.mgmt.web.models.DeletedSite>` object
     """
 
     _attribute_map = {

@@ -10,25 +10,25 @@
 # --------------------------------------------------------------------------
 
 from .app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
-from .app_service_environments_operations import AppServiceEnvironmentsOperations
-from .app_service_plans_operations import AppServicePlansOperations
-from .certificates_operations import CertificatesOperations
 from .domains_operations import DomainsOperations
-from .recommendations_operations import RecommendationsOperations
 from .top_level_domains_operations import TopLevelDomainsOperations
-from .web_apps_operations import WebAppsOperations
+from .certificates_operations import CertificatesOperations
 from .deleted_web_apps_operations import DeletedWebAppsOperations
 from .provider_operations import ProviderOperations
+from .recommendations_operations import RecommendationsOperations
+from .web_apps_operations import WebAppsOperations
+from .app_service_environments_operations import AppServiceEnvironmentsOperations
+from .app_service_plans_operations import AppServicePlansOperations
 
 __all__ = [
     'AppServiceCertificateOrdersOperations',
-    'AppServiceEnvironmentsOperations',
-    'AppServicePlansOperations',
-    'CertificatesOperations',
     'DomainsOperations',
-    'RecommendationsOperations',
     'TopLevelDomainsOperations',
-    'WebAppsOperations',
+    'CertificatesOperations',
     'DeletedWebAppsOperations',
     'ProviderOperations',
+    'RecommendationsOperations',
+    'WebAppsOperations',
+    'AppServiceEnvironmentsOperations',
+    'AppServicePlansOperations',
 ]

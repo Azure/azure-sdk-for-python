@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class NetworkFeatures(Resource):
+class NetworkFeatures(ProxyOnlyResource):
     """Full view of network features for an app (presently VNET integration and
     Hybrid Connections).
 
@@ -21,16 +21,12 @@ class NetworkFeatures(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar virtual_network_name: The Virtual Network name.
     :vartype virtual_network_name: str
     :ivar virtual_network_connection: The Virtual Network summary view.
@@ -46,7 +42,8 @@ class NetworkFeatures(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'virtual_network_name': {'readonly': True},
         'virtual_network_connection': {'readonly': True},
         'hybrid_connections': {'readonly': True},
@@ -57,17 +54,15 @@ class NetworkFeatures(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str'},
         'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo'},
         'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
         'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(NetworkFeatures, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(NetworkFeatures, self).__init__(kind=kind)
         self.virtual_network_name = None
         self.virtual_network_connection = None
         self.hybrid_connections = None
