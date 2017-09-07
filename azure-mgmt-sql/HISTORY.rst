@@ -3,6 +3,97 @@
 Release History
 ===============
 
+0.8.0 (2017-09-07)
+++++++++++++++++++
+
+**Disclaimer**
+
+We were using a slightly unorthodox convention for some operation ids. 
+Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..) 
+instead of the flattened ARM standard client.database_blob_auditing_policies.get(...).
+
+This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs. 
+For example if we wanted to implement listing db audit policies by server, continuing the current convention would be 
+client.databases.list_blob_auditing_policies_by_server(..) which makes much less sense than the ARM standard which would beclient.database_blob_auditing_policies.list_by_server(...)`.
+
+In order to resolve this and provide a good path moving forward, 
+we have renamed the inconsistent operations to follow the ARM standard. 
+This is an unfortunate breaking change, but it's best to do now while the SDK is still in preview and since most of these operations were only recently added.
+
+**Breaking changes**
+
+- client.database.get_backup_long_term_retention_policy -> client.backup_long_term_retention_policies.get
+- client.database.create_or_update_backup_long_term_retention_policy -> client.backup_long_term_retention_policies.create_or_update
+
+- client.servers.create_backup_long_term_retention_vault -> client.backup_long_term_retention_vaults.create_or_update
+- client.servers.get_backup_long_term_retention_vault -> client.backup_long_term_retention_vaults.get
+
+- client.database.list_restore_points -> client.restore_points.list_by_database
+
+- client.servers.create_or_update_connection_policy -> client.server_connection_policies.create_or_update
+- client.servers.get_connection_policy -> client.server_connection_policies.get
+
+- client.databases.create_or_update_data_masking_policy -> client.data_masking_policies.create_or_update
+- client.databases.get_data_masking_policy -> client.data_masking_policies.get
+
+- client.databases.create_or_update_data_masking_rule -> client.data_masking_rules.create_or_update
+- client.databases.get_data_masking_rule -> client.data_masking_rules.get
+- client.databases.list_data_masking_rules -> client.data_masking_rules.list_by_database
+
+- client.databases.get_threat_detection_policy -> client.database_threat_detection_policies.get
+- client.databases.create_or_update_threat_detection_policy -> client.database_threat_detection_policies.create_or_update
+
+- client.databases.create_or_update_geo_backup_policy -> client.geo_backup_policies.create_or_update
+- client.databases.get_geo_backup_policy -> client.geo_backup_policies.get
+- client.databases.list_geo_backup_policies -> client.geo_backup_policies.list_by_database
+
+- client.databases.delete_replication_link -> client.replication_links.delete
+- client.databases.get_replication_link -> client.replication_links.get
+- client.databases.failover_replication_link -> client.replication_links.failover
+- client.databases.failover_replication_link_allow_data_loss -> client.replication_links.failover_allow_data_loss
+- client.databases.list_replication_links -> client.replication_links.list_by_database
+
+- client.server_azure_ad_administrators.list -> client.server_azure_ad_administrators.list_by_server
+- client.servers.get_service_objective -> client.service_objectives.get
+- client.servers.list_service_objectives -> client.service_objectives.list_by_server
+
+- client.elastic_pools.list_activity -> client.elastic_pool_activities.list_by_elastic_pool
+- client.elastic_pools.list_database_activity -> client.elastic_pool_database_activities.list_by_elastic_pool
+- client.elastic_pools.get_database -> client.databases.get_by_elastic_pool
+- client.elastic_pools.list_databases -> client.databases.list_by_elastic_pool
+
+- client.recommended_elastic_pools.get_databases -> client.databases.get_by_recommended_elastic_pool
+- client.recommended_elastic_pools.list_databases -> client.databases.list_by_recommended_elastic_pool
+
+- client.databases.get_service_tier_advisor -> client.service_tier_advisors.get
+- client.databases.list_service_tier_advisors -> client.service_tier_advisors.list_by_database
+
+- client.databases.create_or_update_transparent_data_encryption_configuration -> client.transparent_data_encryptions.create_or_update
+- client.databases.get_transparent_data_encryption_configuration -> client.transparent_data_encryptions.get
+- client.databases.list_transparent_data_encryption_activity -> client.transparent_data_encryption_activities.list_by_configuration
+
+- client.servers.list_usages -> client.server_usages.list_by_server
+- client.databases.list_usages -> client.database_usages.list_by_database
+
+- client.databases.get_blob_auditing_policy -> client.database_blob_auditing_policies.get
+- client.databases.create_or_update_blob_auditing_policy -> client.database_blob_auditing_policies.create_or_update
+
+- client.servers.list_encryption_protectors, -> client.encryption_protectors.list_by_server
+- client.servers.get_encryption_protector -> client.encryption_protectors.get
+- client.servers.create_or_update_encryption_protector -> client.encryption_protectors.create_or_update
+
+- Database blob auditing policy state is required
+- Failover group resource now has required properties defined
+
+**Features**
+
+- Add SQL DB, server, and pool PATCH operations
+- client.operations.list now returnes a full list of operations and not a limited subset (2014-04-01 to 2015-05-01-preview)
+
+**Fixed bugs**
+
+- Fixed KeyError in server_azure_ad_administrators_operations.get
+
 0.7.1 (2017-06-30)
 ++++++++++++++++++
 
@@ -12,7 +103,7 @@ Release History
 0.7.0 (2017-06-28)
 ++++++++++++++++++
 
-**features**
+**Features**
 
 - Backup/Restore related: RecoverableDatabase, RestorableDroppedDatabase, BackupLongTermRetentionVault, BackupLongTermRetentionPolicy, and GeoBackupPolicy
 - Data Masking rules and policies
