@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class GeoBackupPolicyPaged(Paged):
     """
-    A paging container for iterating over a list of GeoBackupPolicy object
+    A paging container for iterating over a list of :class:`GeoBackupPolicy <azure.mgmt.sql.models.GeoBackupPolicy>` object
     """
 
     _attribute_map = {

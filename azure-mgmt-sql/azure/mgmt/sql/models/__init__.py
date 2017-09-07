@@ -10,8 +10,10 @@
 # --------------------------------------------------------------------------
 
 from .resource import Resource
-from .tracked_resource import TrackedResource
 from .proxy_resource import ProxyResource
+from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
+from .backup_long_term_retention_vault import BackupLongTermRetentionVault
+from .tracked_resource import TrackedResource
 from .restore_point import RestorePoint
 from .recoverable_database import RecoverableDatabase
 from .restorable_dropped_database import RestorableDroppedDatabase
@@ -25,9 +27,9 @@ from .elastic_pool_edition_capability import ElasticPoolEditionCapability
 from .server_version_capability import ServerVersionCapability
 from .location_capabilities import LocationCapabilities
 from .server_connection_policy import ServerConnectionPolicy
+from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .data_masking_policy import DataMaskingPolicy
 from .data_masking_rule import DataMaskingRule
-from .sub_resource import SubResource
 from .firewall_rule import FirewallRule
 from .geo_backup_policy import GeoBackupPolicy
 from .import_extension_request import ImportExtensionRequest
@@ -43,6 +45,9 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
 from .replication_link import ReplicationLink
+from .server_azure_ad_administrator import ServerAzureADAdministrator
+from .server_communication_link import ServerCommunicationLink
+from .service_objective import ServiceObjective
 from .check_name_availability_request import CheckNameAvailabilityRequest
 from .check_name_availability_response import CheckNameAvailabilityResponse
 from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
@@ -54,61 +59,61 @@ from .recommended_index import RecommendedIndex
 from .database import Database
 from .recommended_elastic_pool import RecommendedElasticPool
 from .elastic_pool import ElasticPool
+from .elastic_pool_update import ElasticPoolUpdate
 from .elastic_pool_activity import ElasticPoolActivity
 from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
+from .database_update import DatabaseUpdate
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
-from .server_azure_ad_administrator import ServerAzureADAdministrator
-from .sql_sub_resource import SqlSubResource
-from .server_communication_link import ServerCommunicationLink
-from .database_security_alert_policy import DatabaseSecurityAlertPolicy
-from .backup_long_term_retention_vault import BackupLongTermRetentionVault
-from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
-from .service_objective import ServiceObjective
 from .server_usage import ServerUsage
 from .database_usage import DatabaseUsage
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .encryption_protector import EncryptionProtector
 from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
 from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
 from .partner_info import PartnerInfo
 from .failover_group import FailoverGroup
-from .virtual_network_rule import VirtualNetworkRule
+from .server_key import ServerKey
 from .resource_identity import ResourceIdentity
 from .server import Server
-from .server_key import ServerKey
-from .encryption_protector import EncryptionProtector
+from .server_update import ServerUpdate
+from .virtual_network_rule import VirtualNetworkRule
 from .restore_point_paged import RestorePointPaged
+from .recoverable_database_paged import RecoverableDatabasePaged
+from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .data_masking_rule_paged import DataMaskingRulePaged
+from .firewall_rule_paged import FirewallRulePaged
 from .geo_backup_policy_paged import GeoBackupPolicyPaged
 from .metric_paged import MetricPaged
 from .metric_definition_paged import MetricDefinitionPaged
-from .replication_link_paged import ReplicationLinkPaged
 from .database_paged import DatabasePaged
-from .service_tier_advisor_paged import ServiceTierAdvisorPaged
-from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
-from .database_usage_paged import DatabaseUsagePaged
-from .recoverable_database_paged import RecoverableDatabasePaged
-from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
-from .service_objective_paged import ServiceObjectivePaged
-from .server_usage_paged import ServerUsagePaged
-from .server_paged import ServerPaged
-from .encryption_protector_paged import EncryptionProtectorPaged
-from .firewall_rule_paged import FirewallRulePaged
 from .elastic_pool_paged import ElasticPoolPaged
+from .replication_link_paged import ReplicationLinkPaged
+from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
+from .server_communication_link_paged import ServerCommunicationLinkPaged
+from .service_objective_paged import ServiceObjectivePaged
+from .server_paged import ServerPaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
-from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
-from .server_communication_link_paged import ServerCommunicationLinkPaged
+from .service_tier_advisor_paged import ServiceTierAdvisorPaged
+from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
+from .server_usage_paged import ServerUsagePaged
+from .database_usage_paged import DatabaseUsagePaged
+from .encryption_protector_paged import EncryptionProtectorPaged
 from .failover_group_paged import FailoverGroupPaged
-from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .server_key_paged import ServerKeyPaged
+from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .sql_management_client_enums import (
+    BackupLongTermRetentionPolicyState,
     RestorePointType,
     CapabilityStatus,
     MaxSizeUnits,
     PerformanceLevelUnit,
     ServerConnectionType,
+    SecurityAlertPolicyState,
+    SecurityAlertPolicyEmailAccountAdmins,
+    SecurityAlertPolicyUseServerDefault,
     DataMaskingState,
     DataMaskingRuleState,
     DataMaskingFunction,
@@ -133,22 +138,20 @@ from .sql_management_client_enums import (
     SampleName,
     ElasticPoolState,
     TransparentDataEncryptionActivityStatus,
-    SecurityAlertPolicyState,
-    SecurityAlertPolicyEmailAccountAdmins,
-    SecurityAlertPolicyUseServerDefault,
-    BackupLongTermRetentionPolicyState,
     BlobAuditingPolicyState,
+    ServerKeyType,
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
     IdentityType,
-    ServerKeyType,
 )
 
 __all__ = [
     'Resource',
-    'TrackedResource',
     'ProxyResource',
+    'BackupLongTermRetentionPolicy',
+    'BackupLongTermRetentionVault',
+    'TrackedResource',
     'RestorePoint',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
@@ -162,9 +165,9 @@ __all__ = [
     'ServerVersionCapability',
     'LocationCapabilities',
     'ServerConnectionPolicy',
+    'DatabaseSecurityAlertPolicy',
     'DataMaskingPolicy',
     'DataMaskingRule',
-    'SubResource',
     'FirewallRule',
     'GeoBackupPolicy',
     'ImportExtensionRequest',
@@ -180,6 +183,9 @@ __all__ = [
     'Operation',
     'OperationListResult',
     'ReplicationLink',
+    'ServerAzureADAdministrator',
+    'ServerCommunicationLink',
+    'ServiceObjective',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
     'RecommendedElasticPoolMetric',
@@ -191,60 +197,60 @@ __all__ = [
     'Database',
     'RecommendedElasticPool',
     'ElasticPool',
+    'ElasticPoolUpdate',
     'ElasticPoolActivity',
     'ElasticPoolDatabaseActivity',
+    'DatabaseUpdate',
     'TransparentDataEncryptionActivity',
-    'ServerAzureADAdministrator',
-    'SqlSubResource',
-    'ServerCommunicationLink',
-    'DatabaseSecurityAlertPolicy',
-    'BackupLongTermRetentionVault',
-    'BackupLongTermRetentionPolicy',
-    'ServiceObjective',
     'ServerUsage',
     'DatabaseUsage',
     'DatabaseBlobAuditingPolicy',
+    'EncryptionProtector',
     'FailoverGroupReadWriteEndpoint',
     'FailoverGroupReadOnlyEndpoint',
     'PartnerInfo',
     'FailoverGroup',
-    'VirtualNetworkRule',
+    'ServerKey',
     'ResourceIdentity',
     'Server',
-    'ServerKey',
-    'EncryptionProtector',
+    'ServerUpdate',
+    'VirtualNetworkRule',
     'RestorePointPaged',
+    'RecoverableDatabasePaged',
+    'RestorableDroppedDatabasePaged',
     'DataMaskingRulePaged',
+    'FirewallRulePaged',
     'GeoBackupPolicyPaged',
     'MetricPaged',
     'MetricDefinitionPaged',
-    'ReplicationLinkPaged',
     'DatabasePaged',
-    'ServiceTierAdvisorPaged',
-    'TransparentDataEncryptionActivityPaged',
-    'DatabaseUsagePaged',
-    'RecoverableDatabasePaged',
-    'RestorableDroppedDatabasePaged',
-    'ServiceObjectivePaged',
-    'ServerUsagePaged',
-    'ServerPaged',
-    'EncryptionProtectorPaged',
-    'FirewallRulePaged',
     'ElasticPoolPaged',
+    'ReplicationLinkPaged',
+    'ServerAzureADAdministratorPaged',
+    'ServerCommunicationLinkPaged',
+    'ServiceObjectivePaged',
+    'ServerPaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
-    'ServerAzureADAdministratorPaged',
-    'ServerCommunicationLinkPaged',
+    'ServiceTierAdvisorPaged',
+    'TransparentDataEncryptionActivityPaged',
+    'ServerUsagePaged',
+    'DatabaseUsagePaged',
+    'EncryptionProtectorPaged',
     'FailoverGroupPaged',
-    'VirtualNetworkRulePaged',
     'ServerKeyPaged',
+    'VirtualNetworkRulePaged',
+    'BackupLongTermRetentionPolicyState',
     'RestorePointType',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
     'ServerConnectionType',
+    'SecurityAlertPolicyState',
+    'SecurityAlertPolicyEmailAccountAdmins',
+    'SecurityAlertPolicyUseServerDefault',
     'DataMaskingState',
     'DataMaskingRuleState',
     'DataMaskingFunction',
@@ -269,14 +275,10 @@ __all__ = [
     'SampleName',
     'ElasticPoolState',
     'TransparentDataEncryptionActivityStatus',
-    'SecurityAlertPolicyState',
-    'SecurityAlertPolicyEmailAccountAdmins',
-    'SecurityAlertPolicyUseServerDefault',
-    'BackupLongTermRetentionPolicyState',
     'BlobAuditingPolicyState',
+    'ServerKeyType',
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
     'IdentityType',
-    'ServerKeyType',
 ]

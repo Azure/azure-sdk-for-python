@@ -9,23 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class ReplicationLink(SubResource):
+class ReplicationLink(ProxyResource):
     """Represents a database replication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
-    :ivar type: Type of resource this is.
-    :vartype type: str
     :ivar is_termination_allowed: Legacy value indicating whether termination
      is allowed.  Currently always returns true.
     :vartype is_termination_allowed: bool
@@ -59,10 +59,10 @@ class ReplicationLink(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
-        'location': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
         'is_termination_allowed': {'readonly': True},
         'replication_mode': {'readonly': True},
         'partner_server': {'readonly': True},
@@ -76,10 +76,10 @@ class ReplicationLink(SubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'is_termination_allowed': {'key': 'properties.isTerminationAllowed', 'type': 'bool'},
         'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
         'partner_server': {'key': 'properties.partnerServer', 'type': 'str'},
@@ -95,7 +95,6 @@ class ReplicationLink(SubResource):
     def __init__(self):
         super(ReplicationLink, self).__init__()
         self.location = None
-        self.type = None
         self.is_termination_allowed = None
         self.replication_mode = None
         self.partner_server = None
