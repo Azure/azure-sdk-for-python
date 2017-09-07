@@ -9,31 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from msrest.serialization import Model
 
 
-class Server(TrackedResource):
-    """An Azure SQL Database server.
+class ServerUpdate(Model):
+    """An update request for an Azure SQL Database server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param location: Resource location.
-    :type location: str
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: :class:`ResourceIdentity
-     <azure.mgmt.sql.models.ResourceIdentity>`
-    :ivar kind: Kind of sql server. This is metadata used for the Azure portal
-     experience.
-    :vartype kind: str
     :param administrator_login: Administrator username for the server. Once
      created it cannot be changed.
     :type administrator_login: str
@@ -47,39 +31,28 @@ class Server(TrackedResource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :param tags: Resource tags.
+    :type tags: dict
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'readonly': True},
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None, identity=None, administrator_login=None, administrator_login_password=None, version=None):
-        super(Server, self).__init__(tags=tags, location=location)
-        self.identity = identity
-        self.kind = None
+    def __init__(self, administrator_login=None, administrator_login_password=None, version=None, tags=None):
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.tags = tags

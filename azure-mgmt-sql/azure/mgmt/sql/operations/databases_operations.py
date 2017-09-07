@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -24,11 +24,12 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar backup_long_term_retention_policy_name: The name of the backup long term retention policy. Constant value: "Default".
+    :ivar security_alert_policy_name: The name of the security alert policy. Constant value: "default".
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     :ivar geo_backup_policy_name: The name of the geo backup policy. Constant value: "Default".
     :ivar extension_name: The name of the operation to perform. Constant value: "import".
-    :ivar security_alert_policy_name: The name of the security alert policy. Constant value: "default".
-    :ivar backup_long_term_retention_policy_name: The name of the backup long term retention policy. Constant value: "Default".
+    :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     :ivar blob_auditing_policy_name: The name of the blob auditing policy. Constant value: "default".
     """
 
@@ -37,14 +38,199 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.backup_long_term_retention_policy_name = "Default"
+        self.security_alert_policy_name = "default"
         self.data_masking_policy_name = "Default"
         self.geo_backup_policy_name = "Default"
         self.extension_name = "import"
-        self.security_alert_policy_name = "default"
-        self.backup_long_term_retention_policy_name = "Default"
+        self.transparent_data_encryption_name = "current"
         self.blob_auditing_policy_name = "default"
 
         self.config = config
+
+    def get_backup_long_term_retention_policy(
+            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Returns a database backup long term retention policy.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`BackupLongTermRetentionPolicy
+         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`BackupLongTermRetentionPolicy
+         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2014-04-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/backupLongTermRetentionPolicies/{backupLongTermRetentionPolicyName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'backupLongTermRetentionPolicyName': self._serialize.url("self.backup_long_term_retention_policy_name", self.backup_long_term_retention_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_long_term_retention_policy(
+            self, resource_group_name, server_name, database_name, state, recovery_services_backup_policy_resource_id, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a database backup long term retention policy.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database
+        :type database_name: str
+        :param state: The status of the backup long term retention policy.
+         Possible values include: 'Disabled', 'Enabled'
+        :type state: str or :class:`BackupLongTermRetentionPolicyState
+         <azure.mgmt.sql.models.BackupLongTermRetentionPolicyState>`
+        :param recovery_services_backup_policy_resource_id: The azure recovery
+         services backup protection policy resource id
+        :type recovery_services_backup_policy_resource_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`BackupLongTermRetentionPolicy
+         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.BackupLongTermRetentionPolicy(state=state, recovery_services_backup_policy_resource_id=recovery_services_backup_policy_resource_id)
+
+        api_version = "2014-04-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/backupLongTermRetentionPolicies/{backupLongTermRetentionPolicyName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'backupLongTermRetentionPolicyName': self._serialize.url("self.backup_long_term_retention_policy_name", self.backup_long_term_retention_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'BackupLongTermRetentionPolicy')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.put(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 201, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
+            if response.status_code == 201:
+                deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def list_restore_points(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -64,6 +250,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RestorePoint
+         <azure.mgmt.sql.models.RestorePoint>`
         :rtype: :class:`RestorePointPaged
          <azure.mgmt.sql.models.RestorePointPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -123,6 +311,163 @@ class DatabasesOperations(object):
 
         return deserialized
 
+    def get_threat_detection_policy(
+            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a database's threat detection policy.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database for which database
+         Threat Detection policy is defined.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`DatabaseSecurityAlertPolicy
+         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`DatabaseSecurityAlertPolicy
+         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2014-04-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_threat_detection_policy(
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a database's threat detection policy.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database for which database
+         Threat Detection policy is defined.
+        :type database_name: str
+        :param parameters: The database Threat Detection policy.
+        :type parameters: :class:`DatabaseSecurityAlertPolicy
+         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`DatabaseSecurityAlertPolicy
+         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`DatabaseSecurityAlertPolicy
+         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2014-04-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DatabaseSecurityAlertPolicy')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def create_or_update_data_masking_policy(
             self, resource_group_name, server_name, database_name, data_masking_state, exempt_principals=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a database data masking policy.
@@ -149,10 +494,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DataMaskingPolicy
+         <azure.mgmt.sql.models.DataMaskingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.DataMaskingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataMaskingPolicy(data_masking_state=data_masking_state, exempt_principals=exempt_principals)
@@ -225,10 +573,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DataMaskingPolicy
+         <azure.mgmt.sql.models.DataMaskingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.DataMaskingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -301,10 +652,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DataMaskingRule
+         <azure.mgmt.sql.models.DataMaskingRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DataMaskingRule
-         <azure.mgmt.sql.models.DataMaskingRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.DataMaskingRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -378,6 +732,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`DataMaskingRule
+         <azure.mgmt.sql.models.DataMaskingRule>`
         :rtype: :class:`DataMaskingRulePaged
          <azure.mgmt.sql.models.DataMaskingRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -459,10 +815,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`GeoBackupPolicy
+         <azure.mgmt.sql.models.GeoBackupPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.GeoBackupPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.GeoBackupPolicy(state=state)
@@ -537,10 +896,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`GeoBackupPolicy
+         <azure.mgmt.sql.models.GeoBackupPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.GeoBackupPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -607,6 +969,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`GeoBackupPolicy
+         <azure.mgmt.sql.models.GeoBackupPolicy>`
         :rtype: :class:`GeoBackupPolicyPaged
          <azure.mgmt.sql.models.GeoBackupPolicyPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -683,12 +1047,15 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ImportExportResponse
-         <azure.mgmt.sql.models.ImportExportResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ImportExportResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -783,12 +1150,15 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ImportExportResponse
-         <azure.mgmt.sql.models.ImportExportResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ImportExportResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -883,12 +1253,15 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ImportExportResponse
-         <azure.mgmt.sql.models.ImportExportResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ImportExportResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -984,6 +1357,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Metric
+         <azure.mgmt.sql.models.Metric>`
         :rtype: :class:`MetricPaged <azure.mgmt.sql.models.MetricPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1060,6 +1435,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`MetricDefinition
+         <azure.mgmt.sql.models.MetricDefinition>`
         :rtype: :class:`MetricDefinitionPaged
          <azure.mgmt.sql.models.MetricDefinitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1139,9 +1516,11 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1203,10 +1582,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ReplicationLink
+         <azure.mgmt.sql.models.ReplicationLink>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ReplicationLink
-         <azure.mgmt.sql.models.ReplicationLink>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ReplicationLink>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1275,11 +1657,14 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1364,11 +1749,14 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1451,6 +1839,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ReplicationLink
+         <azure.mgmt.sql.models.ReplicationLink>`
         :rtype: :class:`ReplicationLinkPaged
          <azure.mgmt.sql.models.ReplicationLinkPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1525,11 +1915,14 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1609,11 +2002,14 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1680,9 +2076,7 @@ class DatabasesOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new database or updates an existing database. Location is a
-        required property in the request body, and it must be the same as the
-        location of the SQL server.
+        """Creates a new database or updates an existing database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -1699,12 +2093,15 @@ class DatabasesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Database
-         <azure.mgmt.sql.models.Database>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1782,6 +2179,108 @@ class DatabasesOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
+    def update(
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Updates an existing database.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database to be updated.
+        :type database_name: str
+        :param parameters: The required parameters for updating a database.
+        :type parameters: :class:`DatabaseUpdate
+         <azure.mgmt.sql.models.DatabaseUpdate>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Database
+         <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2014-04-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DatabaseUpdate')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.patch(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('Database', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
     def delete(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a database.
@@ -1799,9 +2298,11 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1864,9 +2365,11 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Database <azure.mgmt.sql.models.Database>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Database <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Database <azure.mgmt.sql.models.Database>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -1939,6 +2442,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Database
+         <azure.mgmt.sql.models.Database>`
         :rtype: :class:`DatabasePaged <azure.mgmt.sql.models.DatabasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2019,10 +2524,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceTierAdvisor
+         <azure.mgmt.sql.models.ServiceTierAdvisor>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceTierAdvisor
-         <azure.mgmt.sql.models.ServiceTierAdvisor>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ServiceTierAdvisor>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
@@ -2089,6 +2597,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ServiceTierAdvisor
+         <azure.mgmt.sql.models.ServiceTierAdvisor>`
         :rtype: :class:`ServiceTierAdvisorPaged
          <azure.mgmt.sql.models.ServiceTierAdvisorPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2171,10 +2681,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`TransparentDataEncryption
+         <azure.mgmt.sql.models.TransparentDataEncryption>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.TransparentDataEncryption>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TransparentDataEncryption(status=status)
@@ -2182,12 +2695,13 @@ class DatabasesOperations(object):
         api_version = "2014-04-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2249,21 +2763,25 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`TransparentDataEncryption
+         <azure.mgmt.sql.models.TransparentDataEncryption>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.TransparentDataEncryption>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2014-04-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2319,6 +2837,9 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`TransparentDataEncryptionActivity
+         <azure.mgmt.sql.models.TransparentDataEncryptionActivity>`
         :rtype: :class:`TransparentDataEncryptionActivityPaged
          <azure.mgmt.sql.models.TransparentDataEncryptionActivityPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2329,12 +2850,13 @@ class DatabasesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/current/operationResults'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/transparentDataEncryption/{transparentDataEncryptionName}/operationResults'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'transparentDataEncryptionName': self._serialize.url("self.transparent_data_encryption_name", self.transparent_data_encryption_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -2378,335 +2900,6 @@ class DatabasesOperations(object):
 
         return deserialized
 
-    def get_threat_detection_policy(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a database's threat detection policy.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database for which database
-         Threat Detection policy is defined.
-        :type database_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_threat_detection_policy(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a database's threat detection policy.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database for which database
-         Threat Detection policy is defined.
-        :type database_name: str
-        :param parameters: The database Threat Detection policy.
-        :type parameters: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'DatabaseSecurityAlertPolicy')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_backup_long_term_retention_policy(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a database backup long term retention policy.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupLongTermRetentionPolicy
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/backupLongTermRetentionPolicies/{backupLongTermRetentionPolicyName}'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'backupLongTermRetentionPolicyName': self._serialize.url("self.backup_long_term_retention_policy_name", self.backup_long_term_retention_policy_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_long_term_retention_policy(
-            self, resource_group_name, server_name, database_name, state, recovery_services_backup_policy_resource_id, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a database backup long term retention policy.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database
-        :type database_name: str
-        :param state: The status of the backup long term retention policy.
-         Possible values include: 'Disabled', 'Enabled'
-        :type state: str or :class:`BackupLongTermRetentionPolicyState
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicyState>`
-        :param recovery_services_backup_policy_resource_id: The azure recovery
-         services backup protection policy resource id
-        :type recovery_services_backup_policy_resource_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`BackupLongTermRetentionPolicy
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.BackupLongTermRetentionPolicy(state=state, recovery_services_backup_policy_resource_id=recovery_services_backup_policy_resource_id)
-
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/backupLongTermRetentionPolicies/{backupLongTermRetentionPolicyName}'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'backupLongTermRetentionPolicyName': self._serialize.url("self.backup_long_term_retention_policy_name", self.backup_long_term_retention_policy_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'BackupLongTermRetentionPolicy')
-
-        # Construct and send request
-        def long_running_send():
-
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
     def list_usages(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Returns database usages.
@@ -2724,6 +2917,8 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`DatabaseUsage
+         <azure.mgmt.sql.models.DatabaseUsage>`
         :rtype: :class:`DatabaseUsagePaged
          <azure.mgmt.sql.models.DatabaseUsagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2801,10 +2996,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DatabaseBlobAuditingPolicy
+         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -2875,10 +3073,13 @@ class DatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DatabaseBlobAuditingPolicy
+         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"

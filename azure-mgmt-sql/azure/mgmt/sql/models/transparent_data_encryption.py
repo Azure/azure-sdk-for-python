@@ -13,7 +13,7 @@ from .sub_resource import SubResource
 
 
 class TransparentDataEncryption(SubResource):
-    """Represents a database transparent data encryption .
+    """Represents a database transparent data encryption configuration.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

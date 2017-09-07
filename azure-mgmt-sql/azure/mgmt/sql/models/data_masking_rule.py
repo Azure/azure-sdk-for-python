@@ -47,7 +47,7 @@ class DataMaskingRule(ProxyResource):
      applied.
     :type column_name: str
     :param masking_function: The masking function that is used for the data
-     masking rule. Possible values include: 'CCN', 'Default', 'Email',
+     masking rule. Possible values include: 'Default', 'CCN', 'Email',
      'Number', 'SSN', 'Text'
     :type masking_function: str or :class:`DataMaskingFunction
      <azure.mgmt.sql.models.DataMaskingFunction>`
