@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -56,12 +56,15 @@ class ServerAzureADAdministratorsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -152,12 +155,15 @@ class ServerAzureADAdministratorsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -246,10 +252,13 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServerAzureADAdministrator
+         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -257,7 +266,8 @@ class ServerAzureADAdministratorsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str')
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -295,7 +305,7 @@ class ServerAzureADAdministratorsOperations(object):
 
         return deserialized
 
-    def list(
+    def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Returns a list of server Administrators.
 
@@ -310,6 +320,9 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`ServerAzureADAdministrator
+         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
         :rtype: :class:`ServerAzureADAdministratorPaged
          <azure.mgmt.sql.models.ServerAzureADAdministratorPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class MetricPaged(Paged):
     """
-    A paging container for iterating over a list of Metric object
+    A paging container for iterating over a list of :class:`Metric <azure.mgmt.sql.models.Metric>` object
     """
 
     _attribute_map = {
