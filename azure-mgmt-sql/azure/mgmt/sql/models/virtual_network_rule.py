@@ -24,8 +24,8 @@ class VirtualNetworkRule(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param virtual_network_subnet_id: The resource ID of the virtual network
-     subnet
+    :param virtual_network_subnet_id: The ARM resource id of the virtual
+     network subnet.
     :type virtual_network_subnet_id: str
     """
 
@@ -33,6 +33,7 @@ class VirtualNetworkRule(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'virtual_network_subnet_id': {'required': True},
     }
 
     _attribute_map = {
@@ -42,6 +43,6 @@ class VirtualNetworkRule(ProxyResource):
         'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_subnet_id=None):
+    def __init__(self, virtual_network_subnet_id):
         super(VirtualNetworkRule, self).__init__()
         self.virtual_network_subnet_id = virtual_network_subnet_id

@@ -15,22 +15,36 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """Display metadata associated with the operation.
 
-    :param provider: Service provider: Microsoft SQL Database.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Server,
-     Database, etc.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name.
+    :vartype provider: str
+    :ivar resource: The localized friendly form of the resource type related
+     to this action/operation.
+    :vartype resource: str
+    :ivar operation: The localized friendly name for the operation.
+    :vartype operation: str
+    :ivar description: The localized friendly description for the operation.
+    :vartype description: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None):
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
+    def __init__(self):
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
