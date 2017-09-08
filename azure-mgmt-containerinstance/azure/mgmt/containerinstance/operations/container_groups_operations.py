@@ -37,7 +37,12 @@ class ContainerGroupsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get the list of container groups in a given subscription.
+        """Get a list of container groups in the specified subscription.
+
+        Get a list of container groups in the specified subscription. This
+        operation returns properties of each container group including
+        containers, image registry credentials, restart policy, IP address
+        type, OS type, state, and volumes.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -102,9 +107,16 @@ class ContainerGroupsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get the list of container groups in a given resource group.
+        """Get a list of container groups in the specified subscription and
+        resource group.
 
-        :param resource_group_name: Azure resource group name
+        Get a list of container groups in a specified subscription and resource
+        group. This operation returns properties of each container group
+        including containers, image registry credentials, restart policy, IP
+        address type, OS type, state, and volumes.
+
+        :param resource_group_name: The name of the resource group that
+         contains the container group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -170,11 +182,18 @@ class ContainerGroupsOperations(object):
 
     def get(
             self, resource_group_name, container_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get details for this container group.
+        """Get the properties of the specified container group.
 
-        :param resource_group_name: Azure resource group name
+        Gets the properties of the specified container group in the specified
+        subscription and resource group. The operation returns the properties
+        of each container group including containers, image registry
+        credentials, restart policy, IP address type, OS type, state, and
+        volumes.
+
+        :param resource_group_name: The name of the resource group that
+         contains the container group.
         :type resource_group_name: str
-        :param container_group_name: Container group name
+        :param container_group_name: The name of the container group.
         :type container_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -237,11 +256,16 @@ class ContainerGroupsOperations(object):
             self, resource_group_name, container_group_name, container_group, custom_headers=None, raw=False, **operation_config):
         """Create or update container groups.
 
-        :param resource_group_name: Azure resource group name
+        Create or update container groups with specified configurations.
+
+        :param resource_group_name: The name of the resource group to contain
+         the container group to be created or updated.
         :type resource_group_name: str
-        :param container_group_name: Container group name
+        :param container_group_name: The name of the container group to be
+         created or updated.
         :type container_group_name: str
-        :param container_group: Definition of the container to be created.
+        :param container_group: The properties of the container group to be
+         created or updated.
         :type container_group: :class:`ContainerGroup
          <azure.mgmt.containerinstance.models.ContainerGroup>`
         :param dict custom_headers: headers that will be added to the request
@@ -309,11 +333,17 @@ class ContainerGroupsOperations(object):
 
     def delete(
             self, resource_group_name, container_group_name, custom_headers=None, raw=False, **operation_config):
-        """Delete container groups.
+        """Delete the specified container group.
 
-        :param resource_group_name: Azure resource group name
+        Delete the specified container group in the specified subscription and
+        resource group. The operation does not delete other resources provided
+        by the user, such as volumes.
+
+        :param resource_group_name: The name of the resource group that
+         contains the container group.
         :type resource_group_name: str
-        :param container_group_name: Name of the container group to be deleted
+        :param container_group_name: The name of the container group to be
+         deleted.
         :type container_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

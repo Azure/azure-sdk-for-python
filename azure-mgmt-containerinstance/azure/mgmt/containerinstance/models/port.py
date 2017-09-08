@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class Port(Model):
-    """The port.
+    """The port exposed on the container group.
 
     :param protocol: The protocol associated with the port. Possible values
      include: 'TCP', 'UDP'
     :type protocol: str or :class:`ContainerGroupNetworkProtocol
      <azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol>`
-    :param port: The port.
+    :param port: The port number.
     :type port: int
     """
 

@@ -18,28 +18,29 @@ class Container(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The user-provided name of this container
+    :param name: The user-provided name of the container instance.
     :type name: str
-    :param image: The name of the image used when creating this container
+    :param image: The name of the image used to create the container instance.
     :type image: str
-    :param command: Command array to execute within the container in exec
-     form.
+    :param command: The commands to execute within the container instance in
+     exec form.
     :type command: list of str
-    :param ports: The ports exposed by this container
+    :param ports: The exposed ports on the container instance.
     :type ports: list of :class:`ContainerPort
      <azure.mgmt.containerinstance.models.ContainerPort>`
-    :param environment_variables: The environment variables to set in this
-     container
+    :param environment_variables: The environment variables to set in the
+     container instance.
     :type environment_variables: list of :class:`EnvironmentVariable
      <azure.mgmt.containerinstance.models.EnvironmentVariable>`
-    :ivar instance_view: The instance view of the container. Only valid in
-     response.
+    :ivar instance_view: The instance view of the container instance. Only
+     valid in response.
     :vartype instance_view: :class:`ContainerPropertiesInstanceView
      <azure.mgmt.containerinstance.models.ContainerPropertiesInstanceView>`
-    :param resources: The resource requirements of this container.
+    :param resources: The resource requirements of the container instance.
     :type resources: :class:`ResourceRequirements
      <azure.mgmt.containerinstance.models.ResourceRequirements>`
-    :param volume_mounts: The volume mounts.
+    :param volume_mounts: The volume mounts available to the container
+     instance.
     :type volume_mounts: list of :class:`VolumeMount
      <azure.mgmt.containerinstance.models.VolumeMount>`
     """

@@ -37,16 +37,22 @@ class ContainerLogsOperations(object):
 
     def list(
             self, resource_group_name, container_name, container_group_name, tail=None, custom_headers=None, raw=False, **operation_config):
-        """Get the logs for this container.
+        """Get the logs for a specified container instance.
 
-        :param resource_group_name: Azure resource group name
+        Get the logs for a specified container instance in a specified resource
+        group and container group.
+
+        :param resource_group_name: The name of the resource group that
+         contains the container instance.
         :type resource_group_name: str
-        :param container_name: Container name
+        :param container_name: The name of the container instance.
         :type container_name: str
-        :param container_group_name: Container group name
+        :param container_group_name: The name of the container group the
+         container instance belongs to.
         :type container_group_name: str
-        :param tail: Only show this number of log lines. If not provided, all
-         available logs are shown.
+        :param tail: The number of lines to show from the tail of the
+         container instance log. If not provided, all available logs are shown
+         up to 4mb.
         :type tail: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class VolumeMount(Model):
-    """The volume mount.
+    """The properties of the volume mount.
 
-    :param name: The volume mount name.
+    :param name: The name of the volume mount.
     :type name: str
-    :param mount_path: The path with in the container at which the volume
-     should be mounted. Must not contain ':'.
+    :param mount_path: The path within the container where the volume should
+     be mounted. Must not contain colon (:).
     :type mount_path: str
-    :param read_only: The flag indicating whether the volume mount is read
-     only.
+    :param read_only: The flag indicating whether the volume mount is
+     read-only.
     :type read_only: bool
     """
 

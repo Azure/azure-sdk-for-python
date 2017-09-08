@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ResourceRequests(Model):
     """The resource requests.
 
-    :param memory_in_gb: The memory request in GB of this container.
+    :param memory_in_gb: The memory request in GB of this container instance.
     :type memory_in_gb: float
-    :param cpu: The CPU request of this container.
+    :param cpu: The CPU request of this container instance.
     :type cpu: float
     """
 
