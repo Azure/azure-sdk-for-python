@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ImageRegistryCredential(Model):
     """Image registry credential.
 
-    :param server: Docker image registry server, without protocol such as
+    :param server: The Docker image registry server without a protocol such as
      "http" and "https".
     :type server: str
     :param username: The username for the private registry.

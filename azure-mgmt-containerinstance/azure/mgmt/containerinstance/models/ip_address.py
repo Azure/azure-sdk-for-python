@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class IpAddress(Model):
-    """IP address for the group.
+    """IP address for the container group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param ports: The ports.
+    :param ports: The list of ports exposed on the container group.
     :type ports: list of :class:`Port
      <azure.mgmt.containerinstance.models.Port>`
-    :ivar type: Determines whether the IP is exposed to the public internet.
-     Default value: "Public" .
+    :ivar type: Specifies if the IP is exposed to the public internet. Default
+     value: "Public" .
     :vartype type: str
     :param ip: The IP exposed to the public internet.
     :type ip: str

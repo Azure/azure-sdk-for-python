@@ -18,40 +18,43 @@ class ContainerGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource id.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: The resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: The resource tags.
     :type tags: dict
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
+    :ivar provisioning_state: The provisioning state of the container group.
+     This only appears in the response.
     :vartype provisioning_state: str
-    :param containers: The containers in this container group.
+    :param containers: The containers within the container group.
     :type containers: list of :class:`Container
      <azure.mgmt.containerinstance.models.Container>`
     :param image_registry_credentials: The image registry credentials by which
      the container group is created from.
     :type image_registry_credentials: list of :class:`ImageRegistryCredential
      <azure.mgmt.containerinstance.models.ImageRegistryCredential>`
-    :param restart_policy: - `always` Always restart
-     . Possible values include: 'always'
+    :param restart_policy: Restart policy for all containers within the
+     container group. Currently the only available option is `always`. Possible
+     values include: 'always'
     :type restart_policy: str or :class:`ContainerRestartPolicy
      <azure.mgmt.containerinstance.models.ContainerRestartPolicy>`
-    :param ip_address: The IP address type.
+    :param ip_address: The IP address type of the container group.
     :type ip_address: :class:`IpAddress
      <azure.mgmt.containerinstance.models.IpAddress>`
-    :param os_type: The base level OS type required by the containers in the
-     group. Possible values include: 'Windows', 'Linux'
+    :param os_type: The operating system type required by the containers in
+     the container group. Possible values include: 'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.containerinstance.models.OperatingSystemTypes>`
-    :ivar state: The state of the container group. Only valid in response.
+    :ivar state: The current state of the container group. This is only valid
+     for the response.
     :vartype state: str
-    :param volumes: The volumes for this container group.
+    :param volumes: The list of volumes that can be mounted by containers in
+     this container group.
     :type volumes: list of :class:`Volume
      <azure.mgmt.containerinstance.models.Volume>`
     """

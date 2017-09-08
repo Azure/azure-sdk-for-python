@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Logs(Model):
     """The logs.
 
-    :param content: content of the log.
+    :param content: The content of the log.
     :type content: str
     """
 
