@@ -333,6 +333,15 @@
       "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_08_01",
       "generated_relative_base_directory": "python/azure/mgmt/network/v2017_08_01"
     },
+    "network.2017-09-01": {
+      "markdown": "specification/network/resource-manager/readme.md",
+      "autorest_options": {
+        "tag": "package-2017-09"
+      },
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_09_01"
+    },
     "notificationhubs": {
       "autorest_options": {
         "input-file": "specification/notificationhubs/resource-manager/Microsoft.NotificationHubs/2017-04-01/notificationhubs.json",
