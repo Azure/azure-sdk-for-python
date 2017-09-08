@@ -336,7 +336,8 @@
     "network.2017-09-01": {
       "markdown": "specification/network/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-2017-09"
+        "tag": "package-2017-09",
+        "namespace": "azure.mgmt.network.v2017_09_01"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
       "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
