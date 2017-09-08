@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class ContainerPropertiesInstanceView(Model):
-    """The instance view of the container. Only valid in response.
+    """The instance view of the container instance. Only valid in response.
 
-    :param restart_count: The number of times that the container has been
-     restarted.
+    :param restart_count: The number of times that the container instance has
+     been restarted.
     :type restart_count: int
-    :param current_state: Current container state.
+    :param current_state: Current container instance state.
     :type current_state: :class:`ContainerState
      <azure.mgmt.containerinstance.models.ContainerState>`
-    :param previous_state: Previous container state.
+    :param previous_state: Previous container instance state.
     :type previous_state: :class:`ContainerState
      <azure.mgmt.containerinstance.models.ContainerState>`
-    :param events: The events of this container instance.
+    :param events: The events of the container instance.
     :type events: list of :class:`ContainerEvent
      <azure.mgmt.containerinstance.models.ContainerEvent>`
     """

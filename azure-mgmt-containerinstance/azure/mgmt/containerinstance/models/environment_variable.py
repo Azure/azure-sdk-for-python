@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EnvironmentVariable(Model):
-    """Environment variable to set within the container.
+    """The environment variable to set within the container instance.
 
     :param name: The name of the environment variable.
     :type name: str

@@ -13,18 +13,20 @@ from msrest.serialization import Model
 
 
 class AzureFileVolume(Model):
-    """The Azure file volume.
+    """The properties of the Azure File volume. Azure File shares are mounted as
+    volumes.
 
-    :param share_name: The Azure file share name.
+    :param share_name: The name of the Azure File share to be mounted as a
+     volume.
     :type share_name: str
-    :param read_only: The flag indicating whether the Azure file volume is
-     read only.
+    :param read_only: The flag indicating whether the Azure File shared
+     mounted as a volume is read-only.
     :type read_only: bool
-    :param storage_account_name: The storage account name to access to the
-     Azure file.
+    :param storage_account_name: The name of the storage account that contains
+     the Azure File share.
     :type storage_account_name: str
-    :param storage_account_key: The storage account key to access to the Azure
-     file.
+    :param storage_account_key: The storage account access key used to access
+     the Azure File share.
     :type storage_account_key: str
     """
 

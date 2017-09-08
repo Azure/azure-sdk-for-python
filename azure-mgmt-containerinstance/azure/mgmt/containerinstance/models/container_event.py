@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class ContainerEvent(Model):
-    """A container event.
+    """A container instance event.
 
     :param count: The count of the event.
     :type count: int
-    :param first_timestamp: Date/time of the first event.
+    :param first_timestamp: The date-time of the earliest logged event.
     :type first_timestamp: datetime
-    :param last_timestamp: Date/time of the last event.
+    :param last_timestamp: The date-time of the latest logged event.
     :type last_timestamp: datetime
-    :param message: The event message
+    :param message: The event message.
     :type message: str
     :param type: The event type.
     :type type: str

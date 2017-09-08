@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class ContainerPort(Model):
-    """The container port.
+    """The port exposed on the container instance.
 
-    :param port: Port number to expose within the container group.
+    :param port: The port number exposed within the container group.
     :type port: int
     """
 
