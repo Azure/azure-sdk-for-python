@@ -18,8 +18,8 @@ class RouteFilter(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -31,11 +31,11 @@ class RouteFilter(Resource):
     :param rules: Collection of RouteFilterRules contained within a route
      filter.
     :type rules: list of :class:`RouteFilterRule
-     <azure.mgmt.network.v2017_08_01.models.RouteFilterRule>`
+     <azure.mgmt.network.v2017_09_01.models.RouteFilterRule>`
     :param peerings: A collection of references to express route circuit
      peerings.
     :type peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>`
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
@@ -45,6 +45,7 @@ class RouteFilter(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -63,8 +64,8 @@ class RouteFilter(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, rules=None, peerings=None):
-        super(RouteFilter, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, rules=None, peerings=None):
+        super(RouteFilter, self).__init__(location=location, tags=tags)
         self.rules = rules
         self.peerings = peerings
         self.provisioning_state = None

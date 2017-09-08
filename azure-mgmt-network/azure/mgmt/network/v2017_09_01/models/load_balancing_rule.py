@@ -19,30 +19,30 @@ class LoadBalancingRule(SubResource):
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param backend_address_pool: A reference to a pool of DIPs. Inbound
      traffic is randomly load balanced across IPs in the backend IPs.
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param probe: The reference of the load balancer probe used by the load
      balancing rule.
     :type probe: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
-    :param protocol: The transport protocol for the external endpoint.
-     Possible values are 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :param protocol: Possible values include: 'Udp', 'Tcp', 'All'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.v2017_08_01.models.TransportProtocol>`
+     <azure.mgmt.network.v2017_09_01.models.TransportProtocol>`
     :param load_distribution: The load distribution policy for this rule.
      Possible values are 'Default', 'SourceIP', and 'SourceIPProtocol'.
      Possible values include: 'Default', 'SourceIP', 'SourceIPProtocol'
     :type load_distribution: str or :class:`LoadDistribution
-     <azure.mgmt.network.v2017_08_01.models.LoadDistribution>`
+     <azure.mgmt.network.v2017_09_01.models.LoadDistribution>`
     :param frontend_port: The port for the external endpoint. Port numbers for
-     each Rule must be unique within the Load Balancer. Acceptable values are
-     between 1 and 65534.
+     each rule must be unique within the Load Balancer. Acceptable values are
+     between 0 and 65534. Note that value 0 enables "Any Port"
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
-     endpoint. Acceptable values are between 1 and 65535.
+     endpoint. Acceptable values are between 0 and 65535. Note that value 0
+     enables "Any Port"
     :type backend_port: int
     :param idle_timeout_in_minutes: The timeout for the TCP idle connection.
      The value can be set between 4 and 30 minutes. The default value is 4

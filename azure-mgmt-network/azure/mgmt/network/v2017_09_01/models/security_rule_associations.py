@@ -17,18 +17,18 @@ class SecurityRuleAssociations(Model):
 
     :param network_interface_association:
     :type network_interface_association: :class:`NetworkInterfaceAssociation
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceAssociation>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkInterfaceAssociation>`
     :param subnet_association:
     :type subnet_association: :class:`SubnetAssociation
-     <azure.mgmt.network.v2017_08_01.models.SubnetAssociation>`
+     <azure.mgmt.network.v2017_09_01.models.SubnetAssociation>`
     :param default_security_rules: Collection of default security rules of the
      network security group.
     :type default_security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2017_08_01.models.SecurityRule>`
+     <azure.mgmt.network.v2017_09_01.models.SecurityRule>`
     :param effective_security_rules: Collection of effective security rules.
     :type effective_security_rules: list of
      :class:`EffectiveNetworkSecurityRule
-     <azure.mgmt.network.v2017_08_01.models.EffectiveNetworkSecurityRule>`
+     <azure.mgmt.network.v2017_09_01.models.EffectiveNetworkSecurityRule>`
     """
 
     _attribute_map = {

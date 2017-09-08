@@ -18,8 +18,8 @@ class LoadBalancer(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -30,22 +30,22 @@ class LoadBalancer(Resource):
     :type tags: dict
     :param sku: The load balancer SKU.
     :type sku: :class:`LoadBalancerSku
-     <azure.mgmt.network.v2017_08_01.models.LoadBalancerSku>`
+     <azure.mgmt.network.v2017_09_01.models.LoadBalancerSku>`
     :param frontend_ip_configurations: Object representing the frontend IPs to
      be used for the load balancer
     :type frontend_ip_configurations: list of :class:`FrontendIPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.FrontendIPConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.FrontendIPConfiguration>`
     :param backend_address_pools: Collection of backend address pools used by
      a load balancer
     :type backend_address_pools: list of :class:`BackendAddressPool
-     <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>`
+     <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>`
     :param load_balancing_rules: Object collection representing the load
      balancing rules Gets the provisioning
     :type load_balancing_rules: list of :class:`LoadBalancingRule
-     <azure.mgmt.network.v2017_08_01.models.LoadBalancingRule>`
+     <azure.mgmt.network.v2017_09_01.models.LoadBalancingRule>`
     :param probes: Collection of probe objects used in the load balancer
     :type probes: list of :class:`Probe
-     <azure.mgmt.network.v2017_08_01.models.Probe>`
+     <azure.mgmt.network.v2017_09_01.models.Probe>`
     :param inbound_nat_rules: Collection of inbound NAT Rules used by a load
      balancer. Defining inbound NAT rules on your load balancer is mutually
      exclusive with defining an inbound NAT pool. Inbound NAT pools are
@@ -53,7 +53,7 @@ class LoadBalancer(Resource):
      individual virtual machines cannot reference an Inbound NAT pool. They
      have to reference individual inbound NAT rules.
     :type inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.v2017_08_01.models.InboundNatRule>`
+     <azure.mgmt.network.v2017_09_01.models.InboundNatRule>`
     :param inbound_nat_pools: Defines an external port range for inbound NAT
      to a single backend port on NICs associated with a load balancer. Inbound
      NAT rules are created automatically for each NIC associated with the Load
@@ -63,10 +63,10 @@ class LoadBalancer(Resource):
      NICs that are associated with individual virtual machines cannot reference
      an inbound NAT pool. They have to reference individual inbound NAT rules.
     :type inbound_nat_pools: list of :class:`InboundNatPool
-     <azure.mgmt.network.v2017_08_01.models.InboundNatPool>`
+     <azure.mgmt.network.v2017_09_01.models.InboundNatPool>`
     :param outbound_nat_rules: The outbound NAT rules.
     :type outbound_nat_rules: list of :class:`OutboundNatRule
-     <azure.mgmt.network.v2017_08_01.models.OutboundNatRule>`
+     <azure.mgmt.network.v2017_09_01.models.OutboundNatRule>`
     :param resource_guid: The resource GUID property of the load balancer
      resource.
     :type resource_guid: str
@@ -79,6 +79,7 @@ class LoadBalancer(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -102,8 +103,8 @@ class LoadBalancer(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(LoadBalancer, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(LoadBalancer, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools

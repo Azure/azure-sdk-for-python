@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class RouteTable(Resource):
-    """Route table resource.
+class ApplicationSecurityGroup(Resource):
+    """An application security group in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,25 +28,27 @@ class RouteTable(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :param routes: Collection of routes contained within a route table.
-    :type routes: list of :class:`Route
-     <azure.mgmt.network.v2017_09_01.models.Route>`
-    :ivar subnets: A collection of references to subnets.
-    :vartype subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2017_09_01.models.Subnet>`
-    :param provisioning_state: The provisioning state of the resource.
-     Possible values are: 'Updating', 'Deleting', and 'Failed'.
-    :type provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
-    :type etag: str
+    :ivar resource_guid: The resource GUID property of the application
+     security group resource. It uniquely identifies a resource, even if the
+     user changes its name or migrate the resource across subscriptions or
+     resource groups.
+    :vartype resource_guid: str
+    :ivar provisioning_state: The provisioning state of the application
+     security group resource. Possible values are: 'Succeeded', 'Updating',
+     'Deleting', and 'Failed'.
+    :vartype provisioning_state: str
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
+    :vartype etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'subnets': {'readonly': True},
+        'resource_guid': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,15 +57,13 @@ class RouteTable(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'routes': {'key': 'properties.routes', 'type': '[Route]'},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, routes=None, provisioning_state=None, etag=None):
-        super(RouteTable, self).__init__(location=location, tags=tags)
-        self.routes = routes
-        self.subnets = None
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, location=None, tags=None):
+        super(ApplicationSecurityGroup, self).__init__(location=location, tags=tags)
+        self.resource_guid = None
+        self.provisioning_state = None
+        self.etag = None

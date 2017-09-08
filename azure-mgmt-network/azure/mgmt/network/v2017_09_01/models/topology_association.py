@@ -24,7 +24,7 @@ class TopologyAssociation(Model):
     :param association_type: The association type of the child resource to the
      parent resource. Possible values include: 'Associated', 'Contains'
     :type association_type: str or :class:`AssociationType
-     <azure.mgmt.network.v2017_08_01.models.AssociationType>`
+     <azure.mgmt.network.v2017_09_01.models.AssociationType>`
     """
 
     _attribute_map = {

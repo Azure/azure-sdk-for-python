@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .application_gateways_operations import ApplicationGatewaysOperations
+from .application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .available_endpoint_services_operations import AvailableEndpointServicesOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
@@ -46,6 +47,7 @@ from .local_network_gateways_operations import LocalNetworkGatewaysOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
+    'ApplicationSecurityGroupsOperations',
     'AvailableEndpointServicesOperations',
     'ExpressRouteCircuitAuthorizationsOperations',
     'ExpressRouteCircuitPeeringsOperations',

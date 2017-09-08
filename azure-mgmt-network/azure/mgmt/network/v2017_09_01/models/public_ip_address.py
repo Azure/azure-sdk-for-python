@@ -18,8 +18,8 @@ class PublicIPAddress(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -30,24 +30,24 @@ class PublicIPAddress(Resource):
     :type tags: dict
     :param sku: The public IP address SKU.
     :type sku: :class:`PublicIPAddressSku
-     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressSku>`
+     <azure.mgmt.network.v2017_09_01.models.PublicIPAddressSku>`
     :param public_ip_allocation_method: The public IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
     :type public_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_08_01.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2017_09_01.models.IPAllocationMethod>`
     :param public_ip_address_version: The public IP address version. Possible
      values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.v2017_08_01.models.IPVersion>`
+     <azure.mgmt.network.v2017_09_01.models.IPVersion>`
     :ivar ip_configuration: The IP configuration associated with the public IP
      address.
     :vartype ip_configuration: :class:`IPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.IPConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.IPConfiguration>`
     :param dns_settings: The FQDN of the DNS record associated with the public
      IP address.
     :type dns_settings: :class:`PublicIPAddressDnsSettings
-     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressDnsSettings>`
+     <azure.mgmt.network.v2017_09_01.models.PublicIPAddressDnsSettings>`
     :param ip_address: The IP address associated with the public IP address
      resource.
     :type ip_address: str
@@ -65,6 +65,7 @@ class PublicIPAddress(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'ip_configuration': {'readonly': True},
@@ -88,8 +89,8 @@ class PublicIPAddress(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, sku=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(PublicIPAddress, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.public_ip_allocation_method = public_ip_allocation_method
         self.public_ip_address_version = public_ip_address_version

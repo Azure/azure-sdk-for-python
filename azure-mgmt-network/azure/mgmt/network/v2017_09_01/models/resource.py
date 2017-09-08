@@ -18,8 +18,8 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -31,6 +31,7 @@ class Resource(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -43,8 +44,8 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, location=None, tags=None):
-        self.id = id
+    def __init__(self, location=None, tags=None):
+        self.id = None
         self.name = None
         self.type = None
         self.location = location

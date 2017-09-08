@@ -17,10 +17,10 @@ class ConnectivityParameters(Model):
 
     :param source:
     :type source: :class:`ConnectivitySource
-     <azure.mgmt.network.v2017_08_01.models.ConnectivitySource>`
+     <azure.mgmt.network.v2017_09_01.models.ConnectivitySource>`
     :param destination:
     :type destination: :class:`ConnectivityDestination
-     <azure.mgmt.network.v2017_08_01.models.ConnectivityDestination>`
+     <azure.mgmt.network.v2017_09_01.models.ConnectivityDestination>`
     """
 
     _validation = {

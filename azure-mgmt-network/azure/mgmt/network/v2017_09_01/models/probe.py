@@ -22,14 +22,14 @@ class Probe(SubResource):
     :type id: str
     :ivar load_balancing_rules: The load balancer rules that use this probe.
     :vartype load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param protocol: The protocol of the end point. Possible values are:
      'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required for the
      probe to be successful. If 'Http' is specified, a 200 OK response from the
      specifies URI is required for the probe to be successful. Possible values
      include: 'Http', 'Tcp'
     :type protocol: str or :class:`ProbeProtocol
-     <azure.mgmt.network.v2017_08_01.models.ProbeProtocol>`
+     <azure.mgmt.network.v2017_09_01.models.ProbeProtocol>`
     :param port: The port for communicating the probe. Possible values range
      from 1 to 65535, inclusive.
     :type port: int

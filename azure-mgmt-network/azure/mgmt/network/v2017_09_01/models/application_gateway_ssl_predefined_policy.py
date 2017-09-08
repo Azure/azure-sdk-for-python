@@ -23,12 +23,12 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
      order for application gateway.
     :type cipher_suites: list of str or
      :class:`ApplicationGatewaySslCipherSuite
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslCipherSuite>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslCipherSuite>`
     :param min_protocol_version: Minimum version of Ssl protocol to be
      supported on application gateway. Possible values include: 'TLSv1_0',
      'TLSv1_1', 'TLSv1_2'
     :type min_protocol_version: str or :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslProtocol>`
     """
 
     _attribute_map = {

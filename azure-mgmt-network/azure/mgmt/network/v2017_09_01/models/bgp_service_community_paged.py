@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class BgpServiceCommunityPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`BgpServiceCommunity <azure.mgmt.network.v2017_08_01.models.BgpServiceCommunity>` object
+    A paging container for iterating over a list of :class:`BgpServiceCommunity <azure.mgmt.network.v2017_09_01.models.BgpServiceCommunity>` object
     """
 
     _attribute_map = {

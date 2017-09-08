@@ -24,7 +24,7 @@ class RoutesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class RoutesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -134,10 +134,10 @@ class RoutesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Route <azure.mgmt.network.v2017_08_01.models.Route>`
+        :return: :class:`Route <azure.mgmt.network.v2017_09_01.models.Route>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Route <azure.mgmt.network.v2017_08_01.models.Route>`
+        :rtype: :class:`Route <azure.mgmt.network.v2017_09_01.models.Route>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -198,14 +198,14 @@ class RoutesOperations(object):
         :param route_parameters: Parameters supplied to the create or update
          route operation.
         :type route_parameters: :class:`Route
-         <azure.mgmt.network.v2017_08_01.models.Route>`
+         <azure.mgmt.network.v2017_09_01.models.Route>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Route
-         <azure.mgmt.network.v2017_08_01.models.Route>` or
+         <azure.mgmt.network.v2017_09_01.models.Route>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -300,9 +300,9 @@ class RoutesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Route
-         <azure.mgmt.network.v2017_08_01.models.Route>`
+         <azure.mgmt.network.v2017_09_01.models.Route>`
         :rtype: :class:`RoutePaged
-         <azure.mgmt.network.v2017_08_01.models.RoutePaged>`
+         <azure.mgmt.network.v2017_09_01.models.RoutePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

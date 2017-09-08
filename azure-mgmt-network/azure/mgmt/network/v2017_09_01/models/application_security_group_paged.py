@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class LocalNetworkGatewayPaged(Paged):
+class ApplicationSecurityGroupPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`LocalNetworkGateway <azure.mgmt.network.v2017_09_01.models.LocalNetworkGateway>` object
+    A paging container for iterating over a list of :class:`ApplicationSecurityGroup <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[LocalNetworkGateway]'}
+        'current_page': {'key': 'value', 'type': '[ApplicationSecurityGroup]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(LocalNetworkGatewayPaged, self).__init__(*args, **kwargs)
+        super(ApplicationSecurityGroupPaged, self).__init__(*args, **kwargs)

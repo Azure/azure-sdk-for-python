@@ -25,21 +25,21 @@ class Subnet(SubResource):
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
     :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.v2017_08_01.models.NetworkSecurityGroup>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkSecurityGroup>`
     :param route_table: The reference of the RouteTable resource.
     :type route_table: :class:`RouteTable
-     <azure.mgmt.network.v2017_08_01.models.RouteTable>`
+     <azure.mgmt.network.v2017_09_01.models.RouteTable>`
     :param service_endpoints: An array of service endpoints.
     :type service_endpoints: list of :class:`ServiceEndpointPropertiesFormat
-     <azure.mgmt.network.v2017_08_01.models.ServiceEndpointPropertiesFormat>`
+     <azure.mgmt.network.v2017_09_01.models.ServiceEndpointPropertiesFormat>`
     :ivar ip_configurations: Gets an array of references to the network
      interface IP configurations using subnet.
     :vartype ip_configurations: list of :class:`IPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.IPConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.IPConfiguration>`
     :param resource_navigation_links: Gets an array of references to the
      external resources using subnet.
     :type resource_navigation_links: list of :class:`ResourceNavigationLink
-     <azure.mgmt.network.v2017_08_01.models.ResourceNavigationLink>`
+     <azure.mgmt.network.v2017_09_01.models.ResourceNavigationLink>`
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource

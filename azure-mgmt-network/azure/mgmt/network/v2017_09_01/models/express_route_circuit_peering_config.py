@@ -27,7 +27,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
      :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
     :param legacy_mode: The legacy mode of the peering.
     :type legacy_mode: int
     :param customer_asn: The CustomerASN of the peering.

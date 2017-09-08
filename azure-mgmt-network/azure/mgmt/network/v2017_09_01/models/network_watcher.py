@@ -18,8 +18,8 @@ class NetworkWatcher(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -34,10 +34,11 @@ class NetworkWatcher(Resource):
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.network.v2017_08_01.models.ProvisioningState>`
+     <azure.mgmt.network.v2017_09_01.models.ProvisioningState>`
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -53,7 +54,7 @@ class NetworkWatcher(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, etag=None):
-        super(NetworkWatcher, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, etag=None):
+        super(NetworkWatcher, self).__init__(location=location, tags=tags)
         self.etag = etag
         self.provisioning_state = None

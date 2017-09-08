@@ -19,11 +19,10 @@ class InboundNatPool(SubResource):
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
-    :param protocol: The transport protocol for the endpoint. Possible values
-     are: 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :param protocol: Possible values include: 'Udp', 'Tcp', 'All'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.v2017_08_01.models.TransportProtocol>`
+     <azure.mgmt.network.v2017_09_01.models.TransportProtocol>`
     :param frontend_port_range_start: The first port number in the range of
      external ports that will be used to provide Inbound Nat to NICs associated
      with a load balancer. Acceptable values range between 1 and 65534.

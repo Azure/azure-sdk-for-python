@@ -18,8 +18,8 @@ class VirtualNetwork(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -31,29 +31,36 @@ class VirtualNetwork(Resource):
     :param address_space: The AddressSpace that contains an array of IP
      address ranges that can be used by subnets.
     :type address_space: :class:`AddressSpace
-     <azure.mgmt.network.v2017_08_01.models.AddressSpace>`
+     <azure.mgmt.network.v2017_09_01.models.AddressSpace>`
     :param dhcp_options: The dhcpOptions that contains an array of DNS servers
      available to VMs deployed in the virtual network.
     :type dhcp_options: :class:`DhcpOptions
-     <azure.mgmt.network.v2017_08_01.models.DhcpOptions>`
+     <azure.mgmt.network.v2017_09_01.models.DhcpOptions>`
     :param subnets: A list of subnets in a Virtual Network.
     :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2017_08_01.models.Subnet>`
+     <azure.mgmt.network.v2017_09_01.models.Subnet>`
     :param virtual_network_peerings: A list of peerings in a Virtual Network.
     :type virtual_network_peerings: list of :class:`VirtualNetworkPeering
-     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkPeering>`
+     <azure.mgmt.network.v2017_09_01.models.VirtualNetworkPeering>`
     :param resource_guid: The resourceGuid property of the Virtual Network
      resource.
     :type resource_guid: str
     :param provisioning_state: The provisioning state of the PublicIP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param enable_ddos_protection: Indicates if DDoS protection is enabled for
+     all the protected resources in a Virtual Network.
+    :type enable_ddos_protection: bool
+    :param enable_vm_protection: Indicates if Vm protection is enabled for all
+     the subnets in a Virtual Network.
+    :type enable_vm_protection: bool
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -70,15 +77,19 @@ class VirtualNetwork(Resource):
         'virtual_network_peerings': {'key': 'properties.virtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'enable_ddos_protection': {'key': 'properties.enableDdosProtection', 'type': 'bool'},
+        'enable_vm_protection': {'key': 'properties.enableVmProtection', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, enable_ddos_protection=None, enable_vm_protection=None, etag=None):
+        super(VirtualNetwork, self).__init__(location=location, tags=tags)
         self.address_space = address_space
         self.dhcp_options = dhcp_options
         self.subnets = subnets
         self.virtual_network_peerings = virtual_network_peerings
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.enable_ddos_protection = enable_ddos_protection
+        self.enable_vm_protection = enable_vm_protection
         self.etag = etag

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VirtualNetworkGatewayConnectionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualNetworkGatewayConnection <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>` object
+    A paging container for iterating over a list of :class:`VirtualNetworkGatewayConnection <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>` object
     """
 
     _attribute_map = {

@@ -18,8 +18,8 @@ class ExpressRouteCircuit(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -30,7 +30,7 @@ class ExpressRouteCircuit(Resource):
     :type tags: dict
     :param sku: The SKU.
     :type sku: :class:`ExpressRouteCircuitSku
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitSku>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitSku>`
     :param allow_classic_operations: Allow classic operations
     :type allow_classic_operations: bool
     :param circuit_provisioning_state: The CircuitProvisioningState state of
@@ -43,13 +43,13 @@ class ExpressRouteCircuit(Resource):
      'Deprovisioning'
     :type service_provider_provisioning_state: str or
      :class:`ServiceProviderProvisioningState
-     <azure.mgmt.network.v2017_08_01.models.ServiceProviderProvisioningState>`
+     <azure.mgmt.network.v2017_09_01.models.ServiceProviderProvisioningState>`
     :param authorizations: The list of authorizations.
     :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitAuthorization>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
     :param peerings: The list of peerings.
     :type peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>`
     :param service_key: The ServiceKey.
     :type service_key: str
     :param service_provider_notes: The ServiceProviderNotes.
@@ -57,7 +57,7 @@ class ExpressRouteCircuit(Resource):
     :param service_provider_properties: The ServiceProviderProperties.
     :type service_provider_properties:
      :class:`ExpressRouteCircuitServiceProviderProperties
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitServiceProviderProperties>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitServiceProviderProperties>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -69,6 +69,7 @@ class ExpressRouteCircuit(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
@@ -94,8 +95,8 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None):
-        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None):
+        super(ExpressRouteCircuit, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
         self.circuit_provisioning_state = circuit_provisioning_state

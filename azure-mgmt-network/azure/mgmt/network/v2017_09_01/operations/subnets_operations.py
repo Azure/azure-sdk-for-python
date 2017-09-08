@@ -24,7 +24,7 @@ class SubnetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class SubnetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -137,10 +137,10 @@ class SubnetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`Subnet
-         <azure.mgmt.network.v2017_08_01.models.Subnet>` or
+         <azure.mgmt.network.v2017_09_01.models.Subnet>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Subnet <azure.mgmt.network.v2017_08_01.models.Subnet>`
+        :rtype: :class:`Subnet <azure.mgmt.network.v2017_09_01.models.Subnet>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -203,14 +203,14 @@ class SubnetsOperations(object):
         :param subnet_parameters: Parameters supplied to the create or update
          subnet operation.
         :type subnet_parameters: :class:`Subnet
-         <azure.mgmt.network.v2017_08_01.models.Subnet>`
+         <azure.mgmt.network.v2017_09_01.models.Subnet>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Subnet
-         <azure.mgmt.network.v2017_08_01.models.Subnet>` or
+         <azure.mgmt.network.v2017_09_01.models.Subnet>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -305,9 +305,9 @@ class SubnetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Subnet
-         <azure.mgmt.network.v2017_08_01.models.Subnet>`
+         <azure.mgmt.network.v2017_09_01.models.Subnet>`
         :rtype: :class:`SubnetPaged
-         <azure.mgmt.network.v2017_08_01.models.SubnetPaged>`
+         <azure.mgmt.network.v2017_09_01.models.SubnetPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -17,7 +17,7 @@ class BgpPeerStatusListResult(Model):
 
     :param value: List of BGP peers
     :type value: list of :class:`BgpPeerStatus
-     <azure.mgmt.network.v2017_08_01.models.BgpPeerStatus>`
+     <azure.mgmt.network.v2017_09_01.models.BgpPeerStatus>`
     """
 
     _attribute_map = {

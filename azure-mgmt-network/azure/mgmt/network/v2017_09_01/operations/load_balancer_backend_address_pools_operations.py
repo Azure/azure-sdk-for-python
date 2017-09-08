@@ -23,7 +23,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -49,9 +49,9 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>`
+         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>`
         :rtype: :class:`BackendAddressPoolPaged
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPoolPaged>`
+         <azure.mgmt.network.v2017_09_01.models.BackendAddressPoolPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -123,11 +123,11 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>` or
+         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>` or
+         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

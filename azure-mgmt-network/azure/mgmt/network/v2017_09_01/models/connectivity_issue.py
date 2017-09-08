@@ -22,16 +22,16 @@ class ConnectivityIssue(Model):
     :ivar origin: The origin of the issue. Possible values include: 'Local',
      'Inbound', 'Outbound'
     :vartype origin: str or :class:`Origin
-     <azure.mgmt.network.v2017_08_01.models.Origin>`
+     <azure.mgmt.network.v2017_09_01.models.Origin>`
     :ivar severity: The severity of the issue. Possible values include:
      'Error', 'Warning'
     :vartype severity: str or :class:`Severity
-     <azure.mgmt.network.v2017_08_01.models.Severity>`
+     <azure.mgmt.network.v2017_09_01.models.Severity>`
     :ivar type: The type of issue. Possible values include: 'Unknown',
      'AgentStopped', 'GuestFirewall', 'DnsResolution', 'SocketBind',
      'NetworkSecurityRule', 'UserDefinedRoute', 'PortThrottled', 'Platform'
     :vartype type: str or :class:`IssueType
-     <azure.mgmt.network.v2017_08_01.models.IssueType>`
+     <azure.mgmt.network.v2017_09_01.models.IssueType>`
     :ivar context: Provides additional context on the issue.
     :vartype context: list of dict
     """

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class InboundNatRulePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`InboundNatRule <azure.mgmt.network.v2017_08_01.models.InboundNatRule>` object
+    A paging container for iterating over a list of :class:`InboundNatRule <azure.mgmt.network.v2017_09_01.models.InboundNatRule>` object
     """
 
     _attribute_map = {
