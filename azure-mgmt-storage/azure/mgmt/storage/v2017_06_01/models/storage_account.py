@@ -96,9 +96,9 @@ class StorageAccount(Resource):
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true. Default value: False .
     :type enable_https_traffic_only: bool
-    :ivar network_acls: Network ACL
-    :vartype network_acls: :class:`StorageNetworkAcls
-     <azure.mgmt.storage.v2017_06_01.models.StorageNetworkAcls>`
+    :ivar network_rule_set: Network rule set
+    :vartype network_rule_set: :class:`NetworkRuleSet
+     <azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet>`
     """
 
     _validation = {
@@ -119,7 +119,7 @@ class StorageAccount(Resource):
         'secondary_endpoints': {'readonly': True},
         'encryption': {'readonly': True},
         'access_tier': {'readonly': True},
-        'network_acls': {'readonly': True},
+        'network_rule_set': {'readonly': True},
     }
 
     _attribute_map = {
@@ -144,7 +144,7 @@ class StorageAccount(Resource):
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
-        'network_acls': {'key': 'properties.networkAcls', 'type': 'StorageNetworkAcls'},
+        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
     }
 
     def __init__(self, location=None, tags=None, identity=None, enable_https_traffic_only=False):
@@ -165,4 +165,4 @@ class StorageAccount(Resource):
         self.encryption = None
         self.access_tier = None
         self.enable_https_traffic_only = enable_https_traffic_only
-        self.network_acls = None
+        self.network_rule_set = None
