@@ -135,8 +135,9 @@
       "generated_relative_base_directory": "python/azure/mgmt/containerinstance"
     },
     "containerregistry.2017-03-01": {
+      "markdown": "specification/containerregistry/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/2017-03-01/containerregistry.json",
+        "tag": "package-2017-03",
         "namespace": "azure.mgmt.containerregistry.v2017_03_01"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_03_01",
@@ -144,8 +145,9 @@
       "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_03_01"
     },
     "containerregistry.2017-06-01-preview": {
+      "markdown": "specification/containerregistry/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/2017-06-01-preview/containerregistry.json",
+        "tag": "package-2017-06-preview",
         "namespace": "azure.mgmt.containerregistry.v2017_06_01_preview"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_06_01_preview",
