@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.3 (2017-09-07)
+++++++++++++++++++
+
+**Bug fixes**
+
+- jobs.get function fails if custom retry policy is set (#1358)
+
 1.1.2 (2017-04-18)
 ++++++++++++++++++
 
