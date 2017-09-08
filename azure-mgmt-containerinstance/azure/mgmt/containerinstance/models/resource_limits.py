@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ResourceLimits(Model):
     """The resource limits.
 
-    :param memory_in_gb: The memory limit in GB of this container.
+    :param memory_in_gb: The memory limit in GB of this container instance.
     :type memory_in_gb: float
-    :param cpu: The CPU limit of this container.
+    :param cpu: The CPU limit of this container instance.
     :type cpu: float
     """
 

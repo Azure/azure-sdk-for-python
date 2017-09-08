@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class Volume(Model):
-    """The volume.
+    """The properties of the volume.
 
-    :param name: The volume name.
+    :param name: The name of the volume.
     :type name: str
-    :param azure_file: The Azure file volume.
+    :param azure_file: The name of the Azure File volume.
     :type azure_file: :class:`AzureFileVolume
      <azure.mgmt.containerinstance.models.AzureFileVolume>`
     """
