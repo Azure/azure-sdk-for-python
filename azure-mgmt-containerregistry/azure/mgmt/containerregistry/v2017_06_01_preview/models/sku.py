@@ -18,8 +18,8 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The SKU name of the the container registry. Required for
-     registry creation. Possible values include: 'Basic', 'Managed_Basic',
+    :param name: The SKU name of the container registry. Required for registry
+     creation. Possible values include: 'Basic', 'Managed_Basic',
      'Managed_Standard', 'Managed_Premium'
     :type name: str or :class:`SkuName
      <azure.mgmt.containerregistry.v2017_06_01_preview.models.SkuName>`
