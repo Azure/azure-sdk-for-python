@@ -12,6 +12,7 @@
 from .sub_resource import SubResource
 from .backend_address_pool import BackendAddressPool
 from .inbound_nat_rule import InboundNatRule
+from .application_security_group import ApplicationSecurityGroup
 from .security_rule import SecurityRule
 from .network_interface_dns_settings import NetworkInterfaceDnsSettings
 from .network_interface import NetworkInterface
@@ -164,6 +165,7 @@ from .virtual_network_connection_gateway_reference import VirtualNetworkConnecti
 from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
+from .application_security_group_paged import ApplicationSecurityGroupPaged
 from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
@@ -268,6 +270,7 @@ __all__ = [
     'SubResource',
     'BackendAddressPool',
     'InboundNatRule',
+    'ApplicationSecurityGroup',
     'SecurityRule',
     'NetworkInterfaceDnsSettings',
     'NetworkInterface',
@@ -420,6 +423,7 @@ __all__ = [
     'VirtualNetworkGatewayConnectionListEntity',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
+    'ApplicationSecurityGroupPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',

@@ -18,6 +18,8 @@ class Usage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource identifier.
+    :vartype id: str
     :ivar unit: An enum describing the unit of measurement. Default value:
      "Count" .
     :vartype unit: str
@@ -27,10 +29,11 @@ class Usage(Model):
     :type limit: long
     :param name: The name of the type of usage.
     :type name: :class:`UsageName
-     <azure.mgmt.network.v2017_08_01.models.UsageName>`
+     <azure.mgmt.network.v2017_09_01.models.UsageName>`
     """
 
     _validation = {
+        'id': {'readonly': True},
         'unit': {'required': True, 'constant': True},
         'current_value': {'required': True},
         'limit': {'required': True},
@@ -38,6 +41,7 @@ class Usage(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'long'},
         'limit': {'key': 'limit', 'type': 'long'},
@@ -47,6 +51,7 @@ class Usage(Model):
     unit = "Count"
 
     def __init__(self, current_value, limit, name):
+        self.id = None
         self.current_value = current_value
         self.limit = limit
         self.name = name

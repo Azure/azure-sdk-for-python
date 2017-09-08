@@ -24,7 +24,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -49,14 +49,14 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param parameters: Parameters supplied to the create or update virtual
          network gateway connection operation.
         :type parameters: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -152,11 +152,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -304,7 +304,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_08_01.models.ConnectionSharedKey>` or
+         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -403,11 +403,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_08_01.models.ConnectionSharedKey>` or
+         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_08_01.models.ConnectionSharedKey>` or
+         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -468,9 +468,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
          :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnection>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
         :rtype: :class:`VirtualNetworkGatewayConnectionPaged
-         <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayConnectionPaged>`
+         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnectionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -545,7 +545,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ConnectionResetSharedKey
-         <azure.mgmt.network.v2017_08_01.models.ConnectionResetSharedKey>` or
+         <azure.mgmt.network.v2017_09_01.models.ConnectionResetSharedKey>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:

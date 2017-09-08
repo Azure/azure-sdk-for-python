@@ -39,15 +39,15 @@ class PacketCaptureResult(Model):
     :type time_limit_in_seconds: int
     :param storage_location:
     :type storage_location: :class:`PacketCaptureStorageLocation
-     <azure.mgmt.network.v2017_08_01.models.PacketCaptureStorageLocation>`
+     <azure.mgmt.network.v2017_09_01.models.PacketCaptureStorageLocation>`
     :param filters:
     :type filters: list of :class:`PacketCaptureFilter
-     <azure.mgmt.network.v2017_08_01.models.PacketCaptureFilter>`
+     <azure.mgmt.network.v2017_09_01.models.PacketCaptureFilter>`
     :param provisioning_state: The provisioning state of the packet capture
      session. Possible values include: 'Succeeded', 'Updating', 'Deleting',
      'Failed'
     :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.network.v2017_08_01.models.ProvisioningState>`
+     <azure.mgmt.network.v2017_09_01.models.ProvisioningState>`
     """
 
     _validation = {

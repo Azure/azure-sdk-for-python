@@ -18,8 +18,8 @@ class BgpServiceCommunity(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -32,10 +32,11 @@ class BgpServiceCommunity(Resource):
     :type service_name: str
     :param bgp_communities: Get a list of bgp communities.
     :type bgp_communities: list of :class:`BGPCommunity
-     <azure.mgmt.network.v2017_08_01.models.BGPCommunity>`
+     <azure.mgmt.network.v2017_09_01.models.BGPCommunity>`
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -50,7 +51,7 @@ class BgpServiceCommunity(Resource):
         'bgp_communities': {'key': 'properties.bgpCommunities', 'type': '[BGPCommunity]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, service_name=None, bgp_communities=None):
-        super(BgpServiceCommunity, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, service_name=None, bgp_communities=None):
+        super(BgpServiceCommunity, self).__init__(location=location, tags=tags)
         self.service_name = service_name
         self.bgp_communities = bgp_communities

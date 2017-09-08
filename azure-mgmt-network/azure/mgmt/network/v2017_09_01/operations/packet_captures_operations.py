@@ -24,7 +24,7 @@ class PacketCapturesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class PacketCapturesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -49,14 +49,14 @@ class PacketCapturesOperations(object):
         :param parameters: Parameters that define the create packet capture
          operation.
         :type parameters: :class:`PacketCapture
-         <azure.mgmt.network.v2017_08_01.models.PacketCapture>`
+         <azure.mgmt.network.v2017_09_01.models.PacketCapture>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PacketCaptureResult
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureResult>` or
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -151,11 +151,11 @@ class PacketCapturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`PacketCaptureResult
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureResult>` or
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`PacketCaptureResult
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureResult>` or
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -386,7 +386,7 @@ class PacketCapturesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PacketCaptureQueryStatusResult
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureQueryStatusResult>`
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureQueryStatusResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -477,9 +477,9 @@ class PacketCapturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`PacketCaptureResult
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureResult>`
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureResult>`
         :rtype: :class:`PacketCaptureResultPaged
-         <azure.mgmt.network.v2017_08_01.models.PacketCaptureResultPaged>`
+         <azure.mgmt.network.v2017_09_01.models.PacketCaptureResultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

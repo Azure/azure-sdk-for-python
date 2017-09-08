@@ -18,8 +18,8 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -39,10 +39,11 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :param rule_groups: The rule groups of the web application firewall rule
      set.
     :type rule_groups: list of :class:`ApplicationGatewayFirewallRuleGroup
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleGroup>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayFirewallRuleGroup>`
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'rule_set_type': {'required': True},
@@ -62,8 +63,8 @@ class ApplicationGatewayFirewallRuleSet(Resource):
         'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ApplicationGatewayFirewallRuleGroup]'},
     }
 
-    def __init__(self, rule_set_type, rule_set_version, rule_groups, id=None, location=None, tags=None, provisioning_state=None):
-        super(ApplicationGatewayFirewallRuleSet, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, rule_set_type, rule_set_version, rule_groups, location=None, tags=None, provisioning_state=None):
+        super(ApplicationGatewayFirewallRuleSet, self).__init__(location=location, tags=tags)
         self.provisioning_state = provisioning_state
         self.rule_set_type = rule_set_type
         self.rule_set_version = rule_set_version

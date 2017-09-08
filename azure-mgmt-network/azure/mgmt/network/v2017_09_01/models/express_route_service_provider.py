@@ -18,8 +18,8 @@ class ExpressRouteServiceProvider(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -33,12 +33,13 @@ class ExpressRouteServiceProvider(Resource):
     :param bandwidths_offered: Gets bandwidths offered.
     :type bandwidths_offered: list of
      :class:`ExpressRouteServiceProviderBandwidthsOffered
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteServiceProviderBandwidthsOffered>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteServiceProviderBandwidthsOffered>`
     :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -54,8 +55,8 @@ class ExpressRouteServiceProvider(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
-        super(ExpressRouteServiceProvider, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
+        super(ExpressRouteServiceProvider, self).__init__(location=location, tags=tags)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state

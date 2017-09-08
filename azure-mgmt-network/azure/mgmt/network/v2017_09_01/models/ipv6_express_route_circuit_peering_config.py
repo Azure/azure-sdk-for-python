@@ -21,14 +21,14 @@ class Ipv6ExpressRouteCircuitPeeringConfig(Model):
     :type secondary_peer_address_prefix: str
     :param microsoft_peering_config: The Microsoft peering configuration.
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringConfig>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeeringConfig>`
     :param route_filter: The reference of the RouteFilter resource.
     :type route_filter: :class:`RouteFilter
-     <azure.mgmt.network.v2017_08_01.models.RouteFilter>`
+     <azure.mgmt.network.v2017_09_01.models.RouteFilter>`
     :param state: The state of peering. Possible values are: 'Disabled' and
      'Enabled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringState>`
+     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeeringState>`
     """
 
     _attribute_map = {

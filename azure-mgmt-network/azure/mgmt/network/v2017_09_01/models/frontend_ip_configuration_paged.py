@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class FrontendIPConfigurationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`FrontendIPConfiguration <azure.mgmt.network.v2017_08_01.models.FrontendIPConfiguration>` object
+    A paging container for iterating over a list of :class:`FrontendIPConfiguration <azure.mgmt.network.v2017_09_01.models.FrontendIPConfiguration>` object
     """
 
     _attribute_map = {

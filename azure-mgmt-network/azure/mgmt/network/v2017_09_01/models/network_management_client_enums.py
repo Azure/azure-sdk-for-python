@@ -16,6 +16,7 @@ class TransportProtocol(Enum):
 
     udp = "Udp"
     tcp = "Tcp"
+    all = "All"
 
 
 class IPAllocationMethod(Enum):

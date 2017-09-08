@@ -25,7 +25,7 @@ class Route(SubResource):
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
     :type next_hop_type: str or :class:`RouteNextHopType
-     <azure.mgmt.network.v2017_08_01.models.RouteNextHopType>`
+     <azure.mgmt.network.v2017_09_01.models.RouteNextHopType>`
     :param next_hop_ip_address: The IP address packets should be forwarded to.
      Next hop values are only allowed in routes where the next hop type is
      VirtualAppliance.

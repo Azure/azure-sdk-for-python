@@ -29,10 +29,10 @@ class PacketCapture(Model):
     :type time_limit_in_seconds: int
     :param storage_location:
     :type storage_location: :class:`PacketCaptureStorageLocation
-     <azure.mgmt.network.v2017_08_01.models.PacketCaptureStorageLocation>`
+     <azure.mgmt.network.v2017_09_01.models.PacketCaptureStorageLocation>`
     :param filters:
     :type filters: list of :class:`PacketCaptureFilter
-     <azure.mgmt.network.v2017_08_01.models.PacketCaptureFilter>`
+     <azure.mgmt.network.v2017_09_01.models.PacketCaptureFilter>`
     """
 
     _validation = {

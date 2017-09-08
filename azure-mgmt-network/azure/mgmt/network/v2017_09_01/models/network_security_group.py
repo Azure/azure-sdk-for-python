@@ -18,8 +18,8 @@ class NetworkSecurityGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -31,18 +31,18 @@ class NetworkSecurityGroup(Resource):
     :param security_rules: A collection of security rules of the network
      security group.
     :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2017_08_01.models.SecurityRule>`
+     <azure.mgmt.network.v2017_09_01.models.SecurityRule>`
     :param default_security_rules: The default security rules of network
      security group.
     :type default_security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2017_08_01.models.SecurityRule>`
+     <azure.mgmt.network.v2017_09_01.models.SecurityRule>`
     :ivar network_interfaces: A collection of references to network
      interfaces.
     :vartype network_interfaces: list of :class:`NetworkInterface
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterface>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
     :ivar subnets: A collection of references to subnets.
     :vartype subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2017_08_01.models.Subnet>`
+     <azure.mgmt.network.v2017_09_01.models.Subnet>`
     :param resource_guid: The resource GUID property of the network security
      group resource.
     :type resource_guid: str
@@ -55,6 +55,7 @@ class NetworkSecurityGroup(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'network_interfaces': {'readonly': True},
@@ -76,8 +77,8 @@ class NetworkSecurityGroup(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, security_rules=None, default_security_rules=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(NetworkSecurityGroup, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, security_rules=None, default_security_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkSecurityGroup, self).__init__(location=location, tags=tags)
         self.security_rules = security_rules
         self.default_security_rules = default_security_rules
         self.network_interfaces = None

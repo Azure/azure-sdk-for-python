@@ -18,8 +18,8 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -30,24 +30,25 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     :type tags: dict
     :param predefined_policies: List of available Ssl predefined policy.
     :type predefined_policies: list of :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param default_policy: Name of the Ssl predefined policy applied by
      default to application gateway. Possible values include:
      'AppGwSslPolicy20150501', 'AppGwSslPolicy20170401',
      'AppGwSslPolicy20170401S'
     :type default_policy: str or :class:`ApplicationGatewaySslPolicyName
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyName>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslPolicyName>`
     :param available_cipher_suites: List of available Ssl cipher suites.
     :type available_cipher_suites: list of str or
      :class:`ApplicationGatewaySslCipherSuite
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslCipherSuite>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslCipherSuite>`
     :param available_protocols: List of available Ssl protocols.
     :type available_protocols: list of str or
      :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslProtocol>`
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -64,8 +65,8 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         'available_protocols': {'key': 'properties.availableProtocols', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, predefined_policies=None, default_policy=None, available_cipher_suites=None, available_protocols=None):
-        super(ApplicationGatewayAvailableSslOptions, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, predefined_policies=None, default_policy=None, available_cipher_suites=None, available_protocols=None):
+        super(ApplicationGatewayAvailableSslOptions, self).__init__(location=location, tags=tags)
         self.predefined_policies = predefined_policies
         self.default_policy = default_policy
         self.available_cipher_suites = available_cipher_suites

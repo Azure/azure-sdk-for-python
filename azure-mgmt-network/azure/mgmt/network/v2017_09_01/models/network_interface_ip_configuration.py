@@ -21,38 +21,43 @@ class NetworkInterfaceIPConfiguration(SubResource):
      ApplicationGatewayBackendAddressPool resource.
     :type application_gateway_backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendAddressPool>`
+     <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayBackendAddressPool>`
     :param load_balancer_backend_address_pools: The reference of
      LoadBalancerBackendAddressPool resource.
     :type load_balancer_backend_address_pools: list of
      :class:`BackendAddressPool
-     <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>`
+     <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>`
     :param load_balancer_inbound_nat_rules: A list of references of
      LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.v2017_08_01.models.InboundNatRule>`
+     <azure.mgmt.network.v2017_09_01.models.InboundNatRule>`
     :param private_ip_address: Private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: Defines how a private IP address is
      assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
      include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_08_01.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2017_09_01.models.IPAllocationMethod>`
     :param private_ip_address_version: Available from Api-Version 2016-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.v2017_08_01.models.IPVersion>`
+     <azure.mgmt.network.v2017_09_01.models.IPVersion>`
     :param subnet: Subnet bound to the IP configuration.
     :type subnet: :class:`Subnet
-     <azure.mgmt.network.v2017_08_01.models.Subnet>`
+     <azure.mgmt.network.v2017_09_01.models.Subnet>`
     :param primary: Gets whether this is a primary customer address on the
      network interface.
     :type primary: bool
     :param public_ip_address: Public IP address bound to the IP configuration.
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v2017_08_01.models.PublicIPAddress>`
+     <azure.mgmt.network.v2017_09_01.models.PublicIPAddress>`
+    :param application_security_groups: Application security groups in which
+     the IP configuration is included.
+    :type application_security_groups: list of
+     :class:`ApplicationSecurityGroup
+     <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
     :param provisioning_state: The provisioning state of the network interface
      IP configuration. Possible values are: 'Updating', 'Deleting', and
      'Failed'.
@@ -76,12 +81,13 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
+        'application_security_groups': {'key': 'properties.applicationSecurityGroups', 'type': '[ApplicationSecurityGroup]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, primary=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, primary=None, public_ip_address=None, application_security_groups=None, provisioning_state=None, name=None, etag=None):
         super(NetworkInterfaceIPConfiguration, self).__init__(id=id)
         self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
@@ -92,6 +98,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         self.subnet = subnet
         self.primary = primary
         self.public_ip_address = public_ip_address
+        self.application_security_groups = application_security_groups
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

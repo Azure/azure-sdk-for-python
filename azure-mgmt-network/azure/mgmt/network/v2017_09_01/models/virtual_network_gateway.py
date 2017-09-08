@@ -18,8 +18,8 @@ class VirtualNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -31,17 +31,17 @@ class VirtualNetworkGateway(Resource):
     :param ip_configurations: IP configurations for virtual network gateway.
     :type ip_configurations: list of
      :class:`VirtualNetworkGatewayIPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayIPConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayIPConfiguration>`
     :param gateway_type: The type of this virtual network gateway. Possible
      values are: 'Vpn' and 'ExpressRoute'. Possible values include: 'Vpn',
      'ExpressRoute'
     :type gateway_type: str or :class:`VirtualNetworkGatewayType
-     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewayType>`
+     <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayType>`
     :param vpn_type: The type of this virtual network gateway. Possible values
      are: 'PolicyBased' and 'RouteBased'. Possible values include:
      'PolicyBased', 'RouteBased'
     :type vpn_type: str or :class:`VpnType
-     <azure.mgmt.network.v2017_08_01.models.VpnType>`
+     <azure.mgmt.network.v2017_09_01.models.VpnType>`
     :param enable_bgp: Whether BGP is enabled for this virtual network gateway
      or not.
     :type enable_bgp: bool
@@ -51,19 +51,19 @@ class VirtualNetworkGateway(Resource):
      resource which represents local network site having default routes. Assign
      Null value in case of removing existing default site setting.
     :type gateway_default_site: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param sku: The reference of the VirtualNetworkGatewaySku resource which
      represents the SKU selected for Virtual network gateway.
     :type sku: :class:`VirtualNetworkGatewaySku
-     <azure.mgmt.network.v2017_08_01.models.VirtualNetworkGatewaySku>`
+     <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewaySku>`
     :param vpn_client_configuration: The reference of the
      VpnClientConfiguration resource which represents the P2S VpnClient
      configurations.
     :type vpn_client_configuration: :class:`VpnClientConfiguration
-     <azure.mgmt.network.v2017_08_01.models.VpnClientConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.VpnClientConfiguration>`
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: :class:`BgpSettings
-     <azure.mgmt.network.v2017_08_01.models.BgpSettings>`
+     <azure.mgmt.network.v2017_09_01.models.BgpSettings>`
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
     :type resource_guid: str
@@ -77,6 +77,7 @@ class VirtualNetworkGateway(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -102,8 +103,8 @@ class VirtualNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
-        super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
+        super(VirtualNetworkGateway, self).__init__(location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type

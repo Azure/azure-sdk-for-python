@@ -18,7 +18,7 @@ class PublicIPAddressSku(Model):
     :param name: Name of a public IP address SKU. Possible values include:
      'Basic', 'Standard'
     :type name: str or :class:`PublicIPAddressSkuName
-     <azure.mgmt.network.v2017_08_01.models.PublicIPAddressSkuName>`
+     <azure.mgmt.network.v2017_09_01.models.PublicIPAddressSkuName>`
     """
 
     _attribute_map = {

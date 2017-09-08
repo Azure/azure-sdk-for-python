@@ -18,8 +18,8 @@ class NetworkInterface(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -30,18 +30,18 @@ class NetworkInterface(Resource):
     :type tags: dict
     :param virtual_machine: The reference of a virtual machine.
     :type virtual_machine: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+     <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
     :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.v2017_08_01.models.NetworkSecurityGroup>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkSecurityGroup>`
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
     :type ip_configurations: list of :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkInterfaceIPConfiguration>`
     :param dns_settings: The DNS settings in network interface.
     :type dns_settings: :class:`NetworkInterfaceDnsSettings
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceDnsSettings>`
+     <azure.mgmt.network.v2017_09_01.models.NetworkInterfaceDnsSettings>`
     :param mac_address: The MAC address of the network interface.
     :type mac_address: str
     :param primary: Gets whether this is a primary network interface on a
@@ -65,6 +65,7 @@ class NetworkInterface(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -88,8 +89,8 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_accelerated_networking=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(NetworkInterface, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_accelerated_networking=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkInterface, self).__init__(location=location, tags=tags)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
         self.ip_configurations = ip_configurations

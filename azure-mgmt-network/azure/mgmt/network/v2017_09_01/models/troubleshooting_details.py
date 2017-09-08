@@ -26,7 +26,7 @@ class TroubleshootingDetails(Model):
     :param recommended_actions: List of recommended actions.
     :type recommended_actions: list of
      :class:`TroubleshootingRecommendedActions
-     <azure.mgmt.network.v2017_08_01.models.TroubleshootingRecommendedActions>`
+     <azure.mgmt.network.v2017_09_01.models.TroubleshootingRecommendedActions>`
     """
 
     _attribute_map = {

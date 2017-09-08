@@ -24,7 +24,7 @@ class ApplicationGatewaysOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class ApplicationGatewaysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -130,11 +130,11 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>` or
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>` or
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -192,14 +192,14 @@ class ApplicationGatewaysOperations(object):
         :param parameters: Parameters supplied to the create or update
          application gateway operation.
         :type parameters: :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>` or
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -291,9 +291,9 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>`
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayPaged>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -357,9 +357,9 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`ApplicationGateway
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGateway>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGateway>`
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayPaged>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -590,7 +590,7 @@ class ApplicationGatewaysOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplicationGatewayBackendHealth
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealth>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayBackendHealth>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -676,11 +676,11 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ApplicationGatewayAvailableWafRuleSetsResult
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayAvailableWafRuleSetsResult>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayAvailableWafRuleSetsResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ApplicationGatewayAvailableWafRuleSetsResult
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayAvailableWafRuleSetsResult>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayAvailableWafRuleSetsResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -735,11 +735,11 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ApplicationGatewayAvailableSslOptions
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayAvailableSslOptions>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayAvailableSslOptions>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ApplicationGatewayAvailableSslOptions
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayAvailableSslOptions>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewayAvailableSslOptions>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -795,9 +795,9 @@ class ApplicationGatewaysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
          :class:`ApplicationGatewaySslPredefinedPolicy
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPredefinedPolicy>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslPredefinedPolicy>`
         :rtype: :class:`ApplicationGatewaySslPredefinedPolicyPaged
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPredefinedPolicyPaged>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslPredefinedPolicyPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -862,11 +862,11 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ApplicationGatewaySslPredefinedPolicy
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPredefinedPolicy>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslPredefinedPolicy>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ApplicationGatewaySslPredefinedPolicy
-         <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPredefinedPolicy>`
+         <azure.mgmt.network.v2017_09_01.models.ApplicationGatewaySslPredefinedPolicy>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

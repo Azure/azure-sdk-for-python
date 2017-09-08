@@ -24,7 +24,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01".
+    :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -136,11 +136,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>` or
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>` or
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -201,14 +201,14 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :param peering_parameters: Parameters supplied to the create or update
          express route circuit peering operation.
         :type peering_parameters: :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>`
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>` or
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -304,9 +304,9 @@ class ExpressRouteCircuitPeeringsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
          :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeering>`
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>`
         :rtype: :class:`ExpressRouteCircuitPeeringPaged
-         <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringPaged>`
+         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeeringPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
