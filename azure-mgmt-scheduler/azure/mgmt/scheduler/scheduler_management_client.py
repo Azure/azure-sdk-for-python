@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.job_collections_operations import JobCollectionsOperations
 from .operations.jobs_operations import JobsOperations
 from . import models
+from .patch import patch_client
 
 
 class SchedulerManagementClientConfiguration(AzureConfiguration):
@@ -86,3 +87,5 @@ class SchedulerManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+
+        patch_client(self)
