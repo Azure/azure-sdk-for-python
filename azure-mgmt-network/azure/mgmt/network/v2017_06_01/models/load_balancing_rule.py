@@ -38,7 +38,7 @@ class LoadBalancingRule(SubResource):
     :type load_distribution: str or :class:`LoadDistribution
      <azure.mgmt.network.v2017_06_01.models.LoadDistribution>`
     :param frontend_port: The port for the external endpoint. Port numbers for
-     each Rule must be unique within the Load Balancer. Acceptable values are
+     each rule must be unique within the Load Balancer. Acceptable values are
      between 1 and 65534.
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
