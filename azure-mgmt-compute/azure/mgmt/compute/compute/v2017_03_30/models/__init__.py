@@ -60,7 +60,6 @@ from .maintenance_redeploy_status import MaintenanceRedeployStatus
 from .virtual_machine_instance_view import VirtualMachineInstanceView
 from .virtual_machine import VirtualMachine
 from .upgrade_policy import UpgradePolicy
-from .recovery_policy import RecoveryPolicy
 from .image_os_disk import ImageOSDisk
 from .image_data_disk import ImageDataDisk
 from .image_storage_profile import ImageStorageProfile
@@ -151,7 +150,6 @@ from .compute_management_client_enums import (
     ResourceIdentityType,
     MaintenanceOperationResultCodeTypes,
     UpgradeMode,
-    RecoveryMode,
     OperatingSystemStateTypes,
     ResourceSkuCapacityScaleType,
     ResourceSkuRestrictionsType,
@@ -215,7 +213,6 @@ __all__ = [
     'VirtualMachineInstanceView',
     'VirtualMachine',
     'UpgradePolicy',
-    'RecoveryPolicy',
     'ImageOSDisk',
     'ImageDataDisk',
     'ImageStorageProfile',
@@ -305,7 +302,6 @@ __all__ = [
     'ResourceIdentityType',
     'MaintenanceOperationResultCodeTypes',
     'UpgradeMode',
-    'RecoveryMode',
     'OperatingSystemStateTypes',
     'ResourceSkuCapacityScaleType',
     'ResourceSkuRestrictionsType',
