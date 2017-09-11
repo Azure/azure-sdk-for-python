@@ -23,7 +23,8 @@ class MetricSpecification(Model):
     :type display_description: str
     :param unit: Unit could be Bytes or Count.
     :type unit: str
-    :param dimensions: Dimensions.
+    :param dimensions: Dimensions of blobs, including blob type and access
+     tier.
     :type dimensions: list of :class:`Dimension
      <azure.mgmt.storage.v2017_06_01.models.Dimension>`
     :param aggregation_type: Aggregation type could be Average.

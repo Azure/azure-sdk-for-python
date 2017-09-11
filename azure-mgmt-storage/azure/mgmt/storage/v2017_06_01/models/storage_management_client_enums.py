@@ -12,10 +12,10 @@
 from enum import Enum
 
 
-class Reason(Enum):
+class ReasonCode(Enum):
 
-    account_name_invalid = "AccountNameInvalid"
-    already_exists = "AlreadyExists"
+    quota_id = "QuotaId"
+    not_available_for_subscription = "NotAvailableForSubscription"
 
 
 class SkuName(Enum):
@@ -31,6 +31,18 @@ class SkuTier(Enum):
 
     standard = "Standard"
     premium = "Premium"
+
+
+class Kind(Enum):
+
+    storage = "Storage"
+    blob_storage = "BlobStorage"
+
+
+class Reason(Enum):
+
+    account_name_invalid = "AccountNameInvalid"
+    already_exists = "AlreadyExists"
 
 
 class KeySource(Enum):
@@ -71,12 +83,6 @@ class AccessTier(Enum):
 
     hot = "Hot"
     cool = "Cool"
-
-
-class Kind(Enum):
-
-    storage = "Storage"
-    blob_storage = "BlobStorage"
 
 
 class ProvisioningState(Enum):
