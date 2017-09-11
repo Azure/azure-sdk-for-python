@@ -33,7 +33,7 @@ class InboundNatRule(SubResource):
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.v2017_03_01.models.TransportProtocol>`
     :param frontend_port: The port for the external endpoint. Port numbers for
-     each Rule must be unique within the Load Balancer. Acceptable values range
+     each rule must be unique within the Load Balancer. Acceptable values range
      from 1 to 65534.
     :type frontend_port: int
     :param backend_port: The port used for the internal endpoint. Acceptable
