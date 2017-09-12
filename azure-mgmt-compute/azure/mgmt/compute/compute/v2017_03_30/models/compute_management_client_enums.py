@@ -187,13 +187,6 @@ class UpgradeMode(Enum):
     manual = "Manual"
 
 
-class RecoveryMode(Enum):
-
-    none = "None"
-    over_provision = "OverProvision"
-    reprovision = "Reprovision"
-
-
 class OperatingSystemStateTypes(Enum):
 
     generalized = "Generalized"
