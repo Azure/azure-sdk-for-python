@@ -1,0 +1,115 @@
+interactions:
+- request:
+    body: '{"properties": {"storageProfile": {"osDisk": {"osState": "Generalized",
+      "caching": "ReadWrite", "blobUri": "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd",
+      "osType": "Linux"}}}, "location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['239']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\":
+        {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n
+        \       \"blobUri\": \"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\",\r\n
+        \       \"caching\": \"ReadWrite\"\r\n      },\r\n      \"dataDisks\": []\r\n
+        \   },\r\n    \"provisioningState\": \"Creating\"\r\n  },\r\n  \"type\": \"Microsoft.Compute/images\",\r\n
+        \ \"location\": \"westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage\",\r\n
+        \ \"name\": \"myImage\"\r\n}"}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-03-30']
+      Cache-Control: [no-cache]
+      Content-Length: ['622']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 01:51:49 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [1bd8762f-f938-4279-a501-e76e999d8822]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [53c76029-51ee-40c5-843a-3ab96eba05f4]
+      x-ms-routing-request-id: ['WESTUS2:20170630T015149Z:1bd8762f-f938-4279-a501-e76e999d8822']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131282043969998685]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"startTime\": \"2017-06-30T01:51:43.9432726+00:00\",\r\n
+        \ \"endTime\": \"2017-06-30T01:52:04.5545491+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
+        \ \"name\": \"53c76029-51ee-40c5-843a-3ab96eba05f4\"\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 01:52:19 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['184']
+      x-ms-correlation-request-id: [6215d051-c2b8-4fc2-8160-cfd1caa71d9c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [3e4ec766-74f6-413c-9717-952917115705]
+      x-ms-routing-request-id: ['WESTUS2:20170630T015220Z:6215d051-c2b8-4fc2-8160-cfd1caa71d9c']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131282043969998685]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\":
+        {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n
+        \       \"blobUri\": \"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\",\r\n
+        \       \"caching\": \"ReadWrite\"\r\n      },\r\n      \"dataDisks\": []\r\n
+        \   },\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n  \"type\":
+        \"Microsoft.Compute/images\",\r\n  \"location\": \"westus\",\r\n  \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage\",\r\n
+        \ \"name\": \"myImage\"\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 01:52:20 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['623']
+      x-ms-correlation-request-id: [9800f1b8-8b1f-43c9-88b6-2c78b27b7119]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [94d2774a-a28b-4a61-8c8c-cc4591c4c2e3]
+      x-ms-routing-request-id: ['WESTUS2:20170630T015220Z:9800f1b8-8b1f-43c9-88b6-2c78b27b7119']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131282043969998685]
+    status: {code: 200, message: OK}
+version: 1
