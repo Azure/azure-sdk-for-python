@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .media_service_operations import MediaServiceOperations
 
 __all__ = [
+    'Operations',
     'MediaServiceOperations',
 ]
