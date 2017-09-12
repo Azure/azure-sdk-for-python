@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
+from .operations.skus_operations import SkusOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.usage_operations import UsageOperations
 from . import models
@@ -63,6 +64,8 @@ class StorageManagementClient(object):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storage.v2017_06_01.operations.Operations
+    :ivar skus: Skus operations
+    :vartype skus: azure.mgmt.storage.v2017_06_01.operations.SkusOperations
     :ivar storage_accounts: StorageAccounts operations
     :vartype storage_accounts: azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations
     :ivar usage: Usage operations
@@ -90,6 +93,8 @@ class StorageManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
