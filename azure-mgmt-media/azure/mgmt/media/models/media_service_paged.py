@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class MediaServicePaged(Paged):
     """
-    A paging container for iterating over a list of MediaService object
+    A paging container for iterating over a list of :class:`MediaService <azure.mgmt.media.models.MediaService>` object
     """
 
     _attribute_map = {
