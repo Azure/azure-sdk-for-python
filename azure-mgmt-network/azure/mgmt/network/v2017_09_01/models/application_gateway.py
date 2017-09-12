@@ -18,8 +18,8 @@ class ApplicationGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -108,7 +108,6 @@ class ApplicationGateway(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'operational_state': {'readonly': True},
@@ -141,8 +140,8 @@ class ApplicationGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(ApplicationGateway, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.ssl_policy = ssl_policy
         self.operational_state = None

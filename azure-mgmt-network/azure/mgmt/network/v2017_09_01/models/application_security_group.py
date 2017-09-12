@@ -18,8 +18,8 @@ class ApplicationSecurityGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -43,7 +43,6 @@ class ApplicationSecurityGroup(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource_guid': {'readonly': True},
@@ -62,8 +61,8 @@ class ApplicationSecurityGroup(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(ApplicationSecurityGroup, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None):
+        super(ApplicationSecurityGroup, self).__init__(id=id, location=location, tags=tags)
         self.resource_guid = None
         self.provisioning_state = None
         self.etag = None

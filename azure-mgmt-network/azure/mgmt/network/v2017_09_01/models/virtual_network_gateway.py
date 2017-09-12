@@ -18,8 +18,8 @@ class VirtualNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -77,7 +77,6 @@ class VirtualNetworkGateway(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -103,8 +102,8 @@ class VirtualNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
-        super(VirtualNetworkGateway, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
+        super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type

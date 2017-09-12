@@ -18,8 +18,8 @@ class ExpressRouteCircuit(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -69,7 +69,6 @@ class ExpressRouteCircuit(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
@@ -95,8 +94,8 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None):
-        super(ExpressRouteCircuit, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None):
+        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
         self.circuit_provisioning_state = circuit_provisioning_state

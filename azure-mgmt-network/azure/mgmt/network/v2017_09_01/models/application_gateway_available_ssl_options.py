@@ -18,8 +18,8 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -48,7 +48,6 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -65,8 +64,8 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         'available_protocols': {'key': 'properties.availableProtocols', 'type': '[str]'},
     }
 
-    def __init__(self, location=None, tags=None, predefined_policies=None, default_policy=None, available_cipher_suites=None, available_protocols=None):
-        super(ApplicationGatewayAvailableSslOptions, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, predefined_policies=None, default_policy=None, available_cipher_suites=None, available_protocols=None):
+        super(ApplicationGatewayAvailableSslOptions, self).__init__(id=id, location=location, tags=tags)
         self.predefined_policies = predefined_policies
         self.default_policy = default_policy
         self.available_cipher_suites = available_cipher_suites
