@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.3.0 (2017-09-08)
+++++++++++++++++++
+
+**Features**
+
+- Adds list_skus operation (2017-06-01)
+
+**Breaking changes**
+
+- Rename the preview attribute "network_acls" to "network_rule_set"
+
 1.2.1 (2017-08-14)
 ++++++++++++++++++
 
@@ -16,7 +27,7 @@ Release History
 **Features**
 
 - Api version 2017-06-01 is now the default
-- This API version adds Network ACLs objects
+- This API version adds Network ACLs objects (2017-06-01 as preview)
 
 1.1.0 (2017-06-28)
 ++++++++++++++++++
