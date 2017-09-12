@@ -18,8 +18,8 @@ class LocalNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -49,7 +49,6 @@ class LocalNetworkGateway(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -69,8 +68,8 @@ class LocalNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
-        super(LocalNetworkGateway, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
+        super(LocalNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
         self.bgp_settings = bgp_settings

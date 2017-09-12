@@ -18,8 +18,8 @@ class VirtualNetwork(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -60,7 +60,6 @@ class VirtualNetwork(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -82,8 +81,8 @@ class VirtualNetwork(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, enable_ddos_protection=None, enable_vm_protection=None, etag=None):
-        super(VirtualNetwork, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, enable_ddos_protection=None, enable_vm_protection=None, etag=None):
+        super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags)
         self.address_space = address_space
         self.dhcp_options = dhcp_options
         self.subnets = subnets

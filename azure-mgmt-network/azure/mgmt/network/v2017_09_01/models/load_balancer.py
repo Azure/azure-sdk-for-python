@@ -18,8 +18,8 @@ class LoadBalancer(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -79,7 +79,6 @@ class LoadBalancer(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -103,8 +102,8 @@ class LoadBalancer(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(LoadBalancer, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, sku=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(LoadBalancer, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools

@@ -18,8 +18,8 @@ class ExpressRouteServiceProvider(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -39,7 +39,6 @@ class ExpressRouteServiceProvider(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -55,8 +54,8 @@ class ExpressRouteServiceProvider(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
-        super(ExpressRouteServiceProvider, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
+        super(ExpressRouteServiceProvider, self).__init__(id=id, location=location, tags=tags)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state

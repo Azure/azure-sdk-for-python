@@ -18,8 +18,8 @@ class NetworkInterface(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -65,7 +65,6 @@ class NetworkInterface(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -89,8 +88,8 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_accelerated_networking=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(NetworkInterface, self).__init__(location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_accelerated_networking=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkInterface, self).__init__(id=id, location=location, tags=tags)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
         self.ip_configurations = ip_configurations

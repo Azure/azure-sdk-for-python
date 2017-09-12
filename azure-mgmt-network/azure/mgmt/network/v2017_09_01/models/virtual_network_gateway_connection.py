@@ -18,8 +18,8 @@ class VirtualNetworkGatewayConnection(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :param id: Resource ID.
+    :type id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -93,7 +93,6 @@ class VirtualNetworkGatewayConnection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'virtual_network_gateway1': {'required': True},
@@ -131,8 +130,8 @@ class VirtualNetworkGatewayConnection(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_gateway1, connection_type, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, use_policy_based_traffic_selectors=None, ipsec_policies=None, resource_guid=None, etag=None):
-        super(VirtualNetworkGatewayConnection, self).__init__(location=location, tags=tags)
+    def __init__(self, virtual_network_gateway1, connection_type, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, use_policy_based_traffic_selectors=None, ipsec_policies=None, resource_guid=None, etag=None):
+        super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
         self.virtual_network_gateway2 = virtual_network_gateway2
