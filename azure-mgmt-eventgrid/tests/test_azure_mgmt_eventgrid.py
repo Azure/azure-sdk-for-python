@@ -43,7 +43,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         # Create a new event subscription to this topic
         scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        destination = azure.mgmt.eventgrid.models.EventSubscriptionDestination("WebHook", "https://requestb.in/14ugzyz1")
+        destination = azure.mgmt.eventgrid.models.WebHookEventSubscriptionDestination("https://requestb.in/upue0lup")
         filter = azure.mgmt.eventgrid.models.EventSubscriptionFilter()
 
         event_subscription_info = azure.mgmt.eventgrid.models.EventSubscription(destination, filter)
