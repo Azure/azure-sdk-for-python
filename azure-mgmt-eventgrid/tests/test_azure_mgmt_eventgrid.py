@@ -37,13 +37,13 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         eventsubscription_name = "kalspythonEventSubscription2"
 
         # Create a new topic and verify that it is created successfully
-        topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, "eastus2euap")
+        topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, "westus2")
         topic = topic_result_create.result()
         self.assertEqual(topic.name, topic_name)
 
         # Create a new event subscription to this topic
         scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        destination = azure.mgmt.eventgrid.models.EventSubscriptionDestination("WebHook", "https://requestb.in/14ugzyz1")
+        destination = azure.mgmt.eventgrid.models.WebHookEventSubscriptionDestination("https://requestb.in/upue0lup")
         filter = azure.mgmt.eventgrid.models.EventSubscriptionFilter()
 
         event_subscription_info = azure.mgmt.eventgrid.models.EventSubscription(destination, filter)

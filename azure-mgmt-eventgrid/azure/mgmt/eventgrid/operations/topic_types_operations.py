@@ -23,7 +23,7 @@ class TopicTypesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-06-15-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-09-15-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class TopicTypesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-15-preview"
+        self.api_version = "2017-09-15-preview"
 
         self.config = config
 

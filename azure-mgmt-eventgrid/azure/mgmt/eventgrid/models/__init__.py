@@ -12,6 +12,8 @@
 from .event_subscription_destination import EventSubscriptionDestination
 from .event_subscription_filter import EventSubscriptionFilter
 from .resource import Resource
+from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
+from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
 from .event_subscription import EventSubscription
 from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
 from .event_subscription_full_url import EventSubscriptionFullUrl
@@ -30,7 +32,6 @@ from .event_type_paged import EventTypePaged
 from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     EventSubscriptionProvisioningState,
-    EndpointType,
     OperationOrigin,
     TopicProvisioningState,
     ResourceRegionType,
@@ -41,6 +42,8 @@ __all__ = [
     'EventSubscriptionDestination',
     'EventSubscriptionFilter',
     'Resource',
+    'WebHookEventSubscriptionDestination',
+    'EventHubEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionUpdateParameters',
     'EventSubscriptionFullUrl',
@@ -58,7 +61,6 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'EventSubscriptionProvisioningState',
-    'EndpointType',
     'OperationOrigin',
     'TopicProvisioningState',
     'ResourceRegionType',
