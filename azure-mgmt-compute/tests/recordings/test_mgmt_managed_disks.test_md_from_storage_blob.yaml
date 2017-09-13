@@ -1,0 +1,113 @@
+interactions:
+- request:
+    body: '{"properties": {"creationData": {"sourceUri": "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd",
+      "createOption": "Import"}}, "location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['184']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"createOption\":
+        \"Import\",\r\n      \"sourceUri\": \"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\"\r\n
+        \   },\r\n    \"provisioningState\": \"Updating\",\r\n    \"isArmResource\":
+        true\r\n  },\r\n  \"location\": \"westus\"\r\n}"}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2017-03-30']
+      Cache-Control: [no-cache]
+      Content-Length: ['290']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 02:04:07 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?monitor=true&api-version=2017-03-30']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [d5acbbdf-f6cc-46b1-9fdb-7b9a8e7fea44]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [0f24271a-d4a7-44a3-b2bd-adbd304fef23]
+      x-ms-routing-request-id: ['WESTUS:20170630T020407Z:d5acbbdf-f6cc-46b1-9fdb-7b9a8e7fea44']
+      x-ms-served-by: [da781301-5a24-41ad-adde-45c9a8ccbbf8_131333033761633900]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/0f24271a-d4a7-44a3-b2bd-adbd304fef23?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"startTime\": \"2017-06-30T02:04:06.8961345+00:00\",\r\n
+        \ \"endTime\": \"2017-06-30T02:04:07.7398687+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
+        \ \"properties\": {\r\n    \"output\": {\"sku\":{\"name\":\"Standard_LRS\",\"tier\":\"Standard\"},\"properties\":{\"creationData\":{\"createOption\":\"Import\",\"sourceUri\":\"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\"},\"timeCreated\":\"2017-06-30T02:04:07.2242576+00:00\",\"provisioningState\":\"Succeeded\",\"diskState\":\"Unattached\"},\"type\":\"Microsoft.Compute/disks\",\"location\":\"westus\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name\",\"name\":\"my_disk_name\"}\r\n
+        \ },\r\n  \"name\": \"0f24271a-d4a7-44a3-b2bd-adbd304fef23\"\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 02:04:37 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['791']
+      x-ms-correlation-request-id: [bb0be950-ccbc-4985-8bd3-0948b5b6fc67]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [f49210da-e856-4f67-9f51-89b1245f1f74]
+      x-ms-routing-request-id: ['WESTUS:20170630T020438Z:bb0be950-ccbc-4985-8bd3-0948b5b6fc67']
+      x-ms-served-by: [da781301-5a24-41ad-adde-45c9a8ccbbf8_131333033761633900]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.10 computemanagementclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [661f000a-5d38-11e7-865b-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+  response:
+    body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"tier\":
+        \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\": {\r\n
+        \     \"createOption\": \"Import\",\r\n      \"sourceUri\": \"https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd\"\r\n
+        \   },\r\n    \"timeCreated\": \"2017-06-30T02:04:07.2242576+00:00\",\r\n
+        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\"\r\n
+        \ },\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"westus\",\r\n
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_storage_blobf5ab1401/providers/Microsoft.Compute/disks/my_disk_name\",\r\n
+        \ \"name\": \"my_disk_name\"\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 30 Jun 2017 02:04:38 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['672']
+      x-ms-correlation-request-id: [b7104f5a-85bd-49c4-8668-ae00518cca9b]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [0488c533-3585-4c42-8f46-5849100f82d8]
+      x-ms-routing-request-id: ['WESTUS:20170630T020438Z:b7104f5a-85bd-49c4-8668-ae00518cca9b']
+      x-ms-served-by: [da781301-5a24-41ad-adde-45c9a8ccbbf8_131333033761633900]
+    status: {code: 200, message: OK}
+version: 1
