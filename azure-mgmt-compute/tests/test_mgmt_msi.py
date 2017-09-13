@@ -96,24 +96,27 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         # Get the Principal id of that VM
         msi_principal_id = vm_result.identity.principal_id
 
-        # Get the Role ID of Contributor of a Resource Group
-        role_name = 'Contributor'
-        roles = list(self.authorization_client.role_definitions.list(
-            resource_group.id,
-            filter="roleName eq '{}'".format(role_name)
-        ))
-        assert len(roles) == 1
-        contributor_role = roles[0]
+        # Do not do the Authorization part in playback, since it has nothing to do with Compute
+        if not self.is_playback():
 
-        # Add RG scope to the MSI token
-        self.authorization_client.role_assignments.create(
-            resource_group.id,
-            uuid.uuid4(), # Role assignment name
-            {
-                'role_definition_id': contributor_role.id,
-                'principal_id': msi_principal_id
-            }
-        )
+            # Get the Role ID of Contributor of a Resource Group
+            role_name = 'Contributor'
+            roles = list(self.authorization_client.role_definitions.list(
+                resource_group.id,
+                filter="roleName eq '{}'".format(role_name)
+            ))
+            assert len(roles) == 1
+            contributor_role = roles[0]
+
+            # Add RG scope to the MSI token
+            self.authorization_client.role_assignments.create(
+                resource_group.id,
+                uuid.uuid4(), # Role assignment name
+                {
+                    'role_definition_id': contributor_role.id,
+                    'principal_id': msi_principal_id
+                }
+            )
 
         # Adds the MSI extension
         ext_type_name = 'ManagedIdentityExtensionForLinux'
