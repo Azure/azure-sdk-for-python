@@ -714,7 +714,7 @@ class VirtualNetworkGatewaysOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_vpn_profile_pacakge_url(
+    def get_vpn_profile_package_url(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         """Gets pre-generated VPN profile for P2S client of the virtual network
         gateway in the specified resource group. The profile needs to be
