@@ -39,6 +39,9 @@ class TopicTypeInfo(Resource):
      'Canceled', 'Failed'
     :type provisioning_state: str or :class:`TopicTypeProvisioningState
      <azure.mgmt.eventgrid.models.TopicTypeProvisioningState>`
+    :param supported_locations: List of locations supported by this topic
+     type.
+    :type supported_locations: list of str
     """
 
     _validation = {
@@ -56,12 +59,14 @@ class TopicTypeInfo(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'resource_region_type': {'key': 'properties.resourceRegionType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'supported_locations': {'key': 'properties.supportedLocations', 'type': '[str]'},
     }
 
-    def __init__(self, provider=None, display_name=None, description=None, resource_region_type=None, provisioning_state=None):
+    def __init__(self, provider=None, display_name=None, description=None, resource_region_type=None, provisioning_state=None, supported_locations=None):
         super(TopicTypeInfo, self).__init__()
         self.provider = provider
         self.display_name = display_name
         self.description = description
         self.resource_region_type = resource_region_type
         self.provisioning_state = provisioning_state
+        self.supported_locations = supported_locations

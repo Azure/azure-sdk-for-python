@@ -22,11 +22,6 @@ class EventSubscriptionProvisioningState(Enum):
     failed = "Failed"
 
 
-class EndpointType(Enum):
-
-    web_hook = "WebHook"
-
-
 class OperationOrigin(Enum):
 
     user = "User"
