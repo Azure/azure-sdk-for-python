@@ -181,9 +181,9 @@
     },
     "eventgrid": {
       "autorest_options": {
-        "input-file": "specification/eventgrid/resource-manager/Microsoft.EventGrid/2017-06-15-preview/EventGrid.json",
+        "input-file": "specification/eventgrid/resource-manager/Microsoft.EventGrid/2017-09-15-preview/EventGrid.json",
         "namespace": "azure.mgmt.eventgrid",
-        "package-version": "0.1.0"
+        "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-eventgrid/azure/mgmt/eventgrid",
       "build_dir": "azure-mgmt-eventgrid"
