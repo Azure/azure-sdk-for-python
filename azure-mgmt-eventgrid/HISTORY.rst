@@ -6,9 +6,10 @@ Release History
 0.2.0 (2017-09-13)
 ++++++++++++++++++
 
-**Regenerated based on 2017-09-15-preview version**
+**Breaking changes**
 
 - Use WebHookEventSubscriptionDestination for webhook endpoint URLs.
+- Regenerated based on 2017-09-15-preview version
 
 0.1.1 (2017-08-17)
 ++++++++++++++++++
