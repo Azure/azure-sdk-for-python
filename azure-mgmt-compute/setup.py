@@ -6,6 +6,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import re
+import os.path
+from io import open
 from setuptools import find_packages, setup
 try:
     from azure_bdist_wheel import cmdclass
@@ -13,9 +16,15 @@ except ImportError:
     from distutils import log as logger
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
     cmdclass = {}
-from io import open
-import re
-import sys
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-mgmt-compute"
+PACKAGE_PPRINT_NAME = "Compute Management"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -33,7 +42,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open('azure/mgmt/compute/version.py', 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -46,13 +55,13 @@ with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
 setup(
-    name='azure-mgmt-compute',
+    name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure Compute Resource Management Client Library for Python',
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -67,10 +76,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'azure-common~=1.1.5',
-        'msrestazure~=0.4.7',
+        'msrestazure~=0.4.11',
+        'azure-common~=1.1',
     ],
     cmdclass=cmdclass
 )
