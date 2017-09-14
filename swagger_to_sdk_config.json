@@ -17,8 +17,8 @@
   },
   "projects": {
     "authorization": {
+      "markdown": "specification/authorization/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/authorization/resource-manager/Microsoft.Authorization/2015-07-01/authorization.json",
         "namespace": "azure.mgmt.authorization",
         "package-version": "0.30.0"
       },
@@ -26,24 +26,25 @@
       "build_dir": "azure-mgmt-authorization"
     },
     "batch.management": {
+      "markdown": "specification/batch/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/batch/resource-manager/Microsoft.Batch/2017-05-01/BatchManagement.json",
         "namespace": "azure.mgmt.batch",
         "package-version": "4.0.0"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
     "billing": {
+      "markdown": "specification/billing/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/billing/resource-manager/Microsoft.Billing/2017-04-24-preview/billing.json",
         "namespace": "azure.mgmt.billing",
         "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-billing/azure/mgmt/billing"
     },
     "cdn": {
+      "markdown": "specification/cdn/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/cdn/resource-manager/Microsoft.Cdn/2016-10-02/cdn.json",
+        "tag": "package-2016-10",
         "namespace": "azure.mgmt.cdn",
         "package-version": "1.0.0"
       },
@@ -51,24 +52,24 @@
       "build_dir": "azure-mgmt-cdn"
     },
     "consumption": {
+      "markdown": "specification/consumption/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/consumption/resource-manager/Microsoft.Consumption/2017-04-24-preview/consumption.json",
         "namespace": "azure.mgmt.consumption",
         "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
     },
     "cognitiveservices": {
+      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/2017-04-18/cognitiveservices.json",
         "namespace": "azure.mgmt.cognitiveservices",
         "package-version": "1.0.0"
       },
       "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
     },
     "commerce": {
+      "markdown": "specification/commerce/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/commerce/resource-manager/Microsoft.Commerce/2015-06-01-preview/commerce.json",
         "namespace": "azure.mgmt.commerce",
         "package-version": "1.0.0"
       },
@@ -155,24 +156,24 @@
       "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_06_01_preview"
     },
     "devtestlabs": {
+      "markdown": "specification/devtestlabs/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/devtestlabs/resource-manager/Microsoft.DevTestLab/2016-05-15/DTL.json",
         "namespace": "azure.mgmt.devtestlabs",
         "package-version": "2.0.0"
       },
       "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
     },
     "dns": {
+      "markdown": "specification/dns/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/dns/resource-manager/Microsoft.Network/2016-04-01/dns.json",
         "namespace": "azure.mgmt.dns",
         "package-version": "1.0.1"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },
     "cosmosdb": {
+      "markdown": "specification/cosmos-db/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/cosmos-db/resource-manager/Microsoft.DocumentDB/2015-04-08/cosmos-db.json",
         "namespace": "azure.mgmt.cosmosdb",
         "package-version": "0.2.0"
       },
@@ -180,8 +181,8 @@
       "build_dir": "azure-mgmt-cosmosdb"
     },
     "eventgrid": {
+      "markdown": "specification/eventgrid/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/eventgrid/resource-manager/Microsoft.EventGrid/2017-09-15-preview/EventGrid.json",
         "namespace": "azure.mgmt.eventgrid",
         "package-version": "0.2.0"
       },
@@ -189,8 +190,8 @@
       "build_dir": "azure-mgmt-eventgrid"
     },
     "eventhub": {
+      "markdown": "specification/eventhub/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/eventhub/resource-manager/Microsoft.EventHub/2017-04-01/EventHub.json",
         "namespace": "azure.mgmt.eventhub",
         "package-version": "1.0.0"
       },
@@ -215,16 +216,16 @@
       "build_dir": "azure-mgmt-iothub"
     },
     "keyvault.mgmt": {
+      "markdown": "specification/keyvault/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/keyvault/resource-manager/Microsoft.KeyVault/2016-10-01/keyvault.json",
         "namespace": "azure.mgmt.keyvault",
         "package-version": "0.40.0"
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
     "keyvault.data": {
+      "markdown": "specification/keyvault/data-plane/readme.md",
       "autorest_options": {
-        "input-file": "specification/keyvault/data-plane/Microsoft.KeyVault/2016-10-01/keyvault.json",
         "namespace": "azure.keyvault",
         "package-version": "0.3.6"
       },
@@ -237,24 +238,25 @@
       "generated_relative_base_directory": "azure/keyvault"
     },
     "logic": {
+      "markdown": "specification/logic/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/logic/resource-manager/Microsoft.Logic/2016-06-01/logic.json",
         "namespace": "azure.mgmt.logic",
         "package-version": "2.1.0"
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
     "machinelearning": {
+      "markdown": "specification/machinelearning/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/machinelearning/resource-manager/Microsoft.MachineLearning/2016-05-01-preview/webservices.json",
+        "tag": "package-webservices-2016-05-preview",
         "namespace": "azure.mgmt.machinelearning",
         "package-version": "0.1.0"
       },
       "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
     },
     "media": {
+      "markdown": "specification/mediaservices/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/mediaservices/resource-manager/Microsoft.Media/2015-10-01/media.json",
         "namespace": "azure.mgmt.media",
         "package-version": "0.1.2"
       },
@@ -334,8 +336,8 @@
       "generated_relative_base_directory": "python/azure/mgmt/network/v2017_08_01"
     },
     "notificationhubs": {
+      "markdown": "specification/notificationhubs/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/notificationhubs/resource-manager/Microsoft.NotificationHubs/2017-04-01/notificationhubs.json",
         "namespace": "azure.mgmt.notificationhubs",
         "package-version": "1.0.0"
       },
@@ -343,8 +345,8 @@
       "build_dir": "azure-mgmt-notificationhubs"
     },
     "powerbiembedded": {
+      "markdown": "specification/powerbiembedded/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/powerbiembedded/resource-manager/Microsoft.PowerBI/2016-01-29/powerbiembedded.json",
         "namespace": "azure.mgmt.powerbiembedded",
         "package-version": "1.0.0"
       },
@@ -352,8 +354,8 @@
       "build_dir": "azure-mgmt-powerbiembedded"
     },
     "rdbms.mysql": {
+      "markdown": "specification/mysql/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/mysql/resource-manager/Microsoft.DBforMySQL/2017-04-30-preview/mysql.json",
         "namespace": "azure.mgmt.rdbms.mysql",
         "package-version": "0.1.0"
       },
@@ -361,8 +363,8 @@
       "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
     },
     "rdbms.postgres": {
+      "markdown": "specification/postgresql/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/2017-04-30-preview/postgresql.json",
         "namespace": "azure.mgmt.rdbms.postgresql",
         "package-version": "0.1.0"
       },
@@ -380,8 +382,9 @@
       "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },
     "redis": {
+      "markdown": "specification/redis/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/redis/resource-manager/Microsoft.Cache/2016-04-01/redis.json",
+        "tag": "package-2016-04",
         "namespace": "azure.mgmt.redis",
         "package-version": "4.1.0"
       },
@@ -487,8 +490,8 @@
       "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01"
     },
     "search": {
+      "markdown": "specification/search/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/search/resource-manager/Microsoft.Search/2015-08-19/search.json",
         "namespace": "azure.mgmt.search",
         "package-version": "1.0.0"
       },
@@ -496,8 +499,8 @@
       "build_dir": "azure-mgmt-search"
     },
     "servermanager": {
+      "markdown": "specification/servermanagement/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/servermanagement/resource-manager/Microsoft.ServerManagement/2016-07-01-preview",
         "namespace": "azure.mgmt.servermanager",
         "package-version": "1.2.0"
       },
@@ -505,8 +508,8 @@
       "build_dir": "azure-mgmt-servermanager"
     },
     "servicebus": {
+      "markdown": "specification/servicebus/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/servicebus/resource-manager/Microsoft.ServiceBus/2017-04-01",
         "namespace": "azure.mgmt.servicebus",
         "package-version": "0.2.0"
       },
@@ -514,8 +517,9 @@
       "build_dir": "azure-mgmt-servicebus"
     },
     "servicefabric": {
+      "markdown": "specification/servicefabric/data-plane/readme.md",
       "autorest_options": {
-        "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/5.6/servicefabric.json",
+        "tag": "5.6",
         "namespace": "azure.servicefabric",
         "package-version": "5.6.130"
       },
@@ -523,8 +527,8 @@
       "generated_relative_base_directory": "azure/servicefabric"
     },
     "servicefabric.mgmt": {
+      "markdown": "specification/servicefabric/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/servicefabric/resource-manager/Microsoft.ServiceFabric/2016-09-01/servicefabric.json",
         "namespace": "azure.mgmt.servicefabric",
         "package-version": "0.1.0"
       },
@@ -532,8 +536,8 @@
       "build_dir": "azure-mgmt-servicefabric"
     },
     "scheduler": {
+      "markdown": "specification/scheduler/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/scheduler/resource-manager/Microsoft.Scheduler/2016-03-01/scheduler.json",
         "namespace": "azure.mgmt.scheduler",
         "package-version": "1.1.3"
       },
@@ -576,8 +580,8 @@
       "generated_relative_base_directory": "azure/mgmt/storage/v2017_06_01"
     },
     "trafficmanager": {
+      "markdown": "specification/trafficmanager/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/trafficmanager/resource-manager/Microsoft.Network/2017-05-01/trafficmanager.json",
         "namespace": "azure.mgmt.trafficmanager",
         "package-version": "0.40.0"
       },
@@ -594,8 +598,8 @@
       "generated_relative_base_directory": "python/azure/mgmt/web"
     },
     "batch": {
+      "markdown": "specification/batch/data-plane/readme.md",
       "autorest_options": {
-        "input-file": "specification/batch/data-plane/Microsoft.Batch/2017-06-01.5.1/BatchService.json",
         "namespace": "azure.batch",
         "package-version": "3.1.0"
       },
@@ -607,8 +611,8 @@
       ]
     },
     "datalake.analytics.account": {
+      "markdown": "specification/datalake-analytics/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/datalake-analytics/resource-manager/Microsoft.DataLakeAnalytics/2016-11-01/account.json",
         "namespace": "azure.mgmt.datalake.analytics.account",
         "package-version": "0.1.6"
       },
@@ -634,8 +638,8 @@
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/job"
     },
     "datalake.store.account": {
+      "markdown": "specification/datalake-store/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/datalake-store/resource-manager/Microsoft.DataLakeStore/2016-11-01/account.json",
         "namespace": "azure.mgmt.datalake.store",
         "package-version": "0.1.6"
       },
