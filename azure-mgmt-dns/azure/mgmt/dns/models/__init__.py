@@ -20,12 +20,14 @@ from .cname_record import CnameRecord
 from .soa_record import SoaRecord
 from .record_set import RecordSet
 from .record_set_update_parameters import RecordSetUpdateParameters
+from .sub_resource import SubResource
 from .zone import Zone
 from .zone_delete_result import ZoneDeleteResult
 from .resource import Resource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
 from .dns_management_client_enums import (
+    ZoneType,
     OperationStatus,
     HttpStatusCode,
     RecordType,
@@ -43,11 +45,13 @@ __all__ = [
     'SoaRecord',
     'RecordSet',
     'RecordSetUpdateParameters',
+    'SubResource',
     'Zone',
     'ZoneDeleteResult',
     'Resource',
     'RecordSetPaged',
     'ZonePaged',
+    'ZoneType',
     'OperationStatus',
     'HttpStatusCode',
     'RecordType',

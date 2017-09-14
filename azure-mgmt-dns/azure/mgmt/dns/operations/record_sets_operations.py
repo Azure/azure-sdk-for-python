@@ -23,7 +23,7 @@ class RecordSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2016-04-01".
+    :ivar api_version: Specifies the API version. Constant value: "2017-09-15-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class RecordSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-01"
+        self.api_version = "2017-09-15-preview"
 
         self.config = config
 
