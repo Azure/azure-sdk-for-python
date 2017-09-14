@@ -20,14 +20,14 @@ class ResourceSkuRestrictions(Model):
 
     :ivar type: The type of restrictions. Possible values include: 'location'
     :vartype type: str or :class:`ResourceSkuRestrictionsType
-     <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSkuRestrictionsType>`
+     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsType>`
     :ivar values: The value of restrictions. If the restriction type is set to
      location. This would be different locations where the SKU is restricted.
     :vartype values: list of str
     :ivar reason_code: The reason for restriction. Possible values include:
      'QuotaId', 'NotAvailableForSubscription'
     :vartype reason_code: str or :class:`ResourceSkuRestrictionsReasonCode
-     <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSkuRestrictionsReasonCode>`
+     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsReasonCode>`
     """
 
     _validation = {

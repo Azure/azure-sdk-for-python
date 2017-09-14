@@ -19,7 +19,7 @@ class DiagnosticsProfile(Model):
      allows the user to view console output and/or a screenshot of the virtual
      machine from the hypervisor.
     :type boot_diagnostics: :class:`BootDiagnostics
-     <azure.mgmt.compute.compute.v2015_06_15.models.BootDiagnostics>`
+     <azure.mgmt.compute.v2015_06_15.models.BootDiagnostics>`
     """
 
     _attribute_map = {

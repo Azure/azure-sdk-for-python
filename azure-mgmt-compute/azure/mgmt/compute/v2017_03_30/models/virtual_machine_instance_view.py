@@ -25,27 +25,27 @@ class VirtualMachineInstanceView(Model):
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineAgentInstanceView>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineAgentInstanceView>`
     :param maintenance_redeploy_status: The Maintenance Operation status on
      the virtual machine.
     :type maintenance_redeploy_status: :class:`MaintenanceRedeployStatus
-     <azure.mgmt.compute.compute.v2017_03_30.models.MaintenanceRedeployStatus>`
+     <azure.mgmt.compute.v2017_03_30.models.MaintenanceRedeployStatus>`
     :param disks: The virtual machine disk information.
     :type disks: list of :class:`DiskInstanceView
-     <azure.mgmt.compute.compute.v2017_03_30.models.DiskInstanceView>`
+     <azure.mgmt.compute.v2017_03_30.models.DiskInstanceView>`
     :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView>`
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
      <br><br> For Linux Virtual Machines, you can easily view the output of
      your console log. <br><br> For both Windows and Linux virtual machines,
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
-     <azure.mgmt.compute.compute.v2017_03_30.models.BootDiagnosticsInstanceView>`
+     <azure.mgmt.compute.v2017_03_30.models.BootDiagnosticsInstanceView>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewStatus>`
+     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
     """
 
     _attribute_map = {

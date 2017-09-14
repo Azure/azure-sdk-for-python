@@ -51,7 +51,7 @@ class HardwareProfile(Model):
      'Standard_L32s', 'Standard_NC6', 'Standard_NC12', 'Standard_NC24',
      'Standard_NC24r', 'Standard_NV6', 'Standard_NV12', 'Standard_NV24'
     :type vm_size: str or :class:`VirtualMachineSizeTypes
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineSizeTypes>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineSizeTypes>`
     """
 
     _attribute_map = {

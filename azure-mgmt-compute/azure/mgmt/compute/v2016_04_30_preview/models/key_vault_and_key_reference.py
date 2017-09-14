@@ -19,7 +19,7 @@ class KeyVaultAndKeyReference(Model):
     :param source_vault: Resource id of the KeyVault containing the key or
      secret
     :type source_vault: :class:`SourceVault
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SourceVault>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.SourceVault>`
     :param key_url: Url pointing to a key or secret in KeyVault
     :type key_url: str
     """

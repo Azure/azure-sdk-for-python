@@ -60,7 +60,7 @@ class VirtualMachineScaleSetOSProfile(Model):
     :param windows_configuration: Specifies Windows operating system settings
      on the virtual machine.
     :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.compute.v2017_03_30.models.WindowsConfiguration>`
+     <azure.mgmt.compute.v2017_03_30.models.WindowsConfiguration>`
     :param linux_configuration: Specifies the Linux operating system settings
      on the virtual machine. <br><br>For a list of supported Linux
      distributions, see [Linux on Azure-Endorsed
@@ -69,11 +69,11 @@ class VirtualMachineScaleSetOSProfile(Model):
      Non-Endorsed
      Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
     :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.compute.v2017_03_30.models.LinuxConfiguration>`
+     <azure.mgmt.compute.v2017_03_30.models.LinuxConfiguration>`
     :param secrets: Specifies set of certificates that should be installed
      onto the virtual machines in the scale set.
     :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.compute.v2017_03_30.models.VaultSecretGroup>`
+     <azure.mgmt.compute.v2017_03_30.models.VaultSecretGroup>`
     """
 
     _attribute_map = {

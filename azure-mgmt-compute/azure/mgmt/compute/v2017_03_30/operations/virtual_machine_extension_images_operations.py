@@ -53,11 +53,11 @@ class VirtualMachineExtensionImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -120,11 +120,11 @@ class VirtualMachineExtensionImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -193,11 +193,11 @@ class VirtualMachineExtensionImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

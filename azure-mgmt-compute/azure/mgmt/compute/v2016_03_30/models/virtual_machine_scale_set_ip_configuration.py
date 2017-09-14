@@ -21,20 +21,19 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :type name: str
     :param subnet: The subnet.
     :type subnet: :class:`ApiEntityReference
-     <azure.mgmt.compute.compute.v2016_03_30.models.ApiEntityReference>`
+     <azure.mgmt.compute.v2016_03_30.models.ApiEntityReference>`
     :param application_gateway_backend_address_pools: The application gateway
      backend address pools.
     :type application_gateway_backend_address_pools: list of
-     :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_03_30.models.SubResource>`
+     :class:`SubResource <azure.mgmt.compute.v2016_03_30.models.SubResource>`
     :param load_balancer_backend_address_pools: The load balancer backend
      address pools.
     :type load_balancer_backend_address_pools: list of :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_03_30.models.SubResource>`
+     <azure.mgmt.compute.v2016_03_30.models.SubResource>`
     :param load_balancer_inbound_nat_pools: The load balancer inbound nat
      pools.
     :type load_balancer_inbound_nat_pools: list of :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_03_30.models.SubResource>`
+     <azure.mgmt.compute.v2016_03_30.models.SubResource>`
     """
 
     _validation = {

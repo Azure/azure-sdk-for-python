@@ -32,11 +32,11 @@ class WindowsConfiguration(Model):
      which is used by Windows Setup.
     :type additional_unattend_content: list of
      :class:`AdditionalUnattendContent
-     <azure.mgmt.compute.compute.v2017_03_30.models.AdditionalUnattendContent>`
+     <azure.mgmt.compute.v2017_03_30.models.AdditionalUnattendContent>`
     :param win_rm: Specifies the Windows Remote Management listeners. This
      enables remote Windows PowerShell.
     :type win_rm: :class:`WinRMConfiguration
-     <azure.mgmt.compute.compute.v2017_03_30.models.WinRMConfiguration>`
+     <azure.mgmt.compute.v2017_03_30.models.WinRMConfiguration>`
     """
 
     _attribute_map = {

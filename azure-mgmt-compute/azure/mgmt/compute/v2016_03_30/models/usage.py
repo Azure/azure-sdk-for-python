@@ -27,7 +27,7 @@ class Usage(Model):
     :type limit: long
     :param name: The name of the type of usage.
     :type name: :class:`UsageName
-     <azure.mgmt.compute.compute.v2016_03_30.models.UsageName>`
+     <azure.mgmt.compute.v2016_03_30.models.UsageName>`
     """
 
     _validation = {

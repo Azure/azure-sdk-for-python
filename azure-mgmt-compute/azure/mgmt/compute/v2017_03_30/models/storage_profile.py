@@ -21,19 +21,19 @@ class StorageProfile(Model):
      platform image, marketplace image, or virtual machine image, but is not
      used in other creation operations.
     :type image_reference: :class:`ImageReference
-     <azure.mgmt.compute.compute.v2017_03_30.models.ImageReference>`
+     <azure.mgmt.compute.v2017_03_30.models.ImageReference>`
     :param os_disk: Specifies information about the operating system disk used
      by the virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type os_disk: :class:`OSDisk
-     <azure.mgmt.compute.compute.v2017_03_30.models.OSDisk>`
+     <azure.mgmt.compute.v2017_03_30.models.OSDisk>`
     :param data_disks: Specifies the parameters that are used to add a data
      disk to a virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks: list of :class:`DataDisk
-     <azure.mgmt.compute.compute.v2017_03_30.models.DataDisk>`
+     <azure.mgmt.compute.v2017_03_30.models.DataDisk>`
     """
 
     _attribute_map = {

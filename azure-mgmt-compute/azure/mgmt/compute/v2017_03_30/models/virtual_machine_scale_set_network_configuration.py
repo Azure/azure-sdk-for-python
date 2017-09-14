@@ -28,17 +28,17 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :type enable_accelerated_networking: bool
     :param network_security_group: The network security group.
     :type network_security_group: :class:`SubResource
-     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
+     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
     :param dns_settings: The dns settings to be applied on the network
      interfaces.
     :type dns_settings:
      :class:`VirtualMachineScaleSetNetworkConfigurationDnsSettings
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings>`
     :param ip_configurations: Specifies the IP configurations of the network
      interface.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetIPConfiguration>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetIPConfiguration>`
     """
 
     _validation = {

@@ -26,7 +26,7 @@ class VirtualMachineIdentity(Model):
      the only supported type is 'SystemAssigned', which implicitly creates an
      identity. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType
-     <azure.mgmt.compute.compute.v2017_03_30.models.ResourceIdentityType>`
+     <azure.mgmt.compute.v2017_03_30.models.ResourceIdentityType>`
     """
 
     _validation = {

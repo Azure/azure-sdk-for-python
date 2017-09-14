@@ -48,14 +48,14 @@ class DisksOperations(object):
         :param disk: Disk object supplied in the body of the Put disk
          operation.
         :type disk: :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>` or
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -147,14 +147,14 @@ class DisksOperations(object):
         :param disk: Disk object supplied in the body of the Patch disk
          operation.
         :type disk: :class:`DiskUpdate
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskUpdate>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.DiskUpdate>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>` or
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -249,11 +249,11 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>` or
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>` or
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -315,7 +315,7 @@ class DisksOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -401,9 +401,9 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>`
         :rtype: :class:`DiskPaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskPaged>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.DiskPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -467,9 +467,9 @@ class DisksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Disk
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.Disk>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.Disk>`
         :rtype: :class:`DiskPaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskPaged>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.DiskPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -533,7 +533,7 @@ class DisksOperations(object):
         :type disk_name: str
         :param access: Possible values include: 'None', 'Read'
         :type access: str or :class:`AccessLevel
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AccessLevel>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AccessLevel>`
         :param duration_in_seconds: Time duration in seconds until the SAS
          access expires.
         :type duration_in_seconds: int
@@ -543,7 +543,7 @@ class DisksOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`AccessUri
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AccessUri>` or
+         <azure.mgmt.compute.v2016_04_30_preview.models.AccessUri>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -638,7 +638,7 @@ class DisksOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:

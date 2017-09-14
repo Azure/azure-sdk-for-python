@@ -55,11 +55,11 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualMachineImage
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImage>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualMachineImage
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImage>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImage>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -134,11 +134,11 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -208,11 +208,11 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -272,11 +272,11 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -339,11 +339,11 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineImageResource>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

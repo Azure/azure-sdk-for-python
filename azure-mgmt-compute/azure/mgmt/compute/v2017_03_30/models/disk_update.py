@@ -19,11 +19,11 @@ class DiskUpdate(ResourceUpdate):
     :type tags: dict
     :param sku:
     :type sku: :class:`DiskSku
-     <azure.mgmt.compute.compute.v2017_03_30.models.DiskSku>`
+     <azure.mgmt.compute.v2017_03_30.models.DiskSku>`
     :param os_type: the Operating System type. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.compute.v2017_03_30.models.OperatingSystemTypes>`
+     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
     :param disk_size_gb: If creationData.createOption is Empty, this field is
      mandatory and it indicates the size of the VHD to create. If this field is
      present for updates or creation with other options, it indicates a resize.
@@ -32,7 +32,7 @@ class DiskUpdate(ResourceUpdate):
     :type disk_size_gb: int
     :param encryption_settings: Encryption settings for disk or snapshot
     :type encryption_settings: :class:`EncryptionSettings
-     <azure.mgmt.compute.compute.v2017_03_30.models.EncryptionSettings>`
+     <azure.mgmt.compute.v2017_03_30.models.EncryptionSettings>`
     """
 
     _attribute_map = {

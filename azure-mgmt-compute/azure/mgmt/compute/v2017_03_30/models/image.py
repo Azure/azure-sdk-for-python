@@ -33,11 +33,11 @@ class Image(Resource):
     :param source_virtual_machine: The source virtual machine from which Image
      is created.
     :type source_virtual_machine: :class:`SubResource
-     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
+     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile: :class:`ImageStorageProfile
-     <azure.mgmt.compute.compute.v2017_03_30.models.ImageStorageProfile>`
+     <azure.mgmt.compute.v2017_03_30.models.ImageStorageProfile>`
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     """

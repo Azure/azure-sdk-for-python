@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AvailabilitySetPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AvailabilitySet <azure.mgmt.compute.compute.v2017_03_30.models.AvailabilitySet>` object
+    A paging container for iterating over a list of :class:`AvailabilitySet <azure.mgmt.compute.v2017_03_30.models.AvailabilitySet>` object
     """
 
     _attribute_map = {

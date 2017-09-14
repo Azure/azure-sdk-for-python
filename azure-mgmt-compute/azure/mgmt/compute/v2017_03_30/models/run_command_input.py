@@ -22,7 +22,7 @@ class RunCommandInput(Model):
     :type script: list of str
     :param parameters: The run command parameters.
     :type parameters: list of :class:`RunCommandInputParameter
-     <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandInputParameter>`
+     <azure.mgmt.compute.v2017_03_30.models.RunCommandInputParameter>`
     """
 
     _validation = {

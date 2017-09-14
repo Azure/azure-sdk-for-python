@@ -74,35 +74,35 @@ class ComputeManagementClient(object):
     :vartype config: ComputeManagementClientConfiguration
 
     :ivar availability_sets: AvailabilitySets operations
-    :vartype availability_sets: azure.mgmt.compute.compute.v2017_03_30.operations.AvailabilitySetsOperations
+    :vartype availability_sets: azure.mgmt.compute.v2017_03_30.operations.AvailabilitySetsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
-    :vartype virtual_machine_extension_images: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineExtensionImagesOperations
+    :vartype virtual_machine_extension_images: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
-    :vartype virtual_machine_extensions: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineExtensionsOperations
+    :vartype virtual_machine_extensions: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionsOperations
     :ivar virtual_machine_images: VirtualMachineImages operations
-    :vartype virtual_machine_images: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineImagesOperations
+    :vartype virtual_machine_images: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.compute.compute.v2017_03_30.operations.UsageOperations
+    :vartype usage: azure.mgmt.compute.v2017_03_30.operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
-    :vartype virtual_machine_sizes: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineSizesOperations
+    :vartype virtual_machine_sizes: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineSizesOperations
     :ivar images: Images operations
-    :vartype images: azure.mgmt.compute.compute.v2017_03_30.operations.ImagesOperations
+    :vartype images: azure.mgmt.compute.v2017_03_30.operations.ImagesOperations
     :ivar resource_skus: ResourceSkus operations
-    :vartype resource_skus: azure.mgmt.compute.compute.v2017_03_30.operations.ResourceSkusOperations
+    :vartype resource_skus: azure.mgmt.compute.v2017_03_30.operations.ResourceSkusOperations
     :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.compute.v2017_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
-    :vartype virtual_machine_scale_sets: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations
+    :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensions operations
-    :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetExtensionsOperations
+    :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetExtensionsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
-    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineScaleSetVMsOperations
+    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetVMsOperations
     :ivar disks: Disks operations
-    :vartype disks: azure.mgmt.compute.compute.v2017_03_30.operations.DisksOperations
+    :vartype disks: azure.mgmt.compute.v2017_03_30.operations.DisksOperations
     :ivar snapshots: Snapshots operations
-    :vartype snapshots: azure.mgmt.compute.compute.v2017_03_30.operations.SnapshotsOperations
+    :vartype snapshots: azure.mgmt.compute.v2017_03_30.operations.SnapshotsOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommands operations
-    :vartype virtual_machine_run_commands: azure.mgmt.compute.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations
+    :vartype virtual_machine_run_commands: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

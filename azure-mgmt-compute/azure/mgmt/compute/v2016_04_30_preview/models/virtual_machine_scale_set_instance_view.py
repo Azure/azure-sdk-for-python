@@ -22,14 +22,14 @@ class VirtualMachineScaleSetInstanceView(Model):
      machine scale set.
     :vartype virtual_machine:
      :class:`VirtualMachineScaleSetInstanceViewStatusesSummary
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
     :ivar extensions: The extensions information.
     :vartype extensions: list of
      :class:`VirtualMachineScaleSetVMExtensionsSummary
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMExtensionsSummary>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMExtensionsSummary>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus>`
     """
 
     _validation = {

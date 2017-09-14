@@ -19,16 +19,16 @@ class ImageDataDisk(Model):
     :type lun: int
     :param snapshot: The snapshot.
     :type snapshot: :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SubResource>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.SubResource>`
     :param managed_disk: The managedDisk.
     :type managed_disk: :class:`SubResource
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SubResource>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.SubResource>`
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.CachingTypes>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes>`
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for existing OS and Data disks.
     :type disk_size_gb: int

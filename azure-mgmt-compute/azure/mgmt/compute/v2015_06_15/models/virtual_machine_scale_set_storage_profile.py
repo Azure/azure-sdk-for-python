@@ -17,10 +17,10 @@ class VirtualMachineScaleSetStorageProfile(Model):
 
     :param image_reference: The image reference.
     :type image_reference: :class:`ImageReference
-     <azure.mgmt.compute.compute.v2015_06_15.models.ImageReference>`
+     <azure.mgmt.compute.v2015_06_15.models.ImageReference>`
     :param os_disk: The OS disk.
     :type os_disk: :class:`VirtualMachineScaleSetOSDisk
-     <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineScaleSetOSDisk>`
+     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetOSDisk>`
     """
 
     _attribute_map = {

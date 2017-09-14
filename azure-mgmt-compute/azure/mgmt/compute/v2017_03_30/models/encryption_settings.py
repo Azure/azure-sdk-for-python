@@ -24,11 +24,11 @@ class EncryptionSettings(Model):
     :param disk_encryption_key: Key Vault Secret Url and vault id of the disk
      encryption key
     :type disk_encryption_key: :class:`KeyVaultAndSecretReference
-     <azure.mgmt.compute.compute.v2017_03_30.models.KeyVaultAndSecretReference>`
+     <azure.mgmt.compute.v2017_03_30.models.KeyVaultAndSecretReference>`
     :param key_encryption_key: Key Vault Key Url and vault id of the key
      encryption key
     :type key_encryption_key: :class:`KeyVaultAndKeyReference
-     <azure.mgmt.compute.compute.v2017_03_30.models.KeyVaultAndKeyReference>`
+     <azure.mgmt.compute.v2017_03_30.models.KeyVaultAndKeyReference>`
     """
 
     _attribute_map = {
