@@ -50,7 +50,7 @@ class VirtualMachineExtension(Resource):
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
     :type instance_view: :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.compute.v2016_03_30.models.VirtualMachineExtensionInstanceView>`
+     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionInstanceView>`
     """
 
     _validation = {

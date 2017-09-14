@@ -25,13 +25,13 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :type tags: dict
     :param plan:
     :type plan: :class:`PurchasePlan
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.PurchasePlan>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.PurchasePlan>`
     :param os_disk_image:
     :type os_disk_image: :class:`OSDiskImage
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.OSDiskImage>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.OSDiskImage>`
     :param data_disk_images:
     :type data_disk_images: list of :class:`DataDiskImage
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.DataDiskImage>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.DataDiskImage>`
     """
 
     _validation = {

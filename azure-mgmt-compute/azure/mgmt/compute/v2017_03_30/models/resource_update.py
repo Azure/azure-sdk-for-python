@@ -19,7 +19,7 @@ class ResourceUpdate(Model):
     :type tags: dict
     :param sku:
     :type sku: :class:`DiskSku
-     <azure.mgmt.compute.compute.v2017_03_30.models.DiskSku>`
+     <azure.mgmt.compute.v2017_03_30.models.DiskSku>`
     """
 
     _attribute_map = {

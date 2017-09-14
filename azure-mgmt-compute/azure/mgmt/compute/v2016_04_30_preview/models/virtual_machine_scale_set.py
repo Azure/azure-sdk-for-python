@@ -30,17 +30,17 @@ class VirtualMachineScaleSet(Resource):
     :type tags: dict
     :param sku: The virtual machine scale set sku.
     :type sku: :class:`Sku
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.Sku>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.Sku>`
     :param plan: The purchase plan when deploying a virtual machine scale set
      from VM Marketplace images.
     :type plan: :class:`Plan
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.Plan>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.Plan>`
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: :class:`UpgradePolicy
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.UpgradePolicy>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.UpgradePolicy>`
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMProfile>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMProfile>`
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -53,7 +53,7 @@ class VirtualMachineScaleSet(Resource):
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity: :class:`VirtualMachineScaleSetIdentity
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIdentity>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIdentity>`
     """
 
     _validation = {

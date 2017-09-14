@@ -48,14 +48,14 @@ class VirtualMachinesOperations(object):
         :param parameters: Parameters supplied to the Capture Virtual Machine
          operation.
         :type parameters: :class:`VirtualMachineCaptureParameters
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineCaptureParameters>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineCaptureParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineCaptureResult
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineCaptureResult>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineCaptureResult>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -144,14 +144,14 @@ class VirtualMachinesOperations(object):
         :param parameters: Parameters supplied to the Create Virtual Machine
          operation.
         :type parameters: :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>` or
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -245,8 +245,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -331,18 +331,18 @@ class VirtualMachinesOperations(object):
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'instanceView'
         :type expand: str or :class:`InstanceViewTypes
-         <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewTypes>`
+         <azure.mgmt.compute.v2017_03_30.models.InstanceViewTypes>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>` or
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>` or
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -407,8 +407,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -497,8 +497,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -585,12 +585,12 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -650,9 +650,9 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>`
         :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachinePaged>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachinePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -718,9 +718,9 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualMachine
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachine>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachine>`
         :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachinePaged>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachinePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -788,9 +788,9 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineSize>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineSize>`
         :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineSizePaged>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineSizePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -861,8 +861,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -949,8 +949,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -1037,8 +1037,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -1125,8 +1125,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -1213,8 +1213,8 @@ class VirtualMachinesOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -1297,14 +1297,14 @@ class VirtualMachinesOperations(object):
         :type vm_name: str
         :param parameters: Parameters supplied to the Run command operation.
         :type parameters: :class:`RunCommandInput
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandInput>`
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandInput>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RunCommandResult
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandResult>` or
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:

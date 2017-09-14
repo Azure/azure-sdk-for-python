@@ -34,7 +34,7 @@ class MaintenanceRedeployStatus(Model):
      'MaintenanceCompleted'
     :type last_operation_result_code: str or
      :class:`MaintenanceOperationResultCodeTypes
-     <azure.mgmt.compute.compute.v2017_03_30.models.MaintenanceOperationResultCodeTypes>`
+     <azure.mgmt.compute.v2017_03_30.models.MaintenanceOperationResultCodeTypes>`
     :param last_operation_message: Message returned for the last Maintenance
      Operation.
     :type last_operation_message: str

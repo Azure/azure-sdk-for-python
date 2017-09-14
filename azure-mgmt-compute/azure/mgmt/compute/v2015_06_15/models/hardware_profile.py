@@ -30,7 +30,7 @@ class HardwareProfile(Model):
      'Standard_GS1', 'Standard_GS2', 'Standard_GS3', 'Standard_GS4',
      'Standard_GS5'
     :type vm_size: str or :class:`VirtualMachineSizeTypes
-     <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineSizeTypes>`
+     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizeTypes>`
     """
 
     _attribute_map = {

@@ -25,7 +25,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIPConfiguration>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIPConfiguration>`
     """
 
     _validation = {

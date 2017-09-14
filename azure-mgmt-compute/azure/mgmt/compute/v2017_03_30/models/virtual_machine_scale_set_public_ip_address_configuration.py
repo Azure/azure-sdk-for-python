@@ -24,7 +24,7 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
      addresses .
     :type dns_settings:
      :class:`VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
-     <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings>`
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings>`
     """
 
     _validation = {

@@ -46,9 +46,9 @@ class ResourceSkusOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`ResourceSku
-         <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSku>`
+         <azure.mgmt.compute.v2017_03_30.models.ResourceSku>`
         :rtype: :class:`ResourceSkuPaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSkuPaged>`
+         <azure.mgmt.compute.v2017_03_30.models.ResourceSkuPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

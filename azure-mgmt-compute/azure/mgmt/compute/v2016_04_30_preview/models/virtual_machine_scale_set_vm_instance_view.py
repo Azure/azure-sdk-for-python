@@ -23,19 +23,19 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineAgentInstanceView>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineAgentInstanceView>`
     :param disks: The disks information.
     :type disks: list of :class:`DiskInstanceView
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiskInstanceView>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.DiskInstanceView>`
     :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView>`
     :param boot_diagnostics: The boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.BootDiagnosticsInstanceView>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.BootDiagnosticsInstanceView>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus>`
     :param placement_group_id: The placement group in which the VM is running.
      If the VM is deallocated it will not have a placementGroupId.
     :type placement_group_id: str

@@ -20,15 +20,15 @@ class DiskUpdate(ResourceUpdate):
     :param account_type: the storage account type of the disk. Possible values
      include: 'Standard_LRS', 'Premium_LRS'
     :type account_type: str or :class:`StorageAccountTypes
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.StorageAccountTypes>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.StorageAccountTypes>`
     :param os_type: the Operating System type. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperatingSystemTypes>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes>`
     :param creation_data: disk source information. CreationData information
      cannot be changed after the disk has been created.
     :type creation_data: :class:`CreationData
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.CreationData>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.CreationData>`
     :param disk_size_gb: If creationData.createOption is Empty, this field is
      mandatory and it indicates the size of the VHD to create. If this field is
      present for updates or creation with other options, it indicates a resize.
@@ -37,7 +37,7 @@ class DiskUpdate(ResourceUpdate):
     :type disk_size_gb: int
     :param encryption_settings: Encryption settings for disk or snapshot
     :type encryption_settings: :class:`EncryptionSettings
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.EncryptionSettings>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.EncryptionSettings>`
     """
 
     _attribute_map = {

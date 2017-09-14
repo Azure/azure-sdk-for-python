@@ -33,17 +33,17 @@ class Disk(Resource):
     :vartype managed_by: str
     :param sku:
     :type sku: :class:`DiskSku
-     <azure.mgmt.compute.compute.v2017_03_30.models.DiskSku>`
+     <azure.mgmt.compute.v2017_03_30.models.DiskSku>`
     :ivar time_created: The time when the disk was created.
     :vartype time_created: datetime
     :param os_type: The Operating System type. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.compute.v2017_03_30.models.OperatingSystemTypes>`
+     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
     :param creation_data: Disk source information. CreationData information
      cannot be changed after the disk has been created.
     :type creation_data: :class:`CreationData
-     <azure.mgmt.compute.compute.v2017_03_30.models.CreationData>`
+     <azure.mgmt.compute.v2017_03_30.models.CreationData>`
     :param disk_size_gb: If creationData.createOption is Empty, this field is
      mandatory and it indicates the size of the VHD to create. If this field is
      present for updates or creation with other options, it indicates a resize.
@@ -52,7 +52,7 @@ class Disk(Resource):
     :type disk_size_gb: int
     :param encryption_settings: Encryption settings for disk or snapshot
     :type encryption_settings: :class:`EncryptionSettings
-     <azure.mgmt.compute.compute.v2017_03_30.models.EncryptionSettings>`
+     <azure.mgmt.compute.v2017_03_30.models.EncryptionSettings>`
     :ivar provisioning_state: The disk provisioning state.
     :vartype provisioning_state: str
     """

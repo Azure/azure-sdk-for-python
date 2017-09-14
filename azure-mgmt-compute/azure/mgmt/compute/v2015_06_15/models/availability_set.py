@@ -35,10 +35,10 @@ class AvailabilitySet(Resource):
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
     :type virtual_machines: list of :class:`SubResource
-     <azure.mgmt.compute.compute.v2015_06_15.models.SubResource>`
+     <azure.mgmt.compute.v2015_06_15.models.SubResource>`
     :ivar statuses: The resource status information.
     :vartype statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2015_06_15.models.InstanceViewStatus>`
+     <azure.mgmt.compute.v2015_06_15.models.InstanceViewStatus>`
     """
 
     _validation = {

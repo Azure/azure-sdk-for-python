@@ -46,19 +46,19 @@ class AvailabilitySetsOperations(object):
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
         :type parameters: :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -122,11 +122,11 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.OperationStatusResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -187,12 +187,12 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -250,9 +250,9 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`AvailabilitySet
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySet>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>`
         :rtype: :class:`AvailabilitySetPaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.AvailabilitySetPaged>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySetPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -321,9 +321,9 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineSize>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize>`
         :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineSizePaged>`
+         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

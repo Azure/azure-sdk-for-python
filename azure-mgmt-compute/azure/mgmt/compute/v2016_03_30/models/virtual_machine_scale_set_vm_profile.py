@@ -17,16 +17,16 @@ class VirtualMachineScaleSetVMProfile(Model):
 
     :param os_profile: The virtual machine scale set OS profile.
     :type os_profile: :class:`VirtualMachineScaleSetOSProfile
-     <azure.mgmt.compute.compute.v2016_03_30.models.VirtualMachineScaleSetOSProfile>`
+     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetOSProfile>`
     :param storage_profile: The virtual machine scale set storage profile.
     :type storage_profile: :class:`VirtualMachineScaleSetStorageProfile
-     <azure.mgmt.compute.compute.v2016_03_30.models.VirtualMachineScaleSetStorageProfile>`
+     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetStorageProfile>`
     :param network_profile: The virtual machine scale set network profile.
     :type network_profile: :class:`VirtualMachineScaleSetNetworkProfile
-     <azure.mgmt.compute.compute.v2016_03_30.models.VirtualMachineScaleSetNetworkProfile>`
+     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetNetworkProfile>`
     :param extension_profile: The virtual machine scale set extension profile.
     :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
-     <azure.mgmt.compute.compute.v2016_03_30.models.VirtualMachineScaleSetExtensionProfile>`
+     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetExtensionProfile>`
     """
 
     _attribute_map = {

@@ -22,7 +22,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     :vartype name: str
     :ivar statuses_summary: The extensions information.
     :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
-     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineStatusCodeCount>`
+     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineStatusCodeCount>`
     """
 
     _validation = {

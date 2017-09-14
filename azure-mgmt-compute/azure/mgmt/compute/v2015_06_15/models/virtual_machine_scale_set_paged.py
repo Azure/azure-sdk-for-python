@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VirtualMachineScaleSetPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualMachineScaleSet <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineScaleSet>` object
+    A paging container for iterating over a list of :class:`VirtualMachineScaleSet <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSet>` object
     """
 
     _attribute_map = {

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RunCommandDocumentBasePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`RunCommandDocumentBase <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocumentBase>` object
+    A paging container for iterating over a list of :class:`RunCommandDocumentBase <azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBase>` object
     """
 
     _attribute_map = {

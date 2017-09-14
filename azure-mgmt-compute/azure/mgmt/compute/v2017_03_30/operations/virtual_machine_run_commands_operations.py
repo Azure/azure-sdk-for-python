@@ -47,9 +47,9 @@ class VirtualMachineRunCommandsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`RunCommandDocumentBase
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocumentBase>`
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBase>`
         :rtype: :class:`RunCommandDocumentBasePaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocumentBasePaged>`
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBasePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -117,11 +117,11 @@ class VirtualMachineRunCommandsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`RunCommandDocument
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocument>` or
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandDocument>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`RunCommandDocument
-         <azure.mgmt.compute.compute.v2017_03_30.models.RunCommandDocument>` or
+         <azure.mgmt.compute.v2017_03_30.models.RunCommandDocument>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

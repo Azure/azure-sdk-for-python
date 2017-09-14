@@ -45,13 +45,12 @@ class AvailabilitySet(Resource):
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
     :type virtual_machines: list of :class:`SubResource
-     <azure.mgmt.compute.compute.v2017_03_30.models.SubResource>`
+     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
     :ivar statuses: The resource status information.
     :vartype statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.compute.v2017_03_30.models.InstanceViewStatus>`
+     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
     :param sku: Sku of the availability set
-    :type sku: :class:`Sku
-     <azure.mgmt.compute.compute.v2017_03_30.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.compute.v2017_03_30.models.Sku>`
     """
 
     _validation = {

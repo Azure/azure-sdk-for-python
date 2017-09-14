@@ -22,7 +22,7 @@ class UpgradePolicy(Model):
      All virtual machines in the scale set are  automatically updated at the
      same time. Possible values include: 'Automatic', 'Manual'
     :type mode: str or :class:`UpgradeMode
-     <azure.mgmt.compute.compute.v2017_03_30.models.UpgradeMode>`
+     <azure.mgmt.compute.v2017_03_30.models.UpgradeMode>`
     """
 
     _attribute_map = {

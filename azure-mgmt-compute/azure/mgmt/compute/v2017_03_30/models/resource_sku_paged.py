@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ResourceSkuPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceSku <azure.mgmt.compute.compute.v2017_03_30.models.ResourceSku>` object
+    A paging container for iterating over a list of :class:`ResourceSku <azure.mgmt.compute.v2017_03_30.models.ResourceSku>` object
     """
 
     _attribute_map = {

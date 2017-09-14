@@ -50,14 +50,14 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :param extension_parameters: Parameters supplied to the Create VM
          scale set Extension operation.
         :type extension_parameters: :class:`VirtualMachineScaleSetExtension
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineScaleSetExtension
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
@@ -155,8 +155,8 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v2017_03_30.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
@@ -249,11 +249,11 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`VirtualMachineScaleSetExtension
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`VirtualMachineScaleSetExtension
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -319,9 +319,9 @@ class VirtualMachineScaleSetExtensionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
          :class:`VirtualMachineScaleSetExtension
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension>`
         :rtype: :class:`VirtualMachineScaleSetExtensionPaged
-         <azure.mgmt.compute.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionPaged>`
+         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
