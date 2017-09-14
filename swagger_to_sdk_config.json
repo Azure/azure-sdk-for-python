@@ -166,6 +166,7 @@
     "dns": {
       "markdown": "specification/dns/resource-manager/readme.md",
       "autorest_options": {
+        "tag": "package-2017-09-preview",
         "namespace": "azure.mgmt.dns",
         "package-version": "1.0.1"
       },
