@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -52,10 +52,13 @@ class WebhooksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`Webhook
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`Webhook
-         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -63,8 +66,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -121,12 +124,15 @@ class WebhooksOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Webhook
-         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -134,8 +140,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -216,11 +222,14 @@ class WebhooksOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -228,8 +237,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -301,12 +310,15 @@ class WebhooksOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Webhook
-         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -314,8 +326,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -396,6 +408,8 @@ class WebhooksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Webhook
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Webhook>`
         :rtype: :class:`WebhookPaged
          <azure.mgmt.containerregistry.v2017_06_01_preview.models.WebhookPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -408,7 +422,7 @@ class WebhooksOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+                    'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -468,10 +482,13 @@ class WebhooksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`EventInfo
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.EventInfo>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`EventInfo
          <azure.mgmt.containerregistry.v2017_06_01_preview.models.EventInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -479,8 +496,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -535,10 +552,13 @@ class WebhooksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`CallbackConfig
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.CallbackConfig>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`CallbackConfig
          <azure.mgmt.containerregistry.v2017_06_01_preview.models.CallbackConfig>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -546,8 +566,8 @@ class WebhooksOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -601,6 +621,8 @@ class WebhooksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Event
+         <azure.mgmt.containerregistry.v2017_06_01_preview.models.Event>`
         :rtype: :class:`EventPaged
          <azure.mgmt.containerregistry.v2017_06_01_preview.models.EventPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -613,8 +635,8 @@ class WebhooksOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$'),
-                    'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+                    'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+                    'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
