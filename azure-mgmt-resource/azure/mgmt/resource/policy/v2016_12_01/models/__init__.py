@@ -10,17 +10,21 @@
 # --------------------------------------------------------------------------
 
 from .policy_definition import PolicyDefinition
+from .policy_sku import PolicySku
 from .policy_assignment import PolicyAssignment
 from .policy_assignment_paged import PolicyAssignmentPaged
 from .policy_definition_paged import PolicyDefinitionPaged
 from .policy_client_enums import (
     PolicyType,
+    PolicyMode,
 )
 
 __all__ = [
     'PolicyDefinition',
+    'PolicySku',
     'PolicyAssignment',
     'PolicyAssignmentPaged',
     'PolicyDefinitionPaged',
     'PolicyType',
+    'PolicyMode',
 ]
