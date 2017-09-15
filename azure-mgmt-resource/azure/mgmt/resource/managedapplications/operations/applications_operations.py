@@ -9,21 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
 
-class ApplianceDefinitionsOperations(object):
-    """ApplianceDefinitionsOperations operations.
+class ApplicationsOperations(object):
+    """ApplicationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,37 +31,39 @@ class ApplianceDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01-preview"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
     def get(
-            self, resource_group_name, appliance_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the appliance definition.
+            self, resource_group_name, application_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the managed application.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param appliance_definition_name: The name of the appliance
-         definition.
-        :type appliance_definition_name: str
+        :param application_name: The name of the managed application.
+        :type application_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'applianceDefinitionName': self._serialize.url("appliance_definition_name", appliance_definition_name, 'str', max_length=64, min_length=3),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -90,7 +92,7 @@ class ApplianceDefinitionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplianceDefinition', response)
+            deserialized = self._deserialize('Application', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -99,31 +101,33 @@ class ApplianceDefinitionsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, appliance_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the appliance definition.
+            self, resource_group_name, application_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the managed application.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param appliance_definition_name: The name of the appliance definition
-         to delete.
-        :type appliance_definition_name: str
+        :param application_name: The name of the managed application.
+        :type application_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'applianceDefinitionName': self._serialize.url("appliance_definition_name", appliance_definition_name, 'str', max_length=64, min_length=3),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -158,7 +162,7 @@ class ApplianceDefinitionsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 200, 202]:
+            if response.status_code not in [204, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
@@ -177,36 +181,38 @@ class ApplianceDefinitionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def create_or_update(
-            self, resource_group_name, appliance_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new appliance definition.
+            self, resource_group_name, application_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates a new managed application.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param appliance_definition_name: The name of the appliance
-         definition.
-        :type appliance_definition_name: str
-        :param parameters: Parameters supplied to the create or update an
-         appliance definition.
-        :type parameters: :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
+        :param application_name: The name of the managed application.
+        :type application_name: str
+        :param parameters: Parameters supplied to the create or update a
+         managed application.
+        :type parameters: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'applianceDefinitionName': self._serialize.url("appliance_definition_name", appliance_definition_name, 'str', max_length=64, min_length=3),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -226,7 +232,7 @@ class ApplianceDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplianceDefinition')
+        body_content = self._serialize.body(parameters, 'Application')
 
         # Construct and send request
         def long_running_send():
@@ -251,9 +257,9 @@ class ApplianceDefinitionsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('ApplianceDefinition', response)
+                deserialized = self._deserialize('Application', response)
             if response.status_code == 201:
-                deserialized = self._deserialize('ApplianceDefinition', response)
+                deserialized = self._deserialize('Application', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -272,9 +278,86 @@ class ApplianceDefinitionsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
+    def update(
+            self, resource_group_name, application_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+        """Updates an existing managed application. The only value that can be
+        updated via PATCH currently is the tags.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param application_name: The name of the managed application.
+        :type application_name: str
+        :param parameters: Parameters supplied to update an existing managed
+         application.
+        :type parameters: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications/{applicationName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'Application')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Application', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the appliance definitions in a resource group.
+        """Gets all the applications within a resource group.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -284,8 +367,10 @@ class ApplianceDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplianceDefinitionPaged
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinitionPaged>`
+        :return: An iterator like instance of :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
+        :rtype: :class:`ApplicationPaged
+         <azure.mgmt.resource.managedapplications.models.ApplicationPaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -293,9 +378,9 @@ class ApplianceDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applications'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -329,41 +414,107 @@ class ApplianceDefinitionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ApplianceDefinitionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ApplicationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ApplianceDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ApplicationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
-    def get_by_id(
-            self, appliance_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the appliance definition.
+    def list_by_subscription(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets all the applications within a subscription.
 
-        :param appliance_definition_id: The fully qualified ID of the
-         appliance definition, including the appliance name and the appliance
-         definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applianceDefinitions/{applianceDefinition-name}
-        :type appliance_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An iterator like instance of :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
+        :rtype: :class:`ApplicationPaged
+         <azure.mgmt.resource.managedapplications.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Solutions/applications'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ApplicationPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ApplicationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get_by_id(
+            self, application_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the managed application.
+
+        :param application_id: The fully qualified ID of the managed
+         application, including the managed application name and the managed
+         application resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applications/{application-name}
+        :type application_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{applianceDefinitionId}'
+        url = '/{applicationId}'
         path_format_arguments = {
-            'applianceDefinitionId': self._serialize.url("appliance_definition_id", appliance_definition_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -391,7 +542,7 @@ class ApplianceDefinitionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplianceDefinition', response)
+            deserialized = self._deserialize('Application', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -400,30 +551,32 @@ class ApplianceDefinitionsOperations(object):
         return deserialized
 
     def delete_by_id(
-            self, appliance_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the appliance definition.
+            self, application_id, custom_headers=None, raw=False, **operation_config):
+        """Deletes the managed application.
 
-        :param appliance_definition_id: The fully qualified ID of the
-         appliance definition, including the appliance name and the appliance
-         definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applianceDefinitions/{applianceDefinition-name}
-        :type appliance_definition_id: str
+        :param application_id: The fully qualified ID of the managed
+         application, including the managed application name and the managed
+         application resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applications/{application-name}
+        :type application_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{applianceDefinitionId}'
+        url = '/{applicationId}'
         path_format_arguments = {
-            'applianceDefinitionId': self._serialize.url("appliance_definition_id", appliance_definition_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -457,7 +610,7 @@ class ApplianceDefinitionsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 200, 202]:
+            if response.status_code not in [204, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
@@ -476,35 +629,37 @@ class ApplianceDefinitionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def create_or_update_by_id(
-            self, appliance_definition_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new appliance definition.
+            self, application_id, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates a new managed application.
 
-        :param appliance_definition_id: The fully qualified ID of the
-         appliance definition, including the appliance name and the appliance
-         definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applianceDefinitions/{applianceDefinition-name}
-        :type appliance_definition_id: str
-        :param parameters: Parameters supplied to the create or update an
-         appliance definition.
-        :type parameters: :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
+        :param application_id: The fully qualified ID of the managed
+         application, including the managed application name and the managed
+         application resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applications/{application-name}
+        :type application_id: str
+        :param parameters: Parameters supplied to the create or update a
+         managed application.
+        :type parameters: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ApplianceDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{applianceDefinitionId}'
+        url = '/{applicationId}'
         path_format_arguments = {
-            'applianceDefinitionId': self._serialize.url("appliance_definition_id", appliance_definition_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -523,7 +678,7 @@ class ApplianceDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplianceDefinition')
+        body_content = self._serialize.body(parameters, 'Application')
 
         # Construct and send request
         def long_running_send():
@@ -548,9 +703,9 @@ class ApplianceDefinitionsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('ApplianceDefinition', response)
+                deserialized = self._deserialize('Application', response)
             if response.status_code == 201:
-                deserialized = self._deserialize('ApplianceDefinition', response)
+                deserialized = self._deserialize('Application', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -568,3 +723,78 @@ class ApplianceDefinitionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+
+    def update_by_id(
+            self, application_id, parameters=None, custom_headers=None, raw=False, **operation_config):
+        """Updates an existing managed application. The only value that can be
+        updated via PATCH currently is the tags.
+
+        :param application_id: The fully qualified ID of the managed
+         application, including the managed application name and the managed
+         application resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applications/{application-name}
+        :type application_id: str
+        :param parameters: Parameters supplied to update an existing managed
+         application.
+        :type parameters: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Application
+         <azure.mgmt.resource.managedapplications.models.Application>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/{applicationId}'
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'Application')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Application', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized

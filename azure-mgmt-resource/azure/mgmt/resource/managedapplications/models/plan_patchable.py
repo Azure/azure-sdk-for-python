@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PlanPatchable(Model):
-    """Plan for the appliance.
+    """Plan for the managed application.
 
     :param name: The plan name.
     :type name: str

@@ -13,13 +13,13 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.appliances_operations import AppliancesOperations
-from .operations.appliance_definitions_operations import ApplianceDefinitionsOperations
+from .operations.applications_operations import ApplicationsOperations
+from .operations.application_definitions_operations import ApplicationDefinitionsOperations
 from . import models
 
 
-class ManagedApplicationClientConfiguration(AzureConfiguration):
-    """Configuration for ManagedApplicationClient
+class ApplicationClientConfiguration(AzureConfiguration):
+    """Configuration for ApplicationClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -43,25 +43,25 @@ class ManagedApplicationClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(ManagedApplicationClientConfiguration, self).__init__(base_url)
+        super(ApplicationClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('managedapplicationclient/{}'.format(VERSION))
+        self.add_user_agent('applicationclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class ManagedApplicationClient(object):
-    """ARM managed applications (appliances)
+class ApplicationClient(object):
+    """ARM applications
 
     :ivar config: Configuration for client.
-    :vartype config: ManagedApplicationClientConfiguration
+    :vartype config: ApplicationClientConfiguration
 
-    :ivar appliances: Appliances operations
-    :vartype appliances: azure.mgmt.resource.managedapplications.operations.AppliancesOperations
-    :ivar appliance_definitions: ApplianceDefinitions operations
-    :vartype appliance_definitions: azure.mgmt.resource.managedapplications.operations.ApplianceDefinitionsOperations
+    :ivar applications: Applications operations
+    :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
+    :ivar application_definitions: ApplicationDefinitions operations
+    :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -74,15 +74,15 @@ class ManagedApplicationClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = ManagedApplicationClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ApplicationClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-09-01-preview'
+        self.api_version = '2017-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.appliances = AppliancesOperations(
+        self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.appliance_definitions = ApplianceDefinitionsOperations(
+        self.application_definitions = ApplicationDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
