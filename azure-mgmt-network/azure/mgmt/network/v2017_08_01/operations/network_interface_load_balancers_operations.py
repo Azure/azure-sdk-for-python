@@ -37,7 +37,7 @@ class NetworkInterfaceLoadBalancersOperations(object):
 
     def list(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """Get all load balancers in a network interface.
+        """List all load balancers in a network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

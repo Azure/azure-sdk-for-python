@@ -255,9 +255,9 @@ class NetworkManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
-            self, location, domain_name_label=None, custom_headers=None, raw=False, **operation_config):
-        """Checks whether a domain name in the cloudapp.net zone is available for
-        use.
+            self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
+        """Checks whether a domain name in the cloudapp.azure.com zone is
+        available for use.
 
         :param location: The location of the domain name.
         :type location: str
@@ -291,8 +291,7 @@ class NetworkManagementClient(object):
 
         # Construct parameters
         query_parameters = {}
-        if domain_name_label is not None:
-            query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
+        query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
