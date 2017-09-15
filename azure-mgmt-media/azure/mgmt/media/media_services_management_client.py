@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.media_service_operations import MediaServiceOperations
 from . import models
 
@@ -58,6 +59,8 @@ class MediaServicesManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: MediaServicesManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.media.operations.Operations
     :ivar media_service: MediaService operations
     :vartype media_service: azure.mgmt.media.operations.MediaServiceOperations
 
@@ -81,5 +84,7 @@ class MediaServicesManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.media_service = MediaServiceOperations(
             self._client, self.config, self._serialize, self._deserialize)

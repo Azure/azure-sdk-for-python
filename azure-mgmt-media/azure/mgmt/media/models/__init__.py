@@ -20,6 +20,9 @@ from .regenerate_key_output import RegenerateKeyOutput
 from .resource import Resource
 from .service_keys import ServiceKeys
 from .sync_storage_keys_input import SyncStorageKeysInput
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .media_service_paged import MediaServicePaged
 from .media_services_management_client_enums import (
     ResourceType,
@@ -39,6 +42,9 @@ __all__ = [
     'Resource',
     'ServiceKeys',
     'SyncStorageKeysInput',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'MediaServicePaged',
     'ResourceType',
     'EntityNameUnavailabilityReason',

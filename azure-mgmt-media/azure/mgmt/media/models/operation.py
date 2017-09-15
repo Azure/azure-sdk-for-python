@@ -12,30 +12,28 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityInput(Model):
-    """The request body for CheckNameAvailability API.
+class Operation(Model):
+    """A Media Services REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the resource. A name must be globally unique.
-    :type name: str
-    :ivar type: The type of the resource - mediaservices. Default value:
-     "mediaservices" .
-    :vartype type: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :vartype name: str
+    :param display: The object that represents the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.media.models.OperationDisplay>`
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 24, 'min_length': 3, 'pattern': r'^[a-z0-9]{3,24}$'},
-        'type': {'required': True, 'constant': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    type = "mediaservices"
-
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, display=None):
+        self.name = None
+        self.display = display
