@@ -21,13 +21,13 @@ class RegistryNameCheckRequest(Model):
     :param name: The name of the container registry.
     :type name: str
     :ivar type: The resource type of the container registry. This field must
-     be set to "Microsoft.ContainerRegistry/registries". Default value:
+     be set to 'Microsoft.ContainerRegistry/registries'. Default value:
      "Microsoft.ContainerRegistry/registries" .
     :vartype type: str
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': '^[a-zA-Z0-9]*$'},
+        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': r'^[a-zA-Z0-9]*$'},
         'type': {'required': True, 'constant': True},
     }
 
