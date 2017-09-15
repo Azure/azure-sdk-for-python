@@ -258,7 +258,7 @@
       "markdown": "specification/mediaservices/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.media",
-        "package-version": "0.1.2"
+        "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-media/azure/mgmt/media",
       "build_dir": "azure-mgmt-media"
