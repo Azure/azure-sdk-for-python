@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ApplianceDefinitionPaged(Paged):
+class ApplicationDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of ApplianceDefinition object
+    A paging container for iterating over a list of :class:`ApplicationDefinition <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ApplianceDefinition]'}
+        'current_page': {'key': 'value', 'type': '[ApplicationDefinition]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ApplianceDefinitionPaged, self).__init__(*args, **kwargs)
+        super(ApplicationDefinitionPaged, self).__init__(*args, **kwargs)

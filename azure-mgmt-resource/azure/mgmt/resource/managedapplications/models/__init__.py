@@ -10,43 +10,43 @@
 # --------------------------------------------------------------------------
 
 from .plan import Plan
-from .appliance import Appliance
+from .application import Application
 from .plan_patchable import PlanPatchable
-from .appliance_patchable import AppliancePatchable
-from .appliance_provider_authorization import ApplianceProviderAuthorization
-from .appliance_artifact import ApplianceArtifact
-from .appliance_definition import ApplianceDefinition
+from .application_patchable import ApplicationPatchable
+from .application_provider_authorization import ApplicationProviderAuthorization
+from .application_artifact import ApplicationArtifact
+from .application_definition import ApplicationDefinition
 from .sku import Sku
 from .identity import Identity
 from .generic_resource import GenericResource
 from .resource import Resource
 from .error_response import ErrorResponse, ErrorResponseException
-from .appliance_paged import AppliancePaged
-from .appliance_definition_paged import ApplianceDefinitionPaged
-from .managed_application_client_enums import (
+from .application_paged import ApplicationPaged
+from .application_definition_paged import ApplicationDefinitionPaged
+from .application_client_enums import (
     ProvisioningState,
-    ApplianceLockLevel,
-    ApplianceArtifactType,
+    ApplicationLockLevel,
+    ApplicationArtifactType,
     ResourceIdentityType,
 )
 
 __all__ = [
     'Plan',
-    'Appliance',
+    'Application',
     'PlanPatchable',
-    'AppliancePatchable',
-    'ApplianceProviderAuthorization',
-    'ApplianceArtifact',
-    'ApplianceDefinition',
+    'ApplicationPatchable',
+    'ApplicationProviderAuthorization',
+    'ApplicationArtifact',
+    'ApplicationDefinition',
     'Sku',
     'Identity',
     'GenericResource',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
-    'AppliancePaged',
-    'ApplianceDefinitionPaged',
+    'ApplicationPaged',
+    'ApplicationDefinitionPaged',
     'ProvisioningState',
-    'ApplianceLockLevel',
-    'ApplianceArtifactType',
+    'ApplicationLockLevel',
+    'ApplicationArtifactType',
     'ResourceIdentityType',
 ]

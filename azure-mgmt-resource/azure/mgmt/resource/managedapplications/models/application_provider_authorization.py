@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class ApplianceProviderAuthorization(Model):
-    """The appliance provider authorization.
+class ApplicationProviderAuthorization(Model):
+    """The managed application provider authorization.
 
     :param principal_id: The provider's principal identifier. This is the
-     identity that the provider will use to call ARM to manage the appliance
-     resources.
+     identity that the provider will use to call ARM to manage the managed
+     application resources.
     :type principal_id: str
     :param role_definition_id: The provider's role definition identifier. This
      role will define all the permissions that the provider must have on the
-     appliance's container resource group. This role definition cannot have
-     permission to delete the resource group.
+     managed application's container resource group. This role definition
+     cannot have permission to delete the resource group.
     :type role_definition_id: str
     """
 
