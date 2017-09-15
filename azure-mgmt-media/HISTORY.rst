@@ -3,6 +3,22 @@
 Release History
 ===============
 
+0.2.0 (2017-09-14)
+++++++++++++++++++
+
+**Bug fixes**
+
+- Fix deserialization issue with check_name_availability
+
+**Features**
+
+- Adds operations.list
+
+**Breaking changes**
+
+- Operations will now throw a ValidationError if input string is longer than 24 characters (not CloudError)
+- Some keyword arguments have been renamed "parameters"
+
 0.1.2 (2016-06-27)
 ++++++++++++++++++
 
