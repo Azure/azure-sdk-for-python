@@ -8,6 +8,9 @@ env*/
 # PTVS analysis
 .ptvs/
 
+# Coverage report
+**/.coverage
+
 # Build results
 bin/
 obj/
