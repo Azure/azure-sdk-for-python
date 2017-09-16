@@ -17,8 +17,7 @@ class DeployServicePackageToNodeDescription(Model):
     manifest to image cache on a Service Fabric node.
     .
 
-    :param service_manifest_name: The name of service manifest whose packages
-     need to be downloaded.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param application_type_name:
     :type application_type_name: str

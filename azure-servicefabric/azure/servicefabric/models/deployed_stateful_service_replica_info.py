@@ -15,17 +15,13 @@ from .deployed_service_replica_info import DeployedServiceReplicaInfo
 class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     """Information about a stateful service replica deployed on a node.
 
-    :param service_name: Full hierarchical name of the service in URI format
-     starting with `fabric:`.
+    :param service_name:
     :type service_name: str
-    :param service_type_name: Name of the service type as specified in the
-     service manifest.
+    :param service_type_name:
     :type service_type_name: str
-    :param service_manifest_name: The name of the service manifest in which
-     this service type is defined.
+    :param service_manifest_name:
     :type service_manifest_name: str
-    :param code_package_name: The name of the code package that hosts this
-     replica.
+    :param code_package_name:
     :type code_package_name: str
     :param partition_id:
     :type partition_id: str
@@ -37,13 +33,20 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     :type address: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
+    :param host_process_id: Host process id of the process that is hosting
+     the replica. This will be zero if the replica is down. In hyper-v
+     containers this host process id will be from different kernel.
+    :type host_process_id: str
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str
-    :param replica_id: Id of the stateful service replica.
+    :param replica_id:
     :type replica_id: str
     :param replica_role: Possible values include: 'Unknown', 'None',
      'Primary', 'IdleSecondary', 'ActiveSecondary'
     :type replica_role: str
+    :param reconfiguration_information:
+    :type reconfiguration_information: :class:`ReconfigurationInformation
+     <azure.servicefabric.models.ReconfigurationInformation>`
     """ 
 
     _validation = {
@@ -55,17 +58,20 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
         'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
         'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
         'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionID', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
         'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
         'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},
         'replica_role': {'key': 'ReplicaRole', 'type': 'str'},
+        'reconfiguration_information': {'key': 'ReconfigurationInformation', 'type': 'ReconfigurationInformation'},
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, replica_id=None, replica_role=None):
-        super(DeployedStatefulServiceReplicaInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id)
+    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None, replica_id=None, replica_role=None, reconfiguration_information=None):
+        super(DeployedStatefulServiceReplicaInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id, host_process_id=host_process_id)
         self.replica_id = replica_id
         self.replica_role = replica_role
+        self.reconfiguration_information = reconfiguration_information
         self.ServiceKind = 'Stateful'

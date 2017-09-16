@@ -16,25 +16,23 @@ class DeployedServicePackageHealth(EntityHealth):
     """Information about the health of a service package for a specific
     application deployed on a Service Fabric node.
 
-    :param aggregated_health_state: The HealthState representing the
-     aggregated health state of the entity computed by Health Manager.
-     The health evaluation of the entity reflects all events reported on the
-     entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
+     'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
     :param health_events: The list of health events reported on the entity.
     :type health_events: list of :class:`HealthEvent
      <azure.servicefabric.models.HealthEvent>`
-    :param unhealthy_evaluations: The unhealthy evaluations that show why the
-     current aggregated health state was returned by Health Manager.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
-    :param application_name: Name of the application.
+    :param health_statistics:
+    :type health_statistics: :class:`HealthStatistics
+     <azure.servicefabric.models.HealthStatistics>`
+    :param application_name:
     :type application_name: str
-    :param service_manifest_name: Name of the service manifest.
+    :param service_manifest_name:
     :type service_manifest_name: str
-    :param node_name: Name of the node where this service package is deployed.
+    :param node_name:
     :type node_name: str
     """ 
 
@@ -42,13 +40,14 @@ class DeployedServicePackageHealth(EntityHealth):
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
         'application_name': {'key': 'ApplicationName', 'type': 'str'},
         'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
         'node_name': {'key': 'NodeName', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, application_name=None, service_manifest_name=None, node_name=None):
-        super(DeployedServicePackageHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations)
+    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, application_name=None, service_manifest_name=None, node_name=None):
+        super(DeployedServicePackageHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics)
         self.application_name = application_name
         self.service_manifest_name = service_manifest_name
         self.node_name = node_name

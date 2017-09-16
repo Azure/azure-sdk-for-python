@@ -19,7 +19,7 @@ class ServiceHealthState(EntityHealthState):
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
-    :param service_name: Full name of the service.
+    :param service_name:
     :type service_name: str
     """ 
 

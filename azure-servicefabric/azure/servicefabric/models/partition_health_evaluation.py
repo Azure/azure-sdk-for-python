@@ -26,12 +26,9 @@ class PartitionHealthEvaluation(HealthEvaluation):
     :type description: str
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param partition_id: Id of the partition.
+    :param partition_id:
     :type partition_id: str
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the current aggregated health state of the partition. The types of the
-     unhealthy evaluations can be ReplicasHealthEvaluation or
-     EventHealthEvaluation.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

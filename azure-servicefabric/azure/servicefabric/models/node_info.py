@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class NodeInfo(Model):
     """Information about a node in Service Fabric cluster.
 
-    :param name: The name of the node.
+    :param name:
     :type name: str
     :param ip_address_or_fqdn: The IP address or fully qualified domain name
      of the node.
@@ -61,6 +61,12 @@ class NodeInfo(Model):
     :param node_down_time_in_seconds: Time in seconds since the node has been
      in NodeStatus Down. Value zero indicates node is not NodeStatus Down.
     :type node_down_time_in_seconds: str
+    :param node_up_at: Date time in UTC when the node came up. If the node
+     has never been up then this value will be zero date time.
+    :type node_up_at: datetime
+    :param node_down_at: Date time in UTC when the node went down. If node
+     has never been down then this value will be zero date time.
+    :type node_down_at: datetime
     """ 
 
     _attribute_map = {
@@ -80,9 +86,11 @@ class NodeInfo(Model):
         'node_deactivation_info': {'key': 'NodeDeactivationInfo', 'type': 'NodeDeactivationInfo'},
         'is_stopped': {'key': 'IsStopped', 'type': 'bool'},
         'node_down_time_in_seconds': {'key': 'NodeDownTimeInSeconds', 'type': 'str'},
+        'node_up_at': {'key': 'NodeUpAt', 'type': 'iso-8601'},
+        'node_down_at': {'key': 'NodeDownAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name=None, ip_address_or_fqdn=None, type=None, code_version=None, config_version=None, node_status=None, node_up_time_in_seconds=None, health_state=None, is_seed_node=None, upgrade_domain=None, fault_domain=None, id=None, instance_id=None, node_deactivation_info=None, is_stopped=None, node_down_time_in_seconds=None):
+    def __init__(self, name=None, ip_address_or_fqdn=None, type=None, code_version=None, config_version=None, node_status=None, node_up_time_in_seconds=None, health_state=None, is_seed_node=None, upgrade_domain=None, fault_domain=None, id=None, instance_id=None, node_deactivation_info=None, is_stopped=None, node_down_time_in_seconds=None, node_up_at=None, node_down_at=None):
         self.name = name
         self.ip_address_or_fqdn = ip_address_or_fqdn
         self.type = type
@@ -99,3 +107,5 @@ class NodeInfo(Model):
         self.node_deactivation_info = node_deactivation_info
         self.is_stopped = is_stopped
         self.node_down_time_in_seconds = node_down_time_in_seconds
+        self.node_up_at = node_up_at
+        self.node_down_at = node_down_at

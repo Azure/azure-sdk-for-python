@@ -19,8 +19,7 @@ class ServiceTypeInfo(Model):
     :param service_type_description:
     :type service_type_description: :class:`ServiceTypeDescription
      <azure.servicefabric.models.ServiceTypeDescription>`
-    :param service_manifest_name: The name of the service manifest in which
-     this service type is defined.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param service_manifest_version: The version of the service manifest in
      which this service type is defined.

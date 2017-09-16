@@ -17,11 +17,9 @@ class ServiceInfo(Model):
 
     :param id:
     :type id: str
-    :param name: Full hierarchical name of the service in URI format starting
-     with `fabric:`.
+    :param name:
     :type name: str
-    :param type_name: The name of the service type as specified in the
-     service manifest.
+    :param type_name:
     :type type_name: str
     :param manifest_version: The version of the service manifest.
     :type manifest_version: str

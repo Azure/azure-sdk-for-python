@@ -17,16 +17,21 @@ class RestartDeployedCodePackageDescription(Model):
     Fabric node.
     .
 
-    :param service_manifest_name: The name of service manifest that specified
-     this code package.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    :param code_package_name: The name of the code package.
+    :param code_package_name:
     :type code_package_name: str
     :param code_package_instance_id:
     :type code_package_instance_id: str
     """ 
+
+    _validation = {
+        'service_manifest_name': {'required': True},
+        'code_package_name': {'required': True},
+        'code_package_instance_id': {'required': True},
+    }
 
     _attribute_map = {
         'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
@@ -35,7 +40,7 @@ class RestartDeployedCodePackageDescription(Model):
         'code_package_instance_id': {'key': 'CodePackageInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, service_manifest_name=None, service_package_activation_id=None, code_package_name=None, code_package_instance_id=None):
+    def __init__(self, service_manifest_name, code_package_name, code_package_instance_id, service_package_activation_id=None):
         self.service_manifest_name = service_manifest_name
         self.service_package_activation_id = service_package_activation_id
         self.code_package_name = code_package_name

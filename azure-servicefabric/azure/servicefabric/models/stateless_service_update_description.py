@@ -52,18 +52,18 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme: The correlation scheme.
+    :param correlation_scheme:
     :type correlation_scheme: list of :class:`ServiceCorrelationDescription
      <azure.servicefabric.models.ServiceCorrelationDescription>`
-    :param load_metrics: The service load metrics.
+    :param load_metrics:
     :type load_metrics: list of :class:`ServiceLoadMetricDescription
      <azure.servicefabric.models.ServiceLoadMetricDescription>`
-    :param service_placement_policies: The service placement policies.
+    :param service_placement_policies:
     :type service_placement_policies: list of
      :class:`ServicePlacementPolicyDescription
      <azure.servicefabric.models.ServicePlacementPolicyDescription>`
-    :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+    :param default_move_cost: Possible values include: 'Zero', 'Low',
+     'Medium', 'High'
     :type default_move_cost: str
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str

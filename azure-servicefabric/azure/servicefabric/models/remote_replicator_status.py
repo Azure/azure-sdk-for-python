@@ -17,8 +17,7 @@ class RemoteReplicatorStatus(Model):
     replicator’s point of view.
     .
 
-    :param replica_id: Represents the replica id of the remote secondary
-     replicator.
+    :param replica_id:
     :type replica_id: str
     :param last_acknowledgement_processed_time_utc: The last timestamp (in
      UTC) when an acknowledgement from the secondary replicator was processed
@@ -45,8 +44,7 @@ class RemoteReplicatorStatus(Model):
      A value of -1 implies that the secondary has applied all copy operations
      and the copy process is complete.
     :type last_applied_copy_sequence_number: str
-    :param remote_replicator_acknowledgement_status: Represents the
-     acknowledgement status for the remote secondary replicator.
+    :param remote_replicator_acknowledgement_status:
     :type remote_replicator_acknowledgement_status:
      :class:`RemoteReplicatorAcknowledgementStatus
      <azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus>`

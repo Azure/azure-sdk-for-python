@@ -15,17 +15,13 @@ from msrest.serialization import Model
 class DeployedServiceReplicaInfo(Model):
     """Information about a Service Fabric service replica deployed on a node.
 
-    :param service_name: Full hierarchical name of the service in URI format
-     starting with `fabric:`.
+    :param service_name:
     :type service_name: str
-    :param service_type_name: Name of the service type as specified in the
-     service manifest.
+    :param service_type_name:
     :type service_type_name: str
-    :param service_manifest_name: The name of the service manifest in which
-     this service type is defined.
+    :param service_manifest_name:
     :type service_manifest_name: str
-    :param code_package_name: The name of the code package that hosts this
-     replica.
+    :param code_package_name:
     :type code_package_name: str
     :param partition_id:
     :type partition_id: str
@@ -37,6 +33,10 @@ class DeployedServiceReplicaInfo(Model):
     :type address: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
+    :param host_process_id: Host process id of the process that is hosting
+     the replica. This will be zero if the replica is down. In hyper-v
+     containers this host process id will be from different kernel.
+    :type host_process_id: str
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str
     """ 
@@ -50,10 +50,11 @@ class DeployedServiceReplicaInfo(Model):
         'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
         'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
         'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionID', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
         'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
         'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
@@ -61,7 +62,7 @@ class DeployedServiceReplicaInfo(Model):
         'ServiceKind': {'Stateful': 'DeployedStatefulServiceReplicaInfo', 'Stateless': 'DeployedStatelessServiceInstanceInfo'}
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None):
+    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None):
         self.service_name = service_name
         self.service_type_name = service_type_name
         self.service_manifest_name = service_manifest_name
@@ -70,4 +71,5 @@ class DeployedServiceReplicaInfo(Model):
         self.replica_status = replica_status
         self.address = address
         self.service_package_activation_id = service_package_activation_id
+        self.host_process_id = host_process_id
         self.ServiceKind = None

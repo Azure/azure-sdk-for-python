@@ -21,11 +21,9 @@ class ServiceHealthStateChunk(EntityHealthStateChunk):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param service_name: The name of the service.
+    :param service_name:
     :type service_name: str
-    :param partition_health_state_chunks: The list of partition health state
-     chunks belonging to the service that respect the filters in the cluster
-     health chunk query description.
+    :param partition_health_state_chunks:
     :type partition_health_state_chunks:
      :class:`PartitionHealthStateChunkList <azure.servicefabric.models.PartitionHealthStateChunkList>`
     """ 
