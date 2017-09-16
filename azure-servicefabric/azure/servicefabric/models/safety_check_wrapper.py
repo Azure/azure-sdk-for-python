@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class SafetyCheckWrapper(Model):
     """A wrapper for the safety check object. Safety checks are performed by
     service fabric before continuing with the operations. These checks ensure
-    the avaiability of the service and the reliability of the state.
+    the availability of the service and the reliability of the state.
 
     :param safety_check:
     :type safety_check: :class:`SafetyCheck

@@ -30,10 +30,7 @@ class DeployedServicePackagesHealthEvaluation(HealthEvaluation):
     :param total_count: Total number of deployed service packages of the
      deployed application in the health store.
     :type total_count: long
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the aggregated health state. Includes all the unhealthy
-     DeployedServicePackageHealthEvaluation that impacted the aggregated
-     health.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

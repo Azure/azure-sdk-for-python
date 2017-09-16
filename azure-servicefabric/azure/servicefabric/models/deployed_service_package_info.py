@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DeployedServicePackageInfo(Model):
     """Information about service package deployed on a Service Fabric node.
 
-    :param name: The name of the service package.
+    :param name:
     :type name: str
     :param version: The version of the service package specified in service
      manifest.

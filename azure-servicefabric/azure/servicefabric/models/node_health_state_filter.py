@@ -43,7 +43,7 @@ class NodeHealthStateFilter(Model):
      For example, if the provided value is 6, it matches nodes with
      HealthState value of OK (2) and Warning (4).
      - Default - Default value. Matches any HealthState. The value is zero.
-     - None - Filter that doesn’t match any HealthState value. Used in order
+     - None - Filter that doesn't match any HealthState value. Used in order
      to return no results on a given collection of states. The value is 1.
      - Ok - Filter that matches input with HealthState value Ok. The value is
      2.

@@ -17,7 +17,7 @@ class ResolvedServicePartition(Model):
 
     :param name:
     :type name: str
-    :param partition_information: A representation of the resolved partition.
+    :param partition_information:
     :type partition_information: :class:`PartitionInformation
      <azure.servicefabric.models.PartitionInformation>`
     :param endpoints:

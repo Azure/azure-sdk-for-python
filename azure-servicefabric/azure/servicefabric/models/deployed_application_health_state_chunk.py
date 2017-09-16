@@ -24,10 +24,7 @@ class DeployedApplicationHealthStateChunk(EntityHealthStateChunk):
     :type health_state: str
     :param node_name: The name of node where the application is deployed.
     :type node_name: str
-    :param deployed_service_package_health_state_chunks: The list of deployed
-     service oackage health state chunks belonging to the deployed
-     application that respect the filters in the cluster health chunk query
-     description.
+    :param deployed_service_package_health_state_chunks:
     :type deployed_service_package_health_state_chunks:
      :class:`DeployedServicePackageHealthStateChunkList
      <azure.servicefabric.models.DeployedServicePackageHealthStateChunkList>`

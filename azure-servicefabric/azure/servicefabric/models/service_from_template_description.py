@@ -17,17 +17,15 @@ class ServiceFromTemplateDescription(Model):
     defined in the application manifest.
     .
 
-    :param application_name: Full name of the application.
+    :param application_name:
     :type application_name: str
-    :param service_name: Full name of the service.
+    :param service_name:
     :type service_name: str
-    :param service_type_name: The name of the Service Fabric service type.
+    :param service_type_name:
     :type service_type_name: str
-    :param initialization_data: The initialization data for the newly created
-     service instance.
+    :param initialization_data:
     :type initialization_data: list of int
-    :param service_package_activation_mode: The activation mode of service
-     package to be used for a service. Possible values include:
+    :param service_package_activation_mode: Possible values include:
      'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str
     :param service_dns_name: The DNS name of the service. It requires the DNS

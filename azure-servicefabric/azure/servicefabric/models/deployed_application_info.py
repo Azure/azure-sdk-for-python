@@ -17,9 +17,9 @@ class DeployedApplicationInfo(Model):
 
     :param id:
     :type id: str
-    :param name: The name of the application.
+    :param name:
     :type name: str
-    :param type_name: The name of the application type.
+    :param type_name:
     :type type_name: str
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'

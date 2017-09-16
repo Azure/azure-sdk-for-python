@@ -16,14 +16,11 @@ class RemoteReplicatorAcknowledgementStatus(Model):
     """Provides details about the remote replicators from the primary
     replicator's point of view.
 
-    :param replication_stream_acknowledgement_detail: Details about the
-     acknowledgements for operations that are part of the replication stream
-     data.
+    :param replication_stream_acknowledgement_detail:
     :type replication_stream_acknowledgement_detail:
      :class:`RemoteReplicatorAcknowledgementDetail
      <azure.servicefabric.models.RemoteReplicatorAcknowledgementDetail>`
-    :param copy_stream_acknowledgement_detail: Details about the
-     acknowledgements for operations that are part of the copy stream data.
+    :param copy_stream_acknowledgement_detail:
     :type copy_stream_acknowledgement_detail:
      :class:`RemoteReplicatorAcknowledgementDetail
      <azure.servicefabric.models.RemoteReplicatorAcknowledgementDetail>`

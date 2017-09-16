@@ -140,7 +140,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_cluster_health(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster.
 
         Gets the health of a Service Fabric cluster.
@@ -162,9 +162,8 @@ class ServiceFabricClientAPIs(object):
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -191,9 +190,8 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -216,9 +214,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -230,6 +227,23 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
+        :param include_system_application_health_statistics: Indicates
+         whether the health statistics should include the fabric:/System
+         application health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the
+         health statistics include the entities that belong to the
+         fabric:/System application.
+         Otherwise, the query result includes health statistics only for user
+         applications.
+         The health statistics must be included in the query result for this
+         parameter to be applied.
+        :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -261,6 +275,10 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
         if events_health_state_filter is not None:
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+        if include_system_application_health_statistics is not None:
+            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -289,7 +307,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_cluster_health_using_policy(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
+            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster using the specified
         policy.
 
@@ -314,9 +332,8 @@ class ServiceFabricClientAPIs(object):
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -343,9 +360,8 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -368,9 +384,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -382,6 +397,23 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
+        :param include_system_application_health_statistics: Indicates
+         whether the health statistics should include the fabric:/System
+         application health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the
+         health statistics include the entities that belong to the
+         fabric:/System application.
+         Otherwise, the query result includes health statistics only for user
+         applications.
+         The health statistics must be included in the query result for this
+         parameter to be applied.
+        :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -424,6 +456,10 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
         if events_health_state_filter is not None:
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+        if include_system_application_health_statistics is not None:
+            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -625,7 +661,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_cluster_health(
-            self, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric cluster.
 
         Sends a health report on a Service Fabric cluster. The report must
@@ -647,6 +683,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -671,6 +727,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -884,6 +942,548 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+
+    def get_cluster_configuration(
+            self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the Service Fabric standalone cluster configuration.
+
+        Get the Service Fabric standalone cluster configuration. The cluster
+        configuration contains properties of the cluster that include
+        different node types on the cluster,
+        security configurations, fault and upgrade domain topologies etc.
+        .
+
+        :param configuration_api_version: The API version of the Standalone
+         cluster json configuration.
+        :type configuration_api_version: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ClusterConfiguration
+         <azure.servicefabric.models.ClusterConfiguration>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/GetClusterConfiguration'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ConfigurationApiVersion'] = self._serialize.query("configuration_api_version", configuration_api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_cluster_configuration_upgrade_status(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the cluster configuration upgrade status of a Service Fabric
+        standalone cluster.
+
+        Get the cluster configuration upgrade status of a Service Fabric
+        standalone cluster.
+        .
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ClusterConfigurationUpgradeStatusInfo
+         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/GetClusterConfigurationUpgradeStatus'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterConfigurationUpgradeStatusInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def provision_cluster(
+            self, timeout=60, code_file_path=None, cluster_manifest_file_path=None, custom_headers=None, raw=False, **operation_config):
+        """Provision the code or configuration packages of a Service Fabric
+        cluster.
+
+        Validate and provision the code or configuration packages of a Service
+        Fabric cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param code_file_path: The cluster code package file path.
+        :type code_file_path: str
+        :param cluster_manifest_file_path: The cluster manifest file path.
+        :type cluster_manifest_file_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        provision_fabric_description = models.ProvisionFabricDescription(code_file_path=code_file_path, cluster_manifest_file_path=cluster_manifest_file_path)
+
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/Provision'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(provision_fabric_description, 'ProvisionFabricDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def unprovision_cluster(
+            self, timeout=60, code_version=None, config_version=None, custom_headers=None, raw=False, **operation_config):
+        """Unprovision the code or configuration packages of a Service Fabric
+        cluster.
+
+        Unprovision the code or configuration packages of a Service Fabric
+        cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param code_version: The cluster code package version.
+        :type code_version: str
+        :param config_version: The cluster manifest version.
+        :type config_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        unprovision_fabric_description = models.UnprovisionFabricDescription(code_version=code_version, config_version=config_version)
+
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/Unprovision'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(unprovision_fabric_description, 'UnprovisionFabricDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def rollback_cluster_upgrade(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Rollback the upgrade of a Service Fabric cluster.
+
+        Rollback the upgrade of a Service Fabric cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/RollbackUpgrade'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def resume_cluster_upgrade(
+            self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Make the cluster upgrade move on to the next upgrade domain.
+
+        Make the cluster upgrade move on to the next upgrade domain.
+
+        :param upgrade_domain: The next upgrade domain for this cluster
+         upgrade.
+        :type upgrade_domain: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        resume_cluster_upgrade_description = models.ResumeClusterUpgradeDescription(upgrade_domain=upgrade_domain)
+
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/MoveToNextUpgradeDomain'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(resume_cluster_upgrade_description, 'ResumeClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def start_cluster_upgrade(
+            self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Start upgrading the code or configuration version of a Service Fabric
+        cluster.
+
+        Validate the supplied upgrade parameters and start upgrading the code
+        or configuration version of a Service Fabric cluster if the
+        parameters are valid.
+
+        :param start_cluster_upgrade_description: Describes the parameters
+         for starting a cluster upgrade.
+        :type start_cluster_upgrade_description:
+         :class:`StartClusterUpgradeDescription
+         <azure.servicefabric.models.StartClusterUpgradeDescription>`
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/Upgrade'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def start_cluster_configuration_upgrade(
+            self, cluster_configuration_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Start upgrading the configuration of a Service Fabric standalone
+        cluster.
+
+        Validate the supplied configuration upgrade parameters and start
+        upgrading the cluster configuration if the parameters are valid.
+
+        :param cluster_configuration_upgrade_description: Parameters for a
+         standalone cluster configuration upgrade.
+        :type cluster_configuration_upgrade_description:
+         :class:`ClusterConfigurationUpgradeDescription
+         <azure.servicefabric.models.ClusterConfigurationUpgradeDescription>`
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/StartClusterConfigurationUpgrade'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(cluster_configuration_upgrade_description, 'ClusterConfigurationUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def update_cluster_upgrade(
+            self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Update the upgrade parameters of a Service Fabric cluster upgrade.
+
+        Update the upgrade parameters of a Service Fabric cluster upgrade.
+
+        :param update_cluster_upgrade_description: Parameters for updating a
+         cluster upgrade.
+        :type update_cluster_upgrade_description:
+         :class:`UpdateClusterUpgradeDescription
+         <azure.servicefabric.models.UpdateClusterUpgradeDescription>`
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/$/UpdateUpgrade'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(update_cluster_upgrade_description, 'UpdateClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
     def get_aad_metadata(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1132,9 +1732,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -1228,9 +1827,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -1313,7 +1911,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_node_health(
-            self, node_name, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric node.
 
         Reports health state of the specified Service Fabric node. The report
@@ -1337,6 +1935,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -1365,6 +1983,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -1658,143 +2278,6 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def start_node(
-            self, node_name, node_instance_id="0", timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Starts a Service Fabric cluster node.
-
-        Starts a Service Fabric cluster node that is already stopped.
-
-        :param node_name: The name of the node.
-        :type node_name: str
-        :param node_instance_id: The instance id of the node that is stopped.
-         If instance id is specified the node is started only if it matches
-         with the current instance of the stopped node. A default value of
-         "0" would match any instance id. The instance id can be obtained
-         using get node query.
-        :type node_instance_id: str
-        :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
-        :type timeout: long
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
-        """
-        start_node_description = models.StartNodeDescription(node_instance_id=node_instance_id)
-
-        api_version = "3.0"
-
-        # Construct URL
-        url = '/Nodes/{nodeName}/$/Start'
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(start_node_description, 'StartNodeDescription')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.FabricErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def stop_node(
-            self, node_name, node_instance_id="0", timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Stops a Service Fabric cluster node.
-
-        Stops a Service Fabric cluster node that is in a started state. The
-        node will stay down until start node is called.
-
-        :param node_name: The name of the node.
-        :type node_name: str
-        :param node_instance_id: The instance id of the target node. If
-         instance id is specified the node is stopped only if it matches with
-         the current instance of the node. A default value of "0" would match
-         any instance id. The instance id can be obtained using get node
-         query.
-        :type node_instance_id: str
-        :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
-        :type timeout: long
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
-        """
-        stop_node_description = models.StopNodeDescription(node_instance_id=node_instance_id)
-
-        api_version = "3.0"
-
-        # Construct URL
-        url = '/Nodes/{nodeName}/$/Stop'
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(stop_node_description, 'StopNodeDescription')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.FabricErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
     def restart_node(
             self, node_name, node_instance_id="0", timeout=60, create_fabric_dump="False", custom_headers=None, raw=False, **operation_config):
         """Restarts a Service Fabric cluster node.
@@ -1923,7 +2406,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0"
+        api_version = "5.0"
 
         # Construct URL
         url = '/ApplicationTypes'
@@ -1950,7 +2433,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -2026,7 +2509,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0"
+        api_version = "5.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}'
@@ -2057,7 +2540,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -2146,7 +2629,7 @@ class ServiceFabricClientAPIs(object):
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
-        :param application_type_version: The application type version.
+        :param application_type_version:
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -2195,7 +2678,7 @@ class ServiceFabricClientAPIs(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -2435,10 +2918,12 @@ class ServiceFabricClientAPIs(object):
         """Gets the information about a specified service type of the application
         deployed on a node in a Service Fabric cluster.
 
-        Gets the information about a specified service type of the application
-        deployed on a node in a Service Fabric cluster. The response includes
-        the name of the service type, its registration status, the code
-        package that registered it and activation id of the service package.
+        Gets the list containing the information about a specific service type
+        from the applications deployed on a node in a Service Fabric cluster.
+        The response includes the name of the service type, its registration
+        status, the code package that registered it and activation id of the
+        service package. Each entry represents one activation of a service
+        type, differentiated by the activation id.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2464,14 +2949,14 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedServiceTypeInfo
+        :rtype: list of :class:`DeployedServiceTypeInfo
          <azure.servicefabric.models.DeployedServiceTypeInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "4.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'
@@ -2500,13 +2985,13 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServiceTypeInfo', response)
+            deserialized = self._deserialize('[DeployedServiceTypeInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2520,8 +3005,8 @@ class ServiceFabricClientAPIs(object):
 
         Creates a Service Fabric application using the specified description.
 
-        :param application_description: Describes the application to be
-         created.
+        :param application_description: Description for creating an
+         application.
         :type application_description: :class:`ApplicationDescription
          <azure.servicefabric.models.ApplicationDescription>`
         :param timeout: The server timeout for performing the operation in
@@ -2645,6 +3130,77 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def get_application_load_info(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets load information about a Service Fabric application.
+
+        Returns the load information about the application that was created or
+        in the process of being created in the Service Fabric cluster and
+        whose name matches the one specified as the parameter. The response
+        includes the name, minimum nodes, maximum nodes, the number of nodes
+        the app is occupying currently, and application load metric
+        information about the application.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ApplicationLoadInfo
+         <azure.servicefabric.models.ApplicationLoadInfo>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/Applications/{applicationId}/$/GetLoadInformation'
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplicationLoadInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def get_application_info_list(
             self, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2809,7 +3365,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_health(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the service fabric application.
 
         Returns the heath state of the service fabric application. The
@@ -2831,9 +3387,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -2858,8 +3413,7 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
@@ -2884,9 +3438,8 @@ class ServiceFabricClientAPIs(object):
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of services with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn�t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -2898,6 +3451,12 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type services_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -2933,6 +3492,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
         if services_health_state_filter is not None:
             query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -2961,7 +3522,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_health_using_policy(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric application using the specified
         policy.
 
@@ -2986,9 +3547,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3013,8 +3573,7 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
@@ -3039,9 +3598,8 @@ class ServiceFabricClientAPIs(object):
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of services with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn�t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3053,6 +3611,12 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type services_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param application_health_policy: Describes the health policies used
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
@@ -3094,6 +3658,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
         if services_health_state_filter is not None:
             query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3129,7 +3695,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_application_health(
-            self, application_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric application.
 
         Reports health state of the specified Service Fabric application. The
@@ -3141,8 +3707,8 @@ class ServiceFabricClientAPIs(object):
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, run
-        GetApplicationHealth and check that the report appears in the
+        To see whether the report was applied in the health store, get
+        application health and check that the report appears in the
         HealthEvents section.
         .
 
@@ -3155,6 +3721,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -3183,6 +3769,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3218,8 +3806,8 @@ class ServiceFabricClientAPIs(object):
          typically the full name of the application without the 'fabric:' URI
          scheme.
         :type application_id: str
-        :param application_upgrade_description: Describes the parameters for
-         an application upgrade.
+        :param application_upgrade_description: Parameters for an application
+         upgrade.
         :type application_upgrade_description:
          :class:`ApplicationUpgradeDescription
          <azure.servicefabric.models.ApplicationUpgradeDescription>`
@@ -3355,8 +3943,8 @@ class ServiceFabricClientAPIs(object):
          typically the full name of the application without the 'fabric:' URI
          scheme.
         :type application_id: str
-        :param application_upgrade_update_description: Describes the
-         parameters for updating an existing application upgrade.
+        :param application_upgrade_update_description: Parameters for
+         updating an existing application upgrade.
         :type application_upgrade_update_description:
          :class:`ApplicationUpgradeUpdateDescription
          <azure.servicefabric.models.ApplicationUpgradeUpdateDescription>`
@@ -3683,7 +4271,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_deployed_application_health(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about health of an application deployed on a
         Service Fabric node.
 
@@ -3711,9 +4299,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3740,9 +4327,8 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3754,6 +4340,12 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type deployed_service_packages_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -3788,6 +4380,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if deployed_service_packages_health_state_filter is not None:
             query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3816,7 +4410,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_deployed_application_health_using_policy(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about health of an application deployed on a
         Service Fabric node. using the specified policy.
 
@@ -3850,9 +4444,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3879,9 +4472,8 @@ class ServiceFabricClientAPIs(object):
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -3899,6 +4491,12 @@ class ServiceFabricClientAPIs(object):
          application manifest or the default health policy.
         :type application_health_policy: :class:`ApplicationHealthPolicy
          <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -3933,6 +4531,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if deployed_service_packages_health_state_filter is not None:
             query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3968,7 +4568,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_deployed_application_health(
-            self, node_name, application_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric application deployed on a
         Service Fabric node.
 
@@ -3997,6 +4597,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -4026,6 +4646,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -4349,7 +4971,8 @@ class ServiceFabricClientAPIs(object):
          typically the full name of the application without the 'fabric:' URI
          scheme.
         :type application_id: str
-        :param service_description: The configuration for the service.
+        :param service_description: The information necessary to create a
+         service.
         :type service_description: :class:`ServiceDescription
          <azure.servicefabric.models.ServiceDescription>`
         :param timeout: The server timeout for performing the operation in
@@ -4554,8 +5177,8 @@ class ServiceFabricClientAPIs(object):
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
         :type service_id: str
-        :param service_update_description: The updated configuration for the
-         service.
+        :param service_update_description: The information necessary to
+         update a service.
         :type service_update_description: :class:`ServiceUpdateDescription
          <azure.servicefabric.models.ServiceUpdateDescription>`
         :param timeout: The server timeout for performing the operation in
@@ -4677,7 +5300,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_service_health(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric service.
 
         Gets the health information of the specified service.
@@ -4703,9 +5326,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -4729,8 +5351,7 @@ class ServiceFabricClientAPIs(object):
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
@@ -4743,6 +5364,12 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type partitions_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -4776,6 +5403,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if partitions_health_state_filter is not None:
             query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -4804,7 +5433,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_service_health_using_policy(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric service, by using the
         specified health policy.
 
@@ -4836,9 +5465,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -4862,8 +5490,7 @@ class ServiceFabricClientAPIs(object):
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
@@ -4882,6 +5509,12 @@ class ServiceFabricClientAPIs(object):
          application manifest or the default health policy.
         :type application_health_policy: :class:`ApplicationHealthPolicy
          <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -4915,6 +5548,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if partitions_health_state_filter is not None:
             query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -4950,7 +5585,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_service_health(
-            self, service_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric service.
 
         Reports health state of the specified Service Fabric service. The
@@ -4975,6 +5610,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -5003,6 +5658,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -5331,7 +5988,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_partition_health(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric partition.
 
         Gets the health information of the specified partition.
@@ -5356,9 +6013,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -5382,9 +6038,8 @@ class ServiceFabricClientAPIs(object):
          HealthState value of OK (2) and Warning (4) will be returned. The
          possible values for this parameter include integer value of one of
          the following health states.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -5396,6 +6051,12 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type replicas_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -5429,6 +6090,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if replicas_health_state_filter is not None:
             query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -5457,7 +6120,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_partition_health_using_policy(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric partition, by using
         the specified health policy.
 
@@ -5490,9 +6153,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -5516,9 +6178,8 @@ class ServiceFabricClientAPIs(object):
          HealthState value of OK (2) and Warning (4) will be returned. The
          possible values for this parameter include integer value of one of
          the following health states.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -5536,6 +6197,12 @@ class ServiceFabricClientAPIs(object):
          application manifest or the default health policy.
         :type application_health_policy: :class:`ApplicationHealthPolicy
          <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -5569,6 +6236,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if replicas_health_state_filter is not None:
             query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -5604,7 +6273,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_partition_health(
-            self, partition_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric partition.
 
         Reports health state of the specified Service Fabric partition. The
@@ -5628,6 +6297,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -5656,6 +6345,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -6221,9 +6912,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -6325,9 +7015,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -6412,7 +7101,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_replica_health(
-            self, partition_id, replica_id, health_information, service_kind="Stateful", timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, replica_id, health_information, service_kind="Stateful", immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric replica.
 
         Reports health state of the specified Service Fabric replica. The
@@ -6447,6 +7136,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -6477,6 +7186,8 @@ class ServiceFabricClientAPIs(object):
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['ServiceKind'] = self._serialize.query("service_kind", service_kind, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -6625,6 +7336,76 @@ class ServiceFabricClientAPIs(object):
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeployedServiceReplicaDetailInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_deployed_service_replica_detail_info_by_partition_id(
+            self, node_name, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of replica deployed on a Service Fabric node.
+
+        Gets the details of the replica deployed on a Service Fabric node. The
+        information include service kind, service name, current service
+        operation, current service operation start date time, partition id,
+        replica/instance id, reported load and other information.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value
+         for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DeployedServiceReplicaDetailInfo
+         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "3.0"
+
+        # Construct URL
+        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -6934,12 +7715,12 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
+        if response.status_code == 204:
             deserialized = self._deserialize('[DeployedServicePackageInfo]', response)
 
         if raw:
@@ -6978,9 +7759,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -7088,9 +7868,8 @@ class ServiceFabricClientAPIs(object):
          value obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The
          value is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
@@ -7176,7 +7955,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def report_deployed_service_package_health(
-            self, node_name, application_id, service_package_name, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, service_package_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric deployed service package.
 
         Reports health state of the service package of the application
@@ -7207,6 +7986,26 @@ class ServiceFabricClientAPIs(object):
          health reports sent to the health manager.
         :type health_information: :class:`HealthInformation
          <azure.servicefabric.models.HealthInformation>`
+        :param immediate: A flag which indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application,
+         which forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from Http
+         Gateway to the health store, regardless of the fabric client
+         settings that the Http Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may
+         still fail, for example if the Http Gateway is closed or the message
+         doesn't reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the Http Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client
+         to optimize health reporting messages to health store as well as
+         health report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value
@@ -7237,6 +8036,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -7879,15 +8680,13 @@ class ServiceFabricClientAPIs(object):
         """Gets the next segment of the Chaos report based on the passed-in
         continuation token or the passed-in time-range.
 
-        You can either specify the ContinuationTokenOptionalQueryParam to get
-        the next segment of the Chaos report or you can specify the time-range
-        through StartTimeUtcOptionalQueryParam and
-        EndTimeUtcOptionalQueryParam, but you cannot specify both the
-        ContinuationTokenOptionalQueryParam and the time-range at the same
-        time.
-        When the Chaos report contains more than 100 Chaos events, the Chaos
-        report is returned in segments where a segment contains no more than
-        100 Chaos events.
+        You can either specify the ContinuationToken to get the next segment
+        of the Chaos report or you can specify the time-range
+        through StartTimeUtc and EndTimeUtc, but you cannot specify both the
+        ContinuationToken and the time-range in the same call.
+        When there are more than 100 Chaos events, the Chaos report is
+        returned in segments where a segment contains no more than 100 Chaos
+        events.
         .
 
         :param continuation_token: The continuation token parameter is used
@@ -7899,11 +8698,17 @@ class ServiceFabricClientAPIs(object):
          contain a value. The value of this parameter should not be URL
          encoded.
         :type continuation_token: str
-        :param start_time_utc: Start of the time range for which a Chaos
-         report is to be generated.
+        :param start_time_utc: The count of ticks representing the start time
+         of the time range for which a Chaos report is to be generated.
+         Please consult [DateTime.Ticks
+         Property](https://msdn.microsoft.com/en-us/library/system.datetime.ticks%28v=vs.110%29)
+         for details about tick.
         :type start_time_utc: str
-        :param end_time_utc: End of the time range for which a Chaos report
-         is to be generated.
+        :param end_time_utc: The count of ticks representing the end time of
+         the time range for which a Chaos report is to be generated. Please
+         consult [DateTime.Ticks
+         Property](https://msdn.microsoft.com/en-us/library/system.datetime.ticks%28v=vs.110%29)
+         for details about tick.
         :type end_time_utc: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -7969,7 +8774,16 @@ class ServiceFabricClientAPIs(object):
         Uploads contents of the file to the image store. Use this API if the
         file is small enough to upload again if the connection fails. The
         file's data needs to be added to the request body. The contents will
-        be uploaded to the specified path.
+        be uploaded to the specified path. Image store service uses a mark
+        file to indicate the availability of the folder. The mark file is an
+        empty file named "_.dir". The mark file is generated by the image
+        store service when all files in a folder are uploaded. When using
+        File-by-File approach to upload application package in REST, the
+        image store service isn�t aware of the file hierarchy of the
+        application package; you need to create a mark file per folder and
+        upload it last, to let the image store service know that the folder
+        is complete.
+        .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.

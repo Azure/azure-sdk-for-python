@@ -36,6 +36,7 @@ app_creds_real.py
 *.user
 *.sln.docstates
 .vs/
+.vscode
 
 # Windows image file caches
 Thumbs.db

@@ -15,13 +15,12 @@ from msrest.serialization import Model
 class DeployedCodePackageInfo(Model):
     """Information about code package deployed on a Service Fabric node.
 
-    :param name: The name of the code package.
+    :param name:
     :type name: str
     :param version: The version of the code package specified in service
      manifest.
     :type version: str
-    :param service_manifest_name: The name of service manifest that specified
-     this code package.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str

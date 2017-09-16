@@ -26,14 +26,11 @@ class ReplicaHealthEvaluation(HealthEvaluation):
     :type description: str
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param partition_id: Id of the partition to which the replica belongs.
+    :param partition_id:
     :type partition_id: str
-    :param replica_or_instance_id: Id of the stateful service replica or the
-     stateless service instance.
+    :param replica_or_instance_id:
     :type replica_or_instance_id: str
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the current aggregated health state of the replica. The types of the
-     unhealthy evaluations can be EventHealthEvaluation.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

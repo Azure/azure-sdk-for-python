@@ -18,8 +18,7 @@ class PartitionSafetyCheck(SafetyCheck):
 
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param partition_id: Id of the partition which is undergoing the safety
-     check.
+    :param partition_id:
     :type partition_id: str
     """ 
 

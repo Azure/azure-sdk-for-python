@@ -19,13 +19,11 @@ class DeployedServicePackageHealthState(EntityHealthState):
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
-    :param node_name: Name of the node on which the service package is
-     deployed.
+    :param node_name:
     :type node_name: str
-    :param application_name: Full name of the application.
+    :param application_name:
     :type application_name: str
-    :param service_manifest_name: Name of the manifest describing the service
-     package.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str

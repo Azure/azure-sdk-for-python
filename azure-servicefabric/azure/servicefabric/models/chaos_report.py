@@ -29,7 +29,7 @@ class ChaosReport(Model):
     :type status: str
     :param continuation_token:
     :type continuation_token: str
-    :param history: List of ChaosEvent's that meet the user-supplied criteria.
+    :param history:
     :type history: list of :class:`ChaosEventWrapper
      <azure.servicefabric.models.ChaosEventWrapper>`
     """ 

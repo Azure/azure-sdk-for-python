@@ -19,12 +19,6 @@ class ChaosParameters(Model):
     :param time_to_run_in_seconds: Total time (in seconds) for which Chaos
      will run before automatically stopping. The maximum allowed value is
      4,294,967,295 (System.UInt32.MaxValue).
-     Depending on other time settings, the actual running time of Chaos can be
-     larger than the TimeToRunInSeconds.
-     To be conservative, we should expect Chaos to automatically stop after
-     (MaxClusterStabilizationTimeoutInSeconds + MaxConcurrentFaults *
-     WaitTimeBetweenFaultsInSeconds + WaitTimeBetweenIterationsInSeconds)
-     seconds.
      . Default value: "4294967295" .
     :type time_to_run_in_seconds: str
     :param max_cluster_stabilization_timeout_in_seconds: The maximum amount
@@ -63,10 +57,7 @@ class ChaosParameters(Model):
      The larger the value, the lower the fault injection rate.
      . Default value: 30 .
     :type wait_time_between_iterations_in_seconds: long
-    :param cluster_health_policy: Passed-in cluster health policy is used to
-     validate health of the cluster in between Chaos iterations. If the
-     cluster health is in error, Chaos will wait for
-     ChaosParameters.WaitTimeBetweenIterationsInSeconds before the next check.
+    :param cluster_health_policy:
     :type cluster_health_policy: :class:`ClusterHealthPolicy
      <azure.servicefabric.models.ClusterHealthPolicy>`
     :param context:

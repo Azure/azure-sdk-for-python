@@ -16,7 +16,7 @@ class NodeResult(Model):
     """Contains information about a node that was targeted by a user-induced
     operation.
 
-    :param node_name: The node name
+    :param node_name:
     :type node_name: str
     :param node_instance_id: The node instance id.
     :type node_instance_id: str
