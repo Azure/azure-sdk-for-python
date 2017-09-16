@@ -1,0 +1,444 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"846cd1fc-44c7-498b-9367-4fb9a1a9c432\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
+        \   \"resourceGuid\": \"ed7e3418-ee82-4457-ad88-b17fd9f59ae7\",\r\n    \"\
+        routes\": []\r\n  }\r\n}"}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/fa01371c-1246-443b-b28a-4ae9cd0a3277?api-version=2017-09-01']
+      cache-control: [no-cache]
+      content-length: ['484']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:43 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/fa01371c-1246-443b-b28a-4ae9cd0a3277?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['29']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"ed7e3418-ee82-4457-ad88-b17fd9f59ae7\",\r\n    \"\
+        routes\": []\r\n  }\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['485']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:53 GMT']
+      etag: [W/"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2"]
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/routeTables\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"ed7e3418-ee82-4457-ad88-b17fd9f59ae7\",\r\n    \"\
+        routes\": []\r\n  }\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['485']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:54 GMT']
+      etag: [W/"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2"]
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2\\\"\",\r\
+        \n      \"type\": \"Microsoft.Network/routeTables\",\r\n      \"location\"\
+        : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"ed7e3418-ee82-4457-ad88-b17fd9f59ae7\"\
+        ,\r\n        \"routes\": []\r\n      }\r\n    }\r\n  ]\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['558']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/routeTables?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"5b89a0ee-ba61-43b2-93d0-bf8b853c65e2\\\"\",\r\
+        \n      \"type\": \"Microsoft.Network/routeTables\",\r\n      \"location\"\
+        : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"ed7e3418-ee82-4457-ad88-b17fd9f59ae7\"\
+        ,\r\n        \"routes\": []\r\n      }\r\n    }\r\n  ]\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['558']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"addressPrefix": "10.1.0.0/16", "nextHopType": "None"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['71']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"fe4bb190-bf27-4d5a-9659-458ef748ca00\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
+        addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  }\r\
+        \n}"}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/f1982314-e7f4-4b64-96ff-1165af3d2c5d?api-version=2017-09-01']
+      cache-control: [no-cache]
+      content-length: ['418']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:27:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/f1982314-e7f4-4b64-96ff-1165af3d2c5d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['29']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:07 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"4763d1f7-46c6-4c1a-bb9b-2b20db95e77d\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  }\r\
+        \n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['419']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:07 GMT']
+      etag: [W/"4763d1f7-46c6-4c1a-bb9b-2b20db95e77d"]
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n  \"etag\": \"W/\\\"4763d1f7-46c6-4c1a-bb9b-2b20db95e77d\\\"\",\r\n \
+        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
+        addressPrefix\": \"10.1.0.0/16\",\r\n    \"nextHopType\": \"None\"\r\n  }\r\
+        \n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['419']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:07 GMT']
+      etag: [W/"4763d1f7-46c6-4c1a-bb9b-2b20db95e77d"]
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyrouteb6760c2d\"\
+        ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\"\
+        ,\r\n      \"etag\": \"W/\\\"4763d1f7-46c6-4c1a-bb9b-2b20db95e77d\\\"\",\r\
+        \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
+        ,\r\n        \"addressPrefix\": \"10.1.0.0/16\",\r\n        \"nextHopType\"\
+        : \"None\"\r\n      }\r\n    }\r\n  ]\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['484']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:08 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/34cc0077-3881-4029-a28c-8dc94271276b?api-version=2017-09-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 15 Sep 2017 23:28:09 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/34cc0077-3881-4029-a28c-8dc94271276b?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/34cc0077-3881-4029-a28c-8dc94271276b?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['29']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/75cb519c-bfc8-4cf7-83ec-822717853875?api-version=2017-09-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 15 Sep 2017 23:28:19 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/75cb519c-bfc8-4cf7-83ec-822717853875?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/75cb519c-bfc8-4cf7-83ec-822717853875?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['29']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+version: 1
