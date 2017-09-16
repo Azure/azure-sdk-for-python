@@ -1,0 +1,132 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
+          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2017-09-01
+  response:
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 1.0,\r\
+        \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\"\
+        ,\r\n      \"limit\": 50.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Virtual Networks\",\r\n        \"value\": \"VirtualNetworks\"\r\n    \
+        \  },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StaticPublicIPAddresses\"\
+        ,\r\n      \"limit\": 20.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Static Public IP Addresses\",\r\n        \"value\": \"StaticPublicIPAddresses\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\"\
+        ,\r\n      \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Network Security Groups\",\r\n        \"value\": \"NetworkSecurityGroups\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\"\
+        ,\r\n      \"limit\": 60.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Public IP Addresses\",\r\n        \"value\": \"PublicIPAddresses\"\r\n\
+        \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\"\
+        ,\r\n      \"limit\": 350.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Network Interfaces\",\r\n        \"value\": \"NetworkInterfaces\"\r\n\
+        \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\"\
+        ,\r\n      \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Load Balancers\",\r\n        \"value\": \"LoadBalancers\"\r\n      },\r\
+        \n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":\
+        \ 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/ApplicationGateways\"\
+        ,\r\n      \"limit\": 50.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Application Gateways\",\r\n        \"value\": \"ApplicationGateways\"\r\
+        \n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RouteTables\"\
+        ,\r\n      \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Route Tables\",\r\n        \"value\": \"RouteTables\"\r\n      },\r\n\
+        \      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\
+        \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RouteFilters\"\
+        ,\r\n      \"limit\": 1000.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Route Filters\",\r\n        \"value\": \"RouteFilters\"\r\n      },\r\n\
+        \      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\
+        \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkWatchers\"\
+        ,\r\n      \"limit\": 1.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Network Watchers\",\r\n        \"value\": \"NetworkWatchers\"\r\n    \
+        \  },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PacketCaptures\"\
+        ,\r\n      \"limit\": 10.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Packet Captures\",\r\n        \"value\": \"PacketCaptures\"\r\n      },\r\
+        \n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":\
+        \ 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/DnsServersPerVirtualNetwork\"\
+        ,\r\n      \"limit\": 9.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"DNS servers per Virtual Network\",\r\n        \"value\": \"DnsServersPerVirtualNetwork\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/SubnetsPerVirtualNetwork\"\
+        ,\r\n      \"limit\": 1000.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Subnets per Virtual Network\",\r\n        \"value\": \"SubnetsPerVirtualNetwork\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/IPConfigurationsPerVirtualNetwork\"\
+        ,\r\n      \"limit\": 4096.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"IP Configurations per Virtual Network\",\r\n        \"value\": \"IPConfigurationsPerVirtualNetwork\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PeeringsPerVirtualNetwork\"\
+        ,\r\n      \"limit\": 10.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Peerings per Virtual Network\",\r\n        \"value\": \"PeeringsPerVirtualNetwork\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/SecurityRulesPerNetworkSecurityGroup\"\
+        ,\r\n      \"limit\": 200.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Security rules per Network Security Group\",\r\n        \"value\": \"\
+        SecurityRulesPerNetworkSecurityGroup\"\r\n      },\r\n      \"unit\": \"Count\"\
+        \r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/SecurityRuleAddressesOrPortsPerNetworkSecurityGroup\"\
+        ,\r\n      \"limit\": 2000.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Security rules addresses or ports per Network Security Group\",\r\n  \
+        \      \"value\": \"SecurityRuleAddressesOrPortsPerNetworkSecurityGroup\"\r\
+        \n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/InboundRulesPerLoadBalancer\"\
+        ,\r\n      \"limit\": 150.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Inbound Rules per Load Balancer\",\r\n        \"value\": \"InboundRulesPerLoadBalancer\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/FrontendIPConfigurationPerLoadBalancer\"\
+        ,\r\n      \"limit\": 10.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Frontend IP Configurations per Load Balancer\",\r\n        \"value\":\
+        \ \"FrontendIPConfigurationPerLoadBalancer\"\r\n      },\r\n      \"unit\"\
+        : \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n      \"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/OutboundNatRulesPerLoadBalancer\"\
+        ,\r\n      \"limit\": 5.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Outbound NAT Rules per Load Balancer\",\r\n        \"value\": \"OutboundNatRulesPerLoadBalancer\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RoutesPerRouteTable\"\
+        ,\r\n      \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Routes per Route Table\",\r\n        \"value\": \"RoutesPerRouteTable\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/SecondaryIPConfigurationsPerNetworkInterface\"\
+        ,\r\n      \"limit\": 256.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Secondary IP Configurations per Network Interface\",\r\n        \"value\"\
+        : \"SecondaryIPConfigurationsPerNetworkInterface\"\r\n      },\r\n      \"\
+        unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n \
+        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/InboundRulesPerNetworkInterface\"\
+        ,\r\n      \"limit\": 500.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Inbound rules per Network Interface\",\r\n        \"value\": \"InboundRulesPerNetworkInterface\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RouteFilterRulesPerRouteFilter\"\
+        ,\r\n      \"limit\": 1.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Route filter rules per Route Filter\",\r\n        \"value\": \"RouteFilterRulesPerRouteFilter\"\
+        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
+        : 0.0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/RouteFiltersPerExpressRouteBgpPeering\"\
+        ,\r\n      \"limit\": 1.0,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        : \"Route filters per Express route BGP Peering\",\r\n        \"value\": \"\
+        RouteFiltersPerExpressRouteBgpPeering\"\r\n      },\r\n      \"unit\": \"\
+        Count\"\r\n    }\r\n  ]\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['9205']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Sep 2017 23:28:44 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+version: 1
