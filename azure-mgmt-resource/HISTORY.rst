@@ -3,7 +3,7 @@
 Release History
 ===============
 
-Unreleased (2017-XX-XX)
+1.2.0rc1 (2017-09-18)
 +++++++++++++++++++++++
 
 **Features**
@@ -13,6 +13,10 @@ Unreleased (2017-XX-XX)
 **Bug fixes**
 
 - Do not fail on 204 when deleting a policy assignment (2016-12-01)
+
+**Breaking changes to preview clients**
+
+* Major renaming into ManagedApplication client, and GA ApiVersion 2017-09-01
 
 1.1.0 (2017-05-15)
 ++++++++++++++++++
@@ -51,7 +55,7 @@ The default is still 2016-09-01 in this package, waiting for the ApiVersion to b
 1.0.0rc2 (2017-05-02)
 +++++++++++++++++++++
 
-- Add Managed Applications client
+- Add Managed Applications client (preview)
 
 1.0.0rc1 (2017-04-11)
 +++++++++++++++++++++
