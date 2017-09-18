@@ -11,19 +11,18 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class PolicyDefinitionsOperations(object):
-    """PolicyDefinitionsOperations operations.
+class PolicySetDefinitionsOperations(object):
+    """PolicySetDefinitionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the operation. Constant value: "2016-12-01".
+    :ivar api_version: The API version to use for the operation. Constant value: "2017-06-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,38 +30,39 @@ class PolicyDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-06-01-preview"
 
         self.config = config
 
     def create_or_update(
-            self, policy_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a policy definition.
+            self, policy_set_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a policy set definition.
 
-        :param policy_definition_name: The name of the policy definition to
-         create.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties.
-        :type parameters: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
+        :param policy_set_definition_name: The name of the policy set
+         definition to create.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties.
+        :type parameters: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
+        :return: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
+        :rtype: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
         path_format_arguments = {
-            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
+            'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -82,22 +82,22 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'PolicyDefinition')
+        body_content = self._serialize.body(parameters, 'PolicySetDefinition')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [201, 200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('PolicyDefinition', response)
+            deserialized = self._deserialize('PolicySetDefinition', response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('PolicySetDefinition', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -106,12 +106,12 @@ class PolicyDefinitionsOperations(object):
         return deserialized
 
     def delete(
-            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a policy definition.
+            self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a policy set definition.
 
-        :param policy_definition_name: The name of the policy definition to
-         delete.
-        :type policy_definition_name: str
+        :param policy_set_definition_name: The name of the policy set
+         definition to delete.
+        :type policy_set_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -122,12 +122,13 @@ class PolicyDefinitionsOperations(object):
          raw=true
         :rtype: None or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
         path_format_arguments = {
-            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
+            'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -151,39 +152,38 @@ class PolicyDefinitionsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204, 200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def get(
-            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the policy definition.
+            self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the policy set definition.
 
-        :param policy_definition_name: The name of the policy definition to
-         get.
-        :type policy_definition_name: str
+        :param policy_set_definition_name: The name of the policy set
+         definition to get.
+        :type policy_set_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
+        :return: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
+        :rtype: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
         path_format_arguments = {
-            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
+            'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -207,14 +207,12 @@ class PolicyDefinitionsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PolicyDefinition', response)
+            deserialized = self._deserialize('PolicySetDefinition', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -223,27 +221,26 @@ class PolicyDefinitionsOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the policy definitions for a subscription.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets all the policy set definitions for a subscription.
 
-        :param filter: The filter to apply on the operation.
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition>`
-        :rtype: :class:`PolicyDefinitionPaged
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinitionPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+        :rtype: :class:`PolicySetDefinitionPaged
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -251,8 +248,6 @@ class PolicyDefinitionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -275,18 +270,16 @@ class PolicyDefinitionsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.PolicyDefinitionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PolicySetDefinitionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PolicyDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PolicySetDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

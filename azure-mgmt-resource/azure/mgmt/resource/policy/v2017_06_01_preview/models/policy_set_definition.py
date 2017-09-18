@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class PolicyDefinition(Model):
-    """The policy definition.
+class PolicySetDefinition(Model):
+    """The policy set definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -23,51 +23,53 @@ class PolicyDefinition(Model):
      'NotSpecified', 'BuiltIn', 'Custom'
     :type policy_type: str or :class:`PolicyType
      <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyType>`
-    :param mode: The policy definition mode. Possible values are NotSpecified,
-     Indexed, and All. Possible values include: 'NotSpecified', 'Indexed',
-     'All'
-    :type mode: str or :class:`PolicyMode
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyMode>`
-    :param display_name: The display name of the policy definition.
+    :param display_name: The display name of the policy set definition.
     :type display_name: str
-    :param description: The policy definition description.
+    :param description: The policy set definition description.
     :type description: str
-    :param policy_rule: The policy rule.
-    :type policy_rule: object
-    :param metadata: The policy definition metadata.
+    :param metadata: The policy set definition metadata.
     :type metadata: object
-    :param parameters: Required if a parameter is used in policy rule.
+    :param parameters: The policy set definition parameters that can be used
+     in policy definition references.
     :type parameters: object
-    :ivar id: The ID of the policy definition.
+    :param policy_definitions: An array of policy definition references.
+    :type policy_definitions: list of :class:`PolicyDefinitionReference
+     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinitionReference>`
+    :ivar id: The ID of the policy set definition.
     :vartype id: str
-    :ivar name: The name of the policy definition.
+    :ivar name: The name of the policy set definition.
     :vartype name: str
+    :ivar type: The type of the resource
+     (Microsoft.Authorization/policySetDefinitions).
+    :vartype type: str
     """
 
     _validation = {
+        'policy_definitions': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
-        'mode': {'key': 'properties.mode', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
+        'policy_definitions': {'key': 'properties.policyDefinitions', 'type': '[PolicyDefinitionReference]'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, policy_type=None, mode=None, display_name=None, description=None, policy_rule=None, metadata=None, parameters=None):
+    def __init__(self, policy_definitions, policy_type=None, display_name=None, description=None, metadata=None, parameters=None):
         self.policy_type = policy_type
-        self.mode = mode
         self.display_name = display_name
         self.description = description
-        self.policy_rule = policy_rule
         self.metadata = metadata
         self.parameters = parameters
+        self.policy_definitions = policy_definitions
         self.id = None
         self.name = None
+        self.type = None
