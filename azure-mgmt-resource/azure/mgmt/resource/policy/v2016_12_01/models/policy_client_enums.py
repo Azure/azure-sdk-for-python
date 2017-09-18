@@ -17,3 +17,10 @@ class PolicyType(Enum):
     not_specified = "NotSpecified"
     built_in = "BuiltIn"
     custom = "Custom"
+
+
+class PolicyMode(Enum):
+
+    not_specified = "NotSpecified"
+    indexed = "Indexed"
+    all = "All"

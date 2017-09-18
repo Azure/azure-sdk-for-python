@@ -13,8 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from .operations.policy_definitions_operations import PolicyDefinitionsOperations
+from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from . import models
 
 
@@ -58,10 +58,10 @@ class PolicyClient(object):
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
 
-    :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
     :ivar policy_definitions: PolicyDefinitions operations
     :vartype policy_definitions: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations
+    :ivar policy_assignments: PolicyAssignments operations
+    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,7 +82,7 @@ class PolicyClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.policy_assignments = PolicyAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.policy_definitions = PolicyDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

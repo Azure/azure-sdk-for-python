@@ -59,7 +59,7 @@ class PolicyAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
+        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -130,7 +130,7 @@ class PolicyAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
+        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -199,7 +199,7 @@ class PolicyAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
+        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -347,7 +347,7 @@ class PolicyAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyassignments'
+                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -421,7 +421,7 @@ class PolicyAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyassignments'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
