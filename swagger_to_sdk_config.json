@@ -484,12 +484,24 @@
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01"
     },
     "resources.policy.2016-12-01": {
+      "markdown": "specification/resources/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2016-12-01/policy.json",
+        "tag": "package-policy-2016-12",
         "namespace": "azure.mgmt.resource.policy.v2016_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01"
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01"
+    },
+    "resources.policy.2017-06-01-preview": {
+      "markdown": "specification/resources/resource-manager/readme.md",
+      "autorest_options": {
+        "tag": "package-policy-2017-06",
+        "namespace": "azure.mgmt.resource.policy.v2017_06_01_preview"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2017_06_01_preview",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview"
     },
     "resources.links.2016-09-01": {
       "autorest_options": {
