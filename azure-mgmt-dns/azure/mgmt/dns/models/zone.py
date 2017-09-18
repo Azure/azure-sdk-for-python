@@ -62,7 +62,6 @@ class Zone(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'name_servers': {'readonly': True},
-        'zone_type': {'required': True},
     }
 
     _attribute_map = {
