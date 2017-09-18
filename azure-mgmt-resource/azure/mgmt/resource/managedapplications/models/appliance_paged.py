@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AppliancePaged(Paged):
     """
-    A paging container for iterating over a list of Appliance object
+    A paging container for iterating over a list of :class:`Appliance <azure.mgmt.resource.managedapplications.models.Appliance>` object
     """
 
     _attribute_map = {
