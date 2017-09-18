@@ -17,13 +17,11 @@ class ApplicationInfo(Model):
 
     :param id:
     :type id: str
-    :param name: The Uniform Resource Identifier(URI) of the application.
+    :param name:
     :type name: str
-    :param type_name: The Name of the application type as specified in the
-     Application Manifest.
+    :param type_name:
     :type type_name: str
-    :param type_version: The version of the application type as specified in
-     the Application Manifest.
+    :param type_version:
     :type type_version: str
     :param status: Possible values include: 'Invalid', 'Ready', 'Upgrading',
      'Creating', 'Deleting', 'Failed'

@@ -22,8 +22,7 @@ class ReplicaHealthStateChunk(EntityHealthStateChunk):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param replica_or_instance_id: The ID of the stateful service replica or
-     the stateless service instance.
+    :param replica_or_instance_id:
     :type replica_or_instance_id: str
     """ 
 

@@ -17,12 +17,10 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
 
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param replication_queue_status: Details about the replication queue on
-     the primary replicator.
+    :param replication_queue_status:
     :type replication_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
-    :param remote_replicators: The status of all the active and idle
-     secondary replicators that the primary is aware of.
+    :param remote_replicators:
     :type remote_replicators: list of :class:`RemoteReplicatorStatus
      <azure.servicefabric.models.RemoteReplicatorStatus>`
     """ 

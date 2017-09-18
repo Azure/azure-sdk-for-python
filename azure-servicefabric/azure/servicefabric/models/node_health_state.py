@@ -19,7 +19,7 @@ class NodeHealthState(EntityHealthState):
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
-    :param name: The name of the node.
+    :param name:
     :type name: str
     :param id:
     :type id: :class:`NodeId <azure.servicefabric.models.NodeId>`

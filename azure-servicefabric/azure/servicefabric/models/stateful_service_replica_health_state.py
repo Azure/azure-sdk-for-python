@@ -19,12 +19,11 @@ class StatefulServiceReplicaHealthState(ReplicaHealthState):
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
-    :param partition_id: The ID of the partition to which this replica
-     belongs.
+    :param partition_id:
     :type partition_id: str
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str
-    :param replica_id: The ID of the stateful service replica.
+    :param replica_id:
     :type replica_id: str
     """ 
 

@@ -43,6 +43,8 @@ from .deployed_application_health_state_filter import DeployedApplicationHealthS
 from .deployed_service_package_health_state_filter import DeployedServicePackageHealthStateFilter
 from .application_info import ApplicationInfo
 from .application_parameter import ApplicationParameter
+from .application_load_info import ApplicationLoadInfo
+from .application_metric_description import ApplicationMetricDescription
 from .application_name_info import ApplicationNameInfo
 from .applications_health_evaluation import ApplicationsHealthEvaluation
 from .application_type_applications_health_evaluation import ApplicationTypeApplicationsHealthEvaluation
@@ -59,6 +61,7 @@ from .node_upgrade_progress_info import NodeUpgradeProgressInfo
 from .safety_check_wrapper import SafetyCheckWrapper
 from .safety_check import SafetyCheck
 from .failure_upgrade_domain_progress_info import FailureUpgradeDomainProgressInfo
+from .cluster_configuration import ClusterConfiguration
 from .cluster_health import ClusterHealth
 from .node_health_state import NodeHealthState
 from .node_id import NodeId
@@ -82,9 +85,13 @@ from .deployed_service_package_health_evaluation import DeployedServicePackageHe
 from .deployed_service_packages_health_evaluation import DeployedServicePackagesHealthEvaluation
 from .deployed_service_replica_info import DeployedServiceReplicaInfo
 from .deployed_stateful_service_replica_info import DeployedStatefulServiceReplicaInfo
+from .reconfiguration_information import ReconfigurationInformation
 from .deployed_stateless_service_instance_info import DeployedStatelessServiceInstanceInfo
 from .entity_health import EntityHealth
 from .health_event import HealthEvent
+from .health_statistics import HealthStatistics
+from .entity_kind_health_state_count import EntityKindHealthStateCount
+from .health_state_count import HealthStateCount
 from .entity_health_state import EntityHealthState
 from .entity_health_state_chunk import EntityHealthStateChunk
 from .entity_health_state_chunk_list import EntityHealthStateChunkList
@@ -94,6 +101,7 @@ from .fabric_code_version_info import FabricCodeVersionInfo
 from .fabric_config_version_info import FabricConfigVersionInfo
 from .fabric_error import FabricError, FabricErrorException
 from .fabric_error_error import FabricErrorError
+from .cluster_configuration_upgrade_status_info import ClusterConfigurationUpgradeStatusInfo
 from .health_information import HealthInformation
 from .int64_range_partition_information import Int64RangePartitionInformation
 from .named_partition_information import NamedPartitionInformation
@@ -119,6 +127,13 @@ from .partition_health import PartitionHealth
 from .replica_health_state import ReplicaHealthState
 from .partition_health_evaluation import PartitionHealthEvaluation
 from .partition_health_state import PartitionHealthState
+from .provision_fabric_description import ProvisionFabricDescription
+from .unprovision_fabric_description import UnprovisionFabricDescription
+from .resume_cluster_upgrade_description import ResumeClusterUpgradeDescription
+from .start_cluster_upgrade_description import StartClusterUpgradeDescription
+from .cluster_upgrade_health_policy_object import ClusterUpgradeHealthPolicyObject
+from .update_cluster_upgrade_description import UpdateClusterUpgradeDescription
+from .rolling_upgrade_update_description import RollingUpgradeUpdateDescription
 from .partition_safety_check import PartitionSafetyCheck
 from .ensure_availability_safety_check import EnsureAvailabilitySafetyCheck
 from .ensure_partition_qurum_safety_check import EnsurePartitionQurumSafetyCheck
@@ -144,7 +159,6 @@ from .service_type_extension_description import ServiceTypeExtensionDescription
 from .service_type_info import ServiceTypeInfo
 from .service_type_manifest import ServiceTypeManifest
 from .singleton_partition_information import SingletonPartitionInformation
-from .start_node_description import StartNodeDescription
 from .stateful_service_info import StatefulServiceInfo
 from .stateful_service_partition_info import StatefulServicePartitionInfo
 from .stateful_service_replica_health import StatefulServiceReplicaHealth
@@ -155,7 +169,6 @@ from .stateless_service_instance_health import StatelessServiceInstanceHealth
 from .stateless_service_instance_health_state import StatelessServiceInstanceHealthState
 from .stateless_service_partition_info import StatelessServicePartitionInfo
 from .stateless_service_type_description import StatelessServiceTypeDescription
-from .stop_node_description import StopNodeDescription
 from .system_application_health_evaluation import SystemApplicationHealthEvaluation
 from .upgrade_domain_delta_nodes_check_health_evaluation import UpgradeDomainDeltaNodesCheckHealthEvaluation
 from .upgrade_domain_nodes_health_evaluation import UpgradeDomainNodesHealthEvaluation
@@ -168,9 +181,9 @@ from .partition_load_information import PartitionLoadInformation
 from .stateful_service_replica_info import StatefulServiceReplicaInfo
 from .stateless_service_instance_info import StatelessServiceInstanceInfo
 from .cluster_upgrade_description_object import ClusterUpgradeDescriptionObject
-from .cluster_upgrade_health_policy_object import ClusterUpgradeHealthPolicyObject
 from .cluster_upgrade_progress_object import ClusterUpgradeProgressObject
 from .failed_upgrade_domain_progress_object import FailedUpgradeDomainProgressObject
+from .cluster_configuration_upgrade_description import ClusterConfigurationUpgradeDescription
 from .application_type_image_store_path import ApplicationTypeImageStorePath
 from .application_type_image_store_version import ApplicationTypeImageStoreVersion
 from .code_package_entry_point_statistics import CodePackageEntryPointStatistics
@@ -189,7 +202,6 @@ from .test_error_chaos_event import TestErrorChaosEvent
 from .validation_failed_chaos_event import ValidationFailedChaosEvent
 from .waiting_chaos_event import WaitingChaosEvent
 from .application_capacity_description import ApplicationCapacityDescription
-from .application_metric_description import ApplicationMetricDescription
 from .application_description import ApplicationDescription
 from .compose_application_status_info import ComposeApplicationStatusInfo
 from .paged_compose_application_status_info_list import PagedComposeApplicationStatusInfoList
@@ -247,7 +259,6 @@ from .deploy_service_package_to_node_description import DeployServicePackageToNo
 from .package_sharing_policy_info import PackageSharingPolicyInfo
 from .resume_application_upgrade_description import ResumeApplicationUpgradeDescription
 from .application_upgrade_update_description import ApplicationUpgradeUpdateDescription
-from .rolling_upgrade_update_description import RollingUpgradeUpdateDescription
 
 __all__ = [
     'AadMetadata',
@@ -284,6 +295,8 @@ __all__ = [
     'DeployedServicePackageHealthStateFilter',
     'ApplicationInfo',
     'ApplicationParameter',
+    'ApplicationLoadInfo',
+    'ApplicationMetricDescription',
     'ApplicationNameInfo',
     'ApplicationsHealthEvaluation',
     'ApplicationTypeApplicationsHealthEvaluation',
@@ -300,6 +313,7 @@ __all__ = [
     'SafetyCheckWrapper',
     'SafetyCheck',
     'FailureUpgradeDomainProgressInfo',
+    'ClusterConfiguration',
     'ClusterHealth',
     'NodeHealthState',
     'NodeId',
@@ -323,9 +337,13 @@ __all__ = [
     'DeployedServicePackagesHealthEvaluation',
     'DeployedServiceReplicaInfo',
     'DeployedStatefulServiceReplicaInfo',
+    'ReconfigurationInformation',
     'DeployedStatelessServiceInstanceInfo',
     'EntityHealth',
     'HealthEvent',
+    'HealthStatistics',
+    'EntityKindHealthStateCount',
+    'HealthStateCount',
     'EntityHealthState',
     'EntityHealthStateChunk',
     'EntityHealthStateChunkList',
@@ -335,6 +353,7 @@ __all__ = [
     'FabricConfigVersionInfo',
     'FabricError', 'FabricErrorException',
     'FabricErrorError',
+    'ClusterConfigurationUpgradeStatusInfo',
     'HealthInformation',
     'Int64RangePartitionInformation',
     'NamedPartitionInformation',
@@ -360,6 +379,13 @@ __all__ = [
     'ReplicaHealthState',
     'PartitionHealthEvaluation',
     'PartitionHealthState',
+    'ProvisionFabricDescription',
+    'UnprovisionFabricDescription',
+    'ResumeClusterUpgradeDescription',
+    'StartClusterUpgradeDescription',
+    'ClusterUpgradeHealthPolicyObject',
+    'UpdateClusterUpgradeDescription',
+    'RollingUpgradeUpdateDescription',
     'PartitionSafetyCheck',
     'EnsureAvailabilitySafetyCheck',
     'EnsurePartitionQurumSafetyCheck',
@@ -385,7 +411,6 @@ __all__ = [
     'ServiceTypeInfo',
     'ServiceTypeManifest',
     'SingletonPartitionInformation',
-    'StartNodeDescription',
     'StatefulServiceInfo',
     'StatefulServicePartitionInfo',
     'StatefulServiceReplicaHealth',
@@ -396,7 +421,6 @@ __all__ = [
     'StatelessServiceInstanceHealthState',
     'StatelessServicePartitionInfo',
     'StatelessServiceTypeDescription',
-    'StopNodeDescription',
     'SystemApplicationHealthEvaluation',
     'UpgradeDomainDeltaNodesCheckHealthEvaluation',
     'UpgradeDomainNodesHealthEvaluation',
@@ -409,9 +433,9 @@ __all__ = [
     'StatefulServiceReplicaInfo',
     'StatelessServiceInstanceInfo',
     'ClusterUpgradeDescriptionObject',
-    'ClusterUpgradeHealthPolicyObject',
     'ClusterUpgradeProgressObject',
     'FailedUpgradeDomainProgressObject',
+    'ClusterConfigurationUpgradeDescription',
     'ApplicationTypeImageStorePath',
     'ApplicationTypeImageStoreVersion',
     'CodePackageEntryPointStatistics',
@@ -430,7 +454,6 @@ __all__ = [
     'ValidationFailedChaosEvent',
     'WaitingChaosEvent',
     'ApplicationCapacityDescription',
-    'ApplicationMetricDescription',
     'ApplicationDescription',
     'ComposeApplicationStatusInfo',
     'PagedComposeApplicationStatusInfoList',
@@ -488,5 +511,4 @@ __all__ = [
     'PackageSharingPolicyInfo',
     'ResumeApplicationUpgradeDescription',
     'ApplicationUpgradeUpdateDescription',
-    'RollingUpgradeUpdateDescription',
 ]

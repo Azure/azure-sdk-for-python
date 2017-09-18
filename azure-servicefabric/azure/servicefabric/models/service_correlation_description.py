@@ -15,13 +15,10 @@ from msrest.serialization import Model
 class ServiceCorrelationDescription(Model):
     """Creates a particular correlation between services.
 
-    :param scheme: The ServiceCorrelationScheme which describes the
-     relationship between this service and the service specified via
-     ServiceName. Possible values include: 'Invalid', 'Affinity',
+    :param scheme: Possible values include: 'Invalid', 'Affinity',
      'AlignedAffinity', 'NonAlignedAffinity'
     :type scheme: str
-    :param service_name: The name of the service that the correlation
-     relationship is established with.
+    :param service_name:
     :type service_name: str
     """ 
 

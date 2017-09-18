@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class DeployedServiceReplicaDetailInfo(Model):
     """Information about a Service Fabric service replica deployed on a node.
 
-    :param service_name: Full hierarchical name of the service in URI format
-     starting with `fabric:`.
+    :param service_name:
     :type service_name: str
     :param partition_id:
     :type partition_id: str

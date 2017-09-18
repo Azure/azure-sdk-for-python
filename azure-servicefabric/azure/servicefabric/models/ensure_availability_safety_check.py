@@ -13,14 +13,13 @@ from .partition_safety_check import PartitionSafetyCheck
 
 
 class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
-    """Safety check that waits for ensures the avaiability of the partition. It
-    waits until there are replicas avaiabile such that bring down this
-    replica will not cause avaiability loss for the partition.
+    """Safety check that waits to ensure the availability of the partition. It
+    waits until there are replicas available such that bringing down this
+    replica will not cause availability loss for the partition.
 
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param partition_id: Id of the partition which is undergoing the safety
-     check.
+    :param partition_id:
     :type partition_id: str
     """ 
 

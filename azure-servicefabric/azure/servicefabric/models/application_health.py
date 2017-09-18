@@ -17,20 +17,18 @@ class ApplicationHealth(EntityHealth):
     aggregated health state and the service and deployed application health
     states.
 
-    :param aggregated_health_state: The HealthState representing the
-     aggregated health state of the entity computed by Health Manager.
-     The health evaluation of the entity reflects all events reported on the
-     entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
+     'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
     :param health_events: The list of health events reported on the entity.
     :type health_events: list of :class:`HealthEvent
      <azure.servicefabric.models.HealthEvent>`
-    :param unhealthy_evaluations: The unhealthy evaluations that show why the
-     current aggregated health state was returned by Health Manager.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :param health_statistics:
+    :type health_statistics: :class:`HealthStatistics
+     <azure.servicefabric.models.HealthStatistics>`
     :param name:
     :type name: str
     :param service_health_states: Service health states as found in the
@@ -48,13 +46,14 @@ class ApplicationHealth(EntityHealth):
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
         'name': {'key': 'Name', 'type': 'str'},
         'service_health_states': {'key': 'ServiceHealthStates', 'type': '[ServiceHealthState]'},
         'deployed_application_health_states': {'key': 'DeployedApplicationHealthStates', 'type': '[DeployedApplicationHealthState]'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, name=None, service_health_states=None, deployed_application_health_states=None):
-        super(ApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations)
+    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name=None, service_health_states=None, deployed_application_health_states=None):
+        super(ApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics)
         self.name = name
         self.service_health_states = service_health_states
         self.deployed_application_health_states = deployed_application_health_states

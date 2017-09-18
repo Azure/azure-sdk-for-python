@@ -13,10 +13,11 @@ from .deployed_service_replica_detail_info import DeployedServiceReplicaDetailIn
 
 
 class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo):
-    """Information about a stateful replica running in a code package.
+    """Information about a stateful replica running in a code package. Please
+    note DeployedServiceReplicaQueryResult will contain duplicate data like
+    ServiceKind, ServiceName, PartitionId and replicaId.
 
-    :param service_name: Full hierarchical name of the service in URI format
-     starting with `fabric:`.
+    :param service_name:
     :type service_name: str
     :param partition_id:
     :type partition_id: str
@@ -31,7 +32,7 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
      <azure.servicefabric.models.LoadMetricReportInfo>`
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str
-    :param replica_id: Id of the stateful service replica.
+    :param replica_id:
     :type replica_id: str
     :param current_replicator_operation: Possible values include: 'Invalid',
      'None', 'Open', 'ChangeRole', 'UpdateEpoch', 'Close', 'Abort',
@@ -49,6 +50,10 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
     :param replica_status:
     :type replica_status: :class:`KeyValueStoreReplicaStatus
      <azure.servicefabric.models.KeyValueStoreReplicaStatus>`
+    :param deployed_service_replica_query_result:
+    :type deployed_service_replica_query_result:
+     :class:`DeployedStatefulServiceReplicaInfo
+     <azure.servicefabric.models.DeployedStatefulServiceReplicaInfo>`
     """ 
 
     _validation = {
@@ -68,9 +73,10 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
         'write_status': {'key': 'WriteStatus', 'type': 'str'},
         'replicator_status': {'key': 'ReplicatorStatus', 'type': 'ReplicatorStatus'},
         'replica_status': {'key': 'ReplicaStatus', 'type': 'KeyValueStoreReplicaStatus'},
+        'deployed_service_replica_query_result': {'key': 'DeployedServiceReplicaQueryResult', 'type': 'DeployedStatefulServiceReplicaInfo'},
     }
 
-    def __init__(self, service_name=None, partition_id=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, replica_id=None, current_replicator_operation=None, read_status=None, write_status=None, replicator_status=None, replica_status=None):
+    def __init__(self, service_name=None, partition_id=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, replica_id=None, current_replicator_operation=None, read_status=None, write_status=None, replicator_status=None, replica_status=None, deployed_service_replica_query_result=None):
         super(DeployedStatefulServiceReplicaDetailInfo, self).__init__(service_name=service_name, partition_id=partition_id, current_service_operation=current_service_operation, current_service_operation_start_time_utc=current_service_operation_start_time_utc, reported_load=reported_load)
         self.replica_id = replica_id
         self.current_replicator_operation = current_replicator_operation
@@ -78,4 +84,5 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
         self.write_status = write_status
         self.replicator_status = replicator_status
         self.replica_status = replica_status
+        self.deployed_service_replica_query_result = deployed_service_replica_query_result
         self.ServiceKind = 'Stateful'

@@ -21,7 +21,7 @@ class ServiceTypeDescription(Model):
      service type or a stateless service type. This property is true if the
      service type is a stateful service type, false otherwise.
     :type is_stateful: bool
-    :param service_type_name: Name of the service type.
+    :param service_type_name:
     :type service_type_name: str
     :param placement_constraints: The placement constraint to be used when
      instantiating this service in a Service Fabric cluster.

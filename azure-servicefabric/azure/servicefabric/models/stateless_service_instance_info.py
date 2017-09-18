@@ -23,7 +23,7 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param node_name: The name of the node.
+    :param node_name:
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
@@ -32,7 +32,7 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     :type last_in_build_duration_in_seconds: str
     :param ServiceKind: Polymorphic Discriminator
     :type ServiceKind: str
-    :param instance_id: Id of the stateless service instance.
+    :param instance_id:
     :type instance_id: str
     """ 
 

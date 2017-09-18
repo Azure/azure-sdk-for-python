@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ApplicationTypeInfo(Model):
     """Information about an application type.
 
-    :param name: The name of the application type.
+    :param name:
     :type name: str
-    :param version: The version of the application type.
+    :param version:
     :type version: str
     :param status: Possible values include: 'Invalid', 'Provisioning',
      'Available', 'Unprovisioning', 'Failed'

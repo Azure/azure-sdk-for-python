@@ -19,7 +19,7 @@ class PartitionHealthState(EntityHealthState):
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str
-    :param partition_id: The ID of the partition.
+    :param partition_id:
     :type partition_id: str
     """ 
 

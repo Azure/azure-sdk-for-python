@@ -16,14 +16,11 @@ class DeployedServiceTypeInfo(Model):
     """Information about service type deployed on a node, information such as the
     status of the service type registration on a node.
 
-    :param service_type_name: The name of the service type defined in the
-     service manifest.
+    :param service_type_name:
     :type service_type_name: str
-    :param service_manifest_name: The name of the service manifest in which
-     this service type is defined.
+    :param service_manifest_name:
     :type service_manifest_name: str
-    :param code_package_name: The name of the code package that registered
-     the service type.
+    :param code_package_name:
     :type code_package_name: str
     :param status: Possible values include: 'Invalid', 'Disabled', 'Enabled',
      'Registered'

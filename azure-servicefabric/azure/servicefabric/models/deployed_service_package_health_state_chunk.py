@@ -21,7 +21,7 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param service_manifest_name: The name of the service manifest.
+    :param service_manifest_name:
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
