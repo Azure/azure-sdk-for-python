@@ -25,12 +25,9 @@ class ApplicationHealthEvaluation(HealthEvaluation):
     :type description: str
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param application_name: Full name of the application.
+    :param application_name:
     :type application_name: str
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the current aggregated health state of the application. The types of the
-     unhealthy evaluations can be DeployedApplicationsHealthEvaluation,
-     ServicesHealthEvaluation or EventHealthEvaluation.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

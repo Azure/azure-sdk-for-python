@@ -31,9 +31,7 @@ class NodesHealthEvaluation(HealthEvaluation):
     :type max_percent_unhealthy_nodes: int
     :param total_count: Total number of nodes found in the health store.
     :type total_count: long
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the aggregated health state. Includes all the unhealthy
-     NodeHealthEvaluation that impacted the aggregated health.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

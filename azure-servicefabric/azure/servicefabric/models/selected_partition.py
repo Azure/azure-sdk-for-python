@@ -16,7 +16,7 @@ class SelectedPartition(Model):
     """This class returns information about the partition that the user-induced
     operation acted upon.
 
-    :param service_name: The name of the service the partition belongs to.
+    :param service_name:
     :type service_name: str
     :param partition_id:
     :type partition_id: str

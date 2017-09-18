@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ApplicationTypeImageStoreVersion(Model):
     """A version description for the application type.
 
-    :param application_type_version: The application type version.
+    :param application_type_version:
     :type application_type_version: str
     """ 
 

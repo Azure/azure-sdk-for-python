@@ -22,7 +22,7 @@ class ReplicaInfo(Model):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param node_name: The name of the node.
+    :param node_name:
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str

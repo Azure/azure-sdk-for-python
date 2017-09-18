@@ -17,8 +17,7 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
 
     :param Kind: Polymorphic Discriminator
     :type Kind: str
-    :param replication_queue_status: Details about the replication queue on
-     the secondary replicator.
+    :param replication_queue_status:
     :type replication_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
     :param last_replication_operation_received_time_utc: The last time-stamp
@@ -29,8 +28,7 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     :param is_in_build: Value that indicates whether the replica is currently
      being built.
     :type is_in_build: bool
-    :param copy_queue_status: Details about the copy queue on the secondary
-     replicator.
+    :param copy_queue_status:
     :type copy_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
     :param last_copy_operation_received_time_utc: The last time-stamp (UTC)

@@ -30,9 +30,7 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     :type max_percent_unhealthy_applications: int
     :param total_count: Total number of applications from the health store.
     :type total_count: long
-    :param unhealthy_evaluations: List of unhealthy evaluations that led to
-     the aggregated health state. Includes all the unhealthy
-     ApplicationHealthEvaluation that impacted the aggregated health.
+    :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
     """ 

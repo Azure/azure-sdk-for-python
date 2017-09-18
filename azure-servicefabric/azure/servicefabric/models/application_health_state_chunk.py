@@ -23,19 +23,14 @@ class ApplicationHealthStateChunk(EntityHealthStateChunk):
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
     :type health_state: str
-    :param application_name: The name of the application.
+    :param application_name:
     :type application_name: str
-    :param application_type_name: The application type name for the
-     application.
+    :param application_type_name:
     :type application_type_name: str
-    :param service_health_state_chunks: The list of service health state
-     chunks in the cluster that respect the filters in the cluster health
-     chunk query description.
+    :param service_health_state_chunks:
     :type service_health_state_chunks: :class:`ServiceHealthStateChunkList
      <azure.servicefabric.models.ServiceHealthStateChunkList>`
-    :param deployed_application_health_state_chunks: The list of deployed
-     application health state chunks in the cluster that respect the filters
-     in the cluster health chunk query description.
+    :param deployed_application_health_state_chunks:
     :type deployed_application_health_state_chunks:
      :class:`DeployedApplicationHealthStateChunkList
      <azure.servicefabric.models.DeployedApplicationHealthStateChunkList>`

@@ -21,8 +21,8 @@ class OperationStatus(Model):
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
     :type state: str
-    :param type: Possible values include: 'invalid', 'partitionDataLoss',
-     'partitionQuorumLoss', 'partitionRestart', 'nodeTransition'
+    :param type: Possible values include: 'Invalid', 'PartitionDataLoss',
+     'PartitionQuorumLoss', 'PartitionRestart', 'NodeTransition'
     :type type: str
     """ 
 

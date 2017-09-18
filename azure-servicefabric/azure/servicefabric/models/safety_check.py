@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class SafetyCheck(Model):
     """Represents a safety check performed by service fabric before continuing
-    with the operations. These checks ensure the avaiability of the service
+    with the operations. These checks ensure the availability of the service
     and the reliability of the state.
 
     :param Kind: Polymorphic Discriminator

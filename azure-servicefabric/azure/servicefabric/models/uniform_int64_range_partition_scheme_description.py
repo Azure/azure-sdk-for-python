@@ -12,7 +12,6 @@
 from .partition_scheme_description import PartitionSchemeDescription
 
 
-# pylint: disable=too-few-public-methods
 class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     """Describes a partitioning scheme where an integer range is allocated evenly
     across a number of partitions.
@@ -29,7 +28,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
      range that
      should be split between the partition ‘Count’
     :type high_key: str
-    """
+    """ 
 
     _validation = {
         'PartitionScheme': {'required': True},
