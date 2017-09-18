@@ -69,7 +69,7 @@ class Appliance(GenericResource):
         'managed_resource_group_id': {'required': True},
         'outputs': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'kind': {'required': True, 'pattern': '^[-\w\._,\(\)]+$'},
+        'kind': {'required': True, 'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {

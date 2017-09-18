@@ -68,7 +68,7 @@ class AppliancePatchable(GenericResource):
         'type': {'readonly': True},
         'outputs': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'kind': {'pattern': '^[-\w\._,\(\)]+$'},
+        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
