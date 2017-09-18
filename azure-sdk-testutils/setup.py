@@ -7,5 +7,8 @@ from setuptools import setup, find_packages
 setup(
     name = "azure-sdk-testutils",
     version = "0.0.0",
+    author='Microsoft Corporation',    
+    author_email='azpysdkhelp@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python',
     packages=find_packages(),
 )
