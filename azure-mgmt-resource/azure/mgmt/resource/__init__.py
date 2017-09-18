@@ -11,7 +11,7 @@ from .policy import PolicyClient
 from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
 from .links import ManagementLinkClient
-from .managedapplications import ManagedApplicationClient
+from .managedapplications import ApplicationClient
 
 from .version import VERSION
 
@@ -23,5 +23,5 @@ __all__ = [
     'ResourceManagementClient',
     'SubscriptionClient',
     'ManagementLinkClient',
-    'ManagedApplicationClient'
+    'ApplicationClient'
 ]
