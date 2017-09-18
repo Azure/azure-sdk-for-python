@@ -27,14 +27,14 @@ class ProvisioningState(Enum):
     updating = "Updating"
 
 
-class ApplianceLockLevel(Enum):
+class ApplicationLockLevel(Enum):
 
     can_not_delete = "CanNotDelete"
     read_only = "ReadOnly"
     none = "None"
 
 
-class ApplianceArtifactType(Enum):
+class ApplicationArtifactType(Enum):
 
     template = "Template"
     custom = "Custom"

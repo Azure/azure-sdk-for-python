@@ -12,23 +12,23 @@
 from msrest.serialization import Model
 
 
-class ApplianceArtifact(Model):
-    """Appliance artifact.
+class ApplicationArtifact(Model):
+    """Managed application artifact.
 
-    :param name: The appliance artifact name.
+    :param name: The managed application artifact name.
     :type name: str
-    :param uri: The appliance artifact blob uri.
+    :param uri: The managed application artifact blob uri.
     :type uri: str
-    :param type: The the appliance artifact type. Possible values include:
-     'Template', 'Custom'
-    :type type: str or :class:`ApplianceArtifactType
-     <azure.mgmt.resource.managedapplications.models.ApplianceArtifactType>`
+    :param type: The managed application artifact type. Possible values
+     include: 'Template', 'Custom'
+    :type type: str or :class:`ApplicationArtifactType
+     <azure.mgmt.resource.managedapplications.models.ApplicationArtifactType>`
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ApplianceArtifactType'},
+        'type': {'key': 'type', 'type': 'ApplicationArtifactType'},
     }
 
     def __init__(self, name=None, uri=None, type=None):

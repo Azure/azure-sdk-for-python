@@ -400,14 +400,14 @@
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
-    "resources.managedapplications.2016-09-01-preview": {
+    "resources.managedapplications.2017-09-01": {
       "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Solutions/2016-09-01-preview/managedapplications.json",
+        "input-file": "specification/resources/resource-manager/Microsoft.Solutions/2017-09-01/managedapplications.json",
         "namespace": "azure.mgmt.resource.managedapplications"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
       "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
-      "build_dir": "azure-mgmt-resource"
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications"
     },
     "resources.features.2015-12-01": {
       "autorest_options": {

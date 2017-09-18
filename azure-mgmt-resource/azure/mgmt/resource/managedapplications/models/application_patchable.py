@@ -12,8 +12,8 @@
 from .generic_resource import GenericResource
 
 
-class Appliance(GenericResource):
-    """Information about appliance.
+class ApplicationPatchable(GenericResource):
+    """Information about managed application.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -38,27 +38,29 @@ class Appliance(GenericResource):
      <azure.mgmt.resource.managedapplications.models.Identity>`
     :param managed_resource_group_id: The managed resource group Id.
     :type managed_resource_group_id: str
-    :param appliance_definition_id: The fully qualified path of appliance
-     definition Id.
-    :type appliance_definition_id: str
-    :param parameters: Name and value pairs that define the appliance
-     parameters. It can be a JObject or a well formed JSON string.
+    :param application_definition_id: The fully qualified path of managed
+     application definition Id.
+    :type application_definition_id: str
+    :param parameters: Name and value pairs that define the managed
+     application parameters. It can be a JObject or a well formed JSON string.
     :type parameters: object
-    :ivar outputs: Name and value pairs that define the appliance outputs.
+    :ivar outputs: Name and value pairs that define the managed application
+     outputs.
     :vartype outputs: object
-    :ivar provisioning_state: The appliance provisioning state. Possible
-     values include: 'Accepted', 'Running', 'Ready', 'Creating', 'Created',
-     'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded', 'Updating'
+    :ivar provisioning_state: The managed application provisioning state.
+     Possible values include: 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Updating'
     :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.resource.managedapplications.models.ProvisioningState>`
     :param ui_definition_uri: The blob URI where the UI definition file is
      located.
     :type ui_definition_uri: str
     :param plan: The plan information.
-    :type plan: :class:`Plan
-     <azure.mgmt.resource.managedapplications.models.Plan>`
-    :param kind: The kind of the appliance. Allowed values are MarketPlace and
-     ServiceCatalog.
+    :type plan: :class:`PlanPatchable
+     <azure.mgmt.resource.managedapplications.models.PlanPatchable>`
+    :param kind: The kind of the managed application. Allowed values are
+     MarketPlace and ServiceCatalog.
     :type kind: str
     """
 
@@ -66,10 +68,9 @@ class Appliance(GenericResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'managed_resource_group_id': {'required': True},
         'outputs': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'kind': {'required': True, 'pattern': '^[-\w\._,\(\)]+$'},
+        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
@@ -82,19 +83,19 @@ class Appliance(GenericResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'managed_resource_group_id': {'key': 'properties.managedResourceGroupId', 'type': 'str'},
-        'appliance_definition_id': {'key': 'properties.applianceDefinitionId', 'type': 'str'},
+        'application_definition_id': {'key': 'properties.applicationDefinitionId', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
+        'plan': {'key': 'plan', 'type': 'PlanPatchable'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, managed_resource_group_id, kind, location=None, tags=None, managed_by=None, sku=None, identity=None, appliance_definition_id=None, parameters=None, ui_definition_uri=None, plan=None):
-        super(Appliance, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
+    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None, managed_resource_group_id=None, application_definition_id=None, parameters=None, ui_definition_uri=None, plan=None, kind=None):
+        super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
         self.managed_resource_group_id = managed_resource_group_id
-        self.appliance_definition_id = appliance_definition_id
+        self.application_definition_id = application_definition_id
         self.parameters = parameters
         self.outputs = None
         self.provisioning_state = None
