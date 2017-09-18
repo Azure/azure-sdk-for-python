@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PolicyAssignmentPaged(Paged):
+class PolicySetDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PolicyAssignment <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment>` object
+    A paging container for iterating over a list of :class:`PolicySetDefinition <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PolicyAssignment]'}
+        'current_page': {'key': 'value', 'type': '[PolicySetDefinition]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PolicyAssignmentPaged, self).__init__(*args, **kwargs)
+        super(PolicySetDefinitionPaged, self).__init__(*args, **kwargs)
