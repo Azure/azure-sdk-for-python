@@ -42,6 +42,7 @@ install:
   - python scripts/dev_setup.py
 script: 
   - pytest
+  - python ./setup.py check -r -s
 after_success:
   - coverage report
   - bash <(curl -s https://codecov.io/bash)
