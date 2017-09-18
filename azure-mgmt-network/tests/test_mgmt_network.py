@@ -387,7 +387,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         result_create = self.network_client.virtual_networks.create_or_update(
             resource_group.name,
-            location,
+            network_name,
             params_create,
         )
         result_create.wait() # AzureOperationPoller
