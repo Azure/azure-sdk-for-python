@@ -37,7 +37,7 @@ class UsagesOperations(object):
 
     def list(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Lists compute usages for a subscription.
+        """List network usages for a subscription.
 
         :param location: The location where resource usage is queried.
         :type location: str

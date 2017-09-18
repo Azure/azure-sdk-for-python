@@ -2,6 +2,23 @@
 
 Release History
 ===============
+
+1.5.0rc1 (2017-09-18)
++++++++++++++++++++++
+
+**Features**
+
+- Add ApiVersion 2017-09-01 (new default)
+- Add application_security_groups (ASG) operations group
+- Add ASG to network_interface operations
+- Add ASG to IP operations
+- Add source/destination ASGs to network security rules
+- Add DDOS protection and VM protection to vnet operations
+
+**Bug fix**
+
+- check_dns_name_availability now correctly defines "domain_name_label" as required and not optional
+
 1.4.0 (2017-08-23)
 ++++++++++++++++++
 
