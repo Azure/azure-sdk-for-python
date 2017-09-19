@@ -6,5 +6,7 @@
 # --------------------------------------------------------------------------
 
 from .compute_management_client import ComputeManagementClient
+from .version import VERSION
 
+__version__ = VERSION
 __all__ = ['ComputeManagementClient']
