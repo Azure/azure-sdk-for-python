@@ -63,8 +63,10 @@ class PolicyClient(object):
     :param str base_url: Service URL
     """
 
+    DEFAULT_API_VERSION='2016-12-01'
+
     def __init__(
-            self, credentials, subscription_id, api_version = '2016-12-01', base_url=None):
+            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
 
         self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
@@ -75,12 +77,13 @@ class PolicyClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version='2016-12-01'):
+    def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
            * 2015-10-01-preview: :mod:`v2015_10_01_preview.models<azure.mgmt.resource.policy.v2015_10_01_preview.models>`
            * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.resource.policy.v2016_04_01.models>`
            * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.resource.policy.v2016_12_01.models>`
+           * 2017-06-01-preview: :mod:`v2017_06_01_preview.models<azure.mgmt.resource.policy.v2017_06_01_preview.models>`
         """
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview import models
@@ -91,6 +94,9 @@ class PolicyClient(object):
         elif api_version == '2016-12-01':
             from .v2016_12_01 import models
             return models
+        elif api_version == '2017-06-01-preview':
+            from .v2017_06_01_preview import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
@@ -100,6 +106,7 @@ class PolicyClient(object):
            * 2015-10-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyAssignmentsOperations>`
            * 2016-04-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyAssignmentsOperations>`
            * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
+           * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
         """
         if self.api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyAssignmentsOperations as OperationClass
@@ -107,6 +114,8 @@ class PolicyClient(object):
             from .v2016_04_01.operations import PolicyAssignmentsOperations as OperationClass
         elif self.api_version == '2016-12-01':
             from .v2016_12_01.operations import PolicyAssignmentsOperations as OperationClass
+        elif self.api_version == '2017-06-01-preview':
+            from .v2017_06_01_preview.operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -118,6 +127,7 @@ class PolicyClient(object):
            * 2015-10-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyDefinitionsOperations>`
            * 2016-04-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyDefinitionsOperations>`
            * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
+           * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
         """
         if self.api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyDefinitionsOperations as OperationClass
@@ -125,6 +135,20 @@ class PolicyClient(object):
             from .v2016_04_01.operations import PolicyDefinitionsOperations as OperationClass
         elif self.api_version == '2016-12-01':
             from .v2016_12_01.operations import PolicyDefinitionsOperations as OperationClass
+        elif self.api_version == '2017-06-01-preview':
+            from .v2017_06_01_preview.operations import PolicyDefinitionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def policy_set_definitions(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
+        """
+        if self.api_version == '2017-06-01-preview':
+            from .v2017_06_01_preview.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

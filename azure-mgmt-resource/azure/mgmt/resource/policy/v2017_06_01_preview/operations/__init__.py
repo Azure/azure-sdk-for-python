@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_definitions_operations import PolicyDefinitionsOperations
 from .policy_assignments_operations import PolicyAssignmentsOperations
+from .policy_set_definitions_operations import PolicySetDefinitionsOperations
+from .policy_definitions_operations import PolicyDefinitionsOperations
 
 __all__ = [
-    'PolicyDefinitionsOperations',
     'PolicyAssignmentsOperations',
+    'PolicySetDefinitionsOperations',
+    'PolicyDefinitionsOperations',
 ]
