@@ -88,9 +88,10 @@ class TestRecordingProcessors(unittest.TestCase):
         replaced_subscription_id = str(uuid.uuid4())
         rp = SubscriptionRecordingProcessor(replaced_subscription_id)
 
-        uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
-                         'checkNameAvailability?api-version=2017-03-01',
-                         'https://graph.Windows.net/{}/applications?api-version=1.6']
+        body_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
+                          'checkNameAvailability?api-version=2017-03-01',
+                          'https://graph.Windows.net/{}/applications?api-version=1.6',
+                          "{{'scope':'/subscriptions/{}', 'another_data':'/Microsoft.Something'}}"]
 
         location_header_template = 'https://graph.windows.net/{}/directoryObjects/' \
                                    'f604c53a-aa21-44d5-a41f-c1ef0b5304bd/Microsoft.DirectoryServices.Application'
@@ -100,7 +101,7 @@ class TestRecordingProcessors(unittest.TestCase):
                                          'databases/cliautomationdb01/azureAsyncOperation/' \
                                          '6ec6196b-fbaa-415f-8c1a-6cb634a96cb2?api-version=2014-04-01-Preview'
 
-        for template in uri_templates:
+        for template in body_templates:
             mock_sub_id = str(uuid.uuid4())
             mock_response = dict({'body': {}})
             mock_response['body']['string'] = template.format(mock_sub_id)
