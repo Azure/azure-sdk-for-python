@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.2.0rc2 (2017-09-18)
++++++++++++++++++++++
+
+**Features**
+
+- Add mode and metadata to PolicyDefinition (2016-12-01)
+- Add preview version of Policy 2017-06-01-preview
+
 1.2.0rc1 (2017-09-18)
 +++++++++++++++++++++++
 
