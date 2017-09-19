@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .record_sets_operations import RecordSetsOperations
-from .zones_operations import ZonesOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'RecordSetsOperations',
-    'ZonesOperations',
-]
+
+class SubResource(Model):
+    """SubResource.
+
+    :param id: Resource Id.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

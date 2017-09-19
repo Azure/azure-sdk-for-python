@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -23,7 +23,7 @@ class RecordSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2016-04-01".
+    :ivar api_version: Specifies the API version. Constant value: "2017-09-15-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class RecordSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-01"
+        self.api_version = "2017-09-15-preview"
 
         self.config = config
 
@@ -63,9 +63,11 @@ class RecordSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -153,9 +155,11 @@ class RecordSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -240,9 +244,11 @@ class RecordSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -307,9 +313,11 @@ class RecordSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -358,7 +366,7 @@ class RecordSetsOperations(object):
         return deserialized
 
     def list_by_type(
-            self, resource_group_name, zone_name, record_type, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, zone_name, record_type, top=None, recordsetnamesuffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists the record sets of a specified type in a DNS zone.
 
         :param resource_group_name: The name of the resource group.
@@ -374,11 +382,18 @@ class RecordSetsOperations(object):
         :param top: The maximum number of record sets to return. If not
          specified, returns up to 100 record sets.
         :type top: int
+        :param recordsetnamesuffix: The suffix label of the record set name
+         that has to be used to filter the record set enumerations. If this
+         parameter is specified, Enumeration will return only records that end
+         with .<recordSetNameSuffix>
+        :type recordsetnamesuffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RecordSet
+         <azure.mgmt.dns.models.RecordSet>`
         :rtype: :class:`RecordSetPaged <azure.mgmt.dns.models.RecordSetPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -399,6 +414,8 @@ class RecordSetsOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if recordsetnamesuffix is not None:
+                    query_parameters['$recordsetnamesuffix'] = self._serialize.query("recordsetnamesuffix", recordsetnamesuffix, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -438,7 +455,7 @@ class RecordSetsOperations(object):
         return deserialized
 
     def list_by_dns_zone(
-            self, resource_group_name, zone_name, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, zone_name, top=None, recordsetnamesuffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists all record sets in a DNS zone.
 
         :param resource_group_name: The name of the resource group.
@@ -449,11 +466,18 @@ class RecordSetsOperations(object):
         :param top: The maximum number of record sets to return. If not
          specified, returns up to 100 record sets.
         :type top: int
+        :param recordsetnamesuffix: The suffix label of the record set name
+         that has to be used to filter the record set enumerations. If this
+         parameter is specified, Enumeration will return only records that end
+         with .<recordSetNameSuffix>
+        :type recordsetnamesuffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RecordSet
+         <azure.mgmt.dns.models.RecordSet>`
         :rtype: :class:`RecordSetPaged <azure.mgmt.dns.models.RecordSetPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -473,6 +497,8 @@ class RecordSetsOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if recordsetnamesuffix is not None:
+                    query_parameters['$recordsetnamesuffix'] = self._serialize.query("recordsetnamesuffix", recordsetnamesuffix, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

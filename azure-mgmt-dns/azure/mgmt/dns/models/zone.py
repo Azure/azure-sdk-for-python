@@ -41,6 +41,19 @@ class Zone(Resource):
     :ivar name_servers: The name servers for this DNS zone. This is a
      read-only property and any attempt to set this value will be ignored.
     :vartype name_servers: list of str
+    :param zone_type: The type of this DNS zone (Public or Private). Possible
+     values include: 'Public', 'Private'. Default value: "Public" .
+    :type zone_type: str or :class:`ZoneType <azure.mgmt.dns.models.ZoneType>`
+    :param registration_virtual_networks: A list of references to virtual
+     networks that register hostnames in this DNS zone. This is a only when
+     ZoneType is Private.
+    :type registration_virtual_networks: list of :class:`SubResource
+     <azure.mgmt.dns.models.SubResource>`
+    :param resolution_virtual_networks: A list of references to virtual
+     networks that resolve records in this DNS zone. This is a only when
+     ZoneType is Private.
+    :type resolution_virtual_networks: list of :class:`SubResource
+     <azure.mgmt.dns.models.SubResource>`
     """
 
     _validation = {
@@ -61,11 +74,17 @@ class Zone(Resource):
         'max_number_of_record_sets': {'key': 'properties.maxNumberOfRecordSets', 'type': 'long'},
         'number_of_record_sets': {'key': 'properties.numberOfRecordSets', 'type': 'long'},
         'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
+        'zone_type': {'key': 'properties.zoneType', 'type': 'ZoneType'},
+        'registration_virtual_networks': {'key': 'properties.registrationVirtualNetworks', 'type': '[SubResource]'},
+        'resolution_virtual_networks': {'key': 'properties.resolutionVirtualNetworks', 'type': '[SubResource]'},
     }
 
-    def __init__(self, location, tags=None, etag=None, max_number_of_record_sets=None, number_of_record_sets=None):
+    def __init__(self, location, tags=None, etag=None, max_number_of_record_sets=None, number_of_record_sets=None, zone_type="Public", registration_virtual_networks=None, resolution_virtual_networks=None):
         super(Zone, self).__init__(location=location, tags=tags)
         self.etag = etag
         self.max_number_of_record_sets = max_number_of_record_sets
         self.number_of_record_sets = number_of_record_sets
         self.name_servers = None
+        self.zone_type = zone_type
+        self.registration_virtual_networks = registration_virtual_networks
+        self.resolution_virtual_networks = resolution_virtual_networks
