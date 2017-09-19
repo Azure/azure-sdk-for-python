@@ -13,8 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.policy_definitions_operations import PolicyDefinitionsOperations
 from .operations.policy_assignments_operations import PolicyAssignmentsOperations
+from .operations.policy_set_definitions_operations import PolicySetDefinitionsOperations
+from .operations.policy_definitions_operations import PolicyDefinitionsOperations
 from . import models
 
 
@@ -58,10 +59,12 @@ class PolicyClient(object):
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
 
-    :ivar policy_definitions: PolicyDefinitions operations
-    :vartype policy_definitions: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations
     :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
+    :vartype policy_assignments: azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations
+    :ivar policy_set_definitions: PolicySetDefinitions operations
+    :vartype policy_set_definitions: azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations
+    :ivar policy_definitions: PolicyDefinitions operations
+    :vartype policy_definitions: azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -78,11 +81,12 @@ class PolicyClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.policy_definitions = PolicyDefinitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.policy_assignments = PolicyAssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_set_definitions = PolicySetDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_definitions = PolicyDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
