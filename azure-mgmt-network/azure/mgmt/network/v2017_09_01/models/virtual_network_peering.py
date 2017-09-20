@@ -34,7 +34,9 @@ class VirtualNetworkPeering(SubResource):
      flag cannot be set if virtual network already has a gateway.
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual
-     network.
+     network. The remote virtual network can be in the same or different region
+     (preview). See here to register for the preview and learn more
+     (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
     :type remote_virtual_network: :class:`SubResource
      <azure.mgmt.network.v2017_09_01.models.SubResource>`
     :param peering_state: The status of the virtual network peering. Possible
