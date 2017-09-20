@@ -14,7 +14,7 @@ from enum import Enum
 
 class SkuName(Enum):
 
-    basic = "Basic"
+    classic = "Classic"
     managed_basic = "Managed_Basic"
     managed_standard = "Managed_Standard"
     managed_premium = "Managed_Premium"
@@ -22,7 +22,7 @@ class SkuName(Enum):
 
 class SkuTier(Enum):
 
-    basic = "Basic"
+    classic = "Classic"
     managed = "Managed"
 
 

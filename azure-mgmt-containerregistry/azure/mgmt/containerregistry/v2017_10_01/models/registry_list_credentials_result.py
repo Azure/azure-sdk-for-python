@@ -19,7 +19,7 @@ class RegistryListCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords: list of :class:`RegistryPassword
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.RegistryPassword>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.RegistryPassword>`
     """
 
     _attribute_map = {

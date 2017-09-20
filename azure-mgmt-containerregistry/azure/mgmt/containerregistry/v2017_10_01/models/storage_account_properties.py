@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class StorageAccountProperties(Model):
     """The properties of a storage account for a container registry. Only
-    applicable to Basic SKU.
+    applicable to Classic SKU.
 
     :param id: The resource ID of the storage account.
     :type id: str

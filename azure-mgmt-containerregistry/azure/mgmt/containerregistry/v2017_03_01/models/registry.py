@@ -38,12 +38,13 @@ class Registry(Resource):
     :ivar creation_date: The creation date of the container registry in
      ISO8601 format.
     :vartype creation_date: datetime
-    :ivar provisioning_state: The status of the container registry at the time
-     the operation was called. Possible values include: 'Creating', 'Succeeded'
+    :ivar provisioning_state: The provisioning state of the container registry
+     at the time the operation was called. Possible values include: 'Creating',
+     'Succeeded'
     :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.containerregistry.v2017_03_01.models.ProvisioningState>`
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default. Default value: False .
+     is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry.

@@ -33,11 +33,11 @@ class Replication(Resource):
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.ProvisioningState>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState>`
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status: :class:`Status
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.Status>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.Status>`
     """
 
     _validation = {

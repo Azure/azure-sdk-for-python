@@ -18,7 +18,7 @@ class RegistryUpdateParameters(Model):
     :param tags: The tags for the container registry.
     :type tags: dict
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default.
+     is enabled.
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
      container registry. If specified, the storage account must be in the same
