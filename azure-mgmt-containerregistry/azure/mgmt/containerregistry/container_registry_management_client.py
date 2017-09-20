@@ -81,12 +81,12 @@ class ContainerRegistryManagementClient(object):
         """Module depends on the API version:
 
            * 2017-03-01: :mod:`v2017_03_01.models<azure.mgmt.containerregistry.v2017_03_01.models>`
-           * 2017-06-01-preview: :mod:`v2017_10_01.models<azure.mgmt.containerregistry.v2017_10_01.models>`
+           * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.containerregistry.v2017_10_01.models>`
         """
         if api_version == '2017-03-01':
             from .v2017_03_01 import models
             return models
-        elif api_version == '2017-06-01-preview':
+        elif api_version == '2017-10-01':
             from .v2017_10_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -96,11 +96,11 @@ class ContainerRegistryManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-01: :class:`Operations<azure.mgmt.containerregistry.v2017_03_01.operations.Operations>`
-           * 2017-06-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2017_10_01.operations.Operations>`
+           * 2017-10-01: :class:`Operations<azure.mgmt.containerregistry.v2017_10_01.operations.Operations>`
         """
         if self.api_version == '2017-03-01':
             from .v2017_03_01.operations import Operations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
+        elif self.api_version == '2017-10-01':
             from .v2017_10_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
@@ -111,11 +111,11 @@ class ContainerRegistryManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_03_01.operations.RegistriesOperations>`
-           * 2017-06-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_10_01.operations.RegistriesOperations>`
+           * 2017-10-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_10_01.operations.RegistriesOperations>`
         """
         if self.api_version == '2017-03-01':
             from .v2017_03_01.operations import RegistriesOperations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
+        elif self.api_version == '2017-10-01':
             from .v2017_10_01.operations import RegistriesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
@@ -125,9 +125,9 @@ class ContainerRegistryManagementClient(object):
     def replications(self):
         """Instance depends on the API version:
 
-           * 2017-06-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2017_10_01.operations.ReplicationsOperations>`
+           * 2017-10-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2017_10_01.operations.ReplicationsOperations>`
         """
-        if self.api_version == '2017-06-01-preview':
+        if self.api_version == '2017-10-01':
             from .v2017_10_01.operations import ReplicationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
@@ -137,9 +137,9 @@ class ContainerRegistryManagementClient(object):
     def webhooks(self):
         """Instance depends on the API version:
 
-           * 2017-06-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2017_10_01.operations.WebhooksOperations>`
+           * 2017-10-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2017_10_01.operations.WebhooksOperations>`
         """
-        if self.api_version == '2017-06-01-preview':
+        if self.api_version == '2017-10-01':
             from .v2017_10_01.operations import WebhooksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
