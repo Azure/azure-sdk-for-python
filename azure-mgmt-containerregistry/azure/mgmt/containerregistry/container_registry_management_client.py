@@ -63,7 +63,7 @@ class ContainerRegistryManagementClient(object):
     :param str base_url: Service URL
     """
 
-    DEFAULT_API_VERSION = '2017-03-01'
+    DEFAULT_API_VERSION = '2017-10-01'
 
     def __init__(
             self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
