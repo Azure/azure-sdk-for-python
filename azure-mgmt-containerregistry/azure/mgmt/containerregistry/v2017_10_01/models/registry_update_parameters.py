@@ -19,16 +19,16 @@ class RegistryUpdateParameters(Model):
     :type tags: dict
     :param sku: The SKU of the container registry.
     :type sku: :class:`Sku
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.Sku>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.Sku>`
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
-     container registry. Only applicable to Basic SKU. If specified, the
+     container registry. Only applicable to Classic SKU. If specified, the
      storage account must be in the same physical location as the container
      registry.
     :type storage_account: :class:`StorageAccountProperties
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.StorageAccountProperties>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.StorageAccountProperties>`
     """
 
     _attribute_map = {

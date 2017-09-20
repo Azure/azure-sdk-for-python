@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -40,7 +40,7 @@ class RegistriesOperations(object):
             self, name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the container registry name is available for use. The
         name must contain only alphanumeric characters, be globally unique, and
-        between 5 and 60 characters in length.
+        between 5 and 50 characters in length.
 
         :param name: The name of the container registry.
         :type name: str
@@ -49,10 +49,13 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RegistryNameStatus
+         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RegistryNameStatus
          <azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         registry_name_check_request = models.RegistryNameCheckRequest(name=name)
@@ -116,10 +119,13 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`Registry
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -127,7 +133,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -181,12 +187,15 @@ class RegistriesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -194,7 +203,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -273,9 +282,11 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -283,7 +294,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -332,10 +343,13 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`Registry
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -343,7 +357,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -397,6 +411,8 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Registry
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
         :rtype: :class:`RegistryPaged
          <azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -461,6 +477,8 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Registry
+         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
         :rtype: :class:`RegistryPaged
          <azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -529,10 +547,13 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RegistryListCredentialsResult
+         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RegistryListCredentialsResult
          <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -540,7 +561,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -598,10 +619,13 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RegistryListCredentialsResult
+         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RegistryListCredentialsResult
          <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         regenerate_credential_parameters = models.RegenerateCredentialParameters(name=name)
@@ -611,7 +635,7 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

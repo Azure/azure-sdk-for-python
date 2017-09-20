@@ -20,11 +20,11 @@ class Event(EventInfo):
     :param event_request_message: The event request message sent to the
      service URI.
     :type event_request_message: :class:`EventRequestMessage
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.EventRequestMessage>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.EventRequestMessage>`
     :param event_response_message: The event response message received from
      the service URI.
     :type event_response_message: :class:`EventResponseMessage
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.EventResponseMessage>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.EventResponseMessage>`
     """
 
     _attribute_map = {

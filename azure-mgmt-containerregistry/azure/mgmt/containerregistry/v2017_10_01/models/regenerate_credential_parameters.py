@@ -18,7 +18,7 @@ class RegenerateCredentialParameters(Model):
     :param name: Specifies name of the password which should be regenerated --
      password or password2. Possible values include: 'password', 'password2'
     :type name: str or :class:`PasswordName
-     <azure.mgmt.containerregistry.v2017_06_01_preview.models.PasswordName>`
+     <azure.mgmt.containerregistry.v2017_10_01.models.PasswordName>`
     """
 
     _validation = {

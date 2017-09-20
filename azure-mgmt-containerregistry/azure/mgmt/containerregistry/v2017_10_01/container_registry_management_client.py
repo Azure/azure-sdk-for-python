@@ -61,13 +61,13 @@ class ContainerRegistryManagementClient(object):
     :vartype config: ContainerRegistryManagementClientConfiguration
 
     :ivar registries: Registries operations
-    :vartype registries: azure.mgmt.containerregistry.v2017_06_01_preview.operations.RegistriesOperations
+    :vartype registries: azure.mgmt.containerregistry.v2017_10_01.operations.RegistriesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.containerregistry.v2017_06_01_preview.operations.Operations
+    :vartype operations: azure.mgmt.containerregistry.v2017_10_01.operations.Operations
     :ivar replications: Replications operations
-    :vartype replications: azure.mgmt.containerregistry.v2017_06_01_preview.operations.ReplicationsOperations
+    :vartype replications: azure.mgmt.containerregistry.v2017_10_01.operations.ReplicationsOperations
     :ivar webhooks: Webhooks operations
-    :vartype webhooks: azure.mgmt.containerregistry.v2017_06_01_preview.operations.WebhooksOperations
+    :vartype webhooks: azure.mgmt.containerregistry.v2017_10_01.operations.WebhooksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -84,7 +84,7 @@ class ContainerRegistryManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-06-01-preview'
+        self.api_version = '2017-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

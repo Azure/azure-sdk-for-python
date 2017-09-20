@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ReplicationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Replication <azure.mgmt.containerregistry.v2017_10_01.models.Replication>` object
+class ReplicationUpdateParameters(Model):
+    """The parameters for updating a replication.
+
+    :param tags: The tags for the replication.
+    :type tags: dict
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Replication]'}
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ReplicationPaged, self).__init__(*args, **kwargs)
+    def __init__(self, tags=None):
+        self.tags = tags

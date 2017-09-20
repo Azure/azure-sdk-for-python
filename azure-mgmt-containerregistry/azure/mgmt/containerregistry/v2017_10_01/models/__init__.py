@@ -24,6 +24,7 @@ from .regenerate_credential_parameters import RegenerateCredentialParameters
 from .registry_usage import RegistryUsage
 from .registry_usage_list_result import RegistryUsageListResult
 from .replication import Replication
+from .replication_update_parameters import ReplicationUpdateParameters
 from .webhook import Webhook
 from .webhook_create_parameters import WebhookCreateParameters
 from .webhook_update_parameters import WebhookUpdateParameters
@@ -69,6 +70,7 @@ __all__ = [
     'RegistryUsage',
     'RegistryUsageListResult',
     'Replication',
+    'ReplicationUpdateParameters',
     'Webhook',
     'WebhookCreateParameters',
     'WebhookUpdateParameters',

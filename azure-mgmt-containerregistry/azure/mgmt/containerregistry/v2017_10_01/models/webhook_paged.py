@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WebhookPaged(Paged):
     """
-    A paging container for iterating over a list of Webhook object
+    A paging container for iterating over a list of :class:`Webhook <azure.mgmt.containerregistry.v2017_10_01.models.Webhook>` object
     """
 
     _attribute_map = {

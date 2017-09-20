@@ -27,7 +27,7 @@ class RegistryNameCheckRequest(Model):
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': '^[a-zA-Z0-9]*$'},
+        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': r'^[a-zA-Z0-9]*$'},
         'type': {'required': True, 'constant': True},
     }
 
