@@ -6,3 +6,4 @@ azure-devtools>=0.4.1
 vcrpy
 readme_renderer
 wheel
+cookiecutter
