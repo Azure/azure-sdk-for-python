@@ -27,6 +27,8 @@ from .file_properties import FileProperties
 from .node_file import NodeFile
 from .schedule import Schedule
 from .job_constraints import JobConstraints
+from .container_registry import ContainerRegistry
+from .task_container_settings import TaskContainerSettings
 from .resource_file import ResourceFile
 from .environment_setting import EnvironmentSetting
 from .exit_options import ExitOptions
@@ -52,6 +54,8 @@ from .metadata_item import MetadataItem
 from .cloud_service_configuration import CloudServiceConfiguration
 from .os_disk import OSDisk
 from .windows_configuration import WindowsConfiguration
+from .data_disk import DataDisk
+from .container_configuration import ContainerConfiguration
 from .virtual_machine_configuration import VirtualMachineConfiguration
 from .network_security_group_rule import NetworkSecurityGroupRule
 from .inbound_nat_pool import InboundNATPool
@@ -70,6 +74,7 @@ from .job_scheduling_error import JobSchedulingError
 from .job_execution_information import JobExecutionInformation
 from .cloud_job import CloudJob
 from .job_add_parameter import JobAddParameter
+from .task_container_execution_information import TaskContainerExecutionInformation
 from .task_failure_information import TaskFailureInformation
 from .job_preparation_task_execution_information import JobPreparationTaskExecutionInformation
 from .job_release_task_execution_information import JobReleaseTaskExecutionInformation
@@ -223,6 +228,7 @@ from .batch_service_client_enums import (
     CertificateStoreLocation,
     CertificateVisibility,
     CachingType,
+    StorageAccountType,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
     PoolLifetimeOption,
@@ -269,6 +275,8 @@ __all__ = [
     'NodeFile',
     'Schedule',
     'JobConstraints',
+    'ContainerRegistry',
+    'TaskContainerSettings',
     'ResourceFile',
     'EnvironmentSetting',
     'ExitOptions',
@@ -294,6 +302,8 @@ __all__ = [
     'CloudServiceConfiguration',
     'OSDisk',
     'WindowsConfiguration',
+    'DataDisk',
+    'ContainerConfiguration',
     'VirtualMachineConfiguration',
     'NetworkSecurityGroupRule',
     'InboundNATPool',
@@ -312,6 +322,7 @@ __all__ = [
     'JobExecutionInformation',
     'CloudJob',
     'JobAddParameter',
+    'TaskContainerExecutionInformation',
     'TaskFailureInformation',
     'JobPreparationTaskExecutionInformation',
     'JobReleaseTaskExecutionInformation',
@@ -464,6 +475,7 @@ __all__ = [
     'CertificateStoreLocation',
     'CertificateVisibility',
     'CachingType',
+    'StorageAccountType',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',
     'PoolLifetimeOption',
