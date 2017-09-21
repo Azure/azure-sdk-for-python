@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class BackupItem(Resource):
+class BackupItem(ProxyOnlyResource):
     """Backup description.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class BackupItem(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar backup_id: Id of the backup.
     :vartype backup_id: int
     :ivar storage_account_url: SAS URL for the storage account container which
@@ -71,7 +67,8 @@ class BackupItem(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'backup_id': {'readonly': True},
         'storage_account_url': {'readonly': True},
         'blob_name': {'readonly': True},
@@ -92,9 +89,7 @@ class BackupItem(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'backup_id': {'key': 'properties.id', 'type': 'int'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'blob_name': {'key': 'properties.blobName', 'type': 'str'},
@@ -111,8 +106,8 @@ class BackupItem(Resource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(BackupItem, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(BackupItem, self).__init__(kind=kind)
         self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None

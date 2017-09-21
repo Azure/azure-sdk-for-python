@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class StorageMigrationOptions(Resource):
+class StorageMigrationOptions(ProxyOnlyResource):
     """Options for app content migration.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class StorageMigrationOptions(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param azurefiles_connection_string: AzureFiles connection string.
     :type azurefiles_connection_string: str
     :param azurefiles_share: AzureFiles share.
@@ -45,24 +41,23 @@ class StorageMigrationOptions(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'azurefiles_connection_string': {'key': 'properties.azurefilesConnectionString', 'type': 'str'},
         'azurefiles_share': {'key': 'properties.azurefilesShare', 'type': 'str'},
         'switch_site_after_migration': {'key': 'properties.switchSiteAfterMigration', 'type': 'bool'},
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
-        super(StorageMigrationOptions, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
+        super(StorageMigrationOptions, self).__init__(kind=kind)
         self.azurefiles_connection_string = azurefiles_connection_string
         self.azurefiles_share = azurefiles_share
         self.switch_site_after_migration = switch_site_after_migration

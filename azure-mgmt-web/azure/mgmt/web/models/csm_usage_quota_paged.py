@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CsmUsageQuotaPaged(Paged):
     """
-    A paging container for iterating over a list of CsmUsageQuota object
+    A paging container for iterating over a list of :class:`CsmUsageQuota <azure.mgmt.web.models.CsmUsageQuota>` object
     """
 
     _attribute_map = {

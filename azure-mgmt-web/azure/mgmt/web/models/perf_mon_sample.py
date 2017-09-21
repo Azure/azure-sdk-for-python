@@ -21,15 +21,19 @@ class PerfMonSample(Model):
     :type instance_name: str
     :param value: Value of counter at a certain time.
     :type value: float
+    :param core_count: Core Count of worker. Not a data member
+    :type core_count: int
     """
 
     _attribute_map = {
         'time': {'key': 'time', 'type': 'iso-8601'},
         'instance_name': {'key': 'instanceName', 'type': 'str'},
         'value': {'key': 'value', 'type': 'float'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
     }
 
-    def __init__(self, time=None, instance_name=None, value=None):
+    def __init__(self, time=None, instance_name=None, value=None, core_count=None):
         self.time = time
         self.instance_name = instance_name
         self.value = value
+        self.core_count = core_count
