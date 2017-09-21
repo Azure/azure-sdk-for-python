@@ -27,8 +27,10 @@ from .check_group_membership_result import CheckGroupMembershipResult
 from .service_principal_create_parameters import ServicePrincipalCreateParameters
 from .service_principal import ServicePrincipal
 from .password_profile import PasswordProfile
+from .user_base import UserBase
 from .user_create_parameters import UserCreateParameters
 from .user_update_parameters import UserUpdateParameters
+from .sign_in_name import SignInName
 from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
 from .get_objects_parameters import GetObjectsParameters
@@ -42,6 +44,9 @@ from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
 from .domain_paged import DomainPaged
+from .graph_rbac_management_client_enums import (
+    UserType,
+)
 
 __all__ = [
     'GraphError', 'GraphErrorException',
@@ -62,8 +67,10 @@ __all__ = [
     'ServicePrincipalCreateParameters',
     'ServicePrincipal',
     'PasswordProfile',
+    'UserBase',
     'UserCreateParameters',
     'UserUpdateParameters',
+    'SignInName',
     'User',
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
@@ -77,4 +84,5 @@ __all__ = [
     'ServicePrincipalPaged',
     'UserPaged',
     'DomainPaged',
+    'UserType',
 ]

@@ -12,28 +12,23 @@
 from msrest.serialization import Model
 
 
-class PasswordCredential(Model):
-    """Active Directory Password Credential information.
+class SignInName(Model):
+    """Contains information about a sign-in name of a local account user in an
+    Azure Active Directory B2C tenant.
 
-    :param start_date: Start date.
-    :type start_date: datetime
-    :param end_date: End date.
-    :type end_date: datetime
-    :param key_id: Key ID.
-    :type key_id: str
-    :param value: Key value.
+    :param type: A string value that can be used to classify user sign-in
+     types in your directory, such as 'emailAddress' or 'userName'.
+    :type type: str
+    :param value: The sign-in used by the local account. Must be unique across
+     the company/tenant. For example, 'johnc@example.com'.
     :type value: str
     """
 
     _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
-        'end_date': {'key': 'endDate', 'type': 'iso-8601'},
-        'key_id': {'key': 'keyId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, start_date=None, end_date=None, key_id=None, value=None):
-        self.start_date = start_date
-        self.end_date = end_date
-        self.key_id = key_id
+    def __init__(self, type=None, value=None):
+        self.type = type
         self.value = value
