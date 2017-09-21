@@ -20,14 +20,14 @@ class AppServiceCertificateOrder(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param certificates: State of the Key Vault secret.
@@ -88,7 +88,9 @@ class AppServiceCertificateOrder(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
         'validity_in_years': {'maximum': 3, 'minimum': 1},
         'provisioning_state': {'readonly': True},
@@ -132,8 +134,8 @@ class AppServiceCertificateOrder(Resource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
-        super(AppServiceCertificateOrder, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
+        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
         self.domain_verification_token = None

@@ -74,144 +74,6 @@ class CertificateOrderActionType(Enum):
     unknown = "Unknown"
 
 
-class HostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
-
-
-class WorkerSizeOptions(Enum):
-
-    default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
-
-
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
-class StatusOptions(Enum):
-
-    ready = "Ready"
-    pending = "Pending"
-
-
-class AutoHealActionType(Enum):
-
-    recycle = "Recycle"
-    log_event = "LogEvent"
-    custom_action = "CustomAction"
-
-
-class ConnectionStringType(Enum):
-
-    my_sql = "MySql"
-    sql_server = "SQLServer"
-    sql_azure = "SQLAzure"
-    custom = "Custom"
-    notification_hub = "NotificationHub"
-    service_bus = "ServiceBus"
-    event_hub = "EventHub"
-    api_hub = "ApiHub"
-    doc_db = "DocDb"
-    redis_cache = "RedisCache"
-    postgre_sql = "PostgreSQL"
-
-
-class SslState(Enum):
-
-    disabled = "Disabled"
-    sni_enabled = "SniEnabled"
-    ip_based_enabled = "IpBasedEnabled"
-
-
-class HostType(Enum):
-
-    standard = "Standard"
-    repository = "Repository"
-
-
-class OperationStatus(Enum):
-
-    in_progress = "InProgress"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    timed_out = "TimedOut"
-    created = "Created"
-
-
-class UsageState(Enum):
-
-    normal = "Normal"
-    exceeded = "Exceeded"
-
-
-class SiteAvailabilityState(Enum):
-
-    normal = "Normal"
-    limited = "Limited"
-    disaster_recovery_mode = "DisasterRecoveryMode"
-
-
-class ScmType(Enum):
-
-    none = "None"
-    dropbox = "Dropbox"
-    tfs = "Tfs"
-    local_git = "LocalGit"
-    git_hub = "GitHub"
-    code_plex_git = "CodePlexGit"
-    code_plex_hg = "CodePlexHg"
-    bitbucket_git = "BitbucketGit"
-    bitbucket_hg = "BitbucketHg"
-    external_git = "ExternalGit"
-    external_hg = "ExternalHg"
-    one_drive = "OneDrive"
-    vso = "VSO"
-
-
-class ManagedPipelineMode(Enum):
-
-    integrated = "Integrated"
-    classic = "Classic"
-
-
-class SiteLoadBalancing(Enum):
-
-    weighted_round_robin = "WeightedRoundRobin"
-    least_requests = "LeastRequests"
-    least_response_time = "LeastResponseTime"
-    weighted_total_traffic = "WeightedTotalTraffic"
-    request_hash = "RequestHash"
-
-
-class RouteType(Enum):
-
-    default = "DEFAULT"
-    inherited = "INHERITED"
-    static = "STATIC"
-
-
 class DomainStatus(Enum):
 
     active = "Active"
@@ -329,6 +191,13 @@ class LogLevel(Enum):
     error = "Error"
 
 
+class AutoHealActionType(Enum):
+
+    recycle = "Recycle"
+    log_event = "LogEvent"
+    custom_action = "CustomAction"
+
+
 class BackupItemStatus(Enum):
 
     in_progress = "InProgress"
@@ -362,6 +231,37 @@ class BackupRestoreOperationType(Enum):
     default = "Default"
     clone = "Clone"
     relocation = "Relocation"
+    snapshot = "Snapshot"
+
+
+class ConnectionStringType(Enum):
+
+    my_sql = "MySql"
+    sql_server = "SQLServer"
+    sql_azure = "SQLAzure"
+    custom = "Custom"
+    notification_hub = "NotificationHub"
+    service_bus = "ServiceBus"
+    event_hub = "EventHub"
+    api_hub = "ApiHub"
+    doc_db = "DocDb"
+    redis_cache = "RedisCache"
+    postgre_sql = "PostgreSQL"
+
+
+class ContinuousWebJobStatus(Enum):
+
+    initializing = "Initializing"
+    starting = "Starting"
+    running = "Running"
+    pending_restart = "PendingRestart"
+    stopped = "Stopped"
+
+
+class WebJobType(Enum):
+
+    continuous = "Continuous"
+    triggered = "Triggered"
 
 
 class PublishingProfileFormat(Enum):
@@ -376,6 +276,109 @@ class DnsVerificationTestResult(Enum):
     passed = "Passed"
     failed = "Failed"
     skipped = "Skipped"
+
+
+class SslState(Enum):
+
+    disabled = "Disabled"
+    sni_enabled = "SniEnabled"
+    ip_based_enabled = "IpBasedEnabled"
+
+
+class HostType(Enum):
+
+    standard = "Standard"
+    repository = "Repository"
+
+
+class MSDeployLogEntryType(Enum):
+
+    message = "Message"
+    warning = "Warning"
+    error = "Error"
+
+
+class MSDeployProvisioningState(Enum):
+
+    accepted = "accepted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+    canceled = "canceled"
+
+
+class MySqlMigrationType(Enum):
+
+    local_to_remote = "LocalToRemote"
+    remote_to_local = "RemoteToLocal"
+
+
+class OperationStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+
+
+class RouteType(Enum):
+
+    default = "DEFAULT"
+    inherited = "INHERITED"
+    static = "STATIC"
+
+
+class PublicCertificateLocation(Enum):
+
+    current_user_my = "CurrentUserMy"
+    local_machine_my = "LocalMachineMy"
+    unknown = "Unknown"
+
+
+class UsageState(Enum):
+
+    normal = "Normal"
+    exceeded = "Exceeded"
+
+
+class SiteAvailabilityState(Enum):
+
+    normal = "Normal"
+    limited = "Limited"
+    disaster_recovery_mode = "DisasterRecoveryMode"
+
+
+class ScmType(Enum):
+
+    none = "None"
+    dropbox = "Dropbox"
+    tfs = "Tfs"
+    local_git = "LocalGit"
+    git_hub = "GitHub"
+    code_plex_git = "CodePlexGit"
+    code_plex_hg = "CodePlexHg"
+    bitbucket_git = "BitbucketGit"
+    bitbucket_hg = "BitbucketHg"
+    external_git = "ExternalGit"
+    external_hg = "ExternalHg"
+    one_drive = "OneDrive"
+    vso = "VSO"
+
+
+class ManagedPipelineMode(Enum):
+
+    integrated = "Integrated"
+    classic = "Classic"
+
+
+class SiteLoadBalancing(Enum):
+
+    weighted_round_robin = "WeightedRoundRobin"
+    least_requests = "LeastRequests"
+    least_response_time = "LeastResponseTime"
+    weighted_total_traffic = "WeightedTotalTraffic"
+    request_hash = "RequestHash"
 
 
 class UnauthenticatedClientAction(Enum):
@@ -400,6 +403,61 @@ class CloneAbilityResult(Enum):
     not_cloneable = "NotCloneable"
 
 
+class SiteExtensionType(Enum):
+
+    gallery = "Gallery"
+    web_root = "WebRoot"
+
+
+class TriggeredWebJobStatus(Enum):
+
+    success = "Success"
+    failed = "Failed"
+    error = "Error"
+
+
+class HostingEnvironmentStatus(Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(Enum):
+
+    default = "Default"
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+
+
+class AccessControlEntryAction(Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class StatusOptions(Enum):
+
+    ready = "Ready"
+    pending = "Pending"
+
+
 class SkuName(Enum):
 
     free = "Free"
@@ -407,5 +465,6 @@ class SkuName(Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+    premium_v2 = "PremiumV2"
     dynamic = "Dynamic"
     isolated = "Isolated"
