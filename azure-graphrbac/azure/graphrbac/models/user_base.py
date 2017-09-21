@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .user_base import UserBase
+from msrest.serialization import Model
 
 
-class UserUpdateParameters(UserBase):
-    """Request parameters for updating an existing work or school account user.
+class UserBase(Model):
+    """UserBase.
 
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
@@ -34,19 +34,6 @@ class UserUpdateParameters(UserBase):
      'Member', 'Guest'
     :type user_type: str or :class:`UserType
      <azure.graphrbac.models.UserType>`
-    :param account_enabled: Whether the account is enabled.
-    :type account_enabled: bool
-    :param display_name: The display name of the user.
-    :type display_name: str
-    :param password_profile: The password profile of the user.
-    :type password_profile: :class:`PasswordProfile
-     <azure.graphrbac.models.PasswordProfile>`
-    :param user_principal_name: The user principal name
-     (someuser@contoso.com). It must contain one of the verified domains for
-     the tenant.
-    :type user_principal_name: str
-    :param mail_nickname: The mail alias for the user.
-    :type mail_nickname: str
     """
 
     _attribute_map = {
@@ -55,17 +42,11 @@ class UserUpdateParameters(UserBase):
         'given_name': {'key': 'givenName', 'type': 'str'},
         'surname': {'key': 'surname', 'type': 'str'},
         'user_type': {'key': 'userType', 'type': 'str'},
-        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'password_profile': {'key': 'passwordProfile', 'type': 'PasswordProfile'},
-        'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
-        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
     }
 
-    def __init__(self, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, password_profile=None, user_principal_name=None, mail_nickname=None):
-        super(UserUpdateParameters, self).__init__(immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
-        self.account_enabled = account_enabled
-        self.display_name = display_name
-        self.password_profile = password_profile
-        self.user_principal_name = user_principal_name
-        self.mail_nickname = mail_nickname
+    def __init__(self, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None):
+        self.immutable_id = immutable_id
+        self.usage_location = usage_location
+        self.given_name = given_name
+        self.surname = surname
+        self.user_type = user_type

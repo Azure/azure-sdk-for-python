@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.32.0 (2017-09-21)
++++++++++++++++++++
+
+**Features**
+
+- Add Application.oauth2_allow_implicit_flow (create, update, get)
+- Add to User: immutable_id, given_name, surname, user_type, account_enabled
+- Add to UserCreate: given_name, surname, user_type, mail
+- Add to UserUpdate: immutable_id, given_name, surname, user_type, user_principal_name
+
+**Bugfixes**
+
+- Renamed User.signInName to an array User.signInNames
+
 0.31.0 (2017-08-09)
 +++++++++++++++++++
 

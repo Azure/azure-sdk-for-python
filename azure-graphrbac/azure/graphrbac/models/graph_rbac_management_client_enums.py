@@ -9,19 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class ApplicationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Application <azure.graphrbac.models.Application>` object
-    """
+class UserType(Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Application]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ApplicationPaged, self).__init__(*args, **kwargs)
+    member = "Member"
+    guest = "Guest"

@@ -34,6 +34,9 @@ class Application(Model):
     :type reply_urls: list of str
     :param homepage: The home page of the application.
     :type homepage: str
+    :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
+     for OAuth2
+    :type oauth2_allow_implicit_flow: bool
     """
 
     _attribute_map = {
@@ -46,9 +49,10 @@ class Application(Model):
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
         'homepage': {'key': 'homepage', 'type': 'str'},
+        'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None):
+    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
         self.object_id = object_id
         self.object_type = object_type
         self.app_id = app_id
@@ -58,3 +62,4 @@ class Application(Model):
         self.identifier_uris = identifier_uris
         self.reply_urls = reply_urls
         self.homepage = homepage
+        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow

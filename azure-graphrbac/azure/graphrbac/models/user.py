@@ -9,50 +9,73 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .user_base import UserBase
 
 
-class User(Model):
+class User(UserBase):
     """Active Directory user information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
-    :type object_type: str
-    :param user_principal_name: The principal name of the user.
-    :type user_principal_name: str
-    :param display_name: The display name of the user.
-    :type display_name: str
-    :param sign_in_name: The sign-in name of the user.
-    :type sign_in_name: str
-    :param mail: The primary email address of the user.
-    :type mail: str
-    :param mail_nickname: The mail alias for the user.
-    :type mail_nickname: str
+    :param immutable_id: This must be specified if you are using a federated
+     domain for the user's userPrincipalName (UPN) property when creating a new
+     user account. It is used to associate an on-premises Active Directory user
+     account with their Azure AD user object.
+    :type immutable_id: str
     :param usage_location: A two letter country code (ISO standard 3166).
      Required for users that will be assigned licenses due to legal requirement
      to check for availability of services in countries. Examples include:
      "US", "JP", and "GB".
     :type usage_location: str
+    :param given_name: The given name for the user.
+    :type given_name: str
+    :param surname: The user's surname (family name or last name).
+    :type surname: str
+    :param user_type: A string value that can be used to classify user types
+     in your directory, such as 'Member' and 'Guest'. Possible values include:
+     'Member', 'Guest'
+    :type user_type: str or :class:`UserType
+     <azure.graphrbac.models.UserType>`
+    :param account_enabled: Whether the account is enabled.
+    :type account_enabled: bool
+    :param display_name: The display name of the user.
+    :type display_name: str
+    :param user_principal_name: The principal name of the user.
+    :type user_principal_name: str
+    :param mail_nickname: The mail alias for the user.
+    :type mail_nickname: str
+    :param mail: The primary email address of the user.
+    :type mail: str
+    :param object_id: The object ID.
+    :type object_id: str
+    :param object_type: The object type.
+    :type object_type: str
+    :param sign_in_names: The sign-in names of the user.
+    :type sign_in_names: list of :class:`SignInName
+     <azure.graphrbac.models.SignInName>`
     """
 
     _attribute_map = {
+        'immutable_id': {'key': 'immutableId', 'type': 'str'},
+        'usage_location': {'key': 'usageLocation', 'type': 'str'},
+        'given_name': {'key': 'givenName', 'type': 'str'},
+        'surname': {'key': 'surname', 'type': 'str'},
+        'user_type': {'key': 'userType', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
+        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
+        'mail': {'key': 'mail', 'type': 'str'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'sign_in_name': {'key': 'signInName', 'type': 'str'},
-        'mail': {'key': 'mail', 'type': 'str'},
-        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
-        'usage_location': {'key': 'usageLocation', 'type': 'str'},
+        'sign_in_names': {'key': 'signInNames', 'type': '[SignInName]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, mail_nickname=None, usage_location=None):
+    def __init__(self, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, user_principal_name=None, mail_nickname=None, mail=None, object_id=None, object_type=None, sign_in_names=None):
+        super(User, self).__init__(immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
+        self.account_enabled = account_enabled
+        self.display_name = display_name
+        self.user_principal_name = user_principal_name
+        self.mail_nickname = mail_nickname
+        self.mail = mail
         self.object_id = object_id
         self.object_type = object_type
-        self.user_principal_name = user_principal_name
-        self.display_name = display_name
-        self.sign_in_name = sign_in_name
-        self.mail = mail
-        self.mail_nickname = mail_nickname
-        self.usage_location = usage_location
+        self.sign_in_names = sign_in_names
