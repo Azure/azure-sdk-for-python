@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class ImageReference(Model):
-    """A reference to an Azure Virtual Machines Marketplace image. To get the list
-    of all imageReferences verified by Azure Batch, see the 'List supported
-    node agent SKUs' operation.
+    """A reference to an Azure Virtual Machines Marketplace image or a custom
+    Azure Virtual Machine image. To get the list of all Azure Marketplace image
+    references verified by Azure Batch, see the 'List node agent SKUs'
+    operation.
 
     :param publisher: The publisher of the Azure Virtual Machines Marketplace
      image. For example, Canonical or MicrosoftWindowsServer.
@@ -30,23 +31,29 @@ class ImageReference(Model):
      image. A value of 'latest' can be specified to select the latest version
      of an image. If omitted, the default is 'latest'.
     :type version: str
+    :param virtual_machine_image_id: The ARM resource identifier of the
+     virtual machine image. Computes nodes of the pool will be created using
+     this custom image. This is of the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
+     This property is mutually exclusive with other ImageReference properties.
+     The virtual machine image must be in the same region and subscription as
+     the Azure Batch account. For information about the firewall settings for
+     the Batch node agent to communicate with the Batch service see
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+    :type virtual_machine_image_id: str
     """
-
-    _validation = {
-        'publisher': {'required': True},
-        'offer': {'required': True},
-        'sku': {'required': True},
-    }
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
+        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
     }
 
-    def __init__(self, publisher, offer, sku, version=None):
+    def __init__(self, publisher=None, offer=None, sku=None, version=None, virtual_machine_image_id=None):
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
         self.version = version
+        self.virtual_machine_image_id = virtual_machine_image_id
