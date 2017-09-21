@@ -32,6 +32,9 @@ class ApplicationUpdateParameters(Model):
     :param password_credentials: The list of PasswordCredential objects.
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
+    :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
+     for OAuth2
+    :type oauth2_allow_implicit_flow: bool
     """
 
     _attribute_map = {
@@ -42,9 +45,10 @@ class ApplicationUpdateParameters(Model):
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
+        'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, available_to_other_tenants=None, display_name=None, homepage=None, identifier_uris=None, reply_urls=None, key_credentials=None, password_credentials=None):
+    def __init__(self, available_to_other_tenants=None, display_name=None, homepage=None, identifier_uris=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow=None):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage
@@ -52,3 +56,4 @@ class ApplicationUpdateParameters(Model):
         self.reply_urls = reply_urls
         self.key_credentials = key_credentials
         self.password_credentials = password_credentials
+        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
