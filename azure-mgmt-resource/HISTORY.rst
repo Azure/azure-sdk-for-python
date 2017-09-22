@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.2.0rc3 (2017-09-22)
++++++++++++++++++++++
+
+**Bug fixes**
+
+- Don't throw on 404 for policy set definition get (#1458)
+
 1.2.0rc2 (2017-09-18)
 +++++++++++++++++++++
 
