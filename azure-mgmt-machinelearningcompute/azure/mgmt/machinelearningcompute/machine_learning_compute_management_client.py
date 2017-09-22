@@ -45,7 +45,7 @@ class MachineLearningComputeManagementClientConfiguration(AzureConfiguration):
 
         super(MachineLearningComputeManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-machinelearningcompute/{}'.format(VERSION))
+        self.add_user_agent('machinelearningcomputemanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
