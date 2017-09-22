@@ -30,7 +30,7 @@ from devtools_testutils import (
 
 
 FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
+    name='pyacr',
     id=''
 )
 
@@ -53,7 +53,7 @@ class MgmtACRTest(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    @StorageAccountPreparer(name_prefix='pyacrstorage', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacr', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
     def test_classic_registry(self, resource_group, location, storage_account):
         registry_name = self.get_resource_name('pyacr')
 
@@ -92,24 +92,7 @@ class MgmtACRTest(AzureMgmtTestCase):
         self.assertTrue(name_status.name_available)
 
         # Create a managed registry
-        registry = self.client.registries.create(
-            resource_group_name=resource_group.name,
-            registry_name=registry_name,
-            registry=Registry(
-                location=location,
-                sku=Sku(
-                    name=SkuName.managed_standard
-                )
-            )
-        ).result()
-        self.assertEqual(registry.name, registry_name)
-        self.assertEqual(registry.location, location)
-        self.assertEqual(registry.sku.name, SkuName.managed_standard.value)
-        self.assertEqual(registry.sku.tier, SkuTier.managed.value)
-        self.assertEqual(registry.provisioning_state, ProvisioningState.succeeded.value)
-        self.assertEqual(registry.admin_user_enabled, False)
-        self.assertEqual(registry.storage_account, None)
-
+        self._create_managed_registry(registry_name, resource_group.name, location)
         self._core_registry_scenario(registry_name, resource_group.name)
 
 
@@ -149,29 +132,33 @@ class MgmtACRTest(AzureMgmtTestCase):
         self.client.registries.delete(resource_group_name, registry_name).wait()
 
 
-    @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    def test_webhook(self, resource_group, location):
-        registry_name = self.get_resource_name('pyacr')
-        webhook_name = self.get_resource_name('pyacrwebhook')
-
-        # Create a managed registry
+    def _create_managed_registry(self, registry_name, resource_group_name, location):
         registry = self.client.registries.create(
-            resource_group_name=resource_group.name,
+            resource_group_name=resource_group_name,
             registry_name=registry_name,
             registry=Registry(
                 location=location,
                 sku=Sku(
-                    name=SkuName.managed_standard
+                    name=SkuName.managed_premium
                 )
             )
         ).result()
         self.assertEqual(registry.name, registry_name)
         self.assertEqual(registry.location, location)
-        self.assertEqual(registry.sku.name, SkuName.managed_standard.value)
+        self.assertEqual(registry.sku.name, SkuName.managed_premium.value)
         self.assertEqual(registry.sku.tier, SkuTier.managed.value)
         self.assertEqual(registry.provisioning_state, ProvisioningState.succeeded.value)
         self.assertEqual(registry.admin_user_enabled, False)
         self.assertEqual(registry.storage_account, None)
+
+
+    @ResourceGroupPreparer(location=DEFAULT_LOCATION)
+    def test_webhook(self, resource_group, location):
+        registry_name = self.get_resource_name('pyacr')
+        webhook_name = self.get_resource_name('pyacr')
+
+        # Create a managed registry
+        self._create_managed_registry(registry_name, resource_group.name, location)
 
         # Create a webhook
         webhook = self.client.webhooks.create(
@@ -234,23 +221,7 @@ class MgmtACRTest(AzureMgmtTestCase):
         replication_name = DEFAULT_REPLICATION_LOCATION
 
         # Create a managed registry
-        registry = self.client.registries.create(
-            resource_group_name=resource_group.name,
-            registry_name=registry_name,
-            registry=Registry(
-                location=location,
-                sku=Sku(
-                    name=SkuName.managed_premium # Premium registry is required to create replication
-                )
-            )
-        ).result()
-        self.assertEqual(registry.name, registry_name)
-        self.assertEqual(registry.location, location)
-        self.assertEqual(registry.sku.name, SkuName.managed_premium.value)
-        self.assertEqual(registry.sku.tier, SkuTier.managed.value)
-        self.assertEqual(registry.provisioning_state, ProvisioningState.succeeded.value)
-        self.assertEqual(registry.admin_user_enabled, False)
-        self.assertEqual(registry.storage_account, None)
+        self._create_managed_registry(registry_name, resource_group.name, location)
 
         # Create a replication
         replication = self.client.replications.create(
