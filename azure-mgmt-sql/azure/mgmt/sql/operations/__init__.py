@@ -45,6 +45,7 @@ from .sync_agents_operations import SyncAgentsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
+from .database_operations import DatabaseOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
@@ -83,4 +84,5 @@ __all__ = [
     'SyncGroupsOperations',
     'SyncMembersOperations',
     'VirtualNetworkRulesOperations',
+    'DatabaseOperations',
 ]
