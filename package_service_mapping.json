@@ -192,6 +192,13 @@
 			"azure.mgmt.logic"
 		]
 	},
+	"azure-mgmt-machinelearningcompute": {
+		"service_name": "Machine Learning Compute",
+		"category": "Management",
+		"namespaces": [
+			"azure.mgmt.machinelearningcompute"
+		]
+	},
 	"azure-mgmt-media": {
 		"service_name": "Media Services",
 		"category ": "Management",
