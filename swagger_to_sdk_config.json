@@ -210,7 +210,7 @@
     "graphrbac": {
       "markdown": "specification/graphrbac/data-plane/readme.md",
       "autorest_options": {
-        "package-version": "0.31.0"
+        "package-version": "0.32.0"
       },
       "output_dir": "azure-graphrbac/azure/graphrbac",
       "generated_relative_base_directory": "python/azure/graphrbac"
