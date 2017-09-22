@@ -263,6 +263,15 @@
       },
       "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
     },
+    "machinelearningcompute": {
+      "markdown": "specification/machinelearningcompute/resource-manager/readme.md",
+      "autorest_options": {
+        "namespace": "azure.mgmt.machinelearningcompute",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-machinelearningcompute/azure/mgmt/machinelearningcompute",
+      "build_dir": "azure-mgmt-machinelearningcompute"
+    },
     "media": {
       "markdown": "specification/mediaservices/resource-manager/readme.md",
       "autorest_options": {
