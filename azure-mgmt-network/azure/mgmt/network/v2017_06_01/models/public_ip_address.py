@@ -59,6 +59,9 @@ class PublicIPAddress(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param zones: A list of availability zones denoting the IP allocated for
+     the resource needs to come from.
+    :type zones: list of str
     """
 
     _validation = {
@@ -82,9 +85,10 @@ class PublicIPAddress(Resource):
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None, zones=None):
         super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags)
         self.public_ip_allocation_method = public_ip_allocation_method
         self.public_ip_address_version = public_ip_address_version
@@ -95,3 +99,4 @@ class PublicIPAddress(Resource):
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
+        self.zones = zones
