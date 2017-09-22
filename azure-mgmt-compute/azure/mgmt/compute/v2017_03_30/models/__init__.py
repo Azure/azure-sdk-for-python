@@ -71,21 +71,30 @@ from .resource_sku_capabilities import ResourceSkuCapabilities
 from .resource_sku_restrictions import ResourceSkuRestrictions
 from .resource_sku import ResourceSku
 from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
+from .virtual_machine_scale_set_update_os_profile import VirtualMachineScaleSetUpdateOSProfile
 from .virtual_machine_scale_set_managed_disk_parameters import VirtualMachineScaleSetManagedDiskParameters
 from .virtual_machine_scale_set_os_disk import VirtualMachineScaleSetOSDisk
+from .virtual_machine_scale_set_update_os_disk import VirtualMachineScaleSetUpdateOSDisk
 from .virtual_machine_scale_set_data_disk import VirtualMachineScaleSetDataDisk
 from .virtual_machine_scale_set_storage_profile import VirtualMachineScaleSetStorageProfile
+from .virtual_machine_scale_set_update_storage_profile import VirtualMachineScaleSetUpdateStorageProfile
 from .api_entity_reference import ApiEntityReference
 from .virtual_machine_scale_set_public_ip_address_configuration_dns_settings import VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
 from .virtual_machine_scale_set_public_ip_address_configuration import VirtualMachineScaleSetPublicIPAddressConfiguration
+from .virtual_machine_scale_set_update_public_ip_address_configuration import VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
 from .virtual_machine_scale_set_ip_configuration import VirtualMachineScaleSetIPConfiguration
+from .virtual_machine_scale_set_update_ip_configuration import VirtualMachineScaleSetUpdateIPConfiguration
 from .virtual_machine_scale_set_network_configuration_dns_settings import VirtualMachineScaleSetNetworkConfigurationDnsSettings
 from .virtual_machine_scale_set_network_configuration import VirtualMachineScaleSetNetworkConfiguration
+from .virtual_machine_scale_set_update_network_configuration import VirtualMachineScaleSetUpdateNetworkConfiguration
 from .virtual_machine_scale_set_network_profile import VirtualMachineScaleSetNetworkProfile
+from .virtual_machine_scale_set_update_network_profile import VirtualMachineScaleSetUpdateNetworkProfile
 from .virtual_machine_scale_set_extension import VirtualMachineScaleSetExtension
 from .virtual_machine_scale_set_extension_profile import VirtualMachineScaleSetExtensionProfile
 from .virtual_machine_scale_set_vm_profile import VirtualMachineScaleSetVMProfile
+from .virtual_machine_scale_set_update_vm_profile import VirtualMachineScaleSetUpdateVMProfile
 from .virtual_machine_scale_set import VirtualMachineScaleSet
+from .virtual_machine_scale_set_update import VirtualMachineScaleSetUpdate
 from .virtual_machine_scale_set_vm_instance_ids import VirtualMachineScaleSetVMInstanceIDs
 from .virtual_machine_scale_set_vm_instance_required_ids import VirtualMachineScaleSetVMInstanceRequiredIDs
 from .virtual_machine_status_code_count import VirtualMachineStatusCodeCount
@@ -101,6 +110,7 @@ from .inner_error import InnerError
 from .api_error import ApiError
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
 from .resource import Resource
+from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
 from .operation_status_response import OperationStatusResponse
 from .disk_sku import DiskSku
@@ -224,21 +234,30 @@ __all__ = [
     'ResourceSkuRestrictions',
     'ResourceSku',
     'VirtualMachineScaleSetOSProfile',
+    'VirtualMachineScaleSetUpdateOSProfile',
     'VirtualMachineScaleSetManagedDiskParameters',
     'VirtualMachineScaleSetOSDisk',
+    'VirtualMachineScaleSetUpdateOSDisk',
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetStorageProfile',
+    'VirtualMachineScaleSetUpdateStorageProfile',
     'ApiEntityReference',
     'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings',
     'VirtualMachineScaleSetPublicIPAddressConfiguration',
+    'VirtualMachineScaleSetUpdatePublicIPAddressConfiguration',
     'VirtualMachineScaleSetIPConfiguration',
+    'VirtualMachineScaleSetUpdateIPConfiguration',
     'VirtualMachineScaleSetNetworkConfigurationDnsSettings',
     'VirtualMachineScaleSetNetworkConfiguration',
+    'VirtualMachineScaleSetUpdateNetworkConfiguration',
     'VirtualMachineScaleSetNetworkProfile',
+    'VirtualMachineScaleSetUpdateNetworkProfile',
     'VirtualMachineScaleSetExtension',
     'VirtualMachineScaleSetExtensionProfile',
     'VirtualMachineScaleSetVMProfile',
+    'VirtualMachineScaleSetUpdateVMProfile',
     'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetUpdate',
     'VirtualMachineScaleSetVMInstanceIDs',
     'VirtualMachineScaleSetVMInstanceRequiredIDs',
     'VirtualMachineStatusCodeCount',
@@ -254,6 +273,7 @@ __all__ = [
     'ApiError',
     'ComputeLongRunningOperationProperties',
     'Resource',
+    'UpdateResource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
     'DiskSku',
