@@ -3,6 +3,18 @@
 Release History
 ===============
 
+3.0.0 (2017-XX-XX)
+
+**Features**
+
+- TBD
+
+**Breaking changes**
+
+- "azure.mgmt.compute.compute" namespace is now simply "azure.mgmt.compute". If you were
+  already using "azure.mgmt.compute" before, you code should still work exactly the same.
+- ContainerService has now be removed and exported in azure-mgmt-containerservice
+
 2.1.0 (2017-07-19)
 ++++++++++++++++++
 
