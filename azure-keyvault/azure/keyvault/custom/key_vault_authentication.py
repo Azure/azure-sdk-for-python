@@ -123,7 +123,11 @@ class KeyVaultAuthBase(AuthBase):
             challenge.get_authorization_server(),
             challenge.get_resource(),
             challenge.get_scope())
-        request.headers['Authorization'] = '{} {}'.format(auth[0], auth[1])
+
+        # Due to limitations in the service we hard code the auth scheme to 'Bearer' as the service will fail with any other
+        # scheme or a different casing such as 'bearer', once this is fixed the following line should be replace with:
+        # request.headers['Authorization'] = '{} {}'.format(auth[0], auth[1])
+        request.headers['Authorization'] = '{} {}'.format('Bearer', auth[1])
 
 
 class KeyVaultAuthentication(OAuthTokenAuthentication):
