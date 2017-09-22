@@ -73,9 +73,6 @@ class LoadBalancer(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    :param zones: A list of availability zones denoting the IP allocated for
-     the resource needs to come from.
-    :type zones: list of str
     """
 
     _validation = {
@@ -99,10 +96,9 @@ class LoadBalancer(Resource):
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None, zones=None):
+    def __init__(self, id=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
         super(LoadBalancer, self).__init__(id=id, location=location, tags=tags)
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
@@ -114,4 +110,3 @@ class LoadBalancer(Resource):
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
-        self.zones = zones
