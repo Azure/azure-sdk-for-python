@@ -560,7 +560,7 @@
       "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus",
       "build_dir": "azure-mgmt-servicebus"
     },
-    "servicefabric": {
+    "servicefabric.data": {
       "markdown": "specification/servicefabric/data-plane/readme.md",
       "autorest_options": {
         "namespace": "azure.servicefabric",
