@@ -3,11 +3,12 @@
 Release History
 ===============
 
-3.0.0 (2017-XX-XX)
+3.0.0rc1 (2017-09-22)
++++++++++++++++++++++
 
 **Features**
 
-- TBD
+- Availability Zones
 
 **Breaking changes**
 
