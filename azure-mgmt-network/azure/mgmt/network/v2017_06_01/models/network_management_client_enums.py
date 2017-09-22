@@ -208,6 +208,7 @@ class ExpressRouteCircuitSkuTier(Enum):
 
     standard = "Standard"
     premium = "Premium"
+    transport = "Transport"
 
 
 class ExpressRouteCircuitSkuFamily(Enum):

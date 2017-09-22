@@ -58,6 +58,9 @@ class FrontendIPConfiguration(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
+    :param zones: A list of availability zones denoting the IP allocated for
+     the resource needs to come from.
+    :type zones: list of str
     """
 
     _validation = {
@@ -80,9 +83,10 @@ class FrontendIPConfiguration(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, zones=None):
         super(FrontendIPConfiguration, self).__init__(id=id)
         self.inbound_nat_rules = None
         self.inbound_nat_pools = None
@@ -95,3 +99,4 @@ class FrontendIPConfiguration(SubResource):
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
+        self.zones = zones
