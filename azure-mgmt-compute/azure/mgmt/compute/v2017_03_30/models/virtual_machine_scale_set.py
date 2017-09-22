@@ -60,6 +60,8 @@ class VirtualMachineScaleSet(Resource):
      configured.
     :type identity: :class:`VirtualMachineScaleSetIdentity
      <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetIdentity>`
+    :param zones: The virtual machine scale set zones.
+    :type zones: list of str
     """
 
     _validation = {
@@ -86,9 +88,10 @@ class VirtualMachineScaleSet(Resource):
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
+    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None, zones=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.plan = plan
@@ -99,3 +102,4 @@ class VirtualMachineScaleSet(Resource):
         self.unique_id = None
         self.single_placement_group = single_placement_group
         self.identity = identity
+        self.zones = zones

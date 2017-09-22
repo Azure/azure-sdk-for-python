@@ -95,6 +95,8 @@ class VirtualMachine(Resource):
     :param identity: The identity of the virtual machine, if configured.
     :type identity: :class:`VirtualMachineIdentity
      <azure.mgmt.compute.v2017_03_30.models.VirtualMachineIdentity>`
+    :param zones: The virtual machine zones.
+    :type zones: list of str
     """
 
     _validation = {
@@ -127,9 +129,10 @@ class VirtualMachine(Resource):
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, identity=None):
+    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, identity=None, zones=None):
         super(VirtualMachine, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -144,3 +147,4 @@ class VirtualMachine(Resource):
         self.vm_id = None
         self.resources = None
         self.identity = identity
+        self.zones = zones

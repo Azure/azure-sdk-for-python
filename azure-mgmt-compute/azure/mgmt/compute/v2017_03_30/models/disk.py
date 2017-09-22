@@ -34,6 +34,8 @@ class Disk(Resource):
     :param sku:
     :type sku: :class:`DiskSku
      <azure.mgmt.compute.v2017_03_30.models.DiskSku>`
+    :param zones: The Logical zone list for Disk.
+    :type zones: list of str
     :ivar time_created: The time when the disk was created.
     :vartype time_created: datetime
     :param os_type: The Operating System type. Possible values include:
@@ -76,6 +78,7 @@ class Disk(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'DiskSku'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
@@ -84,10 +87,11 @@ class Disk(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, creation_data, tags=None, sku=None, os_type=None, disk_size_gb=None, encryption_settings=None):
+    def __init__(self, location, creation_data, tags=None, sku=None, zones=None, os_type=None, disk_size_gb=None, encryption_settings=None):
         super(Disk, self).__init__(location=location, tags=tags)
         self.managed_by = None
         self.sku = sku
+        self.zones = zones
         self.time_created = None
         self.os_type = os_type
         self.creation_data = creation_data
