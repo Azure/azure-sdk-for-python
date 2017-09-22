@@ -77,10 +77,6 @@ from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoute
 from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
-from .error_model_error import ErrorModelError
-from .error_model import ErrorModel, ErrorModelException
-from .express_route_connector_return_object import ExpressRouteConnectorReturnObject
-from .express_route_connector import ExpressRouteConnector
 from .frontend_ip_configuration import FrontendIPConfiguration
 from .load_balancing_rule import LoadBalancingRule
 from .probe import Probe
@@ -171,7 +167,6 @@ from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthor
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
-from .express_route_connector_return_object_paged import ExpressRouteConnectorReturnObjectPaged
 from .load_balancer_paged import LoadBalancerPaged
 from .backend_address_pool_paged import BackendAddressPoolPaged
 from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
@@ -334,10 +329,6 @@ __all__ = [
     'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
-    'ErrorModelError',
-    'ErrorModel', 'ErrorModelException',
-    'ExpressRouteConnectorReturnObject',
-    'ExpressRouteConnector',
     'FrontendIPConfiguration',
     'LoadBalancingRule',
     'Probe',
@@ -428,7 +419,6 @@ __all__ = [
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
-    'ExpressRouteConnectorReturnObjectPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',

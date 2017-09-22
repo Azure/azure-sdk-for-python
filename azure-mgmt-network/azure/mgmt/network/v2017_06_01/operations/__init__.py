@@ -15,9 +15,6 @@ from .express_route_circuit_authorizations_operations import ExpressRouteCircuit
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from .express_route_connector_operations import ExpressRouteConnectorOperations
-from .express_route_connectors_operations import ExpressRouteConnectorsOperations
-from .express_route_circuit_connectors_operations import ExpressRouteCircuitConnectorsOperations
 from .load_balancers_operations import LoadBalancersOperations
 from .load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -54,9 +51,6 @@ __all__ = [
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
-    'ExpressRouteConnectorOperations',
-    'ExpressRouteConnectorsOperations',
-    'ExpressRouteCircuitConnectorsOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',
     'LoadBalancerFrontendIPConfigurationsOperations',

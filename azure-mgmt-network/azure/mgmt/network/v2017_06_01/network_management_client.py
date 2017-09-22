@@ -23,9 +23,6 @@ from .operations.express_route_circuit_authorizations_operations import ExpressR
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from .operations.express_route_connector_operations import ExpressRouteConnectorOperations
-from .operations.express_route_connectors_operations import ExpressRouteConnectorsOperations
-from .operations.express_route_circuit_connectors_operations import ExpressRouteCircuitConnectorsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -111,12 +108,6 @@ class NetworkManagementClient(object):
     :vartype express_route_circuits: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
     :vartype express_route_service_providers: azure.mgmt.network.v2017_06_01.operations.ExpressRouteServiceProvidersOperations
-    :ivar express_route_connector: ExpressRouteConnector operations
-    :vartype express_route_connector: azure.mgmt.network.v2017_06_01.operations.ExpressRouteConnectorOperations
-    :ivar express_route_connectors: ExpressRouteConnectors operations
-    :vartype express_route_connectors: azure.mgmt.network.v2017_06_01.operations.ExpressRouteConnectorsOperations
-    :ivar express_route_circuit_connectors: ExpressRouteCircuitConnectors operations
-    :vartype express_route_circuit_connectors: azure.mgmt.network.v2017_06_01.operations.ExpressRouteCircuitConnectorsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2017_06_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -205,12 +196,6 @@ class NetworkManagementClient(object):
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.express_route_connector = ExpressRouteConnectorOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.express_route_connectors = ExpressRouteConnectorsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.express_route_circuit_connectors = ExpressRouteCircuitConnectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
