@@ -236,7 +236,7 @@
       "markdown": "specification/keyvault/data-plane/readme.md",
       "autorest_options": {
         "namespace": "azure.keyvault",
-        "package-version": "0.3.6"
+        "package-version": "0.3.7"
       },
       "wrapper_filesOrDirs": [
         "custom",

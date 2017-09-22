@@ -2,6 +2,11 @@
 
 Release History
 ===============
+0.3.7 (2017-09-22)
+++++++++++++++++++
+
+* Workaround for Azure Stack ADFS authentication issue https://github.com/Azure/azure-cli/issues/4448
+
 0.3.6 (2017-08-16)
 ++++++++++++++++++
 
