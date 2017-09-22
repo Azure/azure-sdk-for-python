@@ -623,7 +623,7 @@
       "markdown": "specification/batch/data-plane/readme.md",
       "autorest_options": {
         "namespace": "azure.batch",
-        "package-version": "3.1.0"
+        "package-version": "4.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
       "build_dir": "azure-batch",
