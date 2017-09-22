@@ -18,15 +18,15 @@ from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
-from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
-from .operations.app_service_plans_operations import AppServicePlansOperations
-from .operations.certificates_operations import CertificatesOperations
 from .operations.domains_operations import DomainsOperations
-from .operations.recommendations_operations import RecommendationsOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
-from .operations.web_apps_operations import WebAppsOperations
+from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
 from .operations.provider_operations import ProviderOperations
+from .operations.recommendations_operations import RecommendationsOperations
+from .operations.web_apps_operations import WebAppsOperations
+from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
+from .operations.app_service_plans_operations import AppServicePlansOperations
 from . import models
 
 
@@ -66,31 +66,31 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
 
 
 class WebSiteManagementClient(object):
-    """Composite Swagger for WebSite Management Client
+    """WebSite Management Client
 
     :ivar config: Configuration for client.
     :vartype config: WebSiteManagementClientConfiguration
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrders operations
-    :vartype app_service_certificate_orders: .operations.AppServiceCertificateOrdersOperations
-    :ivar app_service_environments: AppServiceEnvironments operations
-    :vartype app_service_environments: .operations.AppServiceEnvironmentsOperations
-    :ivar app_service_plans: AppServicePlans operations
-    :vartype app_service_plans: .operations.AppServicePlansOperations
-    :ivar certificates: Certificates operations
-    :vartype certificates: .operations.CertificatesOperations
+    :vartype app_service_certificate_orders: azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
     :ivar domains: Domains operations
-    :vartype domains: .operations.DomainsOperations
-    :ivar recommendations: Recommendations operations
-    :vartype recommendations: .operations.RecommendationsOperations
+    :vartype domains: azure.mgmt.web.operations.DomainsOperations
     :ivar top_level_domains: TopLevelDomains operations
-    :vartype top_level_domains: .operations.TopLevelDomainsOperations
-    :ivar web_apps: WebApps operations
-    :vartype web_apps: .operations.WebAppsOperations
+    :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.web.operations.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebApps operations
-    :vartype deleted_web_apps: .operations.DeletedWebAppsOperations
+    :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
     :ivar provider: Provider operations
-    :vartype provider: .operations.ProviderOperations
+    :vartype provider: azure.mgmt.web.operations.ProviderOperations
+    :ivar recommendations: Recommendations operations
+    :vartype recommendations: azure.mgmt.web.operations.RecommendationsOperations
+    :ivar web_apps: WebApps operations
+    :vartype web_apps: azure.mgmt.web.operations.WebAppsOperations
+    :ivar app_service_environments: AppServiceEnvironments operations
+    :vartype app_service_environments: azure.mgmt.web.operations.AppServiceEnvironmentsOperations
+    :ivar app_service_plans: AppServicePlans operations
+    :vartype app_service_plans: azure.mgmt.web.operations.AppServicePlansOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -113,23 +113,23 @@ class WebSiteManagementClient(object):
 
         self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.app_service_environments = AppServiceEnvironmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.app_service_plans = AppServicePlansOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.certificates = CertificatesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.top_level_domains = TopLevelDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.web_apps = WebAppsOperations(
+        self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deleted_web_apps = DeletedWebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recommendations = RecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.web_apps = WebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.app_service_environments = AppServiceEnvironmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.app_service_plans = AppServicePlansOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def get_publishing_user(
@@ -143,9 +143,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`User <azure.mgmt.web.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`User <azure.mgmt.web.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-03-01"
@@ -200,9 +202,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`User <azure.mgmt.web.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`User <azure.mgmt.web.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-03-01"
@@ -259,6 +263,8 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`SourceControl
+         <azure.mgmt.web.models.SourceControl>`
         :rtype: :class:`SourceControlPaged
          <azure.mgmt.web.models.SourceControlPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -327,9 +333,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-03-01"
@@ -398,10 +406,13 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ResourceNameAvailability
+         <azure.mgmt.web.models.ResourceNameAvailability>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ResourceNameAvailability
-         <azure.mgmt.web.models.ResourceNameAvailability>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.web.models.ResourceNameAvailability>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
@@ -471,6 +482,8 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`GeoRegion
+         <azure.mgmt.web.models.GeoRegion>`
         :rtype: :class:`GeoRegionPaged <azure.mgmt.web.models.GeoRegionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -541,6 +554,8 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`PremierAddOnOffer
+         <azure.mgmt.web.models.PremierAddOnOffer>`
         :rtype: :class:`PremierAddOnOfferPaged
          <azure.mgmt.web.models.PremierAddOnOfferPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -608,9 +623,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SkuInfos <azure.mgmt.web.models.SkuInfos>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`SkuInfos <azure.mgmt.web.models.SkuInfos>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`SkuInfos <azure.mgmt.web.models.SkuInfos>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-03-01"
@@ -656,6 +673,77 @@ class WebSiteManagementClient(object):
 
         return deserialized
 
+    def verify_hosting_environment_vnet(
+            self, parameters, custom_headers=None, raw=False, **operation_config):
+        """Verifies if this VNET is compatible with an App Service Environment.
+
+        Verifies if this VNET is compatible with an App Service Environment by
+        analyzing the Network Security Group rules.
+
+        :param parameters: VNET information
+        :type parameters: :class:`VnetParameters
+         <azure.mgmt.web.models.VnetParameters>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`VnetValidationFailureDetails
+         <azure.mgmt.web.models.VnetValidationFailureDetails>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`VnetValidationFailureDetails
+         <azure.mgmt.web.models.VnetValidationFailureDetails>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2016-03-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VnetParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VnetValidationFailureDetails', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Move resources between resource groups.
@@ -674,9 +762,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
@@ -686,7 +776,7 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -739,10 +829,13 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ValidateResponse
+         <azure.mgmt.web.models.ValidateResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ValidateResponse
-         <azure.mgmt.web.models.ValidateResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.web.models.ValidateResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-03-01"
@@ -750,7 +843,7 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -811,9 +904,11 @@ class WebSiteManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
@@ -823,7 +918,7 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

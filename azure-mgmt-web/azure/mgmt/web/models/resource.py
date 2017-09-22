@@ -13,28 +13,30 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Azure resource.
+    """Azure resource. This resource is tracked in Azure Resource Manager.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,10 +48,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
+    def __init__(self, location, kind=None, tags=None):
         self.id = None
-        self.name = name
+        self.name = None
         self.kind = kind
         self.location = location
-        self.type = type
+        self.type = None
         self.tags = tags

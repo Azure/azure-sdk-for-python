@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteLogsConfig(Resource):
+class SiteLogsConfig(ProxyOnlyResource):
     """Configuration of App Service site logs.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class SiteLogsConfig(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param application_logs: Application logs configuration.
     :type application_logs: :class:`ApplicationLogsConfig
      <azure.mgmt.web.models.ApplicationLogsConfig>`
@@ -46,24 +42,23 @@ class SiteLogsConfig(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig'},
         'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig'},
         'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig'},
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
-        super(SiteLogsConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
+        super(SiteLogsConfig, self).__init__(kind=kind)
         self.application_logs = application_logs
         self.http_logs = http_logs
         self.failed_requests_tracing = failed_requests_tracing
