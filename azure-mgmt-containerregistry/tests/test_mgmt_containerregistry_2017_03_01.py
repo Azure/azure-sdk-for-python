@@ -25,7 +25,7 @@ from devtools_testutils import (
 
 
 FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
+    name='pyacr',
     id=''
 )
 
@@ -47,7 +47,7 @@ class MgmtACRTest20170301(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    @StorageAccountPreparer(name_prefix='pyacrstorage', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacr', location=DEFAULT_LOCATION, playback_fake_resource=FAKE_STORAGE)
     def test_basic_registry(self, resource_group, location, storage_account, storage_account_key):
         registry_name = self.get_resource_name('pyacr')
 
