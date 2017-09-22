@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_metrics_operations import UsageMetricsOperations
-from .operations.event_categories_operations import EventCategoriesOperations
 from .operations.activity_logs_operations import ActivityLogsOperations
+from .operations.event_categories_operations import EventCategoriesOperations
 from .operations.tenant_activity_logs_operations import TenantActivityLogsOperations
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
@@ -57,17 +57,17 @@ class MonitorClientConfiguration(AzureConfiguration):
 
 
 class MonitorClient(object):
-    """Composite Swagger for Monitor Client
+    """Monitor Client
 
     :ivar config: Configuration for client.
     :vartype config: MonitorClientConfiguration
 
     :ivar usage_metrics: UsageMetrics operations
     :vartype usage_metrics: azure.monitor.operations.UsageMetricsOperations
-    :ivar event_categories: EventCategories operations
-    :vartype event_categories: azure.monitor.operations.EventCategoriesOperations
     :ivar activity_logs: ActivityLogs operations
     :vartype activity_logs: azure.monitor.operations.ActivityLogsOperations
+    :ivar event_categories: EventCategories operations
+    :vartype event_categories: azure.monitor.operations.EventCategoriesOperations
     :ivar tenant_activity_logs: TenantActivityLogs operations
     :vartype tenant_activity_logs: azure.monitor.operations.TenantActivityLogsOperations
     :ivar metric_definitions: MetricDefinitions operations
@@ -95,9 +95,9 @@ class MonitorClient(object):
 
         self.usage_metrics = UsageMetricsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.event_categories = EventCategoriesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.activity_logs = ActivityLogsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.event_categories = EventCategoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tenant_activity_logs = TenantActivityLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)

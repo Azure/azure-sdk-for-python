@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class MetricPaged(Paged):
-    """
-    A paging container for iterating over a list of Metric object
+class DiagnosticSettingsResourceCollection(Model):
+    """Represents a collection of alert rule resources.
+
+    :param value: The collection of diagnostic settings resources;.
+    :type value: list of :class:`DiagnosticSettingsResource
+     <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Metric]'}
+        'value': {'key': 'value', 'type': '[DiagnosticSettingsResource]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(MetricPaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None):
+        self.value = value
