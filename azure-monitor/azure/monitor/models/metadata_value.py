@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class LocalizableString(Model):
-    """The localizable string class.
+class MetadataValue(Model):
+    """Represents a metric metadata value.
 
-    :param value: the invariant value.
+    :param name: the name of the metadata.
+    :type name: :class:`LocalizableString
+     <azure.monitor.models.LocalizableString>`
+    :param value: the value of the metadata.
     :type value: str
-    :param localized_value: the locale specific value.
-    :type localized_value: str
     """
 
-    _validation = {
-        'value': {'required': True},
-    }
-
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'LocalizableString'},
         'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value, localized_value=None):
+    def __init__(self, name=None, value=None):
+        self.name = name
         self.value = value
-        self.localized_value = localized_value

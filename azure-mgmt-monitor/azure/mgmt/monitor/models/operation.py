@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class LocalizableString(Model):
-    """The localizable string class.
+class Operation(Model):
+    """Microsoft Insights API operation definition.
 
-    :param value: the invariant value.
-    :type value: str
-    :param localized_value: the locale specific value.
-    :type localized_value: str
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: Display metadata associated with the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.monitor.models.OperationDisplay>`
     """
 
-    _validation = {
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, value, localized_value=None):
-        self.value = value
-        self.localized_value = localized_value
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display
