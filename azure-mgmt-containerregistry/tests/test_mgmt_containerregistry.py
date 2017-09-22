@@ -35,7 +35,7 @@ FAKE_STORAGE = FakeStorageAccount(
 )
 
 DEFAULT_LOCATION = 'westcentralus'
-DEFAULT_REPLICATION_LOCATION = 'centraluseuap'
+DEFAULT_REPLICATION_LOCATION = 'southcentralus'
 DEFAULT_WEBHOOK_SERVICE_URI = 'http://www.microsoft.com'
 DEFAULT_WEBHOOK_SCOPE = 'hello-world'
 DEFAULT_KEY_VALUE_PAIR = {
@@ -146,7 +146,7 @@ class MgmtACRTest(AzureMgmtTestCase):
             usages = self.client.registries.list_usages(resource_group_name, registry_name)
             self.assertTrue(len(usages.value) > 1)
 
-        self.client.registries.delete(resource_group_name, registry_name)
+        self.client.registries.delete(resource_group_name, registry_name).wait()
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
@@ -224,8 +224,8 @@ class MgmtACRTest(AzureMgmtTestCase):
         self.client.webhooks.ping(resource_group.name, registry_name, webhook_name)
         self.client.webhooks.list_events(resource_group.name, registry_name, webhook_name)
 
-        self.client.webhooks.delete(resource_group.name, registry_name, webhook_name)
-        self.client.registries.delete(resource_group.name, registry_name)
+        self.client.webhooks.delete(resource_group.name, registry_name, webhook_name).wait()
+        self.client.registries.delete(resource_group.name, registry_name).wait()
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
@@ -280,8 +280,8 @@ class MgmtACRTest(AzureMgmtTestCase):
         self.assertEqual(replication.name, replication_name)
         self.assertEqual(replication.tags, DEFAULT_KEY_VALUE_PAIR)
 
-        self.client.replications.delete(resource_group.name, registry_name, replication_name)
-        self.client.registries.delete(resource_group.name, registry_name)
+        self.client.replications.delete(resource_group.name, registry_name, replication_name).wait()
+        self.client.registries.delete(resource_group.name, registry_name).wait()
 
 
 #------------------------------------------------------------------------------
