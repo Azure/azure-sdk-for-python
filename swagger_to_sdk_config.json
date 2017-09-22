@@ -155,6 +155,15 @@
       "build_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_06_01_preview",
       "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_06_01_preview"
     },
+    "datafactory": {
+      "markdown": "specification/datafactory/resource-manager/readme.md",
+      "autorest_options": {
+        "namespace": "azure.mgmt.datafactory",
+        "package-version": "0.2.0"
+      },
+      "output_dir": "azure-mgmt-datafactory/azure/mgmt/datafactory",
+      "build_dir": "azure-mgmt-datafactory"
+    },
     "devtestlabs": {
       "markdown": "specification/devtestlabs/resource-manager/readme.md",
       "autorest_options": {
