@@ -120,6 +120,13 @@
 			"azure.mgmt.containerregistry.v2017_06_01_preview"
 		]
 	},
+	"azure-mgmt-datafactory": {
+		"service_name": "Data Factory",
+		"category ": "Management",
+		"namespaces": [
+			"azure.mgmt.datafactory"
+		]
+	},
 	"azure-mgmt-datalake-analytics": {
 		"service_name": "Data Lake Analytics",
 		"category ": "Management",
