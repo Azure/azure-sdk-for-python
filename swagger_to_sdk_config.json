@@ -561,8 +561,8 @@
       "build_dir": "azure-mgmt-servicebus"
     },
     "servicefabric.data": {
-      "markdown": "specification/servicefabric/data-plane/readme.md",
       "autorest_options": {
+        "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/6.0/servicefabric.json",
         "namespace": "azure.servicefabric",
         "package-version": "6.0",
         "azure-arm": false
