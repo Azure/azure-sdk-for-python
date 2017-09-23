@@ -29,8 +29,8 @@ class ApplicationHealthStateFilter(Model):
      If not specified, all applications are matched against the other filter
      members, like health state filter.
     :type application_name_filter: str
-    :param application_type_name_filter: The name of the application type
-     that matches the filter.
+    :param application_type_name_filter: The name of the application type that
+     matches the filter.
      If specified, the filter is applied only to applications of the selected
      application type, if any exists.
      If no applications of the specified application type exists, no
@@ -54,16 +54,16 @@ class ApplicationHealthStateFilter(Model):
      For example, if the provided value is 6, it matches applications with
      HealthState value of OK (2) and Warning (4).
      - Default - Default value. Matches any HealthState. The value is zero.
-     - None - Filter that doesn't match any HealthState value. Used in order
-     to return no results on a given collection of states. The value is 1.
+     - None - Filter that doesn't match any HealthState value. Used in order to
+     return no results on a given collection of states. The value is 1.
      - Ok - Filter that matches input with HealthState value Ok. The value is
      2.
      - Warning - Filter that matches input with HealthState value Warning. The
      value is 4.
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
-     - All - Filter that matches input with any HealthState value. The value
-     is 65535.
+     - All - Filter that matches input with any HealthState value. The value is
+     65535.
      . Default value: 0 .
     :type health_state_filter: int
     :param service_filters: Defines a list of filters that specify which
@@ -71,8 +71,8 @@ class ApplicationHealthStateFilter(Model):
      of the application. The services are returned only if the parent
      application matches a filter.
      If the list is empty, no services are returned. All the services are used
-     to evaluate the parent application aggregated health state, regardless
-     of the input filters.
+     to evaluate the parent application aggregated health state, regardless of
+     the input filters.
      The application filter may specify multiple service filters.
      For example, it can specify a filter to return all services with health
      state Error and another filter to always include a service identified by
@@ -80,10 +80,9 @@ class ApplicationHealthStateFilter(Model):
     :type service_filters: list of :class:`ServiceHealthStateFilter
      <azure.servicefabric.models.ServiceHealthStateFilter>`
     :param deployed_application_filters: Defines a list of filters that
-     specify which deployed applications to be included in the returned
-     cluster health chunk as children of the application. The deployed
-     applications are returned only if the parent application matches a
-     filter.
+     specify which deployed applications to be included in the returned cluster
+     health chunk as children of the application. The deployed applications are
+     returned only if the parent application matches a filter.
      If the list is empty, no deployed applications are returned. All the
      deployed applications are used to evaluate the parent application
      aggregated health state, regardless of the input filters.
@@ -94,7 +93,7 @@ class ApplicationHealthStateFilter(Model):
     :type deployed_application_filters: list of
      :class:`DeployedApplicationHealthStateFilter
      <azure.servicefabric.models.DeployedApplicationHealthStateFilter>`
-    """ 
+    """
 
     _attribute_map = {
         'application_name_filter': {'key': 'ApplicationNameFilter', 'type': 'str'},

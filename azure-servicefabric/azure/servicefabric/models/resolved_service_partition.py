@@ -24,10 +24,10 @@ class ResolvedServicePartition(Model):
     :type endpoints: list of :class:`ResolvedServiceEndpoint
      <azure.servicefabric.models.ResolvedServiceEndpoint>`
     :param version: The version of this resolved service partition result.
-     This version should be passed in the next time the ResolveService call
-     is made via the PreviousRspVersion query parameter.
+     This version should be passed in the next time the ResolveService call is
+     made via the PreviousRspVersion query parameter.
     :type version: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

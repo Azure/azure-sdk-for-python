@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class ApplicationMetricDescription(Model):
-    """Describes capacity information for a custom resource balancing metric.
-    This can be used to limit the total consumption of this metric by the
-    services of this application.
+    """Describes capacity information for a custom resource balancing metric. This
+    can be used to limit the total consumption of this metric by the services
+    of this application.
     .
 
     :param name: The name of the metric.
@@ -36,10 +36,10 @@ class ApplicationMetricDescription(Model):
     :type maximum_capacity: long
     :param reservation_capacity: The node reservation capacity for Service
      Fabric application.
-     This is the amount of load which is reserved on nodes which have
-     instances of this application.
-     If MinimumNodes is specified, then the product of these values will be
-     the capacity reserved in the cluster for the application.
+     This is the amount of load which is reserved on nodes which have instances
+     of this application.
+     If MinimumNodes is specified, then the product of these values will be the
+     capacity reserved in the cluster for the application.
      If set to zero, no capacity is reserved for this metric.
      When setting application capacity or when updating application capacity;
      this value must be smaller than or equal to MaximumCapacity for each
@@ -51,10 +51,10 @@ class ApplicationMetricDescription(Model):
      Service Fabric will try to limit the sum of loads of services within the
      application to this value.
      When creating a new application with application capacity defined, the
-     product of MaximumNodes and MaximumCapacity must always be smaller than
-     or equal to this value.
+     product of MaximumNodes and MaximumCapacity must always be smaller than or
+     equal to this value.
     :type total_application_capacity: long
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

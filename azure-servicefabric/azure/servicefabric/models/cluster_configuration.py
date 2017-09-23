@@ -18,7 +18,7 @@ class ClusterConfiguration(Model):
     :param cluster_configuration: The contents of the cluster configuration
      file.
     :type cluster_configuration: str
-    """ 
+    """
 
     _attribute_map = {
         'cluster_configuration': {'key': 'ClusterConfiguration', 'type': 'str'},

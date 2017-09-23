@@ -20,11 +20,11 @@ class OperationStatus(Model):
     :type operation_id: str
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
+    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param type: Possible values include: 'Invalid', 'PartitionDataLoss',
      'PartitionQuorumLoss', 'PartitionRestart', 'NodeTransition'
-    :type type: str
-    """ 
+    :type type: str or :class:`enum <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'operation_id': {'key': 'OperationId', 'type': 'str'},

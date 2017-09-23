@@ -17,18 +17,18 @@ class HealthStatistics(Model):
     result when the query description is configured to include statistics.
     The statistics include health state counts for all children types of the
     current entity.
-    For example, for cluster, the health statistics include health state
-    counts for nodes, applications, services, partitions, replicas, deployed
+    For example, for cluster, the health statistics include health state counts
+    for nodes, applications, services, partitions, replicas, deployed
     applications and deployed service packages.
     For partition, the health statistics include health counts for replicas.
     .
 
     :param health_state_count_list: List of health state counts per entity
-     kind, which keeps track of how many children of the queried entity are
-     in Ok, Warning and Error state.
+     kind, which keeps track of how many children of the queried entity are in
+     Ok, Warning and Error state.
     :type health_state_count_list: list of :class:`EntityKindHealthStateCount
      <azure.servicefabric.models.EntityKindHealthStateCount>`
-    """ 
+    """
 
     _attribute_map = {
         'health_state_count_list': {'key': 'HealthStateCountList', 'type': '[EntityKindHealthStateCount]'},

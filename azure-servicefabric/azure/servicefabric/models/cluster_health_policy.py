@@ -36,11 +36,10 @@ class ClusterHealthPolicy(Model):
      . Default value: 0 .
     :type max_percent_unhealthy_nodes: int
     :param max_percent_unhealthy_applications: The maximum allowed percentage
-     of unhealthy applications before reporting an error. For example, to
-     allow 10% of applications to be unhealthy, this value would be 10.
-     The percentage represents the maximum tolerated percentage of
-     applications that can be unhealthy before the cluster is considered in
-     error.
+     of unhealthy applications before reporting an error. For example, to allow
+     10% of applications to be unhealthy, this value would be 10.
+     The percentage represents the maximum tolerated percentage of applications
+     that can be unhealthy before the cluster is considered in error.
      If the percentage is respected but there is at least one unhealthy
      application, the health is evaluated as Warning.
      This is calculated by dividing the number of unhealthy applications over
@@ -55,7 +54,7 @@ class ClusterHealthPolicy(Model):
     :type application_type_health_policy_map: list of
      :class:`ApplicationTypeHealthPolicyMapItem
      <azure.servicefabric.models.ApplicationTypeHealthPolicyMapItem>`
-    """ 
+    """
 
     _attribute_map = {
         'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},

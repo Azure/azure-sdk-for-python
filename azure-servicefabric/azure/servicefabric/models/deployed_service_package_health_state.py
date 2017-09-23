@@ -18,7 +18,8 @@ class DeployedServicePackageHealthState(EntityHealthState):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param node_name:
     :type node_name: str
     :param application_name:
@@ -27,7 +28,7 @@ class DeployedServicePackageHealthState(EntityHealthState):
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},

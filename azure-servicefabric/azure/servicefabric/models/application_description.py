@@ -27,7 +27,7 @@ class ApplicationDescription(Model):
     :param application_capacity:
     :type application_capacity: :class:`ApplicationCapacityDescription
      <azure.servicefabric.models.ApplicationCapacityDescription>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

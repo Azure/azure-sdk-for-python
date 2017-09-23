@@ -20,7 +20,7 @@ class SafetyCheckWrapper(Model):
     :param safety_check:
     :type safety_check: :class:`SafetyCheck
      <azure.servicefabric.models.SafetyCheck>`
-    """ 
+    """
 
     _attribute_map = {
         'safety_check': {'key': 'SafetyCheck', 'type': 'SafetyCheck'},

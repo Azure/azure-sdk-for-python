@@ -19,11 +19,12 @@ class NodeUpgradeProgressInfo(Model):
     :type node_name: str
     :param upgrade_phase: Possible values include: 'Invalid',
      'PreUpgradeSafetyCheck', 'Upgrading', 'PostUpgradeSafetyCheck'
-    :type upgrade_phase: str
+    :type upgrade_phase: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param pending_safety_checks:
     :type pending_safety_checks: list of :class:`SafetyCheckWrapper
      <azure.servicefabric.models.SafetyCheckWrapper>`
-    """ 
+    """
 
     _attribute_map = {
         'node_name': {'key': 'NodeName', 'type': 'str'},

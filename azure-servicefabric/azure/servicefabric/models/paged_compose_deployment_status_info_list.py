@@ -12,22 +12,22 @@
 from msrest.serialization import Model
 
 
-class PagedComposeApplicationStatusInfoList(Model):
-    """The list of compose applications in the cluster. The list is paged when
-    all of the results cannot fit in a single message. The next set of
-    results can be obtained by executing the same query with the continuation
-    token provided in this list.
+class PagedComposeDeploymentStatusInfoList(Model):
+    """The list of compose deployments in the cluster. The list is paged when all
+    of the results cannot fit in a single message. The next set of results can
+    be obtained by executing the same query with the continuation token
+    provided in this list.
 
     :param continuation_token:
     :type continuation_token: str
     :param items:
-    :type items: list of :class:`ComposeApplicationStatusInfo
-     <azure.servicefabric.models.ComposeApplicationStatusInfo>`
-    """ 
+    :type items: list of :class:`ComposeDeploymentStatusInfo
+     <azure.servicefabric.models.ComposeDeploymentStatusInfo>`
+    """
 
     _attribute_map = {
         'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ComposeApplicationStatusInfo]'},
+        'items': {'key': 'Items', 'type': '[ComposeDeploymentStatusInfo]'},
     }
 
     def __init__(self, continuation_token=None, items=None):

@@ -17,34 +17,35 @@ class ServicePartitionInfo(Model):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param partition_status: Possible values include: 'Invalid', 'Ready',
      'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str
+    :type partition_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param partition_information:
     :type partition_information: :class:`PartitionInformation
      <azure.servicefabric.models.PartitionInformation>`
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
+        'service_kind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
     }
 
     def __init__(self, health_state=None, partition_status=None, partition_information=None):
         self.health_state = health_state
         self.partition_status = partition_status
         self.partition_information = partition_information
-        self.ServiceKind = None
+        self.service_kind = None

@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class DeployedApplicationHealthStateChunkList(Model):
-    """The list of deployed application health state chunks that respect the
-    input filters in the chunk query. Returned by get cluster health state
-    chunks query.
+    """The list of deployed application health state chunks that respect the input
+    filters in the chunk query. Returned by get cluster health state chunks
+    query.
     .
 
     :param items: The list of deployed application health state chunks that
      respect the input filters in the chunk query.
     :type items: list of :class:`DeployedApplicationHealthStateChunk
      <azure.servicefabric.models.DeployedApplicationHealthStateChunk>`
-    """ 
+    """
 
     _attribute_map = {
         'items': {'key': 'Items', 'type': '[DeployedApplicationHealthStateChunk]'},

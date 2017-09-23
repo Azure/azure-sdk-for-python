@@ -17,7 +17,7 @@ class FabricCodeVersionInfo(Model):
 
     :param code_version: The product version of Service Fabric.
     :type code_version: str
-    """ 
+    """
 
     _attribute_map = {
         'code_version': {'key': 'CodeVersion', 'type': 'str'},

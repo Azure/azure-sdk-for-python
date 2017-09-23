@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class RemoteReplicatorAcknowledgementStatus(Model):
-    """Provides details about the remote replicators from the primary
-    replicator's point of view.
+    """Provides details about the remote replicators from the primary replicator's
+    point of view.
 
     :param replication_stream_acknowledgement_detail:
     :type replication_stream_acknowledgement_detail:
@@ -24,7 +24,7 @@ class RemoteReplicatorAcknowledgementStatus(Model):
     :type copy_stream_acknowledgement_detail:
      :class:`RemoteReplicatorAcknowledgementDetail
      <azure.servicefabric.models.RemoteReplicatorAcknowledgementDetail>`
-    """ 
+    """
 
     _attribute_map = {
         'replication_stream_acknowledgement_detail': {'key': 'ReplicationStreamAcknowledgementDetail', 'type': 'RemoteReplicatorAcknowledgementDetail'},

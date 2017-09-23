@@ -19,24 +19,24 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
 
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param faults:
     :type faults: list of str
-    """ 
+    """
 
     _validation = {
         'time_stamp_utc': {'required': True},
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'faults': {'key': 'Faults', 'type': '[str]'},
     }
 
     def __init__(self, time_stamp_utc, faults=None):
         super(ExecutingFaultsChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
         self.faults = faults
-        self.Kind = 'ExecutingFaults'
+        self.kind = 'ExecutingFaults'

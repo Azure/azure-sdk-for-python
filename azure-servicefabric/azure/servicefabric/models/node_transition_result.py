@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class NodeTransitionResult(Model):
-    """Represents information about an operation in a terminal state (Completed
-    or Faulted).
+    """Represents information about an operation in a terminal state (Completed or
+    Faulted).
 
     :param error_code: If OperationState is Completed, this is 0.  If
      OperationState is Faulted, this is an error code indicating the reason.
@@ -22,7 +22,7 @@ class NodeTransitionResult(Model):
     :param node_result:
     :type node_result: :class:`NodeResult
      <azure.servicefabric.models.NodeResult>`
-    """ 
+    """
 
     _attribute_map = {
         'error_code': {'key': 'ErrorCode', 'type': 'int'},

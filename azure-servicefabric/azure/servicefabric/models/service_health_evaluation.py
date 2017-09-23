@@ -20,27 +20,28 @@ class ServiceHealthEvaluation(HealthEvaluation):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param service_name:
     :type service_name: str
     :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'service_name': {'key': 'ServiceName', 'type': 'str'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
@@ -49,4 +50,4 @@ class ServiceHealthEvaluation(HealthEvaluation):
         super(ServiceHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
         self.service_name = service_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'Service'
+        self.kind = 'Service'
