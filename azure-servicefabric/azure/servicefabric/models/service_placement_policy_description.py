@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class ServicePlacementPolicyDescription(Model):
     """Describes the policy to be used for placement of a Service Fabric service.
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
-    """ 
+    :param type: Polymorphic Discriminator
+    :type type: str
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'Type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
+        'type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
     }
 
     def __init__(self):
-        self.Type = None
+        self.type = None

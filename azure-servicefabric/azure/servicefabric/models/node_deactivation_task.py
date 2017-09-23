@@ -20,8 +20,9 @@ class NodeDeactivationTask(Model):
      <azure.servicefabric.models.NodeDeactivationTaskId>`
     :param node_deactivation_intent: Possible values include: 'Invalid',
      'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str
-    """ 
+    :type node_deactivation_intent: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'node_deactivation_task_id': {'key': 'NodeDeactivationTaskId', 'type': 'NodeDeactivationTaskId'},

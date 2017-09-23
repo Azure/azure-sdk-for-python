@@ -14,13 +14,13 @@ from msrest.serialization import Model
 
 class ClusterHealthChunk(Model):
     """Represents the health chunk of the cluster.
-    Contains the cluster aggregated health state, and the cluster entities
-    that respect the input filter.
+    Contains the cluster aggregated health state, and the cluster entities that
+    respect the input filter.
     .
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param node_health_state_chunks:
     :type node_health_state_chunks: :class:`NodeHealthStateChunkList
      <azure.servicefabric.models.NodeHealthStateChunkList>`
@@ -28,7 +28,7 @@ class ClusterHealthChunk(Model):
     :type application_health_state_chunks:
      :class:`ApplicationHealthStateChunkList
      <azure.servicefabric.models.ApplicationHealthStateChunkList>`
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

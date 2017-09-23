@@ -22,7 +22,7 @@ class ServiceTypeHealthPolicyMapItem(Model):
     :param value:
     :type value: :class:`ServiceTypeHealthPolicy
      <azure.servicefabric.models.ServiceTypeHealthPolicy>`
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},

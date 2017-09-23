@@ -19,14 +19,14 @@ class ApplicationUpgradeUpdateDescription(Model):
     :type name: str
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str
+    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param application_health_policy:
     :type application_health_policy: :class:`ApplicationHealthPolicy
      <azure.servicefabric.models.ApplicationHealthPolicy>`
     :param update_description:
     :type update_description: :class:`RollingUpgradeUpdateDescription
      <azure.servicefabric.models.RollingUpgradeUpdateDescription>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

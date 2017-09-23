@@ -19,7 +19,7 @@ class ResumeApplicationUpgradeDescription(Model):
     :param upgrade_domain_name: The name of the upgrade domain in which to
      resume the upgrade.
     :type upgrade_domain_name: str
-    """ 
+    """
 
     _validation = {
         'upgrade_domain_name': {'required': True},

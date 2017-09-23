@@ -17,11 +17,11 @@ class PartitionDataLossProgress(Model):
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
+    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param invoke_data_loss_result:
     :type invoke_data_loss_result: :class:`InvokeDataLossResult
      <azure.servicefabric.models.InvokeDataLossResult>`
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'State', 'type': 'str'},

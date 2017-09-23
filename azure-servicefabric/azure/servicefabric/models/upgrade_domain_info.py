@@ -17,10 +17,10 @@ class UpgradeDomainInfo(Model):
 
     :param name:
     :type name: str
-    :param state: Possible values include: 'Invalid', 'Pending',
-     'InProgress', 'Completed'
-    :type state: str
-    """ 
+    :param state: Possible values include: 'Invalid', 'Pending', 'InProgress',
+     'Completed'
+    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

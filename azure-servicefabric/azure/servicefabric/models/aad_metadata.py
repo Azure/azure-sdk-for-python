@@ -27,7 +27,7 @@ class AadMetadata(Model):
     :type redirect: str
     :param tenant: The AAD tenant Id.
     :type tenant: str
-    """ 
+    """
 
     _attribute_map = {
         'authority': {'key': 'authority', 'type': 'str'},

@@ -11,40 +11,40 @@
 
 from .aad_metadata import AadMetadata
 from .aad_metadata_object import AadMetadataObject
-from .application_health import ApplicationHealth
 from .service_health_state import ServiceHealthState
 from .deployed_application_health_state import DeployedApplicationHealthState
-from .application_health_evaluation import ApplicationHealthEvaluation
-from .health_evaluation_wrapper import HealthEvaluationWrapper
+from .application_health import ApplicationHealth
 from .health_evaluation import HealthEvaluation
-from .application_health_policies import ApplicationHealthPolicies
-from .application_health_policy_map_item import ApplicationHealthPolicyMapItem
-from .application_health_policy import ApplicationHealthPolicy
+from .health_evaluation_wrapper import HealthEvaluationWrapper
+from .application_health_evaluation import ApplicationHealthEvaluation
 from .service_type_health_policy import ServiceTypeHealthPolicy
 from .service_type_health_policy_map_item import ServiceTypeHealthPolicyMapItem
+from .application_health_policy import ApplicationHealthPolicy
+from .application_health_policy_map_item import ApplicationHealthPolicyMapItem
+from .application_health_policies import ApplicationHealthPolicies
 from .application_health_state import ApplicationHealthState
-from .application_health_state_chunk import ApplicationHealthStateChunk
-from .service_health_state_chunk_list import ServiceHealthStateChunkList
-from .service_health_state_chunk import ServiceHealthStateChunk
-from .partition_health_state_chunk_list import PartitionHealthStateChunkList
-from .partition_health_state_chunk import PartitionHealthStateChunk
-from .replica_health_state_chunk_list import ReplicaHealthStateChunkList
 from .replica_health_state_chunk import ReplicaHealthStateChunk
-from .deployed_application_health_state_chunk_list import DeployedApplicationHealthStateChunkList
-from .deployed_application_health_state_chunk import DeployedApplicationHealthStateChunk
-from .deployed_service_package_health_state_chunk_list import DeployedServicePackageHealthStateChunkList
+from .replica_health_state_chunk_list import ReplicaHealthStateChunkList
+from .partition_health_state_chunk import PartitionHealthStateChunk
+from .partition_health_state_chunk_list import PartitionHealthStateChunkList
+from .service_health_state_chunk import ServiceHealthStateChunk
+from .service_health_state_chunk_list import ServiceHealthStateChunkList
 from .deployed_service_package_health_state_chunk import DeployedServicePackageHealthStateChunk
+from .deployed_service_package_health_state_chunk_list import DeployedServicePackageHealthStateChunkList
+from .deployed_application_health_state_chunk import DeployedApplicationHealthStateChunk
+from .deployed_application_health_state_chunk_list import DeployedApplicationHealthStateChunkList
+from .application_health_state_chunk import ApplicationHealthStateChunk
 from .application_health_state_chunk_list import ApplicationHealthStateChunkList
-from .application_health_state_filter import ApplicationHealthStateFilter
-from .service_health_state_filter import ServiceHealthStateFilter
-from .partition_health_state_filter import PartitionHealthStateFilter
 from .replica_health_state_filter import ReplicaHealthStateFilter
-from .deployed_application_health_state_filter import DeployedApplicationHealthStateFilter
+from .partition_health_state_filter import PartitionHealthStateFilter
+from .service_health_state_filter import ServiceHealthStateFilter
 from .deployed_service_package_health_state_filter import DeployedServicePackageHealthStateFilter
-from .application_info import ApplicationInfo
+from .deployed_application_health_state_filter import DeployedApplicationHealthStateFilter
+from .application_health_state_filter import ApplicationHealthStateFilter
 from .application_parameter import ApplicationParameter
-from .application_load_info import ApplicationLoadInfo
+from .application_info import ApplicationInfo
 from .application_metric_description import ApplicationMetricDescription
+from .application_load_info import ApplicationLoadInfo
 from .application_name_info import ApplicationNameInfo
 from .applications_health_evaluation import ApplicationsHealthEvaluation
 from .application_type_applications_health_evaluation import ApplicationTypeApplicationsHealthEvaluation
@@ -52,31 +52,31 @@ from .application_type_health_policy_map_item import ApplicationTypeHealthPolicy
 from .application_type_info import ApplicationTypeInfo
 from .paged_application_type_info_list import PagedApplicationTypeInfoList
 from .application_type_manifest import ApplicationTypeManifest
-from .application_upgrade_description import ApplicationUpgradeDescription
 from .monitoring_policy_description import MonitoringPolicyDescription
-from .application_upgrade_progress_info import ApplicationUpgradeProgressInfo
+from .application_upgrade_description import ApplicationUpgradeDescription
 from .upgrade_domain_info import UpgradeDomainInfo
-from .current_upgrade_domain_progress_info import CurrentUpgradeDomainProgressInfo
-from .node_upgrade_progress_info import NodeUpgradeProgressInfo
-from .safety_check_wrapper import SafetyCheckWrapper
 from .safety_check import SafetyCheck
+from .safety_check_wrapper import SafetyCheckWrapper
+from .node_upgrade_progress_info import NodeUpgradeProgressInfo
+from .current_upgrade_domain_progress_info import CurrentUpgradeDomainProgressInfo
 from .failure_upgrade_domain_progress_info import FailureUpgradeDomainProgressInfo
+from .application_upgrade_progress_info import ApplicationUpgradeProgressInfo
 from .cluster_configuration import ClusterConfiguration
-from .cluster_health import ClusterHealth
-from .node_health_state import NodeHealthState
 from .node_id import NodeId
-from .cluster_health_chunk import ClusterHealthChunk
-from .node_health_state_chunk_list import NodeHealthStateChunkList
+from .node_health_state import NodeHealthState
+from .cluster_health import ClusterHealth
 from .node_health_state_chunk import NodeHealthStateChunk
-from .cluster_health_chunk_query_description import ClusterHealthChunkQueryDescription
+from .node_health_state_chunk_list import NodeHealthStateChunkList
+from .cluster_health_chunk import ClusterHealthChunk
 from .node_health_state_filter import NodeHealthStateFilter
 from .cluster_health_policy import ClusterHealthPolicy
+from .cluster_health_chunk_query_description import ClusterHealthChunkQueryDescription
 from .cluster_health_policies import ClusterHealthPolicies
 from .cluster_manifest import ClusterManifest
 from .deactivation_intent_description import DeactivationIntentDescription
 from .delta_nodes_check_health_evaluation import DeltaNodesCheckHealthEvaluation
-from .deployed_application_health import DeployedApplicationHealth
 from .deployed_service_package_health_state import DeployedServicePackageHealthState
+from .deployed_application_health import DeployedApplicationHealth
 from .deployed_application_health_evaluation import DeployedApplicationHealthEvaluation
 from .deployed_application_info import DeployedApplicationInfo
 from .deployed_applications_health_evaluation import DeployedApplicationsHealthEvaluation
@@ -84,14 +84,14 @@ from .deployed_service_package_health import DeployedServicePackageHealth
 from .deployed_service_package_health_evaluation import DeployedServicePackageHealthEvaluation
 from .deployed_service_packages_health_evaluation import DeployedServicePackagesHealthEvaluation
 from .deployed_service_replica_info import DeployedServiceReplicaInfo
-from .deployed_stateful_service_replica_info import DeployedStatefulServiceReplicaInfo
 from .reconfiguration_information import ReconfigurationInformation
+from .deployed_stateful_service_replica_info import DeployedStatefulServiceReplicaInfo
 from .deployed_stateless_service_instance_info import DeployedStatelessServiceInstanceInfo
-from .entity_health import EntityHealth
 from .health_event import HealthEvent
-from .health_statistics import HealthStatistics
-from .entity_kind_health_state_count import EntityKindHealthStateCount
 from .health_state_count import HealthStateCount
+from .entity_kind_health_state_count import EntityKindHealthStateCount
+from .health_statistics import HealthStatistics
+from .entity_health import EntityHealth
 from .entity_health_state import EntityHealthState
 from .entity_health_state_chunk import EntityHealthStateChunk
 from .entity_health_state_chunk_list import EntityHealthStateChunkList
@@ -99,41 +99,41 @@ from .epoch import Epoch
 from .event_health_evaluation import EventHealthEvaluation
 from .fabric_code_version_info import FabricCodeVersionInfo
 from .fabric_config_version_info import FabricConfigVersionInfo
-from .fabric_error import FabricError, FabricErrorException
 from .fabric_error_error import FabricErrorError
+from .fabric_error import FabricError, FabricErrorException
 from .cluster_configuration_upgrade_status_info import ClusterConfigurationUpgradeStatusInfo
 from .health_information import HealthInformation
 from .int64_range_partition_information import Int64RangePartitionInformation
 from .named_partition_information import NamedPartitionInformation
-from .node_deactivation_info import NodeDeactivationInfo
-from .node_deactivation_task import NodeDeactivationTask
 from .node_deactivation_task_id import NodeDeactivationTaskId
+from .node_deactivation_task import NodeDeactivationTask
+from .node_deactivation_info import NodeDeactivationInfo
 from .node_health import NodeHealth
 from .node_health_evaluation import NodeHealthEvaluation
 from .node_info import NodeInfo
-from .node_load_info import NodeLoadInfo
 from .node_load_metric_information import NodeLoadMetricInformation
+from .node_load_info import NodeLoadInfo
 from .nodes_health_evaluation import NodesHealthEvaluation
 from .paged_application_info_list import PagedApplicationInfoList
 from .paged_node_info_list import PagedNodeInfoList
-from .paged_service_partition_info_list import PagedServicePartitionInfoList
-from .service_partition_info import ServicePartitionInfo
 from .partition_information import PartitionInformation
-from .paged_replica_info_list import PagedReplicaInfoList
+from .service_partition_info import ServicePartitionInfo
+from .paged_service_partition_info_list import PagedServicePartitionInfoList
 from .replica_info import ReplicaInfo
-from .paged_service_info_list import PagedServiceInfoList
+from .paged_replica_info_list import PagedReplicaInfoList
 from .service_info import ServiceInfo
-from .partition_health import PartitionHealth
+from .paged_service_info_list import PagedServiceInfoList
 from .replica_health_state import ReplicaHealthState
+from .partition_health import PartitionHealth
 from .partition_health_evaluation import PartitionHealthEvaluation
 from .partition_health_state import PartitionHealthState
 from .provision_fabric_description import ProvisionFabricDescription
 from .unprovision_fabric_description import UnprovisionFabricDescription
 from .resume_cluster_upgrade_description import ResumeClusterUpgradeDescription
-from .start_cluster_upgrade_description import StartClusterUpgradeDescription
 from .cluster_upgrade_health_policy_object import ClusterUpgradeHealthPolicyObject
-from .update_cluster_upgrade_description import UpdateClusterUpgradeDescription
+from .start_cluster_upgrade_description import StartClusterUpgradeDescription
 from .rolling_upgrade_update_description import RollingUpgradeUpdateDescription
+from .update_cluster_upgrade_description import UpdateClusterUpgradeDescription
 from .partition_safety_check import PartitionSafetyCheck
 from .ensure_availability_safety_check import EnsureAvailabilitySafetyCheck
 from .ensure_partition_qurum_safety_check import EnsurePartitionQurumSafetyCheck
@@ -154,8 +154,8 @@ from .service_placement_prefer_primary_domain_policy_description import ServiceP
 from .service_placement_required_domain_policy_description import ServicePlacementRequiredDomainPolicyDescription
 from .service_placement_require_domain_distribution_policy_description import ServicePlacementRequireDomainDistributionPolicyDescription
 from .services_health_evaluation import ServicesHealthEvaluation
-from .service_type_description import ServiceTypeDescription
 from .service_type_extension_description import ServiceTypeExtensionDescription
+from .service_type_description import ServiceTypeDescription
 from .service_type_info import ServiceTypeInfo
 from .service_type_manifest import ServiceTypeManifest
 from .singleton_partition_information import SingletonPartitionInformation
@@ -181,14 +181,14 @@ from .partition_load_information import PartitionLoadInformation
 from .stateful_service_replica_info import StatefulServiceReplicaInfo
 from .stateless_service_instance_info import StatelessServiceInstanceInfo
 from .cluster_upgrade_description_object import ClusterUpgradeDescriptionObject
-from .cluster_upgrade_progress_object import ClusterUpgradeProgressObject
 from .failed_upgrade_domain_progress_object import FailedUpgradeDomainProgressObject
+from .cluster_upgrade_progress_object import ClusterUpgradeProgressObject
 from .cluster_configuration_upgrade_description import ClusterConfigurationUpgradeDescription
 from .application_type_image_store_path import ApplicationTypeImageStorePath
 from .application_type_image_store_version import ApplicationTypeImageStoreVersion
 from .code_package_entry_point_statistics import CodePackageEntryPointStatistics
-from .deployed_code_package_info import DeployedCodePackageInfo
 from .code_package_entry_point import CodePackageEntryPoint
+from .deployed_code_package_info import DeployedCodePackageInfo
 from .chaos_context_map_item import ChaosContextMapItem
 from .chaos_context import ChaosContext
 from .chaos_parameters import ChaosParameters
@@ -203,10 +203,12 @@ from .validation_failed_chaos_event import ValidationFailedChaosEvent
 from .waiting_chaos_event import WaitingChaosEvent
 from .application_capacity_description import ApplicationCapacityDescription
 from .application_description import ApplicationDescription
-from .compose_application_status_info import ComposeApplicationStatusInfo
-from .paged_compose_application_status_info_list import PagedComposeApplicationStatusInfoList
-from .create_compose_application_description import CreateComposeApplicationDescription
-from .repository_credential import RepositoryCredential
+from .compose_deployment_status_info import ComposeDeploymentStatusInfo
+from .registry_credential import RegistryCredential
+from .compose_deployment_upgrade_description import ComposeDeploymentUpgradeDescription
+from .compose_deployment_upgrade_progress_info import ComposeDeploymentUpgradeProgressInfo
+from .paged_compose_deployment_status_info_list import PagedComposeDeploymentStatusInfoList
+from .create_compose_deployment_description import CreateComposeDeploymentDescription
 from .deployed_service_package_info import DeployedServicePackageInfo
 from .service_correlation_description import ServiceCorrelationDescription
 from .service_load_metric_description import ServiceLoadMetricDescription
@@ -219,17 +221,17 @@ from .stateful_service_description import StatefulServiceDescription
 from .stateless_service_description import StatelessServiceDescription
 from .replicator_queue_status import ReplicatorQueueStatus
 from .replicator_status import ReplicatorStatus
-from .primary_replicator_status import PrimaryReplicatorStatus
-from .remote_replicator_status import RemoteReplicatorStatus
-from .remote_replicator_acknowledgement_status import RemoteReplicatorAcknowledgementStatus
 from .remote_replicator_acknowledgement_detail import RemoteReplicatorAcknowledgementDetail
+from .remote_replicator_acknowledgement_status import RemoteReplicatorAcknowledgementStatus
+from .remote_replicator_status import RemoteReplicatorStatus
+from .primary_replicator_status import PrimaryReplicatorStatus
 from .secondary_replicator_status import SecondaryReplicatorStatus
 from .secondary_active_replicator_status import SecondaryActiveReplicatorStatus
 from .secondary_idle_replicator_status import SecondaryIdleReplicatorStatus
-from .deployed_service_replica_detail_info import DeployedServiceReplicaDetailInfo
 from .load_metric_report_info import LoadMetricReportInfo
-from .deployed_stateful_service_replica_detail_info import DeployedStatefulServiceReplicaDetailInfo
+from .deployed_service_replica_detail_info import DeployedServiceReplicaDetailInfo
 from .key_value_store_replica_status import KeyValueStoreReplicaStatus
+from .deployed_stateful_service_replica_detail_info import DeployedStatefulServiceReplicaDetailInfo
 from .deployed_stateless_service_instance_detail_info import DeployedStatelessServiceInstanceDetailInfo
 from .replica_status_base import ReplicaStatusBase
 from .service_update_description import ServiceUpdateDescription
@@ -244,59 +246,71 @@ from .restart_deployed_code_package_description import RestartDeployedCodePackag
 from .deployed_service_type_info import DeployedServiceTypeInfo
 from .resolved_service_endpoint import ResolvedServiceEndpoint
 from .resolved_service_partition import ResolvedServicePartition
-from .invoke_data_loss_result import InvokeDataLossResult
 from .selected_partition import SelectedPartition
+from .invoke_data_loss_result import InvokeDataLossResult
 from .invoke_quorum_loss_result import InvokeQuorumLossResult
 from .node_result import NodeResult
-from .node_transition_progress import NodeTransitionProgress
 from .node_transition_result import NodeTransitionResult
+from .node_transition_progress import NodeTransitionProgress
 from .operation_status import OperationStatus
 from .partition_data_loss_progress import PartitionDataLossProgress
 from .partition_quorum_loss_progress import PartitionQuorumLossProgress
-from .partition_restart_progress import PartitionRestartProgress
 from .restart_partition_result import RestartPartitionResult
-from .deploy_service_package_to_node_description import DeployServicePackageToNodeDescription
+from .partition_restart_progress import PartitionRestartProgress
 from .package_sharing_policy_info import PackageSharingPolicyInfo
+from .deploy_service_package_to_node_description import DeployServicePackageToNodeDescription
 from .resume_application_upgrade_description import ResumeApplicationUpgradeDescription
 from .application_upgrade_update_description import ApplicationUpgradeUpdateDescription
+from .node_impact import NodeImpact
+from .node_repair_impact_description import NodeRepairImpactDescription
+from .node_repair_target_description import NodeRepairTargetDescription
+from .repair_impact_description_base import RepairImpactDescriptionBase
+from .repair_target_description_base import RepairTargetDescriptionBase
+from .repair_task_history import RepairTaskHistory
+from .repair_task import RepairTask
+from .repair_task_approve_description import RepairTaskApproveDescription
+from .repair_task_cancel_description import RepairTaskCancelDescription
+from .repair_task_delete_description import RepairTaskDeleteDescription
+from .repair_task_update_health_policy_description import RepairTaskUpdateHealthPolicyDescription
+from .repair_task_update_info import RepairTaskUpdateInfo
 
 __all__ = [
     'AadMetadata',
     'AadMetadataObject',
-    'ApplicationHealth',
     'ServiceHealthState',
     'DeployedApplicationHealthState',
-    'ApplicationHealthEvaluation',
-    'HealthEvaluationWrapper',
+    'ApplicationHealth',
     'HealthEvaluation',
-    'ApplicationHealthPolicies',
-    'ApplicationHealthPolicyMapItem',
-    'ApplicationHealthPolicy',
+    'HealthEvaluationWrapper',
+    'ApplicationHealthEvaluation',
     'ServiceTypeHealthPolicy',
     'ServiceTypeHealthPolicyMapItem',
+    'ApplicationHealthPolicy',
+    'ApplicationHealthPolicyMapItem',
+    'ApplicationHealthPolicies',
     'ApplicationHealthState',
-    'ApplicationHealthStateChunk',
-    'ServiceHealthStateChunkList',
-    'ServiceHealthStateChunk',
-    'PartitionHealthStateChunkList',
-    'PartitionHealthStateChunk',
-    'ReplicaHealthStateChunkList',
     'ReplicaHealthStateChunk',
-    'DeployedApplicationHealthStateChunkList',
-    'DeployedApplicationHealthStateChunk',
-    'DeployedServicePackageHealthStateChunkList',
+    'ReplicaHealthStateChunkList',
+    'PartitionHealthStateChunk',
+    'PartitionHealthStateChunkList',
+    'ServiceHealthStateChunk',
+    'ServiceHealthStateChunkList',
     'DeployedServicePackageHealthStateChunk',
+    'DeployedServicePackageHealthStateChunkList',
+    'DeployedApplicationHealthStateChunk',
+    'DeployedApplicationHealthStateChunkList',
+    'ApplicationHealthStateChunk',
     'ApplicationHealthStateChunkList',
-    'ApplicationHealthStateFilter',
-    'ServiceHealthStateFilter',
-    'PartitionHealthStateFilter',
     'ReplicaHealthStateFilter',
-    'DeployedApplicationHealthStateFilter',
+    'PartitionHealthStateFilter',
+    'ServiceHealthStateFilter',
     'DeployedServicePackageHealthStateFilter',
-    'ApplicationInfo',
+    'DeployedApplicationHealthStateFilter',
+    'ApplicationHealthStateFilter',
     'ApplicationParameter',
-    'ApplicationLoadInfo',
+    'ApplicationInfo',
     'ApplicationMetricDescription',
+    'ApplicationLoadInfo',
     'ApplicationNameInfo',
     'ApplicationsHealthEvaluation',
     'ApplicationTypeApplicationsHealthEvaluation',
@@ -304,31 +318,31 @@ __all__ = [
     'ApplicationTypeInfo',
     'PagedApplicationTypeInfoList',
     'ApplicationTypeManifest',
-    'ApplicationUpgradeDescription',
     'MonitoringPolicyDescription',
-    'ApplicationUpgradeProgressInfo',
+    'ApplicationUpgradeDescription',
     'UpgradeDomainInfo',
-    'CurrentUpgradeDomainProgressInfo',
-    'NodeUpgradeProgressInfo',
-    'SafetyCheckWrapper',
     'SafetyCheck',
+    'SafetyCheckWrapper',
+    'NodeUpgradeProgressInfo',
+    'CurrentUpgradeDomainProgressInfo',
     'FailureUpgradeDomainProgressInfo',
+    'ApplicationUpgradeProgressInfo',
     'ClusterConfiguration',
-    'ClusterHealth',
-    'NodeHealthState',
     'NodeId',
-    'ClusterHealthChunk',
-    'NodeHealthStateChunkList',
+    'NodeHealthState',
+    'ClusterHealth',
     'NodeHealthStateChunk',
-    'ClusterHealthChunkQueryDescription',
+    'NodeHealthStateChunkList',
+    'ClusterHealthChunk',
     'NodeHealthStateFilter',
     'ClusterHealthPolicy',
+    'ClusterHealthChunkQueryDescription',
     'ClusterHealthPolicies',
     'ClusterManifest',
     'DeactivationIntentDescription',
     'DeltaNodesCheckHealthEvaluation',
-    'DeployedApplicationHealth',
     'DeployedServicePackageHealthState',
+    'DeployedApplicationHealth',
     'DeployedApplicationHealthEvaluation',
     'DeployedApplicationInfo',
     'DeployedApplicationsHealthEvaluation',
@@ -336,14 +350,14 @@ __all__ = [
     'DeployedServicePackageHealthEvaluation',
     'DeployedServicePackagesHealthEvaluation',
     'DeployedServiceReplicaInfo',
-    'DeployedStatefulServiceReplicaInfo',
     'ReconfigurationInformation',
+    'DeployedStatefulServiceReplicaInfo',
     'DeployedStatelessServiceInstanceInfo',
-    'EntityHealth',
     'HealthEvent',
-    'HealthStatistics',
-    'EntityKindHealthStateCount',
     'HealthStateCount',
+    'EntityKindHealthStateCount',
+    'HealthStatistics',
+    'EntityHealth',
     'EntityHealthState',
     'EntityHealthStateChunk',
     'EntityHealthStateChunkList',
@@ -351,41 +365,41 @@ __all__ = [
     'EventHealthEvaluation',
     'FabricCodeVersionInfo',
     'FabricConfigVersionInfo',
-    'FabricError', 'FabricErrorException',
     'FabricErrorError',
+    'FabricError', 'FabricErrorException',
     'ClusterConfigurationUpgradeStatusInfo',
     'HealthInformation',
     'Int64RangePartitionInformation',
     'NamedPartitionInformation',
-    'NodeDeactivationInfo',
-    'NodeDeactivationTask',
     'NodeDeactivationTaskId',
+    'NodeDeactivationTask',
+    'NodeDeactivationInfo',
     'NodeHealth',
     'NodeHealthEvaluation',
     'NodeInfo',
-    'NodeLoadInfo',
     'NodeLoadMetricInformation',
+    'NodeLoadInfo',
     'NodesHealthEvaluation',
     'PagedApplicationInfoList',
     'PagedNodeInfoList',
-    'PagedServicePartitionInfoList',
-    'ServicePartitionInfo',
     'PartitionInformation',
-    'PagedReplicaInfoList',
+    'ServicePartitionInfo',
+    'PagedServicePartitionInfoList',
     'ReplicaInfo',
-    'PagedServiceInfoList',
+    'PagedReplicaInfoList',
     'ServiceInfo',
-    'PartitionHealth',
+    'PagedServiceInfoList',
     'ReplicaHealthState',
+    'PartitionHealth',
     'PartitionHealthEvaluation',
     'PartitionHealthState',
     'ProvisionFabricDescription',
     'UnprovisionFabricDescription',
     'ResumeClusterUpgradeDescription',
-    'StartClusterUpgradeDescription',
     'ClusterUpgradeHealthPolicyObject',
-    'UpdateClusterUpgradeDescription',
+    'StartClusterUpgradeDescription',
     'RollingUpgradeUpdateDescription',
+    'UpdateClusterUpgradeDescription',
     'PartitionSafetyCheck',
     'EnsureAvailabilitySafetyCheck',
     'EnsurePartitionQurumSafetyCheck',
@@ -406,8 +420,8 @@ __all__ = [
     'ServicePlacementRequiredDomainPolicyDescription',
     'ServicePlacementRequireDomainDistributionPolicyDescription',
     'ServicesHealthEvaluation',
-    'ServiceTypeDescription',
     'ServiceTypeExtensionDescription',
+    'ServiceTypeDescription',
     'ServiceTypeInfo',
     'ServiceTypeManifest',
     'SingletonPartitionInformation',
@@ -433,14 +447,14 @@ __all__ = [
     'StatefulServiceReplicaInfo',
     'StatelessServiceInstanceInfo',
     'ClusterUpgradeDescriptionObject',
-    'ClusterUpgradeProgressObject',
     'FailedUpgradeDomainProgressObject',
+    'ClusterUpgradeProgressObject',
     'ClusterConfigurationUpgradeDescription',
     'ApplicationTypeImageStorePath',
     'ApplicationTypeImageStoreVersion',
     'CodePackageEntryPointStatistics',
-    'DeployedCodePackageInfo',
     'CodePackageEntryPoint',
+    'DeployedCodePackageInfo',
     'ChaosContextMapItem',
     'ChaosContext',
     'ChaosParameters',
@@ -455,10 +469,12 @@ __all__ = [
     'WaitingChaosEvent',
     'ApplicationCapacityDescription',
     'ApplicationDescription',
-    'ComposeApplicationStatusInfo',
-    'PagedComposeApplicationStatusInfoList',
-    'CreateComposeApplicationDescription',
-    'RepositoryCredential',
+    'ComposeDeploymentStatusInfo',
+    'RegistryCredential',
+    'ComposeDeploymentUpgradeDescription',
+    'ComposeDeploymentUpgradeProgressInfo',
+    'PagedComposeDeploymentStatusInfoList',
+    'CreateComposeDeploymentDescription',
     'DeployedServicePackageInfo',
     'ServiceCorrelationDescription',
     'ServiceLoadMetricDescription',
@@ -471,17 +487,17 @@ __all__ = [
     'StatelessServiceDescription',
     'ReplicatorQueueStatus',
     'ReplicatorStatus',
-    'PrimaryReplicatorStatus',
-    'RemoteReplicatorStatus',
-    'RemoteReplicatorAcknowledgementStatus',
     'RemoteReplicatorAcknowledgementDetail',
+    'RemoteReplicatorAcknowledgementStatus',
+    'RemoteReplicatorStatus',
+    'PrimaryReplicatorStatus',
     'SecondaryReplicatorStatus',
     'SecondaryActiveReplicatorStatus',
     'SecondaryIdleReplicatorStatus',
-    'DeployedServiceReplicaDetailInfo',
     'LoadMetricReportInfo',
-    'DeployedStatefulServiceReplicaDetailInfo',
+    'DeployedServiceReplicaDetailInfo',
     'KeyValueStoreReplicaStatus',
+    'DeployedStatefulServiceReplicaDetailInfo',
     'DeployedStatelessServiceInstanceDetailInfo',
     'ReplicaStatusBase',
     'ServiceUpdateDescription',
@@ -496,19 +512,31 @@ __all__ = [
     'DeployedServiceTypeInfo',
     'ResolvedServiceEndpoint',
     'ResolvedServicePartition',
-    'InvokeDataLossResult',
     'SelectedPartition',
+    'InvokeDataLossResult',
     'InvokeQuorumLossResult',
     'NodeResult',
-    'NodeTransitionProgress',
     'NodeTransitionResult',
+    'NodeTransitionProgress',
     'OperationStatus',
     'PartitionDataLossProgress',
     'PartitionQuorumLossProgress',
-    'PartitionRestartProgress',
     'RestartPartitionResult',
-    'DeployServicePackageToNodeDescription',
+    'PartitionRestartProgress',
     'PackageSharingPolicyInfo',
+    'DeployServicePackageToNodeDescription',
     'ResumeApplicationUpgradeDescription',
     'ApplicationUpgradeUpdateDescription',
+    'NodeImpact',
+    'NodeRepairImpactDescription',
+    'NodeRepairTargetDescription',
+    'RepairImpactDescriptionBase',
+    'RepairTargetDescriptionBase',
+    'RepairTaskHistory',
+    'RepairTask',
+    'RepairTaskApproveDescription',
+    'RepairTaskCancelDescription',
+    'RepairTaskDeleteDescription',
+    'RepairTaskUpdateHealthPolicyDescription',
+    'RepairTaskUpdateInfo',
 ]

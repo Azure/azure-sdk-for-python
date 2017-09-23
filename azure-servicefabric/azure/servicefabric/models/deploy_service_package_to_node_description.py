@@ -28,7 +28,7 @@ class DeployServicePackageToNodeDescription(Model):
     :param package_sharing_policy:
     :type package_sharing_policy: list of :class:`PackageSharingPolicyInfo
      <azure.servicefabric.models.PackageSharingPolicyInfo>`
-    """ 
+    """
 
     _validation = {
         'service_manifest_name': {'required': True},

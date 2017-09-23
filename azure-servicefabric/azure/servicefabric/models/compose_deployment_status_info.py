@@ -12,26 +12,30 @@
 from msrest.serialization import Model
 
 
-class ComposeApplicationStatusInfo(Model):
-    """Information about a Service Fabric compose application.
+class ComposeDeploymentStatusInfo(Model):
+    """Information about a Service Fabric compose deployment.
 
     :param name:
     :type name: str
+    :param application_name:
+    :type application_name: str
     :param status: Possible values include: 'Invalid', 'Provisioning',
-     'Creating', 'Created', 'Unprovisioning', 'Deleting', 'Failed'
-    :type status: str
-    :param status_details: The status details of compose application
-     including failure message.
+     'Creating', 'Ready', 'Unprovisioning', 'Deleting', 'Failed', 'Upgrading'
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param status_details: The status details of compose deployment including
+     failure message.
     :type status_details: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
+        'application_name': {'key': 'ApplicationName', 'type': 'str'},
         'status': {'key': 'Status', 'type': 'str'},
         'status_details': {'key': 'StatusDetails', 'type': 'str'},
     }
 
-    def __init__(self, name=None, status=None, status_details=None):
+    def __init__(self, name=None, application_name=None, status=None, status_details=None):
         self.name = name
+        self.application_name = application_name
         self.status = status
         self.status_details = status_details

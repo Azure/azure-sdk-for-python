@@ -27,30 +27,31 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     :type partition_id: str
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str
+    :type replica_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param address: The last address returned by the replica in Open or
      ChangeRole.
     :type address: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    :param host_process_id: Host process id of the process that is hosting
-     the replica. This will be zero if the replica is down. In hyper-v
-     containers this host process id will be from different kernel.
+    :param host_process_id: Host process id of the process that is hosting the
+     replica. This will be zero if the replica is down. In hyper-v containers
+     this host process id will be from different kernel.
     :type host_process_id: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
     :param replica_id:
     :type replica_id: str
     :param replica_role: Possible values include: 'Unknown', 'None',
      'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type replica_role: str
+    :type replica_role: str or :class:`enum <azure.servicefabric.models.enum>`
     :param reconfiguration_information:
     :type reconfiguration_information: :class:`ReconfigurationInformation
      <azure.servicefabric.models.ReconfigurationInformation>`
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -63,7 +64,7 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
         'address': {'key': 'Address', 'type': 'str'},
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
         'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},
         'replica_role': {'key': 'ReplicaRole', 'type': 'str'},
         'reconfiguration_information': {'key': 'ReconfigurationInformation', 'type': 'ReconfigurationInformation'},
@@ -74,4 +75,4 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
         self.replica_id = replica_id
         self.replica_role = replica_role
         self.reconfiguration_information = reconfiguration_information
-        self.ServiceKind = 'Stateful'
+        self.service_kind = 'Stateful'

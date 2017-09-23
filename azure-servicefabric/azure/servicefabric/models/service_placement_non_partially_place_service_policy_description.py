@@ -18,14 +18,14 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
     be created.
     .
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
-    """ 
+    :param type: Polymorphic Discriminator
+    :type type: str
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     def __init__(self):
         super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__()
-        self.Type = 'NonPartiallyPlaceService'
+        self.type = 'NonPartiallyPlaceService'

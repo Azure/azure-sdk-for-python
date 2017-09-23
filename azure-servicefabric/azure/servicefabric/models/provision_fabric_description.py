@@ -19,7 +19,7 @@ class ProvisionFabricDescription(Model):
     :type code_file_path: str
     :param cluster_manifest_file_path: The cluster manifest file path.
     :type cluster_manifest_file_path: str
-    """ 
+    """
 
     _attribute_map = {
         'code_file_path': {'key': 'CodeFilePath', 'type': 'str'},

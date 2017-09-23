@@ -18,7 +18,7 @@ class HealthEvaluationWrapper(Model):
     :param health_evaluation:
     :type health_evaluation: :class:`HealthEvaluation
      <azure.servicefabric.models.HealthEvaluation>`
-    """ 
+    """
 
     _attribute_map = {
         'health_evaluation': {'key': 'HealthEvaluation', 'type': 'HealthEvaluation'},

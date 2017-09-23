@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class RemoteReplicatorAcknowledgementDetail(Model):
-    """Provides various statistics of the acknowledgements that are being
-    received from the remote replicator.
+    """Provides various statistics of the acknowledgements that are being received
+    from the remote replicator.
 
     :param average_receive_duration: Represents the average duration it takes
      for the remote replicator to receive an operation.
@@ -26,10 +26,10 @@ class RemoteReplicatorAcknowledgementDetail(Model):
     :param not_received_count: Represents the number of operations not yet
      received by a remote replicator.
     :type not_received_count: str
-    :param received_and_not_applied_count: Represents the number of
-     operations received and not yet applied by a remote replicator.
+    :param received_and_not_applied_count: Represents the number of operations
+     received and not yet applied by a remote replicator.
     :type received_and_not_applied_count: str
-    """ 
+    """
 
     _attribute_map = {
         'average_receive_duration': {'key': 'AverageReceiveDuration', 'type': 'str'},

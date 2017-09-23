@@ -21,7 +21,7 @@ class LoadMetricReportInfo(Model):
     :type value: int
     :param last_reported_utc: The UTC time when the load is reported.
     :type last_reported_utc: datetime
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

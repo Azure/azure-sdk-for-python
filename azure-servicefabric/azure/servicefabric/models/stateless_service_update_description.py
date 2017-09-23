@@ -25,30 +25,30 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      - None - Does not indicate any other properties are set. The value is
      zero.
      - TargetReplicaSetSize/InstanceCount - Indicates whether the
-     TargetReplicaSetSize property (for Stateful services) or the
-     InstanceCount property (for Stateless services) is set. The value is 1.
+     TargetReplicaSetSize property (for Stateful services) or the InstanceCount
+     property (for Stateless services) is set. The value is 1.
      - ReplicaRestartWaitDuration - Indicates the ReplicaRestartWaitDuration
      property is set. The value is  2.
      - QuorumLossWaitDuration - Indicates the QuorumLossWaitDuration property
      is set. The value is 4.
      - StandByReplicaKeepDuration - Indicates the StandByReplicaKeepDuration
      property is set. The value is 8.
-     - MinReplicaSetSize - Indicates the MinReplicaSetSize property is set.
-     The value is 16.
+     - MinReplicaSetSize - Indicates the MinReplicaSetSize property is set. The
+     value is 16.
      - PlacementConstraints - Indicates the PlacementConstraints property is
      set. The value is 32.
-     - PlacementPolicyList - Indicates the ServicePlacementPolicies property
-     is set. The value is 64.
-     - Correlation - Indicates the CorrelationScheme property is set. The
-     value is 128.
-     - Metrics - Indicates the ServiceLoadMetrics property is set. The value
-     is 256.
+     - PlacementPolicyList - Indicates the ServicePlacementPolicies property is
+     set. The value is 64.
+     - Correlation - Indicates the CorrelationScheme property is set. The value
+     is 128.
+     - Metrics - Indicates the ServiceLoadMetrics property is set. The value is
+     256.
      - DefaultMoveCost - Indicates the DefaultMoveCost property is set. The
      value is 512.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
-     Placement constraints are boolean expressions on node properties and
-     allow for restricting a service to particular nodes based on the service
+     Placement constraints are boolean expressions on node properties and allow
+     for restricting a service to particular nodes based on the service
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
@@ -64,15 +64,16 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      <azure.servicefabric.models.ServicePlacementPolicyDescription>`
     :param default_move_cost: Possible values include: 'Zero', 'Low',
      'Medium', 'High'
-    :type default_move_cost: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    :type default_move_cost: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
         'instance_count': {'minimum': -1},
     }
 
@@ -83,11 +84,11 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
         'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
     }
 
     def __init__(self, flags=None, placement_constraints=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, instance_count=None):
         super(StatelessServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
         self.instance_count = instance_count
-        self.ServiceKind = 'Stateless'
+        self.service_kind = 'Stateless'

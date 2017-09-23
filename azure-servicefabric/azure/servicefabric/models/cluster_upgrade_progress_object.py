@@ -23,16 +23,17 @@ class ClusterUpgradeProgressObject(Model):
     :type upgrade_domains: list of :class:`UpgradeDomainInfo
      <azure.servicefabric.models.UpgradeDomainInfo>`
     :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted',
-     'RollingForwardPending', 'RollingForwardInProgress',
-     'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str
+     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
+     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param next_upgrade_domain:
     :type next_upgrade_domain: str
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str
+    :type rolling_upgrade_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_description:
     :type upgrade_description: :class:`ClusterUpgradeDescriptionObject
      <azure.servicefabric.models.ClusterUpgradeDescriptionObject>`
@@ -53,12 +54,13 @@ class ClusterUpgradeProgressObject(Model):
     :type failure_timestamp_utc: str
     :param failure_reason: Possible values include: 'None', 'Interrupted',
      'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str
+    :type failure_reason: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_domain_progress_at_failure:
     :type upgrade_domain_progress_at_failure:
      :class:`FailedUpgradeDomainProgressObject
      <azure.servicefabric.models.FailedUpgradeDomainProgressObject>`
-    """ 
+    """
 
     _attribute_map = {
         'code_version': {'key': 'CodeVersion', 'type': 'str'},

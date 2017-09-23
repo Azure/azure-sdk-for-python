@@ -19,7 +19,7 @@ class ApplicationTypeImageStorePath(Model):
     :param application_type_build_path: The relative image store path to the
      application package.
     :type application_type_build_path: str
-    """ 
+    """
 
     _validation = {
         'application_type_build_path': {'required': True},

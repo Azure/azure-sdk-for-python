@@ -15,23 +15,23 @@ from .partition_scheme_description import PartitionSchemeDescription
 class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     """Describes the named partition scheme of the service.
 
-    :param PartitionScheme: Polymorphic Discriminator
-    :type PartitionScheme: str
+    :param partition_scheme: Polymorphic Discriminator
+    :type partition_scheme: str
     :param count: The number of partitions.
     :type count: int
     :param names: Array of size specified by the ‘Count’ parameter, for the
      names of the partitions.
     :type names: list of str
-    """ 
+    """
 
     _validation = {
-        'PartitionScheme': {'required': True},
+        'partition_scheme': {'required': True},
         'count': {'required': True},
         'names': {'required': True},
     }
 
     _attribute_map = {
-        'PartitionScheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
         'count': {'key': 'Count', 'type': 'int'},
         'names': {'key': 'Names', 'type': '[str]'},
     }
@@ -40,4 +40,4 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
         super(NamedPartitionSchemeDescription, self).__init__()
         self.count = count
         self.names = names
-        self.PartitionScheme = 'Named'
+        self.partition_scheme = 'Named'

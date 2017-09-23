@@ -23,8 +23,9 @@ class DeactivationIntentDescription(Model):
      - RemoveData - Indicates the intent is for the node to remove data. The
      value is 3.
      . Possible values include: 'Pause', 'Restart', 'RemoveData'
-    :type deactivation_intent: str
-    """ 
+    :type deactivation_intent: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'deactivation_intent': {'key': 'DeactivationIntent', 'type': 'str'},

@@ -12,32 +12,32 @@
 from msrest.serialization import Model
 
 
-class CreateComposeApplicationDescription(Model):
-    """Defines description for creating a Service Fabric compose application.
+class CreateComposeDeploymentDescription(Model):
+    """Defines description for creating a Service Fabric compose deployment.
     .
 
-    :param application_name:
-    :type application_name: str
+    :param deployment_name:
+    :type deployment_name: str
     :param compose_file_content: The content of the compose file that
-     describes application to create.
+     describes the deployment to create.
     :type compose_file_content: str
-    :param repository_credential:
-    :type repository_credential: :class:`RepositoryCredential
-     <azure.servicefabric.models.RepositoryCredential>`
-    """ 
+    :param registry_credential:
+    :type registry_credential: :class:`RegistryCredential
+     <azure.servicefabric.models.RegistryCredential>`
+    """
 
     _validation = {
-        'application_name': {'required': True},
+        'deployment_name': {'required': True},
         'compose_file_content': {'required': True},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
+        'deployment_name': {'key': 'DeploymentName', 'type': 'str'},
         'compose_file_content': {'key': 'ComposeFileContent', 'type': 'str'},
-        'repository_credential': {'key': 'RepositoryCredential', 'type': 'RepositoryCredential'},
+        'registry_credential': {'key': 'RegistryCredential', 'type': 'RegistryCredential'},
     }
 
-    def __init__(self, application_name, compose_file_content, repository_credential=None):
-        self.application_name = application_name
+    def __init__(self, deployment_name, compose_file_content, registry_credential=None):
+        self.deployment_name = deployment_name
         self.compose_file_content = compose_file_content
-        self.repository_credential = repository_credential
+        self.registry_credential = registry_credential

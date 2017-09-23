@@ -19,8 +19,9 @@ class NodeDeactivationTaskId(Model):
     :type id: str
     :param node_deactivation_task_type: Possible values include: 'Invalid',
      'Infrastructure', 'Repair', 'Client'
-    :type node_deactivation_task_type: str
-    """ 
+    :type node_deactivation_task_type: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},

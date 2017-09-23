@@ -14,18 +14,18 @@ from msrest.serialization import Model
 
 class NodeTransitionProgress(Model):
     """Information about an NodeTransition operation.  This class contains an
-    OperationState and a NodeTransitionResult.  The NodeTransitionResult is
-    not valid until OperationState
+    OperationState and a NodeTransitionResult.  The NodeTransitionResult is not
+    valid until OperationState
     is Completed or Faulted.
     .
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
+    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param node_transition_result:
     :type node_transition_result: :class:`NodeTransitionResult
      <azure.servicefabric.models.NodeTransitionResult>`
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'State', 'type': 'str'},
