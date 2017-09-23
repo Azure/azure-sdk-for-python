@@ -21,18 +21,25 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, base_url=None):
+            self, credentials, base_url=None):
 
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
             base_url = 'http://localhost:19080'
 
         super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url)
 
         self.add_user_agent('servicefabricclientapis/{}'.format(VERSION))
+
+        self.credentials = credentials
 
 
 class ServiceFabricClientAPIs(object):
@@ -41,14 +48,17 @@ class ServiceFabricClientAPIs(object):
     :ivar config: Configuration for client.
     :vartype config: ServiceFabricClientAPIsConfiguration
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = ServiceFabricClientAPIsConfiguration(base_url)
-        self._client = ServiceClient(None, self.config)
+        self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '6.0'
