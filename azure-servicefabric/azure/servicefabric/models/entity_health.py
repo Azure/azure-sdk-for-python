@@ -19,7 +19,8 @@ class EntityHealth(Model):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param health_events: The list of health events reported on the entity.
     :type health_events: list of :class:`HealthEvent
      <azure.servicefabric.models.HealthEvent>`
@@ -29,7 +30,7 @@ class EntityHealth(Model):
     :param health_statistics:
     :type health_statistics: :class:`HealthStatistics
      <azure.servicefabric.models.HealthStatistics>`
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},

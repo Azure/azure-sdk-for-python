@@ -22,7 +22,7 @@ class ClusterHealthPolicies(Model):
     :param cluster_health_policy:
     :type cluster_health_policy: :class:`ClusterHealthPolicy
      <azure.servicefabric.models.ClusterHealthPolicy>`
-    """ 
+    """
 
     _attribute_map = {
         'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},

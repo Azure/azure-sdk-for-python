@@ -22,10 +22,10 @@ class DeployedServicePackageInfo(Model):
     :type version: str
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

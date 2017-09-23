@@ -20,12 +20,12 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param service_manifest_name:
     :type service_manifest_name: str
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

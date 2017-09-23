@@ -17,38 +17,39 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param partition_status: Possible values include: 'Invalid', 'Ready',
      'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str
+    :type partition_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param partition_information:
     :type partition_information: :class:`PartitionInformation
      <azure.servicefabric.models.PartitionInformation>`
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: long
     :param min_replica_set_size: The minimum replica set size as a number.
     :type min_replica_set_size: long
     :param last_quorum_loss_duration: The duration for which this partition
      was in quorum loss. If the partition is currently in quorum loss, it
-     returns the duration since it has been in that state. This field is
-     using ISO8601 format for specifying the duration.
+     returns the duration since it has been in that state. This field is using
+     ISO8601 format for specifying the duration.
     :type last_quorum_loss_duration: timedelta
     :param current_configuration_epoch:
     :type current_configuration_epoch: :class:`Epoch
      <azure.servicefabric.models.Epoch>`
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'long'},
         'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'long'},
         'last_quorum_loss_duration': {'key': 'LastQuorumLossDuration', 'type': 'duration'},
@@ -61,4 +62,4 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
         self.min_replica_set_size = min_replica_set_size
         self.last_quorum_loss_duration = last_quorum_loss_duration
         self.current_configuration_epoch = current_configuration_epoch
-        self.ServiceKind = 'Stateful'
+        self.service_kind = 'Stateful'

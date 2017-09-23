@@ -13,32 +13,33 @@ from .replica_health_state import ReplicaHealthState
 
 
 class StatefulServiceReplicaHealthState(ReplicaHealthState):
-    """Represents the health state of the stateful service replica, which
-    contains the replica id and the aggregated health state.
+    """Represents the health state of the stateful service replica, which contains
+    the replica id and the aggregated health state.
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param partition_id:
     :type partition_id: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
     :param replica_id:
     :type replica_id: str
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},
     }
 
     def __init__(self, aggregated_health_state=None, partition_id=None, replica_id=None):
         super(StatefulServiceReplicaHealthState, self).__init__(aggregated_health_state=aggregated_health_state, partition_id=partition_id)
         self.replica_id = replica_id
-        self.ServiceKind = 'Stateful'
+        self.service_kind = 'Stateful'

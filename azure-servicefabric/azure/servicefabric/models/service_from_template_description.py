@@ -27,11 +27,12 @@ class ServiceFromTemplateDescription(Model):
     :type initialization_data: list of int
     :param service_package_activation_mode: Possible values include:
      'SharedProcess', 'ExclusiveProcess'
-    :type service_package_activation_mode: str
+    :type service_package_activation_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    """ 
+    """
 
     _validation = {
         'application_name': {'required': True},

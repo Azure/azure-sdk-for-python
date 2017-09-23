@@ -18,15 +18,14 @@ class NodeHealthStateChunkList(EntityHealthStateChunkList):
     query.
     .
 
-    :param total_count: Total number of entity health state objects that
-     match the specified filters from the cluster health chunk query
-     description.
+    :param total_count: Total number of entity health state objects that match
+     the specified filters from the cluster health chunk query description.
     :type total_count: long
     :param items: The list of node health state chunks that respect the input
      filters in the chunk query.
     :type items: list of :class:`NodeHealthStateChunk
      <azure.servicefabric.models.NodeHealthStateChunk>`
-    """ 
+    """
 
     _attribute_map = {
         'total_count': {'key': 'TotalCount', 'type': 'long'},

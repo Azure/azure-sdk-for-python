@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class RestartDeployedCodePackageDescription(Model):
-    """Defines description for restarting a deloyed code package on Service
-    Fabric node.
+    """Defines description for restarting a deloyed code package on Service Fabric
+    node.
     .
 
     :param service_manifest_name:
@@ -25,7 +25,7 @@ class RestartDeployedCodePackageDescription(Model):
     :type code_package_name: str
     :param code_package_instance_id:
     :type code_package_instance_id: str
-    """ 
+    """
 
     _validation = {
         'service_manifest_name': {'required': True},

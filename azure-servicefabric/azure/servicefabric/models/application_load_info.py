@@ -39,7 +39,7 @@ class ApplicationLoadInfo(Model):
     :type application_load_metric_information: list of
      :class:`ApplicationMetricDescription
      <azure.servicefabric.models.ApplicationMetricDescription>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},

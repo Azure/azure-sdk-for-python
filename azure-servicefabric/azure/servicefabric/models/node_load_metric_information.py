@@ -35,7 +35,7 @@ class NodeLoadMetricInformation(Model):
     :param node_remaining_buffered_capacity: The remaining reserved capacity
      for this metric on the node.
     :type node_remaining_buffered_capacity: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

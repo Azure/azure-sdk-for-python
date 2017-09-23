@@ -23,7 +23,7 @@ class ApplicationTypeHealthPolicyMapItem(Model):
      The max percent unhealthy applications allowed for the application type.
      Must be between zero and 100.
     :type value: int
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},

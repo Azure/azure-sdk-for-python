@@ -18,48 +18,48 @@ class DeployedApplicationHealthStateFilter(Model):
     chunk.
     The deployed applications are only returned if the parent application
     matches a filter specified in the cluster health chunk query description.
-    One filter can match zero, one or multiple deployed applications,
-    depending on its properties.
+    One filter can match zero, one or multiple deployed applications, depending
+    on its properties.
     .
 
     :param node_name_filter: The name of the node where the application is
      deployed in order to match the filter.
      If specified, the filter is applied only to the application deployed on
      the specified node.
-     If the application is not deployed on the node with the specified name,
-     no deployed application is returned in the cluster health chunk based on
-     this filter.
+     If the application is not deployed on the node with the specified name, no
+     deployed application is returned in the cluster health chunk based on this
+     filter.
      Otherwise, the deployed application is included in the cluster health
      chunk if it respects the other filter properties.
      If not specified, all deployed applications that match the parent filters
-     (if any) are taken into consideration and matched against the other
-     filter members, like health state filter.
+     (if any) are taken into consideration and matched against the other filter
+     members, like health state filter.
     :type node_name_filter: str
     :param health_state_filter: The filter for the health state of the
      deployed applications. It allows selecting deployed applications if they
      match the desired health states.
      The possible values are integer value of one of the following health
-     states. Only deployed applications that match the filter are returned.
-     All deployed applications are used to evaluate the cluster aggregated
-     health state.
+     states. Only deployed applications that match the filter are returned. All
+     deployed applications are used to evaluate the cluster aggregated health
+     state.
      If not specified, default value is None, unless the node name is
-     specified. If the filter has default value and node name is specified,
-     the matching deployed application is returned.
+     specified. If the filter has default value and node name is specified, the
+     matching deployed application is returned.
      The state values are flag based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches deployed applications
      with HealthState value of OK (2) and Warning (4).
      - Default - Default value. Matches any HealthState. The value is zero.
-     - None - Filter that doesn't match any HealthState value. Used in order
-     to return no results on a given collection of states. The value is 1.
+     - None - Filter that doesn't match any HealthState value. Used in order to
+     return no results on a given collection of states. The value is 1.
      - Ok - Filter that matches input with HealthState value Ok. The value is
      2.
      - Warning - Filter that matches input with HealthState value Warning. The
      value is 4.
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
-     - All - Filter that matches input with any HealthState value. The value
-     is 65535.
+     - All - Filter that matches input with any HealthState value. The value is
+     65535.
      . Default value: 0 .
     :type health_state_filter: int
     :param deployed_service_package_filters: Defines a list of filters that
@@ -78,7 +78,7 @@ class DeployedApplicationHealthStateFilter(Model):
     :type deployed_service_package_filters: list of
      :class:`DeployedServicePackageHealthStateFilter
      <azure.servicefabric.models.DeployedServicePackageHealthStateFilter>`
-    """ 
+    """
 
     _attribute_map = {
         'node_name_filter': {'key': 'NodeNameFilter', 'type': 'str'},

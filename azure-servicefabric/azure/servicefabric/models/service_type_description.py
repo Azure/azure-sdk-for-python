@@ -33,12 +33,12 @@ class ServiceTypeDescription(Model):
     :param extensions:
     :type extensions: list of :class:`ServiceTypeExtensionDescription
      <azure.servicefabric.models.ServiceTypeExtensionDescription>`
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -47,11 +47,11 @@ class ServiceTypeDescription(Model):
         'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'Stateful': 'StatefulServiceTypeDescription', 'Stateless': 'StatelessServiceTypeDescription'}
+        'kind': {'Stateful': 'StatefulServiceTypeDescription', 'Stateless': 'StatelessServiceTypeDescription'}
     }
 
     def __init__(self, is_stateful=None, service_type_name=None, placement_constraints=None, service_placement_policies=None, extensions=None):
@@ -60,4 +60,4 @@ class ServiceTypeDescription(Model):
         self.placement_constraints = placement_constraints
         self.service_placement_policies = service_placement_policies
         self.extensions = extensions
-        self.Kind = None
+        self.kind = None

@@ -22,7 +22,7 @@ class LoadMetricReport(Model):
     :type name: str
     :param value: The value of the load metric.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'last_reported_utc': {'key': 'LastReportedUtc', 'type': 'iso-8601'},

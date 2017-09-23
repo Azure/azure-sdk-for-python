@@ -19,14 +19,16 @@ class RollingUpgradeUpdateDescription(Model):
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str
+    :type rolling_upgrade_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param force_restart:
     :type force_restart: bool
     :param replica_set_check_timeout_in_milliseconds:
     :type replica_set_check_timeout_in_milliseconds: long
     :param failure_action: Possible values include: 'Invalid', 'Rollback',
      'Manual'
-    :type failure_action: str
+    :type failure_action: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param health_check_wait_duration_in_milliseconds:
     :type health_check_wait_duration_in_milliseconds: str
     :param health_check_stable_duration_in_milliseconds:
@@ -37,7 +39,7 @@ class RollingUpgradeUpdateDescription(Model):
     :type upgrade_timeout_in_milliseconds: str
     :param upgrade_domain_timeout_in_milliseconds:
     :type upgrade_domain_timeout_in_milliseconds: str
-    """ 
+    """
 
     _validation = {
         'rolling_upgrade_mode': {'required': True},

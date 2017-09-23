@@ -18,23 +18,23 @@ class NamedPartitionInformation(PartitionInformation):
 
     :param id:
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
+    :param service_partition_kind: Polymorphic Discriminator
+    :type service_partition_kind: str
     :param name: Name of the partition.
     :type name: str
-    """ 
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
-        'ServicePartitionKind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
         'name': {'key': 'Name', 'type': 'str'},
     }
 
     def __init__(self, id=None, name=None):
         super(NamedPartitionInformation, self).__init__(id=id)
         self.name = name
-        self.ServicePartitionKind = 'Named'
+        self.service_partition_kind = 'Named'

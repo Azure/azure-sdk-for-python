@@ -22,27 +22,27 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     replicas are deployed across different data center, with one replica per
     location. In the event that one of the datacenters goes offline, normally
     the replica that was placed in that datacenter will be packed into one of
-    the remaining datacenters. If this is not desirable then this policy
-    should be set.
+    the remaining datacenters. If this is not desirable then this policy should
+    be set.
     .
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
+    :param type: Polymorphic Discriminator
+    :type type: str
     :param domain_name: The name of the domain that should used for placement
      as per this policy.
     :type domain_name: str
-    """ 
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'Type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
     def __init__(self, domain_name=None):
         super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__()
         self.domain_name = domain_name
-        self.Type = 'RequireDomainDistribution'
+        self.type = 'RequireDomainDistribution'

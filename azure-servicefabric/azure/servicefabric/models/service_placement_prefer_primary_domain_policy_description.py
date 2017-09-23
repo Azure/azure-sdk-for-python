@@ -16,33 +16,32 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     """Describes the policy to be used for placement of a Service Fabric service
     where the service's Primary replicas should optimally be placed in a
     particular domain.
-    This placement policy is usually used with fault domains in scenarios
-    where the Service Fabric cluster is geographically distributed in order
-    to indicate that a service�s primary replica should be located in a
-    particular fault domain, which in geo-distributed scenarios usually
-    aligns with regional or datacenter boundaries. Note that since this is an
-    optimization it is possible that the Primary replica may not end up
-    located in this domain due to failures, capacity limits, or other
-    constraints.
+    This placement policy is usually used with fault domains in scenarios where
+    the Service Fabric cluster is geographically distributed in order to
+    indicate that a service�s primary replica should be located in a particular
+    fault domain, which in geo-distributed scenarios usually aligns with
+    regional or datacenter boundaries. Note that since this is an optimization
+    it is possible that the Primary replica may not end up located in this
+    domain due to failures, capacity limits, or other constraints.
     .
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
+    :param type: Polymorphic Discriminator
+    :type type: str
     :param domain_name: The name of the domain that should used for placement
      as per this policy.
     :type domain_name: str
-    """ 
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'Type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
     def __init__(self, domain_name=None):
         super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__()
         self.domain_name = domain_name
-        self.Type = 'PreferPrimaryDomain'
+        self.type = 'PreferPrimaryDomain'

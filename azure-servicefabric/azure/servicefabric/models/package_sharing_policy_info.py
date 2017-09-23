@@ -20,8 +20,9 @@ class PackageSharingPolicyInfo(Model):
     :type shared_package_name: str
     :param package_sharing_scope: Possible values include: 'None', 'All',
      'Code', 'Config', 'Data'
-    :type package_sharing_scope: str
-    """ 
+    :type package_sharing_scope: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'shared_package_name': {'key': 'SharedPackageName', 'type': 'str'},

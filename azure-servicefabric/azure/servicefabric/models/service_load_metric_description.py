@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class ServiceLoadMetricDescription(Model):
     """Specifies a metric to load balance a service during runtime.
 
-    :param name: The name of the metric. If the service chooses to report
-     load during runtime, the load metric name should match the name that is
+    :param name: The name of the metric. If the service chooses to report load
+     during runtime, the load metric name should match the name that is
      specified in Name exactly. Note that metric names are case sensitive.
     :type name: str
     :param weight: Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type weight: str
+    :type weight: str or :class:`enum <azure.servicefabric.models.enum>`
     :param primary_default_load: Used only for Stateful services. The default
      amount of load, as a number, that this service creates for this metric
      when it is a Primary replica.
@@ -32,7 +32,7 @@ class ServiceLoadMetricDescription(Model):
     :param default_load: Used only for Stateless services. The default amount
      of load, as a number, that this service creates for this metric.
     :type default_load: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

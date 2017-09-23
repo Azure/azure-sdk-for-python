@@ -20,7 +20,7 @@ class NodeResult(Model):
     :type node_name: str
     :param node_instance_id: The node instance id.
     :type node_instance_id: str
-    """ 
+    """
 
     _attribute_map = {
         'node_name': {'key': 'NodeName', 'type': 'str'},

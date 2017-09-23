@@ -26,8 +26,8 @@ class ClusterConfigurationUpgradeDescription(Model):
      process. Default value: "PT0H0M0S" .
     :type health_check_wait_duration_in_seconds: timedelta
     :param health_check_stable_duration_in_seconds: The length of time that
-     the application or cluster must remain healthy. Default value:
-     "PT0H0M0S" .
+     the application or cluster must remain healthy. Default value: "PT0H0M0S"
+     .
     :type health_check_stable_duration_in_seconds: timedelta
     :param upgrade_domain_timeout_in_seconds: The timeout for the upgrade
      domain. Default value: "PT0H0M0S" .
@@ -40,19 +40,19 @@ class ClusterConfigurationUpgradeDescription(Model):
      values from zero to 100. Default value: 0 .
     :type max_percent_unhealthy_applications: int
     :param max_percent_unhealthy_nodes: The maximum allowed percentage of
-     unhealthy nodes during the upgrade. Allowed values are integer values
-     from zero to 100. Default value: 0 .
+     unhealthy nodes during the upgrade. Allowed values are integer values from
+     zero to 100. Default value: 0 .
     :type max_percent_unhealthy_nodes: int
     :param max_percent_delta_unhealthy_nodes: The maximum allowed percentage
-     of delta health degradation during the upgrade. Allowed values are
-     integer values from zero to 100. Default value: 0 .
+     of delta health degradation during the upgrade. Allowed values are integer
+     values from zero to 100. Default value: 0 .
     :type max_percent_delta_unhealthy_nodes: int
     :param max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum
      allowed percentage of upgrade domain delta health degradation during the
      upgrade. Allowed values are integer values from zero to 100. Default
      value: 0 .
     :type max_percent_upgrade_domain_delta_unhealthy_nodes: int
-    """ 
+    """
 
     _validation = {
         'cluster_config': {'required': True},

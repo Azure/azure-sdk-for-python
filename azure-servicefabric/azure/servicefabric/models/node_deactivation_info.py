@@ -18,17 +18,19 @@ class NodeDeactivationInfo(Model):
 
     :param node_deactivation_intent: Possible values include: 'Invalid',
      'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str
+    :type node_deactivation_intent: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param node_deactivation_status: Possible values include: 'None',
      'SafetyCheckInProgress', 'SafetyCheckComplete', 'Completed'
-    :type node_deactivation_status: str
+    :type node_deactivation_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param node_deactivation_task:
     :type node_deactivation_task: list of :class:`NodeDeactivationTask
      <azure.servicefabric.models.NodeDeactivationTask>`
     :param pending_safety_checks:
     :type pending_safety_checks: list of :class:`SafetyCheckWrapper
      <azure.servicefabric.models.SafetyCheckWrapper>`
-    """ 
+    """
 
     _attribute_map = {
         'node_deactivation_intent': {'key': 'NodeDeactivationIntent', 'type': 'str'},

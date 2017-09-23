@@ -17,7 +17,8 @@ class MonitoringPolicyDescription(Model):
 
     :param failure_action: Possible values include: 'Invalid', 'Rollback',
      'Manual'
-    :type failure_action: str
+    :type failure_action: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param health_check_wait_duration_in_milliseconds:
     :type health_check_wait_duration_in_milliseconds: str
     :param health_check_stable_duration_in_milliseconds:
@@ -28,7 +29,7 @@ class MonitoringPolicyDescription(Model):
     :type upgrade_timeout_in_milliseconds: str
     :param upgrade_domain_timeout_in_milliseconds:
     :type upgrade_domain_timeout_in_milliseconds: str
-    """ 
+    """
 
     _attribute_map = {
         'failure_action': {'key': 'FailureAction', 'type': 'str'},

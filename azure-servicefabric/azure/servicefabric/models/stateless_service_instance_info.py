@@ -19,10 +19,11 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
 
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str
+    :type replica_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param node_name:
     :type node_name: str
     :param address: The address the replica is listening on.
@@ -30,14 +31,14 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
     :param instance_id:
     :type instance_id: str
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -46,11 +47,11 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
         'node_name': {'key': 'NodeName', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_id': {'key': 'InstanceId', 'type': 'str'},
     }
 
     def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None, instance_id=None):
         super(StatelessServiceInstanceInfo, self).__init__(replica_status=replica_status, health_state=health_state, node_name=node_name, address=address, last_in_build_duration_in_seconds=last_in_build_duration_in_seconds)
         self.instance_id = instance_id
-        self.ServiceKind = 'Stateless'
+        self.service_kind = 'Stateless'

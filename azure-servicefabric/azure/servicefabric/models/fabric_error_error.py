@@ -56,14 +56,13 @@ class FabricErrorError(Model):
      'FABRIC_E_NODE_HAS_NOT_STOPPED_YET', 'FABRIC_E_INSTANCE_ID_MISMATCH',
      'FABRIC_E_VALUE_TOO_LARGE', 'FABRIC_E_NO_WRITE_QUORUM',
      'FABRIC_E_NOT_PRIMARY', 'FABRIC_E_NOT_READY',
-     'FABRIC_E_RECONFIGURATION_PENDING', 'FABRIC_E_SERVICE_OFFLINE',
-     'E_ABORT', 'FABRIC_E_COMMUNICATION_ERROR',
-     'FABRIC_E_OPERATION_NOT_COMPLETE', 'FABRIC_E_TIMEOUT',
-     'FABRIC_E_NODE_IS_UP'
-    :type code: str
+     'FABRIC_E_RECONFIGURATION_PENDING', 'FABRIC_E_SERVICE_OFFLINE', 'E_ABORT',
+     'FABRIC_E_COMMUNICATION_ERROR', 'FABRIC_E_OPERATION_NOT_COMPLETE',
+     'FABRIC_E_TIMEOUT', 'FABRIC_E_NODE_IS_UP'
+    :type code: str or :class:`enum <azure.servicefabric.models.enum>`
     :param message: Error message.
     :type message: str
-    """ 
+    """
 
     _validation = {
         'code': {'required': True},

@@ -25,9 +25,9 @@ class ApplicationCapacityDescription(Model):
     :param minimum_nodes: The minimum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean
      that the services of this application will be placed on all of those
-     nodes. If this property is set to zero, no capacity will be reserved.
-     The value of this property cannot be more than the value of the
-     MaximumNodes property.
+     nodes. If this property is set to zero, no capacity will be reserved. The
+     value of this property cannot be more than the value of the MaximumNodes
+     property.
     :type minimum_nodes: long
     :param maximum_nodes: The maximum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean
@@ -38,7 +38,7 @@ class ApplicationCapacityDescription(Model):
     :param application_metrics:
     :type application_metrics: list of :class:`ApplicationMetricDescription
      <azure.servicefabric.models.ApplicationMetricDescription>`
-    """ 
+    """
 
     _validation = {
         'minimum_nodes': {'minimum': 0},

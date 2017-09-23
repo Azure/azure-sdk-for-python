@@ -20,7 +20,7 @@ class ApplicationParameter(Model):
     :type key: str
     :param value: The value of the parameter.
     :type value: str
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},

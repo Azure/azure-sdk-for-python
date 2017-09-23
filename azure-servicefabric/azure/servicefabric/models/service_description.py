@@ -28,8 +28,8 @@ class ServiceDescription(Model):
     :type partition_description: :class:`PartitionSchemeDescription
      <azure.servicefabric.models.PartitionSchemeDescription>`
     :param placement_constraints: The placement constraints as a string.
-     Placement constraints are boolean expressions on node properties and
-     allow for restricting a service to particular nodes based on the service
+     Placement constraints are boolean expressions on node properties and allow
+     for restricting a service to particular nodes based on the service
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
@@ -45,25 +45,27 @@ class ServiceDescription(Model):
      <azure.servicefabric.models.ServicePlacementPolicyDescription>`
     :param default_move_cost: Possible values include: 'Zero', 'Low',
      'Medium', 'High'
-    :type default_move_cost: str
+    :type default_move_cost: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
     :type is_default_move_cost_specified: bool
     :param service_package_activation_mode: Possible values include:
      'SharedProcess', 'ExclusiveProcess'
-    :type service_package_activation_mode: str
+    :type service_package_activation_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
+    """
 
     _validation = {
         'service_name': {'required': True},
         'service_type_name': {'required': True},
         'partition_description': {'required': True},
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -80,11 +82,11 @@ class ServiceDescription(Model):
         'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
+        'service_kind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
     }
 
     def __init__(self, service_name, service_type_name, partition_description, application_name=None, initialization_data=None, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified=None, service_package_activation_mode=None, service_dns_name=None):
@@ -101,4 +103,4 @@ class ServiceDescription(Model):
         self.is_default_move_cost_specified = is_default_move_cost_specified
         self.service_package_activation_mode = service_package_activation_mode
         self.service_dns_name = service_dns_name
-        self.ServiceKind = None
+        self.service_kind = None
