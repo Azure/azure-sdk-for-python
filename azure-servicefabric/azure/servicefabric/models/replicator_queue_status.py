@@ -50,7 +50,7 @@ class ReplicatorQueueStatus(Model):
     :param last_sequence_number: Represents the latest sequence number of the
      operation that is available in the queue.
     :type last_sequence_number: str
-    """ 
+    """
 
     _attribute_map = {
         'queue_utilization_percentage': {'key': 'QueueUtilizationPercentage', 'type': 'int'},

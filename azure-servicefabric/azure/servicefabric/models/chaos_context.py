@@ -23,7 +23,7 @@ class ChaosContext(Model):
 
     :param map:
     :type map: object
-    """ 
+    """
 
     _attribute_map = {
         'map': {'key': 'Map', 'type': 'object'},

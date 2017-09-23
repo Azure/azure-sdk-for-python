@@ -17,7 +17,7 @@ class ApplicationTypeImageStoreVersion(Model):
 
     :param application_type_version:
     :type application_type_version: str
-    """ 
+    """
 
     _validation = {
         'application_type_version': {'required': True},

@@ -14,19 +14,19 @@ from .entity_health_state_chunk import EntityHealthStateChunk
 
 class PartitionHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a partition, which contains the
-    partition id, its aggregated health state and any replicas that respect
-    the filters in the cluster health chunk query description.
+    partition id, its aggregated health state and any replicas that respect the
+    filters in the cluster health chunk query description.
     .
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param partition_id:
     :type partition_id: str
     :param replica_health_state_chunks:
     :type replica_health_state_chunks: :class:`ReplicaHealthStateChunkList
      <azure.servicefabric.models.ReplicaHealthStateChunkList>`
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

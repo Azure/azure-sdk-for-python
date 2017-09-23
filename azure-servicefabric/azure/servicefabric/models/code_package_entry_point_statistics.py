@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class CodePackageEntryPointStatistics(Model):
-    """Statistics about setup or main entry point  of a code package deployed on
-    a Service Fabric node.
+    """Statistics about setup or main entry point  of a code package deployed on a
+    Service Fabric node.
 
     :param last_exit_code: The last exit code of the entry point.
     :type last_exit_code: str
@@ -32,8 +32,8 @@ class CodePackageEntryPointStatistics(Model):
     :type last_successful_exit_time: datetime
     :param activation_count: Number of times the entry point has run.
     :type activation_count: str
-    :param activation_failure_count: Number of times the entry point failed
-     to run.
+    :param activation_failure_count: Number of times the entry point failed to
+     run.
     :type activation_failure_count: str
     :param continuous_activation_failure_count: Number of times the entry
      point continuously failed to run.
@@ -46,7 +46,7 @@ class CodePackageEntryPointStatistics(Model):
     :param continuous_exit_failure_count: Number of times the entry point
      continuously failed to exit gracefully.
     :type continuous_exit_failure_count: str
-    """ 
+    """
 
     _attribute_map = {
         'last_exit_code': {'key': 'LastExitCode', 'type': 'str'},

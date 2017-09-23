@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class FileVersion(Model):
     """Information about the version of image store file.
 
-    :param version_number: The current iamge store version number for the
-     file is used in image store for checking whether it need to be updated.
+    :param version_number: The current iamge store version number for the file
+     is used in image store for checking whether it need to be updated.
     :type version_number: str
     :param epoch_data_loss_number: The epoch data loss number of image store
      file is used to indicate the status of data loss.
     :type epoch_data_loss_number: str
-    """ 
+    """
 
     _attribute_map = {
         'version_number': {'key': 'VersionNumber', 'type': 'str'},

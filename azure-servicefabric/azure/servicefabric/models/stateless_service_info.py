@@ -25,20 +25,21 @@ class StatelessServiceInfo(ServiceInfo):
     :type manifest_version: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param service_status: Possible values include: 'Unknown', 'Active',
      'Upgrading', 'Deleting', 'Creating', 'Failed'
-    :type service_status: str
+    :type service_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None):
         super(StatelessServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group)
-        self.ServiceKind = 'Stateless'
+        self.service_kind = 'Stateless'

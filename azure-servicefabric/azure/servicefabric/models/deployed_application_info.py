@@ -23,7 +23,7 @@ class DeployedApplicationInfo(Model):
     :type type_name: str
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param work_directory: The work directory of the application on the node.
      The work directory can be used to store application data.
     :type work_directory: str
@@ -34,7 +34,7 @@ class DeployedApplicationInfo(Model):
      The code packages belonging to the application are forked with this
      directory set as their temporary directory.
     :type temp_directory: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},

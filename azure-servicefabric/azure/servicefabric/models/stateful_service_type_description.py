@@ -32,16 +32,16 @@ class StatefulServiceTypeDescription(ServiceTypeDescription):
     :param extensions:
     :type extensions: list of :class:`ServiceTypeExtensionDescription
      <azure.servicefabric.models.ServiceTypeExtensionDescription>`
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    :param has_persisted_state: A flag indicating whether this is a
-     persistent service which stores states on the local disk. If it is then
-     the value of this property is true, if not it is false.
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    :param has_persisted_state: A flag indicating whether this is a persistent
+     service which stores states on the local disk. If it is then the value of
+     this property is true, if not it is false.
     :type has_persisted_state: bool
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -50,11 +50,11 @@ class StatefulServiceTypeDescription(ServiceTypeDescription):
         'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'has_persisted_state': {'key': 'HasPersistedState', 'type': 'bool'},
     }
 
     def __init__(self, is_stateful=None, service_type_name=None, placement_constraints=None, service_placement_policies=None, extensions=None, has_persisted_state=None):
         super(StatefulServiceTypeDescription, self).__init__(is_stateful=is_stateful, service_type_name=service_type_name, placement_constraints=placement_constraints, service_placement_policies=service_placement_policies, extensions=extensions)
         self.has_persisted_state = has_persisted_state
-        self.Kind = 'Stateful'
+        self.kind = 'Stateful'

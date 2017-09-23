@@ -21,27 +21,18 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: :mod:`A msrest Authentication
-     object<msrest.authentication>`
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, base_url=None, filepath=None):
+            self, base_url=None):
 
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
             base_url = 'http://localhost:19080'
 
-        super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url, filepath)
+        super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url)
 
         self.add_user_agent('servicefabricclientapis/{}'.format(VERSION))
-
-        self.credentials = credentials
 
 
 class ServiceFabricClientAPIs(object):
@@ -50,21 +41,17 @@ class ServiceFabricClientAPIs(object):
     :ivar config: Configuration for client.
     :vartype config: ServiceFabricClientAPIsConfiguration
 
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: :mod:`A msrest Authentication
-     object<msrest.authentication>`
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, base_url=None, filepath=None):
+            self, base_url=None):
 
-        self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url, filepath)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = ServiceFabricClientAPIsConfiguration(base_url)
+        self._client = ServiceClient(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '6.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -78,8 +65,8 @@ class ServiceFabricClientAPIs(object):
         cluster,
         security configurations, fault and upgrade domain topologies etc.
         These properties are specified as part of the ClusterConfig.JSON file
-        while deploying a stand alone cluster. However, most of the
-        information in the cluster manifest
+        while deploying a stand alone cluster. However, most of the information
+        in the cluster manifest
         is generated internally by service fabric during cluster deployment in
         other deployment scenarios (for e.g when using azuer portal).
         The contents of the cluster manifest are for informational purposes
@@ -89,22 +76,25 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterManifest
+         <azure.servicefabric.models.ClusterManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterManifest
-         <azure.servicefabric.models.ClusterManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterManifest'
@@ -146,9 +136,9 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
-        Similarly, use NodesHealthStateFilter and
-        ApplicationsHealthStateFilter to filter the collection of nodes and
-        applications returned based on their aggregated health state.
+        Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
+        to filter the collection of nodes and applications returned based on
+        their aggregated health state.
         .
 
         :param nodes_health_state_filter: Allows filtering of the node health
@@ -164,8 +154,8 @@ class ServiceFabricClientAPIs(object):
          with HealthState value of OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -192,8 +182,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -205,19 +195,19 @@ class ServiceFabricClientAPIs(object):
         :type applications_health_state_filter: int
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -233,12 +223,12 @@ class ServiceFabricClientAPIs(object):
          The statistics show the number of children entities in health state
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
-        :param include_system_application_health_statistics: Indicates
-         whether the health statistics should include the fabric:/System
-         application health statistics. False by default.
-         If IncludeSystemApplicationHealthStatistics is set to true, the
-         health statistics include the entities that belong to the
-         fabric:/System application.
+        :param include_system_application_health_statistics: Indicates whether
+         the health statistics should include the fabric:/System application
+         health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the health
+         statistics include the entities that belong to the fabric:/System
+         application.
          Otherwise, the query result includes health statistics only for user
          applications.
          The health statistics must be included in the query result for this
@@ -246,22 +236,25 @@ class ServiceFabricClientAPIs(object):
         :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterHealth
+         <azure.servicefabric.models.ClusterHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterHealth'
@@ -308,15 +301,14 @@ class ServiceFabricClientAPIs(object):
 
     def get_cluster_health_using_policy(
             self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of a Service Fabric cluster using the specified
-        policy.
+        """Gets the health of a Service Fabric cluster using the specified policy.
 
         Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
-        Similarly, use NodesHealthStateFilter and
-        ApplicationsHealthStateFilter to filter the collection of nodes and
-        applications returned based on their aggregated health state.
+        Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
+        to filter the collection of nodes and applications returned based on
+        their aggregated health state.
         Use ClusterHealthPolicies to override the health policies used to
         evaluate the health.
         .
@@ -334,8 +326,8 @@ class ServiceFabricClientAPIs(object):
          with HealthState value of OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -362,8 +354,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -375,19 +367,19 @@ class ServiceFabricClientAPIs(object):
         :type applications_health_state_filter: int
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -403,12 +395,12 @@ class ServiceFabricClientAPIs(object):
          The statistics show the number of children entities in health state
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
-        :param include_system_application_health_statistics: Indicates
-         whether the health statistics should include the fabric:/System
-         application health statistics. False by default.
-         If IncludeSystemApplicationHealthStatistics is set to true, the
-         health statistics include the entities that belong to the
-         fabric:/System application.
+        :param include_system_application_health_statistics: Indicates whether
+         the health statistics should include the fabric:/System application
+         health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the health
+         statistics include the entities that belong to the fabric:/System
+         application.
          Otherwise, the query result includes health statistics only for user
          applications.
          The health statistics must be included in the query result for this
@@ -416,8 +408,8 @@ class ServiceFabricClientAPIs(object):
         :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param application_health_policy_map:
         :type application_health_policy_map: list of
@@ -431,10 +423,13 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterHealth
+         <azure.servicefabric.models.ClusterHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -442,7 +437,7 @@ class ServiceFabricClientAPIs(object):
         if application_health_policy_map is not None or cluster_health_policy is not None:
             cluster_health_policies = models.ClusterHealthPolicies(application_health_policy_map=application_health_policy_map, cluster_health_policy=cluster_health_policy)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterHealth'
@@ -501,29 +496,32 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric cluster using health chunks.
         Includes the aggregated health state of the cluster, but none of the
         cluster entities.
-        To expand the cluster health and get the health state of all or some
-        of the entities, use the POST URI and specify the cluster health
-        chunk query description.
+        To expand the cluster health and get the health state of all or some of
+        the entities, use the POST URI and specify the cluster health chunk
+        query description.
         .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterHealthChunk
+         <azure.servicefabric.models.ClusterHealthChunk>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterHealthChunk>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterHealthChunk'
@@ -563,8 +561,8 @@ class ServiceFabricClientAPIs(object):
         """Gets the health of a Service Fabric cluster using health chunks.
 
         Gets the health of a Service Fabric cluster using health chunks. The
-        health evaluation is done based on the input cluster health chunk
-        query description.
+        health evaluation is done based on the input cluster health chunk query
+        description.
         The query description allows users to specify health policies for
         evaluating the cluster and its children.
         Users can specify very flexible filters to select which cluster
@@ -585,17 +583,17 @@ class ServiceFabricClientAPIs(object):
          evaluation uses the cluster health policy defined in the cluster
          manifest or the default cluster health policy.
          By default, each application is evaluated using its specific
-         application health policy, defined in the application manifest, or
-         the default health policy, if no policy is defined in manifest.
-         If the application health policy map is specified, and it has an
-         entry for an application, the specified application health policy
+         application health policy, defined in the application manifest, or the
+         default health policy, if no policy is defined in manifest.
+         If the application health policy map is specified, and it has an entry
+         for an application, the specified application health policy
          is used to evaluate the application health.
          Users can specify very flexible filters to select which cluster
          entities to include in response. The selection can be done based on
          the entities health state and based on the hierarchy.
-         The query can return multi-level children of the entities based on
-         the specified filters. For example, it can return one application
-         with a specified name, and for this application, return
+         The query can return multi-level children of the entities based on the
+         specified filters. For example, it can return one application with a
+         specified name, and for this application, return
          only services that are in Error or Warning, and all partitions and
          replicas for one of these services.
         :type cluster_health_chunk_query_description:
@@ -603,22 +601,25 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ClusterHealthChunkQueryDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterHealthChunk
+         <azure.servicefabric.models.ClusterHealthChunk>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterHealthChunk>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterHealthChunk'
@@ -674,8 +675,8 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetClusterHealth and check that the report appears in the
-        HealthEvents section.
+        GetClusterHealth and check that the report appears in the HealthEvents
+        section.
         .
 
         :param health_information: Describes the health information for the
@@ -685,41 +686,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/ReportClusterHealth'
@@ -766,22 +769,25 @@ class ServiceFabricClientAPIs(object):
         :type code_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`FabricCodeVersionInfo
+         <azure.servicefabric.models.FabricCodeVersionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`FabricCodeVersionInfo
-         <azure.servicefabric.models.FabricCodeVersionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.FabricCodeVersionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetProvisionedCodeVersions'
@@ -820,33 +826,36 @@ class ServiceFabricClientAPIs(object):
 
     def get_provisioned_fabric_config_version_info_list(
             self, config_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of fabric config versions that are provisioned in a
-        Service Fabric cluster.
+        """Gets a list of fabric config versions that are provisioned in a Service
+        Fabric cluster.
 
         Gets a list of information about fabric config versions that are
-        provisioned in the cluster. The parameter ConfigVersion can be used
-        to optionally filter the output to only that particular version.
+        provisioned in the cluster. The parameter ConfigVersion can be used to
+        optionally filter the output to only that particular version.
 
         :param config_version: The config version of Service Fabric.
         :type config_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`FabricConfigVersionInfo
+         <azure.servicefabric.models.FabricConfigVersionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`FabricConfigVersionInfo
-         <azure.servicefabric.models.FabricConfigVersionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.FabricConfigVersionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetProvisionedConfigVersions'
@@ -887,28 +896,31 @@ class ServiceFabricClientAPIs(object):
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the progress of the current cluster upgrade.
 
-        Gets the current progress of the ongoing cluster upgrade. If no
-        upgrade is currently in progress, gets the last state of the previous
-        cluster upgrade.
+        Gets the current progress of the ongoing cluster upgrade. If no upgrade
+        is currently in progress, gets the last state of the previous cluster
+        upgrade.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterUpgradeProgressObject
+         <azure.servicefabric.models.ClusterUpgradeProgressObject>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterUpgradeProgressObject
-         <azure.servicefabric.models.ClusterUpgradeProgressObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterUpgradeProgressObject>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetUpgradeProgress'
@@ -948,8 +960,8 @@ class ServiceFabricClientAPIs(object):
         """Get the Service Fabric standalone cluster configuration.
 
         Get the Service Fabric standalone cluster configuration. The cluster
-        configuration contains properties of the cluster that include
-        different node types on the cluster,
+        configuration contains properties of the cluster that include different
+        node types on the cluster,
         security configurations, fault and upgrade domain topologies etc.
         .
 
@@ -958,18 +970,21 @@ class ServiceFabricClientAPIs(object):
         :type configuration_api_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterConfiguration
+         <azure.servicefabric.models.ClusterConfiguration>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterConfiguration
-         <azure.servicefabric.models.ClusterConfiguration>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterConfiguration>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1020,22 +1035,25 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ClusterConfigurationUpgradeStatusInfo
+         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ClusterConfigurationUpgradeStatusInfo
-         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetClusterConfigurationUpgradeStatus'
@@ -1080,8 +1098,8 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param code_file_path: The cluster code package file path.
         :type code_file_path: str
@@ -1092,15 +1110,17 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         provision_fabric_description = models.ProvisionFabricDescription(code_file_path=code_file_path, cluster_manifest_file_path=cluster_manifest_file_path)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/Provision'
@@ -1142,8 +1162,8 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param code_version: The cluster code package version.
         :type code_version: str
@@ -1154,15 +1174,17 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         unprovision_fabric_description = models.UnprovisionFabricDescription(code_version=code_version, config_version=config_version)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/Unprovision'
@@ -1202,21 +1224,23 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/RollbackUpgrade'
@@ -1255,23 +1279,25 @@ class ServiceFabricClientAPIs(object):
         :type upgrade_domain: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         resume_cluster_upgrade_description = models.ResumeClusterUpgradeDescription(upgrade_domain=upgrade_domain)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/MoveToNextUpgradeDomain'
@@ -1309,31 +1335,33 @@ class ServiceFabricClientAPIs(object):
         cluster.
 
         Validate the supplied upgrade parameters and start upgrading the code
-        or configuration version of a Service Fabric cluster if the
-        parameters are valid.
+        or configuration version of a Service Fabric cluster if the parameters
+        are valid.
 
-        :param start_cluster_upgrade_description: Describes the parameters
-         for starting a cluster upgrade.
+        :param start_cluster_upgrade_description: Describes the parameters for
+         starting a cluster upgrade.
         :type start_cluster_upgrade_description:
          :class:`StartClusterUpgradeDescription
          <azure.servicefabric.models.StartClusterUpgradeDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/Upgrade'
@@ -1380,21 +1408,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ClusterConfigurationUpgradeDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/StartClusterConfigurationUpgrade'
@@ -1439,21 +1469,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.UpdateClusterUpgradeDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/UpdateUpgrade'
@@ -1487,11 +1519,11 @@ class ServiceFabricClientAPIs(object):
 
     def get_aad_metadata(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the Azure Active Directory metadata used for secured connection
-        to cluster.
+        """Gets the Azure Active Directory metadata used for secured connection to
+        cluster.
 
-        Gets the Azure Active Directory metadata used for secured connection
-        to cluster.
+        Gets the Azure Active Directory metadata used for secured connection to
+        cluster.
         This API is not supposed to be called separately. It provides
         information needed to set up an Azure Active Directory secured
         connection with a Service Fabric cluster.
@@ -1499,22 +1531,25 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`AadMetadataObject
+         <azure.servicefabric.models.AadMetadataObject>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`AadMetadataObject
-         <azure.servicefabric.models.AadMetadataObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.AadMetadataObject>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "1.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/GetAadMetadata'
@@ -1557,20 +1592,19 @@ class ServiceFabricClientAPIs(object):
         Fabric Cluster. The respons include the name, status, id, health,
         uptime and other details about the node.
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param node_status_filter: Allows filtering the nodes based on the
          NodeStatus. Only the nodes that are matching the specified filter
          value will be returned. The filter value can be one of the following.
-         - default - This filter value will match all of the nodes excepts
-         the ones with with status as Unknown or Removed.
+         - default - This filter value will match all of the nodes excepts the
+         ones with with status as Unknown or Removed.
          - all - This filter value will match all of the nodes.
          - up - This filter value will match nodes that are Up.
          - down - This filter value will match nodes that are Down.
@@ -1581,32 +1615,35 @@ class ServiceFabricClientAPIs(object):
          - disabled - This filter value will match nodes that are Disabled.
          - unknown - This filter value will match nodes whose status is
          Unknown. A node would be in Unknown state if Service Fabric does not
-         have authoritative information about that node. This can happen if
-         the system learns about a node at runtime.
+         have authoritative information about that node. This can happen if the
+         system learns about a node at runtime.
          - removed - This filter value will match nodes whose status is
          Removed. These are the nodes that are removed from the cluster using
          the RemoveNodeState API.
-         . Possible values include: 'default', 'all', 'up', 'down',
-         'enabling', 'disabling', 'disabled', 'unknown', 'removed'
+         . Possible values include: 'default', 'all', 'up', 'down', 'enabling',
+         'disabling', 'disabled', 'unknown', 'removed'
         :type node_status_filter: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedNodeInfoList
+         <azure.servicefabric.models.PagedNodeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedNodeInfoList
-         <azure.servicefabric.models.PagedNodeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedNodeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes'
@@ -1657,21 +1694,23 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}'
@@ -1715,27 +1754,27 @@ class ServiceFabricClientAPIs(object):
         """Gets the health of a Service Fabric node.
 
         Gets the health of a Service Fabric node. Use EventsHealthStateFilter
-        to filter the collection of health events reported on the node based
-        on the health state. If the node that you specify by name does not
-        exist in the health store, this returns an error.
+        to filter the collection of health events reported on the node based on
+        the health state. If the node that you specify by name does not exist
+        in the health store, this returns an error.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -1747,21 +1786,23 @@ class ServiceFabricClientAPIs(object):
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetHealth'
@@ -1804,33 +1845,33 @@ class ServiceFabricClientAPIs(object):
 
     def get_node_health_using_policy(
             self, node_name, events_health_state_filter=0, cluster_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of a Service Fabric node, by using the specified
-        health policy.
+        """Gets the health of a Service Fabric node, by using the specified health
+        policy.
 
         Gets the health of a Service Fabric node. Use EventsHealthStateFilter
-        to filter the collection of health events reported on the node based
-        on the health state. Use ClusterHealthPolicy in the POST body to
-        override the health policies used to evaluate the health. If the node
-        that you specify by name does not exist in the health store, this
-        returns an error.
+        to filter the collection of health events reported on the node based on
+        the health state. Use ClusterHealthPolicy in the POST body to override
+        the health policies used to evaluate the health. If the node that you
+        specify by name does not exist in the health store, this returns an
+        error.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -1842,27 +1883,29 @@ class ServiceFabricClientAPIs(object):
         :type events_health_state_filter: int
         :param cluster_health_policy: Describes the health policies used to
          evaluate the health of a cluster or node. If not present, the health
-         evaluation uses the health policy from cluster manifest or the
-         default health policy.
+         evaluation uses the health policy from cluster manifest or the default
+         health policy.
         :type cluster_health_policy: :class:`ClusterHealthPolicy
          <azure.servicefabric.models.ClusterHealthPolicy>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetHealth'
@@ -1915,8 +1958,8 @@ class ServiceFabricClientAPIs(object):
         """Sends a health report on the Service Fabric node.
 
         Reports health state of the specified Service Fabric node. The report
-        must contain the information about the source of the health report
-        and property on which it is reported.
+        must contain the information about the source of the health report and
+        property on which it is reported.
         The report is sent to a Service Fabric gateway node, which forwards to
         the health store.
         The report may be accepted by the gateway, but rejected by the health
@@ -1937,41 +1980,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/ReportHealth'
@@ -2019,22 +2064,25 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`NodeLoadInfo
+         <azure.servicefabric.models.NodeLoadInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`NodeLoadInfo
-         <azure.servicefabric.models.NodeLoadInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.NodeLoadInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetLoadInformation'
@@ -2080,27 +2128,27 @@ class ServiceFabricClientAPIs(object):
 
         Deactivate a Service Fabric cluster node with the specified
         deactivation intent. Once the deactivation is in progress, the
-        deactivation intent can be increased, but not decreased (for example,
-        a node which is was deactivated with the Pause intent can be
-        deactivated further with Restart, but not the other way around. Nodes
-        may be reactivated using the Activate a node operation any time after
-        they are deactivated. If the deactivation is not complete this will
-        cancel the deactivation. A node which goes down and comes back up
-        while deactivated will still need to be reactivated before services
-        will be placed on that node.
+        deactivation intent can be increased, but not decreased (for example, a
+        node which is was deactivated with the Pause intent can be deactivated
+        further with Restart, but not the other way around. Nodes may be
+        reactivated using the Activate a node operation any time after they are
+        deactivated. If the deactivation is not complete this will cancel the
+        deactivation. A node which goes down and comes back up while
+        deactivated will still need to be reactivated before services will be
+        placed on that node.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param deactivation_intent: Describes the intent or reason for
          deactivating the node. The possible values are following.
          - Pause - Indicates that the node should be paused. The value is 1.
-         - Restart - Indicates that the intent is for the node to be
-         restarted after a short period of time. The value is 2.
+         - Restart - Indicates that the intent is for the node to be restarted
+         after a short period of time. The value is 2.
          - RemoveData - Indicates the intent is for the node to remove data.
          The value is 3.
          . Possible values include: 'Pause', 'Restart', 'RemoveData'
@@ -2110,15 +2158,17 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         deactivation_intent_description = models.DeactivationIntentDescription(deactivation_intent=deactivation_intent)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/Deactivate'
@@ -2158,30 +2208,32 @@ class ServiceFabricClientAPIs(object):
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Activate a Service Fabric cluster node which is currently deactivated.
 
-        Activates a Service Fabric cluster node which is currently
-        deactivated. Once activated, the node will again become a viable
-        target for placing new replicas, and any deactivated replicas
-        remaining on the node will be reactivated.
+        Activates a Service Fabric cluster node which is currently deactivated.
+        Once activated, the node will again become a viable target for placing
+        new replicas, and any deactivated replicas remaining on the node will
+        be reactivated.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/Activate'
@@ -2221,32 +2273,34 @@ class ServiceFabricClientAPIs(object):
         Notifies Service Fabric that the persisted state on a node has been
         permanently removed or lost.  This implies that it is not possible to
         recover the persisted state of that node. This generally happens if a
-        hard disk has been wiped clean, or if a hard disk crashes. The node
-        has to be down for this operation to be successful. This operation
-        lets Service Fabric know that the replicas on that node no longer
-        exist, and that Service Fabric should stop waiting for those replicas
-        to come back up. Do not run this cmdlet if the state on the node has
-        not been removed and the node can comes back up with its state intact.
+        hard disk has been wiped clean, or if a hard disk crashes. The node has
+        to be down for this operation to be successful. This operation lets
+        Service Fabric know that the replicas on that node no longer exist, and
+        that Service Fabric should stop waiting for those replicas to come back
+        up. Do not run this cmdlet if the state on the node has not been
+        removed and the node can comes back up with its state intact.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/RemoveNodeState'
@@ -2287,34 +2341,35 @@ class ServiceFabricClientAPIs(object):
         :param node_name: The name of the node.
         :type node_name: str
         :param node_instance_id: The instance id of the target node. If
-         instance id is specified the node is restarted only if it matches
-         with the current instance of the node. A default value of "0" would
-         match any instance id. The instance id can be obtained using get
-         node query.
+         instance id is specified the node is restarted only if it matches with
+         the current instance of the node. A default value of "0" would match
+         any instance id. The instance id can be obtained using get node query.
         :type node_instance_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
-        :param create_fabric_dump: Specify True to create a dump of the
-         fabric node process. This is case sensitive. Possible values
-         include: 'False', 'True'
+        :param create_fabric_dump: Specify True to create a dump of the fabric
+         node process. This is case sensitive. Possible values include:
+         'False', 'True'
         :type create_fabric_dump: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         restart_node_description = models.RestartNodeDescription(node_instance_id=node_instance_id, create_fabric_dump=create_fabric_dump)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/Restart'
@@ -2351,62 +2406,75 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
     def get_application_type_info_list(
-            self, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_definition_kind_filter=65535, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster.
 
         Returns the information about the application types that are
         provisioned or in the process of being provisioned in the Service
-        Fabric cluster. Each version of an application type is returned as
-        one application type. The response includes the name, version, status
-        and other details about the application type. This is a paged query,
+        Fabric cluster. Each version of an application type is returned as one
+        application type. The response includes the name, version, status and
+        other details about the application type. This is a paged query,
         meaning that if not all of the application types fit in a page, one
         page of results is returned as well as a continuation token which can
-        be used to get the next page. For example, if there are 10
-        application types but a page only fits the first 3 application types,
-        or if max results is set to 3, then 3 is returned. To access the rest
-        of the results, retrieve subsequent pages by using the returned
-        continuation token in the next query. An empty continuation token is
-        returned if there are no subsequent pages.
+        be used to get the next page. For example, if there are 10 application
+        types but a page only fits the first 3 application types, or if max
+        results is set to 3, then 3 is returned. To access the rest of the
+        results, retrieve subsequent pages by using the returned continuation
+        token in the next query. An empty continuation token is returned if
+        there are no subsequent pages.
 
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param application_type_definition_kind_filter: Used to filter on
+         ApplicationTypeDefinitionKind for application type query operations.
+         - Default - Default value. Filter that matches input with any
+         ApplicationTypeDefinitionKind value. The value is 0.
+         - All - Filter that matches input with any
+         ApplicationTypeDefinitionKind value. The value is 65535.
+         - ServiceFabricApplicationPackage - Filter that matches input with
+         ApplicationTypeDefinitionKind value ServiceFabricApplicationPackage.
+         The value is 1.
+         - Compose - Filter that matches input with
+         ApplicationTypeDefinitionKind value Compose. The value is 2.
+        :type application_type_definition_kind_filter: int
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         much results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedApplicationTypeInfoList
+         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "5.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes'
@@ -2414,6 +2482,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_type_definition_kind_filter is not None:
+            query_parameters['ApplicationTypeDefinitionKindFilter'] = self._serialize.query("application_type_definition_kind_filter", application_type_definition_kind_filter, 'int')
         if exclude_application_parameters is not None:
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
@@ -2454,62 +2524,63 @@ class ServiceFabricClientAPIs(object):
 
         Returns the information about the application types that are
         provisioned or in the process of being provisioned in the Service
-        Fabric cluster. These results are of application types whose name
-        match exactly the one specified as the parameter, and which comply
-        with the given query parameters. All versions of the application type
-        matching the application type name are returned, with each version
-        returned as one application type. The response includes the name,
-        version, status and other details about the application type. This is
-        a paged query, meaning that if not all of the application types fit
-        in a page, one page of results is returned as well as a continuation
-        token which can be used to get the next page. For example, if there
-        are 10 application types but a page only fits the first 3 application
-        types, or if max results is set to 3, then 3 is returned. To access
-        the rest of the results, retrieve subsequent pages by using the
-        returned continuation token in the next query. An empty continuation
-        token is returned if there are no subsequent pages.
+        Fabric cluster. These results are of application types whose name match
+        exactly the one specified as the parameter, and which comply with the
+        given query parameters. All versions of the application type matching
+        the application type name are returned, with each version returned as
+        one application type. The response includes the name, version, status
+        and other details about the application type. This is a paged query,
+        meaning that if not all of the application types fit in a page, one
+        page of results is returned as well as a continuation token which can
+        be used to get the next page. For example, if there are 10 application
+        types but a page only fits the first 3 application types, or if max
+        results is set to 3, then 3 is returned. To access the rest of the
+        results, retrieve subsequent pages by using the returned continuation
+        token in the next query. An empty continuation token is returned if
+        there are no subsequent pages.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         much results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedApplicationTypeInfoList
+         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "5.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}'
@@ -2568,23 +2639,25 @@ class ServiceFabricClientAPIs(object):
         :type application_type_build_path: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         application_type_image_store_path = models.ApplicationTypeImageStorePath(application_type_build_path=application_type_build_path)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/$/Provision'
@@ -2609,7 +2682,7 @@ class ServiceFabricClientAPIs(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 409]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -2623,9 +2696,9 @@ class ServiceFabricClientAPIs(object):
 
         Removes or unregisters a Service Fabric application type from the
         cluster. This operation can only be performed if all application
-        instance of the application type has been deleted. Once the
-        application type is unregistered, no new application instance can be
-        created for this particular application type.
+        instance of the application type has been deleted. Once the application
+        type is unregistered, no new application instance can be created for
+        this particular application type.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
@@ -2633,23 +2706,25 @@ class ServiceFabricClientAPIs(object):
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         application_type_image_store_version = models.ApplicationTypeImageStoreVersion(application_type_version=application_type_version)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}/$/Unprovision'
@@ -2704,22 +2779,25 @@ class ServiceFabricClientAPIs(object):
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`ServiceTypeInfo
+         <azure.servicefabric.models.ServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`ServiceTypeInfo
-         <azure.servicefabric.models.ServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'
@@ -2771,27 +2849,29 @@ class ServiceFabricClientAPIs(object):
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceTypeManifest
+         <azure.servicefabric.models.ServiceTypeManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceTypeManifest
-         <azure.servicefabric.models.ServiceTypeManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceTypeManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'
@@ -2847,7 +2927,10 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_manifest_name: The name of the service manifest to
          filter the list of deployed service type information. If specified,
@@ -2856,22 +2939,25 @@ class ServiceFabricClientAPIs(object):
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedServiceTypeInfo
+         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'
@@ -2929,7 +3015,10 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_type_name: Specifies the name of a Service Fabric
          service type.
@@ -2941,22 +3030,25 @@ class ServiceFabricClientAPIs(object):
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedServiceTypeInfo
+         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'
@@ -3011,21 +3103,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ApplicationDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/$/Create'
@@ -3064,40 +3158,45 @@ class ServiceFabricClientAPIs(object):
         Deletes an existing Service Fabric application. An application must be
         created before it can be deleted. Deleting an application will delete
         all services that are part of that application. By default Service
-        Fabric will try to close service replicas in a graceful manner and
-        then delete the service. However if service is having issues closing
-        the replica gracefully, the delete operation may take a long time or
-        get stuck. Use the optional ForceRemove flag to skip the graceful
-        close sequence and forcefully delete the application and all of the
-        its services.
+        Fabric will try to close service replicas in a graceful manner and then
+        delete the service. However if service is having issues closing the
+        replica gracefully, the delete operation may take a long time or get
+        stuck. Use the optional ForceRemove flag to skip the graceful close
+        sequence and forcefully delete the application and all of the its
+        services.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/Delete'
@@ -3124,7 +3223,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -3136,34 +3235,40 @@ class ServiceFabricClientAPIs(object):
         """Gets load information about a Service Fabric application.
 
         Returns the load information about the application that was created or
-        in the process of being created in the Service Fabric cluster and
-        whose name matches the one specified as the parameter. The response
-        includes the name, minimum nodes, maximum nodes, the number of nodes
-        the app is occupying currently, and application load metric
-        information about the application.
+        in the process of being created in the Service Fabric cluster and whose
+        name matches the one specified as the parameter. The response includes
+        the name, minimum nodes, maximum nodes, the number of nodes the app is
+        occupying currently, and application load metric information about the
+        application.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationLoadInfo
+         <azure.servicefabric.models.ApplicationLoadInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationLoadInfo
-         <azure.servicefabric.models.ApplicationLoadInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationLoadInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetLoadInformation'
@@ -3203,52 +3308,65 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_info_list(
-            self, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_definition_kind_filter=65535, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications created in the Service Fabric cluster
         that match filters specified as the parameter.
 
-        Gets the information about the applications that were created or in
-        the process of being created in the Service Fabric cluster and match
+        Gets the information about the applications that were created or in the
+        process of being created in the Service Fabric cluster and match
         filters specified as the parameter. The response includes the name,
         type, status, parameters and other details about the application. If
-        the applications do not fit in a page, one page of results is
-        returned as well as a continuation token which can be used to get the
-        next page.
+        the applications do not fit in a page, one page of results is returned
+        as well as a continuation token which can be used to get the next page.
 
-        :param application_type_name: The application type name used to
-         filter the applications to query for. This value should not contain
-         the application type version.
+        :param application_definition_kind_filter: Used to filter on
+         ApplicationDefinitionKind for application query operations.
+         - Default - Default value. Filter that matches input with any
+         ApplicationDefinitionKind value. The value is 0.
+         - All - Filter that matches input with any ApplicationDefinitionKind
+         value. The value is 65535.
+         - ServiceFabricApplicationDescription - Filter that matches input with
+         ApplicationDefinitionKind value ServiceFabricApplicationDescription.
+         The value is 1.
+         - Compose - Filter that matches input with ApplicationDefinitionKind
+         value Compose. The value is 2.
+        :type application_definition_kind_filter: int
+        :param application_type_name: The application type name used to filter
+         the applications to query for. This value should not contain the
+         application type version.
         :type application_type_name: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedApplicationInfoList
+         <azure.servicefabric.models.PagedApplicationInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedApplicationInfoList
-         <azure.servicefabric.models.PagedApplicationInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedApplicationInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications'
@@ -3256,6 +3374,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_definition_kind_filter is not None:
+            query_parameters['ApplicationDefinitionKindFilter'] = self._serialize.query("application_definition_kind_filter", application_definition_kind_filter, 'int')
         if application_type_name is not None:
             query_parameters['ApplicationTypeName'] = self._serialize.query("application_type_name", application_type_name, 'str')
         if exclude_application_parameters is not None:
@@ -3295,35 +3415,41 @@ class ServiceFabricClientAPIs(object):
 
         Returns the information about the application that was created or in
         the process of being created in the Service Fabric cluster and whose
-        name matches the one specified as the parameter. The response
-        includes the name, type, status, parameters and other details about
-        the application.
+        name matches the one specified as the parameter. The response includes
+        the name, type, status, parameters and other details about the
+        application.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationInfo
+         <azure.servicefabric.models.ApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationInfo
-         <azure.servicefabric.models.ApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}'
@@ -3368,29 +3494,32 @@ class ServiceFabricClientAPIs(object):
             self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the service fabric application.
 
-        Returns the heath state of the service fabric application. The
-        response reports either Ok, Error or Warning health state. If the
-        entity is not found in the helath store, it will return Error.
+        Returns the heath state of the service fabric application. The response
+        reports either Ok, Error or Warning health state. If the entity is not
+        found in the helath store, it will return Error.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3401,11 +3530,11 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param deployed_applications_health_state_filter: Allows filtering of
-         the deployed applications health state objects returned in the
-         result of application health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states. Only deployed applications that
-         match the filter will be returned.\\
+         the deployed applications health state objects returned in the result
+         of application health query based on their health state.
+         The possible values for this parameter include integer value of one of
+         the following health states. Only deployed applications that match the
+         filter will be returned.\\
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
          The state values are flag based enumeration, so the value could be a
@@ -3415,8 +3544,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3429,19 +3558,19 @@ class ServiceFabricClientAPIs(object):
         :param services_health_state_filter: Allows filtering of the services
          health state objects returned in the result of services health query
          based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
+         The possible values for this parameter include integer value of one of
+         the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
          based enumeration, so the value could be a combination of these value
          obtained using bitwise 'OR' operator. For example, if the provided
-         value is 6 then health state of services with HealthState value of
-         OK (2) and Warning (4) will be returned.
+         value is 6 then health state of services with HealthState value of OK
+         (2) and Warning (4) will be returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3459,22 +3588,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationHealth
+         <azure.servicefabric.models.ApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetHealth'
@@ -3529,28 +3661,31 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric application. Use
         EventsHealthStateFilter to filter the collection of health events
         reported on the node based on the health state. Use
-        ClusterHealthPolicies to override the health policies used to
-        evaluate the health.
+        ClusterHealthPolicies to override the health policies used to evaluate
+        the health.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3561,11 +3696,11 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param deployed_applications_health_state_filter: Allows filtering of
-         the deployed applications health state objects returned in the
-         result of application health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states. Only deployed applications that
-         match the filter will be returned.\\
+         the deployed applications health state objects returned in the result
+         of application health query based on their health state.
+         The possible values for this parameter include integer value of one of
+         the following health states. Only deployed applications that match the
+         filter will be returned.\\
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
          The state values are flag based enumeration, so the value could be a
@@ -3575,8 +3710,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3589,19 +3724,19 @@ class ServiceFabricClientAPIs(object):
         :param services_health_state_filter: Allows filtering of the services
          health state objects returned in the result of services health query
          based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
+         The possible values for this parameter include integer value of one of
+         the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
          based enumeration, so the value could be a combination of these value
          obtained using bitwise 'OR' operator. For example, if the provided
-         value is 6 then health state of services with HealthState value of
-         OK (2) and Warning (4) will be returned.
+         value is 6 then health state of services with HealthState value of OK
+         (2) and Warning (4) will be returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3625,22 +3760,25 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ApplicationHealthPolicy>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationHealth
+         <azure.servicefabric.models.ApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetHealth'
@@ -3714,7 +3852,10 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -3723,41 +3864,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/ReportHealth'
@@ -3804,7 +3947,10 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param application_upgrade_description: Parameters for an application
          upgrade.
@@ -3813,21 +3959,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ApplicationUpgradeDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/Upgrade'
@@ -3872,26 +4020,32 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationUpgradeProgressInfo
+         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationUpgradeProgressInfo
-         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetUpgradeProgress'
@@ -3935,36 +4089,41 @@ class ServiceFabricClientAPIs(object):
         """Updates an ongoing application upgrade in the Service Fabric cluster.
 
         Updates the parameters of an ongoing application upgrade from the ones
-        specified at the time of starting the application upgrade. This may
-        be required to mitigate stuck application upgrades due to incorrect
+        specified at the time of starting the application upgrade. This may be
+        required to mitigate stuck application upgrades due to incorrect
         parameters or issues in the application to make progress.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
-        :param application_upgrade_update_description: Parameters for
-         updating an existing application upgrade.
+        :param application_upgrade_update_description: Parameters for updating
+         an existing application upgrade.
         :type application_upgrade_update_description:
          :class:`ApplicationUpgradeUpdateDescription
          <azure.servicefabric.models.ApplicationUpgradeUpdateDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/UpdateUpgrade'
@@ -4012,30 +4171,35 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
-        :param upgrade_domain_name: The name of the upgrade domain in which
-         to resume the upgrade.
+        :param upgrade_domain_name: The name of the upgrade domain in which to
+         resume the upgrade.
         :type upgrade_domain_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         resume_application_upgrade_description = models.ResumeApplicationUpgradeDescription(upgrade_domain_name=upgrade_domain_name)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'
@@ -4073,37 +4237,41 @@ class ServiceFabricClientAPIs(object):
 
     def rollback_application_upgrade(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Starts rolling back the currently on-going upgrade of an application
-        in the Service Fabric cluster.
+        """Starts rolling back the currently on-going upgrade of an application in
+        the Service Fabric cluster.
 
         Starts rolling back the current application upgrade to the previous
-        version. This API can only be used to rollback the current
-        in-progress upgrade that is rolling forward to new version. If the
-        application is not currently being upgraded use
-        StartApplicationUpgrade API to upgrade it to desired version
-        including rolling back to a previous version.
+        version. This API can only be used to rollback the current in-progress
+        upgrade that is rolling forward to new version. If the application is
+        not currently being upgraded use StartApplicationUpgrade API to upgrade
+        it to desired version including rolling back to a previous version.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/RollbackUpgrade'
@@ -4145,22 +4313,25 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedApplicationInfo
+         <azure.servicefabric.models.DeployedApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications'
@@ -4211,26 +4382,32 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedApplicationInfo
+         <azure.servicefabric.models.DeployedApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedApplicationInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}'
@@ -4286,23 +4463,26 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4312,15 +4492,15 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
-        :param deployed_service_packages_health_state_filter: Allows
-         filtering of the deployed service package health state objects
-         returned in the result of deployed application health query based on
-         their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only deployed service packages that match the filter are returned.
-         All deployed service packages are used to evaluate the aggregated
-         health state of the deployed application.
+        :param deployed_service_packages_health_state_filter: Allows filtering
+         of the deployed service package health state objects returned in the
+         result of deployed application health query based on their health
+         state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only deployed service packages that match the filter are returned. All
+         deployed service packages are used to evaluate the aggregated health
+         state of the deployed application.
          If not specified, all entries are returned.
          The state values are flag based enumeration, so the value can be a
          combination of these value obtained using bitwise 'OR' operator.
@@ -4329,8 +4509,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4348,22 +4528,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedApplicationHealth
+         <azure.servicefabric.models.DeployedApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
@@ -4422,32 +4605,35 @@ class ServiceFabricClientAPIs(object):
         optionally filter for DeployedServicePackageHealth children based on
         health state. Use ApplicationHealthPolicy to optionally override the
         health policies used to evaluate the health. This API only uses
-        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The
-        rest of the fields are ignored while evaluating the health of the
-        deployed application.
+        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
+        of the fields are ignored while evaluating the health of the deployed
+        application.
         .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4457,15 +4643,15 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
-        :param deployed_service_packages_health_state_filter: Allows
-         filtering of the deployed service package health state objects
-         returned in the result of deployed application health query based on
-         their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only deployed service packages that match the filter are returned.
-         All deployed service packages are used to evaluate the aggregated
-         health state of the deployed application.
+        :param deployed_service_packages_health_state_filter: Allows filtering
+         of the deployed service package health state objects returned in the
+         result of deployed application health query based on their health
+         state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only deployed service packages that match the filter are returned. All
+         deployed service packages are used to evaluate the aggregated health
+         state of the deployed application.
          If not specified, all entries are returned.
          The state values are flag based enumeration, so the value can be a
          combination of these value obtained using bitwise 'OR' operator.
@@ -4474,8 +4660,8 @@ class ServiceFabricClientAPIs(object):
          returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4499,22 +4685,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedApplicationHealth
+         <azure.servicefabric.models.DeployedApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedApplicationHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
@@ -4581,8 +4770,8 @@ class ServiceFabricClientAPIs(object):
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, get
-        deployed application health and check that the report appears in the
+        To see whether the report was applied in the health store, get deployed
+        application health and check that the report appears in the
         HealthEvents section.
         .
 
@@ -4590,7 +4779,10 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -4599,41 +4791,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'
@@ -4676,8 +4870,8 @@ class ServiceFabricClientAPIs(object):
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the manifest describing an application type.
 
-        Gets the manifest describing an application type. The response
-        contains the application manifest XML as a string.
+        Gets the manifest describing an application type. The response contains
+        the application manifest XML as a string.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
@@ -4685,22 +4879,25 @@ class ServiceFabricClientAPIs(object):
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationTypeManifest
+         <azure.servicefabric.models.ApplicationTypeManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationTypeManifest
-         <azure.servicefabric.models.ApplicationTypeManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationTypeManifest>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'
@@ -4745,43 +4942,48 @@ class ServiceFabricClientAPIs(object):
         """Gets the information about all services belonging to the application
         specified by the application id.
 
-        Returns the information about all services belonging to the
-        application specified by the application id.
+        Returns the information about all services belonging to the application
+        specified by the application id.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_type_name: The service type name used to filter the
          services to query for.
         :type service_type_name: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedServiceInfoList
+         <azure.servicefabric.models.PagedServiceInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedServiceInfoList
-         <azure.servicefabric.models.PagedServiceInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedServiceInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetServices'
@@ -4834,28 +5036,37 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceInfo <azure.servicefabric.models.ServiceInfo>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceInfo <azure.servicefabric.models.ServiceInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetServices/{serviceId}'
@@ -4899,30 +5110,37 @@ class ServiceFabricClientAPIs(object):
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric application for a service.
 
-        The GetApplicationName endpoint returns the name of the application
-        for the specified service.
+        The GetApplicationName endpoint returns the name of the application for
+        the specified service.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ApplicationNameInfo
+         <azure.servicefabric.models.ApplicationNameInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ApplicationNameInfo
-         <azure.servicefabric.models.ApplicationNameInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ApplicationNameInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/GetApplicationName'
@@ -4969,7 +5187,10 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_description: The information necessary to create a
          service.
@@ -4977,21 +5198,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ServiceDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetServices/$/Create'
@@ -5037,7 +5260,10 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_from_template_description: Describes the service that
          needs to be created from the template defined in the application
@@ -5047,21 +5273,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ServiceFromTemplateDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'
@@ -5104,37 +5332,43 @@ class ServiceFabricClientAPIs(object):
         Deletes an existing Service Fabric service. A service must be created
         before it can be deleted. By default Service Fabric will try to close
         service replicas in a graceful manner and then delete the service.
-        However if service is having issues closing the replica gracefully,
-        the delete operation may take a long time or get stuck. Use the
-        optional ForceRemove flag to skip the graceful close sequence and
-        forcefully delete the service.
+        However if service is having issues closing the replica gracefully, the
+        delete operation may take a long time or get stuck. Use the optional
+        ForceRemove flag to skip the graceful close sequence and forcefully
+        delete the service.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/Delete'
@@ -5175,29 +5409,35 @@ class ServiceFabricClientAPIs(object):
         Updates the specified service using the given update description.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
-        :param service_update_description: The information necessary to
-         update a service.
+        :param service_update_description: The information necessary to update
+         a service.
         :type service_update_description: :class:`ServiceUpdateDescription
          <azure.servicefabric.models.ServiceUpdateDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/Update'
@@ -5241,26 +5481,33 @@ class ServiceFabricClientAPIs(object):
         must be created before its description can be obtained.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceDescription
+         <azure.servicefabric.models.ServiceDescription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceDescription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/GetDescription'
@@ -5313,23 +5560,27 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5342,10 +5593,10 @@ class ServiceFabricClientAPIs(object):
         :param partitions_health_state_filter: Allows filtering of the
          partitions health state objects returned in the result of service
          health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only partitions that match the filter are returned. All partitions
-         are used to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only partitions that match the filter are returned. All partitions are
+         used to evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
          based enumeration, so the value could be a combination of these value
          obtained using bitwise 'OR' operator. For example, if the provided
@@ -5353,8 +5604,8 @@ class ServiceFabricClientAPIs(object):
          OK (2) and Warning (4) will be returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5372,22 +5623,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceHealth
+         <azure.servicefabric.models.ServiceHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/GetHealth'
@@ -5452,23 +5706,27 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5481,10 +5739,10 @@ class ServiceFabricClientAPIs(object):
         :param partitions_health_state_filter: Allows filtering of the
          partitions health state objects returned in the result of service
          health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only partitions that match the filter are returned. All partitions
-         are used to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only partitions that match the filter are returned. All partitions are
+         used to evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
          based enumeration, so the value could be a combination of these value
          obtained using bitwise 'OR' operator. For example, if the provided
@@ -5492,8 +5750,8 @@ class ServiceFabricClientAPIs(object):
          OK (2) and Warning (4) will be returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5517,22 +5775,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceHealth
+         <azure.servicefabric.models.ServiceHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/GetHealth'
@@ -5598,12 +5859,16 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetServiceHealth and check that the report appears in the
-        HealthEvents section.
+        GetServiceHealth and check that the report appears in the HealthEvents
+        section.
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -5612,41 +5877,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/ReportHealth'
@@ -5688,18 +5955,22 @@ class ServiceFabricClientAPIs(object):
             self, service_id, partition_key_type=None, partition_key_value=None, previous_rsp_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resolve a Service Fabric partition.
 
-        Resolve a Service Fabric service partition, to get the endpoints of
-        the service replicas.
+        Resolve a Service Fabric service partition, to get the endpoints of the
+        service replicas.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_key_type: Key type for the partition. This parameter
          is required if the partition scheme for the service is Int64Range or
          Named. The possible values are following.
-         - None (1) - Indicates that the the PartitionKeyValue parameter is
-         not specified. This is valid for the partitions with partitioning
-         scheme as Singleton. This is the default value. The value is 1.
+         - None (1) - Indicates that the the PartitionKeyValue parameter is not
+         specified. This is valid for the partitions with partitioning scheme
+         as Singleton. This is the default value. The value is 1.
          - Int64Range (2) - Indicates that the the PartitionKeyValue parameter
          is an int64 partition key. This is valid for the partitions with
          partitioning scheme as Int64Range. The value is 2.
@@ -5716,22 +5987,25 @@ class ServiceFabricClientAPIs(object):
         :type previous_rsp_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ResolvedServicePartition
+         <azure.servicefabric.models.ResolvedServicePartition>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ResolvedServicePartition
-         <azure.servicefabric.models.ResolvedServicePartition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ResolvedServicePartition>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/ResolvePartition'
@@ -5782,39 +6056,45 @@ class ServiceFabricClientAPIs(object):
 
         Gets the list of partitions of a Service Fabric service. The response
         include the partition id, partitioning scheme information, keys
-        supported by the partition, status, health and other details about
-        the partition.
+        supported by the partition, status, health and other details about the
+        partition.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedServicePartitionInfoList
+         <azure.servicefabric.models.PagedServicePartitionInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedServicePartitionInfoList
-         <azure.servicefabric.models.PagedServicePartitionInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedServicePartitionInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/{serviceId}/$/GetPartitions'
@@ -5861,29 +6141,32 @@ class ServiceFabricClientAPIs(object):
 
         The Partitions endpoint returns information about the specified
         partition. The response include the partition id, partitioning scheme
-        information, keys supported by the partition, status, health and
-        other details about the partition.
+        information, keys supported by the partition, status, health and other
+        details about the partition.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServicePartitionInfo
+         <azure.servicefabric.models.ServicePartitionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServicePartitionInfo
-         <azure.servicefabric.models.ServicePartitionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServicePartitionInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}'
@@ -5933,22 +6216,25 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ServiceNameInfo
+         <azure.servicefabric.models.ServiceNameInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ServiceNameInfo
-         <azure.servicefabric.models.ServiceNameInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ServiceNameInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetServiceName'
@@ -6004,19 +6290,19 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6030,18 +6316,17 @@ class ServiceFabricClientAPIs(object):
          of ReplicaHealthState objects on the partition. The value can be
          obtained from members or bitwise operations on members of
          HealthStateFilter. Only replicas that match the filter will be
-         returned. All replicas will be used to evaluate the aggregated
-         health state. If not specified, all entries will be returned.The
-         state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator. For
-         example, If the provided value is 6 then all of the events with
-         HealthState value of OK (2) and Warning (4) will be returned. The
-         possible values for this parameter include integer value of one of
-         the following health states.
+         returned. All replicas will be used to evaluate the aggregated health
+         state. If not specified, all entries will be returned.The state values
+         are flag based enumeration, so the value could be a combination of
+         these value obtained using bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) will be returned. The possible values for this
+         parameter include integer value of one of the following health states.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6059,22 +6344,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionHealth
+         <azure.servicefabric.models.PartitionHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetHealth'
@@ -6121,8 +6409,8 @@ class ServiceFabricClientAPIs(object):
 
     def get_partition_health_using_policy(
             self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of the specified Service Fabric partition, by using
-        the specified health policy.
+        """Gets the health of the specified Service Fabric partition, by using the
+        specified health policy.
 
         Gets the health information of the specified partition.
         If the application health policy is specified, the health evaluation
@@ -6144,19 +6432,19 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6170,18 +6458,17 @@ class ServiceFabricClientAPIs(object):
          of ReplicaHealthState objects on the partition. The value can be
          obtained from members or bitwise operations on members of
          HealthStateFilter. Only replicas that match the filter will be
-         returned. All replicas will be used to evaluate the aggregated
-         health state. If not specified, all entries will be returned.The
-         state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator. For
-         example, If the provided value is 6 then all of the events with
-         HealthState value of OK (2) and Warning (4) will be returned. The
-         possible values for this parameter include integer value of one of
-         the following health states.
+         returned. All replicas will be used to evaluate the aggregated health
+         state. If not specified, all entries will be returned.The state values
+         are flag based enumeration, so the value could be a combination of
+         these value obtained using bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) will be returned. The possible values for this
+         parameter include integer value of one of the following health states.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6205,22 +6492,25 @@ class ServiceFabricClientAPIs(object):
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionHealth
+         <azure.servicefabric.models.PartitionHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetHealth'
@@ -6299,41 +6589,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/ReportHealth'
@@ -6385,22 +6677,25 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionLoadInformation
+         <azure.servicefabric.models.PartitionLoadInformation>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionLoadInformation
-         <azure.servicefabric.models.PartitionLoadInformation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionLoadInformation>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetLoadInformation'
@@ -6450,21 +6745,23 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/ResetLoad'
@@ -6511,21 +6808,23 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/Recover'
@@ -6560,35 +6859,40 @@ class ServiceFabricClientAPIs(object):
     def recover_service_partitions(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum
-        loss.
+        recover the specified service which is currently stuck in quorum loss.
 
         Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum
-        loss. This operation should only be performed if it is known that the
+        recover the specified service which is currently stuck in quorum loss.
+        This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Services/$/{serviceId}/$/GetPartitions/$/Recover'
@@ -6633,21 +6937,23 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/RecoverSystemPartitions'
@@ -6683,27 +6989,29 @@ class ServiceFabricClientAPIs(object):
 
         Indicates to the Service Fabric cluster that it should attempt to
         recover any services (including system services) which are currently
-        stuck in quorum loss. This operation should only be performed if it
-        is known that the replicas that are down cannot be recovered.
-        Incorrect use of this API can cause potential data loss.
+        stuck in quorum loss. This operation should only be performed if it is
+        known that the replicas that are down cannot be recovered. Incorrect
+        use of this API can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/RecoverAllPartitions'
@@ -6731,44 +7039,522 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def create_repair_task(
+            self, repair_task, custom_headers=None, raw=False, **operation_config):
+        """Creates a new repair task.
+
+        For clusters that have the Repair Manager Service configured,
+        this API provides a way to create repair tasks that run automatically
+        or manually.
+        For repair tasks that run automatically, an appropriate repair executor
+        must be running for each repair action to run automatically.
+        These are currently only available in specially-configured Azure Cloud
+        Services.
+        To create a manual repair task, provide the set of impacted node names
+        and the
+        expected impact. When the state of the created repair task changes to
+        approved,
+        you can safely perform repair actions on those nodes.
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param repair_task: Describes the repair task to be created or
+         updated.
+        :type repair_task: :class:`RepairTask
+         <azure.servicefabric.models.RepairTask>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/CreateRepairTask'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task, 'RepairTask')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def cancel_repair_task(
+            self, repair_task_cancel_description, custom_headers=None, raw=False, **operation_config):
+        """Requests the cancellation of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param repair_task_cancel_description: Describes the repair task to be
+         cancelled.
+        :type repair_task_cancel_description:
+         :class:`RepairTaskCancelDescription
+         <azure.servicefabric.models.RepairTaskCancelDescription>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/CancelRepairTask'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_cancel_description, 'RepairTaskCancelDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_repair_task(
+            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes a completed repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param task_id: The ID of the completed repair task to be deleted.
+        :type task_id: str
+        :param version: The current version number of the repair task. If
+         non-zero, then the request will only succeed if this value matches the
+         actual current version of the repair task. If zero, then no version
+         check is performed.
+        :type version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        repair_task_delete_description = models.RepairTaskDeleteDescription(task_id=task_id, version=version)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/DeleteRepairTask'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_delete_description, 'RepairTaskDeleteDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_repair_task_list(
+            self, task_id_filter=None, state_filter=None, executor_filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of repair tasks matching the given filters.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param task_id_filter: The repair task ID prefix to be matched.
+        :type task_id_filter: str
+        :param state_filter: A bitwise-OR of the following values, specifying
+         which task states should be included in the result list.
+         - 1 - Created
+         - 2 - Claimed
+         - 4 - Preparing
+         - 8 - Approved
+         - 16 - Executing
+         - 32 - Restoring
+         - 64 - Completed
+        :type state_filter: int
+        :param executor_filter: The name of the repair executor whose claimed
+         tasks should be included in the list.
+        :type executor_filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`RepairTask
+         <azure.servicefabric.models.RepairTask>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: list of :class:`RepairTask
+         <azure.servicefabric.models.RepairTask>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/GetRepairTaskList'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if task_id_filter is not None:
+            query_parameters['TaskIdFilter'] = self._serialize.query("task_id_filter", task_id_filter, 'str')
+        if state_filter is not None:
+            query_parameters['StateFilter'] = self._serialize.query("state_filter", state_filter, 'int')
+        if executor_filter is not None:
+            query_parameters['ExecutorFilter'] = self._serialize.query("executor_filter", executor_filter, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[RepairTask]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def force_approve_repair_task(
+            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+        """Forces the approval of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param task_id: The ID of the repair task.
+        :type task_id: str
+        :param version: The current version number of the repair task. If
+         non-zero, then the request will only succeed if this value matches the
+         actual current version of the repair task. If zero, then no version
+         check is performed.</para>
+        :type version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        repair_task_approve_description = models.RepairTaskApproveDescription(task_id=task_id, version=version)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/ForceApproveRepairTask'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_approve_description, 'RepairTaskApproveDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_repair_task_health_policy(
+            self, repair_task_update_health_policy_description, custom_headers=None, raw=False, **operation_config):
+        """Updates the health policy of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param repair_task_update_health_policy_description: Describes the
+         repair task healthy policy to be updated.
+        :type repair_task_update_health_policy_description:
+         :class:`RepairTaskUpdateHealthPolicyDescription
+         <azure.servicefabric.models.RepairTaskUpdateHealthPolicyDescription>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/UpdateRepairTaskHealthPolicy'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_update_health_policy_description, 'RepairTaskUpdateHealthPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_repair_execution_state(
+            self, repair_task, custom_headers=None, raw=False, **operation_config):
+        """Updates the execution state of a repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+        .
+
+        :param repair_task: Describes the repair task to be created or
+         updated.
+        :type repair_task: :class:`RepairTask
+         <azure.servicefabric.models.RepairTask>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`RepairTaskUpdateInfo
+         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/UpdateRepairExecutionState'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task, 'RepairTask')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def get_replica_info_list(
             self, partition_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about replicas of a Service Fabric service
         partition.
 
         The GetReplicas endpoint returns information about the replicas of the
-        specified partition. The respons include the id, role, status,
-        health, node name, uptime, and other details about the replica.
+        specified partition. The respons include the id, role, status, health,
+        node name, uptime, and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedReplicaInfoList
+         <azure.servicefabric.models.PagedReplicaInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PagedReplicaInfoList
-         <azure.servicefabric.models.PagedReplicaInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PagedReplicaInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetReplicas'
@@ -6820,32 +7606,33 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param replica_id: The identifier of the replica.
         :type replica_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ReplicaInfo <azure.servicefabric.models.ReplicaInfo>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ReplicaInfo <azure.servicefabric.models.ReplicaInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'
@@ -6903,19 +7690,19 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6927,22 +7714,25 @@ class ServiceFabricClientAPIs(object):
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ReplicaHealth
+         <azure.servicefabric.models.ReplicaHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ReplicaHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
@@ -6995,9 +7785,8 @@ class ServiceFabricClientAPIs(object):
         reported on the cluster based on the health state.
         Use ApplicationHealthPolicy to optionally override the health policies
         used to evaluate the health. This API only uses
-        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The
-        rest of the fields are ignored while evaluating the health of the
-        replica.
+        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
+        of the fields are ignored while evaluating the health of the replica.
         .
 
         :param partition_id: The identity of the partition.
@@ -7006,19 +7795,19 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -7036,22 +7825,25 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ApplicationHealthPolicy>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ReplicaHealth
+         <azure.servicefabric.models.ReplicaHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ReplicaHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
@@ -7114,8 +7906,8 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetReplicaHealth and check that the report appears in the
-        HealthEvents section.
+        GetReplicaHealth and check that the report appears in the HealthEvents
+        section.
         .
 
         :param partition_id: The identity of the partition.
@@ -7138,41 +7930,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'
@@ -7217,42 +8011,47 @@ class ServiceFabricClientAPIs(object):
         """Gets the list of replicas deployed on a Service Fabric node.
 
         Gets the list containing the information about replicas deployed on a
-        Service Fabric node. The information include partition id, replica
-        id, status of the replica, name of the service, name of the service
-        type and other information. Use PartitionId or ServiceManifestName
-        query parameters to return information about the deployed replicas
-        matching the specified values for those parameters.
+        Service Fabric node. The information include partition id, replica id,
+        status of the replica, name of the service, name of the service type
+        and other information. Use PartitionId or ServiceManifestName query
+        parameters to return information about the deployed replicas matching
+        the specified values for those parameters.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedServiceReplicaInfo
+         <azure.servicefabric.models.DeployedServiceReplicaInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedServiceReplicaInfo
-         <azure.servicefabric.models.DeployedServiceReplicaInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServiceReplicaInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'
@@ -7313,22 +8112,25 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedServiceReplicaDetailInfo
+         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'
@@ -7384,22 +8186,25 @@ class ServiceFabricClientAPIs(object):
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedServiceReplicaDetailInfo
+         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'
@@ -7456,21 +8261,23 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'
@@ -7509,15 +8316,14 @@ class ServiceFabricClientAPIs(object):
         """Removes a service replica running on a node.
 
         This API simulates a Service Fabric replica failure by removing a
-        replica from a Service Fabric cluster. The removal closes the
-        replica, transitions the replica to the role None, and then removes
-        all of the state information of the replica from the cluster. This
-        API tests the replica state removal path, and simulates the report
-        fault permanent path through client APIs. Warning - There are no
-        safety checks performed when this API is used. Incorrect use of this
-        API can lead to data loss for stateful services.In addition, the
-        forceRemove flag impacts all other replicas hosted in the same
-        process.
+        replica from a Service Fabric cluster. The removal closes the replica,
+        transitions the replica to the role None, and then removes all of the
+        state information of the replica from the cluster. This API tests the
+        replica state removal path, and simulates the report fault permanent
+        path through client APIs. Warning - There are no safety checks
+        performed when this API is used. Incorrect use of this API can lead to
+        data loss for stateful services.In addition, the forceRemove flag
+        impacts all other replicas hosted in the same process.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -7526,28 +8332,30 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'
@@ -7594,26 +8402,32 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedServicePackageInfo
+         <azure.servicefabric.models.DeployedServicePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServicePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'
@@ -7667,28 +8481,34 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedServicePackageInfo
+         <azure.servicefabric.models.DeployedServicePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServicePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'
@@ -7744,25 +8564,28 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -7774,22 +8597,25 @@ class ServiceFabricClientAPIs(object):
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedServicePackageHealth
+         <azure.servicefabric.models.DeployedServicePackageHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServicePackageHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
@@ -7853,25 +8679,28 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
          If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
-         provided value is 6 then all of the events with HealthState value of
-         OK (2) and Warning (4) are returned.
+         based enumeration, so the value could be a combination of these value
+         obtained using bitwise 'OR' operator. For example, If the provided
+         value is 6 then all of the events with HealthState value of OK (2) and
+         Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -7889,22 +8718,25 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ApplicationHealthPolicy>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeployedServicePackageHealth
+         <azure.servicefabric.models.DeployedServicePackageHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedServicePackageHealth>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
@@ -7958,26 +8790,28 @@ class ServiceFabricClientAPIs(object):
             self, node_name, application_id, service_package_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric deployed service package.
 
-        Reports health state of the service package of the application
-        deployed on a Service Fabric node. The report must contain the
-        information about the source of the health report and property on
-        which it is reported.
+        Reports health state of the service package of the application deployed
+        on a Service Fabric node. The report must contain the information about
+        the source of the health report and property on which it is reported.
         The report is sent to a Service Fabric gateway Service, which forwards
         to the health store.
         The report may be accepted by the gateway, but rejected by the health
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, get
-        deployed service package health and check that the report appears in
-        the HealthEvents section.
+        To see whether the report was applied in the health store, get deployed
+        service package health and check that the report appears in the
+        HealthEvents section.
         .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
@@ -7988,41 +8822,43 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.HealthInformation>`
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
-         A health report is sent to a Service Fabric gateway Application,
-         which forwards to the health store.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
          If Immediate is set to true, the report is sent immediately from Http
-         Gateway to the health store, regardless of the fabric client
-         settings that the Http Gateway Application is using.
+         Gateway to the health store, regardless of the fabric client settings
+         that the Http Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
-         Depending on timing and other conditions, sending the report may
-         still fail, for example if the Http Gateway is closed or the message
-         doesn't reach the Gateway.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the Http Gateway is closed or the message doesn't
+         reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
          client settings from the Http Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
-         This is the recommended setting because it allows the health client
-         to optimize health reporting messages to health store as well as
-         health report processing.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'
@@ -8080,21 +8916,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.DeployServicePackageToNodeDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/DeployServicePackage'
@@ -8141,11 +8979,13 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param code_package_name: The name of code package specified in
          service manifest registered as part of an application type in a
@@ -8153,22 +8993,25 @@ class ServiceFabricClientAPIs(object):
         :type code_package_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`DeployedCodePackageInfo
+         <azure.servicefabric.models.DeployedCodePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`DeployedCodePackageInfo
-         <azure.servicefabric.models.DeployedCodePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.DeployedCodePackageInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'
@@ -8214,18 +9057,20 @@ class ServiceFabricClientAPIs(object):
 
     def restart_deployed_code_package(
             self, node_name, application_id, restart_deployed_code_package_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Restarts a code package deployed on a Service Fabric node in a
-        cluster.
+        """Restarts a code package deployed on a Service Fabric node in a cluster.
 
-        Restarts a code package deployed on a Service Fabric node in a
-        cluster. This aborts the code package process, which will restart all
-        the user service replicas hosted in that process.
+        Restarts a code package deployed on a Service Fabric node in a cluster.
+        This aborts the code package process, which will restart all the user
+        service replicas hosted in that process.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme.
+         scheme. Starting from version 6.0, hierarchical names are delimited
+         with the "~" character. For example, if the application name is
+         "fabric://myapp/app1", the application identity would be "myapp~app1"
+         in 6.0+ and "myapp/app1" in previous versions.
         :type application_id: str
         :param restart_deployed_code_package_description: Describes the
          deployed code package on Service Fabric node to restart.
@@ -8234,21 +9079,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.RestartDeployedCodePackageDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'
@@ -8285,34 +9132,36 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def create_compose_application(
-            self, create_compose_application_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates a Service Fabric compose application.
+    def create_compose_deployment(
+            self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a Service Fabric compose deployment.
 
-        Creates a Service Fabric compose application.
+        Creates a Service Fabric compose deployment.
 
-        :param create_compose_application_description: Describes the compose
-         application that needs to be created.
-        :type create_compose_application_description:
-         :class:`CreateComposeApplicationDescription
-         <azure.servicefabric.models.CreateComposeApplicationDescription>`
+        :param create_compose_deployment_description: Describes the compose
+         deployment that needs to be created.
+        :type create_compose_deployment_description:
+         :class:`CreateComposeDeploymentDescription
+         <azure.servicefabric.models.CreateComposeDeploymentDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
         url = '/ComposeDeployments/$/Create'
@@ -8330,7 +9179,7 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(create_compose_application_description, 'CreateComposeApplicationDescription')
+        body_content = self._serialize.body(create_compose_deployment_description, 'CreateComposeDeploymentDescription')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -8344,42 +9193,43 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get_compose_application_status(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a Service Fabric compose application.
+    def get_compose_deployment_status(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a Service Fabric compose deployment.
 
-        Returns the status of compose application that was created or in the
+        Returns the status of the compose deployment that was created or in the
         process of being created in the Service Fabric cluster and whose name
         matches the one specified as the parameter. The response includes the
-        name, status and other details about the application.
+        name, status and other details about the deployment.
 
-        :param application_id: The identity of the application. This is
-         typically the full name of the application without the 'fabric:' URI
-         scheme.
-        :type application_id: str
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ComposeApplicationStatusInfo
-         <azure.servicefabric.models.ComposeApplicationStatusInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`ComposeDeploymentStatusInfo
+         <azure.servicefabric.models.ComposeDeploymentStatusInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`ComposeDeploymentStatusInfo
+         <azure.servicefabric.models.ComposeDeploymentStatusInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{applicationId}'
+        url = '/ComposeDeployments/{deploymentName}'
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -8405,7 +9255,7 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ComposeApplicationStatusInfo', response)
+            deserialized = self._deserialize('ComposeDeploymentStatusInfo', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -8413,54 +9263,55 @@ class ServiceFabricClientAPIs(object):
 
         return deserialized
 
-    def get_compose_application_status_list(
+    def get_compose_deployment_status_list(
             self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of compose applications created in the Service Fabric
+        """Gets the list of compose deployments created in the Service Fabric
         cluster.
 
-        Gets the status about the compose applications that were created or in
+        Gets the status about the compose deployments that were created or in
         the process of being created in the Service Fabric cluster. The
-        response includes the name, status and other details about the
-        compose application. If the applications do not fit in a page, one
-        page of results is returned as well as a continuation token which can
-        be used to get the next page.
+        response includes the name, status and other details about the compose
+        deployments. If the list of deployments do not fit in a page, one page
+        of results is returned as well as a continuation token which can be
+        used to get the next page.
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         much results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedComposeApplicationStatusInfoList
-         <azure.servicefabric.models.PagedComposeApplicationStatusInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`PagedComposeDeploymentStatusInfoList
+         <azure.servicefabric.models.PagedComposeDeploymentStatusInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PagedComposeDeploymentStatusInfoList
+         <azure.servicefabric.models.PagedComposeDeploymentStatusInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
         url = '/ComposeDeployments'
@@ -8491,7 +9342,7 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedComposeApplicationStatusInfoList', response)
+            deserialized = self._deserialize('PagedComposeDeploymentStatusInfoList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -8499,39 +9350,107 @@ class ServiceFabricClientAPIs(object):
 
         return deserialized
 
-    def remove_compose_application(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing Service Fabric compose application from cluster.
+    def get_compose_deployment_upgrade_progress(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest upgrade performed on this Service Fabric
+        compose deployment.
 
-        Deletes an existing Service Fabric compose application. An application
-        must be created before it can be deleted.
+        Returns the information about the state of the compose deployment
+        upgrade along with details to aid debugging application health issues.
 
-        :param application_id: The identity of the application. This is
-         typically the full name of the application without the 'fabric:' URI
-         scheme.
-        :type application_id: str
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`ComposeDeploymentUpgradeProgressInfo
+         <azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`ComposeDeploymentUpgradeProgressInfo
+         <azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{applicationId}/$/Delete'
+        url = '/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress'
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ComposeDeploymentUpgradeProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def remove_compose_deployment(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing Service Fabric compose deployment from cluster.
+
+        Deletes an existing Service Fabric compose deployment.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0-preview"
+
+        # Construct URL
+        url = '/ComposeDeployments/{deploymentName}/$/Delete'
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -8558,14 +9477,82 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def start_compose_deployment_upgrade(
+            self, deployment_name, compose_deployment_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Starts upgrading a compose deployment in the Service Fabric cluster.
+
+        Validates the supplied upgrade parameters and starts upgrading the
+        deployment if the parameters are valid.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param compose_deployment_upgrade_description: Parameters for
+         upgrading compose deployment.
+        :type compose_deployment_upgrade_description:
+         :class:`ComposeDeploymentUpgradeDescription
+         <azure.servicefabric.models.ComposeDeploymentUpgradeDescription>`
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0-preview"
+
+        # Construct URL
+        url = '/ComposeDeployments/{deploymentName}/$/Upgrade'
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(compose_deployment_upgrade_description, 'ComposeDeploymentUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def start_chaos(
             self, chaos_parameters, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Starts Chaos in the cluster.
 
         If Chaos is not already running in the cluster, it starts Chaos with
         the passed in Chaos parameters.
-        If Chaos is already running when this call is made, the call fails
-        with the error code FABRIC_E_CHAOS_ALREADY_RUNNING.
+        If Chaos is already running when this call is made, the call fails with
+        the error code FABRIC_E_CHAOS_ALREADY_RUNNING.
         Please refer to the article [Induce controlled Chaos in Service Fabric
         clusters](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-controlled-chaos)
         for more details.
@@ -8577,21 +9564,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ChaosParameters>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Tools/Chaos/$/Start'
@@ -8633,21 +9622,23 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Tools/Chaos/$/Stop'
@@ -8680,27 +9671,25 @@ class ServiceFabricClientAPIs(object):
         """Gets the next segment of the Chaos report based on the passed-in
         continuation token or the passed-in time-range.
 
-        You can either specify the ContinuationToken to get the next segment
-        of the Chaos report or you can specify the time-range
+        You can either specify the ContinuationToken to get the next segment of
+        the Chaos report or you can specify the time-range
         through StartTimeUtc and EndTimeUtc, but you cannot specify both the
         ContinuationToken and the time-range in the same call.
-        When there are more than 100 Chaos events, the Chaos report is
-        returned in segments where a segment contains no more than 100 Chaos
-        events.
+        When there are more than 100 Chaos events, the Chaos report is returned
+        in segments where a segment contains no more than 100 Chaos events.
         .
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param start_time_utc: The count of ticks representing the start time
-         of the time range for which a Chaos report is to be generated.
-         Please consult [DateTime.Ticks
+         of the time range for which a Chaos report is to be generated. Please
+         consult [DateTime.Ticks
          Property](https://msdn.microsoft.com/en-us/library/system.datetime.ticks%28v=vs.110%29)
          for details about tick.
         :type start_time_utc: str
@@ -8712,21 +9701,23 @@ class ServiceFabricClientAPIs(object):
         :type end_time_utc: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ChaosReport <azure.servicefabric.models.ChaosReport>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ChaosReport <azure.servicefabric.models.ChaosReport>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Tools/Chaos/$/Report'
@@ -8773,16 +9764,15 @@ class ServiceFabricClientAPIs(object):
 
         Uploads contents of the file to the image store. Use this API if the
         file is small enough to upload again if the connection fails. The
-        file's data needs to be added to the request body. The contents will
-        be uploaded to the specified path. Image store service uses a mark
-        file to indicate the availability of the folder. The mark file is an
-        empty file named "_.dir". The mark file is generated by the image
-        store service when all files in a folder are uploaded. When using
-        File-by-File approach to upload application package in REST, the
-        image store service isn�t aware of the file hierarchy of the
-        application package; you need to create a mark file per folder and
-        upload it last, to let the image store service know that the folder
-        is complete.
+        file's data needs to be added to the request body. The contents will be
+        uploaded to the specified path. Image store service uses a mark file to
+        indicate the availability of the folder. The mark file is an empty file
+        named "_.dir". The mark file is generated by the image store service
+        when all files in a folder are uploaded. When using File-by-File
+        approach to upload application package in REST, the image store service
+        isn�t aware of the file hierarchy of the application package; you need
+        to create a mark file per folder and upload it last, to let the image
+        store service know that the folder is complete.
         .
 
         :param content_path: Relative path to file or folder in the image
@@ -8790,21 +9780,23 @@ class ServiceFabricClientAPIs(object):
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ImageStore/{contentPath}'
@@ -8848,22 +9840,25 @@ class ServiceFabricClientAPIs(object):
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ImageStoreContent
+         <azure.servicefabric.models.ImageStoreContent>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ImageStoreContent>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ImageStore/{contentPath}'
@@ -8906,30 +9901,32 @@ class ServiceFabricClientAPIs(object):
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes existing image store content.
 
-        Deletes existing image store content being found within the given
-        image store relative path. This can be used to delete uploaded
-        application packages once they are provisioned.
+        Deletes existing image store content being found within the given image
+        store relative path. This can be used to delete uploaded application
+        packages once they are provisioned.
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ImageStore/{contentPath}'
@@ -8970,22 +9967,25 @@ class ServiceFabricClientAPIs(object):
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ImageStoreContent
+         <azure.servicefabric.models.ImageStoreContent>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.ImageStoreContent>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ImageStore'
@@ -9033,21 +10033,23 @@ class ServiceFabricClientAPIs(object):
          <azure.servicefabric.models.ImageStoreCopyDescription>`
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/ImageStore/$/Copy'
@@ -9080,7 +10082,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
     def invoke_infrastructure_command(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Invokes an administrative command on the given Infrastructure Service
         instance.
 
@@ -9099,33 +10101,30 @@ class ServiceFabricClientAPIs(object):
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
         :type command: str
-        :param service_id: The identity of the infrastructure service. This
-         is  the full name of the infrastructure service without the
-         'fabric:' URI scheme. This parameter required only for the cluster
-         that have more than one instance of infrastructure service running.
+        :param service_id: The identity of the infrastructure service. This is
+         the full name of the infrastructure service without the 'fabric:' URI
+         scheme. This parameter required only for the cluster that have more
+         than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: str or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: str or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/InvokeInfrastructureCommand'
@@ -9155,7 +10154,7 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -9164,9 +10163,8 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def invoke_infrastructure_query(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Invokes a read-only query on the given infrastructure service
-        instance.
+            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Invokes a read-only query on the given infrastructure service instance.
 
         For clusters that have one or more instances of the Infrastructure
         Service configured,
@@ -9183,33 +10181,30 @@ class ServiceFabricClientAPIs(object):
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
         :type command: str
-        :param service_id: The identity of the infrastructure service. This
-         is  the full name of the infrastructure service without the
-         'fabric:' URI scheme. This parameter required only for the cluster
-         that have more than one instance of infrastructure service running.
+        :param service_id: The identity of the infrastructure service. This is
+         the full name of the infrastructure service without the 'fabric:' URI
+         scheme. This parameter required only for the cluster that have more
+         than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: str or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: str or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/$/InvokeInfrastructureQuery'
@@ -9239,7 +10234,7 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -9272,19 +10267,23 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param data_loss_mode: This enum is passed to the StartDataLoss API
-         to indicate what type of data loss to induce.
+        :param data_loss_mode: This enum is passed to the StartDataLoss API to
+         indicate what type of data loss to induce.
          - Invalid - Reserved.  Do not pass into API.
          - PartialDataLoss - PartialDataLoss option will cause a quorum of
-         replicas to go down, triggering an OnDataLoss event in the system
-         for the given partition.
+         replicas to go down, triggering an OnDataLoss event in the system for
+         the given partition.
          - FullDataLoss - FullDataLoss option will drop all the replicas which
          means that all the data will be lost.
          . Possible values include: 'Invalid', 'PartialDataLoss',
@@ -9292,21 +10291,23 @@ class ServiceFabricClientAPIs(object):
         :type data_loss_mode: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'
@@ -9351,7 +10352,11 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -9360,22 +10365,25 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionDataLossProgress
+         <azure.servicefabric.models.PartitionDataLossProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionDataLossProgress
-         <azure.servicefabric.models.PartitionDataLossProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionDataLossProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'
@@ -9424,13 +10432,17 @@ class ServiceFabricClientAPIs(object):
         is useful for a temporary quorum loss situation on your service.
         Call the GetQuorumLossProgress API with the same OperationId to return
         information on the operation started with this API.
-        This can only be called on stateful persisted
-        (HasPersistedState==true) services.  Do not use this API on stateless
-        services or stateful in-memory only services.
+        This can only be called on stateful persisted (HasPersistedState==true)
+        services.  Do not use this API on stateless services or stateful
+        in-memory only services.
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -9452,21 +10464,23 @@ class ServiceFabricClientAPIs(object):
         :type quorum_loss_duration: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'
@@ -9512,7 +10526,11 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -9521,22 +10539,25 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionQuorumLossProgress
+         <azure.servicefabric.models.PartitionQuorumLossProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionQuorumLossProgress
-         <azure.servicefabric.models.PartitionQuorumLossProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionQuorumLossProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'
@@ -9590,15 +10611,19 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param restart_partition_mode: - Invalid - Reserved.  Do not pass
-         into API.
+        :param restart_partition_mode: - Invalid - Reserved.  Do not pass into
+         API.
          - AllReplicasOrInstances - All replicas or instances in the partition
          are restarted at once.
          - OnlyActiveSecondaries - Only the secondary replicas are restarted.
@@ -9607,21 +10632,23 @@ class ServiceFabricClientAPIs(object):
         :type restart_partition_mode: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'
@@ -9666,7 +10693,11 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+         full name of the service without the 'fabric:' URI scheme. Starting
+         from version 6.0, hierarchical names are delimited with the "~"
+         character. For example, if the service name is
+         "fabric://myapp/app1/svc1", the service identity would be
+         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -9675,22 +10706,25 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PartitionRestartProgress
+         <azure.servicefabric.models.PartitionRestartProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PartitionRestartProgress
-         <azure.servicefabric.models.PartitionRestartProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.PartitionRestartProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'
@@ -9739,8 +10773,8 @@ class ServiceFabricClientAPIs(object):
         OS instance itself.  To start a node, pass in "Start" for the
         NodeTransitionType parameter.
         To stop a node, pass in "Stop" for the NodeTransitionType parameter.
-        This API starts the operation - when the API returns the node may
-        not have finished transitioning yet.
+        This API starts the operation - when the API returns the node may not
+        have finished transitioning yet.
         Call GetNodeTransitionProgress with the same OperationId to get the
         progress of the operation.
         .
@@ -9761,27 +10795,29 @@ class ServiceFabricClientAPIs(object):
         :param node_instance_id: The node instance ID of the target node.
          This can be determined through GetNodeInfo API.
         :type node_instance_id: str
-        :param stop_duration_in_seconds: The duration, in seconds, to keep
-         the node stopped.  The minimum value is 600, the maximum is 14400.
-         After this time expires, the node will automatically come back up.
+        :param stop_duration_in_seconds: The duration, in seconds, to keep the
+         node stopped.  The minimum value is 600, the maximum is 14400.  After
+         this time expires, the node will automatically come back up.
         :type stop_duration_in_seconds: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Nodes/{nodeName}/$/StartTransition/'
@@ -9832,22 +10868,25 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`NodeTransitionProgress
+         <azure.servicefabric.models.NodeTransitionProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`NodeTransitionProgress
-         <azure.servicefabric.models.NodeTransitionProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.NodeTransitionProgress>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'
@@ -9915,22 +10954,25 @@ class ServiceFabricClientAPIs(object):
         :type state_filter: int
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: list of :class:`OperationStatus
+         <azure.servicefabric.models.OperationStatus>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: list of :class:`OperationStatus
-         <azure.servicefabric.models.OperationStatus>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.servicefabric.models.OperationStatus>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/'
@@ -9971,24 +11013,24 @@ class ServiceFabricClientAPIs(object):
             self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Cancels a user-induced fault operation.
 
-        The following is a list of APIs that start fault operations that may
-        be cancelled using CancelOperation -
+        The following is a list of APIs that start fault operations that may be
+        cancelled using CancelOperation -
         - StartDataLoss
         - StartQuorumLoss
         - StartPartitionRestart
         - StartNodeTransition
         If force is false, then the specified user-induced operation will be
-        gracefully stopped and cleaned up.  If force is true, the command
-        will be aborted, and some internal state
-        may be left behind.  Specifying force as true should be used with
-        care.  Calling this API with force set to true is not allowed until
-        this API has already
+        gracefully stopped and cleaned up.  If force is true, the command will
+        be aborted, and some internal state
+        may be left behind.  Specifying force as true should be used with care.
+        Calling this API with force set to true is not allowed until this API
+        has already
         been called on the same test command with force set to false first, or
         unless the test command already has an OperationState of
         OperationState.RollingBack.
-        Clarification: OperationState.RollingBack means that the system
-        will/is be cleaning up internal system state caused by executing the
-        command.  It will not restore data if the
+        Clarification: OperationState.RollingBack means that the system will/is
+        be cleaning up internal system state caused by executing the command.
+        It will not restore data if the
         test command was to cause data loss.  For example, if you call
         StartDataLoss then call this API, the system will only clean up
         internal state from running the command.
@@ -10007,21 +11049,23 @@ class ServiceFabricClientAPIs(object):
         :type force: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
         url = '/Faults/$/Cancel'

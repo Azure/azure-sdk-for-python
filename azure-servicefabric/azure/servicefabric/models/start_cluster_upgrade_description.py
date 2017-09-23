@@ -21,11 +21,12 @@ class StartClusterUpgradeDescription(Model):
     :type config_version: str
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str
+    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str
+    :type rolling_upgrade_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_replica_set_check_timeout_in_seconds:
     :type upgrade_replica_set_check_timeout_in_seconds: long
     :param force_restart:
@@ -37,8 +38,8 @@ class StartClusterUpgradeDescription(Model):
     :type cluster_health_policy: :class:`ClusterHealthPolicy
      <azure.servicefabric.models.ClusterHealthPolicy>`
     :param enable_delta_health_evaluation: When true, enables delta health
-     evaluation rather than absolute health evaluation after completion of
-     each upgrade domain.
+     evaluation rather than absolute health evaluation after completion of each
+     upgrade domain.
     :type enable_delta_health_evaluation: bool
     :param cluster_upgrade_health_policy:
     :type cluster_upgrade_health_policy:
@@ -47,7 +48,7 @@ class StartClusterUpgradeDescription(Model):
     :param application_health_policy_map:
     :type application_health_policy_map: :class:`ApplicationHealthPolicies
      <azure.servicefabric.models.ApplicationHealthPolicies>`
-    """ 
+    """
 
     _attribute_map = {
         'code_version': {'key': 'CodeVersion', 'type': 'str'},

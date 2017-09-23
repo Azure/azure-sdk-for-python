@@ -30,7 +30,7 @@ class ImageStoreCopyDescription(Model):
      constructed. If the property is true and mark file does not exist, the
      copy is skipped.
     :type check_mark_file: bool
-    """ 
+    """
 
     _validation = {
         'remote_source': {'required': True},

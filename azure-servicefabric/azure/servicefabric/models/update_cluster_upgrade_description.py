@@ -17,7 +17,7 @@ class UpdateClusterUpgradeDescription(Model):
 
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling',
      'Rolling_ForceRestart'. Default value: "Rolling" .
-    :type upgrade_kind: str
+    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param update_description:
     :type update_description: :class:`RollingUpgradeUpdateDescription
      <azure.servicefabric.models.RollingUpgradeUpdateDescription>`
@@ -33,7 +33,7 @@ class UpdateClusterUpgradeDescription(Model):
     :param application_health_policy_map:
     :type application_health_policy_map: :class:`ApplicationHealthPolicies
      <azure.servicefabric.models.ApplicationHealthPolicies>`
-    """ 
+    """
 
     _attribute_map = {
         'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},

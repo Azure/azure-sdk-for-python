@@ -17,15 +17,15 @@ class ClusterHealthChunkQueryDescription(Model):
     policies to evaluate cluster health and very expressive filters to select
     which cluster entities to include in response.
 
-    :param node_filters: Defines a list of filters that specify which nodes
-     to be included in the returned cluster health chunk.
-     If no filters are specified, no nodes are returned. All the nodes are
-     used to evaluate the cluster's aggregated health state, regardless of
-     the input filters.
+    :param node_filters: Defines a list of filters that specify which nodes to
+     be included in the returned cluster health chunk.
+     If no filters are specified, no nodes are returned. All the nodes are used
+     to evaluate the cluster's aggregated health state, regardless of the input
+     filters.
      The cluster health chunk query may specify multiple node filters.
-     For example, it can specify a filter to return all nodes with health
-     state Error and another filter to always include a node identified by
-     its NodeName.
+     For example, it can specify a filter to return all nodes with health state
+     Error and another filter to always include a node identified by its
+     NodeName.
     :type node_filters: list of :class:`NodeHealthStateFilter
      <azure.servicefabric.models.NodeHealthStateFilter>`
     :param application_filters: Defines a list of filters that specify which
@@ -35,8 +35,8 @@ class ClusterHealthChunkQueryDescription(Model):
      regardless of the input filters.
      The cluster health chunk query may specify multiple application filters.
      For example, it can specify a filter to return all applications with
-     health state Error and another filter to always include applications of
-     a specified application type.
+     health state Error and another filter to always include applications of a
+     specified application type.
     :type application_filters: list of :class:`ApplicationHealthStateFilter
      <azure.servicefabric.models.ApplicationHealthStateFilter>`
     :param cluster_health_policy:
@@ -45,7 +45,7 @@ class ClusterHealthChunkQueryDescription(Model):
     :param application_health_policies:
     :type application_health_policies: :class:`ApplicationHealthPolicies
      <azure.servicefabric.models.ApplicationHealthPolicies>`
-    """ 
+    """
 
     _attribute_map = {
         'node_filters': {'key': 'NodeFilters', 'type': '[NodeHealthStateFilter]'},

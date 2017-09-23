@@ -20,7 +20,7 @@ class SelectedPartition(Model):
     :type service_name: str
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _attribute_map = {
         'service_name': {'key': 'ServiceName', 'type': 'str'},

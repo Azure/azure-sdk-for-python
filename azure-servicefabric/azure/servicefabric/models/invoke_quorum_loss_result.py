@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class InvokeQuorumLossResult(Model):
-    """Represents information about an operation in a terminal state (Completed
-    or Faulted).
+    """Represents information about an operation in a terminal state (Completed or
+    Faulted).
 
     :param error_code: If OperationState is Completed, this is 0.  If
      OperationState is Faulted, this is an error code indicating the reason.
@@ -22,7 +22,7 @@ class InvokeQuorumLossResult(Model):
     :param selected_partition:
     :type selected_partition: :class:`SelectedPartition
      <azure.servicefabric.models.SelectedPartition>`
-    """ 
+    """
 
     _attribute_map = {
         'error_code': {'key': 'ErrorCode', 'type': 'int'},

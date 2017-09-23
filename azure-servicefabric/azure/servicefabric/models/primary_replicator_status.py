@@ -15,22 +15,22 @@ from .replicator_status import ReplicatorStatus
 class PrimaryReplicatorStatus(ReplicatorStatus):
     """PrimaryReplicatorStatus.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param replication_queue_status:
     :type replication_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
     :param remote_replicators:
     :type remote_replicators: list of :class:`RemoteReplicatorStatus
      <azure.servicefabric.models.RemoteReplicatorStatus>`
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
         'remote_replicators': {'key': 'RemoteReplicators', 'type': '[RemoteReplicatorStatus]'},
     }
@@ -39,4 +39,4 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
         super(PrimaryReplicatorStatus, self).__init__()
         self.replication_queue_status = replication_queue_status
         self.remote_replicators = remote_replicators
-        self.Kind = 'Primary'
+        self.kind = 'Primary'

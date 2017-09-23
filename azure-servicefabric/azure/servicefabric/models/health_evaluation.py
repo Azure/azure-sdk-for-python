@@ -18,29 +18,30 @@ class HealthEvaluation(Model):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation'}
+        'kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation'}
     }
 
     def __init__(self, aggregated_health_state=None, description=None):
         self.aggregated_health_state = aggregated_health_state
         self.description = description
-        self.Kind = None
+        self.kind = None

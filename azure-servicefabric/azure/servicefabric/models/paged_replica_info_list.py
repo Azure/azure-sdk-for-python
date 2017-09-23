@@ -14,8 +14,8 @@ from msrest.serialization import Model
 
 class PagedReplicaInfoList(Model):
     """The list of replicas in the cluster for a given partition. The list is
-    paged when all of the results cannot fit in a single message. The next
-    set of results can be obtained by executing the same query with the
+    paged when all of the results cannot fit in a single message. The next set
+    of results can be obtained by executing the same query with the
     continuation token provided in this list.
 
     :param continuation_token:
@@ -23,7 +23,7 @@ class PagedReplicaInfoList(Model):
     :param items:
     :type items: list of :class:`ReplicaInfo
      <azure.servicefabric.models.ReplicaInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},

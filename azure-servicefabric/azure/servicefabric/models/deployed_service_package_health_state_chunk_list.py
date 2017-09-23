@@ -22,7 +22,7 @@ class DeployedServicePackageHealthStateChunkList(Model):
      that respect the input filters in the chunk query.
     :type items: list of :class:`DeployedServicePackageHealthStateChunk
      <azure.servicefabric.models.DeployedServicePackageHealthStateChunk>`
-    """ 
+    """
 
     _attribute_map = {
         'items': {'key': 'Items', 'type': '[DeployedServicePackageHealthStateChunk]'},

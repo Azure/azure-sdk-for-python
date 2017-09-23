@@ -16,14 +16,14 @@ class SeedNodeSafetyCheck(SafetyCheck):
     """Represents a safety check for the seed nodes being performed by service
     fabric before continuing with node level operations.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     def __init__(self):
         super(SeedNodeSafetyCheck, self).__init__()
-        self.Kind = 'EnsureSeedNodeQuorum'
+        self.kind = 'EnsureSeedNodeQuorum'

@@ -21,12 +21,13 @@ class EventHealthEvaluation(HealthEvaluation):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param consider_warning_as_error: Indicates whether warnings are treated
      with the same severity as errors. The field is specified in the health
      policy used to evaluate the entity.
@@ -34,16 +35,16 @@ class EventHealthEvaluation(HealthEvaluation):
     :param unhealthy_event:
     :type unhealthy_event: :class:`HealthEvent
      <azure.servicefabric.models.HealthEvent>`
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
         'unhealthy_event': {'key': 'UnhealthyEvent', 'type': 'HealthEvent'},
     }
@@ -52,4 +53,4 @@ class EventHealthEvaluation(HealthEvaluation):
         super(EventHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
         self.consider_warning_as_error = consider_warning_as_error
         self.unhealthy_event = unhealthy_event
-        self.Kind = 'Event'
+        self.kind = 'Event'

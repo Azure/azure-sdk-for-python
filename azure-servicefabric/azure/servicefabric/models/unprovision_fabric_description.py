@@ -19,7 +19,7 @@ class UnprovisionFabricDescription(Model):
     :type code_version: str
     :param config_version: The cluster manifest version.
     :type config_version: str
-    """ 
+    """
 
     _attribute_map = {
         'code_version': {'key': 'CodeVersion', 'type': 'str'},

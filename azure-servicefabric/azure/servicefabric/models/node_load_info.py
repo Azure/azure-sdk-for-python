@@ -23,7 +23,7 @@ class NodeLoadInfo(Model):
     :type node_load_metric_information: list of
      :class:`NodeLoadMetricInformation
      <azure.servicefabric.models.NodeLoadMetricInformation>`
-    """ 
+    """
 
     _attribute_map = {
         'node_name': {'key': 'NodeName', 'type': 'str'},

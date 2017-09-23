@@ -18,11 +18,11 @@ class EntityKindHealthStateCount(Model):
     :param entity_kind: Possible values include: 'Invalid', 'Node',
      'Partition', 'Service', 'Application', 'Replica', 'DeployedApplication',
      'DeployedServicePackage', 'Cluster'
-    :type entity_kind: str
+    :type entity_kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param health_state_count:
     :type health_state_count: :class:`HealthStateCount
      <azure.servicefabric.models.HealthStateCount>`
-    """ 
+    """
 
     _attribute_map = {
         'entity_kind': {'key': 'EntityKind', 'type': 'str'},

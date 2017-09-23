@@ -17,16 +17,16 @@ class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
     waits until there are replicas available such that bringing down this
     replica will not cause availability loss for the partition.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     def __init__(self, partition_id=None):
         super(EnsureAvailabilitySafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'EnsureAvailability'
+        self.kind = 'EnsureAvailability'
