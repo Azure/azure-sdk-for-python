@@ -27,5 +27,5 @@ class AbstractEventProcessor(ABC):
     # EventProcessorHost will take care of recovering from the error and continuing to pump messages, so no action is required from
     # (Params) Context: Information about the partition, Error: The error that occured.
     @abstractmethod
-    def processErrorAsync(PartitionContext context, Exception error):
+    def processErrorAsync(context, error):
         pass
