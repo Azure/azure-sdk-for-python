@@ -80,7 +80,7 @@ class StorageManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-   @classmethod
+    @classmethod
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
