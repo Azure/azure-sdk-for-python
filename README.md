@@ -1,5 +1,7 @@
 The eventhubs package provides a simple client to read events from an Event Hub.
 
+**This project is under active development. Major API changes may be excepted.**
+
 It is built on top of the [Apache Qpid Proton](https://qpid.apache.org/proton/) Python binding and provides the following extra functionalities.
 * Specifies address with Event Hubs specific concepts, e.g. entity name, consumer group, and partition. The client constructs the AMQP address from those.
 * Provides an offset to read events. The client constructs the AMQP filter supported by the Event Hubs service.

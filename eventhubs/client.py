@@ -53,7 +53,7 @@ class EventHubClient(Container):
     def on_reactor_init(self, event):
         if not self.shared_connection:
             logging.info("Client starts address=%s", self.address)
-            self.shared_connection = self.connect(self.address, handler=self)
+            self.shared_connection = self.connect(self.address, reconnect=False, handler=self)
             self.shared_connection.__setattr__("_session_policy", self)
         for client in self.clients:
             client.start(self)
@@ -99,6 +99,9 @@ class EventHubClient(Container):
         else:
             logging.error("Session close %s", event.connection.remote_container)
         self.schedule(3.0, self)
+
+    #def on_transport_closed(self, event):
+    #    pass
 
     def on_timer_task(self, event):
         self.on_reactor_init(None)
