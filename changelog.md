@@ -1,4 +1,11 @@
+## Changes in 2.2.1-SNAPSHOT : ##
+
+- bugfix for aggregate dict
+- bugfix for trimming slashes in the resource link
+- tests for unicode encoding
+
 ## Changes in 2.2.0 : ##
+
 - Added support for Request Unit per Minute (RU/m) feature.
 - Added support for a new consistency level called ConsistentPrefix.
 
