@@ -7,6 +7,7 @@ Release History
 ++++++++++++++++++
 
 * New default API version 2017-10-01.
+* Remove support for API Version 2017-06-01-preview
 * New support for managed registries with three Managed SKUs.
 * New support for registry webhooks and replications.
 * Rename Basic SKU to Classic SKU.
