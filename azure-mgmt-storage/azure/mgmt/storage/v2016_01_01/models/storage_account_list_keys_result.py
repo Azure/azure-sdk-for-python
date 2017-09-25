@@ -12,20 +12,25 @@
 from msrest.serialization import Model
 
 
-class StorageAccountRegenerateKeyParameters(Model):
-    """StorageAccountRegenerateKeyParameters.
+class StorageAccountListKeysResult(Model):
+    """The response from the ListKeys operation.
 
-    :param key_name:
-    :type key_name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar keys: Gets the list of storage account keys and their properties for
+     the specified storage account.
+    :vartype keys: list of :class:`StorageAccountKey
+     <azure.mgmt.storage.v2016_01_01.models.StorageAccountKey>`
     """
 
     _validation = {
-        'key_name': {'required': True},
+        'keys': {'readonly': True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        'keys': {'key': 'keys', 'type': '[StorageAccountKey]'},
     }
 
-    def __init__(self, key_name):
-        self.key_name = key_name
+    def __init__(self):
+        self.keys = None

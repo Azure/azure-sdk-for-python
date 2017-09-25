@@ -15,26 +15,30 @@ from msrest.serialization import Model
 class Usage(Model):
     """Describes Storage Resource Usage.
 
-    :param unit: The unit of measurement. Possible values include: 'Count',
-     'Bytes', 'Seconds', 'Percent', 'CountsPerSecond', 'BytesPerSecond'
-    :type unit: str or :class:`UsageUnit
-     <azure.mgmt.storage.v2015_06_15.models.UsageUnit>`
-    :param current_value: The current count of the allocated resources in the
-     subscription.
-    :type current_value: int
-    :param limit: The maximum count of the resources that can be allocated in
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar unit: Gets the unit of measurement. Possible values include:
+     'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
+     'BytesPerSecond'
+    :vartype unit: str or :class:`UsageUnit
+     <azure.mgmt.storage.v2016_01_01.models.UsageUnit>`
+    :ivar current_value: Gets the current count of the allocated resources in
      the subscription.
-    :type limit: int
-    :param name: The name of the type of usage.
-    :type name: :class:`UsageName
-     <azure.mgmt.storage.v2015_06_15.models.UsageName>`
+    :vartype current_value: int
+    :ivar limit: Gets the maximum count of the resources that can be allocated
+     in the subscription.
+    :vartype limit: int
+    :ivar name: Gets the name of the type of usage.
+    :vartype name: :class:`UsageName
+     <azure.mgmt.storage.v2016_01_01.models.UsageName>`
     """
 
     _validation = {
-        'unit': {'required': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        'unit': {'readonly': True},
+        'current_value': {'readonly': True},
+        'limit': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,8 +48,8 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, unit, current_value, limit, name):
-        self.unit = unit
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+    def __init__(self):
+        self.unit = None
+        self.current_value = None
+        self.limit = None
+        self.name = None

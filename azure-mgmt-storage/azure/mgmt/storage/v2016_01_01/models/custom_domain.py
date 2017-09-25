@@ -16,10 +16,11 @@ class CustomDomain(Model):
     """The custom domain assigned to this storage account. This can be set via
     Update.
 
-    :param name: The custom domain name. Name is the CNAME source.
+    :param name: Gets or sets the custom domain name assigned to the storage
+     account. Name is the CNAME source.
     :type name: str
     :param use_sub_domain: Indicates whether indirect CName validation is
-     enabled. Default value is false. This should only be set on updates
+     enabled. Default value is false. This should only be set on updates.
     :type use_sub_domain: bool
     """
 

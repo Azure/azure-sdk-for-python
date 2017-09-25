@@ -23,7 +23,7 @@ class UsageOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-06-15".
+    :ivar api_version: Client Api Version. Constant value: "2016-01-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,13 +31,13 @@ class UsageOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-06-15"
+        self.api_version = "2016-01-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists the current usage count and the limit for the resources under the
+        """Gets the current usage count and the limit for the resources under the
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -46,9 +46,9 @@ class UsageOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`Usage
-         <azure.mgmt.storage.v2015_06_15.models.Usage>`
+         <azure.mgmt.storage.v2016_01_01.models.Usage>`
         :rtype: :class:`UsagePaged
-         <azure.mgmt.storage.v2015_06_15.models.UsagePaged>`
+         <azure.mgmt.storage.v2016_01_01.models.UsagePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
