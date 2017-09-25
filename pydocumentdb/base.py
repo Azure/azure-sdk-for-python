@@ -202,7 +202,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     """
     # For named based, the resource link is the full name
     if IsNameBased(resource_link):
-        return resource_link
+        return TrimBeginningAndEndingSlashes(resource_link)
     
     # Padding the resource link with leading and trailing slashes if not already
     if resource_link[-1] != '/':
