@@ -12,6 +12,7 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
@@ -52,6 +53,8 @@
     <Compile Include="pydocumentdb\utils.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
+    <Compile Include="test\encoding_tests.py" />
+    <Compile Include="test\query_tests.py" />
     <Compile Include="test\orderby_tests.py" />
     <Compile Include="test\aggregate_tests.py" />
     <Compile Include="test\globaldb_tests.py" />
@@ -65,7 +68,7 @@
     <Compile Include="test\session_container_tests.py" />
     <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
-	<Compile Include="test\ru_per_min_tests.py" />
+    <Compile Include="test\ru_per_min_tests.py" />
     <Compile Include="pydocumentdb\auth.py" />
     <Compile Include="pydocumentdb\base.py" />
     <Compile Include="pydocumentdb\documents.py" />
@@ -76,6 +79,7 @@
     <Compile Include="test\__init__.py" />
     <Content Include="requirements.txt" />
     <Content Include="test-requirements.txt" />
+    <Content Include="test\test-requirements.txt" />
     <Content Include="tox.ini" />
     <Content Include="test\BaselineTest.PathParser.json" />
   </ItemGroup>
@@ -85,6 +89,10 @@
     <Folder Include="pydocumentdb\routing\" />
     <Folder Include="test" />
     <Folder Include="test\routing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />

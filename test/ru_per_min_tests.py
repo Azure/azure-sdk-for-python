@@ -107,7 +107,6 @@ class RuPerMinTests(unittest.TestCase):
         self.assertIsNotNone(offer)
         self.assertEqual(offer['offerType'], "Invalid")
         self.assertIsNotNone(offer['content'])
-        self.assertEqual(offer['content']['offerIsRUPerMinuteThroughputEnabled'], True)
 
     def test_create_collection_without_ru_pm(self):        
         # create a non ru pm collection
@@ -130,8 +129,6 @@ class RuPerMinTests(unittest.TestCase):
         self.assertIsNotNone(offer)
         self.assertEqual(offer['offerType'], "Invalid")
         self.assertIsNotNone(offer['content'])
-        self.assertEqual(offer['content']['offerIsRUPerMinuteThroughputEnabled'], True)
-
 
     def test_create_collection_disable_ru_pm_on_request(self):        
         # create a non ru pm collection
