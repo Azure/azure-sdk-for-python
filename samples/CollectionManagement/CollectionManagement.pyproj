@@ -6,7 +6,7 @@
     <ProjectGuid>d65bad79-205d-4b95-bc98-294974eab39c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>Program.py</StartupFile>
-    <SearchPath>..\Shared\;..\..\..\azure-documentdb-python</SearchPath>
+    <SearchPath>..\Shared\;..\..\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CollectionManagement</Name>
