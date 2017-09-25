@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class RegistryPaged(Paged):
+class OperationDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` object
+    A paging container for iterating over a list of :class:`OperationDefinition <azure.mgmt.containerregistry.v2017_10_01.models.OperationDefinition>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Registry]'}
+        'current_page': {'key': 'value', 'type': '[OperationDefinition]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(RegistryPaged, self).__init__(*args, **kwargs)
+        super(OperationDefinitionPaged, self).__init__(*args, **kwargs)

@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class RegistryPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` object
+class RegistryUsageListResult(Model):
+    """The result of a request to get container registry quota usages.
+
+    :param value: The list of container registry quota usages.
+    :type value: list of :class:`RegistryUsage
+     <azure.mgmt.containerregistry.v2017_10_01.models.RegistryUsage>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Registry]'}
+        'value': {'key': 'value', 'type': '[RegistryUsage]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(RegistryPaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None):
+        self.value = value

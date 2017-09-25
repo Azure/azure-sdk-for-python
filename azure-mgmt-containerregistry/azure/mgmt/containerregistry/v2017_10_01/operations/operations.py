@@ -23,7 +23,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The client API version. Constant value: "2017-03-01".
+    :ivar api_version: The client API version. Constant value: "2017-10-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2017-10-01"
 
         self.config = config
 
@@ -46,9 +46,9 @@ class Operations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of :class:`OperationDefinition
-         <azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinition>`
+         <azure.mgmt.containerregistry.v2017_10_01.models.OperationDefinition>`
         :rtype: :class:`OperationDefinitionPaged
-         <azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinitionPaged>`
+         <azure.mgmt.containerregistry.v2017_10_01.models.OperationDefinitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

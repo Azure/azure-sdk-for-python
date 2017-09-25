@@ -24,7 +24,7 @@ class RegistryCreateParameters(Model):
     :type sku: :class:`Sku
      <azure.mgmt.containerregistry.v2017_03_01.models.Sku>`
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default.
+     is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
      container registry. If specified, the storage account must be in the same
@@ -47,7 +47,7 @@ class RegistryCreateParameters(Model):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountParameters'},
     }
 
-    def __init__(self, location, sku, storage_account, tags=None, admin_user_enabled=None):
+    def __init__(self, location, sku, storage_account, tags=None, admin_user_enabled=False):
         self.tags = tags
         self.location = location
         self.sku = sku
