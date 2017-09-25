@@ -15,6 +15,12 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetNetworkProfile(Model):
     """Describes a virtual machine scale set network profile.
 
+    :param health_probe: A reference to a load balancer probe used to
+     determine the health of an instance in the virtual machine scale set. The
+     reference will be in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+    :type health_probe: :class:`ApiEntityReference
+     <azure.mgmt.compute.v2017_03_30.models.ApiEntityReference>`
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations: list of
@@ -23,8 +29,10 @@ class VirtualMachineScaleSetNetworkProfile(Model):
     """
 
     _attribute_map = {
+        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
     }
 
-    def __init__(self, network_interface_configurations=None):
+    def __init__(self, health_probe=None, network_interface_configurations=None):
+        self.health_probe = health_probe
         self.network_interface_configurations = network_interface_configurations

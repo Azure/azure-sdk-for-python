@@ -28,7 +28,7 @@ class VirtualMachineScaleSetDataDisk(Model):
     :type caching: str or :class:`CachingTypes
      <azure.mgmt.compute.v2017_03_30.models.CachingTypes>`
     :param create_option: The create option. Possible values include:
-     'fromImage', 'empty', 'attach'
+     'FromImage', 'Empty', 'Attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes>`
     :param disk_size_gb: Specifies the size of an empty data disk in

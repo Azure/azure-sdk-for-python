@@ -20,6 +20,7 @@ from .resource_skus_operations import ResourceSkusOperations
 from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
+from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .disks_operations import DisksOperations
 from .snapshots_operations import SnapshotsOperations
@@ -37,6 +38,7 @@ __all__ = [
     'VirtualMachinesOperations',
     'VirtualMachineScaleSetsOperations',
     'VirtualMachineScaleSetExtensionsOperations',
+    'VirtualMachineScaleSetRollingUpgradesOperations',
     'VirtualMachineScaleSetVMsOperations',
     'DisksOperations',
     'SnapshotsOperations',
