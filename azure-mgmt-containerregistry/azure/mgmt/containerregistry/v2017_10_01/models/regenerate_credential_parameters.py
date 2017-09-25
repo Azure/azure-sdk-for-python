@@ -12,31 +12,22 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """The SKU of a container registry.
+class RegenerateCredentialParameters(Model):
+    """The parameters used to regenerate the login credential.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: The SKU name of the container registry. Required for registry
-     creation. Allowed value: Basic.
-    :type name: str
-    :ivar tier: The SKU tier based on the SKU name. Possible values include:
-     'Basic'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.containerregistry.v2017_03_01.models.SkuTier>`
+    :param name: Specifies name of the password which should be regenerated --
+     password or password2. Possible values include: 'password', 'password2'
+    :type name: str or :class:`PasswordName
+     <azure.mgmt.containerregistry.v2017_10_01.models.PasswordName>`
     """
 
     _validation = {
         'name': {'required': True},
-        'tier': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'PasswordName'},
     }
 
     def __init__(self, name):
         self.name = name
-        self.tier = None

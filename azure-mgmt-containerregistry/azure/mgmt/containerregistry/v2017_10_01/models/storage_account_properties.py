@@ -9,19 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class RegistryPaged(Paged):
+class StorageAccountProperties(Model):
+    """The properties of a storage account for a container registry. Only
+    applicable to Classic SKU.
+
+    :param id: The resource ID of the storage account.
+    :type id: str
     """
-    A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` object
-    """
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Registry]'}
+    _validation = {
+        'id': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
 
-        super(RegistryPaged, self).__init__(*args, **kwargs)
+    def __init__(self, id):
+        self.id = id

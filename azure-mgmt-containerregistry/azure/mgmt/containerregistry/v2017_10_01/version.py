@@ -9,19 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+VERSION = "2017-10-01"
 
-
-class RegistryPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Registry <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Registry]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RegistryPaged, self).__init__(*args, **kwargs)
