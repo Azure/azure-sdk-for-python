@@ -763,6 +763,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        database_or_collection_link = base.TrimBeginningAndEndingSlashes(database_or_collection_link)
+
         if options is None:
             options = {}
 

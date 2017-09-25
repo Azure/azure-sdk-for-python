@@ -164,15 +164,10 @@ class Test_ttl_tests(unittest.TestCase):
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        dummy_document_definition = { 'id': 'dummy doc' }
-
         created_document = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(6)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-
+        time.sleep(7)
+        
         # the created document should be gone now as it's ttl value would be same as defaultTtl value of the collection
         self.__AssertHTTPFailureWithStatus(
             404,
@@ -183,10 +178,7 @@ class Test_ttl_tests(unittest.TestCase):
         document_definition['ttl'] = -1
         created_document = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(6)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
+        time.sleep(5)
 
         # the created document should NOT be gone as it's ttl value is set to -1(never expire) which overrides the collections's defaultTtl value
         read_document = client.ReadDocument(created_document['_self'])
@@ -196,10 +188,7 @@ class Test_ttl_tests(unittest.TestCase):
         document_definition['ttl'] = 2
         created_document = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(3)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
+        time.sleep(4)
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(5)
         self.__AssertHTTPFailureWithStatus(
@@ -213,19 +202,13 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(6)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-
         # the created document should NOT be gone as it's ttl value is set to 8 which overrides the collections's defaultTtl value(5)
         read_document = client.ReadDocument(created_document['_self'])
         self.assertEqual(created_document['id'], read_document['id'])
 
-        time.sleep(3)
+        time.sleep(4)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-
-        # the created document should be gone now as we have waited for (6+3) secs which is greater than documents's ttl value of 8
+        # the created document should be gone now as we have waited for (6+4) secs which is greater than documents's ttl value of 8
         self.__AssertHTTPFailureWithStatus(
             404,
             client.ReadDocument,
@@ -246,8 +229,6 @@ class Test_ttl_tests(unittest.TestCase):
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        dummy_document_definition = { 'id': 'dummy doc' }
-
         # the created document's ttl value would be -1 inherited from the collection's defaultTtl and this document will never expire
         created_document1 = client.CreateDocument(created_collection['_self'], document_definition)
 
@@ -260,10 +241,7 @@ class Test_ttl_tests(unittest.TestCase):
         document_definition['ttl'] = 2
         created_document3 = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(3)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
+        time.sleep(4)
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(-1)
         self.__AssertHTTPFailureWithStatus(
@@ -292,14 +270,9 @@ class Test_ttl_tests(unittest.TestCase):
                                 'key': 'value',
                                 'ttl' : 5}
 
-        dummy_document_definition = { 'id': 'dummy doc' }
-
         created_document = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(6)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
+        time.sleep(7)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level(no defaultTtl property defined)
         read_document = client.ReadDocument(created_document['_self'])
@@ -320,15 +293,10 @@ class Test_ttl_tests(unittest.TestCase):
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        dummy_document_definition = { 'id': 'dummy doc' }
-
         created_document = client.CreateDocument(created_collection['_self'], document_definition)
 
-        time.sleep(9)
+        time.sleep(10)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-        
         # the created document cannot be deleted since it should already be gone now
         self.__AssertHTTPFailureWithStatus(
             404,
@@ -341,34 +309,23 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(3)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-        
         # Upsert the document after 3 secs to reset the document's ttl
         document_definition['key'] = 'value2'
         upserted_docment = client.UpsertDocument(created_collection['_self'], document_definition)
 
-        time.sleep(6)
+        time.sleep(7)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-
-        # Upserted document still exists after 9 secs from document creation time(with collection's defaultTtl set to 8) since it's ttl was reset after 3 secs by upserting it
+        # Upserted document still exists after 10 secs from document creation time(with collection's defaultTtl set to 8) since it's ttl was reset after 3 secs by upserting it
         read_document = client.ReadDocument(upserted_docment['_self'])
         self.assertEqual(upserted_docment['id'], read_document['id'])
 
         time.sleep(3)
 
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(created_collection['_self'], dummy_document_definition)
-
-        # the upserted document should be gone now after 9 secs from the last write(upsert) of the document
+        # the upserted document should be gone now after 10 secs from the last write(upsert) of the document
         self.__AssertHTTPFailureWithStatus(
             404,
             client.ReadDocument,
             upserted_docment['_self'])
-
-        client.DeleteDocument(dummy_doc['_self'])
 
         documents = list(client.QueryDocuments(
         created_collection['_self'],
@@ -385,10 +342,7 @@ class Test_ttl_tests(unittest.TestCase):
         document_definition['id'] = 'doc2'
         created_document = client.CreateDocument(replaced_collection['_self'], document_definition)
 
-        time.sleep(6)
-
-        # Call to Upsert a dummy document here is a way to update the logical timestamp of the created document
-        dummy_doc = client.UpsertDocument(replaced_collection['_self'], dummy_document_definition)
+        time.sleep(5)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level
         read_document = client.ReadDocument(created_document['_self'])
