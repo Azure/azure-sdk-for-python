@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMInstanceView(Model):
     """The instance view of a virtual machine scale set VM.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param platform_update_domain: The Update Domain count.
     :type platform_update_domain: int
     :param platform_fault_domain: The Fault Domain count.
@@ -30,6 +33,9 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView>`
+    :ivar vm_health: The health status for the VM.
+    :vartype vm_health: :class:`VirtualMachineHealthStatus
+     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineHealthStatus>`
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
      <br><br> For Linux Virtual Machines, you can easily view the output of
@@ -45,6 +51,10 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :type placement_group_id: str
     """
 
+    _validation = {
+        'vm_health': {'readonly': True},
+    }
+
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
@@ -52,6 +62,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
         'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
+        'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
         'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
@@ -64,6 +75,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         self.vm_agent = vm_agent
         self.disks = disks
         self.extensions = extensions
+        self.vm_health = None
         self.boot_diagnostics = boot_diagnostics
         self.statuses = statuses
         self.placement_group_id = placement_group_id

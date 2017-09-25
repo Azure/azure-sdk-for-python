@@ -24,9 +24,9 @@ class VirtualMachineScaleSetIdentity(Model):
     :ivar tenant_id: The tenant id associated with the virtual machine scale
      set.
     :vartype tenant_id: str
-    :param type: The type of identity used for the virtual machine. Currently,
-     the only supported type is 'SystemAssigned', which implicitly creates an
-     identity. Possible values include: 'SystemAssigned'
+    :param type: The type of identity used for the virtual machine scale set.
+     Currently, the only supported type is 'SystemAssigned', which implicitly
+     creates an identity. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType
      <azure.mgmt.compute.v2017_03_30.models.ResourceIdentityType>`
     """

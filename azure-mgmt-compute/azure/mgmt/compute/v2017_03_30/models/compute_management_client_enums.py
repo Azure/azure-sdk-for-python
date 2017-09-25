@@ -135,9 +135,9 @@ class CachingTypes(Enum):
 
 class DiskCreateOptionTypes(Enum):
 
-    from_image = "fromImage"
-    empty = "empty"
-    attach = "attach"
+    from_image = "FromImage"
+    empty = "Empty"
+    attach = "Attach"
 
 
 class StorageAccountTypes(Enum):
@@ -148,7 +148,7 @@ class StorageAccountTypes(Enum):
 
 class PassNames(Enum):
 
-    oobe_system = "oobeSystem"
+    oobe_system = "OobeSystem"
 
 
 class ComponentNames(Enum):
@@ -185,6 +185,7 @@ class UpgradeMode(Enum):
 
     automatic = "Automatic"
     manual = "Manual"
+    rolling = "Rolling"
 
 
 class OperatingSystemStateTypes(Enum):
@@ -202,7 +203,7 @@ class ResourceSkuCapacityScaleType(Enum):
 
 class ResourceSkuRestrictionsType(Enum):
 
-    location = "location"
+    location = "Location"
 
 
 class ResourceSkuRestrictionsReasonCode(Enum):
@@ -221,6 +222,20 @@ class VirtualMachineScaleSetSkuScaleType(Enum):
 
     automatic = "Automatic"
     none = "None"
+
+
+class RollingUpgradeStatusCode(Enum):
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+
+class RollingUpgradeActionType(Enum):
+
+    start = "Start"
+    cancel = "Cancel"
 
 
 class DiskCreateOption(Enum):

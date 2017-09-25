@@ -52,7 +52,7 @@ class OSDisk(Model):
      using an image to create the virtual machine. If you are using a platform
      image, you also use the imageReference element described above. If you are
      using a marketplace image, you  also use the plan element previously
-     described. Possible values include: 'fromImage', 'empty', 'attach'
+     described. Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes>`
     :param disk_size_gb: Specifies the size of an empty data disk in

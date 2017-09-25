@@ -18,7 +18,7 @@ class AdditionalUnattendContent(Model):
     setting name, component name, and the pass in which the content is applied.
 
     :param pass_name: The pass name. Currently, the only allowable value is
-     oobeSystem. Possible values include: 'oobeSystem'
+     oobeSystem. Possible values include: 'OobeSystem'
     :type pass_name: str or :class:`PassNames
      <azure.mgmt.compute.v2017_03_30.models.PassNames>`
     :param component_name: The component name. Currently, the only allowable

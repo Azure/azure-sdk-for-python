@@ -24,6 +24,7 @@ from .operations.resource_skus_operations import ResourceSkusOperations
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
+from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .operations.disks_operations import DisksOperations
 from .operations.snapshots_operations import SnapshotsOperations
@@ -95,6 +96,8 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensions operations
     :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetExtensionsOperations
+    :ivar virtual_machine_scale_set_rolling_upgrades: VirtualMachineScaleSetRollingUpgrades operations
+    :vartype virtual_machine_scale_set_rolling_upgrades: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetRollingUpgradesOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
     :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetVMsOperations
     :ivar disks: Disks operations
@@ -146,6 +149,8 @@ class ComputeManagementClient(object):
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self.config, self._serialize, self._deserialize)
