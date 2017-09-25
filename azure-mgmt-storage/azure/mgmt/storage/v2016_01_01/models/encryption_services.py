@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class StorageAccountKeys(Model):
-    """The access keys for the storage account.
+class EncryptionServices(Model):
+    """A list of services that support encryption.
 
-    :param key1: The value of key 1.
-    :type key1: str
-    :param key2: The value of key 2.
-    :type key2: str
+    :param blob: The encryption function of the blob storage service.
+    :type blob: :class:`EncryptionService
+     <azure.mgmt.storage.v2016_01_01.models.EncryptionService>`
     """
 
     _attribute_map = {
-        'key1': {'key': 'key1', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
+        'blob': {'key': 'blob', 'type': 'EncryptionService'},
     }
 
-    def __init__(self, key1=None, key2=None):
-        self.key1 = key1
-        self.key2 = key2
+    def __init__(self, blob=None):
+        self.blob = blob

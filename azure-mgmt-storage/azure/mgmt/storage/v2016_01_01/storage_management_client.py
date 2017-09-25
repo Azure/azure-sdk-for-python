@@ -26,9 +26,9 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -55,22 +55,22 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 
 
 class StorageManagementClient(object):
-    """The Azure Storage Management API.
+    """The Storage Management Client.
 
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
 
     :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.storage.v2015_06_15.operations.StorageAccountsOperations
+    :vartype storage_accounts: azure.mgmt.storage.v2016_01_01.operations.StorageAccountsOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.storage.v2015_06_15.operations.UsageOperations
+    :vartype usage: azure.mgmt.storage.v2016_01_01.operations.UsageOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -82,7 +82,7 @@ class StorageManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-06-15'
+        self.api_version = '2016-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

@@ -11,13 +11,18 @@
 
 from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
 from .check_name_availability_result import CheckNameAvailabilityResult
+from .sku import Sku
+from .custom_domain import CustomDomain
+from .encryption_service import EncryptionService
+from .encryption_services import EncryptionServices
+from .encryption import Encryption
 from .storage_account_create_parameters import StorageAccountCreateParameters
 from .endpoints import Endpoints
-from .custom_domain import CustomDomain
 from .storage_account import StorageAccount
-from .storage_account_keys import StorageAccountKeys
-from .storage_account_update_parameters import StorageAccountUpdateParameters
+from .storage_account_key import StorageAccountKey
+from .storage_account_list_keys_result import StorageAccountListKeysResult
 from .storage_account_regenerate_key_parameters import StorageAccountRegenerateKeyParameters
+from .storage_account_update_parameters import StorageAccountUpdateParameters
 from .usage_name import UsageName
 from .usage import Usage
 from .resource import Resource
@@ -25,30 +30,43 @@ from .storage_account_paged import StorageAccountPaged
 from .usage_paged import UsagePaged
 from .storage_management_client_enums import (
     Reason,
-    AccountType,
+    SkuName,
+    SkuTier,
+    AccessTier,
+    Kind,
     ProvisioningState,
     AccountStatus,
+    KeyPermission,
     UsageUnit,
 )
 
 __all__ = [
     'StorageAccountCheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
+    'Sku',
+    'CustomDomain',
+    'EncryptionService',
+    'EncryptionServices',
+    'Encryption',
     'StorageAccountCreateParameters',
     'Endpoints',
-    'CustomDomain',
     'StorageAccount',
-    'StorageAccountKeys',
-    'StorageAccountUpdateParameters',
+    'StorageAccountKey',
+    'StorageAccountListKeysResult',
     'StorageAccountRegenerateKeyParameters',
+    'StorageAccountUpdateParameters',
     'UsageName',
     'Usage',
     'Resource',
     'StorageAccountPaged',
     'UsagePaged',
     'Reason',
-    'AccountType',
+    'SkuName',
+    'SkuTier',
+    'AccessTier',
+    'Kind',
     'ProvisioningState',
     'AccountStatus',
+    'KeyPermission',
     'UsageUnit',
 ]

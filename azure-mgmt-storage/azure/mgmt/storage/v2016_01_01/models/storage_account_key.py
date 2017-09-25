@@ -12,29 +12,35 @@
 from msrest.serialization import Model
 
 
-class UsageName(Model):
-    """The usage names that can be used; currently limited to StorageAccount.
+class StorageAccountKey(Model):
+    """An access key for the storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Gets a string describing the resource name.
+    :ivar key_name: Name of the key.
+    :vartype key_name: str
+    :ivar value: Base 64-encoded value of the key.
     :vartype value: str
-    :ivar localized_value: Gets a localized string describing the resource
-     name.
-    :vartype localized_value: str
+    :ivar permissions: Permissions for the key -- read-only or full
+     permissions. Possible values include: 'READ', 'FULL'
+    :vartype permissions: str or :class:`KeyPermission
+     <azure.mgmt.storage.v2016_01_01.models.KeyPermission>`
     """
 
     _validation = {
+        'key_name': {'readonly': True},
         'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        'permissions': {'readonly': True},
     }
 
     _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'permissions': {'key': 'permissions', 'type': 'KeyPermission'},
     }
 
     def __init__(self):
+        self.key_name = None
         self.value = None
-        self.localized_value = None
+        self.permissions = None

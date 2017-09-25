@@ -18,13 +18,31 @@ class Reason(Enum):
     already_exists = "AlreadyExists"
 
 
-class AccountType(Enum):
+class SkuName(Enum):
 
     standard_lrs = "Standard_LRS"
-    standard_zrs = "Standard_ZRS"
     standard_grs = "Standard_GRS"
     standard_ragrs = "Standard_RAGRS"
+    standard_zrs = "Standard_ZRS"
     premium_lrs = "Premium_LRS"
+
+
+class SkuTier(Enum):
+
+    standard = "Standard"
+    premium = "Premium"
+
+
+class AccessTier(Enum):
+
+    hot = "Hot"
+    cool = "Cool"
+
+
+class Kind(Enum):
+
+    storage = "Storage"
+    blob_storage = "BlobStorage"
 
 
 class ProvisioningState(Enum):
@@ -38,6 +56,12 @@ class AccountStatus(Enum):
 
     available = "Available"
     unavailable = "Unavailable"
+
+
+class KeyPermission(Enum):
+
+    read = "READ"
+    full = "FULL"
 
 
 class UsageUnit(Enum):
