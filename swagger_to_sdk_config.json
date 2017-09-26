@@ -565,6 +565,7 @@
         "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/6.0/servicefabric.json",
         "namespace": "azure.servicefabric",
         "package-version": "6.0",
+        "add-credentials": true,
         "azure-arm": false
       },
       "output_dir": "azure-servicefabric/azure/servicefabric",
