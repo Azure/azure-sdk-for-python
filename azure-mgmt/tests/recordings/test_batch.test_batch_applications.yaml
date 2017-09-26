@@ -366,4 +366,370 @@ interactions:
       x-ms-request-id: [55963090-c467-4e87-b7ef-4bbb48c45fd3]
       x-ms-routing-request-id: ['WESTUS:20170724T165910Z:9f40a912-5347-4194-a687-1cdbfe774943']
     status: {code: 204, message: No Content}
+- request:
+    body: '{"displayName": "my_application_name"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['38']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a0f1d706-a02c-11e7-957d-6c3be5273719]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id?api-version=2017-05-01
+  response:
+    body: {string: '{"id":"my_application_id","displayName":"my_application_name","packages":[{"version":"v1.0","state":"pending"}],"allowUpdates":true}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['132']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 23 Sep 2017 06:58:40 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [ccf3ef49-f163-46b6-9a26-042b5df524f9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [77928a55-fb52-431b-a3d2-a67e38127c4a]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065841Z:ccf3ef49-f163-46b6-9a26-042b5df524f9']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a1e0fcf4-a02c-11e7-9878-6c3be5273719]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id?api-version=2017-05-01
+  response:
+    body: {string: '{"id":"my_application_id","displayName":"my_application_name","packages":[{"version":"v1.0","state":"pending"}],"allowUpdates":true}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 23 Sep 2017 06:58:42 GMT']
+      ETag: ['"0x8D5025085D828FB"']
+      Expires: ['-1']
+      Last-Modified: ['Sat, 23 Sep 2017 06:58:40 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['132']
+      x-ms-correlation-request-id: [98325fd4-56f0-4600-910f-03ba99e5d47b]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [866062cf-784c-4c41-ba03-24648dba5ff8]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065842Z:98325fd4-56f0-4600-910f-03ba99e5d47b']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a2a3bd2e-a02c-11e7-ab95-6c3be5273719]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications?api-version=2017-05-01
+  response:
+    body: {string: '{"value":[{"id":"my_application_id","displayName":"my_application_name","packages":[{"version":"v1.0","state":"pending"}],"allowUpdates":true}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 23 Sep 2017 06:58:43 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['144']
+      x-ms-correlation-request-id: [a7b2a32a-e8cc-49f5-9d62-7915d8217945]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [2507f802-5ab0-4e70-8acb-15c147f84465]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065843Z:a7b2a32a-e8cc-49f5-9d62-7915d8217945']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a352cd9c-a02c-11e7-a707-6c3be5273719]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id/versions/v1.0?api-version=2017-05-01
+  response:
+    body: {string: '{"id":"my_application_id","version":"v1.0","storageUrl":"https://batchpythonsdktest3.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-0d661d30-26ef-49da-8e86-3af622499619?sv=2015-04-05&sr=b&sig=JEjJlawktxIKI7pVW0e8tQFt6lshyAVs6D45Cj9Uq54%3D&st=2017-09-23T06%3A53%3A45Z&se=2017-09-23T10%3A58%3A45Z&sp=rw","storageUrlExpiry":"2017-09-23T10:58:45.767173Z","state":"pending"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['430']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 23 Sep 2017 06:58:45 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [8cc84a70-d0f4-43e5-8f33-ef0d5279c07f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [e9ce0fcc-7387-46e7-9e2d-31c7b2721521]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065845Z:8cc84a70-d0f4-43e5-8f33-ef0d5279c07f']
+    status: {code: 201, message: Created}
+- request:
+    body: Hello World
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['11']
+      User-Agent: [python-requests/2.18.4]
+      x-ms-blob-type: [BlockBlob]
+    method: PUT
+    uri: https://batchpythonsdktest3.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-0d661d30-26ef-49da-8e86-3af622499619?sv=2015-04-05&sr=b&sig=JEjJlawktxIKI7pVW0e8tQFt6lshyAVs6D45Cj9Uq54%3D&st=2017-09-23T06%3A53%3A45Z&se=2017-09-23T10%3A58%3A45Z&sp=rw
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [sQqNsWTgdUEFt6mb5y4/5Q==]
+      Date: ['Sat, 23 Sep 2017 06:58:45 GMT']
+      ETag: ['"0x8D5025088E03812"']
+      Last-Modified: ['Sat, 23 Sep 2017 06:58:45 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [09a08636-001e-003d-2439-3413e6000000]
+      x-ms-version: ['2015-04-05']
+    status: {code: 201, message: Created}
+- request:
+    body: '{"format": "zip"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['17']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a50b0b62-a02c-11e7-a090-6c3be5273719]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id/versions/v1.0/activate?api-version=2017-05-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Sat, 23 Sep 2017 06:58:47 GMT']
+      ETag: ['"0x8D502508863E7C3"']
+      Expires: ['-1']
+      Last-Modified: ['Sat, 23 Sep 2017 06:58:45 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [45560319-8c72-46c4-a831-9dec6adfa7b5]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [defef8cf-3ef0-457f-bc43-9b2334f5b80b]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065848Z:45560319-8c72-46c4-a831-9dec6adfa7b5']
+    status: {code: 204, message: No Content}
+- request:
+    body: '{"allowUpdates": false, "defaultVersion": "v1.0", "displayName": "my_updated_name"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['83']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a6022264-a02c-11e7-9ba4-6c3be5273719]
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id?api-version=2017-05-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Sat, 23 Sep 2017 06:58:49 GMT']
+      ETag: ['"0x8D5025085D828FB"']
+      Expires: ['-1']
+      Last-Modified: ['Sat, 23 Sep 2017 06:58:40 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [8064725d-3b04-42ea-9156-8829dc56ba1b]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [0a1bc26c-5852-43b0-891f-ae13e110ad9a]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065849Z:8064725d-3b04-42ea-9156-8829dc56ba1b']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a708d1fa-a02c-11e7-b78e-6c3be5273719]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id/versions/v1.0?api-version=2017-05-01
+  response:
+    body: {string: '{"id":"my_application_id","version":"v1.0","storageUrl":"https://batchpythonsdktest3.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-0d661d30-26ef-49da-8e86-3af622499619?sv=2015-04-05&sr=b&sig=n4TpI6UKpkneTYicm9qde4ngRnPikoBGWzvSd%2FR7CV4%3D&st=2017-09-23T06%3A53%3A51Z&se=2017-09-23T10%3A58%3A51Z&sp=r","storageUrlExpiry":"2017-09-23T10:58:51.3533642Z","state":"active","format":"zip","lastActivationTime":"2017-09-23T06:58:47.4458552Z"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 23 Sep 2017 06:58:51 GMT']
+      ETag: ['"0x8D5025089EB5186"']
+      Expires: ['-1']
+      Last-Modified: ['Sat, 23 Sep 2017 06:58:47 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['498']
+      x-ms-correlation-request-id: [73bc0337-b4f2-4ad6-89c3-0d02ba605de4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [e4773316-6258-47d3-a974-57e697205cea]
+      x-ms-routing-request-id: ['WESTUS2:20170923T065851Z:73bc0337-b4f2-4ad6-89c3-0d02ba605de4']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [a7c1330a-a02c-11e7-8414-6c3be5273719]
+      ocp-date: ['Sat, 23 Sep 2017 06:58:51 GMT']
+    method: GET
+    uri: https://pythonsdktest3.brazilsouth.batch.azure.com/applications/my_application_id?api-version=2017-09-01.6.0
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest3.brazilsouth.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\"\
+        ,\"id\":\"my_application_id\",\"versions\":[\r\n    \"v1.0\"\r\n  ],\"displayName\"\
+        :\"my_updated_name\"\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Sat, 23 Sep 2017 06:58:52 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [acbb0dff-de00-4b42-a125-9780f1b48aac]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [a8ba0c0c-a02c-11e7-ae45-6c3be5273719]
+      ocp-date: ['Sat, 23 Sep 2017 06:58:52 GMT']
+    method: GET
+    uri: https://pythonsdktest3.brazilsouth.batch.azure.com/applications?api-version=2017-09-01.6.0
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest3.brazilsouth.batch.azure.com/$metadata#listapplicationsummariesresponses\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"my_application_id\",\"versions\":[\r\
+        \n        \"v1.0\"\r\n      ],\"displayName\":\"my_updated_name\"\r\n    }\r\
+        \n  ]\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Sat, 23 Sep 2017 06:58:54 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [6f97d949-aa25-4faa-a366-297d78e6ddd1]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a9be7222-a02c-11e7-b8d9-6c3be5273719]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id/versions/v1.0?api-version=2017-05-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Sat, 23 Sep 2017 06:58:55 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [d9e11d28-e6c5-4143-9900-9c61ac64d55a]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [ba8649a4-29bb-4b74-b72b-fc888d169a59]
+      x-ms-routing-request-id: ['WESTUS:20170923T065856Z:d9e11d28-e6c5-4143-9900-9c61ac64d55a']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.14 batchmanagementclient/4.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [aabf34c6-a02c-11e7-915d-6c3be5273719]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest3/applications/my_application_id?api-version=2017-05-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Sat, 23 Sep 2017 06:58:57 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [b59b15ba-237e-4e63-9697-0a0910918bbe]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [d8c27fe2-aed7-4ff5-b09d-8a03a2ccfa97]
+      x-ms-routing-request-id: ['WESTUS:20170923T065858Z:b59b15ba-237e-4e63-9697-0a0910918bbe']
+    status: {code: 204, message: No Content}
 version: 1

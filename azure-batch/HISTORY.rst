@@ -3,6 +3,17 @@
 Release History
 ===============
 
+4.0.0 (2017-09-25)
+++++++++++++++++++
+
+- Added the ability to get a discount on Windows VM pricing if you have on-premises licenses for the OS SKUs you are deploying, via `license_type` on `VirtualMachineConfiguration`.
+- Added support for attaching empty data drives to `VirtualMachineConfiguration` based pools, via the new `data_disks` attribute on `VirtualMachineConfiguration`.
+- [Breaking] Custom images must now be deployed using a reference to an ARM Image, instead of pointing to .vhd files in blobs directly.
+  - The new `virtual_machine_image_id` property on `ImageReference` contains the reference to the ARM Image, and `OSDisk.image_uris` no longer exists.
+  - Because of this, `image_reference` is now a required attribute of `VirtualMachineConfiguration`.
+- [Breaking] Multi-instance tasks (created using `MultiInstanceSettings`) must now specify a `coordination_commandLine`, and `number_of_instances` is now optional and defaults to 1.
+- Added support for tasks run using Docker containers. To run a task using a Docker container you must specify a `container_configuration` on the `VirtualMachineConfiguration` for a pool, and then add `container_settings` on the Task.
+
 3.1.0 (2017-07-24)
 ++++++++++++++++++
 
