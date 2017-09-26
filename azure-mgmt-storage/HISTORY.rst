@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.4.0 (2017-09-26)
+++++++++++++++++++
+
+**Bug fixes**
+
+- Add skus operations group to the generic client
+
+**Features**
+
+- Add official support for API version 2016-01-01
+
 1.3.0 (2017-09-08)
 ++++++++++++++++++
 
