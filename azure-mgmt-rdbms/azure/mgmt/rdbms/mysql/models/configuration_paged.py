@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ConfigurationPaged(Paged):
     """
-    A paging container for iterating over a list of Configuration object
+    A paging container for iterating over a list of :class:`Configuration <azure.mgmt.rdbms.mysql.models.Configuration>` object
     """
 
     _attribute_map = {
