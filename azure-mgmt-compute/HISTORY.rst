@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.0.1 (2017-09-26)
+++++++++++++++++++
+
+**Bugfix**
+
+- Add missing virtual_machine_scale_set_rolling_upgrades operation group alias
+
 3.0.0 (2017-09-26)
 ++++++++++++++++++
 
