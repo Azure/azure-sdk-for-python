@@ -599,17 +599,29 @@
       "generated_relative_base_directory": "python/azure/mgmt/sql"
     },
     "storage.2015-06-15": {
+      "markdown": "specification/storage/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/storage/resource-manager/Microsoft.Storage/2015-06-15/storage.json",
+        "tag": "package-2015-06",
         "namespace": "azure.mgmt.storage.v2015_06_15"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
       "build_dir":  "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/storage/v2015_06_15"
     },
-    "storage.2016-12-01": {
+    "storage.2016-01-01": {
+      "markdown": "specification/storage/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/storage/resource-manager/Microsoft.Storage/2016-12-01/storage.json",
+        "tag": "package-2016-01",
+        "namespace": "azure.mgmt.storage.v2016_01_01"
+      },
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01",
+      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01",
+      "generated_relative_base_directory": "azure/mgmt/storage/v2016_01_01"
+    },
+    "storage.2016-12-01": {
+      "markdown": "specification/storage/resource-manager/readme.md",
+      "autorest_options": {
+        "tag": "package-2016-12",
         "namespace": "azure.mgmt.storage.v2016_12_01"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
@@ -617,8 +629,9 @@
       "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01"
     },
     "storage.2017-06-01": {
+      "markdown": "specification/storage/resource-manager/readme.md",
       "autorest_options": {
-        "input-file": "specification/storage/resource-manager/Microsoft.Storage/2017-06-01/storage.json",
+        "tag": "package-2017-06",
         "namespace": "azure.mgmt.storage.v2017_06_01"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2017_06_01",
