@@ -51,6 +51,14 @@ class JobPreparationTask(Model):
      the command line, for example using "cmd /c MyCommand" in Windows or
      "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
+    :param container_settings: The settings for the container under which the
+     Job Preparation task runs. When this is specified, all directories
+     recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch
+     directories on the node) are mapped into the container, all task
+     environment variables are mapped into the container, and the task command
+     line is executed in the container.
+    :type container_settings: :class:`TaskContainerSettings
+     <azure.batch.models.TaskContainerSettings>`
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
@@ -101,6 +109,7 @@ class JobPreparationTask(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
+        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
@@ -109,9 +118,10 @@ class JobPreparationTask(Model):
         'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, user_identity=None, rerun_on_node_reboot_after_success=None):
+    def __init__(self, command_line, id=None, container_settings=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, user_identity=None, rerun_on_node_reboot_after_success=None):
         self.id = id
         self.command_line = command_line
+        self.container_settings = container_settings
         self.resource_files = resource_files
         self.environment_settings = environment_settings
         self.constraints = constraints

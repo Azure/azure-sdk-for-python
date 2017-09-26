@@ -13,18 +13,8 @@ from msrest.serialization import Model
 
 
 class OSDisk(Model):
-    """A reference to an OS disk image.
+    """Settings for the operating system disk of the virtual machine.
 
-    :param image_uris: The collection of Virtual Hard Disk (VHD) URIs. All the
-     VHDs must be identical and must reside in an Azure Storage account within
-     the same subscription and same region as the Batch account. For best
-     performance, it is recommended that each VHD resides in a separate Azure
-     Storage account. Each VHD can serve upto 20 Windows compute nodes or 40
-     Linux compute nodes. You must supply enough VHD URIs to satisfy the
-     'targetDedicated' property of the pool. If you do not supply enough VHD
-     URIs, the pool will partially allocate compute nodes, and a resize error
-     will occur.
-    :type image_uris: list of str
     :param caching: The type of caching to enable for the OS disk. Values are:
      none - The caching mode for the disk is not enabled.
      readOnly - The caching mode for the disk is read only.
@@ -37,15 +27,9 @@ class OSDisk(Model):
      <azure.batch.models.CachingType>`
     """
 
-    _validation = {
-        'image_uris': {'required': True},
-    }
-
     _attribute_map = {
-        'image_uris': {'key': 'imageUris', 'type': '[str]'},
         'caching': {'key': 'caching', 'type': 'CachingType'},
     }
 
-    def __init__(self, image_uris, caching=None):
-        self.image_uris = image_uris
+    def __init__(self, caching=None):
         self.caching = caching

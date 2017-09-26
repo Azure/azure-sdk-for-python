@@ -45,6 +45,17 @@ class JobManagerTask(Model):
      line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
      MyCommand" in Linux.
     :type command_line: str
+    :param container_settings: The settings for the container under which the
+     Job Manager task runs. If the pool that will run this task has
+     containerConfiguration set, this must be set as well. If the pool that
+     will run this task doesn't have containerConfiguration set, this must not
+     be set. When this is specified, all directories recursively below the
+     AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node)
+     are mapped into the container, all task environment variables are mapped
+     into the container, and the task command line is executed in the
+     container.
+    :type container_settings: :class:`TaskContainerSettings
+     <azure.batch.models.TaskContainerSettings>`
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
@@ -127,6 +138,7 @@ class JobManagerTask(Model):
         'id': {'key': 'id', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
+        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
         'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
@@ -139,10 +151,11 @@ class JobManagerTask(Model):
         'allow_low_priority_node': {'key': 'allowLowPriorityNode', 'type': 'bool'},
     }
 
-    def __init__(self, id, command_line, display_name=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
+    def __init__(self, id, command_line, display_name=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
+        self.container_settings = container_settings
         self.resource_files = resource_files
         self.output_files = output_files
         self.environment_settings = environment_settings
