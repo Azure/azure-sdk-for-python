@@ -59,6 +59,7 @@ from .virtual_machine_identity import VirtualMachineIdentity
 from .maintenance_redeploy_status import MaintenanceRedeployStatus
 from .virtual_machine_instance_view import VirtualMachineInstanceView
 from .virtual_machine import VirtualMachine
+from .rolling_upgrade_policy import RollingUpgradePolicy
 from .upgrade_policy import UpgradePolicy
 from .image_os_disk import ImageOSDisk
 from .image_data_disk import ImageDataDisk
@@ -104,10 +105,14 @@ from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInsta
 from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
 from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
 from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
+from .virtual_machine_health_status import VirtualMachineHealthStatus
 from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
+from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
 from .api_error_base import ApiErrorBase
 from .inner_error import InnerError
 from .api_error import ApiError
+from .rolling_upgrade_status_info import RollingUpgradeStatusInfo
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
 from .resource import Resource
 from .update_resource import UpdateResource
@@ -166,6 +171,8 @@ from .compute_management_client_enums import (
     ResourceSkuRestrictionsReasonCode,
     IPVersion,
     VirtualMachineScaleSetSkuScaleType,
+    RollingUpgradeStatusCode,
+    RollingUpgradeActionType,
     DiskCreateOption,
     AccessLevel,
     InstanceViewTypes,
@@ -222,6 +229,7 @@ __all__ = [
     'MaintenanceRedeployStatus',
     'VirtualMachineInstanceView',
     'VirtualMachine',
+    'RollingUpgradePolicy',
     'UpgradePolicy',
     'ImageOSDisk',
     'ImageDataDisk',
@@ -267,10 +275,14 @@ __all__ = [
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
     'VirtualMachineScaleSetVM',
+    'VirtualMachineHealthStatus',
     'VirtualMachineScaleSetVMInstanceView',
+    'RollingUpgradeRunningStatus',
+    'RollingUpgradeProgressInfo',
     'ApiErrorBase',
     'InnerError',
     'ApiError',
+    'RollingUpgradeStatusInfo',
     'ComputeLongRunningOperationProperties',
     'Resource',
     'UpdateResource',
@@ -328,6 +340,8 @@ __all__ = [
     'ResourceSkuRestrictionsReasonCode',
     'IPVersion',
     'VirtualMachineScaleSetSkuScaleType',
+    'RollingUpgradeStatusCode',
+    'RollingUpgradeActionType',
     'DiskCreateOption',
     'AccessLevel',
     'InstanceViewTypes',

@@ -28,8 +28,7 @@ class Snapshot(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar managed_by: A relative URI containing the ID of the VM that has the
-     disk attached.
+    :ivar managed_by: Unused. Always Null.
     :vartype managed_by: str
     :param sku:
     :type sku: :class:`DiskSku
