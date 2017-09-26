@@ -12,25 +12,20 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ServicePlacementPolicyDescription(Model):
+    """Describes the policy to be used for placement of a Service Fabric service.
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param type: Polymorphic Discriminator
+    :type type: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self):
+        self.type = None

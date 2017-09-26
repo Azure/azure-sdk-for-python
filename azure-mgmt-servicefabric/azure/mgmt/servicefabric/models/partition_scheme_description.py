@@ -12,25 +12,24 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class PartitionSchemeDescription(Model):
+    """Describes how the service is partitioned.
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param partition_scheme: Polymorphic Discriminator
+    :type partition_scheme: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        'partition_scheme': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    _subtype_map = {
+        'partition_scheme': {'Named': 'NamedPartitionSchemeDescription', 'Singleton': 'SingletonPartitionSchemeDescription', 'UniformInt64Range': 'UniformInt64RangePartitionSchemeDescription'}
+    }
+
+    def __init__(self):
+        self.partition_scheme = None

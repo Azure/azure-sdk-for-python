@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CertificateDescription(Model):
-    """Certificate details.
+    """Describes the certificate details.
 
-    :param thumbprint: Thumbprint of the primary certificate
+    :param thumbprint: Thumbprint of the primary certificate.
     :type thumbprint: str
-    :param thumbprint_secondary: Thumbprint of the secondary certificate
+    :param thumbprint_secondary: Thumbprint of the secondary certificate.
     :type thumbprint_secondary: str
     :param x509_store_name: The local certificate store location. Possible
      values include: 'AddressBook', 'AuthRoot', 'CertificateAuthority',

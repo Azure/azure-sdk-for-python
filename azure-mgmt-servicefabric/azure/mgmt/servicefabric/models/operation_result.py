@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class OperationResult(Model):
     """Available operation list result.
 
-    :param name: Result name
+    :param name: The name of the operation.
     :type name: str
-    :param display: Dispaly of the result
+    :param display: The object that represents the operation.
     :type display: :class:`AvailableOperationDisplay
      <azure.mgmt.servicefabric.models.AvailableOperationDisplay>`
     :param origin: Origin result

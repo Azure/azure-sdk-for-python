@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class AzureActiveDirectory(Model):
     """The settings to enable AAD authentication on the cluster.
 
-    :param tenant_id: Azure active directory tenant id
+    :param tenant_id: Azure active directory tenant id.
     :type tenant_id: str
-    :param cluster_application: Azure active directory cluster application id
+    :param cluster_application: Azure active directory cluster application id.
     :type cluster_application: str
-    :param client_application: Azure active directory client application id
+    :param client_application: Azure active directory client application id.
     :type client_application: str
     """
 
