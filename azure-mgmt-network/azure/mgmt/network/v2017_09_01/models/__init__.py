@@ -130,6 +130,16 @@ from .connectivity_parameters import ConnectivityParameters
 from .connectivity_issue import ConnectivityIssue
 from .connectivity_hop import ConnectivityHop
 from .connectivity_information import ConnectivityInformation
+from .azure_reachability_report_location import AzureReachabilityReportLocation
+from .azure_reachability_report_parameters import AzureReachabilityReportParameters
+from .azure_reachability_report_latency_info import AzureReachabilityReportLatencyInfo
+from .azure_reachability_report_item import AzureReachabilityReportItem
+from .azure_reachability_report import AzureReachabilityReport
+from .available_providers_list_parameters import AvailableProvidersListParameters
+from .available_providers_list_city import AvailableProvidersListCity
+from .available_providers_list_state import AvailableProvidersListState
+from .available_providers_list_country import AvailableProvidersListCountry
+from .available_providers_list import AvailableProvidersList
 from .patch_route_filter_rule import PatchRouteFilterRule
 from .patch_route_filter import PatchRouteFilter
 from .bgp_community import BGPCommunity
@@ -163,6 +173,7 @@ from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
 from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
 from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
+from .vpn_device_script_parameters import VpnDeviceScriptParameters
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
@@ -388,6 +399,16 @@ __all__ = [
     'ConnectivityIssue',
     'ConnectivityHop',
     'ConnectivityInformation',
+    'AzureReachabilityReportLocation',
+    'AzureReachabilityReportParameters',
+    'AzureReachabilityReportLatencyInfo',
+    'AzureReachabilityReportItem',
+    'AzureReachabilityReport',
+    'AvailableProvidersListParameters',
+    'AvailableProvidersListCity',
+    'AvailableProvidersListState',
+    'AvailableProvidersListCountry',
+    'AvailableProvidersList',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -421,6 +442,7 @@ __all__ = [
     'ConnectionSharedKey',
     'VirtualNetworkConnectionGatewayReference',
     'VirtualNetworkGatewayConnectionListEntity',
+    'VpnDeviceScriptParameters',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
