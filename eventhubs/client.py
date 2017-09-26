@@ -37,6 +37,8 @@ class EventHubClient(Container):
             super(EventHubClient, self).__init__(**kwargs)
         else:
             super(EventHubClient, self).__init__(self, **kwargs)
+            self.allow_insecure_mechs = False
+            self.allowed_mechs = 'PLAIN MSCBS'
             self.address = Url(address)
             self.shared_connection = None
             self.shared_session = None
