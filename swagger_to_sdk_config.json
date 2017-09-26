@@ -568,7 +568,7 @@
         "azure-arm": false
       },
       "output_dir": "azure-servicefabric/azure/servicefabric",
-      "generated_relative_base_directory": "azure-servicefabric/azure/servicefabric",
+      "generated_relative_base_directory": "service_fabric_client_ap_is",
       "build_dir": "azure-servicefabric"      
     },
     "servicefabric.mgmt": {
