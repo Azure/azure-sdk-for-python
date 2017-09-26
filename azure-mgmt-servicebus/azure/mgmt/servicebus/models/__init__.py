@@ -33,13 +33,22 @@ from .sql_filter import SqlFilter
 from .correlation_filter import CorrelationFilter
 from .rule import Rule
 from .sql_rule_action import SqlRuleAction
+from .premium_messaging_regions_properties import PremiumMessagingRegionsProperties
+from .premium_messaging_regions import PremiumMessagingRegions
+from .destination import Destination
+from .capture_description import CaptureDescription
+from .eventhub import Eventhub
+from .arm_disaster_recovery import ArmDisasterRecovery
 from .operation_paged import OperationPaged
 from .sb_namespace_paged import SBNamespacePaged
 from .sb_authorization_rule_paged import SBAuthorizationRulePaged
+from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
 from .sb_queue_paged import SBQueuePaged
 from .sb_topic_paged import SBTopicPaged
 from .sb_subscription_paged import SBSubscriptionPaged
 from .rule_paged import RulePaged
+from .premium_messaging_regions_paged import PremiumMessagingRegionsPaged
+from .eventhub_paged import EventhubPaged
 from .service_bus_management_client_enums import (
     SkuName,
     SkuTier,
@@ -48,6 +57,9 @@ from .service_bus_management_client_enums import (
     EntityStatus,
     UnavailableReason,
     FilterType,
+    EncodingCaptureDescription,
+    ProvisioningStateDR,
+    RoleDisasterRecovery,
 )
 
 __all__ = [
@@ -75,13 +87,22 @@ __all__ = [
     'CorrelationFilter',
     'Rule',
     'SqlRuleAction',
+    'PremiumMessagingRegionsProperties',
+    'PremiumMessagingRegions',
+    'Destination',
+    'CaptureDescription',
+    'Eventhub',
+    'ArmDisasterRecovery',
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
+    'ArmDisasterRecoveryPaged',
     'SBQueuePaged',
     'SBTopicPaged',
     'SBSubscriptionPaged',
     'RulePaged',
+    'PremiumMessagingRegionsPaged',
+    'EventhubPaged',
     'SkuName',
     'SkuTier',
     'AccessRights',
@@ -89,4 +110,7 @@ __all__ = [
     'EntityStatus',
     'UnavailableReason',
     'FilterType',
+    'EncodingCaptureDescription',
+    'ProvisioningStateDR',
+    'RoleDisasterRecovery',
 ]

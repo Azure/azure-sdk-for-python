@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class EventHubsOperations(object):
+    """EventHubsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,19 +34,24 @@ class Operations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available ServiceBus REST API operations.
+    def list_by_namespace(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all the Event Hubs in a service bus Namespace.
 
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Operation
-         <azure.mgmt.servicebus.models.Operation>`
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.servicebus.models.OperationPaged>`
+        :return: An iterator like instance of :class:`Eventhub
+         <azure.mgmt.servicebus.models.Eventhub>`
+        :rtype: :class:`EventhubPaged
+         <azure.mgmt.servicebus.models.EventhubPaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -54,7 +59,13 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.ServiceBus/operations'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/eventhubs'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -85,11 +96,11 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EventhubPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EventhubPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_namespace_patch import ResourceNamespacePatch
 
 
-class TrackedResource(Resource):
-    """The Resource definition.
+class PremiumMessagingRegions(ResourceNamespacePatch):
+    """Premium Messaging Region.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,17 +24,19 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: The Geo-location where the resource lives
+    :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param properties:
+    :type properties: :class:`PremiumMessagingRegionsProperties
+     <azure.mgmt.servicebus.models.PremiumMessagingRegionsProperties>`
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -43,9 +45,9 @@ class TrackedResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'PremiumMessagingRegionsProperties'},
     }
 
-    def __init__(self, location, tags=None):
-        super(TrackedResource, self).__init__()
-        self.location = location
-        self.tags = tags
+    def __init__(self, location=None, tags=None, properties=None):
+        super(PremiumMessagingRegions, self).__init__(location=location, tags=tags)
+        self.properties = properties

@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SBSubscriptionPaged(Paged):
+class PremiumMessagingRegionsPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SBSubscription <azure.mgmt.servicebus.models.SBSubscription>` object
+    A paging container for iterating over a list of :class:`PremiumMessagingRegions <azure.mgmt.servicebus.models.PremiumMessagingRegions>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SBSubscription]'}
+        'current_page': {'key': 'value', 'type': '[PremiumMessagingRegions]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SBSubscriptionPaged, self).__init__(*args, **kwargs)
+        super(PremiumMessagingRegionsPaged, self).__init__(*args, **kwargs)
