@@ -29,7 +29,7 @@ class VirtualMachineScaleSetOSDisk(Model):
      virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace
      image, you  also use the plan element previously described. Possible
-     values include: 'fromImage', 'empty', 'attach'
+     values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes>`
     :param os_type: This property allows you to specify the type of the OS
