@@ -3,7 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Batch Client Library.
 
-This package has been tested with Python 2.7, 3.3, 3.4 and 3.5.
+This package has been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 
 
 Compatibility
