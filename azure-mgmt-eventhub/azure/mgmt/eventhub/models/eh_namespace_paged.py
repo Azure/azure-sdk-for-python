@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EHNamespacePaged(Paged):
     """
-    A paging container for iterating over a list of EHNamespace object
+    A paging container for iterating over a list of :class:`EHNamespace <azure.mgmt.eventhub.models.EHNamespace>` object
     """
 
     _attribute_map = {
