@@ -3,12 +3,14 @@
 Release History
 ===============
 
-3.0.0rc1 (2017-09-22)
-+++++++++++++++++++++
+3.0.0 (2017-09-26)
+++++++++++++++++++
 
 **Features**
 
 - Availability Zones
+- VMSS Rolling upgrade / patch / health status
+- VM instance view APIs
 
 **Breaking changes**
 
