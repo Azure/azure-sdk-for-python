@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -45,6 +45,8 @@ class ClassicAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ClassicAdministrator
+         <azure.mgmt.authorization.models.ClassicAdministrator>`
         :rtype: :class:`ClassicAdministratorPaged
          <azure.mgmt.authorization.models.ClassicAdministratorPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

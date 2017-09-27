@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .iot_hub_resource_operations import IotHubResourceOperations
 
 __all__ = [
+    'Operations',
     'IotHubResourceOperations',
 ]

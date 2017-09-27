@@ -16,7 +16,6 @@ from .version import VERSION
 from .operations.job_collections_operations import JobCollectionsOperations
 from .operations.jobs_operations import JobsOperations
 from . import models
-from .patch import patch_client
 
 
 class SchedulerManagementClientConfiguration(AzureConfiguration):
@@ -60,9 +59,9 @@ class SchedulerManagementClient(object):
     :vartype config: SchedulerManagementClientConfiguration
 
     :ivar job_collections: JobCollections operations
-    :vartype job_collections: .operations.JobCollectionsOperations
+    :vartype job_collections: azure.mgmt.scheduler.operations.JobCollectionsOperations
     :ivar jobs: Jobs operations
-    :vartype jobs: .operations.JobsOperations
+    :vartype jobs: azure.mgmt.scheduler.operations.JobsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,5 +86,3 @@ class SchedulerManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-        patch_client(self)

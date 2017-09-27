@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LocalizableStringPaged(Paged):
     """
-    A paging container for iterating over a list of LocalizableString object
+    A paging container for iterating over a list of :class:`LocalizableString <azure.monitor.models.LocalizableString>` object
     """
 
     _attribute_map = {

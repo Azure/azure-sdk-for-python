@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -51,10 +51,13 @@ class PowerShellOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PowerShellSessionResources
+         <azure.mgmt.servermanager.models.PowerShellSessionResources>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PowerShellSessionResources
-         <azure.mgmt.servermanager.models.PowerShellSessionResources>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellSessionResources>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -62,8 +65,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -116,12 +119,15 @@ class PowerShellOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PowerShellSessionResource
-         <azure.mgmt.servermanager.models.PowerShellSessionResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellSessionResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -129,8 +135,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }
@@ -213,10 +219,13 @@ class PowerShellOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PowerShellCommandStatus
+         <azure.mgmt.servermanager.models.PowerShellCommandStatus>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PowerShellCommandStatus
-         <azure.mgmt.servermanager.models.PowerShellCommandStatus>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellCommandStatus>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -224,8 +233,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }
@@ -281,12 +290,15 @@ class PowerShellOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PowerShellCommandResults
-         <azure.mgmt.servermanager.models.PowerShellCommandResults>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellCommandResults>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -294,8 +306,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }
@@ -374,12 +386,15 @@ class PowerShellOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PowerShellCommandResults
-         <azure.mgmt.servermanager.models.PowerShellCommandResults>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellCommandResults>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -389,8 +404,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}/invokeCommand'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }
@@ -471,12 +486,15 @@ class PowerShellOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PowerShellCommandResults
-         <azure.mgmt.servermanager.models.PowerShellCommandResults>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellCommandResults>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -484,8 +502,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}/cancel'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }
@@ -566,10 +584,13 @@ class PowerShellOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PowerShellTabCompletionResults
+         <azure.mgmt.servermanager.models.PowerShellTabCompletionResults>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PowerShellTabCompletionResults
-         <azure.mgmt.servermanager.models.PowerShellTabCompletionResults>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.PowerShellTabCompletionResults>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -579,8 +600,8 @@ class PowerShellOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}/tab'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'session': self._serialize.url("session", session, 'str'),
             'pssession': self._serialize.url("pssession", pssession, 'str')
         }

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -38,13 +38,15 @@ class EventCategoriesOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get the list of available event categories supported in the Activity
         Logs Service.<br>The current list includes the following:
-        Aministrative, Security, ServiceHealth, Alert, Recommendation, Policy.
+        Administrative, Security, ServiceHealth, Alert, Recommendation, Policy.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`LocalizableString
+         <azure.monitor.models.LocalizableString>`
         :rtype: :class:`LocalizableStringPaged
          <azure.monitor.models.LocalizableStringPaged>`
         :raises:

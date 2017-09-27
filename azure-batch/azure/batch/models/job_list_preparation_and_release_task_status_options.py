@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobListPreparationAndReleaseTaskStatusOptions(Model):
-    """Additional parameters for the Job_list_preparation_and_release_task_status
+    """Additional parameters for list_preparation_and_release_task_status
     operation.
 
     :param filter: An OData $filter clause. To get the status of the Job

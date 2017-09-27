@@ -117,10 +117,13 @@ class CdnManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`CheckNameAvailabilityOutput
+         <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`CheckNameAvailabilityOutput
-         <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -175,6 +178,8 @@ class CdnManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`ResourceUsage
+         <azure.mgmt.cdn.models.ResourceUsage>`
         :rtype: :class:`ResourceUsagePaged
          <azure.mgmt.cdn.models.ResourceUsagePaged>`
         :raises:
@@ -237,6 +242,8 @@ class CdnManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Operation
+         <azure.mgmt.cdn.models.Operation>`
         :rtype: :class:`OperationPaged <azure.mgmt.cdn.models.OperationPaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`

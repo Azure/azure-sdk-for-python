@@ -47,7 +47,7 @@ class IotHubDescription(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': '^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
         'location': {'required': True},
         'subscriptionid': {'required': True},

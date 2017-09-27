@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolEvaluateAutoScaleOptions(Model):
-    """Additional parameters for the Pool_evaluate_auto_scale operation.
+    """Additional parameters for evaluate_auto_scale operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

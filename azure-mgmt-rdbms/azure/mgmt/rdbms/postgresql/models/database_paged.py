@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DatabasePaged(Paged):
     """
-    A paging container for iterating over a list of Database object
+    A paging container for iterating over a list of :class:`Database <azure.mgmt.rdbms.postgresql.models.Database>` object
     """
 
     _attribute_map = {

@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.iot_hub_resource_operations import IotHubResourceOperations
 from . import models
 
@@ -57,6 +58,8 @@ class IotHubClient(object):
     :ivar config: Configuration for client.
     :vartype config: IotHubClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.iothub.operations.Operations
     :ivar iot_hub_resource: IotHubResource operations
     :vartype iot_hub_resource: azure.mgmt.iothub.operations.IotHubResourceOperations
 
@@ -75,9 +78,11 @@ class IotHubClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-01-19'
+        self.api_version = '2017-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.iot_hub_resource = IotHubResourceOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -82,6 +82,12 @@ class TimeAggregationOperator(Enum):
     last = "Last"
 
 
+class CategoryType(Enum):
+
+    metrics = "Metrics"
+    logs = "Logs"
+
+
 class ReceiverStatus(Enum):
 
     not_specified = "NotSpecified"
