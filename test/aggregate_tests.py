@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import unittest
 
+from six import with_metaclass
 from six.moves import xrange
 
 import pydocumentdb.document_client as document_client
@@ -218,8 +219,7 @@ class AggregateQueryTestSequenceMeta(type):
         _run_all()
         return type.__new__(mcs, name, bases, dict)
 
-
-class AggregationQueryTest(unittest.TestCase):
+class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
     @classmethod
     def tearDownClass(cls):
         _helper.clean_up_database()
@@ -264,9 +264,6 @@ class AggregationQueryTest(unittest.TestCase):
             self.assertRaises(HTTPFailure, _verify_result)
         else:
             _verify_result()
-
-    __metaclass__ = AggregateQueryTestSequenceMeta
-
 
 if __name__ == "__main__":
     unittest.main()
