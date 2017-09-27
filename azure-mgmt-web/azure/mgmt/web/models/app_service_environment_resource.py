@@ -20,14 +20,14 @@ class AppServiceEnvironmentResource(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param app_service_environment_resource_name: Name of the App Service
@@ -145,7 +145,9 @@ class AppServiceEnvironmentResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'app_service_environment_resource_name': {'required': True},
         'app_service_environment_resource_location': {'required': True},
         'provisioning_state': {'readonly': True},
@@ -213,8 +215,8 @@ class AppServiceEnvironmentResource(Resource):
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, name=None, kind=None, type=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
-        super(AppServiceEnvironmentResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
         self.app_service_environment_resource_name = app_service_environment_resource_name
         self.app_service_environment_resource_location = app_service_environment_resource_location
         self.provisioning_state = None

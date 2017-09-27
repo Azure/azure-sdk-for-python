@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SBQueuePaged(Paged):
     """
-    A paging container for iterating over a list of SBQueue object
+    A paging container for iterating over a list of :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` object
     """
 
     _attribute_map = {

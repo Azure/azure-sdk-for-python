@@ -380,3 +380,22 @@ class SyncMemberState(Enum):
     reprovisioning = "Reprovisioning"
     reprovision_failed = "ReprovisionFailed"
     un_reprovisioned = "UnReprovisioned"
+
+
+class VirtualNetworkRuleState(Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    deleting = "Deleting"
+    unknown = "Unknown"
+
+
+class ManagementOperationState(Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"

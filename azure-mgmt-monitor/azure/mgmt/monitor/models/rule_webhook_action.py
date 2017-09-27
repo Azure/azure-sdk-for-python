@@ -18,7 +18,7 @@ class RuleWebhookAction(RuleAction):
 
     :param odatatype: Polymorphic Discriminator
     :type odatatype: str
-    :param service_uri: the service uri to Post the notitication when the
+    :param service_uri: the service uri to Post the notification when the
      alert activates or resolves.
     :type service_uri: str
     :param properties: the dictionary of custom properties to include with the

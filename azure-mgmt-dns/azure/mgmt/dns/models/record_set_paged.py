@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RecordSetPaged(Paged):
     """
-    A paging container for iterating over a list of RecordSet object
+    A paging container for iterating over a list of :class:`RecordSet <azure.mgmt.dns.models.RecordSet>` object
     """
 
     _attribute_map = {

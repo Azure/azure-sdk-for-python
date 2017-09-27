@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ZonePaged(Paged):
     """
-    A paging container for iterating over a list of Zone object
+    A paging container for iterating over a list of :class:`Zone <azure.mgmt.dns.models.Zone>` object
     """
 
     _attribute_map = {

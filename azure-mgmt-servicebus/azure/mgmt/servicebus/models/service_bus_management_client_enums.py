@@ -66,3 +66,23 @@ class FilterType(Enum):
 
     sql_filter = "SqlFilter"
     correlation_filter = "CorrelationFilter"
+
+
+class EncodingCaptureDescription(Enum):
+
+    avro = "Avro"
+    avro_deflate = "AvroDeflate"
+
+
+class ProvisioningStateDR(Enum):
+
+    accepted = "Accepted"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class RoleDisasterRecovery(Enum):
+
+    primary = "Primary"
+    primary_not_replicating = "PrimaryNotReplicating"
+    secondary = "Secondary"

@@ -18,11 +18,11 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource ID.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type.
     :vartype type: str
     :param location: Resource location.
     :type location: str

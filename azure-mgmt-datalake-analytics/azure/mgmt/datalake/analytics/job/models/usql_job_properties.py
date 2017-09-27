@@ -28,11 +28,11 @@ class USqlJobProperties(JobProperties):
     :ivar resources: the list of resources that are required by the job
     :vartype resources: list of :class:`JobResource
      <azure.mgmt.datalake.analytics.job.models.JobResource>`
-    :ivar statistics: the job specific statistics.
-    :vartype statistics: :class:`JobStatistics
+    :param statistics: the job specific statistics.
+    :type statistics: :class:`JobStatistics
      <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
-    :ivar debug_data: the job specific debug data locations.
-    :vartype debug_data: :class:`JobDataPath
+    :param debug_data: the job specific debug data locations.
+    :type debug_data: :class:`JobDataPath
      <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
     :ivar diagnostics: the diagnostics for the job.
     :vartype diagnostics: list of :class:`Diagnostics
@@ -75,8 +75,6 @@ class USqlJobProperties(JobProperties):
         'script': {'required': True},
         'type': {'required': True},
         'resources': {'readonly': True},
-        'statistics': {'readonly': True},
-        'debug_data': {'readonly': True},
         'diagnostics': {'readonly': True},
         'algebra_file_path': {'readonly': True},
         'total_compilation_time': {'readonly': True},
@@ -108,11 +106,11 @@ class USqlJobProperties(JobProperties):
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None):
+    def __init__(self, script, runtime_version=None, statistics=None, debug_data=None):
         super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
         self.resources = None
-        self.statistics = None
-        self.debug_data = None
+        self.statistics = statistics
+        self.debug_data = debug_data
         self.diagnostics = None
         self.algebra_file_path = None
         self.total_compilation_time = None

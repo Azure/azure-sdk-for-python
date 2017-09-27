@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolGetOptions(Model):
-    """Additional parameters for the Pool_get operation.
+    """Additional parameters for get operation.
 
     :param select: An OData $select clause.
     :type select: str

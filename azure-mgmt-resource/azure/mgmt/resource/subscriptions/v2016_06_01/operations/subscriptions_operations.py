@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,6 +50,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Location
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Location>`
         :rtype: :class:`LocationPaged
          <azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -115,10 +117,13 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`Subscription
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`Subscription
          <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -171,6 +176,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Subscription
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
         :rtype: :class:`SubscriptionPaged
          <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

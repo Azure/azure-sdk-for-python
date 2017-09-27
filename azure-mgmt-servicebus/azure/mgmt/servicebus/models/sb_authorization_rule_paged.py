@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SBAuthorizationRulePaged(Paged):
     """
-    A paging container for iterating over a list of SBAuthorizationRule object
+    A paging container for iterating over a list of :class:`SBAuthorizationRule <azure.mgmt.servicebus.models.SBAuthorizationRule>` object
     """
 
     _attribute_map = {

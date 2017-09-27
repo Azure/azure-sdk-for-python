@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class HybridConnectionPaged(Paged):
     """
-    A paging container for iterating over a list of HybridConnection object
+    A paging container for iterating over a list of :class:`HybridConnection <azure.mgmt.web.models.HybridConnection>` object
     """
 
     _attribute_map = {

@@ -60,9 +60,9 @@ class DnsManagementClient(object):
     :vartype config: DnsManagementClientConfiguration
 
     :ivar record_sets: RecordSets operations
-    :vartype record_sets: .operations.RecordSetsOperations
+    :vartype record_sets: azure.mgmt.dns.operations.RecordSetsOperations
     :ivar zones: Zones operations
-    :vartype zones: .operations.ZonesOperations
+    :vartype zones: azure.mgmt.dns.operations.ZonesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
