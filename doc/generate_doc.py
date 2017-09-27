@@ -3,7 +3,7 @@ import logging
 import json
 from pathlib import Path
 
-CONFIG_FILE = '../swagger_to_sdk_config.json'
+CONFIG_FILE = '../package_service_mapping.json'
 GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,8 +71,8 @@ Submodules
 MULTIAPI_VERSION_NAMESPACE = [
     "azure.mgmt.storage",
     "azure.mgmt.network",
-    "azure.mgmt.compute.compute",
-    "azure.mgmt.compute.containerservice",
+    "azure.mgmt.compute",
+    "azure.mgmt.containerregistry",
     "azure.mgmt.resource.resources",
     "azure.mgmt.resource.features",
     "azure.mgmt.resource.links",
@@ -89,17 +89,14 @@ def generate_doc(config_path, project_pattern=None):
         config = json.load(config_fd)
     package_list_path = []
 
-    for project, local_conf in config["projects"].items():
-        if project_pattern and not any(project.startswith(p) for p in project_pattern):
-            _LOGGER.info("Skip project %s", project)
+    namespaces = [n for pack in config.values() for n in pack.get("namespaces", {})]
+
+    for namespace in namespaces:
+        if project_pattern and not any(namespace.startswith(p) for p in project_pattern):
+            _LOGGER.info("Skip project %s", namespace)
             continue
 
-        if 'unreleased' in local_conf['output_dir'].lower():
-            _LOGGER.info("Skip unreleased project %s", project)
-            continue
-
-        _LOGGER.info("Working on %s", project)
-        namespace = local_conf['autorest_options']['namespace']
+        _LOGGER.info("Working on %s", namespace)
 
         rst_path = './ref/{}.rst'.format(namespace) 
         with Path(rst_path).open('w') as rst_file:
