@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -60,6 +60,8 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`User
+         <azure.mgmt.devtestlabs.models.User>`
         :rtype: :class:`UserPaged <azure.mgmt.devtestlabs.models.UserPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -141,9 +143,11 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -209,9 +213,11 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -277,11 +283,14 @@ class UsersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -362,9 +371,11 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`User <azure.mgmt.devtestlabs.models.User>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

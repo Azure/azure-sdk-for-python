@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -48,6 +48,8 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`SBQueue
+         <azure.mgmt.servicebus.models.SBQueue>`
         :rtype: :class:`SBQueuePaged
          <azure.mgmt.servicebus.models.SBQueuePaged>`
         :raises:
@@ -123,9 +125,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -134,7 +138,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -191,9 +195,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -202,7 +208,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -248,9 +254,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -259,7 +267,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -312,6 +320,8 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`SBAuthorizationRule
+         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
         :rtype: :class:`SBAuthorizationRulePaged
          <azure.mgmt.servicebus.models.SBAuthorizationRulePaged>`
         :raises:
@@ -325,7 +335,7 @@ class QueuesOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+                    'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -389,10 +399,13 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SBAuthorizationRule
+         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -403,7 +416,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -463,9 +476,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -474,7 +489,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -523,10 +538,13 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SBAuthorizationRule
+         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -535,7 +553,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -591,9 +609,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -602,7 +622,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -665,9 +685,11 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -678,7 +700,7 @@ class QueuesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

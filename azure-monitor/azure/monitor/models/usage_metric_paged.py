@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class UsageMetricPaged(Paged):
     """
-    A paging container for iterating over a list of UsageMetric object
+    A paging container for iterating over a list of :class:`UsageMetric <azure.monitor.models.UsageMetric>` object
     """
 
     _attribute_map = {

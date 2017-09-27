@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -52,6 +52,8 @@ class WorkflowTriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`WorkflowTrigger
+         <azure.mgmt.logic.models.WorkflowTrigger>`
         :rtype: :class:`WorkflowTriggerPaged
          <azure.mgmt.logic.models.WorkflowTriggerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -127,10 +129,13 @@ class WorkflowTriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`WorkflowTrigger
+         <azure.mgmt.logic.models.WorkflowTrigger>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`WorkflowTrigger
-         <azure.mgmt.logic.models.WorkflowTrigger>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.WorkflowTrigger>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -192,9 +197,11 @@ class WorkflowTriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: object or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: object or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
@@ -248,10 +255,13 @@ class WorkflowTriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`WorkflowTriggerCallbackUrl
+         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`WorkflowTriggerCallbackUrl
-         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

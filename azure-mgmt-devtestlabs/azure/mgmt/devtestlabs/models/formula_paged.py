@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class FormulaPaged(Paged):
     """
-    A paging container for iterating over a list of Formula object
+    A paging container for iterating over a list of :class:`Formula <azure.mgmt.devtestlabs.models.Formula>` object
     """
 
     _attribute_map = {

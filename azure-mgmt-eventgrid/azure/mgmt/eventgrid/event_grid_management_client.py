@@ -49,7 +49,7 @@ class EventGridManagementClientConfiguration(AzureConfiguration):
 
         super(EventGridManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-eventgrid/{}'.format(VERSION))
+        self.add_user_agent('eventgridmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

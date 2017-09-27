@@ -17,11 +17,11 @@ class RoutingEventHubProperties(Model):
 
     :param connection_string: The connection string of the event hub endpoint.
     :type connection_string: str
-    :param name: The name of the event hub endpoint. The name can only include
-     alphanumeric characters, periods, underscores, hyphens and has a maximum
-     length of 64 characters. The following names are reserved;  events,
-     operationsMonitoringEvents, fileNotifications, $default. Endpoint names
-     must be unique across endpoint types.
+    :param name: The name that identifies this endpoint. The name can only
+     include alphanumeric characters, periods, underscores, hyphens and has a
+     maximum length of 64 characters. The following names are reserved:
+     events, operationsMonitoringEvents, fileNotifications, $default. Endpoint
+     names must be unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the event hub
      endpoint.
@@ -33,7 +33,7 @@ class RoutingEventHubProperties(Model):
 
     _validation = {
         'connection_string': {'required': True},
-        'name': {'required': True, 'pattern': '^[A-Za-z0-9-._]{1,64}$'},
+        'name': {'required': True, 'pattern': r'^[A-Za-z0-9-._]{1,64}$'},
     }
 
     _attribute_map = {

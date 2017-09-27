@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NameIdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of NameIdentifier object
+    A paging container for iterating over a list of :class:`NameIdentifier <azure.mgmt.web.models.NameIdentifier>` object
     """
 
     _attribute_map = {

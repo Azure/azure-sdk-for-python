@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -51,6 +51,9 @@ class SessionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>`
         :rtype: :class:`IntegrationAccountSessionPaged
          <azure.mgmt.logic.models.IntegrationAccountSessionPaged>`
         :raises:
@@ -125,10 +128,13 @@ class SessionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`IntegrationAccountSession
-         <azure.mgmt.logic.models.IntegrationAccountSession>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.IntegrationAccountSession>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
@@ -192,10 +198,13 @@ class SessionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`IntegrationAccountSession
-         <azure.mgmt.logic.models.IntegrationAccountSession>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.IntegrationAccountSession>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
@@ -262,9 +271,11 @@ class SessionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """

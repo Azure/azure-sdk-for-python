@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class ClusterVersionDetails(Model):
-    """The detail of the ServiceFabric runtime version result.
+    """The detail of the Service Fabric runtime version result.
 
-    :param code_version: The ServiceFabric runtime version of the cluster
+    :param code_version: The Service Fabric runtime version of the cluster.
     :type code_version: str
-    :param support_expiry_utc: The date of expiry of support of the version
+    :param support_expiry_utc: The date of expiry of support of the version.
     :type support_expiry_utc: str
-    :param environment: Cluster operating system. Possible values include:
-     'Windows', 'Linux'
+    :param environment: Indicates if this version is for Windows or Linux
+     operating system. Possible values include: 'Windows', 'Linux'
     :type environment: str or :class:`enum
      <azure.mgmt.servicefabric.models.enum>`
     """

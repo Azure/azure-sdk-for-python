@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -53,9 +53,11 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Vault <azure.mgmt.keyvault.models.Vault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -64,7 +66,7 @@ class VaultsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern='^[a-zA-Z0-9-]{3,24}$'),
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -123,9 +125,11 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -180,9 +184,11 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Vault <azure.mgmt.keyvault.models.Vault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -245,6 +251,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Vault
+         <azure.mgmt.keyvault.models.Vault>`
         :rtype: :class:`VaultPaged <azure.mgmt.keyvault.models.VaultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -312,6 +320,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`DeletedVault
+         <azure.mgmt.keyvault.models.DeletedVault>`
         :rtype: :class:`DeletedVaultPaged
          <azure.mgmt.keyvault.models.DeletedVaultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -381,10 +391,13 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`DeletedVault
+         <azure.mgmt.keyvault.models.DeletedVault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`DeletedVault
-         <azure.mgmt.keyvault.models.DeletedVault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.keyvault.models.DeletedVault>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -444,11 +457,14 @@ class VaultsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -524,6 +540,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Resource
+         <azure.mgmt.keyvault.models.Resource>`
         :rtype: :class:`ResourcePaged
          <azure.mgmt.keyvault.models.ResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

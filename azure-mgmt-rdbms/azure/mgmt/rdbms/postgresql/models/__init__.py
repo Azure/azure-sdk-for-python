@@ -25,11 +25,16 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
 from .log_file import LogFile
+from .performance_tier_service_level_objectives import PerformanceTierServiceLevelObjectives
+from .performance_tier_properties import PerformanceTierProperties
+from .name_availability_request import NameAvailabilityRequest
+from .name_availability import NameAvailability
 from .server_paged import ServerPaged
 from .firewall_rule_paged import FirewallRulePaged
 from .database_paged import DatabasePaged
 from .configuration_paged import ConfigurationPaged
 from .log_file_paged import LogFilePaged
+from .performance_tier_properties_paged import PerformanceTierPropertiesPaged
 from .postgre_sql_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
@@ -55,11 +60,16 @@ __all__ = [
     'Operation',
     'OperationListResult',
     'LogFile',
+    'PerformanceTierServiceLevelObjectives',
+    'PerformanceTierProperties',
+    'NameAvailabilityRequest',
+    'NameAvailability',
     'ServerPaged',
     'FirewallRulePaged',
     'DatabasePaged',
     'ConfigurationPaged',
     'LogFilePaged',
+    'PerformanceTierPropertiesPaged',
     'ServerVersion',
     'SslEnforcementEnum',
     'ServerState',

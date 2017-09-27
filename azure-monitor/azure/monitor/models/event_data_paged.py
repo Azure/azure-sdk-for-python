@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EventDataPaged(Paged):
     """
-    A paging container for iterating over a list of EventData object
+    A paging container for iterating over a list of :class:`EventData <azure.monitor.models.EventData>` object
     """
 
     _attribute_map = {

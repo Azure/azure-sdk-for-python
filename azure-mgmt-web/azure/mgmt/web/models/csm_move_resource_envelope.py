@@ -23,7 +23,7 @@ class CsmMoveResourceEnvelope(Model):
     """
 
     _validation = {
-        'target_resource_group': {'max_length': 90, 'min_length': 1, 'pattern': ' ^[-\w\._\(\)]+[^\.]$'},
+        'target_resource_group': {'max_length': 90, 'min_length': 1, 'pattern': r' ^[-\w\._\(\)]+[^\.]$'},
     }
 
     _attribute_map = {

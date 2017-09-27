@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteConfigurationSnapshotInfo(Resource):
+class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
     """A snapshot of a web app configuration.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class SiteConfigurationSnapshotInfo(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar time: The time the snapshot was taken.
     :vartype time: datetime
     :ivar site_configuration_snapshot_info_id: The id of the snapshot
@@ -38,7 +34,8 @@ class SiteConfigurationSnapshotInfo(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'time': {'readonly': True},
         'site_configuration_snapshot_info_id': {'readonly': True},
     }
@@ -47,14 +44,12 @@ class SiteConfigurationSnapshotInfo(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'time': {'key': 'properties.time', 'type': 'iso-8601'},
         'site_configuration_snapshot_info_id': {'key': 'properties.id', 'type': 'int'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(SiteConfigurationSnapshotInfo, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(SiteConfigurationSnapshotInfo, self).__init__(kind=kind)
         self.time = None
         self.site_configuration_snapshot_info_id = None

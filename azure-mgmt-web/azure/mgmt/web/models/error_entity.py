@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class ErrorEntity(Model):
     """Body of the error response returned from the API.
 
+    :param code: Basic error code.
+    :type code: str
+    :param message: Any details of the error.
+    :type message: str
     :param extended_code: Type of error.
     :type extended_code: str
     :param message_template: Message template.
@@ -24,25 +28,21 @@ class ErrorEntity(Model):
     :param inner_errors: Inner errors.
     :type inner_errors: list of :class:`ErrorEntity
      <azure.mgmt.web.models.ErrorEntity>`
-    :param code: Basic error code.
-    :type code: str
-    :param message: Any details of the error.
-    :type message: str
     """
 
     _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
         'extended_code': {'key': 'extendedCode', 'type': 'str'},
         'message_template': {'key': 'messageTemplate', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '[str]'},
         'inner_errors': {'key': 'innerErrors', 'type': '[ErrorEntity]'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, extended_code=None, message_template=None, parameters=None, inner_errors=None, code=None, message=None):
+    def __init__(self, code=None, message=None, extended_code=None, message_template=None, parameters=None, inner_errors=None):
+        self.code = code
+        self.message = message
         self.extended_code = extended_code
         self.message_template = message_template
         self.parameters = parameters
         self.inner_errors = inner_errors
-        self.code = code
-        self.message = message

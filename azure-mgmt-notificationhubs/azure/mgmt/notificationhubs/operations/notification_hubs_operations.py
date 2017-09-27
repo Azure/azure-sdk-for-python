@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -51,10 +51,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`CheckAvailabilityResult
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`CheckAvailabilityResult
-         <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -123,10 +126,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`NotificationHubResource
-         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -194,9 +200,11 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -251,10 +259,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`NotificationHubResource
-         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -322,10 +333,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SharedAccessAuthorizationRuleResource
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -394,9 +408,11 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -454,10 +470,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SharedAccessAuthorizationRuleResource
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -518,6 +537,8 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`NotificationHubResourcePaged
          <azure.mgmt.notificationhubs.models.NotificationHubResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -589,6 +610,9 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -665,10 +689,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ResourceListKeys
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -739,10 +766,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`ResourceListKeys
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.PolicykeyResource(policy_key=policy_key)
@@ -811,10 +841,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`PnsCredentialsResource
+         <azure.mgmt.notificationhubs.models.PnsCredentialsResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`PnsCredentialsResource
-         <azure.mgmt.notificationhubs.models.PnsCredentialsResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.notificationhubs.models.PnsCredentialsResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

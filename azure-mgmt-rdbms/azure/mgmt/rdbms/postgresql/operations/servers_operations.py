@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -36,10 +36,9 @@ class ServersOperations(object):
 
         self.config = config
 
-    def create_or_update(
+    def create(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new server or updates an existing server. The update action
-        will overwrite the existing server.
+        """Creates a new server, or will overwrite an existing server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -54,12 +53,15 @@ class ServersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Server
-         <azure.mgmt.rdbms.postgresql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.rdbms.postgresql.models.Server>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -151,12 +153,15 @@ class ServersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Server
-         <azure.mgmt.rdbms.postgresql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.rdbms.postgresql.models.Server>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -242,11 +247,14 @@ class ServersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -323,9 +331,11 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Server <azure.mgmt.rdbms.postgresql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`Server <azure.mgmt.rdbms.postgresql.models.Server>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`Server <azure.mgmt.rdbms.postgresql.models.Server>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -384,6 +394,8 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Server
+         <azure.mgmt.rdbms.postgresql.models.Server>`
         :rtype: :class:`ServerPaged
          <azure.mgmt.rdbms.postgresql.models.ServerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -448,6 +460,8 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Server
+         <azure.mgmt.rdbms.postgresql.models.Server>`
         :rtype: :class:`ServerPaged
          <azure.mgmt.rdbms.postgresql.models.ServerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

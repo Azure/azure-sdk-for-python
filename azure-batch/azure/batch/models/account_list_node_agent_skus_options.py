@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AccountListNodeAgentSkusOptions(Model):
-    """Additional parameters for the Account_list_node_agent_skus operation.
+    """Additional parameters for list_node_agent_skus operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

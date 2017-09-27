@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -57,12 +57,15 @@ class GatewayOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GatewayResource
-         <azure.mgmt.servermanager.models.GatewayResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.GatewayResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -72,8 +75,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -160,12 +163,15 @@ class GatewayOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GatewayResource
-         <azure.mgmt.servermanager.models.GatewayResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.GatewayResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -175,8 +181,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -253,9 +259,11 @@ class GatewayOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -263,8 +271,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -313,10 +321,13 @@ class GatewayOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`GatewayResource
+         <azure.mgmt.servermanager.models.GatewayResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`GatewayResource
-         <azure.mgmt.servermanager.models.GatewayResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.GatewayResource>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -324,8 +335,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -372,6 +383,8 @@ class GatewayOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`GatewayResource
+         <azure.mgmt.servermanager.models.GatewayResource>`
         :rtype: :class:`GatewayResourcePaged
          <azure.mgmt.servermanager.models.GatewayResourcePaged>`
         :raises:
@@ -437,6 +450,8 @@ class GatewayOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`GatewayResource
+         <azure.mgmt.servermanager.models.GatewayResource>`
         :rtype: :class:`GatewayResourcePaged
          <azure.mgmt.servermanager.models.GatewayResourcePaged>`
         :raises:
@@ -449,7 +464,7 @@ class GatewayOperations(object):
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -503,11 +518,14 @@ class GatewayOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -515,8 +533,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/upgradetolatest'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -580,11 +598,14 @@ class GatewayOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -592,8 +613,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/regenerateprofile'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -657,12 +678,15 @@ class GatewayOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GatewayProfile
-         <azure.mgmt.servermanager.models.GatewayProfile>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servermanager.models.GatewayProfile>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
@@ -670,8 +694,8 @@ class GatewayOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/profile'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern='[a-zA-Z0-9]+'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern='^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=3, pattern=r'[a-zA-Z0-9]+'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str', max_length=256, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
