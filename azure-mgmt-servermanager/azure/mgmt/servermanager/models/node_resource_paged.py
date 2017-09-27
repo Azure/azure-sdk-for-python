@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NodeResourcePaged(Paged):
     """
-    A paging container for iterating over a list of NodeResource object
+    A paging container for iterating over a list of :class:`NodeResource <azure.mgmt.servermanager.models.NodeResource>` object
     """
 
     _attribute_map = {

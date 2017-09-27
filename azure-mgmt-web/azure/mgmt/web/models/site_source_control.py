@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteSourceControl(Resource):
+class SiteSourceControl(ProxyOnlyResource):
     """Source control configuration for an app.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class SiteSourceControl(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param repo_url: Repository or source control URL.
     :type repo_url: str
     :param branch: Name of branch to use for deployment.
@@ -48,16 +44,15 @@ class SiteSourceControl(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
         'branch': {'key': 'properties.branch', 'type': 'str'},
         'is_manual_integration': {'key': 'properties.isManualIntegration', 'type': 'bool'},
@@ -65,8 +60,8 @@ class SiteSourceControl(Resource):
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
-        super(SiteSourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
+        super(SiteSourceControl, self).__init__(kind=kind)
         self.repo_url = repo_url
         self.branch = branch
         self.is_manual_integration = is_manual_integration

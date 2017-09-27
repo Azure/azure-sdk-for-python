@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobDeleteOptions(Model):
-    """Additional parameters for the Job_delete operation.
+    """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

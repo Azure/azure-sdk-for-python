@@ -20,14 +20,14 @@ class Site(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :ivar state: Current state of the app.
@@ -72,9 +72,6 @@ class Site(Resource):
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list of str
-    :ivar premium_app_deployed: Indicates whether app is deployed as a premium
-     app.
-    :vartype premium_app_deployed: bool
     :param scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site
      when the app is stopped; otherwise, <code>false</code>. The default is
      <code>false</code>. Default value: False .
@@ -86,11 +83,6 @@ class Site(Resource):
      app.
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
      <azure.mgmt.web.models.HostingEnvironmentProfile>`
-    :param micro_service: Micro services like apps, logic apps. Default value:
-     "WebSites" .
-    :type micro_service: str
-    :param gateway_site_name: Name of gateway app associated with the app.
-    :type gateway_site_name: str
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -123,6 +115,10 @@ class Site(Resource):
      from a source app.
     :type cloning_info: :class:`CloningInfo
      <azure.mgmt.web.models.CloningInfo>`
+    :param snapshot_info: If specified during app creation, the app is created
+     from a previous snapshot.
+    :type snapshot_info: :class:`SnapshotRecoveryRequest
+     <azure.mgmt.web.models.SnapshotRecoveryRequest>`
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -134,11 +130,21 @@ class Site(Resource):
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
     :vartype slot_swap_status: :class:`SlotSwapStatus
      <azure.mgmt.web.models.SlotSwapStatus>`
+    :ivar premium_app_deployed: Indicates whether app is deployed as a premium
+     app.
+    :vartype premium_app_deployed: bool
+    :param micro_service: Micro services like apps, logic apps. Default value:
+     "WebSites" .
+    :type micro_service: str
+    :param gateway_site_name: Name of gateway app associated with the app.
+    :type gateway_site_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'state': {'readonly': True},
         'host_names': {'readonly': True},
         'repository_site_name': {'readonly': True},
@@ -147,7 +153,6 @@ class Site(Resource):
         'availability_state': {'readonly': True},
         'last_modified_time_utc': {'readonly': True},
         'traffic_manager_host_names': {'readonly': True},
-        'premium_app_deployed': {'readonly': True},
         'target_swap_slot': {'readonly': True},
         'outbound_ip_addresses': {'readonly': True},
         'suspended_till': {'readonly': True},
@@ -156,6 +161,7 @@ class Site(Resource):
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
         'slot_swap_status': {'readonly': True},
+        'premium_app_deployed': {'readonly': True},
     }
 
     _attribute_map = {
@@ -178,12 +184,9 @@ class Site(Resource):
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
-        'premium_app_deployed': {'key': 'properties.premiumAppDeployed', 'type': 'bool'},
         'scm_site_also_stopped': {'key': 'properties.scmSiteAlsoStopped', 'type': 'bool'},
         'target_swap_slot': {'key': 'properties.targetSwapSlot', 'type': 'str'},
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
-        'micro_service': {'key': 'properties.microService', 'type': 'str'},
-        'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str'},
         'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
@@ -193,14 +196,18 @@ class Site(Resource):
         'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
         'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
+        'snapshot_info': {'key': 'properties.snapshotInfo', 'type': 'SnapshotRecoveryRequest'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
+        'premium_app_deployed': {'key': 'properties.premiumAppDeployed', 'type': 'bool'},
+        'micro_service': {'key': 'properties.microService', 'type': 'str'},
+        'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="WebSites", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
-        super(Site, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, micro_service="WebSites", gateway_site_name=None):
+        super(Site, self).__init__(kind=kind, location=location, tags=tags)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
@@ -214,12 +221,9 @@ class Site(Resource):
         self.last_modified_time_utc = None
         self.site_config = site_config
         self.traffic_manager_host_names = None
-        self.premium_app_deployed = None
         self.scm_site_also_stopped = scm_site_also_stopped
         self.target_swap_slot = None
         self.hosting_environment_profile = hosting_environment_profile
-        self.micro_service = micro_service
-        self.gateway_site_name = gateway_site_name
         self.client_affinity_enabled = client_affinity_enabled
         self.client_cert_enabled = client_cert_enabled
         self.host_names_disabled = host_names_disabled
@@ -229,7 +233,11 @@ class Site(Resource):
         self.suspended_till = None
         self.max_number_of_workers = None
         self.cloning_info = cloning_info
+        self.snapshot_info = snapshot_info
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
+        self.premium_app_deployed = None
+        self.micro_service = micro_service
+        self.gateway_site_name = gateway_site_name

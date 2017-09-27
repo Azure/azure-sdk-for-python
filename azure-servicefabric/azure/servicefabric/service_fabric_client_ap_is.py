@@ -2692,7 +2692,7 @@ class ServiceFabricClientAPIs(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 409]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -3233,7 +3233,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:

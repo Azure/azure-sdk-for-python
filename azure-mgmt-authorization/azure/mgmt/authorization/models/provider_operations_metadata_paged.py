@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ProviderOperationsMetadataPaged(Paged):
     """
-    A paging container for iterating over a list of ProviderOperationsMetadata object
+    A paging container for iterating over a list of :class:`ProviderOperationsMetadata <azure.mgmt.authorization.models.ProviderOperationsMetadata>` object
     """
 
     _attribute_map = {

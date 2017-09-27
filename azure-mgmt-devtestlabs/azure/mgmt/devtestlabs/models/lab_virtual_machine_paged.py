@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LabVirtualMachinePaged(Paged):
     """
-    A paging container for iterating over a list of LabVirtualMachine object
+    A paging container for iterating over a list of :class:`LabVirtualMachine <azure.mgmt.devtestlabs.models.LabVirtualMachine>` object
     """
 
     _attribute_map = {

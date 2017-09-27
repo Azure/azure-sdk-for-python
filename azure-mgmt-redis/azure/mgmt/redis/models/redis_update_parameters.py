@@ -41,8 +41,8 @@ class RedisUpdateParameters(Model):
     """
 
     _validation = {
-        'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
+        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
+        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
     }
 
     _attribute_map = {

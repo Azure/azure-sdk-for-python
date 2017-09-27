@@ -30,6 +30,7 @@ from .replication_usage import ReplicationUsage
 from .client_discovery_display import ClientDiscoveryDisplay
 from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecification
 from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
+from .client_discovery_for_properties import ClientDiscoveryForProperties
 from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
 from .name_info import NameInfo
 from .vault_usage import VaultUsage
@@ -71,6 +72,7 @@ __all__ = [
     'ClientDiscoveryDisplay',
     'ClientDiscoveryForLogSpecification',
     'ClientDiscoveryForServiceSpecification',
+    'ClientDiscoveryForProperties',
     'ClientDiscoveryValueForSingleApi',
     'NameInfo',
     'VaultUsage',

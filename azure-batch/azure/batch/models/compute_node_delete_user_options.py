@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeDeleteUserOptions(Model):
-    """Additional parameters for the ComputeNode_delete_user operation.
+    """Additional parameters for delete_user operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

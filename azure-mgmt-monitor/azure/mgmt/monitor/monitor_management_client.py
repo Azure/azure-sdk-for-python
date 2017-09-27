@@ -14,10 +14,12 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.autoscale_settings_operations import AutoscaleSettingsOperations
+from .operations.operations import Operations
 from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
 from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.log_profiles_operations import LogProfilesOperations
-from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
+from .operations.diagnostic_settings_operations import DiagnosticSettingsOperations
+from .operations.diagnostic_settings_category_operations import DiagnosticSettingsCategoryOperations
 from .operations.action_groups_operations import ActionGroupsOperations
 from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
 from . import models
@@ -65,14 +67,18 @@ class MonitorManagementClient(object):
 
     :ivar autoscale_settings: AutoscaleSettings operations
     :vartype autoscale_settings: azure.mgmt.monitor.operations.AutoscaleSettingsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.monitor.operations.Operations
     :ivar alert_rule_incidents: AlertRuleIncidents operations
     :vartype alert_rule_incidents: azure.mgmt.monitor.operations.AlertRuleIncidentsOperations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: azure.mgmt.monitor.operations.AlertRulesOperations
     :ivar log_profiles: LogProfiles operations
     :vartype log_profiles: azure.mgmt.monitor.operations.LogProfilesOperations
-    :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
-    :vartype service_diagnostic_settings: azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations
+    :ivar diagnostic_settings: DiagnosticSettings operations
+    :vartype diagnostic_settings: azure.mgmt.monitor.operations.DiagnosticSettingsOperations
+    :ivar diagnostic_settings_category: DiagnosticSettingsCategory operations
+    :vartype diagnostic_settings_category: azure.mgmt.monitor.operations.DiagnosticSettingsCategoryOperations
     :ivar action_groups: ActionGroups operations
     :vartype action_groups: azure.mgmt.monitor.operations.ActionGroupsOperations
     :ivar activity_log_alerts: ActivityLogAlerts operations
@@ -98,13 +104,17 @@ class MonitorManagementClient(object):
 
         self.autoscale_settings = AutoscaleSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.alert_rule_incidents = AlertRuleIncidentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_profiles = LogProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
+        self.diagnostic_settings = DiagnosticSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostic_settings_category = DiagnosticSettingsCategoryOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.action_groups = ActionGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

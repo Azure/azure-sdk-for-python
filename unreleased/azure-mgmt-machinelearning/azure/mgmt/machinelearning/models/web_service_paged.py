@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WebServicePaged(Paged):
     """
-    A paging container for iterating over a list of WebService object
+    A paging container for iterating over a list of :class:`WebService <azure.mgmt.machinelearning.models.WebService>` object
     """
 
     _attribute_map = {

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolListOptions(Model):
-    """Additional parameters for the Pool_list operation.
+    """Additional parameters for list operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

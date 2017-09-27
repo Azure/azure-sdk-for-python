@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeListOptions(Model):
-    """Additional parameters for the ComputeNode_list operation.
+    """Additional parameters for list operation.
 
     :param filter: An OData $filter clause..
     :type filter: str

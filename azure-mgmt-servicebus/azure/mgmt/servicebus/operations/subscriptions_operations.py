@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -50,6 +50,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`SBSubscription
+         <azure.mgmt.servicebus.models.SBSubscription>`
         :rtype: :class:`SBSubscriptionPaged
          <azure.mgmt.servicebus.models.SBSubscriptionPaged>`
         :raises:
@@ -63,7 +65,7 @@ class SubscriptionsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -128,10 +130,13 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SBSubscription
+         <azure.mgmt.servicebus.models.SBSubscription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servicebus.models.SBSubscription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -140,7 +145,7 @@ class SubscriptionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -200,9 +205,11 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -211,7 +218,7 @@ class SubscriptionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -260,10 +267,13 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SBSubscription
+         <azure.mgmt.servicebus.models.SBSubscription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.servicebus.models.SBSubscription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -272,7 +282,7 @@ class SubscriptionsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

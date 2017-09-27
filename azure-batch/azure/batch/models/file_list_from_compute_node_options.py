@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class FileListFromComputeNodeOptions(Model):
-    """Additional parameters for the File_list_from_compute_node operation.
+    """Additional parameters for list_from_compute_node operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

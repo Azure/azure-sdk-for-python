@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ApplicationListOptions(Model):
-    """Additional parameters for the Application_list operation.
+    """Additional parameters for list operation.
 
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 applications can be returned. Default value: 1000 .

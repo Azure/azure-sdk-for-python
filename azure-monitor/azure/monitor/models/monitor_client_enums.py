@@ -30,6 +30,8 @@ class Unit(Enum):
     bytes_per_second = "BytesPerSecond"
     percent = "Percent"
     milli_seconds = "MilliSeconds"
+    byte_seconds = "ByteSeconds"
+    unspecified = "Unspecified"
 
 
 class AggregationType(Enum):
@@ -40,3 +42,9 @@ class AggregationType(Enum):
     minimum = "Minimum"
     maximum = "Maximum"
     total = "Total"
+
+
+class ResultType(Enum):
+
+    data = "Data"
+    metadata = "Metadata"

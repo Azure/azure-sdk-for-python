@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,6 +50,8 @@ class WorkflowVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`WorkflowVersion
+         <azure.mgmt.logic.models.WorkflowVersion>`
         :rtype: :class:`WorkflowVersionPaged
          <azure.mgmt.logic.models.WorkflowVersionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -123,10 +125,13 @@ class WorkflowVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`WorkflowVersion
+         <azure.mgmt.logic.models.WorkflowVersion>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`WorkflowVersion
-         <azure.mgmt.logic.models.WorkflowVersion>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.WorkflowVersion>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -196,10 +201,13 @@ class WorkflowVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`WorkflowTriggerCallbackUrl
+         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`WorkflowTriggerCallbackUrl
-         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.logic.models.WorkflowTriggerCallbackUrl>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class FileDeleteFromTaskOptions(Model):
-    """Additional parameters for the File_delete_from_task operation.
+    """Additional parameters for delete_from_task operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

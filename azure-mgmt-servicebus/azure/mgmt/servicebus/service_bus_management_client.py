@@ -15,10 +15,14 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
+from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.rules_operations import RulesOperations
+from .operations.regions_operations import RegionsOperations
+from .operations.premium_messaging_regions_operations import PremiumMessagingRegionsOperations
+from .operations.event_hubs_operations import EventHubsOperations
 from . import models
 
 
@@ -68,6 +72,8 @@ class ServiceBusManagementClient(object):
     :vartype operations: azure.mgmt.servicebus.operations.Operations
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.servicebus.operations.NamespacesOperations
+    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
+    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
@@ -76,6 +82,12 @@ class ServiceBusManagementClient(object):
     :vartype subscriptions: azure.mgmt.servicebus.operations.SubscriptionsOperations
     :ivar rules: Rules operations
     :vartype rules: azure.mgmt.servicebus.operations.RulesOperations
+    :ivar regions: Regions operations
+    :vartype regions: azure.mgmt.servicebus.operations.RegionsOperations
+    :ivar premium_messaging_regions: PremiumMessagingRegions operations
+    :vartype premium_messaging_regions: azure.mgmt.servicebus.operations.PremiumMessagingRegionsOperations
+    :ivar event_hubs: EventHubs operations
+    :vartype event_hubs: azure.mgmt.servicebus.operations.EventHubsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -102,6 +114,8 @@ class ServiceBusManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topics = TopicsOperations(
@@ -109,4 +123,10 @@ class ServiceBusManagementClient(object):
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.rules = RulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regions = RegionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.premium_messaging_regions = PremiumMessagingRegionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
