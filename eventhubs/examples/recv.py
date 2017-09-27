@@ -11,8 +11,8 @@ An example to show receiving events from an Event Hub partition.
 
 import sys
 import logging
-from eventhubs.client import EventHubClient, EventData
-from eventhubs.client import Receiver
+from eventhubs import EventHubClient, EventData
+from eventhubs import Receiver
 
 class MyReceiver(Receiver):
     """

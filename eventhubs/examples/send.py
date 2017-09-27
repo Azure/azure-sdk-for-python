@@ -7,8 +7,8 @@ An example to show receiving events from an Event Hub partition.
 import sys
 import logging
 from proton import Message
-from eventhubs.client import EventHubClient
-from eventhubs.client import Sender
+from eventhubs import EventHubClient
+from eventhubs import Sender
 
 class MySender(Sender):
     """
