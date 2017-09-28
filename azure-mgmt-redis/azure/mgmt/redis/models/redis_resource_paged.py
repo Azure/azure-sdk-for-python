@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RedisResourcePaged(Paged):
     """
-    A paging container for iterating over a list of RedisResource object
+    A paging container for iterating over a list of :class:`RedisResource <azure.mgmt.redis.models.RedisResource>` object
     """
 
     _attribute_map = {

@@ -104,10 +104,13 @@ class PowerBIEmbeddedManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`OperationList
+         <azure.mgmt.powerbiembedded.models.OperationList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`OperationList
-         <azure.mgmt.powerbiembedded.models.OperationList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.powerbiembedded.models.OperationList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """

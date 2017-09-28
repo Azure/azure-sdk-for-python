@@ -18,16 +18,19 @@ from .event_data import EventData
 from .metric_availability import MetricAvailability
 from .metric_definition import MetricDefinition
 from .metric_value import MetricValue
+from .metadata_value import MetadataValue
+from .time_series_element import TimeSeriesElement
 from .metric import Metric
+from .response import Response
 from .usage_metric_paged import UsageMetricPaged
-from .localizable_string_paged import LocalizableStringPaged
 from .event_data_paged import EventDataPaged
+from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
-from .metric_paged import MetricPaged
 from .monitor_client_enums import (
     EventLevel,
     Unit,
     AggregationType,
+    ResultType,
 )
 
 __all__ = [
@@ -40,13 +43,16 @@ __all__ = [
     'MetricAvailability',
     'MetricDefinition',
     'MetricValue',
+    'MetadataValue',
+    'TimeSeriesElement',
     'Metric',
+    'Response',
     'UsageMetricPaged',
-    'LocalizableStringPaged',
     'EventDataPaged',
+    'LocalizableStringPaged',
     'MetricDefinitionPaged',
-    'MetricPaged',
     'EventLevel',
     'Unit',
     'AggregationType',
+    'ResultType',
 ]

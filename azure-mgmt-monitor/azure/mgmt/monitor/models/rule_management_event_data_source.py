@@ -17,7 +17,7 @@ class RuleManagementEventDataSource(RuleDataSource):
     RuleManagementEventDataSource in this case.
 
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
     :param odatatype: Polymorphic Discriminator
     :type odatatype: str

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -53,7 +53,7 @@ class TenantActivityLogsOperations(object):
          and resourceUri eq '<ResourceURI>'.<br>- List events for a
          subscription: $filter=eventTimestamp ge '<Start Time>' and
          eventTimestamp le '<End Time>' and eventChannels eq 'Admin,
-         Operation'.<br>- List evetns for a resource provider:
+         Operation'.<br>- List events for a resource provider:
          $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
          Time>' and eventChannels eq 'Admin, Operation' and resourceProvider eq
          '<ResourceProviderName>'.<br>- List events for a correlation Id:
@@ -77,6 +77,8 @@ class TenantActivityLogsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`EventData
+         <azure.monitor.models.EventData>`
         :rtype: :class:`EventDataPaged <azure.monitor.models.EventDataPaged>`
         :raises:
          :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`

@@ -35,6 +35,12 @@ class ApplicationCreateParameters(Model):
     :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
      for OAuth2
     :type oauth2_allow_implicit_flow: bool
+    :param required_resource_access: Specifies resources that this application
+     requires access to and the set of OAuth permission scopes and application
+     roles that it needs under each of those resources. This pre-configuration
+     of required resource access drives the consent experience.
+    :type required_resource_access: list of :class:`RequiredResourceAccess
+     <azure.graphrbac.models.RequiredResourceAccess>`
     """
 
     _validation = {
@@ -52,9 +58,10 @@ class ApplicationCreateParameters(Model):
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
+        'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, identifier_uris, homepage=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow=None):
+    def __init__(self, available_to_other_tenants, display_name, identifier_uris, homepage=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow=None, required_resource_access=None):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage
@@ -63,3 +70,4 @@ class ApplicationCreateParameters(Model):
         self.key_credentials = key_credentials
         self.password_credentials = password_credentials
         self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+        self.required_resource_access = required_resource_access

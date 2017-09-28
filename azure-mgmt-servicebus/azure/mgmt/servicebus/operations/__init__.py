@@ -11,16 +11,24 @@
 
 from .operations import Operations
 from .namespaces_operations import NamespacesOperations
+from .disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .queues_operations import QueuesOperations
 from .topics_operations import TopicsOperations
 from .subscriptions_operations import SubscriptionsOperations
 from .rules_operations import RulesOperations
+from .regions_operations import RegionsOperations
+from .premium_messaging_regions_operations import PremiumMessagingRegionsOperations
+from .event_hubs_operations import EventHubsOperations
 
 __all__ = [
     'Operations',
     'NamespacesOperations',
+    'DisasterRecoveryConfigsOperations',
     'QueuesOperations',
     'TopicsOperations',
     'SubscriptionsOperations',
     'RulesOperations',
+    'RegionsOperations',
+    'PremiumMessagingRegionsOperations',
+    'EventHubsOperations',
 ]

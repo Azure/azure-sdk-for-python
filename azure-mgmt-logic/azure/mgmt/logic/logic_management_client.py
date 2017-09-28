@@ -73,31 +73,31 @@ class LogicManagementClient(object):
     :vartype config: LogicManagementClientConfiguration
 
     :ivar workflows: Workflows operations
-    :vartype workflows: .operations.WorkflowsOperations
+    :vartype workflows: azure.mgmt.logic.operations.WorkflowsOperations
     :ivar workflow_versions: WorkflowVersions operations
-    :vartype workflow_versions: .operations.WorkflowVersionsOperations
+    :vartype workflow_versions: azure.mgmt.logic.operations.WorkflowVersionsOperations
     :ivar workflow_triggers: WorkflowTriggers operations
-    :vartype workflow_triggers: .operations.WorkflowTriggersOperations
+    :vartype workflow_triggers: azure.mgmt.logic.operations.WorkflowTriggersOperations
     :ivar workflow_trigger_histories: WorkflowTriggerHistories operations
-    :vartype workflow_trigger_histories: .operations.WorkflowTriggerHistoriesOperations
+    :vartype workflow_trigger_histories: azure.mgmt.logic.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_runs: WorkflowRuns operations
-    :vartype workflow_runs: .operations.WorkflowRunsOperations
+    :vartype workflow_runs: azure.mgmt.logic.operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActions operations
-    :vartype workflow_run_actions: .operations.WorkflowRunActionsOperations
+    :vartype workflow_run_actions: azure.mgmt.logic.operations.WorkflowRunActionsOperations
     :ivar integration_accounts: IntegrationAccounts operations
-    :vartype integration_accounts: .operations.IntegrationAccountsOperations
+    :vartype integration_accounts: azure.mgmt.logic.operations.IntegrationAccountsOperations
     :ivar schemas: Schemas operations
-    :vartype schemas: .operations.SchemasOperations
+    :vartype schemas: azure.mgmt.logic.operations.SchemasOperations
     :ivar maps: Maps operations
-    :vartype maps: .operations.MapsOperations
+    :vartype maps: azure.mgmt.logic.operations.MapsOperations
     :ivar partners: Partners operations
-    :vartype partners: .operations.PartnersOperations
+    :vartype partners: azure.mgmt.logic.operations.PartnersOperations
     :ivar agreements: Agreements operations
-    :vartype agreements: .operations.AgreementsOperations
+    :vartype agreements: azure.mgmt.logic.operations.AgreementsOperations
     :ivar certificates: Certificates operations
-    :vartype certificates: .operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.logic.operations.CertificatesOperations
     :ivar sessions: Sessions operations
-    :vartype sessions: .operations.SessionsOperations
+    :vartype sessions: azure.mgmt.logic.operations.SessionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -154,6 +154,8 @@ class LogicManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Operation
+         <azure.mgmt.logic.models.Operation>`
         :rtype: :class:`OperationPaged
          <azure.mgmt.logic.models.OperationPaged>`
         :raises:
@@ -167,7 +169,7 @@ class LogicManagementClient(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -61,6 +61,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -138,6 +140,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -209,10 +213,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -280,10 +287,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
@@ -347,10 +357,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -406,10 +419,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -467,10 +483,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
@@ -531,10 +550,13 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RoleAssignment
-         <azure.mgmt.authorization.models.RoleAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.authorization.models.RoleAssignment>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -592,6 +614,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -664,6 +688,8 @@ class RoleAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

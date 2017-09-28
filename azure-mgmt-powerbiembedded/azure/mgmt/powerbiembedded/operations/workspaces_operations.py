@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -49,6 +49,8 @@ class WorkspacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`Workspace
+         <azure.mgmt.powerbiembedded.models.Workspace>`
         :rtype: :class:`WorkspacePaged
          <azure.mgmt.powerbiembedded.models.WorkspacePaged>`
         :raises:

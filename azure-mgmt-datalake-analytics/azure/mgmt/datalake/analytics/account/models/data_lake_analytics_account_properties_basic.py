@@ -22,7 +22,7 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     :ivar provisioning_state: the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
-     'Deleted'
+     'Deleted', 'Undeleting', 'Canceled'
     :vartype provisioning_state: str or :class:`DataLakeAnalyticsAccountStatus
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
     :ivar state: the state of the Data Lake Analytics account. Possible values

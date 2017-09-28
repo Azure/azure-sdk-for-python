@@ -21,14 +21,14 @@ class AppServiceCertificateResource(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param key_vault_id: Key Vault resource Id.
@@ -47,7 +47,9 @@ class AppServiceCertificateResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -63,8 +65,8 @@ class AppServiceCertificateResource(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
-        super(AppServiceCertificateResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
+        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None

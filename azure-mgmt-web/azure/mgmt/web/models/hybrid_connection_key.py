@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class HybridConnectionKey(Resource):
+class HybridConnectionKey(ProxyOnlyResource):
     """Hybrid Connection key contract. This has the send key name and value for a
     Hybrid Connection.
 
@@ -21,16 +21,12 @@ class HybridConnectionKey(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar send_key_name: The name of the send key.
     :vartype send_key_name: str
     :ivar send_key_value: The value of the send key.
@@ -39,7 +35,8 @@ class HybridConnectionKey(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'send_key_name': {'readonly': True},
         'send_key_value': {'readonly': True},
     }
@@ -48,14 +45,12 @@ class HybridConnectionKey(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(HybridConnectionKey, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(HybridConnectionKey, self).__init__(kind=kind)
         self.send_key_name = None
         self.send_key_value = None

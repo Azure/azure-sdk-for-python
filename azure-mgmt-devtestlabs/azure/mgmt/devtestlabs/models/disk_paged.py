@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DiskPaged(Paged):
     """
-    A paging container for iterating over a list of Disk object
+    A paging container for iterating over a list of :class:`Disk <azure.mgmt.devtestlabs.models.Disk>` object
     """
 
     _attribute_map = {

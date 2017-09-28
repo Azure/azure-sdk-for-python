@@ -27,6 +27,13 @@ class VirtualNetworkRule(ProxyResource):
     :param virtual_network_subnet_id: The ARM resource id of the virtual
      network subnet.
     :type virtual_network_subnet_id: str
+    :param ignore_missing_vnet_service_endpoint: Create firewall rule before
+     the virtual network has vnet service endpoint enabled.
+    :type ignore_missing_vnet_service_endpoint: bool
+    :ivar state: Virtual Network Rule State. Possible values include:
+     'Initializing', 'InProgress', 'Ready', 'Deleting', 'Unknown'
+    :vartype state: str or :class:`VirtualNetworkRuleState
+     <azure.mgmt.sql.models.VirtualNetworkRuleState>`
     """
 
     _validation = {
@@ -34,6 +41,7 @@ class VirtualNetworkRule(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'virtual_network_subnet_id': {'required': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -41,8 +49,12 @@ class VirtualNetworkRule(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
+        'ignore_missing_vnet_service_endpoint': {'key': 'properties.ignoreMissingVnetServiceEndpoint', 'type': 'bool'},
+        'state': {'key': 'properties.state', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_subnet_id):
+    def __init__(self, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None):
         super(VirtualNetworkRule, self).__init__()
         self.virtual_network_subnet_id = virtual_network_subnet_id
+        self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
+        self.state = None
