@@ -55,6 +55,8 @@ class DataLakeAnalyticsAccountStatus(Enum):
     resuming = "Resuming"
     deleting = "Deleting"
     deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
 
 
 class DataLakeAnalyticsAccountState(Enum):

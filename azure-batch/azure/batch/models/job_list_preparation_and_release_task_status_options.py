@@ -16,9 +16,9 @@ class JobListPreparationAndReleaseTaskStatusOptions(Model):
     """Additional parameters for list_preparation_and_release_task_status
     operation.
 
-    :param filter: An OData $filter clause. To get the status of the Job
-     Preparation and Job Release tasks on a specific compute node, use "nodeId
-     eq '{desired-node-id}'"
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str

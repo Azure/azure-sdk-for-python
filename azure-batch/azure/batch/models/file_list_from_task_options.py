@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class FileListFromTaskOptions(Model):
     """Additional parameters for list_from_task operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .

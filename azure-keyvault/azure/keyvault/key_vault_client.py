@@ -67,7 +67,7 @@ class KeyVaultClient(object):
 
 
     def create_key(
-            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, curve=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new key, stores it, then returns key parameters and
         attributes to the client.
 
@@ -81,9 +81,8 @@ class KeyVaultClient(object):
         :param key_name: The name for the new key. The system will generate
          the version name for the new key.
         :type key_name: str
-        :param kty: The type of key to create. For valid key types, see
-         JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic
-         Curve, RSA, HSM, Octet. Possible values include: 'EC', 'RSA',
+        :param kty: The type of key to create. For valid values, see
+         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
         :type kty: str or :class:`JsonWebKeyType
          <azure.keyvault.models.JsonWebKeyType>`
@@ -98,6 +97,11 @@ class KeyVaultClient(object):
         :param tags: Application specific metadata in the form of key-value
          pairs.
         :type tags: dict
+        :param curve: Elliptic curve name. For valid values, see
+         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
+         'P-521', 'SECP256K1'
+        :type curve: str or :class:`JsonWebKeyCurveName
+         <azure.keyvault.models.JsonWebKeyCurveName>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -111,7 +115,7 @@ class KeyVaultClient(object):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags)
+        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags, curve=curve)
 
         # Construct URL
         url = '/keys/{key-name}/create'
@@ -976,7 +980,8 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm identifier. For
          more information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
         :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
          <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
         :param value:
@@ -1064,7 +1069,8 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm. For more
          information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
         :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
          <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
         :param digest: The digest used for signing.

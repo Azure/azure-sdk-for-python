@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class JobListFromJobScheduleOptions(Model):
     """Additional parameters for list_from_job_schedule operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str

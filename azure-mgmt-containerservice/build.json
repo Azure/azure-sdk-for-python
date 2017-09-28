@@ -4,7 +4,7 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4144",
+        "version": "2.0.4147",
         "engines": {
           "node": ">=7.10.0"
         },
@@ -42,22 +42,22 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "fab17fce794ca213d7772e2e8b47a530c45b8e1b",
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "cfad16a831757f2f55e53bf56669d126cd36113a",
         "_shrinkwrap": null,
         "bin": null,
-        "_id": "@microsoft.azure/autorest-core@2.0.4144",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
+        "_id": "@microsoft.azure/autorest-core@2.0.4147",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
         "_requested": {
           "type": "directory",
           "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core"
+          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core"
         },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core",
-        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4144/node_modules/@microsoft.azure/autorest-core"
+        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core",
+        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4147/node_modules/@microsoft.azure/autorest-core"
       },
       "extensionManager": {
         "installationPath": "/root/.autorest",
@@ -179,5 +179,5 @@
       }
     }
   },
-  "date": "2017-09-27T17:18:14Z"
+  "date": "2017-09-28T18:30:14Z"
 }

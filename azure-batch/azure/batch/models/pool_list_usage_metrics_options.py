@@ -25,9 +25,9 @@ class PoolListUsageMetricsOptions(Model):
      defaults to the end time of the last aggregation interval currently
      available.
     :type end_time: datetime
-    :param filter: An OData $filter clause. If this is not specified the
-     response includes all pools that existed in the account in the time range
-     of the returned aggregation intervals.
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 results will be returned. Default value: 1000 .
