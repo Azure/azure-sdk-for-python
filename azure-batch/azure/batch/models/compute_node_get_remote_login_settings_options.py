@@ -13,8 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeGetRemoteLoginSettingsOptions(Model):
-    """Additional parameters for the ComputeNode_get_remote_login_settings
-    operation.
+    """Additional parameters for get_remote_login_settings operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

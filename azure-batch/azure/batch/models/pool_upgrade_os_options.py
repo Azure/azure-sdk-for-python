@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolUpgradeOsOptions(Model):
-    """Additional parameters for the Pool_upgrade_os operation.
+    """Additional parameters for upgrade_os operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
