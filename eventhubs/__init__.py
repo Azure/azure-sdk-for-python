@@ -9,7 +9,6 @@ The module provides a client to connect to Azure Event Hubs.
 """
 
 # pylint: disable=line-too-long
-# pylint: disable=C0111
 # pylint: disable=W0613
 # pylint: disable=W0702
 
@@ -65,6 +64,12 @@ class EventHubClient(Container):
         _receiver = ReceiverHandler(handler, _source, EventData.create, _selector, prefetch)
         self.clients.append(_receiver)
         return self
+
+    def publish(self, handler, partition=None):
+        """
+        Publishes to the event hub or one of its partitions.
+        """
+        raise NotImplementedError("Publish is under development")
 
     def session(self, context):
         if not self.shared_session:
@@ -163,8 +168,7 @@ class EventData(object):
     def _set_partition_key(self, value):
         self.message.annotations[EventData.PROP_PARTITION_KEY] = value
 
-    partition_key = property(_get_partition_key, _set_partition_key,
-        doc="""
+    partition_key = property(_get_partition_key, _set_partition_key, doc="""
         Gets or sets the partition key of the event data object.
         """)
 

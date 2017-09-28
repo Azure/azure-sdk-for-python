@@ -4,23 +4,22 @@
 An example to show receiving events from an Event Hub partition.
 """
 
+# pylint: disable=C0111
+
 import sys
 import logging
-from proton import Message
 from eventhubs import EventHubClient
-from eventhubs import Sender
 
-class MySender(Sender):
+class MySender(object):
     """
     The event data sender.
     """
 
     def __init__(self, partition=None):
-        super(MySender, self).__init__(partition)
+        pass
 
     def on_start(self):
-        super(MySender, self).on_start()
-        self.send(Message("hello"))
+        pass
 
 try:
     logging.basicConfig(filename="test.log", level=logging.INFO)
@@ -34,7 +33,7 @@ try:
                "<mynamespace>.servicebus.windows.net"
                "/"
                "myeventhub")
-    EventHubClient(ADDRESS, MySender()).run()
+    EventHubClient(ADDRESS).publish(MySender()).run()
 
 except KeyboardInterrupt:
     pass
