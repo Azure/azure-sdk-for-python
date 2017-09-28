@@ -61,12 +61,15 @@ class ClientHandler(Handler):
         event.link.close()
         condition = event.link.remote_condition
         if condition:
-            logging.error("Link detached %s:%s ref:%s",
+            logging.error("%s: link detached %s:%s ref:%s",
+                          event.connection.container,
                           condition.name,
                           condition.description,
                           event.connection.remote_container)
         else:
-            logging.error("Link detached ref:%s", event.connection.remote_container)
+            logging.error("%s: link detached ref:%s",
+                          event.connection.container,
+                          event.connection.remote_container)
         if condition and condition.name in self.fatal_conditions:
             event.connection.close()
         else:
@@ -105,10 +108,15 @@ class ReceiverHandler(ClientHandler):
         self.offset = _message.annotations["x-opt-offset"]
 
     def on_link_local_open(self, event):
-        logging.info("Link local open. entity=%s offset=%s", self.source, self.selector)
+        logging.info("%s: link local open. entity=%s offset=%s",
+                     event.connection.container,
+                     self.source,
+                     self.selector.filter_set["selector"].value)
 
     def on_link_remote_open(self, event):
-        logging.info("Link remote open. entity=%s offset=%s", self.source, self.selector)
+        logging.info("%s: link remote open. entity=%s",
+                     event.connection.container,
+                     self.source)
 
 class SenderHandler(ClientHandler):
     def __init__(self, partition=None):
@@ -143,10 +151,10 @@ class SenderHandler(ClientHandler):
             self.injector.close()
 
     def on_link_local_open(self, event):
-        logging.info("Link local open. entity=%s", self._get_target())
+        logging.info("%s: link local open. entity=%s", event.connection.container, self._get_target())
 
     def on_link_remote_open(self, event):
-        logging.info("Link remote open. entity=%s", self._get_target())
+        logging.info("%s: link remote open. entity=%s", event.connection.container, self._get_target())
 
     def on_message(self, event):
         self.messages.append(event.subject)

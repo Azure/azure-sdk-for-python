@@ -37,6 +37,7 @@ class EventHubClient(Container):
             super(EventHubClient, self).__init__(self, **kwargs)
             self.allow_insecure_mechs = False
             self.allowed_mechs = 'PLAIN MSCBS'
+            self.container_id = "ehpy-" + str(generate_uuid())[:8]
             self.address = Url(address)
             self.shared_connection = None
             self.shared_session = None
@@ -79,7 +80,7 @@ class EventHubClient(Container):
 
     def on_reactor_init(self, event):
         if not self.shared_connection:
-            logging.info("Client starts address=%s", self.address)
+            logging.info("%s: client starts address=%s", self.container_id, self.address)
             self.shared_connection = self.connect(self.address, reconnect=False, handler=self)
             self.shared_connection.__setattr__("_session_policy", self)
         for client in self.clients:
@@ -89,25 +90,25 @@ class EventHubClient(Container):
         dispatch(event.client, event.typename, event.subject)
 
     def on_connection_local_open(self, event):
-        logging.info("Connection local open host=%s", event.connection.hostname)
+        logging.info("%s: connection local open", event.connection.container)
 
     def on_connection_remote_open(self, event):
-        logging.info("Connection remote open host=%s remote=%s", event.connection.hostname, event.connection.remote_container)
+        logging.info("%s: connection remote open %s", self.container_id, event.connection.remote_container)
 
     def on_session_local_open(self, event):
-        logging.info("Session local open host=%s", event.connection.hostname)
+        logging.info("%s: session local open", self.container_id)
 
     def on_session_remote_open(self, event):
-        logging.info("Session remote open host=%s", event.connection.hostname)
+        logging.info("%s: session remote open", self.container_id)
 
     def on_connection_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.connection):
             return DELEGATED
         condition = event.connection.remote_condition
         if condition:
-            logging.error("Connection closed by peer %s:%s %s", condition.name, condition.description, event.connection.remote_container)
+            logging.error("%s: connection closed by peer %s:%s %s", self.container_id, condition.name, condition.description, event.connection.remote_container)
         else:
-            logging.error("Connection closed by peer %s", event.connection.remote_container)
+            logging.error("%s: connection closed by peer %s", self.container_id, event.connection.remote_container)
         if self.shared_session:
             self.shared_session.close()
             self.shared_session = None
@@ -122,9 +123,9 @@ class EventHubClient(Container):
         self.shared_session = None
         condition = event.session.remote_condition
         if condition:
-            logging.error("Session close %s:%s %s", condition.name, condition.description, event.connection.remote_container)
+            logging.error("%s: session close %s:%s %s", self.container_id, condition.name, condition.description, event.connection.remote_container)
         else:
-            logging.error("Session close %s", event.connection.remote_container)
+            logging.error("%s, session close %s", self.container_id, event.connection.remote_container)
         self.schedule(3.0, self)
 
     #def on_transport_closed(self, event):
@@ -174,6 +175,7 @@ class EventData(object):
 
     @classmethod
     def create(cls, message):
+        """Creates an event data object from an AMQP message."""
         _event = EventData()
         _event.message = message
         return _event
