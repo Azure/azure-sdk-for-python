@@ -1,4 +1,4 @@
-## Changes in 2.2.1-SNAPSHOT : ##
+## Changes in 2.2.1 : ##
 
 - bugfix for aggregate dict
 - bugfix for trimming slashes in the resource link
