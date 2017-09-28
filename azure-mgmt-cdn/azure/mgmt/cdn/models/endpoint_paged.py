@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EndpointPaged(Paged):
     """
-    A paging container for iterating over a list of Endpoint object
+    A paging container for iterating over a list of :class:`Endpoint <azure.mgmt.cdn.models.Endpoint>` object
     """
 
     _attribute_map = {
