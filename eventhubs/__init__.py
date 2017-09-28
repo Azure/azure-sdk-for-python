@@ -8,30 +8,30 @@ The module provides a client to connect to Azure Event Hubs.
 
 """
 
-try:
-    import Queue
-except:
-    import queue as Queue
+# pylint: disable=line-too-long
+# pylint: disable=C0111
+# pylint: disable=W0613
+# pylint: disable=W0702
 
 import logging
 import datetime
 
-from proton import DELEGATED, Url, timestamp, generate_uuid
+from proton import DELEGATED, Url, timestamp, generate_uuid, Message
 from proton.reactor import dispatch, Container, Selector
-from proton.reactor import EventInjector, ApplicationEvent
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-
-# pylint: disable=line-too-long
-# pylint: disable=C0111
-# pylint: disable=W0613
+from eventhubs._impl import ReceiverHandler, OffsetUtil
 
 class EventHubClient(Container):
     """
-    The container for all client objects.
+    The L{EventHubClient} class defines a high level interface for sending
+    events to and receiving events from the Azure Event Hubs service.
     """
-    def __init__(self, address=None, *handlers, **kwargs):
+    def __init__(self, address=None, **kwargs):
+        """
+        Constructs a new L{EventHubClient} with the given address Url.
+        """
         if not address:
             super(EventHubClient, self).__init__(**kwargs)
         else:
@@ -42,8 +42,29 @@ class EventHubClient(Container):
             self.shared_connection = None
             self.shared_session = None
             self.clients = []
-            for handler in handlers:
-                self.clients.append(handler)
+
+    def subscribe(self, handler, consumer_group, partition, offset=None, prefetch=300):
+        """
+        Subscribes to an Event Hub partition to receive events.
+
+        @param handler: handler to process the received event data. It must
+        define an 'on_event_data' method to handle incoming events.
+
+        @param consumer_group: the consumer group the receiver belongs to.
+
+        @param partition: the id of the event hub partition.
+
+        @param offset: the L{Offset} to receive events.
+
+        @param prefetch: the number of events that will be proactively prefetched
+        by the library into a local buffer queue.
+
+        """
+        _source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
+        _selector = OffsetUtil.selector(offset.value, offset.inclusive)
+        _receiver = ReceiverHandler(handler, _source, EventData.create, _selector, prefetch)
+        self.clients.append(_receiver)
+        return self
 
     def session(self, context):
         if not self.shared_session:
@@ -109,224 +130,54 @@ class EventHubClient(Container):
 
 class EventData(object):
     """
-    A utility to read EventData properties from an AMQP message
+    The L{EventData} class is a holder of event content.
     """
-    @classmethod
-    def sequence_number(cls, message):
+
+    PROP_SEQ_NUMBER = "x-opt-sequence-number"
+    PROP_OFFSET = "x-opt-offset"
+    PROP_PARTITION_KEY = "x-opt-partition-key"
+
+    def __init__(self, body=None):
+        """
+        @param kwargs: name/value pairs in properties.
+        """
+        self.message = Message(body)
+
+    @property
+    def sequence_number(self):
         """
         Return the sequence number of the event data object.
         """
-        return message.annotations["x-opt-sequence-number"]
+        return self.message.annotations[EventData.PROP_SEQ_NUMBER]
 
-    @classmethod
-    def offset(cls, message):
+    @property
+    def offset(self):
         """
         Return the offset of the event data object.
         """
-        return message.annotations["x-opt-offset"]
+        return self.message.annotations[EventData.PROP_OFFSET]
+
+    def _get_partition_key(self):
+        return self.message.annotations[EventData.PROP_PARTITION_KEY]
+
+    def _set_partition_key(self, value):
+        self.message.annotations[EventData.PROP_PARTITION_KEY] = value
+
+    partition_key = property(_get_partition_key, _set_partition_key,
+        doc="""
+        Gets or sets the partition key of the event data object.
+        """)
 
     @classmethod
-    def partition_key(cls, message):
-        """
-        Return the partition key of the event data object.
-        """
-        return message.annotations["x-opt-partition-key"]
+    def create(cls, message):
+        _event = EventData()
+        _event.message = message
+        return _event
 
-class ClientHandler(Handler):
+class Offset(object):
     """
-    The base class of a sender or a receiver.
+    The offset (position or timestamp) where a receiver starts.
     """
-    def __init__(self, prefix):
-        super(ClientHandler, self).__init__()
-        self.name = "%s-%s" % (prefix, str(generate_uuid())[:8])
-        self.container = None
-        self.link = None
-        self.iteration = 0
-        self.fatal_conditions = ["amqp:unauthorized-access", "amqp:not-found"]
-
-    def start(self, container):
-        self.container = container
-        self.iteration += 1
-        self.on_start()
-
-    def stop(self):
-        if self.link:
-            self.link.close()
-        self.on_stop()
-
-    def _get_link_name(self):
-        return "%s-%d" % (self.name, self.iteration)
-
-    def on_start(self):
-        pass
-
-    def on_stop(self):
-        pass
-
-    def on_link_remote_close(self, event):
-        if EndpointStateHandler.is_local_closed(event.link):
-            return DELEGATED
-        event.link.close()
-        condition = event.link.remote_condition
-        if condition:
-            logging.error("Link detached %s:%s ref:%s",
-                          condition.name,
-                          condition.description,
-                          event.connection.remote_container)
-        else:
-            logging.error("Link detached ref:%s", event.connection.remote_container)
-        if condition and condition.name in self.fatal_conditions:
-            event.connection.close()
-        else:
-            event.reactor.schedule(3.0, self)
-
-    def on_timer_task(self, event):
-        self.start(self.container)
-
-class Sender(ClientHandler):
-    """
-    Creates a sender to send events to an Event Hub, or
-    to a partition directly.
-
-    @param partition: if not None, specifies the partition to send events.
-    If None, the events are sent to the event hub and are distributed to
-    partition(s) according to the Event Hubs service partitioning logic.
-
-    """
-    def __init__(self, partition=None):
-        super(Sender, self).__init__("sender")
-        self.partition = partition
-        self.handlers = [OutgoingMessageHandler(False, self)]
-        self.messages = Queue.Queue()
-        self.count = 0
-        self.injector = None
-
-    def _get_target(self):
-        target = self.container.address.path
-        if self.partition:
-            target += "/Partitions/" + self.partition
-        return target
-
-    def send(self, message):
-        self.injector.trigger(ClientEvent(self, "message", subject=message))
-
-    def on_start(self):
-        if not self.injector:
-            self.injector = EventInjector()
-            self.container.selectable(self.injector)
-        self.link = self.container.create_sender(
-            self.container.shared_connection,
-            self._get_target(),
-            name=self._get_link_name(),
-            handler=self)
-
-    def on_stop(self):
-        if self.injector:
-            self.injector.close()
-
-    def on_link_local_open(self, event):
-        logging.info("Link local open. entity=%s", self._get_target())
-
-    def on_link_remote_open(self, event):
-        logging.info("Link remote open. entity=%s", self._get_target())
-
-    def on_message(self, event):
-        self.messages.append(event.subject)
-        self.on_sendable(None)
-
-    def on_sendable(self, event):
-        while self.link.credit and not self.messages.empty():
-            message = self.messages.get(False)
-            self.link.send(message, tag=str(self.count))
-            self.count += 1
-
-    def on_accepted(self, event):
-        pass
-
-    def on_released(self, event):
-        pass
-
-    def on_rejected(self, event):
-        pass
-
-class Receiver(ClientHandler):
-    """
-    Creates a receiver handler for reading events from an Event Hub partition.
-
-    @param handler: handler to process the received event data. It must
-    define an 'on_event_data' method. The event data object is an AMQP
-    message (proton.Message). Besides the APIs from proton, the module
-    provides the EventData utility to access Event Hubs specific
-    properties of the message.
-
-    @param consumer_group: the consumer group the receiver belongs to.
-
-    @param partition: the id of the destination partition.
-
-    @param position: the start point to read events. It can be None, a datetime
-    a proton.timestamp or a string object.
-    string: specifies the offset of an event after which events are returned.
-    Besides an actual offset, it can also be '-1' (beginning of the event stream)
-    or '@latest' (end of the stream).
-    datetime: specifies the enqueued time of the first event that should be
-    returned.
-    timestamp: same as datetime except that the value is an AMQP timestamp.
-    None: no filter will be sent. This is the same as '-1'.
-
-    @param prefetch: the number of events that will be proactively prefetched
-    by the library into a local buffer queue.
-
-    """
-    def __init__(self, consumer_group, partition, position=None, prefetch=300):
-        super(Receiver, self).__init__("receiver")
-        self.consumer_group = consumer_group
-        self.partition = partition
-        self.position = position
-        self.handlers = []
-        if prefetch:
-            self.handlers.append(CFlowController(prefetch))
-        self.handlers.append(IncomingMessageHandler(True, self))
-
-    def _get_source(self):
-        return "%s/ConsumerGroups/%s/Partitions/%s" % (self.container.address.path, self.consumer_group, self.partition)
-
-    def on_start(self):
-        selector = None
-        if isinstance(self.position, datetime.datetime):
-            _epoch = datetime.datetime.utcfromtimestamp(0)
-            _timestamp = long((self.position - _epoch).total_seconds() * 1000.0)
-            selector = Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(_timestamp) + "'")
-        elif isinstance(self.position, timestamp):
-            selector = Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(self.position) + "'")
-        elif self.position:
-            selector = Selector(u"amqp.annotation.x-opt-offset > '" + self.position + "'")
-        self.link = self.container.create_receiver(
-            self.container.shared_connection,
-            self._get_source(),
-            name=self._get_link_name(),
-            handler=self,
-            options=selector)
-
-    def on_event_data(self, message):
-        pass
-
-    def on_message(self, event):
-        _message = event.message
-        self.on_event_data(_message)
-        self.position = EventData.offset(_message)
-
-    def on_link_local_open(self, event):
-        logging.info("Link local open. entity=%s offset=%s", self._get_source(), self.position)
-
-    def on_link_remote_open(self, event):
-        logging.info("Link remote open. entity=%s offset=%s", self._get_source(), self.position)
-
-class ClientEvent(ApplicationEvent):
-    """
-    Client defined event, to be dispatched by the container to a
-    client (Sender or Receiver)
-    """
-    def __init__(self, client, typename, subject=None):
-        super(ClientEvent, self).__init__("client_event", subject=subject)
-        self.typename = typename
-        self.client = client
+    def __init__(self, value, inclusive=False):
+        self.value = value
+        self.inclusive = inclusive

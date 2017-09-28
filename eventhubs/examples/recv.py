@@ -11,35 +11,31 @@ An example to show receiving events from an Event Hub partition.
 
 import sys
 import logging
-from eventhubs import EventHubClient, EventData
-from eventhubs import Receiver
+from eventhubs import EventHubClient, Offset
 
-class MyReceiver(Receiver):
+class MyReceiver(object):
     """
     The event data handler.
     """
 
-    def __init__(self, consumer_group, partition, offset):
-        super(MyReceiver, self).__init__(consumer_group, partition, offset)
+    def __init__(self, partition):
+        self.partition = partition
         self.total = 0
         self.last_sn = -1
         self.last_offset = "-1"
 
-    def on_event_data(self, message):
+    def on_event_data(self, event_data):
         """
         Process one event data.
         """
-        self.last_offset = EventData.offset(message)
-        self.last_sn = EventData.sequence_number(message)
-        # message.properties (dict) - application defined properties
-        # message.body (object) - application set object
+        self.last_offset = event_data.offset
+        self.last_sn = event_data.sequence_number
         self.total += 1
-        if self.total % 100 == 0:
-            # do checkpoint for every 50 events received
-            logging.info("Received %s, sn=%d offset=%s",
-                         self.total,
-                         self.last_sn,
-                         self.last_offset)
+        logging.info("Partition %s, Received %s, sn=%d offset=%s",
+                     self.partition,
+                     self.total,
+                     self.last_sn,
+                     self.last_offset)
 
 try:
     logging.basicConfig(filename="test.log", level=logging.INFO)
@@ -54,9 +50,11 @@ try:
                "/"
                "myeventhub")
     CONSUMER_GROUP = "$default"
-    PARTITION = "1"
-    OFFSET = "-1"
+    OFFSET = Offset("-1")
 
-    EventHubClient(ADDRESS, MyReceiver(CONSUMER_GROUP, PARTITION, OFFSET)).run()
+    EventHubClient(ADDRESS) \
+        .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \
+        .subscribe(MyReceiver("1"), CONSUMER_GROUP, "1", OFFSET) \
+        .run()
 except KeyboardInterrupt:
     pass
