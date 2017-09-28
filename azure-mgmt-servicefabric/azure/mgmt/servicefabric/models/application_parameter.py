@@ -12,25 +12,26 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ApplicationParameter(Model):
+    """Describes an application parameter override to be applied when creating or
+    upgrading an application.
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
+    :param key: The name of the parameter.
+    :type key: str
+    :param value: The value of the parameter.
     :type value: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'key': {'required': True},
         'value': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
+    def __init__(self, key, value):
+        self.key = key
         self.value = value

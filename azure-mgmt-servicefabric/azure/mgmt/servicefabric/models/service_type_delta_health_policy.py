@@ -12,25 +12,22 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ServiceTypeDeltaHealthPolicy(Model):
+    """Service health policy
+    .
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param max_percent_delta_unhealthy_services: Maximum percentage of
+     unhealthy services in cluster
+    :type max_percent_delta_unhealthy_services: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        'max_percent_delta_unhealthy_services': {'maximum': 100, 'minimum': 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'max_percent_delta_unhealthy_services': {'key': 'maxPercentDeltaUnhealthyServices', 'type': 'int'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self, max_percent_delta_unhealthy_services=None):
+        self.max_percent_delta_unhealthy_services = max_percent_delta_unhealthy_services

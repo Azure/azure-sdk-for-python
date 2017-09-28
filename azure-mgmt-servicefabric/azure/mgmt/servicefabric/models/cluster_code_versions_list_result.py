@@ -12,25 +12,21 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ClusterCodeVersionsListResult(Model):
+    """The list results of the ServiceFabric runtime versions.
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param value:
+    :type value: list of :class:`ClusterCodeVersionsResult
+     <azure.mgmt.servicefabric.models.ClusterCodeVersionsResult>`
+    :param next_link: The URL to use for getting the next set of results.
+    :type next_link: str
     """
 
-    _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ClusterCodeVersionsResult]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
+    def __init__(self, value=None, next_link=None):
         self.value = value
+        self.next_link = next_link

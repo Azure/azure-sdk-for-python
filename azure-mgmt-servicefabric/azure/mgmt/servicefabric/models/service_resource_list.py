@@ -12,25 +12,17 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ServiceResourceList(Model):
+    """The list of service resources.
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param value:
+    :type value: list of :class:`ServiceResource
+     <azure.mgmt.servicefabric.models.ServiceResource>`
     """
 
-    _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ServiceResource]'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
+    def __init__(self, value=None):
         self.value = value

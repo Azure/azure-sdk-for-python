@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Resource(Model):
-    """The resource model definition.
+class VersionResource(ProxyResource):
+    """A version resource for the specified application type name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,8 +26,14 @@ class Resource(Model):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response
+    :vartype provisioning_state: str
+    :param app_package_url: The URL to the application package
+    :type app_package_url: str
+    :ivar default_parameter_list:
+    :vartype default_parameter_list: list of :class:`ApplicationParameter
+     <azure.mgmt.servicefabric.models.ApplicationParameter>`
     """
 
     _validation = {
@@ -35,6 +41,8 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'default_parameter_list': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,12 +50,13 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
+        'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '[ApplicationParameter]'},
     }
 
-    def __init__(self, location, tags=None):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, location, app_package_url=None):
+        super(VersionResource, self).__init__(location=location)
+        self.provisioning_state = None
+        self.app_package_url = app_package_url
+        self.default_parameter_list = None

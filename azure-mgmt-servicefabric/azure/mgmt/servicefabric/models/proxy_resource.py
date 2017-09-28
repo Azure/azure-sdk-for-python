@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class ProxyResource(Model):
     """The resource model definition.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,8 +26,6 @@ class Resource(Model):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :param tags: Resource tags.
-    :type tags: dict
     """
 
     _validation = {
@@ -42,12 +40,10 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, location):
         self.id = None
         self.name = None
         self.type = None
         self.location = location
-        self.tags = tags
