@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -43,6 +43,8 @@ class EdgeNodesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`EdgeNode
+         <azure.mgmt.cdn.models.EdgeNode>`
         :rtype: :class:`EdgeNodePaged <azure.mgmt.cdn.models.EdgeNodePaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CustomDomainPaged(Paged):
     """
-    A paging container for iterating over a list of CustomDomain object
+    A paging container for iterating over a list of :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>` object
     """
 
     _attribute_map = {

@@ -13,6 +13,7 @@ from .sku import Sku
 from .profile import Profile
 from .profile_update_parameters import ProfileUpdateParameters
 from .sso_uri import SsoUri
+from .supported_optimization_types_result import SupportedOptimizationTypesResult
 from .deep_created_origin import DeepCreatedOrigin
 from .endpoint import Endpoint
 from .geo_filter import GeoFilter
@@ -45,6 +46,7 @@ from .edge_node_paged import EdgeNodePaged
 from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
+    OptimizationType,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
@@ -59,6 +61,7 @@ __all__ = [
     'Profile',
     'ProfileUpdateParameters',
     'SsoUri',
+    'SupportedOptimizationTypesResult',
     'DeepCreatedOrigin',
     'Endpoint',
     'GeoFilter',
@@ -90,6 +93,7 @@ __all__ = [
     'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
+    'OptimizationType',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',

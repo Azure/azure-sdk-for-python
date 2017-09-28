@@ -29,6 +29,15 @@ class ProfileResourceState(Enum):
     disabled = "Disabled"
 
 
+class OptimizationType(Enum):
+
+    general_web_delivery = "GeneralWebDelivery"
+    general_media_streaming = "GeneralMediaStreaming"
+    video_on_demand_media_streaming = "VideoOnDemandMediaStreaming"
+    large_file_download = "LargeFileDownload"
+    dynamic_site_acceleration = "DynamicSiteAcceleration"
+
+
 class EndpointResourceState(Enum):
 
     creating = "Creating"
