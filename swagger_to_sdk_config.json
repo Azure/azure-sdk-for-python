@@ -31,7 +31,8 @@
         "namespace": "azure.mgmt.batch",
         "package-version": "4.0.0"
       },
-      "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
+      "output_dir": "azure-mgmt-batch/azure/mgmt/batch",
+      "build_dir": "azure-mgmt-batch"
     },
     "billing": {
       "markdown": "specification/billing/resource-manager/readme.md",
@@ -39,7 +40,8 @@
         "namespace": "azure.mgmt.billing",
         "package-version": "0.1.0"
       },
-      "output_dir": "azure-mgmt-billing/azure/mgmt/billing"
+      "output_dir": "azure-mgmt-billing/azure/mgmt/billing",
+      "build_dir": "azure-mgmt-billing",
     },
     "cdn": {
       "markdown": "specification/cdn/resource-manager/readme.md",
@@ -57,7 +59,8 @@
         "namespace": "azure.mgmt.consumption",
         "package-version": "0.1.0"
       },
-      "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
+      "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption",
+      "build_dir": "azure-mgmt-consumption"
     },
     "cognitiveservices": {
       "markdown": "specification/cognitiveservices/resource-manager/readme.md",
@@ -65,7 +68,8 @@
         "namespace": "azure.mgmt.cognitiveservices",
         "package-version": "1.0.0"
       },
-      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices",
+      "build_dir": "azure-mgmt-cognitiveservices"
     },
     "commerce": {
       "markdown": "specification/commerce/resource-manager/readme.md",
@@ -174,7 +178,8 @@
         "namespace": "azure.mgmt.devtestlabs",
         "package-version": "2.0.0"
       },
-      "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
+      "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs",
+      "build_dir": "azure-mgmt-devtestlabs"
     },
     "dns": {
       "markdown": "specification/dns/resource-manager/readme.md",
@@ -182,7 +187,8 @@
         "namespace": "azure.mgmt.dns",
         "package-version": "1.0.1"
       },
-      "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
+      "output_dir": "azure-mgmt-dns/azure/mgmt/dns",
+      "build_dir": "azure-mgmt-dns"
     },
     "cosmosdb": {
       "markdown": "specification/cosmos-db/resource-manager/readme.md",
@@ -217,7 +223,8 @@
         "package-version": "0.32.0"
       },
       "output_dir": "azure-graphrbac/azure/graphrbac",
-      "generated_relative_base_directory": "python/azure/graphrbac"
+      "generated_relative_base_directory": "python/azure/graphrbac",
+      "build_dir": "azure-graphrbac"
     },
     "iothub": {
       "markdown": "specification/iothub/resource-manager/readme.md",
@@ -234,7 +241,8 @@
         "namespace": "azure.mgmt.keyvault",
         "package-version": "0.40.0"
       },
-      "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
+      "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault",
+      "build_dir": "azure-mgmt-keyvault"
     },
     "keyvault.data": {
       "markdown": "specification/keyvault/data-plane/readme.md",
@@ -248,7 +256,8 @@
         "__init__.py"
       ],
       "output_dir": "azure-keyvault/azure/keyvault",
-      "generated_relative_base_directory": "azure/keyvault"
+      "generated_relative_base_directory": "azure/keyvault",
+      "build_dir": "azure-keyvault"
     },
     "logic": {
       "markdown": "specification/logic/resource-manager/readme.md",
@@ -256,7 +265,8 @@
         "namespace": "azure.mgmt.logic",
         "package-version": "2.1.0"
       },
-      "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
+      "output_dir": "azure-mgmt-logic/azure/mgmt/logic",
+      "build_dir": "azure-mgmt-logic"
     },
     "machinelearning": {
       "markdown": "specification/machinelearning/resource-manager/readme.md",
@@ -265,7 +275,8 @@
         "namespace": "azure.mgmt.machinelearning",
         "package-version": "0.1.0"
       },
-      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
+      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning",
+      "build_dir": "unreleased/azure-mgmt-machinelearning"
     },
     "machinelearningcompute": {
       "markdown": "specification/machinelearningcompute/resource-manager/readme.md",
@@ -392,7 +403,8 @@
         "package-version": "0.1.0"
       },
       "generated_relative_base_directory": "azure/mgmt/rdbms/mysql",
-      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
+      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
+      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
     },
     "rdbms.postgres": {
       "markdown": "specification/postgresql/resource-manager/readme.md",
@@ -401,17 +413,20 @@
         "package-version": "0.1.0"
       },
       "generated_relative_base_directory": "azure/mgmt/rdbms/postgresql",
-      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
+      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql",
+      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
     },
     "recoveryservices": {
       "markdown": "specification/recoveryservices/resource-manager/readme.md",
       "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservices",
-      "output_dir":  "azure-mgmt-recoveryservices/azure/mgmt/recoveryservices"
+      "output_dir":  "azure-mgmt-recoveryservices/azure/mgmt/recoveryservices",
+      "build_dir": "azure-mgmt-recoveryservices"
     },
     "recoveryservicesbackup": {
       "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md",
       "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
-      "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
+      "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup",
+      "build_dir": "azure-mgmt-recoveryservicesbackup"
     },
     "redis": {
       "markdown": "specification/redis/resource-manager/readme.md",
@@ -420,7 +435,8 @@
         "namespace": "azure.mgmt.redis",
         "package-version": "4.1.0"
       },
-      "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
+      "output_dir": "azure-mgmt-redis/azure/mgmt/redis",
+      "build_dir": "azure-mgmt-redis"
     },
     "resources.managedapplications.2017-09-01": {
       "autorest_options": {
@@ -437,7 +453,8 @@
         "namespace": "azure.mgmt.resource.features.v2015_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01"
+      "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01"
     },
     "resources.subscriptions.2016-06-01": {
       "autorest_options": {
@@ -445,6 +462,7 @@
         "namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
       "generated_relative_base_directory": "azure/mgmt/resource/subscriptions/v2016_06_01"
     },
     "resources.locks.2015-01-01": {
@@ -453,6 +471,7 @@
         "namespace": "azure.mgmt.resource.locks.v2015_01_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01"
     },
     "resources.locks.2016-09-01": {
@@ -461,6 +480,7 @@
         "namespace": "azure.mgmt.resource.locks.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2016_09_01"
     },
     "resources.resources.2016-02-01": {
@@ -469,6 +489,7 @@
         "namespace": "azure.mgmt.resource.resources.v2016_02_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_02_01"
     },
     "resources.resources.2016-09-01": {
@@ -477,6 +498,7 @@
         "namespace": "azure.mgmt.resource.resources.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
     },
     "resources.resources.2017-05-10": {
@@ -503,6 +525,7 @@
         "namespace": "azure.mgmt.resource.policy.v2016_04_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01"
     },
     "resources.policy.2016-12-01": {
@@ -531,6 +554,7 @@
         "namespace": "azure.mgmt.resource.links.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01"
     },
     "search": {
@@ -587,7 +611,8 @@
         "namespace": "azure.mgmt.scheduler",
         "package-version": "1.1.3"
       },
-      "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
+      "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler",
+      "build_dir": "azure-mgmt-scheduler"
     },
     "sql": {
       "markdown": "specification/sql/resource-manager/readme.md",
@@ -676,7 +701,8 @@
         "package-version": "0.1.6"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/",
-      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/account"
+      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/account",
+      "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
     },
     "datalake.analytics.catalog": {
       "autorest_options": {
@@ -685,6 +711,7 @@
         "package-version": "0.1.6"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
+      "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/catalog"
     },
     "datalake.analytics.job": {
@@ -694,6 +721,7 @@
         "package-version": "0.1.6"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/",
+      "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/job"
     },
     "datalake.store.account": {
@@ -703,6 +731,7 @@
         "package-version": "0.1.6"
       },
       "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/",
+      "build_dir": "azure-mgmt-datalake-store",
       "generated_relative_base_directory": "azure/mgmt/datalake/store"
     }
   }
