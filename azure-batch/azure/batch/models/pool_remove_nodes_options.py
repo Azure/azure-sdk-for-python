@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolRemoveNodesOptions(Model):
-    """Additional parameters for the Pool_remove_nodes operation.
+    """Additional parameters for remove_nodes operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
