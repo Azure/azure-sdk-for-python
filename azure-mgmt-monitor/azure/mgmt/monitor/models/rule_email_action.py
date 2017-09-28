@@ -19,11 +19,11 @@ class RuleEmailAction(RuleAction):
     :param odatatype: Polymorphic Discriminator
     :type odatatype: str
     :param send_to_service_owners: Whether the administrators (service and
-     co-adiminstrators) of the service should be notified when the alert is
+     co-administrators) of the service should be notified when the alert is
      activated.
     :type send_to_service_owners: bool
     :param custom_emails: the list of administrator's custom email addresses
-     notifiy of the activation of the alert.
+     to notify of the activation of the alert.
     :type custom_emails: list of str
     """
 

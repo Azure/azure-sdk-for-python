@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class MigrateMySqlStatus(Resource):
+class MigrateMySqlStatus(ProxyOnlyResource):
     """MySQL migration status.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class MigrateMySqlStatus(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar migration_operation_status: Status of the migration task. Possible
      values include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
     :vartype migration_operation_status: str or :class:`OperationStatus
@@ -42,7 +38,8 @@ class MigrateMySqlStatus(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'migration_operation_status': {'readonly': True},
         'operation_id': {'readonly': True},
         'local_my_sql_enabled': {'readonly': True},
@@ -52,16 +49,14 @@ class MigrateMySqlStatus(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'migration_operation_status': {'key': 'properties.migrationOperationStatus', 'type': 'OperationStatus'},
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(MigrateMySqlStatus, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None):
+        super(MigrateMySqlStatus, self).__init__(kind=kind)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None

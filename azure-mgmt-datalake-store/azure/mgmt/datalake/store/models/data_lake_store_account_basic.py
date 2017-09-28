@@ -30,7 +30,8 @@ class DataLakeStoreAccountBasic(Resource):
     :type tags: dict
     :ivar provisioning_state: the provisioning status of the Data Lake Store
      account. Possible values include: 'Failed', 'Creating', 'Running',
-     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted'
+     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted',
+     'Undeleting', 'Canceled'
     :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
      <azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus>`
     :ivar state: the state of the Data Lake Store account. Possible values

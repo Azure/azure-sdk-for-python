@@ -14,6 +14,9 @@ from .firewall_rules_operations import FirewallRulesOperations
 from .databases_operations import DatabasesOperations
 from .configurations_operations import ConfigurationsOperations
 from .log_files_operations import LogFilesOperations
+from .performance_tiers_operations import PerformanceTiersOperations
+from .location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from .check_name_availability_operations import CheckNameAvailabilityOperations
 from .operations import Operations
 
 __all__ = [
@@ -22,5 +25,8 @@ __all__ = [
     'DatabasesOperations',
     'ConfigurationsOperations',
     'LogFilesOperations',
+    'PerformanceTiersOperations',
+    'LocationBasedPerformanceTierOperations',
+    'CheckNameAvailabilityOperations',
     'Operations',
 ]

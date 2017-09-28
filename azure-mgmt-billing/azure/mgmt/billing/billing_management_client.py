@@ -60,11 +60,11 @@ class BillingManagementClient(object):
     :vartype config: BillingManagementClientConfiguration
 
     :ivar billing_periods: BillingPeriods operations
-    :vartype billing_periods: .operations.BillingPeriodsOperations
+    :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
-    :vartype invoices: .operations.InvoicesOperations
+    :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.billing.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

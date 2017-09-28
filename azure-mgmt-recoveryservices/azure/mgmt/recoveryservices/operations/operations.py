@@ -36,12 +36,9 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Returns the list of available operations.
 
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -58,12 +55,7 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/operations'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = '/providers/Microsoft.RecoveryServices/operations'
 
                 # Construct parameters
                 query_parameters = {}

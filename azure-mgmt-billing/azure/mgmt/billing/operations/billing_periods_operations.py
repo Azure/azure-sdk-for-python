@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -56,6 +56,8 @@ class BillingPeriodsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`BillingPeriod
+         <azure.mgmt.billing.models.BillingPeriod>`
         :rtype: :class:`BillingPeriodPaged
          <azure.mgmt.billing.models.BillingPeriodPaged>`
         :raises:
@@ -126,10 +128,13 @@ class BillingPeriodsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`BillingPeriod
+         <azure.mgmt.billing.models.BillingPeriod>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`BillingPeriod
-         <azure.mgmt.billing.models.BillingPeriod>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.billing.models.BillingPeriod>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """

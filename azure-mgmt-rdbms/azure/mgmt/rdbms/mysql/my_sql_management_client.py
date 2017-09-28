@@ -18,6 +18,9 @@ from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
+from .operations.performance_tiers_operations import PerformanceTiersOperations
+from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
 from .operations.operations import Operations
 from . import models
 
@@ -64,17 +67,23 @@ class MySQLManagementClient(object):
     :vartype config: MySQLManagementClientConfiguration
 
     :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :vartype servers: azure.mgmt.rdbms.mysql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.rdbms.mysql.operations.FirewallRulesOperations
     :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
+    :vartype databases: azure.mgmt.rdbms.mysql.operations.DatabasesOperations
     :ivar configurations: Configurations operations
-    :vartype configurations: .operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.rdbms.mysql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
-    :vartype log_files: .operations.LogFilesOperations
+    :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
+    :ivar performance_tiers: PerformanceTiers operations
+    :vartype performance_tiers: azure.mgmt.rdbms.mysql.operations.PerformanceTiersOperations
+    :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
+    :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
+    :ivar check_name_availability: CheckNameAvailability operations
+    :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -105,6 +114,12 @@ class MySQLManagementClient(object):
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.performance_tiers = PerformanceTiersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

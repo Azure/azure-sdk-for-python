@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PermissionPaged(Paged):
     """
-    A paging container for iterating over a list of Permission object
+    A paging container for iterating over a list of :class:`Permission <azure.mgmt.authorization.models.Permission>` object
     """
 
     _attribute_map = {

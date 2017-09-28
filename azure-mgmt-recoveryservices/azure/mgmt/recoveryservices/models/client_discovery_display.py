@@ -15,25 +15,15 @@ from msrest.serialization import Model
 class ClientDiscoveryDisplay(Model):
     """Localized display information of an operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar provider: Name of the resource provider.
-    :vartype provider: str
-    :ivar resource: Type of the resource.
-    :vartype resource: str
-    :ivar operation: Name of the operation.
-    :vartype operation: str
-    :ivar description: Operation description.
-    :vartype description: str
+    :param provider: Name of the provider for display purposes
+    :type provider: str
+    :param resource: Name of the resource type for display purposes
+    :type resource: str
+    :param operation: Name of the operation for display purposes
+    :type operation: str
+    :param description: Description of the operation for display purposes
+    :type description: str
     """
-
-    _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
-    }
 
     _attribute_map = {
         'provider': {'key': 'Provider', 'type': 'str'},
@@ -42,8 +32,8 @@ class ClientDiscoveryDisplay(Model):
         'description': {'key': 'Description', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+    def __init__(self, provider=None, resource=None, operation=None, description=None):
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description

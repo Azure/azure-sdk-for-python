@@ -13,24 +13,17 @@ from msrest.serialization import Model
 
 
 class ClientDiscoveryForServiceSpecification(Model):
-    """Operation properties.
+    """Class to represent shoebox service specification in json client discovery.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar log_specifications: List of log specifications of this operation.
-    :vartype log_specifications: list of
+    :param log_specifications: List of log specifications of this operation.
+    :type log_specifications: list of
      :class:`ClientDiscoveryForLogSpecification
      <azure.mgmt.recoveryservices.models.ClientDiscoveryForLogSpecification>`
     """
-
-    _validation = {
-        'log_specifications': {'readonly': True},
-    }
 
     _attribute_map = {
         'log_specifications': {'key': 'logSpecifications', 'type': '[ClientDiscoveryForLogSpecification]'},
     }
 
-    def __init__(self):
-        self.log_specifications = None
+    def __init__(self, log_specifications=None):
+        self.log_specifications = log_specifications

@@ -62,15 +62,15 @@ class AuthorizationManagementClient(object):
     :vartype config: AuthorizationManagementClientConfiguration
 
     :ivar classic_administrators: ClassicAdministrators operations
-    :vartype classic_administrators: .operations.ClassicAdministratorsOperations
+    :vartype classic_administrators: azure.mgmt.authorization.operations.ClassicAdministratorsOperations
     :ivar permissions: Permissions operations
-    :vartype permissions: .operations.PermissionsOperations
+    :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar provider_operations_metadata: ProviderOperationsMetadata operations
-    :vartype provider_operations_metadata: .operations.ProviderOperationsMetadataOperations
+    :vartype provider_operations_metadata: azure.mgmt.authorization.operations.ProviderOperationsMetadataOperations
     :ivar role_assignments: RoleAssignments operations
-    :vartype role_assignments: .operations.RoleAssignmentsOperations
+    :vartype role_assignments: azure.mgmt.authorization.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
-    :vartype role_definitions: .operations.RoleDefinitionsOperations
+    :vartype role_definitions: azure.mgmt.authorization.operations.RoleDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -61,8 +61,12 @@ class Endpoint(Resource):
      <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
     :param optimization_type: Customer can specify what scenario they want
      this CDN endpoint to optimize, e.g. Download, Media services. With this
-     information we can apply scenario driven optimization.
-    :type optimization_type: str
+     information we can apply scenario driven optimization. Possible values
+     include: 'GeneralWebDelivery', 'GeneralMediaStreaming',
+     'VideoOnDemandMediaStreaming', 'LargeFileDownload',
+     'DynamicSiteAcceleration'
+    :type optimization_type: str or :class:`OptimizationType
+     <azure.mgmt.cdn.models.OptimizationType>`
     :param geo_filters: List of rules defining user geo access within a CDN
      endpoint. Each geo filter defines an acess rule to a specified path or
      content, e.g. block APAC for path /pictures/

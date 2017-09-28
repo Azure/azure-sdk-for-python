@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SecretPaged(Paged):
     """
-    A paging container for iterating over a list of Secret object
+    A paging container for iterating over a list of :class:`Secret <azure.mgmt.devtestlabs.models.Secret>` object
     """
 
     _attribute_map = {
