@@ -18,14 +18,15 @@ class CreateUSqlJobProperties(CreateJobProperties):
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run
+    :param script: the script to run. Please note that the maximum script size
+     is 3 MB.
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str
-    :param compile_mode: Optionally enforces a specific compilation mode for
-     the job during execution. If this is not specified during submission, the
-     server will determine the optimal compilation mode. Possible values
-     include: 'Semantic', 'Full', 'SingleBox'
+    :param compile_mode: the specific compilation mode for the job used during
+     execution. If this is not specified during submission, the server will
+     determine the optimal compilation mode. Possible values include:
+     'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str or :class:`CompileMode
      <azure.mgmt.datalake.analytics.job.models.CompileMode>`
     """

@@ -70,6 +70,8 @@ class DataLakeStoreAccountStatus(Enum):
     resuming = "Resuming"
     deleting = "Deleting"
     deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
 
 
 class DataLakeStoreAccountState(Enum):
