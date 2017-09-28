@@ -17,18 +17,22 @@ class JsonWebKey(Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: Supported JsonWebKey key types (kty) for Elliptic Curve, RSA,
-     HSM, Octet. Kty is usually set to RSA. Possible values include: 'EC',
-     'RSA', 'RSA-HSM', 'oct'
+    :param kty: JsonWebKey key type (kty). Possible values include: 'EC',
+     'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
     :type kty: str or :class:`JsonWebKeyType
      <azure.keyvault.models.JsonWebKeyType>`
     :param key_ops:
     :type key_ops: list of str
+    :param crv: Elliptic curve name. For valid values, see
+     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
+     'SECP256K1'
+    :type crv: str or :class:`JsonWebKeyCurveName
+     <azure.keyvault.models.JsonWebKeyCurveName>`
     :param n: RSA modulus.
     :type n: bytes
     :param e: RSA public exponent.
     :type e: bytes
-    :param d: RSA private exponent.
+    :param d: RSA private exponent, or the D component of an EC private key.
     :type d: bytes
     :param dp: RSA private key parameter.
     :type dp: bytes
@@ -40,6 +44,10 @@ class JsonWebKey(Model):
     :type p: bytes
     :param q: RSA secret prime, with p < q.
     :type q: bytes
+    :param x: X component of an EC public key.
+    :type x: bytes
+    :param y: Y component of an EC public key.
+    :type y: bytes
     :param k: Symmetric key.
     :type k: bytes
     :param t: HSM Token, used with 'Bring Your Own Key'.
@@ -50,6 +58,7 @@ class JsonWebKey(Model):
         'kid': {'key': 'kid', 'type': 'str'},
         'kty': {'key': 'kty', 'type': 'str'},
         'key_ops': {'key': 'key_ops', 'type': '[str]'},
+        'crv': {'key': 'crv', 'type': 'str'},
         'n': {'key': 'n', 'type': 'base64'},
         'e': {'key': 'e', 'type': 'base64'},
         'd': {'key': 'd', 'type': 'base64'},
@@ -58,14 +67,17 @@ class JsonWebKey(Model):
         'qi': {'key': 'qi', 'type': 'base64'},
         'p': {'key': 'p', 'type': 'base64'},
         'q': {'key': 'q', 'type': 'base64'},
+        'x': {'key': 'x', 'type': 'base64'},
+        'y': {'key': 'y', 'type': 'base64'},
         'k': {'key': 'k', 'type': 'base64'},
         't': {'key': 'key_hsm', 'type': 'base64'},
     }
 
-    def __init__(self, kid=None, kty=None, key_ops=None, n=None, e=None, d=None, dp=None, dq=None, qi=None, p=None, q=None, k=None, t=None):
+    def __init__(self, kid=None, kty=None, key_ops=None, crv=None, n=None, e=None, d=None, dp=None, dq=None, qi=None, p=None, q=None, x=None, y=None, k=None, t=None):
         self.kid = kid
         self.kty = kty
         self.key_ops = key_ops
+        self.crv = crv
         self.n = n
         self.e = e
         self.d = d
@@ -74,5 +86,7 @@ class JsonWebKey(Model):
         self.qi = qi
         self.p = p
         self.q = q
+        self.x = x
+        self.y = y
         self.k = k
         self.t = t
