@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure ServiceFabric Client Library.
+This is the Microsoft Azure Service Fabric Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -36,7 +36,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `ServiceFabric
+For code examples, see `Service Fabric
 <https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-servicefabric.html>`__
 on readthedocs.org.
 
