@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobScheduleUpdateOptions(Model):
-    """Additional parameters for the JobSchedule_update operation.
+    """Additional parameters for update operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
