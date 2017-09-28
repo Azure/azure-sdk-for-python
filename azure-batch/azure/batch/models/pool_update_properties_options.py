@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PoolUpdatePropertiesOptions(Model):
-    """Additional parameters for the Pool_update_properties operation.
+    """Additional parameters for update_properties operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
