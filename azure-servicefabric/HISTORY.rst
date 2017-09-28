@@ -3,6 +3,13 @@
 Release History
 ===============
 
+6.0.1 (2017-09-28)
+++++++++++++++++++
+
+**Bug fix**
+
+- Fix some unexpected exceptions
+
 6.0 (2017-09-22)
 ++++++++++++++++
 

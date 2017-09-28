@@ -19,7 +19,7 @@ except ImportError:
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-servicefabric"
-PACKAGE_PPRINT_NAME = "ServiceFabric"
+PACKAGE_PPRINT_NAME = "Service Fabric"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -61,7 +61,7 @@ setup(
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -76,10 +76,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure~=0.4.7',
-        'azure-common~=1.1.5',
+        'msrest~=0.4.11',
+        'azure-common~=1.1',
     ],
     cmdclass=cmdclass
 )
