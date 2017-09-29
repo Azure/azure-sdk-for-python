@@ -308,7 +308,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
             self.client.get_key(key_id.vault, key_id.name, '')
             self.fail('Get should fail')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
     @sharedvault
@@ -614,7 +614,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         try:
             self.client.get_secret(secret_id.vault, secret_id.name, '')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
     @sharedvault
@@ -892,7 +892,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             self.client.get_certificate(cert_id.vault, cert_id.name, '')
             self.fail('Get should fail')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
     @sharedvault
@@ -997,7 +997,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             self.client.get_certificate_issuer(vault_uri, issuer_name)
             self.fail('Get should fail')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
     @sharedvault
@@ -1073,7 +1073,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             self.client.get_certificate_operation(vault_uri, cert_name)
             self.fail('Get should fail')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
         # delete cancelled certificate operation
@@ -1106,7 +1106,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             contacts = self.client.get_certificate_contacts(vault_uri)
             self.fail('Get should fail')
         except Exception as ex:
-            if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
+            if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
                 raise ex
 
     @sharedvault
