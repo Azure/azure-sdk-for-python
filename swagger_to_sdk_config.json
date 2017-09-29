@@ -41,7 +41,7 @@
         "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-billing/azure/mgmt/billing",
-      "build_dir": "azure-mgmt-billing",
+      "build_dir": "azure-mgmt-billing"
     },
     "cdn": {
       "markdown": "specification/cdn/resource-manager/readme.md",
