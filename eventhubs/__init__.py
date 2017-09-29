@@ -206,6 +206,11 @@ class EventData(object):
         """)
 
     @property
+    def properties(self):
+        """Application defined properties (dict)."""
+        return self.message.properties
+
+    @property
     def body(self):
         """Return the body of the event data object."""
         return self.message.body
