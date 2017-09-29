@@ -42,15 +42,17 @@ class ClientHandler(Handler):
         self.on_start()
 
     def stop(self):
+        self.on_stop()
         if self.link:
             self.link.close()
-        self.on_stop()
+            self.link.free()
+            self.link = None
 
     def _get_link_name(self):
-        return "%s-%d" % (self.name, self.iteration)
+        return "%s:%d" % (self.name, self.iteration)
 
     def on_start(self):
-        pass
+      assert False, "Subclass must override this!"
 
     def on_stop(self):
         pass
@@ -58,17 +60,21 @@ class ClientHandler(Handler):
     def on_link_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.link):
             return DELEGATED
-        event.link.close()
+        self.link.close()
+        self.link.free()
+        self.link = None
         condition = event.link.remote_condition
         if condition:
-            logging.error("%s: link detached %s:%s ref:%s",
+            logging.error("%s: link detached name:%s ref:%s %s:%s",
                           event.connection.container,
+                          event.link.name,
                           condition.name,
-                          condition.description,
-                          event.connection.remote_container)
+                          event.connection.remote_container,
+                          condition.description)
         else:
-            logging.error("%s: link detached ref:%s",
+            logging.error("%s: link detached name=%s ref:%s",
                           event.connection.container,
+                          event.link.name,
                           event.connection.remote_container)
         if condition and condition.name in self.fatal_conditions:
             event.connection.close()
@@ -80,7 +86,7 @@ class ClientHandler(Handler):
 
 class ReceiverHandler(ClientHandler):
     def __init__(self, handler, source, factory, selector=None, prefetch=300):
-        super(ReceiverHandler, self).__init__("receiver")
+        super(ReceiverHandler, self).__init__("recv")
         self.handler = handler
         self.source = source
         self.factory = factory
@@ -108,19 +114,21 @@ class ReceiverHandler(ClientHandler):
         self.offset = _message.annotations["x-opt-offset"]
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. entity=%s offset=%s",
+        logging.info("%s: link local open. name=%s entity=%s offset=%s",
                      event.connection.container,
+                     event.link.name,
                      self.source,
                      self.selector.filter_set["selector"].value)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. entity=%s",
+        logging.info("%s: link remote open. name=%s entity=%s",
                      event.connection.container,
+                     event.link.name,
                      self.source)
 
 class SenderHandler(ClientHandler):
     def __init__(self, partition=None):
-        super(SenderHandler, self).__init__("sender")
+        super(SenderHandler, self).__init__("send")
         self.partition = partition
         self.handlers = [OutgoingMessageHandler(False, self)]
         self.messages = Queue.Queue()

@@ -102,37 +102,69 @@ class EventHubClient(Container):
         logging.info("%s: session remote open", self.container_id)
 
     def on_connection_remote_close(self, event):
-        if EndpointStateHandler.is_local_closed(event.connection):
+        if EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
-        condition = event.connection.remote_condition
+        condition = self.shared_connection.remote_condition
         if condition:
-            logging.error("%s: connection closed by peer %s:%s %s", self.container_id, condition.name, condition.description, event.connection.remote_container)
+            logging.error("%s: connection closed by peer %s:%s %s",
+                          self.container_id,
+                          condition.name,
+                          condition.description,
+                          self.shared_connection.remote_container)
         else:
-            logging.error("%s: connection closed by peer %s", self.container_id, event.connection.remote_container)
-        if self.shared_session:
-            self.shared_session.close()
-            self.shared_session = None
-        event.connection.close()
-        self.shared_connection = None
-        self.schedule(3.0, self)
+            logging.error("%s: connection closed by peer %s",
+                          self.container_id,
+                          self.shared_connection.remote_container)
+        self._free_clients()
+        self._free_session()
+        self._free_connection()
+        self.on_reactor_init(None)
 
     def on_session_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.session):
             return DELEGATED
-        event.session.close()
-        self.shared_session = None
-        condition = event.session.remote_condition
+        condition = self.shared_session.remote_condition
         if condition:
-            logging.error("%s: session close %s:%s %s", self.container_id, condition.name, condition.description, event.connection.remote_container)
+            logging.error("%s: session close %s:%s %s",
+                          self.container_id,
+                          condition.name,
+                          condition.description,
+                          self.shared_connection.remote_container)
         else:
-            logging.error("%s, session close %s", self.container_id, event.connection.remote_container)
+            logging.error("%s, session close %s",
+                          self.container_id,
+                          self.shared_connection.remote_container)
+        self._free_clients()
+        self._free_session()
         self.schedule(3.0, self)
 
-    #def on_transport_closed(self, event):
-    #    pass
+    def on_transport_closed(self, event):
+        logging.error("%s: transport close", self.container_id)
+        if self.shared_connection and self.shared_connection.__eq__(event.connection):
+            self._free_clients()
+            self._free_session()
+            self._free_connection()
+            self.on_reactor_init(None)
 
     def on_timer_task(self, event):
         self.on_reactor_init(None)
+
+    def _free_connection(self):
+        if self.shared_connection:
+            self.shared_connection.__delattr__("_session_policy")
+            self.shared_connection.close()
+            self.shared_connection.free()
+            self.shared_connection = None
+
+    def _free_session(self):
+        if self.shared_session:
+            self.shared_session.close()
+            self.shared_session.free()
+            self.shared_session = None
+
+    def _free_clients(self):
+        for client in self.clients:
+            client.stop()
 
 class EventData(object):
     """
@@ -172,6 +204,11 @@ class EventData(object):
     partition_key = property(_get_partition_key, _set_partition_key, doc="""
         Gets or sets the partition key of the event data object.
         """)
+
+    @property
+    def body(self):
+        """Return the body of the event data object."""
+        return self.message.body
 
     @classmethod
     def create(cls, message):
