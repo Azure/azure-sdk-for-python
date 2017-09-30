@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class IotHubSkuDescriptionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`IotHubSkuDescription <azure.mgmt.iothub.models.IotHubSkuDescription>` object
+class CertificateBodyDescription(Model):
+    """The JSON-serialized X509 Certificate.
+
+    :param certificate: base-64 representation of the X509 leaf certificate
+     .cer file or just .pem file content.
+    :type certificate: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[IotHubSkuDescription]'}
+        'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(IotHubSkuDescriptionPaged, self).__init__(*args, **kwargs)
+    def __init__(self, certificate=None):
+        self.certificate = certificate
