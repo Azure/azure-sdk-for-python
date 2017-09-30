@@ -117,7 +117,7 @@ class EventHubClient(Container):
                           self.shared_connection.remote_container)
         self._free_clients()
         self._free_session()
-        self._free_connection()
+        self._free_connection(True)
         self.on_reactor_init(None)
 
     def on_session_remote_close(self, event):
@@ -143,16 +143,20 @@ class EventHubClient(Container):
         if self.shared_connection and self.shared_connection.__eq__(event.connection):
             self._free_clients()
             self._free_session()
-            self._free_connection()
+            self._free_connection(False)
             self.on_reactor_init(None)
 
     def on_timer_task(self, event):
         self.on_reactor_init(None)
 
-    def _free_connection(self):
+    def _free_connection(self, close_transport):
         if self.shared_connection:
             self.shared_connection.__delattr__("_session_policy")
             self.shared_connection.close()
+            if close_transport:
+                _transport = self.shared_connection.transport
+                _transport.unbind()
+                _transport.close_tail()
             self.shared_connection.free()
             self.shared_connection = None
 
