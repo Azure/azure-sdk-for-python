@@ -54,7 +54,7 @@ class IotHubProperties(Model):
     :param cloud_to_device:
     :type cloud_to_device: :class:`CloudToDeviceProperties
      <azure.mgmt.iothub.models.CloudToDeviceProperties>`
-    :param comments: Comments.
+    :param comments: IoT hub comments.
     :type comments: str
     :param operations_monitoring_properties:
     :type operations_monitoring_properties:

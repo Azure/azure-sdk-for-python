@@ -13,7 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.iot_hub_resource_operations import IotHubResourceOperations
+from .operations.certificates_operations import CertificatesOperations
 from . import models
 
 
@@ -27,11 +29,18 @@ class IotHubClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group that contains
+     the IoT hub.
+    :type resource_group_name: str
+    :param resource_name: The name of the IoT hub.
+    :type resource_name: str
+    :param certificate_name: The name of the certificate
+    :type certificate_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, resource_name, certificate_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -39,6 +48,18 @@ class IotHubClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if not isinstance(resource_group_name, str):
+            raise TypeError("Parameter 'resource_group_name' must be str.")
+        if resource_name is None:
+            raise ValueError("Parameter 'resource_name' must not be None.")
+        if not isinstance(resource_name, str):
+            raise TypeError("Parameter 'resource_name' must be str.")
+        if certificate_name is None:
+            raise ValueError("Parameter 'certificate_name' must not be None.")
+        if not isinstance(certificate_name, str):
+            raise TypeError("Parameter 'certificate_name' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -49,6 +70,9 @@ class IotHubClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.resource_name = resource_name
+        self.certificate_name = certificate_name
 
 
 class IotHubClient(object):
@@ -57,27 +81,42 @@ class IotHubClient(object):
     :ivar config: Configuration for client.
     :vartype config: IotHubClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.iothub.operations.Operations
     :ivar iot_hub_resource: IotHubResource operations
     :vartype iot_hub_resource: azure.mgmt.iothub.operations.IotHubResourceOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.iothub.operations.CertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group that contains
+     the IoT hub.
+    :type resource_group_name: str
+    :param resource_name: The name of the IoT hub.
+    :type resource_name: str
+    :param certificate_name: The name of the certificate
+    :type certificate_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, resource_name, certificate_name, base_url=None):
 
-        self.config = IotHubClientConfiguration(credentials, subscription_id, base_url)
+        self.config = IotHubClientConfiguration(credentials, subscription_id, resource_group_name, resource_name, certificate_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-01-19'
+        self.api_version = '2017-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.iot_hub_resource = IotHubResourceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
