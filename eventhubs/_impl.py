@@ -186,6 +186,22 @@ class SenderHandler(ClientHandler):
     def on_rejected(self, event):
         pass
 
+class SessionPolicy(object):
+    def __init__(self):
+        self.shared_session = None
+
+    def session(self, context):
+        if not self.shared_session:
+            self.shared_session = context.session()
+            self.shared_session.open()
+        return self.shared_session
+
+    def free(self):
+        if self.shared_session:
+            self.shared_session.close()
+            self.shared_session.free()
+            self.shared_session = None        
+    
 class OffsetUtil(object):
     @classmethod
     def selector(cls, value, inclusive=False):

@@ -22,7 +22,7 @@ from proton.reactor import dispatch, Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from eventhubs._impl import ReceiverHandler, OffsetUtil
+from eventhubs._impl import ReceiverHandler, OffsetUtil, SessionPolicy
 
 class EventHubClient(Container):
     """
@@ -42,7 +42,7 @@ class EventHubClient(Container):
             self.container_id = "ehpy-" + str(generate_uuid())[:8]
             self.address = Url(address)
             self.shared_connection = None
-            self.shared_session = None
+            self.session_policy = None
             self.clients = []
 
     def subscribe(self, handler, consumer_group, partition, offset=None, prefetch=300):
@@ -74,17 +74,12 @@ class EventHubClient(Container):
         """
         raise NotImplementedError("Publish is under development")
 
-    def session(self, context):
-        if not self.shared_session:
-            self.shared_session = context.session()
-            self.shared_session.open()
-        return self.shared_session
-
     def on_reactor_init(self, event):
         if not self.shared_connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
             self.shared_connection = self.connect(self.address, reconnect=False, handler=self)
-            self.shared_connection.__setattr__("_session_policy", self)
+            self.session_policy = SessionPolicy()
+            self.shared_connection.__setattr__("_session_policy", self.session_policy)
         for client in self.clients:
             client.start(self)
 
@@ -125,7 +120,7 @@ class EventHubClient(Container):
     def on_session_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.session):
             return DELEGATED
-        _condition = self.shared_session.remote_condition
+        _condition = event.session.remote_condition
         if _condition:
             logging.error("%s: session close %s:%s %s",
                           self.container_id,
@@ -141,20 +136,20 @@ class EventHubClient(Container):
         self.schedule(2.0, self)
 
     def on_transport_closed(self, event):
+        if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
+            return
         logging.error("%s: transport close", self.container_id)
-        if self.shared_connection is not None and self.shared_connection.__eq__(event.connection):
-            self._free_clients()
-            self._free_session()
-            self._free_connection(False)
-            self.on_reactor_init(None)
+        self._free_clients()
+        self._free_session()
+        self._free_connection(False)
+        self.on_reactor_init(None)
 
     def on_timer_task(self, event):
-        if self.shared_session is None:
+        if self.session_policy is None:
             self.on_reactor_init(None)
 
     def _free_connection(self, close_transport):
         if self.shared_connection:
-            self.shared_connection.__delattr__("_session_policy")
             self.shared_connection.close()
             if close_transport:
                 _transport = self.shared_connection.transport
@@ -164,10 +159,9 @@ class EventHubClient(Container):
             self.shared_connection = None
 
     def _free_session(self):
-        if self.shared_session:
-            self.shared_session.close()
-            self.shared_session.free()
-            self.shared_session = None
+        if self.session_policy:
+            self.session_policy.free()
+            self.session_policy = None
 
     def _free_clients(self):
         for client in self.clients:
