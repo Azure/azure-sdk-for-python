@@ -106,12 +106,12 @@ class EventHubClient(Container):
     def on_connection_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
-        condition = self.shared_connection.remote_condition
-        if condition:
+        _condition = self.shared_connection.remote_condition
+        if _condition:
             logging.error("%s: connection closed by peer %s:%s %s",
                           self.container_id,
-                          condition.name,
-                          condition.description,
+                          _condition.name,
+                          _condition.description,
                           self.shared_connection.remote_container)
         else:
             logging.error("%s: connection closed by peer %s",
@@ -125,12 +125,12 @@ class EventHubClient(Container):
     def on_session_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.session):
             return DELEGATED
-        condition = self.shared_session.remote_condition
-        if condition:
+        _condition = self.shared_session.remote_condition
+        if _condition:
             logging.error("%s: session close %s:%s %s",
                           self.container_id,
-                          condition.name,
-                          condition.description,
+                          _condition.name,
+                          _condition.description,
                           self.shared_connection.remote_container)
         else:
             logging.error("%s, session close %s",
@@ -138,18 +138,19 @@ class EventHubClient(Container):
                           self.shared_connection.remote_container)
         self._free_clients()
         self._free_session()
-        self.schedule(3.0, self)
+        self.schedule(2.0, self)
 
     def on_transport_closed(self, event):
         logging.error("%s: transport close", self.container_id)
-        if self.shared_connection and self.shared_connection.__eq__(event.connection):
+        if self.shared_connection is not None and self.shared_connection.__eq__(event.connection):
             self._free_clients()
             self._free_session()
             self._free_connection(False)
             self.on_reactor_init(None)
 
     def on_timer_task(self, event):
-        self.on_reactor_init(None)
+        if self.shared_session is None:
+            self.on_reactor_init(None)
 
     def _free_connection(self, close_transport):
         if self.shared_connection:

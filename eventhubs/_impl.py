@@ -52,37 +52,40 @@ class ClientHandler(Handler):
         return "%s:%d" % (self.name, self.iteration)
 
     def on_start(self):
-      assert False, "Subclass must override this!"
+        assert False, "Subclass must override this!"
 
     def on_stop(self):
         pass
 
     def on_link_remote_close(self, event):
-        if EndpointStateHandler.is_local_closed(event.link):
+        _link = event.link
+        if EndpointStateHandler.is_local_closed(_link):
             return DELEGATED
-        self.link.close()
-        self.link.free()
-        self.link = None
-        condition = event.link.remote_condition
-        if condition:
+        _link.close()
+        _condition = _link.remote_condition
+        _connection = event.connection
+        if _condition:
             logging.error("%s: link detached name:%s ref:%s %s:%s",
-                          event.connection.container,
-                          event.link.name,
-                          condition.name,
-                          event.connection.remote_container,
-                          condition.description)
+                          _connection.container,
+                          _link.name,
+                          _condition.name,
+                          _connection.remote_container,
+                          _condition.description)
         else:
             logging.error("%s: link detached name=%s ref:%s",
-                          event.connection.container,
-                          event.link.name,
-                          event.connection.remote_container)
-        if condition and condition.name in self.fatal_conditions:
-            event.connection.close()
-        else:
-            event.reactor.schedule(3.0, self)
+                          _connection.container,
+                          _link.name,
+                          _connection.remote_container)
+        _link.free()
+        if _condition and _condition.name in self.fatal_conditions:
+            _connection.close()
+        elif _link.__eq__(self.link):
+            self.link = None
+            event.reactor.schedule(2.0, self)
 
     def on_timer_task(self, event):
-        self.start(self.container)
+        if self.link is None:
+            self.start(self.container)
 
 class ReceiverHandler(ClientHandler):
     def __init__(self, handler, source, factory, selector=None, prefetch=300):
@@ -136,16 +139,16 @@ class SenderHandler(ClientHandler):
         self.injector = None
 
     def _get_target(self):
-        target = self.container.address.path
+        _target = self.container.address.path
         if self.partition:
-            target += "/Partitions/" + self.partition
-        return target
+            _target += "/Partitions/" + self.partition
+        return _target
 
     def send(self, message):
         self.injector.trigger(ClientEvent(self, "message", subject=message))
 
     def on_start(self):
-        if not self.injector:
+        if self.injector is None:
             self.injector = EventInjector()
             self.container.selectable(self.injector)
         self.link = self.container.create_sender(
@@ -155,7 +158,7 @@ class SenderHandler(ClientHandler):
             handler=self)
 
     def on_stop(self):
-        if self.injector:
+        if self.injector is not None:
             self.injector.close()
 
     def on_link_local_open(self, event):
