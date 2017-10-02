@@ -8,10 +8,11 @@ Setup the eventhubs module.
 
 """
 
+import eventhubs
 from setuptools import setup
 
 setup(name='eventhubs',
-      version='0.1.0',
+      version=eventhubs.__version__,
       description='Python client library for Azure Event Hubs',
       url='http://github.com/azure/azure-event-hubs-python',
       author='microsoft',

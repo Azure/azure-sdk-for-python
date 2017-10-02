@@ -8,6 +8,8 @@ The module provides a client to connect to Azure Event Hubs.
 
 """
 
+__version__ = "0.1.0"
+
 # pylint: disable=line-too-long
 # pylint: disable=W0613
 # pylint: disable=W0702
