@@ -16,7 +16,7 @@ __version__ = "0.1.0"
 
 import logging
 import datetime
-
+import sys
 from proton import DELEGATED, Url, timestamp, generate_uuid, Message
 from proton.reactor import dispatch, Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
@@ -77,7 +77,12 @@ class EventHubClient(Container):
     def on_reactor_init(self, event):
         if not self.shared_connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
-            self.shared_connection = self.connect(self.address, reconnect=False, handler=self)
+            _properties = {}
+            _properties["product"] = "eventhubs.python"
+            _properties["version"] = __version__
+            _properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+            _properties["platform"] = sys.platform
+            self.shared_connection = self.connect(self.address, reconnect=False, handler=self, properties=_properties)
             self.session_policy = SessionPolicy()
             self.shared_connection.__setattr__("_session_policy", self.session_policy)
         for client in self.clients:
