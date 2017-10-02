@@ -11,6 +11,8 @@ An example to show receiving events from an Event Hub partition.
 
 import sys
 import logging
+import datetime
+from proton import timestamp
 from eventhubs import EventHubClient, Offset
 
 class MyReceiver(object):
@@ -50,7 +52,9 @@ try:
                "/"
                "myeventhub")
     CONSUMER_GROUP = "$default"
-    OFFSET = Offset("-1")
+#    OFFSET = Offset("-1")
+#    OFFSET = Offset(datetime.datetime.utcnow())
+    OFFSET = Offset(timestamp(1506968696002))
 
     EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
         .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \

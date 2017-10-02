@@ -13,19 +13,19 @@ Internal implementations.
 # pylint: disable=W0613
 # pylint: disable=W0702
 
-try:
-    import Queue
-except:
-    import queue as Queue
-
 import logging
 
 import datetime
-from proton import DELEGATED, generate_uuid, timestamp
+from proton import DELEGATED, generate_uuid, timestamp, utf82unicode
 from proton.reactor import EventInjector, ApplicationEvent, Selector
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
+
+try:
+    import Queue
+except:
+    import queue as Queue
 
 class ClientHandler(Handler):
     def __init__(self, prefix):
@@ -186,18 +186,15 @@ class SenderHandler(ClientHandler):
 class OffsetUtil(object):
     @classmethod
     def selector(cls, value, inclusive=False):
-        selector = None
         if isinstance(value, datetime.datetime):
             _epoch = datetime.datetime.utcfromtimestamp(0)
-            _ms = long((value - _epoch).total_seconds() * 1000.0)
+            _ms = timestamp((value - _epoch).total_seconds() * 1000.0)
             return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(_ms) + "'")
         elif isinstance(value, timestamp):
             return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(value) + "'")
-        elif isinstance(value, str):
-            _op = ">=" if inclusive else ">"
-            return Selector(u"amqp.annotation.x-opt-offset " + _op + " '" + value + "'")
         else:
-            raise TypeError("Not a valid type")
+            _op = ">=" if inclusive else ">"
+            return Selector(u"amqp.annotation.x-opt-offset " + _op + " '" + utf82unicode(value) + "'")
 
 
 class ClientEvent(ApplicationEvent):
