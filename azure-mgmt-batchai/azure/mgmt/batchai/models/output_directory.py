@@ -12,19 +12,14 @@ class OutputDirectory(Model):
     """Output directory for the job.
 
     :param id: The name for the output directory. It will be available for the
-     job as an environment variable under AZ_LEARNING_OUTPUT_id.
+     job as an environment variable under AZ_BATCHAI_OUTPUT_id.
     :type id: str
     :param path_prefix: The prefix path where the output directory will be
      created. NOTE: This is an absolute path to prefix. E.g.
-     $AZ_LEARNING_MOUNT_ROOT/MyNFS/MyLearningLogs.
+     $AZ_BATCHAI_MOUNT_ROOT/MyNFS/MyLogs.
     :type path_prefix: str
-    :param path_suffix: The path of the directory to create. The learning
-     system will create the following directory on user's behalf:
-     PathPrefix/JobID/jobVersion/directoryName, where the JobID is a unique
-     name created by the Batch AI Service and jobVersion is the version of the
-     job. The Batch AI Service will also populate a file under this the
-     PathPrefix/JobID/jobVersion directory, which maps the directory to a job
-     ARM resource ID.
+    :param path_suffix: The suffix path where the output directory will be
+     created. The suffix path where the output directory will be created.
     :type path_suffix: str
     :param type: An enumeration, which specifies the type of job output
      directory. Default value is Custom. The possible values are Model, Logs,

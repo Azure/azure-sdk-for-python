@@ -20,7 +20,7 @@ class FileServerReference(Model):
     :type source_directory: str
     :param relative_mount_path: Specifies the relative path on the compute
      node where the file server will be mounted. Note that all file shares will
-     be mounted under $AZ_LEARNING_MOUNT_ROOT location.
+     be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
     :param mount_options: Specifies the various mount options required for
      mounting the file server.

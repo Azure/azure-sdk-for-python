@@ -74,13 +74,13 @@ class FileServerTestCase(AzureMgmtTestCase):
         # Execute publishing tasks on the first cluster
         job1 = helpers.create_custom_job(self.client, resource_group.name, location, cluster1.id,
                                          'host_publisher', 1,
-                                         'echo hi from host > $AZ_LEARNING_MOUNT_ROOT/nfs/host.txt')
+                                         'echo hi from host > $AZ_BATCHAI_MOUNT_ROOT/nfs/host.txt')
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job1.name, helpers.MINUTE),
             models.ExecutionState.succeeded)
         job2 = helpers.create_custom_job(self.client, resource_group.name, location, cluster1.id,
                                          'container_publisher', 1,
-                                         'echo hi from container >> $AZ_LEARNING_MOUNT_ROOT/nfs/container.txt',
+                                         'echo hi from container >> $AZ_BATCHAI_MOUNT_ROOT/nfs/container.txt',
                                          container=models.ContainerSettings(models.ImageSourceRegistry(image="ubuntu")))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job2.name, helpers.MINUTE),
@@ -88,8 +88,8 @@ class FileServerTestCase(AzureMgmtTestCase):
 
         # Execute consumer task on the second cluster
         job3 = helpers.create_custom_job(self.client, resource_group.name, location, cluster2.id, 'consumer', 1,
-                                         'cat $AZ_LEARNING_MOUNT_ROOT/nfs/host.txt; '
-                                         'cat $AZ_LEARNING_MOUNT_ROOT/nfs/container.txt')
+                                         'cat $AZ_BATCHAI_MOUNT_ROOT/nfs/host.txt; '
+                                         'cat $AZ_BATCHAI_MOUNT_ROOT/nfs/container.txt')
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job3.name, helpers.MINUTE),
             models.ExecutionState.succeeded)

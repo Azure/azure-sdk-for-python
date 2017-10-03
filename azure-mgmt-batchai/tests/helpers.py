@@ -34,10 +34,10 @@ AZURE_FILES_NAME = 'share'
 AZURE_FILES_MOUNTING_PATH = 'azfiles'
 
 # Job's output directory configuration.
-JOB_OUTPUT_DIRECTORY_PATH = '$AZ_LEARNING_MOUNT_ROOT/{0}/'.format(AZURE_FILES_MOUNTING_PATH)
+JOB_OUTPUT_DIRECTORY_PATH = '$AZ_BATCHAI_MOUNT_ROOT/{0}/'.format(AZURE_FILES_MOUNTING_PATH)
 JOB_OUTPUT_DIRECTORY_ID = 'OUTPUTS'
 # Environment variable used by jobs to access the output directory.
-JOB_OUTPUT_DIRECTORY_PATH_ENV = '$AZ_LEARNING_OUTPUT_{0}'.format(JOB_OUTPUT_DIRECTORY_ID)
+JOB_OUTPUT_DIRECTORY_PATH_ENV = '$AZ_BATCHAI_OUTPUT_{0}'.format(JOB_OUTPUT_DIRECTORY_ID)
 
 # Polling interval for checking nodes allocation, jobs completion and so on.
 _POLL_INTERVAL_SEC = 20
@@ -130,7 +130,7 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
         setup_task = models.SetupTask(
             command_line=setup_task_cmd,
             environment_variables=[models.EnvironmentSetting(k, v) for k, v in setup_task_env.items()],
-            std_out_err_path_prefix='$AZ_LEARNING_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH))
+            std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH))
     return client.clusters.create(
         resource_group,
         cluster_name,
@@ -188,14 +188,14 @@ def create_custom_job(client, resource_group, location, cluster_id, job_name, no
             location=location,
             cluster=models.ResourceId(cluster_id),
             node_count=nodes,
-            std_out_err_path_prefix='$AZ_LEARNING_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
+            std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
             output_directories=[models.OutputDirectory(
                 id=JOB_OUTPUT_DIRECTORY_ID,
                 path_prefix=JOB_OUTPUT_DIRECTORY_PATH,
                 path_suffix="files")],
             input_directories=[models.InputDirectory(
                 id='INPUT',
-                path='$AZ_LEARNING_MOUNT_ROOT/{0}/input'.format(AZURE_FILES_MOUNTING_PATH))],
+                path='$AZ_BATCHAI_MOUNT_ROOT/{0}/input'.format(AZURE_FILES_MOUNTING_PATH))],
             container_settings=container,
             job_preparation=job_preparation,
             custom_toolkit_settings=models.CustomToolkitSettings(

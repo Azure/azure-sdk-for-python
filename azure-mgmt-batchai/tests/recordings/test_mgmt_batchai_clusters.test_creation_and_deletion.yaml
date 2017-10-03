@@ -531,12 +531,12 @@ interactions:
     status: {code: 200, message: OK}
 - request:
     body: 'b''{"properties": {"customToolkitSettings": {"commandLine": "echo hello
-      | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"}, "priority": 0, "inputDirectories":
-      [{"id": "INPUT", "path": "$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}], "cluster":
+      | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"}, "priority": 0, "inputDirectories":
+      [{"id": "INPUT", "path": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}], "cluster":
       {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},
       "nodeCount": 1, "outputDirectories": [{"createNew": true, "type": "custom",
-      "pathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles/", "id": "OUTPUTS", "pathSuffix":
-      "files"}], "stdOutErrPathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles"}, "location":
+      "pathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/", "id": "OUTPUTS", "pathSuffix":
+      "files"}], "stdOutErrPathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles"}, "location":
       "eastus"}'''
     headers:
       Accept: [application/json]
@@ -607,7 +607,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/host_job?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/host_job","name":"host_job","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},"nodeCount":1,"toolType":"Custom","customToolkitSettings":{"commandLine":"echo
-        hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:29.799Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:31.99Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:32:33.996Z","executionInfo":{"startTime":"2017-09-27T22:32:31.344Z","endTime":"2017-09-27T22:32:33.996Z","exitCode":0}}}'}
+        hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:29.799Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:31.99Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:32:33.996Z","executionInfo":{"startTime":"2017-09-27T22:32:31.344Z","endTime":"2017-09-27T22:32:33.996Z","exitCode":0}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1253']
@@ -638,7 +638,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/host_job?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/host_job","name":"host_job","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},"nodeCount":1,"toolType":"Custom","customToolkitSettings":{"commandLine":"echo
-        hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:29.799Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:31.99Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:32:33.996Z","executionInfo":{"startTime":"2017-09-27T22:32:31.344Z","endTime":"2017-09-27T22:32:33.996Z","exitCode":0}}}'}
+        hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:29.799Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:31.99Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:32:33.996Z","executionInfo":{"startTime":"2017-09-27T22:32:31.344Z","endTime":"2017-09-27T22:32:33.996Z","exitCode":0}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1253']
@@ -785,12 +785,12 @@ interactions:
     status: {code: 200, message: OK}
 - request:
     body: 'b''{"properties": {"customToolkitSettings": {"commandLine": "echo hello
-      | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"}, "priority": 0, "containerSettings":
+      | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"}, "priority": 0, "containerSettings":
       {"imageSourceRegistry": {"image": "ubuntu"}}, "inputDirectories": [{"id": "INPUT",
-      "path": "$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}], "cluster": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},
+      "path": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}], "cluster": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},
       "nodeCount": 1, "outputDirectories": [{"createNew": true, "type": "custom",
-      "pathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles/", "id": "OUTPUTS", "pathSuffix":
-      "files"}], "stdOutErrPathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles"}, "location":
+      "pathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/", "id": "OUTPUTS", "pathSuffix":
+      "files"}], "stdOutErrPathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles"}, "location":
       "eastus"}'''
     headers:
       Accept: [application/json]
@@ -861,7 +861,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job","name":"container_job","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},"nodeCount":1,"containerSettings":{"imageSourceRegistry":{"image":"ubuntu"}},"toolType":"Custom","customToolkitSettings":{"commandLine":"echo
-        hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Running","executionStateTransitionTime":"2017-09-27T22:32:57.367Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z"}}}'}
+        hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Running","executionStateTransitionTime":"2017-09-27T22:32:57.367Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z"}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1274']
@@ -892,7 +892,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job","name":"container_job","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},"nodeCount":1,"containerSettings":{"imageSourceRegistry":{"image":"ubuntu"}},"toolType":"Custom","customToolkitSettings":{"commandLine":"echo
-        hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Running","executionStateTransitionTime":"2017-09-27T22:32:57.367Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z"}}}'}
+        hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Running","executionStateTransitionTime":"2017-09-27T22:32:57.367Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z"}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1274']
@@ -923,7 +923,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/jobs/container_job","name":"container_job","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_creation_and_deletion4c3c15bb/providers/Microsoft.BatchAI/clusters/cluster4c3c15bb"},"nodeCount":1,"containerSettings":{"imageSourceRegistry":{"image":"ubuntu"}},"toolType":"Custom","customToolkitSettings":{"commandLine":"echo
-        hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:33:29.048Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z","endTime":"2017-09-27T22:33:29.048Z","exitCode":0}}}'}
+        hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-27T22:32:53.614Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-27T22:32:54.317Z","executionState":"Succeeded","executionStateTransitionTime":"2017-09-27T22:33:29.048Z","executionInfo":{"startTime":"2017-09-27T22:32:54.73Z","endTime":"2017-09-27T22:33:29.048Z","exitCode":0}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1326']

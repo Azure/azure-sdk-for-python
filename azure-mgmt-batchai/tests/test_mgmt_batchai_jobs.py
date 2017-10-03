@@ -125,7 +125,7 @@ class JobTestCase(AzureMgmtTestCase):
         job = self.client.jobs.get(resource_group.name, job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
-        self.assertEqual(job.execution_info.errors[0].code, 'LearningJobFailed')
+        self.assertEqual(job.execution_info.errors[0].code, 'JobFailed')
         self.client.jobs.delete(resource_group.name, job.name).result()
         self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
 
@@ -134,11 +134,11 @@ class JobTestCase(AzureMgmtTestCase):
     @helpers.ClusterPreparer()
     def test_job_preparation_host(self, resource_group, location, cluster):
         """Tests job preparation execution for a job running on a host."""
-        # create a job with job preparation which populates input data in $AZ_LEARNING_INPUT_INPUT/hi.txt
+        # create a job with job preparation which populates input data in $AZ_BATCHAI_INPUT_INPUT/hi.txt
         job = helpers.create_custom_job(
             self.client, resource_group.name, location, cluster.id, 'job', 1,
-            'cat $AZ_LEARNING_INPUT_INPUT/hi.txt',
-            'mkdir -p $AZ_LEARNING_INPUT_INPUT && echo hello | tee $AZ_LEARNING_INPUT_INPUT/hi.txt')
+            'cat $AZ_BATCHAI_INPUT_INPUT/hi.txt',
+            'mkdir -p $AZ_BATCHAI_INPUT_INPUT && echo hello | tee $AZ_BATCHAI_INPUT_INPUT/hi.txt')
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
                                             helpers.MINUTE),
@@ -157,11 +157,11 @@ class JobTestCase(AzureMgmtTestCase):
     @helpers.ClusterPreparer()
     def test_job_preparation_container(self, resource_group, location, cluster):
         """Tests job preparation execution for a job running in a container."""
-        # create a job with job preparation which populates input data in $AZ_LEARNING_INPUT_INPUT/hi.txt
+        # create a job with job preparation which populates input data in $AZ_BATCHAI_INPUT_INPUT/hi.txt
         job = helpers.create_custom_job(
             self.client, resource_group.name, location, cluster.id, 'job', 1,
-            'cat $AZ_LEARNING_INPUT_INPUT/hi.txt',
-            'mkdir -p $AZ_LEARNING_INPUT_INPUT && echo hello | tee $AZ_LEARNING_INPUT_INPUT/hi.txt',
+            'cat $AZ_BATCHAI_INPUT_INPUT/hi.txt',
+            'mkdir -p $AZ_BATCHAI_INPUT_INPUT && echo hello | tee $AZ_BATCHAI_INPUT_INPUT/hi.txt',
             container=models.ContainerSettings(models.ImageSourceRegistry('ubuntu')))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
@@ -192,7 +192,7 @@ class JobTestCase(AzureMgmtTestCase):
         job = self.client.jobs.get(resource_group.name, job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
-        self.assertEqual(job.execution_info.errors[0].code, 'LearningJobNodePreparationFailed')
+        self.assertEqual(job.execution_info.errors[0].code, 'JobNodePreparationFailed')
         print(job.serialize())
         self.client.jobs.delete(resource_group.name, job.name).result()
         self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
@@ -214,7 +214,7 @@ class JobTestCase(AzureMgmtTestCase):
         job = self.client.jobs.get(resource_group.name, job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
-        self.assertEqual(job.execution_info.errors[0].code, 'LearningJobNodePreparationFailed')
+        self.assertEqual(job.execution_info.errors[0].code, 'JobNodePreparationFailed')
         self.client.jobs.delete(resource_group.name, job.name).result()
         self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
 
