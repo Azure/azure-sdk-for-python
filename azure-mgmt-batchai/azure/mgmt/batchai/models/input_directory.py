@@ -12,9 +12,9 @@ class InputDirectory(Model):
     """Input directory for the job.
 
     :param id: The id for the input directory. It will be available for the
-     job as an environment variable under AZ_LEARNING_INPUT_id. The learning
-     service will also provide the following  environment variable:
-     AZ_LEARNING_PREV_OUTPUT_Name. The value of the variable will be populated
+     job as an environment variable under AZ_BATCHAI_INPUT_id. The service will
+     also provide the following  environment variable:
+     AZ_BATCHAI_PREV_OUTPUT_Name. The value of the variable will be populated
      if the job is being retried after a previous failure, otherwise it will be
      set to nothing.
     :type id: str

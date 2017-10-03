@@ -1,10 +1,10 @@
 interactions:
 - request:
-    body: 'b''{"location": "eastus", "properties": {"stdOutErrPathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles",
+    body: 'b''{"location": "eastus", "properties": {"stdOutErrPathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles",
       "cluster": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/clusters/cluster200514fe"},
       "nodeCount": 1, "customToolkitSettings": {"commandLine": "sleep 600"}, "inputDirectories":
-      [{"id": "INPUT", "path": "$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}], "priority":
-      0, "outputDirectories": [{"pathPrefix": "$AZ_LEARNING_MOUNT_ROOT/azfiles/",
+      [{"id": "INPUT", "path": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}], "priority":
+      0, "outputDirectories": [{"pathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles/",
       "type": "custom", "id": "OUTPUTS", "pathSuffix": "files", "createNew": true}]}}'''
     headers:
       Accept: [application/json]
@@ -75,7 +75,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning","name":"longrunning","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/clusters/cluster200514fe"},"nodeCount":1,"toolType":"Custom","customToolkitSettings":{"commandLine":"sleep
-        600"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Running","executionStateTransitionTime":"2017-09-28T02:29:56.92Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z"}}}'}
+        600"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Running","executionStateTransitionTime":"2017-09-28T02:29:56.92Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z"}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1160']
@@ -106,7 +106,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning","name":"longrunning","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/clusters/cluster200514fe"},"nodeCount":1,"toolType":"Custom","customToolkitSettings":{"commandLine":"sleep
-        600"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Running","executionStateTransitionTime":"2017-09-28T02:29:56.92Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z"}}}'}
+        600"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Running","executionStateTransitionTime":"2017-09-28T02:29:56.92Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z"}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1160']
@@ -250,7 +250,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning?api-version=2017-09-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/jobs/longrunning","name":"longrunning","type":"Microsoft.BatchAI/Jobs","properties":{"priority":0,"cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_jobs_test_running_job_termination200514fe/providers/Microsoft.BatchAI/clusters/cluster200514fe"},"nodeCount":1,"toolType":"Custom","customToolkitSettings":{"commandLine":"sleep
-        600"},"stdOutErrPathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_LEARNING_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_LEARNING_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Failed","executionStateTransitionTime":"2017-09-28T02:31:12.656Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z","endTime":"2017-09-28T02:31:12.656Z","errors":[{"code":"JobTerminate","message":"The
+        600"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","inputDirectories":[{"id":"INPUT","path":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/input"}],"outputDirectories":[{"id":"OUTPUTS","pathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles/","pathSuffix":"files","type":"Custom","createNew":true}],"constraints":{"maxWallClockTime":"P7D","maxRetryCount":0},"creationTime":"2017-09-28T02:29:52.874Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-09-28T02:29:53.903Z","executionState":"Failed","executionStateTransitionTime":"2017-09-28T02:31:12.656Z","executionInfo":{"startTime":"2017-09-28T02:29:54.19Z","endTime":"2017-09-28T02:31:12.656Z","errors":[{"code":"JobTerminate","message":"The
         specified job has been terminated by the user"}]}}}'}
     headers:
       cache-control: [no-cache]

@@ -22,7 +22,7 @@ class AzureBlobFileSystemReference(Model):
      <azure.mgmt.batchai.models.AzureStorageCredentialsInfo>`
     :param relative_mount_path: Specifies the relative path on the compute
      node where the Azure Blob file system will be mounted. Note that all blob
-     file systems will be mounted under $AZ_LEARNING_MOUNT_ROOT location.
+     file systems will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
     :param mount_options: Specifies the various mount options that can be used
      to configure Blob file system.

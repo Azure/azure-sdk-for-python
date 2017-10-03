@@ -145,7 +145,7 @@ class ClusterTestCase(AzureMgmtTestCase):
 
     def assertCanRunJob(self, resource_group, location, cluster_id, job_name, container_settings, timeout_sec):
         helpers.create_custom_job(self.client, resource_group.name, location, cluster_id, job_name, 1,
-                                  'echo hello | tee $AZ_LEARNING_OUTPUT_OUTPUTS/hi.txt', container=container_settings)
+                                  'echo hello | tee $AZ_BATCHAI_OUTPUT_OUTPUTS/hi.txt', container=container_settings)
 
         # Verify if the job finishes reasonably fast.
         self.assertEqual(

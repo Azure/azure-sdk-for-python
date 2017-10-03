@@ -15,7 +15,7 @@ class UnmanagedFileSystemReference(Model):
     :type mount_command: str
     :param relative_mount_path: Specifies the relative path on the compute
      cluster node where the file system will be mounted. Note that all file
-     shares will be mounted under $AZ_LEARNING_MOUNT_ROOT location.
+     shares will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
     """
 
