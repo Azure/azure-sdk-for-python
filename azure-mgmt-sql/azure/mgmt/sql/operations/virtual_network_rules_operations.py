@@ -108,7 +108,7 @@ class VirtualNetworkRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an existing virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -123,6 +123,9 @@ class VirtualNetworkRulesOperations(object):
         :param virtual_network_subnet_id: The ARM resource id of the virtual
          network subnet.
         :type virtual_network_subnet_id: str
+        :param ignore_missing_vnet_service_endpoint: Create firewall rule
+         before the virtual network has vnet service endpoint enabled.
+        :type ignore_missing_vnet_service_endpoint: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -137,7 +140,7 @@ class VirtualNetworkRulesOperations(object):
          or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id)
+        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=ignore_missing_vnet_service_endpoint)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{virtualNetworkRuleName}'
