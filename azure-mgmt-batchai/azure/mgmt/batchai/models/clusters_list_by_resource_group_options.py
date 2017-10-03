@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ClustersListByResourceGroupOptions(Model):
-    """Additional parameters for the Clusters_list_by_resource_group operation.
+    """Additional parameters for list_by_resource_group operation.
 
     :param filter: An OData $filter clause.
     :type filter: str
