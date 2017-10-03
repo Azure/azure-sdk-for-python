@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobsListByResourceGroupOptions(Model):
-    """Additional parameters for the Jobs_list_by_resource_group operation.
+    """Additional parameters for list_by_resource_group operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

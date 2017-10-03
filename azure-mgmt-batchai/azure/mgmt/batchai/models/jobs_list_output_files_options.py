@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobsListOutputFilesOptions(Model):
-    """Additional parameters for the Jobs_list_output_files operation.
+    """Additional parameters for list_output_files operation.
 
     :param outputdirectoryid: Id of the job output directory.
     :type outputdirectoryid: str
