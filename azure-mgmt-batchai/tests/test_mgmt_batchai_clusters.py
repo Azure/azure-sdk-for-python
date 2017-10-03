@@ -121,11 +121,10 @@ class ClusterTestCase(AzureMgmtTestCase):
 
         # Switch the cluster into auto-scale mode
         self.client.clusters.update(resource_group.name, self.cluster_name,
-                                    models.ClusterUpdateParameters(
-                                        scale_settings=models.ScaleSettings(
-                                            auto_scale=models.AutoScaleSettings(
-                                                minimum_node_count=0,
-                                                maximum_node_count=1))))
+                                    scale_settings=models.ScaleSettings(
+                                        auto_scale=models.AutoScaleSettings(
+                                            minimum_node_count=0,
+                                            maximum_node_count=1)))
 
         # Submit a task. BatchAI must increase the number of nodes to execute the task.
         self.assertCanRunJobOnHost(resource_group, location, cluster.id, timeout_sec=helpers.AUTO_SCALE_TIMEOUT_SEC)
@@ -160,8 +159,8 @@ class ClusterTestCase(AzureMgmtTestCase):
                                      {u'stdout.txt': u'hello\n', u'stderr.txt': ''})
 
     def assertCanResizeCluster(self, resource_group, target):
-        self.client.clusters.update(resource_group.name, self.cluster_name, models.ClusterUpdateParameters(
-            scale_settings=models.ScaleSettings(manual=models.ManualScaleSettings(target_node_count=target))))
+        self.client.clusters.update(resource_group.name, self.cluster_name, scale_settings=models.ScaleSettings(
+            manual=models.ManualScaleSettings(target_node_count=target)))
         self.assertEqual(
             helpers.wait_for_nodes(self.is_live, self.client, resource_group.name, self.cluster_name, target,
                                    helpers.NODE_STARTUP_TIMEOUT_SEC),
