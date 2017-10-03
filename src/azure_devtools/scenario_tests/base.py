@@ -141,7 +141,8 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
     def tearDown(self):
         os.environ = self.original_env
-        assert not [t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")]
+        assert not [t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")], \
+            "You need to call 'result' or 'wait' on all AzureOperationPoller you have created"
 
     def _process_request_recording(self, request):
         if self.disable_recording:
