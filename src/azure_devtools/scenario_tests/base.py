@@ -10,8 +10,8 @@ import inspect
 import tempfile
 import shutil
 import logging
-import six
 import threading
+import six
 import vcr
 
 from .config import TestConfig
