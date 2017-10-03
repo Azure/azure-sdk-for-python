@@ -53,6 +53,13 @@
 			"azure.mgmt.batch"
 		]
 	},
+	"azure-mgmt-batchai": {
+		"service_name": "Batch AI",
+		"category ": "Management",
+		"namespaces": [
+			"azure.mgmt.batchai"
+		]
+	},
 	"azure-mgmt-billing": {
 		"service_name": "Billing",
 		"category ": "Management",
