@@ -16,8 +16,8 @@ class AzureBlobLease(Lease):
     
     def withSourceBlob(self, azure_blob_lease, blob):
         Lease.__init__().withSource(azure_blob_lease)
-		self.Offset = azure_blob_lease.Offset
-		self.SequenceNumber = azure_blob_lease.SequenceNumber
+        self.Offset = azure_blob_lease.Offset
+        self.SequenceNumber = azure_blob_lease.SequenceNumber
 		self.Blob = blob
 		
 	# do not serialize

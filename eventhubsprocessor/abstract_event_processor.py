@@ -1,31 +1,80 @@
-# Abstract that must be extended by event processor classes.
+"""
+Author: Aaron (Ari) Bornstien
+"""
 from abc import ABC, abstractmethod
- 
+
 class AbstractEventProcessor(ABC):
- 
+    """
+    Abstract that must be extended by event processor classes.
+    """
     def __init__(self):
-        super(AbstractEventProcessor, self).__init__()
-
-    #Called by processor host to initialize the event processor.
-    @abstractmethod
-    def openAsync(context):
         pass
 
-    # Called by processor host to indicate that the event processor is being stopped.
-    # (Params) Context:Information about the partition
     @abstractmethod
-    def closeAsync(context, reason):
+    async def open_async(self, context):
+        """
+        Called by processor host to initialize the event processor.
+        """
         pass
 
-    # Called by the processor host when a batch of events has arrived. This is where the real work of the event processor is done.</para>
-    # (Params) Context: Information about the partition, Messages: The events to be processed.
     @abstractmethod
-    def processEventsAsync(context, messages):
+    async def close_async(self, context, reason):
+        """
+        Called by processor host to indicate that the event processor is being stopped.
+        (Params) Context:Information about the partition
+        """
         pass
 
-    # Called when the underlying client experiences an error while receiving. 
-    # EventProcessorHost will take care of recovering from the error and continuing to pump messages, so no action is required from
-    # (Params) Context: Information about the partition, Error: The error that occured.
     @abstractmethod
-    def processErrorAsync(context, error):
+    async def process_events_async(self, context, messages):
+        """
+        Called by the processor host when a batch of events has arrived.
+        This is where the real work of the event processor is done.
+        (Params) Context: Information about the partition, Messages: The events to be processed.
+        """
         pass
+
+    @abstractmethod
+    async def process_error_async(self, context, error):
+        """
+        Called when the underlying client experiences an error while receiving.
+        EventProcessorHost will take care of recovering from the error and
+        continuing to pump messages,so no action is required from
+        (Params) Context: Information about the partition, Error: The error that occured.
+        """
+        pass
+
+class DummyEventProcessor(AbstractEventProcessor):
+    """
+    Mock Implmentation of AbstractEventProcessor move to test mocks folder
+    """
+
+    async def open_async(self, context):
+        """
+        Called by processor host to initialize the event processor.
+        """
+        print("connection established")
+
+    async def close_async(self, context, reason):
+        """
+        Called by processor host to indicate that the event processor is being stopped.
+        (Params) Context:Information about the partition
+        """
+        print("connection closed")
+
+    async def process_events_async(self, context, messages):
+        """
+        Called by the processor host when a batch of events has arrived.
+        This is where the real work of the event processor is done.
+        (Params) Context: Information about the partition, Messages: The events to be processed.
+        """
+        print("events processed", messages)
+
+    async def process_error_async(self, context, error):
+        """
+        Called when the underlying client experiences an error while receiving.
+        EventProcessorHost will take care of recovering from the error and
+        continuing to pump messages,so no action is required from
+        (Params) Context: Information about the partition, Error: The error that occured.
+        """
+        print("Error ", error)

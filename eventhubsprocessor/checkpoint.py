@@ -1,41 +1,33 @@
- class Checkpoint:
-
+"""
+Author: Aaron (Ari) Bornstien
+"""
+class Checkpoint:
+    """
+    Contains checkpoint metadata
+    """
     def __init__(self):
-        pass
-        
-    # Creates a new Checkpoint for a particular partition ID.
-    # (Params) partitionId:The partition ID for the checkpoint
-    def withDefaults(self, partitionId):
-        self.custom(partitionId, PartitionReceiver.StartOfStream, 0)
-    
-    # Creates a new Checkpoint for a particular partition ID, with the offset and sequence number.
-    # (Params)partitionId:The partition ID for the checkpoint, offset:The offset for the last processed sequenceNumber:The sequence number of the last processed 
-    def custom(self, partitionId,  offset, sequenceNumber):
-        self.PartitionId = partitionId
-        self.Offset = offset
-        self.SequenceNumber = sequenceNumber
+        self.partition_id = None
+        self.offset = None
+        self.sequence_number = None
 
-    # Creates a new Checkpoint from an existing checkpoint.
-    # (Params) source:The existing checkpoint to copy
-    def withSource(self, checkpoint):
-        self.PartitionId = checkpoint.PartitionId
-        self.Offset = checkpoint.Offset
-        self.SequenceNumber = checkpoint.SequenceNumber
+    def with_defaults(self, partition_id):
+        """
+        Creates a new Checkpoint for a particular partition id.
+        """
+        # self.custom(partition_id, PartitionReceiver.StartOfStream, 0)
 
-    # Gets or sets the offset of the last processed
-    def getOffset(self):
-        return self.Offset
+    def custom(self, partition_id, offset, sequence_number):
+        """
+        Creates a new Checkpoint for a particular partition ID, with the offset and sequence number.
+        """
+        self.partition_id = partition_id
+        self.offset = offset
+        self.sequence_number = sequence_number
 
-    def setOffest(self, offset):
-        self.Offset = offset
-        
-    # Gets or sets the sequence number of the last processed 
-    def getSequenceNumber(self):
-        return self.SequenceNumber
-
-    def setSequenceNumber(self, sequenceNumber):
-        self.SequenceNumber = sequenceNumber
-    
-    # Gets the partition ID for the corresponding checkpoint.
-    def getPartitionId(self):
-        return self.PartitionId
+    def from_source(self, checkpoint):
+        """
+        Creates a new Checkpoint from an existing checkpoint.
+        """
+        self.partition_id = checkpoint.partition_id
+        self.offset = checkpoint.offset
+        self.sequence_number = checkpoint.sequence_number
