@@ -34,6 +34,15 @@
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch",
       "build_dir": "azure-mgmt-batch"
     },
+    "batchai.management": {
+      "markdown": "specification/batchai/resource-manager/readme.md",
+      "autorest_options": {
+        "namespace": "azure.mgmt.batchai",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-batchai/azure/mgmt/batchai",
+      "build_dir": "azure-mgmt-batchai"
+    },
     "billing": {
       "markdown": "specification/billing/resource-manager/readme.md",
       "autorest_options": {
