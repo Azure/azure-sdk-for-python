@@ -9,12 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class PushSettings(Model):
+class PushSettings(ProxyOnlyResource):
     """Push settings for the App.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param is_push_enabled: Gets or sets a flag indicating whether the Push
      endpoint is enabled.
     :type is_push_enabled: bool
@@ -35,17 +46,24 @@ class PushSettings(Model):
     """
 
     _validation = {
-        'is_push_enabled': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'tag_whitelist_json': {'key': 'tagWhitelistJson', 'type': 'str'},
-        'tags_requiring_auth': {'key': 'tagsRequiringAuth', 'type': 'str'},
-        'dynamic_tags_json': {'key': 'dynamicTagsJson', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_push_enabled': {'key': 'properties.isPushEnabled', 'type': 'bool'},
+        'tag_whitelist_json': {'key': 'properties.tagWhitelistJson', 'type': 'str'},
+        'tags_requiring_auth': {'key': 'properties.tagsRequiringAuth', 'type': 'str'},
+        'dynamic_tags_json': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, is_push_enabled, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
+    def __init__(self, kind=None, is_push_enabled=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
+        super(PushSettings, self).__init__(kind=kind)
         self.is_push_enabled = is_push_enabled
         self.tag_whitelist_json = tag_whitelist_json
         self.tags_requiring_auth = tags_requiring_auth

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class HostNameBinding(Resource):
+class HostNameBinding(ProxyOnlyResource):
     """A hostname binding object.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class HostNameBinding(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param host_name_binding_name: Hostname.
     :type host_name_binding_name: str
     :param site_name: App Service app name.
@@ -56,23 +52,23 @@ class HostNameBinding(Resource):
     :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
     :param thumbprint: SSL certificate thumbprint
     :type thumbprint: str
-    :param virtual_ip: Virtual IP address assigned to the hostname if IP based
+    :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based
      SSL is enabled.
-    :type virtual_ip: str
+    :vartype virtual_ip: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'virtual_ip': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name_binding_name': {'key': 'properties.name', 'type': 'str'},
         'site_name': {'key': 'properties.siteName', 'type': 'str'},
         'domain_id': {'key': 'properties.domainId', 'type': 'str'},
@@ -85,8 +81,8 @@ class HostNameBinding(Resource):
         'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None, virtual_ip=None):
-        super(HostNameBinding, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None):
+        super(HostNameBinding, self).__init__(kind=kind)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name
         self.domain_id = domain_id
@@ -96,4 +92,4 @@ class HostNameBinding(Resource):
         self.host_name_type = host_name_type
         self.ssl_state = ssl_state
         self.thumbprint = thumbprint
-        self.virtual_ip = virtual_ip
+        self.virtual_ip = None
