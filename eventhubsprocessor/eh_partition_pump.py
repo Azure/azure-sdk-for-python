@@ -157,14 +157,7 @@ class PartitionReceiver:
 # Test
 if __name__ == "__main__":
     # Simulate Eventhub Pump
-    ADDRESS = ("amqps://"
-    "RootManageSharedAccessKey"
-    ":"
-    "SE3o2xcXU2acPhSbm8me0VWvWE7TjP4qcFBYC4FkLmI="
-    "@"
-    "k8sworkshop.servicebus.windows.net"
-    "/"
-    "k8s")
+    ADDRESS = ("ADDRESS HERE")
     CONSUMER_GROUP = "$Default"
     HOST = EventProcessorHost(DummyEventProcessor, ADDRESS, CONSUMER_GROUP)
     LEASE = Lease()

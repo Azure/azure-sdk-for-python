@@ -54,14 +54,6 @@ try:
     #            "<mynamespace>.servicebus.windows.net"
     #            "/"
     #            "myeventhub")
-    ADDRESS = ("amqps://"
-    "RootManageSharedAccessKey"
-    ":"
-    "SE3o2xcXU2acPhSbm8me0VWvWE7TjP4qcFBYC4FkLmI="
-    "@"
-    "k8sworkshop.servicebus.windows.net"
-    "/"
-    "k8s") 
 
     CONSUMER_GROUP = "$Default"
     PARTITION = "2"
