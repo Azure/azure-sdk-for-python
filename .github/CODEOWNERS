@@ -5,6 +5,7 @@
 /azure-batch/ @annatisch @matthchr
 /azure-keyvault/ @schaabs
 /azure-mgmt-batch/ @annatisch @matthchr
+/azure-mgmt-batchai/ @AlexanderYukhanov
 /azure-mgmt-cdn/ @tjprescott
 /azure-mgmt-containerregistry/ @djyou 
 /azure-mgmt-cosmosdb/ @dmakwana
