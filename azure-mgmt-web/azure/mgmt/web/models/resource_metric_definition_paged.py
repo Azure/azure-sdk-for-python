@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ResourceMetricDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of ResourceMetricDefinition object
+    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.models.ResourceMetricDefinition>` object
     """
 
     _attribute_map = {

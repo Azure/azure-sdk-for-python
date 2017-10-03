@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SitePhpErrorLogFlag(Resource):
+class SitePhpErrorLogFlag(ProxyOnlyResource):
     """Used for getting PHP error logging flag.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class SitePhpErrorLogFlag(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param local_log_errors: Local log_errors setting.
     :type local_log_errors: str
     :param master_log_errors: Master log_errors setting.
@@ -42,24 +38,23 @@ class SitePhpErrorLogFlag(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'local_log_errors': {'key': 'properties.localLogErrors', 'type': 'str'},
         'master_log_errors': {'key': 'properties.masterLogErrors', 'type': 'str'},
         'local_log_errors_max_length': {'key': 'properties.localLogErrorsMaxLength', 'type': 'str'},
         'master_log_errors_max_length': {'key': 'properties.masterLogErrorsMaxLength', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, local_log_errors=None, master_log_errors=None, local_log_errors_max_length=None, master_log_errors_max_length=None):
-        super(SitePhpErrorLogFlag, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, local_log_errors=None, master_log_errors=None, local_log_errors_max_length=None, master_log_errors_max_length=None):
+        super(SitePhpErrorLogFlag, self).__init__(kind=kind)
         self.local_log_errors = local_log_errors
         self.master_log_errors = master_log_errors
         self.local_log_errors_max_length = local_log_errors_max_length
