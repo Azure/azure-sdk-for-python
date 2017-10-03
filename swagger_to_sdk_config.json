@@ -176,7 +176,7 @@
       "markdown": "specification/datafactory/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.datafactory",
-        "package-version": "0.2.0"
+        "package-version": "0.2.1"
       },
       "output_dir": "azure-mgmt-datafactory/azure/mgmt/datafactory",
       "build_dir": "azure-mgmt-datafactory"
