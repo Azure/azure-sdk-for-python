@@ -11,6 +11,7 @@ import tempfile
 import shutil
 import logging
 import six
+import threading
 import vcr
 
 from .config import TestConfig
@@ -140,6 +141,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
     def tearDown(self):
         os.environ = self.original_env
+        assert not [t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")]
 
     def _process_request_recording(self, request):
         if self.disable_recording:
