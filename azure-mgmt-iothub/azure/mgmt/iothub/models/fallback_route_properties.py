@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class FallbackRouteProperties(Model):
-    """The properties related to the fallback route based on which the IoT hub
+    """The properties of the fallback route. IoT Hub uses these properties when it
     routes messages to the fallback endpoint.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar source: The source to which the routing rule is to be applied to.
-     e.g. DeviceMessages. Default value: "DeviceMessages" .
+     For example, DeviceMessages. Default value: "DeviceMessages" .
     :vartype source: str
     :param condition: The condition which is evaluated in order to apply the
      fallback route. If the condition is not provided it will evaluate to true
@@ -30,8 +30,7 @@ class FallbackRouteProperties(Model):
     :param endpoint_names: The list of endpoints to which the messages that
      satisfy the condition are routed to. Currently only 1 endpoint is allowed.
     :type endpoint_names: list of str
-    :param is_enabled: Used to specify whether the fallback route is enabled
-     or not.
+    :param is_enabled: Used to specify whether the fallback route is enabled.
     :type is_enabled: bool
     """
 

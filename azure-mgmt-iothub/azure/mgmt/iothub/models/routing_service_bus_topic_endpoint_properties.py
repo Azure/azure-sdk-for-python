@@ -18,9 +18,9 @@ class RoutingServiceBusTopicEndpointProperties(Model):
     :param connection_string: The connection string of the service bus topic
      endpoint.
     :type connection_string: str
-    :param name: The name of the service bus topic endpoint. The name can only
+    :param name: The name that identifies this endpoint. The name can only
      include alphanumeric characters, periods, underscores, hyphens and has a
-     maximum length of 64 characters. The following names are reserved;
+     maximum length of 64 characters. The following names are reserved:
      events, operationsMonitoringEvents, fileNotifications, $default. Endpoint
      names must be unique across endpoint types.  The name need not be the same
      as the actual topic name.
@@ -35,7 +35,7 @@ class RoutingServiceBusTopicEndpointProperties(Model):
 
     _validation = {
         'connection_string': {'required': True},
-        'name': {'required': True, 'pattern': '^[A-Za-z0-9-._]{1,64}$'},
+        'name': {'required': True, 'pattern': r'^[A-Za-z0-9-._]{1,64}$'},
     }
 
     _attribute_map = {
