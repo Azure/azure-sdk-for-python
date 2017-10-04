@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -23,7 +23,7 @@ class IotHubResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-01-19".
+    :ivar api_version: The version of the API. Constant value: "2017-07-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class IotHubResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-01-19"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
@@ -51,10 +51,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`IotHubDescription
+         <azure.mgmt.iothub.models.IotHubDescription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.IotHubDescription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -100,7 +103,7 @@ class IotHubResourceOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, iot_hub_description, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, iot_hub_description, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Create or update the metadata of an IoT hub.
 
         Create or update the metadata of an Iot hub. The usual pattern to
@@ -111,21 +114,27 @@ class IotHubResourceOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to create or update.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security
          metadata.
         :type iot_hub_description: :class:`IotHubDescription
          <azure.mgmt.iothub.models.IotHubDescription>`
+        :param if_match: ETag of the IoT Hub. Do not specify for creating a
+         brand new IoT Hub. Required to update an existing IoT Hub.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
+        :return:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.IotHubDescription>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -149,6 +158,8 @@ class IotHubResourceOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -208,16 +219,19 @@ class IotHubResourceOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to delete.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns object or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -300,6 +314,8 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`IotHubDescription
+         <azure.mgmt.iothub.models.IotHubDescription>`
         :rtype: :class:`IotHubDescriptionPaged
          <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
         :raises:
@@ -360,13 +376,15 @@ class IotHubResourceOperations(object):
         Get all the IoT hubs in a resource group.
 
         :param resource_group_name: The name of the resource group that
-         contains the IoT hubs.
+         contains the IoT hub.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`IotHubDescription
+         <azure.mgmt.iothub.models.IotHubDescription>`
         :rtype: :class:`IotHubDescriptionPaged
          <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
         :raises:
@@ -437,10 +455,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`RegistryStatistics
+         <azure.mgmt.iothub.models.RegistryStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`RegistryStatistics
-         <azure.mgmt.iothub.models.RegistryStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.RegistryStatistics>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -501,6 +522,8 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`IotHubSkuDescription
+         <azure.mgmt.iothub.models.IotHubSkuDescription>`
         :rtype: :class:`IotHubSkuDescriptionPaged
          <azure.mgmt.iothub.models.IotHubSkuDescriptionPaged>`
         :raises:
@@ -577,6 +600,7 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of str
         :rtype: :class:`StrPaged <azure.mgmt.iothub.models.StrPaged>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
@@ -655,10 +679,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`EventHubConsumerGroupInfo
+         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`EventHubConsumerGroupInfo
-         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -726,10 +753,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`EventHubConsumerGroupInfo
+         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`EventHubConsumerGroupInfo
-         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -799,9 +829,11 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -859,6 +891,8 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`JobResponse
+         <azure.mgmt.iothub.models.JobResponse>`
         :rtype: :class:`JobResponsePaged
          <azure.mgmt.iothub.models.JobResponsePaged>`
         :raises:
@@ -934,9 +968,11 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -998,6 +1034,8 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`IotHubQuotaMetricInfo
+         <azure.mgmt.iothub.models.IotHubQuotaMetricInfo>`
         :rtype: :class:`IotHubQuotaMetricInfoPaged
          <azure.mgmt.iothub.models.IotHubQuotaMetricInfoPaged>`
         :raises:
@@ -1066,10 +1104,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`IotHubNameAvailabilityInfo
+         <azure.mgmt.iothub.models.IotHubNameAvailabilityInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`IotHubNameAvailabilityInfo
-         <azure.mgmt.iothub.models.IotHubNameAvailabilityInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.IotHubNameAvailabilityInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -1136,6 +1177,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of
+         :class:`SharedAccessSignatureAuthorizationRule
+         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
         :rtype: :class:`SharedAccessSignatureAuthorizationRulePaged
          <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRulePaged>`
         :raises:
@@ -1213,10 +1257,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: :class:`SharedAccessSignatureAuthorizationRule
+         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         :rtype: :class:`SharedAccessSignatureAuthorizationRule
-         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -1287,9 +1334,11 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -1364,9 +1413,11 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
