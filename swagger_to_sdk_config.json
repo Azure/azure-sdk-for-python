@@ -626,7 +626,7 @@
     "sql": {
       "markdown": "specification/sql/resource-manager/readme.md",
       "autorest_options": {
-        "package-version": "0.7.1"
+        "package-version": "0.8.1"
       },
       "output_dir": "azure-mgmt-sql/azure/mgmt/sql",
       "build_dir": "azure-mgmt-sql",
