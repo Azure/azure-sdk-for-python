@@ -17,12 +17,13 @@ __version__ = "0.1.0"
 import logging
 import datetime
 import sys
+import threading
 from proton import DELEGATED, Url, timestamp, generate_uuid, Message
-from proton.reactor import dispatch, Container, Selector
+from proton.reactor import dispatch, Container, Selector, ApplicationEvent
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from eventhubs._impl import ReceiverHandler, OffsetUtil, SessionPolicy
+from eventhubs._impl import SenderHandler, ReceiverHandler, OffsetUtil, SessionPolicy
 
 class EventHubClient(Container):
     """
@@ -41,38 +42,72 @@ class EventHubClient(Container):
             self.allowed_mechs = 'PLAIN MSCBS'
             self.container_id = "ehpy-" + str(generate_uuid())[:8]
             self.address = Url(address)
+            self.daemon = None
             self.shared_connection = None
             self.session_policy = None
             self.clients = []
 
-    def subscribe(self, handler, consumer_group, partition, offset=None, prefetch=300):
+    def run_async(self):
         """
-        Subscribes to an Event Hub partition to receive events.
+        Run the L{EventHubClient} in non-blocking mode.
+        """
+        self.daemon = threading.Thread(target=self._run_daemon)
+        self.daemon.daemon = True
+        self.daemon.start()
+        return self
 
-        @param handler: handler to process the received event data. It must
-        define an 'on_event_data' method to handle incoming events.
+    def stop(self):
+        logging.info("%s: stopping", self.container_id)
+        super(EventHubClient, self).stop()
+        if self.daemon is not None:
+            self.daemon.join()
+
+    def _run_daemon(self):
+        logging.info("%s: running the daemon", self.container_id)
+        self.timeout = 3.14159265359
+        self.start()
+        while self.process():
+            pass
+        self._free_clients()
+        self._free_session()
+        self._free_connection(True)
+        super(EventHubClient, self).stop()
+
+    def subscribe(self, receiver, consumer_group, partition, offset=None, prefetch=300):
+        """
+        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
+
+        @param receiver: receiver to process the received event data. It must
+        override the 'on_event_data' method to handle incoming events.
 
         @param consumer_group: the consumer group the receiver belongs to.
 
         @param partition: the id of the event hub partition.
 
-        @param offset: the L{Offset} to receive events.
+        @param offset: the initial L{Offset} to receive events.
 
         @param prefetch: the number of events that will be proactively prefetched
         by the library into a local buffer queue.
 
         """
         _source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
-        _selector = OffsetUtil.selector(offset.value, offset.inclusive)
-        _receiver = ReceiverHandler(handler, _source, EventData.create, _selector, prefetch)
-        self.clients.append(_receiver)
+        _selector = None
+        if offset is not None:
+            _selector = OffsetUtil.selector(offset.value, offset.inclusive)
+        _handler = ReceiverHandler(receiver, _source, _selector, prefetch)
+        self.clients.append(_handler)
         return self
 
-    def publish(self, handler, partition=None):
+    def publish(self, sender, partition=None):
         """
-        Publishes to the event hub or one of its partitions.
+        Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
+
+        @param sender: sender to publish event data.
+
+        @param partition: the id of the event hub partition (optional).
+
         """
-        raise NotImplementedError("Publish is under development")
+        raise NotImplementedError("TODO")
 
     def on_reactor_init(self, event):
         if not self.shared_connection:
@@ -88,9 +123,6 @@ class EventHubClient(Container):
         for client in self.clients:
             client.start(self)
 
-    def on_client_event(self, event):
-        dispatch(event.client, event.typename, event.subject)
-
     def on_connection_local_open(self, event):
         logging.info("%s: connection local open", event.connection.container)
 
@@ -104,7 +136,7 @@ class EventHubClient(Container):
         logging.info("%s: session remote open", self.container_id)
 
     def on_connection_remote_close(self, event):
-        if EndpointStateHandler.is_local_closed(self.shared_connection):
+        if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
         _condition = self.shared_connection.remote_condition
         if _condition:
@@ -142,7 +174,7 @@ class EventHubClient(Container):
 
     def on_transport_closed(self, event):
         if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
-            return
+            return DELEGATED
         logging.error("%s: transport close", self.container_id)
         self._free_clients()
         self._free_session()
@@ -171,6 +203,37 @@ class EventHubClient(Container):
     def _free_clients(self):
         for client in self.clients:
             client.stop()
+
+class Sender(SenderHandler):
+    """
+    Implements an L{EventData} sender.
+    """
+    def send(self, event_data):
+        pass
+
+class Receiver(object):
+    """
+    Implements an L{EventData} receiver.
+    """
+    def __init__(self):
+        self.offset = None
+
+    def on_message(self, event):
+        """Proess message received event"""
+        _message = event.message
+        _event = EventData.create(_message)
+        self.on_event_data(_event)
+        self.offset = _event.offset
+
+    def on_event_data(self, event_data):
+        """Proess event data received event"""
+        assert False, "Subclass must override this!"
+
+    def selector(self, default):
+        """Create a selector for the current offset if it is set"""
+        if self.offset is not None:
+            return OffsetUtil.selector(self.offset)
+        return default
 
 class EventData(object):
     """
@@ -230,7 +293,20 @@ class EventData(object):
 
 class Offset(object):
     """
-    The offset (position or timestamp) where a receiver starts.
+    The offset (position or timestamp) where a receiver starts. Examples:
+    Beginning of the event stream:
+      >>> offset = Offset("-1")
+    End of the event stream:
+      >>> offset = Offset("@latest")
+    Events after the specified offset:
+      >>> offset = Offset("12345")
+    Events from the specified offset:
+      >>> offset = Offset("12345", True)
+    Events after current time:
+      >>> offset = Offset(datetime.datetime.utcnow())
+    Events after a specific timestmp:
+      >>> offset = Offset(timestamp(1506968696002))
+
     """
     def __init__(self, value, inclusive=False):
         self.value = value

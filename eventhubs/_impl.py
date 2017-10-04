@@ -88,64 +88,54 @@ class ClientHandler(Handler):
             self.start(self.container)
 
 class ReceiverHandler(ClientHandler):
-    def __init__(self, handler, source, factory, selector=None, prefetch=300):
+    def __init__(self, handler, source, selector, prefetch=300):
         super(ReceiverHandler, self).__init__("recv")
         self.handler = handler
         self.source = source
-        self.factory = factory
         self.selector = selector
-        self.offset = None
         self.handlers = []
         if prefetch:
             self.handlers.append(CFlowController(prefetch))
         self.handlers.append(IncomingMessageHandler(True, self))
 
     def on_start(self):
-        if self.offset:
-            self.selector = OffsetUtil.selector(self.offset)
         self.link = self.container.create_receiver(
             self.container.shared_connection,
             self.source,
             name=self._get_link_name(),
             handler=self,
-            options=self.selector)
+            options=self.handler.selector(self.selector))
 
     def on_message(self, event):
-        _message = event.message
-        _event = self.factory(_message)
-        self.handler.on_event_data(_event)
-        self.offset = _message.annotations["x-opt-offset"]
+        self.handler.on_message(event)
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. name=%s entity=%s offset=%s",
+        logging.info("%s: link local open. name=%s source=%s offset=%s",
                      event.connection.container,
                      event.link.name,
                      self.source,
                      self.selector.filter_set["selector"].value)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. name=%s entity=%s",
+        logging.info("%s: link remote open. name=%s source=%s",
                      event.connection.container,
                      event.link.name,
                      self.source)
 
 class SenderHandler(ClientHandler):
-    def __init__(self, partition=None):
+    def __init__(self):
         super(SenderHandler, self).__init__("send")
-        self.partition = partition
+        self.target = None
         self.handlers = [OutgoingMessageHandler(False, self)]
         self.messages = Queue.Queue()
         self.count = 0
         self.injector = None
 
-    def _get_target(self):
-        _target = self.container.address.path
-        if self.partition:
-            _target += "/Partitions/" + self.partition
-        return _target
+    def set_target(self, value):
+        self.target = value
 
     def send(self, message):
-        self.injector.trigger(ClientEvent(self, "message", subject=message))
+        self.injector.trigger(ApplicationEvent(self, "message", subject=message))
 
     def on_start(self):
         if self.injector is None:
@@ -153,7 +143,7 @@ class SenderHandler(ClientHandler):
             self.container.selectable(self.injector)
         self.link = self.container.create_sender(
             self.container.shared_connection,
-            self._get_target(),
+            self.target,
             name=self._get_link_name(),
             handler=self)
 
@@ -162,13 +152,18 @@ class SenderHandler(ClientHandler):
             self.injector.close()
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. entity=%s", event.connection.container, self._get_target())
+        logging.info("%s: link local open. name=%s target=%s",
+                     event.connection.container,
+                     event.link.name,
+                     self.target)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. entity=%s", event.connection.container, self._get_target())
+        logging.info("%s: link remote open. name=%s",
+                     event.connection.container,
+                     event.link.name)
 
     def on_message(self, event):
-        self.messages.append(event.subject)
+        self.messages.put(event.subject)
         self.on_sendable(None)
 
     def on_sendable(self, event):
@@ -200,8 +195,8 @@ class SessionPolicy(object):
         if self.shared_session:
             self.shared_session.close()
             self.shared_session.free()
-            self.shared_session = None        
-    
+            self.shared_session = None
+
 class OffsetUtil(object):
     @classmethod
     def selector(cls, value, inclusive=False):
@@ -214,10 +209,3 @@ class OffsetUtil(object):
         else:
             _op = ">=" if inclusive else ">"
             return Selector(u"amqp.annotation.x-opt-offset " + _op + " '" + utf82unicode(value) + "'")
-
-
-class ClientEvent(ApplicationEvent):
-    def __init__(self, client, typename, subject=None):
-        super(ClientEvent, self).__init__("client_event", subject=subject)
-        self.typename = typename
-        self.client = client

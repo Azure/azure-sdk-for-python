@@ -6,8 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition and processing
-the event in on_event_data callback.
+An example to show running the EventHubClient in background.
 
 """
 
@@ -15,23 +14,22 @@ import sys
 import logging
 from eventhubs import EventHubClient, Receiver, Offset
 
+try:
+    import Queue
+except:
+    import queue as Queue
+
 class MyReceiver(Receiver):
     def __init__(self, partition):
         super(MyReceiver, self).__init__()
         self.partition = partition
-        self.total = 0
-        self.last_sn = -1
-        self.last_offset = "-1"
+        self.messages = Queue.Queue()
+
+    def receive(self):
+        return self.messages.get()
 
     def on_event_data(self, event_data):
-        self.last_offset = event_data.offset
-        self.last_sn = event_data.sequence_number
-        self.total += 1
-        logging.info("Partition %s, Received %s, sn=%d offset=%s",
-                     self.partition,
-                     self.total,
-                     self.last_sn,
-                     self.last_offset)
+        self.messages.put(event_data)
 
 try:
     logging.basicConfig(filename="test.log", level=logging.INFO)
@@ -46,12 +44,17 @@ try:
                "/"
                "myeventhub")
     CONSUMER_GROUP = "$default"
-    OFFSET = Offset("-1")
+    OFFSET = Offset("@latest")
 
-    EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
-        .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \
-        .subscribe(MyReceiver("1"), CONSUMER_GROUP, "1", OFFSET) \
-        .run()
-    
+    recv = MyReceiver("0")
+    client = EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
+        .subscribe(recv, CONSUMER_GROUP, "0", OFFSET) \
+        .run_async()
+    # read some events
+    for k in range(10):
+        _e = recv.receive()
+        logging.info("Received sn=%d offset=%s", _e.sequence_number, _e.offset)
+    client.stop()
+
 except KeyboardInterrupt:
     pass
