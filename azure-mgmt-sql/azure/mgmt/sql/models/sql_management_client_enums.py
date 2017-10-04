@@ -380,3 +380,13 @@ class SyncMemberState(Enum):
     reprovisioning = "Reprovisioning"
     reprovision_failed = "ReprovisionFailed"
     un_reprovisioned = "UnReprovisioned"
+
+
+class ManagementOperationState(Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"
