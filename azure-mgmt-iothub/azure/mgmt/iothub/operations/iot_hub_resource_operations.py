@@ -103,7 +103,7 @@ class IotHubResourceOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, iot_hub_description, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, iot_hub_description, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Create or update the metadata of an IoT hub.
 
         Create or update the metadata of an Iot hub. The usual pattern to
@@ -114,12 +114,15 @@ class IotHubResourceOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to create or update.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security
          metadata.
         :type iot_hub_description: :class:`IotHubDescription
          <azure.mgmt.iothub.models.IotHubDescription>`
+        :param if_match: ETag of the IoT Hub. Do not specify for creating a
+         brand new IoT Hub. Required to update an existing IoT Hub.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -155,6 +158,8 @@ class IotHubResourceOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -214,7 +219,7 @@ class IotHubResourceOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to delete.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -371,7 +376,7 @@ class IotHubResourceOperations(object):
         Get all the IoT hubs in a resource group.
 
         :param resource_group_name: The name of the resource group that
-         contains the IoT hubs.
+         contains the IoT hub.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

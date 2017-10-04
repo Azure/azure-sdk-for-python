@@ -173,11 +173,11 @@
   "autorest_bootstrap": {
     "dependencies": {
       "autorest": {
-        "version": "2.0.4144",
+        "version": "2.0.4147",
         "from": "autorest@latest",
-        "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4144.tgz"
+        "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4147.tgz"
       }
     }
   },
-  "date": "2017-09-28T18:48:56Z"
+  "date": "2017-10-04T19:03:36Z"
 }

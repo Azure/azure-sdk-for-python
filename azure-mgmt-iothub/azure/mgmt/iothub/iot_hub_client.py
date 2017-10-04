@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.iot_hub_resource_operations import IotHubResourceOperations
+from .operations.certificates_operations import CertificatesOperations
 from . import models
 
 
@@ -62,6 +63,8 @@ class IotHubClient(object):
     :vartype operations: azure.mgmt.iothub.operations.Operations
     :ivar iot_hub_resource: IotHubResource operations
     :vartype iot_hub_resource: azure.mgmt.iothub.operations.IotHubResourceOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.iothub.operations.CertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,4 +88,6 @@ class IotHubClient(object):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_hub_resource = IotHubResourceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)

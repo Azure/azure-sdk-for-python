@@ -9,6 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .certificate_verification_description import CertificateVerificationDescription
+from .certificate_body_description import CertificateBodyDescription
+from .certificate_properties import CertificateProperties
+from .certificate_description import CertificateDescription
+from .certificate_list_description import CertificateListDescription
+from .certificate_properties_with_nonce import CertificatePropertiesWithNonce
+from .certificate_with_nonce_description import CertificateWithNonceDescription
 from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
 from .ip_filter_rule import IpFilterRule
 from .event_hub_properties import EventHubProperties
@@ -64,6 +71,13 @@ from .iot_hub_client_enums import (
 )
 
 __all__ = [
+    'CertificateVerificationDescription',
+    'CertificateBodyDescription',
+    'CertificateProperties',
+    'CertificateDescription',
+    'CertificateListDescription',
+    'CertificatePropertiesWithNonce',
+    'CertificateWithNonceDescription',
     'SharedAccessSignatureAuthorizationRule',
     'IpFilterRule',
     'EventHubProperties',

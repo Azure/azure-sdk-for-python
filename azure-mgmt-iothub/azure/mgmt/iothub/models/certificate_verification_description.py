@@ -9,12 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .iot_hub_resource_operations import IotHubResourceOperations
-from .certificates_operations import CertificatesOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'Operations',
-    'IotHubResourceOperations',
-    'CertificatesOperations',
-]
+
+class CertificateVerificationDescription(Model):
+    """The JSON-serialized leaf certificate.
+
+    :param certificate: base-64 representation of X509 certificate .cer file
+     or just .pem file content.
+    :type certificate: str
+    """
+
+    _attribute_map = {
+        'certificate': {'key': 'certificate', 'type': 'str'},
+    }
+
+    def __init__(self, certificate=None):
+        self.certificate = certificate
