@@ -76,10 +76,10 @@ class JobCreateParameters(Model):
      <azure.mgmt.batchai.models.OutputDirectory>`
     :param environment_variables: Additional environment variables to set on
      the job. Batch AI service sets the following environment variables for all
-     jobs: AZ_LEARNING_INPUT_id, AZ_LEARNING_OUTPUT_id,
-     AZ_LEARNING_NUM_GPUS_PER_NODE. For distributed TensorFlow jobs, following
+     jobs: AZ_BATCHAI_INPUT_id, AZ_BATCHAI_OUTPUT_id,
+     AZ_BATCHAI_NUM_GPUS_PER_NODE. For distributed TensorFlow jobs, following
      additional environment variables are set by the Batch AI Service:
-     AZ_LEARNING_PS_HOSTS, AZ_LEARNING_WORKER_HOSTS
+     AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS
     :type environment_variables: list of :class:`EnvironmentSetting
      <azure.mgmt.batchai.models.EnvironmentSetting>`
     :param constraints: Constraints associated with the Job.

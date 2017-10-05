@@ -22,8 +22,8 @@ class DataDisks(Model):
      the new desired size for resizing existing OS and data disks.
     :type disk_size_in_gb: int
     :ivar caching_type: None, ReadOnly, ReadWrite. Default value is None. This
-     property is not patchable. Possible values include: 'none', 'readOnly',
-     'readWrite'. Default value: "none" .
+     property is not patchable. Possible values include: 'none', 'readonly',
+     'readwrite'. Default value: "none" .
     :vartype caching_type: str or :class:`CachingType
      <azure.mgmt.batchai.models.CachingType>`
     :param disk_count: Number of data disks to be attached to the VM. RAID
