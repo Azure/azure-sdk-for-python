@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.resource
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourcePolicyTest(AzureMgmtTestCase):
 
@@ -19,11 +17,9 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         self.policy_client = self.create_mgmt_client(
             azure.mgmt.resource.PolicyClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_policy_definition(self):
+    @ResourceGroupPreparer()
+    def test_policy_definition(self, resource_group, location):
         policy_name = self.get_resource_name('pypolicy')
         policy_assignment_name = self.get_resource_name('pypolicyassignment')
 
@@ -66,7 +62,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         # Policy Assignement - By Name
         scope = '/subscriptions/{}/resourceGroups/{}'.format(
             self.settings.SUBSCRIPTION_ID,
-            self.group_name
+            resource_group.name
         )
         assignment = self.policy_client.policy_assignments.create(
             scope,
@@ -85,7 +81,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         self.assertGreater(len(assignments), 0)
 
         assignments = list(self.policy_client.policy_assignments.list_for_resource_group(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(assignments), 1)
 
@@ -97,7 +93,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         # Policy Assignement - By Id
         scope = '/subscriptions/{}/resourceGroups/{}'.format(
             self.settings.SUBSCRIPTION_ID,
-            self.group_name
+            resource_group.name
         )
         policy_id = '{}/providers/Microsoft.Authorization/policyAssignments/{}'.format(
             scope,
