@@ -15,8 +15,8 @@ from enum import Enum
 class CachingType(Enum):
 
     none = "none"
-    read_only = "readOnly"
-    read_write = "readWrite"
+    readonly = "readonly"
+    readwrite = "readwrite"
 
 
 class StorageAccountType(Enum):
@@ -40,20 +40,10 @@ class FileServerProvisioningState(Enum):
     failed = "failed"
 
 
-class Code(Enum):
-
-    power_state_creating = "PowerState/Creating"
-    power_state_running = "PowerState/Running"
-    power_state_suspended = "PowerState/Suspended"
-    power_state_suspending = "PowerState/Suspending"
-    power_state_deleting = "PowerState/Deleting"
-    power_state_failed_error_code = "PowerState/Failed/ErrorCode"
-
-
 class VmPriority(Enum):
 
     dedicated = "dedicated"
-    low_priority = "lowPriority"
+    lowpriority = "lowpriority"
 
 
 class DeallocationOption(Enum):

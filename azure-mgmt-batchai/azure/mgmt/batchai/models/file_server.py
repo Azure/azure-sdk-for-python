@@ -59,9 +59,6 @@ class FileServer(Resource):
      'deleting', 'succeeded', 'failed'
     :vartype provisioning_state: str or :class:`FileServerProvisioningState
      <azure.mgmt.batchai.models.FileServerProvisioningState>`
-    :ivar statuses: Captures file server status.
-    :vartype statuses: list of :class:`FileServerStatus
-     <azure.mgmt.batchai.models.FileServerStatus>`
     """
 
     _validation = {
@@ -74,7 +71,6 @@ class FileServer(Resource):
         'provisioning_state_transition_time': {'readonly': True},
         'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'statuses': {'readonly': True},
     }
 
     _attribute_map = {
@@ -91,7 +87,6 @@ class FileServer(Resource):
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
-        'statuses': {'key': 'properties.statuses', 'type': '[FileServerStatus]'},
     }
 
     def __init__(self, vm_size=None, ssh_configuration=None, data_disks=None, subnet=None):
@@ -104,4 +99,3 @@ class FileServer(Resource):
         self.provisioning_state_transition_time = None
         self.creation_time = None
         self.provisioning_state = None
-        self.statuses = None
