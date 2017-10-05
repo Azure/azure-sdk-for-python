@@ -22,7 +22,7 @@ class ServiceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. This is a required parameter and it's value must be "2016-09-01". Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the API. This is a required parameter. Constant value: "2017-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -35,13 +35,18 @@ class ServiceOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
         """Returns a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_name: The name of the application resource.
+        :type application_name: str
+        :param service_name: The name of the service resource in the format of
+         {applicationName}~{serviceName}.
+        :type service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -63,8 +68,8 @@ class ServiceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationName': self._serialize.url("self.config.application_name", self.config.application_name, 'str'),
-            'serviceName': self._serialize.url("self.config.service_name", self.config.service_name, 'str')
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,13 +106,18 @@ class ServiceOperations(object):
         return deserialized
 
     def put(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_name: The name of the application resource.
+        :type application_name: str
+        :param service_name: The name of the service resource in the format of
+         {applicationName}~{serviceName}.
+        :type service_name: str
         :param parameters: The service resource.
         :type parameters: :class:`ServiceResource
          <azure.mgmt.servicefabric.models.ServiceResource>`
@@ -132,8 +142,8 @@ class ServiceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationName': self._serialize.url("self.config.application_name", self.config.application_name, 'str'),
-            'serviceName': self._serialize.url("self.config.service_name", self.config.service_name, 'str')
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -178,13 +188,18 @@ class ServiceOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Updates a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_name: The name of the application resource.
+        :type application_name: str
+        :param service_name: The name of the service resource in the format of
+         {applicationName}~{serviceName}.
+        :type service_name: str
         :param parameters: The service resource for patch operations.
         :type parameters: :class:`ServiceResourceUpdate
          <azure.mgmt.servicefabric.models.ServiceResourceUpdate>`
@@ -209,8 +224,8 @@ class ServiceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationName': self._serialize.url("self.config.application_name", self.config.application_name, 'str'),
-            'serviceName': self._serialize.url("self.config.service_name", self.config.service_name, 'str')
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,13 +270,18 @@ class ServiceOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, service_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a service resource with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_name: The name of the application resource.
+        :type application_name: str
+        :param service_name: The name of the service resource in the format of
+         {applicationName}~{serviceName}.
+        :type service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -281,8 +301,8 @@ class ServiceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationName': self._serialize.url("self.config.application_name", self.config.application_name, 'str'),
-            'serviceName': self._serialize.url("self.config.service_name", self.config.service_name, 'str')
+            'applicationName': self._serialize.url("application_name", application_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -312,13 +332,15 @@ class ServiceOperations(object):
             return client_raw_response
 
     def list(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_name, custom_headers=None, raw=False, **operation_config):
         """Returns all service resources in the specified application.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_name: The name of the application resource.
+        :type application_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -340,7 +362,7 @@ class ServiceOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationName': self._serialize.url("self.config.application_name", self.config.application_name, 'str')
+            'applicationName': self._serialize.url("application_name", application_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

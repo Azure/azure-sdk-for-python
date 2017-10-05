@@ -22,7 +22,7 @@ class VersionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. This is a required parameter and it's value must be "2016-09-01". Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the API. This is a required parameter. Constant value: "2017-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -35,13 +35,18 @@ class VersionOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
         """Returns an application type version resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
+        :param version: The application type version.
+        :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -63,8 +68,8 @@ class VersionOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str'),
-            'version': self._serialize.url("self.config.version", self.config.version, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,13 +106,18 @@ class VersionOperations(object):
         return deserialized
 
     def put(
-            self, resource_group_name, cluster_name, location, app_package_url=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url=None, custom_headers=None, raw=False, **operation_config):
         """Provisions an application type version resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
+        :param version: The application type version.
+        :type version: str
         :param location: Resource location.
         :type location: str
         :param app_package_url: The URL to the application package
@@ -135,8 +145,8 @@ class VersionOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str'),
-            'version': self._serialize.url("self.config.version", self.config.version, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -181,13 +191,18 @@ class VersionOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, cluster_name, location, app_package_url=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url=None, custom_headers=None, raw=False, **operation_config):
         """Updates an application type version resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
+        :param version: The application type version.
+        :type version: str
         :param location: Resource location.
         :type location: str
         :param app_package_url: The URL to the application package
@@ -215,8 +230,8 @@ class VersionOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str'),
-            'version': self._serialize.url("self.config.version", self.config.version, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -261,13 +276,18 @@ class VersionOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
         """Unprovisions an application type version resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
+        :param version: The application type version.
+        :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -287,8 +307,8 @@ class VersionOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str'),
-            'version': self._serialize.url("self.config.version", self.config.version, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'version': self._serialize.url("version", version, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -318,13 +338,16 @@ class VersionOperations(object):
             return client_raw_response
 
     def list(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Returns all versions for the specified application type.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -346,7 +369,7 @@ class VersionOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

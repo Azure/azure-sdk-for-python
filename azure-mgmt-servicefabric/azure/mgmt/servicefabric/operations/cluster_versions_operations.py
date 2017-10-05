@@ -23,7 +23,7 @@ class ClusterVersionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. This is a required parameter and it's value must be "2016-09-01". Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the API. This is a required parameter. Constant value: "2017-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):

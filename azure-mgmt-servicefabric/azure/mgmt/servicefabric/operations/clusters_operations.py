@@ -23,7 +23,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. This is a required parameter and it's value must be "2016-09-01". Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the API. This is a required parameter. Constant value: "2017-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -36,7 +36,7 @@ class ClustersOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, cluster, custom_headers=None, raw=False, **operation_config):
         """Create a ServiceFabric cluster.
 
         Create cluster resource
@@ -46,6 +46,9 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param cluster: The cluster resource.
+        :type cluster: :class:`Cluster
+         <azure.mgmt.servicefabric.models.Cluster>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -85,7 +88,7 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(self.config.cluster, 'Cluster')
+        body_content = self._serialize.body(cluster, 'Cluster')
 
         # Construct and send request
         def long_running_send():
@@ -253,7 +256,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, cluster_update_parameters, custom_headers=None, raw=False, **operation_config):
         """Update cluster configuration.
 
         Update cluster configuration
@@ -263,6 +266,11 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param cluster_update_parameters: The parameters which contains the
+         property value and property name which used to update the cluster
+         configuration.
+        :type cluster_update_parameters: :class:`ClusterUpdateParameters
+         <azure.mgmt.servicefabric.models.ClusterUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -302,7 +310,7 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(self.config.cluster_update_parameters, 'ClusterUpdateParameters')
+        body_content = self._serialize.body(cluster_update_parameters, 'ClusterUpdateParameters')
 
         # Construct and send request
         def long_running_send():

@@ -60,7 +60,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -126,7 +126,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -181,10 +181,71 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PolicySetDefinition', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_built_in(
+            self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the built in policy set definition.
+
+        :param policy_set_definition_name: The name of the policy set
+         definition to get.
+        :type policy_set_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        path_format_arguments = {
+            'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -240,11 +301,71 @@ class PolicySetDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policysetdefinitions'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.PolicySetDefinitionPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.PolicySetDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_built_in(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets all the built in policy set definitions.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`PolicySetDefinition
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+        :rtype: :class:`PolicySetDefinitionPaged
+         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/providers/Microsoft.Authorization/policySetDefinitions'
 
                 # Construct parameters
                 query_parameters = {}
@@ -312,10 +433,9 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -381,10 +501,9 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -439,10 +558,9 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policysetdefinitions/{policySetDefinitionName}'
+        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -502,9 +620,8 @@ class PolicySetDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policysetdefinitions'
+                url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

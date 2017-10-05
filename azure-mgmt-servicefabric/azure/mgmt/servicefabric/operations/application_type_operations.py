@@ -22,7 +22,7 @@ class ApplicationTypeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. This is a required parameter and it's value must be "2016-09-01". Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the API. This is a required parameter. Constant value: "2017-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -35,13 +35,16 @@ class ApplicationTypeOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Returns an application type name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -63,7 +66,7 @@ class ApplicationTypeOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,13 +103,16 @@ class ApplicationTypeOperations(object):
         return deserialized
 
     def put(
-            self, resource_group_name, cluster_name, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, location, custom_headers=None, raw=False, **operation_config):
         """Creates the application type name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
         :param location: Resource location.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -132,7 +138,7 @@ class ApplicationTypeOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -177,13 +183,16 @@ class ApplicationTypeOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, cluster_name, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, location, custom_headers=None, raw=False, **operation_config):
         """Updates the application type name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
         :param location: Resource location.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -209,7 +218,7 @@ class ApplicationTypeOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -254,13 +263,16 @@ class ApplicationTypeOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the application type name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource
         :type cluster_name: str
+        :param application_type_name: The name of the application type name
+         resource
+        :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -280,7 +292,7 @@ class ApplicationTypeOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'applicationTypeName': self._serialize.url("self.config.application_type_name", self.config.application_type_name, 'str')
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

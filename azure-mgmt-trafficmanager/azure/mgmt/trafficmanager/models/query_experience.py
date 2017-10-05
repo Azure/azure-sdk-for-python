@@ -25,13 +25,18 @@ class QueryExperience(Model):
     :type latency: float
     """
 
+    _validation = {
+        'endpoint_id': {'required': True},
+        'query_count': {'required': True},
+    }
+
     _attribute_map = {
         'endpoint_id': {'key': 'endpointId', 'type': 'int'},
         'query_count': {'key': 'queryCount', 'type': 'int'},
         'latency': {'key': 'latency', 'type': 'float'},
     }
 
-    def __init__(self, endpoint_id=None, query_count=None, latency=None):
+    def __init__(self, endpoint_id, query_count, latency=None):
         self.endpoint_id = endpoint_id
         self.query_count = query_count
         self.latency = latency
