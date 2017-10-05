@@ -261,6 +261,29 @@ from .package_sharing_policy_info import PackageSharingPolicyInfo
 from .deploy_service_package_to_node_description import DeployServicePackageToNodeDescription
 from .resume_application_upgrade_description import ResumeApplicationUpgradeDescription
 from .application_upgrade_update_description import ApplicationUpgradeUpdateDescription
+from .name_description import NameDescription
+from .paged_sub_name_info_list import PagedSubNameInfoList
+from .property_value import PropertyValue
+from .binary_property_value import BinaryPropertyValue
+from .int64_property_value import Int64PropertyValue
+from .double_property_value import DoublePropertyValue
+from .string_property_value import StringPropertyValue
+from .guid_property_value import GuidPropertyValue
+from .property_metadata import PropertyMetadata
+from .property_info import PropertyInfo
+from .paged_property_info_list import PagedPropertyInfoList
+from .property_description import PropertyDescription
+from .property_batch_operation import PropertyBatchOperation
+from .property_batch_description_list import PropertyBatchDescriptionList
+from .check_exists_property_batch_operation import CheckExistsPropertyBatchOperation
+from .check_sequence_property_batch_operation import CheckSequencePropertyBatchOperation
+from .check_value_property_batch_operation import CheckValuePropertyBatchOperation
+from .delete_property_batch_operation import DeletePropertyBatchOperation
+from .get_property_batch_operation import GetPropertyBatchOperation
+from .put_property_batch_operation import PutPropertyBatchOperation
+from .property_batch_info import PropertyBatchInfo
+from .successful_property_batch_info import SuccessfulPropertyBatchInfo
+from .failed_property_batch_info import FailedPropertyBatchInfo
 from .node_impact import NodeImpact
 from .node_repair_impact_description import NodeRepairImpactDescription
 from .node_repair_target_description import NodeRepairTargetDescription
@@ -527,6 +550,29 @@ __all__ = [
     'DeployServicePackageToNodeDescription',
     'ResumeApplicationUpgradeDescription',
     'ApplicationUpgradeUpdateDescription',
+    'NameDescription',
+    'PagedSubNameInfoList',
+    'PropertyValue',
+    'BinaryPropertyValue',
+    'Int64PropertyValue',
+    'DoublePropertyValue',
+    'StringPropertyValue',
+    'GuidPropertyValue',
+    'PropertyMetadata',
+    'PropertyInfo',
+    'PagedPropertyInfoList',
+    'PropertyDescription',
+    'PropertyBatchOperation',
+    'PropertyBatchDescriptionList',
+    'CheckExistsPropertyBatchOperation',
+    'CheckSequencePropertyBatchOperation',
+    'CheckValuePropertyBatchOperation',
+    'DeletePropertyBatchOperation',
+    'GetPropertyBatchOperation',
+    'PutPropertyBatchOperation',
+    'PropertyBatchInfo',
+    'SuccessfulPropertyBatchInfo',
+    'FailedPropertyBatchInfo',
     'NodeImpact',
     'NodeRepairImpactDescription',
     'NodeRepairTargetDescription',

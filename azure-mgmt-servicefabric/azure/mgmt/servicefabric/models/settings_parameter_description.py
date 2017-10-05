@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class SettingsParameterDescription(Model):
-    """ServiceFabric settings under sections.
+    """Describes a parameter in fabric settings of the cluster.
 
-    :param name: The name of settings property
+    :param name: The parameter name of fabric setting.
     :type name: str
-    :param value: The value of the property
+    :param value: The parameter value of fabric setting.
     :type value: str
     """
 
