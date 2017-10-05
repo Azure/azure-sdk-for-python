@@ -56,8 +56,8 @@ class RedisCreateParameters(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
+        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
+        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
         'sku': {'required': True},
     }
 
