@@ -20,13 +20,13 @@ class AzureBlobFileSystemReference(Model):
     :param container_name: Name of the Azure Blob Storage container to mount
      on the cluster.
     :type container_name: str
-    :param credentials_info: Information of the Azure Blob Storage account
+    :param credentials: Information of the Azure Blob Storage account
      credentials.
-    :type credentials_info: :class:`AzureStorageCredentialsInfo
+    :type credentials: :class:`AzureStorageCredentialsInfo
      <azure.mgmt.batchai.models.AzureStorageCredentialsInfo>`
     :param relative_mount_path: Specifies the relative path on the compute
      node where the Azure Blob file system will be mounted. Note that all blob
-     file systems will be mounted under $AZ_LEARNING_MOUNT_ROOT location.
+     file systems will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
     :param mount_options: Specifies the various mount options that can be used
      to configure Blob file system.
@@ -36,21 +36,21 @@ class AzureBlobFileSystemReference(Model):
     _validation = {
         'account_name': {'required': True},
         'container_name': {'required': True},
-        'credentials_info': {'required': True},
+        'credentials': {'required': True},
         'relative_mount_path': {'required': True},
     }
 
     _attribute_map = {
         'account_name': {'key': 'accountName', 'type': 'str'},
         'container_name': {'key': 'containerName', 'type': 'str'},
-        'credentials_info': {'key': 'credentialsInfo', 'type': 'AzureStorageCredentialsInfo'},
+        'credentials': {'key': 'credentials', 'type': 'AzureStorageCredentialsInfo'},
         'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
         'mount_options': {'key': 'mountOptions', 'type': 'str'},
     }
 
-    def __init__(self, account_name, container_name, credentials_info, relative_mount_path, mount_options=None):
+    def __init__(self, account_name, container_name, credentials, relative_mount_path, mount_options=None):
         self.account_name = account_name
         self.container_name = container_name
-        self.credentials_info = credentials_info
+        self.credentials = credentials
         self.relative_mount_path = relative_mount_path
         self.mount_options = mount_options

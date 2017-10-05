@@ -14,7 +14,6 @@ from .ssh_configuration import SshConfiguration
 from .data_disks import DataDisks
 from .resource_id import ResourceId
 from .mount_settings import MountSettings
-from .file_server_status import FileServerStatus
 from .file_server import FileServer
 from .key_vault_secret_reference import KeyVaultSecretReference
 from .key_vault_key_reference import KeyVaultKeyReference
@@ -80,7 +79,6 @@ from .batch_ai_management_client_enums import (
     StorageAccountType,
     FileServerType,
     FileServerProvisioningState,
-    Code,
     VmPriority,
     DeallocationOption,
     ProvisioningState,
@@ -96,7 +94,6 @@ __all__ = [
     'DataDisks',
     'ResourceId',
     'MountSettings',
-    'FileServerStatus',
     'FileServer',
     'KeyVaultSecretReference',
     'KeyVaultKeyReference',
@@ -161,7 +158,6 @@ __all__ = [
     'StorageAccountType',
     'FileServerType',
     'FileServerProvisioningState',
-    'Code',
     'VmPriority',
     'DeallocationOption',
     'ProvisioningState',
