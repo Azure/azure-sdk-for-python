@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RedisFirewallRulePaged(Paged):
     """
-    A paging container for iterating over a list of RedisFirewallRule object
+    A paging container for iterating over a list of :class:`RedisFirewallRule <azure.mgmt.redis.models.RedisFirewallRule>` object
     """
 
     _attribute_map = {
