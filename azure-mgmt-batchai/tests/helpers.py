@@ -147,7 +147,7 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
                                                                                       AZURE_FILES_NAME),
                         relative_mount_path=AZURE_FILES_MOUNTING_PATH,
                         account_name=storage_account,
-                        credentials_info=models.AzureStorageCredentialsInfo(
+                        credentials=models.AzureStorageCredentialsInfo(
                             account_key=storage_account_key
                         ),
                     )],

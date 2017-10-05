@@ -27,8 +27,8 @@ class ClusterCreateParameters(Model):
      STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
      STANDARD_DSV2 series).
     :type vm_size: str
-    :param vm_priority: dedicated or lowPriority. Default is dedicated.
-     Possible values include: 'dedicated', 'lowPriority'. Default value:
+    :param vm_priority: dedicated or lowpriority. Default is dedicated.
+     Possible values include: 'dedicated', 'lowpriority'. Default value:
      "dedicated" .
     :type vm_priority: str or :class:`VmPriority
      <azure.mgmt.batchai.models.VmPriority>`
