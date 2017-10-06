@@ -442,8 +442,7 @@ class ClustersOperations(object):
 
     def list(
             self, clusters_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch AI Clusters associated with the
-        subscription.
+        """Gets information about the Clusters associated with the subscription.
 
         :param clusters_list_options: Additional parameters for the operation
         :type clusters_list_options: :class:`ClustersListOptions
@@ -526,8 +525,8 @@ class ClustersOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, clusters_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch AI Clusters associated within the
-        specified resource group.
+        """Gets information about the Clusters associated within the specified
+        resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

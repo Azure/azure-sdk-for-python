@@ -17,7 +17,7 @@ class ClusterCreateParameters(Model):
 
     :param location: The region in which to create the cluster.
     :type location: str
-    :param tags: The user specified tags associated with the cluster.
+    :param tags: The user specified tags associated with the Cluster.
     :type tags: dict
     :param vm_size: The size of the virtual machines in the cluster. All
      virtual machines in a cluster are the same size. For information about
@@ -41,10 +41,11 @@ class ClusterCreateParameters(Model):
      <azure.mgmt.batchai.models.VirtualMachineConfiguration>`
     :param node_setup: Setup to be done on all compute nodes in the cluster.
     :type node_setup: :class:`NodeSetup <azure.mgmt.batchai.models.NodeSetup>`
-    :param user_account_settings: Settings for user account of compute nodes.
+    :param user_account_settings: Settings for user account that will be
+     created on all compute nodes of the cluster.
     :type user_account_settings: :class:`UserAccountSettings
      <azure.mgmt.batchai.models.UserAccountSettings>`
-    :param subnet: Specifies the identifier of the subnet.
+    :param subnet: Specifies the identifier of the subnet. .
     :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
     """
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UnmanagedFileSystemReference(Model):
-    """Details of the file system to mount on the compute cluster.
+    """Details of the file system to mount on the compute cluster nodes.
 
     :param mount_command: Command used to mount the unmanaged file system.
     :type mount_command: str

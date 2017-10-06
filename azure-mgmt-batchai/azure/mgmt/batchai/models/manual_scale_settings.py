@@ -16,11 +16,11 @@ class ManualScaleSettings(Model):
     """Manual scale settings for the cluster.
 
     :param target_node_count: The desired number of compute nodes in the
-     cluster. Default is 0. If autoScaleSettings are not specified, then the
-     cluster starts with this target. Default value: 0 .
+     Cluster. Default is 0. If autoScaleSettings are not specified, then the
+     Cluster starts with this target. Default value: 0 .
     :type target_node_count: int
-    :param node_deallocation_option: Determines what to do with a compute node
-     and its running task(s) if the cluster size is decreasing. The default
+    :param node_deallocation_option: Determines what to do with the job(s)
+     running on compute node if the Cluster size is decreasing. The default
      value is requeue. Possible values include: 'requeue', 'terminate',
      'waitforjobcompletion', 'unknown'. Default value: "requeue" .
     :type node_deallocation_option: str or :class:`DeallocationOption
