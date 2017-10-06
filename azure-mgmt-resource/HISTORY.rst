@@ -3,27 +3,25 @@
 Release History
 ===============
 
-1.2.0rc3 (2017-09-22)
-+++++++++++++++++++++
-
-**Bug fixes**
-
-- Don't throw on 404 for policy set definition get (#1458)
-
-1.2.0rc2 (2017-09-18)
-+++++++++++++++++++++
-
-**Features**
-
-- Add mode and metadata to PolicyDefinition (2016-12-01)
-- Add preview version of Policy 2017-06-01-preview
-
-1.2.0rc1 (2017-09-18)
-+++++++++++++++++++++++
+1.2.0 (2017-10-05)
+++++++++++++++++++
 
 **Features**
 
 - Add validate_move_resources
+- Add mode and metadata to PolicyDefinition
+- Add policy_definitions.get_built_in
+- Add policy_definitions.list_built_in
+- Add policy_definitions.create_or_update_at_management_group
+- Add policy_definitions.delete_at_management_group
+- Add policy_definitions.get_at_management_group
+- Add policy_definitions.list_by_management_group
+
+- Add preview version of Policy 2017-06-01-preview:
+
+  - Add policy_set_definitions operations group
+  - Add policy set definitions to policy_assignments operations group
+  - Add skus to policy assignment
 
 **Bug fixes**
 
@@ -32,6 +30,12 @@ Release History
 **Breaking changes to preview clients**
 
 * Major renaming into ManagedApplication client, and GA ApiVersion 2017-09-01
+
+**Disclaimer**
+
+- We removed the "filter" parameter of policy_definitions.list method. 
+  However, we don't upgrade the  major version of the package, since this parameter has no meaning 
+  for the RestAPI and there is no way any Python users would have been able to use it anyway.
 
 1.1.0 (2017-05-15)
 ++++++++++++++++++
