@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.2.1 (2017-10-06)
+++++++++++++++++++
+
+**Bugfixes**
+
+- "Get" on unkwon policy resources should raise and not return None
+
 1.2.0 (2017-10-05)
 ++++++++++++++++++
 
