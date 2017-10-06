@@ -25,7 +25,7 @@ class SetupTask(Model):
      mode. The default value is false.  Default value: False .
     :type run_elevated: bool
     :param std_out_err_path_prefix: The path where the Batch AI service will
-     upload stdout and stderror of setup task.
+     upload the stdout and stderror of setup task.
     :type std_out_err_path_prefix: str
     """
 

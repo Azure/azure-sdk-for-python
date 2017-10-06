@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class JobsListOutputFilesOptions(Model):
     """Additional parameters for list_output_files operation.
 
-    :param outputdirectoryid: Id of the job output directory.
+    :param outputdirectoryid: Id of the job output directory. This is the
+     OutputDirectory-->id parameter that is given by the user during Create
+     Job.
     :type outputdirectoryid: str
     :param linkexpiryinminutes: The number of minutes after which the download
      link will expire. Default value: 60 .

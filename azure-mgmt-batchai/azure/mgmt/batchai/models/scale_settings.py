@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class ScaleSettings(Model):
-    """Specifies the scale settings for the cluster. At least one of manual and
-    autoScale settings must be specified. Only one of manual and autoScale
-    settings can be specified.
+    """At least one of manual or autoScale settings must be specified. Only one of
+    manual or autoScale settings can be specified. If autoScale settings are
+    specified, the system automatically scales the cluster up and down (within
+    the supplied limits) based on the pending jobs on the cluster.
 
     :param manual: The scale for the cluster by manual settings.
     :type manual: :class:`ManualScaleSettings

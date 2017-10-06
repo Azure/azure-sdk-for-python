@@ -58,9 +58,9 @@ class JobCreateParameters(Model):
      job.
     :type custom_toolkit_settings: :class:`CustomToolkitSettings
      <azure.mgmt.batchai.models.CustomToolkitSettings>`
-    :param job_preparation: Specifies the actions to be performed before tool
-     kit is launched. The specified actions will run on all the nodes that are
-     part of the job
+    :param job_preparation: Specifies the command line to be executed before
+     tool kit is launched. The specified actions will run on all the nodes that
+     are part of the job
     :type job_preparation: :class:`JobPreparation
      <azure.mgmt.batchai.models.JobPreparation>`
     :param std_out_err_path_prefix: The path where the Batch AI service will

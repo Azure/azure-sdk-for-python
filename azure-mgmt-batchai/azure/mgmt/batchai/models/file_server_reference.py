@@ -13,21 +13,21 @@ from msrest.serialization import Model
 
 
 class FileServerReference(Model):
-    """Details of the file server to mount on the cluster.
+    """Provides required information, for the service to be able to mount Azure
+    FileShare on the cluster nodes.
 
     :param file_server: Reference to the file server resource.
     :type file_server: :class:`ResourceId
      <azure.mgmt.batchai.models.ResourceId>`
-    :param source_directory: Specifies the source directory in file server
+    :param source_directory: Specifies the source directory in File Server
      that needs to be mounted. If this property is not specified, the entire
-     file server will be mounted.
+     File Server will be mounted.
     :type source_directory: str
     :param relative_mount_path: Specifies the relative path on the compute
-     node where the file server will be mounted. Note that all file shares will
+     node where the File Server will be mounted. Note that all file shares will
      be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
-    :param mount_options: Specifies the various mount options required for
-     mounting the file server.
+    :param mount_options: Specifies the mount options for File Server.
     :type mount_options: str
     """
 

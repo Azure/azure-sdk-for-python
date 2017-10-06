@@ -13,7 +13,9 @@ from msrest.serialization import Model
 
 
 class AutoScaleSettings(Model):
-    """Specifies the autoscale settings for the cluster.
+    """The system automatically scales the cluster up and down (within
+    minimumNodeCount and maximumNodeCount) based on the pending and running
+    jobs on the cluster.
 
     :param minimum_node_count: Specifies the minimum number of compute nodes
      the cluster can have.

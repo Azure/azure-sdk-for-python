@@ -447,8 +447,7 @@ class JobsOperations(object):
 
     def list(
             self, jobs_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch AI jobs associated with the
-        subscription.
+        """Gets information about the jobs associated with the subscription.
 
         :param jobs_list_options: Additional parameters for the operation
         :type jobs_list_options: :class:`JobsListOptions
@@ -622,7 +621,7 @@ class JobsOperations(object):
     def list_output_files(
             self, resource_group_name, job_name, jobs_list_output_files_options, custom_headers=None, raw=False, **operation_config):
         """List all files inside the given output directory (Only if the output
-        directory is on Azure File Share).
+        directory is on Azure File Share or Azure Storage container).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.

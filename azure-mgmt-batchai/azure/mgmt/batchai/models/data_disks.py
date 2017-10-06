@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class DataDisks(Model):
-    """Settings for the data disk which would be created for the file server.
+    """Settings for the data disk which would be created for the File Server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param disk_size_in_gb: initial disk size in GB for blank data disks, and
-     the new desired size for resizing existing OS and data disks.
+    :param disk_size_in_gb: Initial disk size in GB for blank data disks, and
+     the new desired size for resizing existing data disks.
     :type disk_size_in_gb: int
     :ivar caching_type: None, ReadOnly, ReadWrite. Default value is None. This
      property is not patchable. Possible values include: 'none', 'readonly',
