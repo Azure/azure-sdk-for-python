@@ -583,7 +583,7 @@ class PolicySetDefinitionsOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
