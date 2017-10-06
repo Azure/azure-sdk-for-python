@@ -15,10 +15,9 @@ from msrest.serialization import Model
 class SshConfiguration(Model):
     """SSH configuration settings for the VM.
 
-    :param public_ips_to_allow: List of source IPs range which would be
-     allowed to perform SSH with the VMs. Default value is '*' can be used to
-     match all source IPs. Maximum number of publicIPs that can be specified
-     are 400.
+    :param public_ips_to_allow: List of source IP ranges to allow SSH
+     connection to VM. Default value is '*' can be used to match all source
+     IPs. Maximum number of publicIPs that can be specified are 400.
     :type public_ips_to_allow: list of str
     :param user_account_settings: Settings for user account of VMs.
     :type user_account_settings: :class:`UserAccountSettings

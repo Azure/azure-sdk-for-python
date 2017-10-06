@@ -26,7 +26,7 @@ class AzureFileShareReference(Model):
      node where the Azure file share will be mounted. Note that all file shares
      will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
     :type relative_mount_path: str
-    :param file_mode: Specifies the file Mode. Default value is 0777. Valid
+    :param file_mode: Specifies the file mode. Default value is 0777. Valid
      only if OS is linux. Default value: "0777" .
     :type file_mode: str
     :param directory_mode: Specifies the directory Mode. Default value is

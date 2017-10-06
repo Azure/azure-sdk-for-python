@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Cluster(Resource):
-    """Contains information about an Azure Batch AI Cluster.
+    """Contains information about a Cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,19 +36,21 @@ class Cluster(Resource):
      STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
      STANDARD_DSV2 series).
     :type vm_size: str
-    :param vm_priority: dedicated or lowpriority. Default is dedicated.
-     Possible values include: 'dedicated', 'lowpriority'. Default value:
-     "dedicated" .
+    :param vm_priority: dedicated or lowpriority. The default value is
+     dedicated. The node can get preempted while the task is running if
+     lowpriority is choosen. This is best suited if the workload is
+     checkpointing and can be restarted. Possible values include: 'dedicated',
+     'lowpriority'. Default value: "dedicated" .
     :type vm_priority: str or :class:`VmPriority
      <azure.mgmt.batchai.models.VmPriority>`
-    :param scale_settings: Desired scale for the cluster.
+    :param scale_settings: Desired scale for the Cluster.
     :type scale_settings: :class:`ScaleSettings
      <azure.mgmt.batchai.models.ScaleSettings>`
     :param virtual_machine_configuration: Settings for OS image and mounted
      data volumes.
     :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
      <azure.mgmt.batchai.models.VirtualMachineConfiguration>`
-    :param node_setup: Setup to be done on all compute nodes in the cluster.
+    :param node_setup: Setup to be done on all compute nodes in the Cluster.
     :type node_setup: :class:`NodeSetup <azure.mgmt.batchai.models.NodeSetup>`
     :param user_account_settings: Settings for user account of compute nodes.
     :type user_account_settings: :class:`UserAccountSettings

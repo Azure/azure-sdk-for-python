@@ -13,13 +13,17 @@ from msrest.serialization import Model
 
 
 class NodeSetup(Model):
-    """Setup to be done on all compute nodes in the cluster.
+    """Use this to prepare the VM. NOTE: The volumes specified in mountVolumes are
+    mounted first and then the setupTask is run. Therefore the setup task can
+    use local mountPaths in its execution.
 
     :param setup_task: Specifies a setup task which can be used to customize
-     the compute nodes of the cluster.
+     the compute nodes of the cluster. The NodeSetup task runs everytime a VM
+     is rebooted. For that reason the task code needs to be idempotent.
+     Generally it is used to either download static data that is required for
+     all jobs that run on the cluster VMs or to download/install software.
     :type setup_task: :class:`SetupTask <azure.mgmt.batchai.models.SetupTask>`
-    :param mount_volumes: Information on shared volumes to be used for the
-     job.
+    :param mount_volumes: Information on shared volumes to be used by jobs.
     :type mount_volumes: :class:`MountVolumes
      <azure.mgmt.batchai.models.MountVolumes>`
     """

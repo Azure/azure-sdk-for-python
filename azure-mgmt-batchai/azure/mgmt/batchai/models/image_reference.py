@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class ImageReference(Model):
     """The image reference.
 
-    :param publisher: publisher of the image.
+    :param publisher: Publisher of the image.
     :type publisher: str
-    :param offer: offer of the image.
+    :param offer: Offer of the image.
     :type offer: str
     :param sku: SKU of the image.
     :type sku: str
-    :param version: version of the image.
+    :param version: Version of the image.
     :type version: str
     """
 
