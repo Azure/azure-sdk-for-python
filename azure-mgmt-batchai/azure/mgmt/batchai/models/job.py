@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Job(Resource):
-    """Contains information about an Azure Batch AI job.
+    """Contains information about the job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -86,11 +86,11 @@ class Job(Resource):
     :type output_directories: list of :class:`OutputDirectory
      <azure.mgmt.batchai.models.OutputDirectory>`
     :param environment_variables: Additional environment variables to be
-     passed to the job. Batch AI services sends the following environment
+     passed to the job. Batch AI services sets the following environment
      variables for all jobs: AZ_BATCHAI_INPUT_id, AZ_BATCHAI_OUTPUT_id,
      AZ_BATCHAI_NUM_GPUS_PER_NODE, For distributed TensorFlow jobs, following
      additional environment variables are set by the Batch AI Service:
-     AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS
+     AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS.
     :type environment_variables: list of :class:`EnvironmentSetting
      <azure.mgmt.batchai.models.EnvironmentSetting>`
     :param constraints: Constraints associated with the Job.

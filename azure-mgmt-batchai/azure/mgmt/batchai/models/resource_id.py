@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class ResourceId(Model):
-    """A definition of a resource ID.
+    """Represents a resource ID. For example, for a subnet, it is the resource URL
+    for the subnet.
 
     :param id: The ID of the resource
     :type id: str

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class FileServerCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which to create the cluster.
+    :param location: The region in which to create the File Server.
     :type location: str
-    :param tags: The user specified tags associated with the cluster.
+    :param tags: The user specified tags associated with the File Server.
     :type tags: dict
     :param vm_size: The size of the virtual machine of the file server. For
      information about available VM sizes for fileservers from the Virtual

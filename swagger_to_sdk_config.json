@@ -38,7 +38,7 @@
       "markdown": "specification/batchai/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.batchai",
-        "package-version": "0.1.0"
+        "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-batchai/azure/mgmt/batchai",
       "build_dir": "azure-mgmt-batchai"

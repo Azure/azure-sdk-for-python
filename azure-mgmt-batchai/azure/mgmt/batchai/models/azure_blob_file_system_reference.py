@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class AzureBlobFileSystemReference(Model):
-    """Details of the Azure Blob Storage container to mount on the cluster.
+    """Provides required information, for the service to be able to mount Azure
+    Blob Storage container on the cluster nodes.
 
     :param account_name: Name of the Azure Blob Storage account.
     :type account_name: str

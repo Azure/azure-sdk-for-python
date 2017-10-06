@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class MountVolumes(Model):
     """Details of volumes to mount on the cluster.
 
-    :param azure_file_shares: Azure File Share setup configuration. Azure File
-     will be mounted to the cluster node.
+    :param azure_file_shares: Azure File Share setup configuration. References
+     to Azure File Shares that are to be mounted to the cluster nodes.
     :type azure_file_shares: list of :class:`AzureFileShareReference
      <azure.mgmt.batchai.models.AzureFileShareReference>`
     :param azure_blob_file_systems: Azure Blob FileSystem setup configuration.
-     Azure Blob file system will be mounted to the cluster node.
+     References to Azure Blob FUSE that are to be mounted to the cluster nodes.
     :type azure_blob_file_systems: list of
      :class:`AzureBlobFileSystemReference
      <azure.mgmt.batchai.models.AzureBlobFileSystemReference>`

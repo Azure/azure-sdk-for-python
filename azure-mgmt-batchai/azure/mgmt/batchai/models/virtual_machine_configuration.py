@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VirtualMachineConfiguration(Model):
-    """Settings for OS image and mounted data volumes.
+    """Settings for OS image.
 
     :param image_reference: Reference to OS image.
     :type image_reference: :class:`ImageReference

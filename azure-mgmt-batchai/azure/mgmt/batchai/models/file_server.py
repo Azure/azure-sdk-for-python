@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class FileServer(Resource):
-    """Contains information about an Azure Batch AI file server.
+    """Contains information about the File Server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,19 +28,19 @@ class FileServer(Resource):
     :vartype location: str
     :ivar tags: The tags of the resource
     :vartype tags: dict
-    :param vm_size: The size of the virtual machine of the file server. For
-     information about available VM sizes for fileservers from the Virtual
+    :param vm_size: The size of the virtual machine of the File Server. For
+     information about available VM sizes for File Server from the Virtual
      Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
-    :param ssh_configuration: SSH settings for the file server.
+    :param ssh_configuration: SSH settings for the File Server.
     :type ssh_configuration: :class:`SshConfiguration
      <azure.mgmt.batchai.models.SshConfiguration>`
     :param data_disks: Settings for the data disk which would be created for
-     the file server.
+     the File Server.
     :type data_disks: :class:`DataDisks <azure.mgmt.batchai.models.DataDisks>`
     :param subnet: Specifies the identifier of the subnet.
     :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
-    :ivar mount_settings: Details of the file Server.
+    :ivar mount_settings: Details of the File Server.
     :vartype mount_settings: :class:`MountSettings
      <azure.mgmt.batchai.models.MountSettings>`
     :ivar provisioning_state_transition_time: Time when the status was
@@ -48,13 +48,13 @@ class FileServer(Resource):
     :vartype provisioning_state_transition_time: datetime
     :ivar creation_time: Time when the FileServer was created.
     :vartype creation_time: datetime
-    :ivar provisioning_state: Specifies the provisioning state of the file
-     server. Possible values: creating - The fileServer is just getting
-     created. Updating - The file server creation has been accepted and it is
-     getting updated. Deleting - The user has requested that the cluster be
-     deleted, but the delete operation has not yet completed. Failed - The file
-     server creation has failed with the specified errorCode. Details about the
-     error code are specified in the message field. Succeeded - The file server
+    :ivar provisioning_state: Specifies the provisioning state of the File
+     Server. Possible values: creating - The File Server is getting created.
+     updating - The File Server creation has been accepted and it is getting
+     updated. deleting - The user has requested that the File Server be
+     deleted, and it is in the process of being deleted. failed - The File
+     Server creation has failed with the specified errorCode. Details about the
+     error code are specified in the message field. succeeded - The File Server
      creation has succeeded. Possible values include: 'creating', 'updating',
      'deleting', 'succeeded', 'failed'
     :vartype provisioning_state: str or :class:`FileServerProvisioningState

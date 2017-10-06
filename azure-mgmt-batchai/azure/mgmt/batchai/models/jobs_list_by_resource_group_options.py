@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class JobsListByResourceGroupOptions(Model):
     """Additional parameters for list_by_resource_group operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause.. Used to filter results that are
+     returned in the GET respnose.
     :type filter: str
-    :param select: list of files.
+    :param select: An OData $select clause. Used to select the properties to
+     be returned in the GET respnose.
     :type select: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .

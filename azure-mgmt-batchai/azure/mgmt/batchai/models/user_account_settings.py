@@ -13,14 +13,16 @@ from msrest.serialization import Model
 
 
 class UserAccountSettings(Model):
-    """Settings for user account of VMs.
+    """Settings for user account that gets created on each on the nodes of a
+    cluster.
 
     :param admin_user_name: Specifies the name of the administrator account.
     :type admin_user_name: str
     :param admin_user_ssh_public_key: SSH public keys used to authenticate
-     with linux based VMs.
+     with linux based VMs. This does not get returned in a GET response body.
     :type admin_user_ssh_public_key: str
-    :param admin_user_password: Admin user Password (linux and windows).
+    :param admin_user_password: Admin user Password (linux only). This does
+     not get returned in a GET response body.
     :type admin_user_password: str
     """
 
