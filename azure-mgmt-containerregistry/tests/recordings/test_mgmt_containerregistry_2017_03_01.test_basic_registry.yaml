@@ -8,7 +8,7 @@ interactions:
       Content-Length: ['75']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/checkNameAvailability?api-version=2017-03-01
@@ -36,7 +36,7 @@ interactions:
       Content-Length: ['248']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642?api-version=2017-03-01
@@ -63,7 +63,7 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries?api-version=2017-03-01
@@ -90,7 +90,7 @@ interactions:
       Content-Length: ['68']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642?api-version=2017-03-01
@@ -117,7 +117,7 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642?api-version=2017-03-01
@@ -144,7 +144,7 @@ interactions:
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642/listCredentials?api-version=2017-03-01
@@ -172,7 +172,7 @@ interactions:
       Content-Length: ['20']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642/regenerateCredential?api-version=2017-03-01
@@ -200,7 +200,7 @@ interactions:
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.15
-          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.14 containerregistrymanagementclient/1.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_03_01_test_basic_registry99e51642/providers/Microsoft.ContainerRegistry/registries/pyacr99e51642?api-version=2017-03-01
