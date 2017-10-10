@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.0 (2017-10-10)
+++++++++++++++++++
+
+- Add "recordsetnamesuffix" filter parameter to list operations
+
 1.0.1 (2017-04-20)
 ++++++++++++++++++
 
