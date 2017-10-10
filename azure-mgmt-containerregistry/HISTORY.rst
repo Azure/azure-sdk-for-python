@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.0.1 (2017-10-09)
+++++++++++++++++++
+
+* Rename Managed_Basic, Managed_Standard, Managed_Premium to Basic, Standard, Premium.
+
 1.0.0 (2017-09-22)
 ++++++++++++++++++
 

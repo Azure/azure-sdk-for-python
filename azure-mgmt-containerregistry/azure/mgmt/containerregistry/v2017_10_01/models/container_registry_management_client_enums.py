@@ -15,15 +15,17 @@ from enum import Enum
 class SkuName(Enum):
 
     classic = "Classic"
-    managed_basic = "Managed_Basic"
-    managed_standard = "Managed_Standard"
-    managed_premium = "Managed_Premium"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
 
 
 class SkuTier(Enum):
 
     classic = "Classic"
-    managed = "Managed"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
 
 
 class ProvisioningState(Enum):
