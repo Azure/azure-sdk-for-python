@@ -19,14 +19,14 @@ class SingletonPartitionInformation(PartitionInformation):
 
     :param id:
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
-    """ 
+    :param service_partition_kind: Polymorphic Discriminator
+    :type service_partition_kind: str
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     def __init__(self, id=None):
         super(SingletonPartitionInformation, self).__init__(id=id)
-        self.ServicePartitionKind = 'Singleton'
+        self.service_partition_kind = 'Singleton'

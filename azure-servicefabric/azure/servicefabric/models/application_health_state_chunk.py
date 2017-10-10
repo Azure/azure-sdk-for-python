@@ -15,14 +15,13 @@ from .entity_health_state_chunk import EntityHealthStateChunk
 class ApplicationHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a application.
     The application health state chunk contains the application name, its
-    aggregated health state and any children services and deployed
-    applications that respect the filters in cluster health chunk query
-    description.
+    aggregated health state and any children services and deployed applications
+    that respect the filters in cluster health chunk query description.
     .
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param application_name:
     :type application_name: str
     :param application_type_name:
@@ -34,7 +33,7 @@ class ApplicationHealthStateChunk(EntityHealthStateChunk):
     :type deployed_application_health_state_chunks:
      :class:`DeployedApplicationHealthStateChunkList
      <azure.servicefabric.models.DeployedApplicationHealthStateChunkList>`
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

@@ -18,7 +18,7 @@ class ServiceTypeManifest(Model):
 
     :param manifest: The XML manifest as a string.
     :type manifest: str
-    """ 
+    """
 
     _attribute_map = {
         'manifest': {'key': 'Manifest', 'type': 'str'},

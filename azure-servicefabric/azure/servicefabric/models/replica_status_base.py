@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class ReplicaStatusBase(Model):
     """Information about the replica.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'KeyValueStore': 'KeyValueStoreReplicaStatus'}
+        'kind': {'KeyValueStore': 'KeyValueStoreReplicaStatus'}
     }
 
     def __init__(self):
-        self.Kind = None
+        self.kind = None

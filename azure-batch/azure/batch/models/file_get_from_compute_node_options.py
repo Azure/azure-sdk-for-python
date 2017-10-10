@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class FileGetFromComputeNodeOptions(Model):
-    """Additional parameters for the File_get_from_compute_node operation.
+    """Additional parameters for get_from_compute_node operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

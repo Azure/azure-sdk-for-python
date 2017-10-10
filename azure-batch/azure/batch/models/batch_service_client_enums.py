@@ -94,6 +94,12 @@ class CachingType(Enum):
     read_write = "readWrite"
 
 
+class StorageAccountType(Enum):
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+
 class InboundEndpointProtocol(Enum):
 
     tcp = "tcp"

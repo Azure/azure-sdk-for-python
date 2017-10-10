@@ -36,6 +36,11 @@ class TaskExecutionInformation(Model):
      termination via the API) you may see an operating system-defined exit
      code.
     :type exit_code: int
+    :param container_info: Information about the container under which the
+     task is executing. This property is set only if the task runs in a
+     container context.
+    :type container_info: :class:`TaskContainerExecutionInformation
+     <azure.batch.models.TaskContainerExecutionInformation>`
     :param failure_info: Information describing the task failure, if any. This
      property is set only if the task is in the completed state and encountered
      a failure.
@@ -81,6 +86,7 @@ class TaskExecutionInformation(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
+        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
         'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
         'retry_count': {'key': 'retryCount', 'type': 'int'},
         'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
@@ -89,10 +95,11 @@ class TaskExecutionInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, failure_info=None, last_retry_time=None, last_requeue_time=None, result=None):
+    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, last_requeue_time=None, result=None):
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
+        self.container_info = container_info
         self.failure_info = failure_info
         self.retry_count = retry_count
         self.last_retry_time = last_retry_time

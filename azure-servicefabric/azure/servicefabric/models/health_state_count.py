@@ -20,13 +20,13 @@ class HealthStateCount(Model):
     :param ok_count: The number of health entities with aggregated health
      state Ok.
     :type ok_count: long
-    :param warning_count: The number of health entities with aggregated
-     health state Warning.
+    :param warning_count: The number of health entities with aggregated health
+     state Warning.
     :type warning_count: long
     :param error_count: The number of health entities with aggregated health
      state Error.
     :type error_count: long
-    """ 
+    """
 
     _validation = {
         'ok_count': {'minimum': 0},

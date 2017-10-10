@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobTerminateOptions(Model):
-    """Additional parameters for the Job_terminate operation.
+    """Additional parameters for terminate operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

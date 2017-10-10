@@ -17,7 +17,7 @@ class ResumeClusterUpgradeDescription(Model):
 
     :param upgrade_domain: The next upgrade domain for this cluster upgrade.
     :type upgrade_domain: str
-    """ 
+    """
 
     _validation = {
         'upgrade_domain': {'required': True},

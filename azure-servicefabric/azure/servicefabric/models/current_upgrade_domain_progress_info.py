@@ -20,7 +20,7 @@ class CurrentUpgradeDomainProgressInfo(Model):
     :param node_upgrade_progress_list:
     :type node_upgrade_progress_list: list of :class:`NodeUpgradeProgressInfo
      <azure.servicefabric.models.NodeUpgradeProgressInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'domain_name': {'key': 'DomainName', 'type': 'str'},

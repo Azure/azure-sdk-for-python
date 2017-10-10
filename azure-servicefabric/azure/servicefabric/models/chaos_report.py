@@ -24,15 +24,15 @@ class ChaosReport(Model):
      enumerations have the invalid type.
      The valus is zero.
      - Running - Indicates that Chaos is not stopped.
-     - Stopped - Indicates that Chaos is not scheduling futher faults.
-     Possible values include: 'Invalid', 'Running', 'Stopped'
-    :type status: str
+     - Stopped - Indicates that Chaos is not scheduling futher faults. Possible
+     values include: 'Invalid', 'Running', 'Stopped'
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param continuation_token:
     :type continuation_token: str
     :param history:
     :type history: list of :class:`ChaosEventWrapper
      <azure.servicefabric.models.ChaosEventWrapper>`
-    """ 
+    """
 
     _attribute_map = {
         'chaos_parameters': {'key': 'ChaosParameters', 'type': 'ChaosParameters'},

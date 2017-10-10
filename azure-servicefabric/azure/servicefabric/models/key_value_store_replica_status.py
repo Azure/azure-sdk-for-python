@@ -15,13 +15,13 @@ from .replica_status_base import ReplicaStatusBase
 class KeyValueStoreReplicaStatus(ReplicaStatusBase):
     """Key value store related information for the replica.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param database_row_count_estimate: Value indicating the estimated number
      of rows in the underlying database.
     :type database_row_count_estimate: str
-    :param database_logical_size_estimate: Value indicating the estimated
-     size of the underlying database.
+    :param database_logical_size_estimate: Value indicating the estimated size
+     of the underlying database.
     :type database_logical_size_estimate: str
     :param copy_notification_current_key_filter: Value indicating the latest
      key-prefix filter applied to enumeration during the callback. Null if
@@ -34,14 +34,14 @@ class KeyValueStoreReplicaStatus(ReplicaStatusBase):
     :param status_details: Value indicating the current status details of the
      replica.
     :type status_details: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'database_row_count_estimate': {'key': 'DatabaseRowCountEstimate', 'type': 'str'},
         'database_logical_size_estimate': {'key': 'DatabaseLogicalSizeEstimate', 'type': 'str'},
         'copy_notification_current_key_filter': {'key': 'CopyNotificationCurrentKeyFilter', 'type': 'str'},
@@ -56,4 +56,4 @@ class KeyValueStoreReplicaStatus(ReplicaStatusBase):
         self.copy_notification_current_key_filter = copy_notification_current_key_filter
         self.copy_notification_current_progress = copy_notification_current_progress
         self.status_details = status_details
-        self.Kind = 'KeyValueStore'
+        self.kind = 'KeyValueStore'

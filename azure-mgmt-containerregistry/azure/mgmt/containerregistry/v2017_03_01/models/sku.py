@@ -18,8 +18,8 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The SKU name of the the container registry. Required for
-     registry creation. Allowed value: Basic.
+    :param name: The SKU name of the container registry. Required for registry
+     creation. Allowed value: Basic.
     :type name: str
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Basic'

@@ -20,7 +20,7 @@ class FolderInfo(Model):
     :type store_relative_path: str
     :param file_count: The number of files from within the image store folder.
     :type file_count: str
-    """ 
+    """
 
     _attribute_map = {
         'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},

@@ -19,7 +19,7 @@ class ServiceTypeExtensionDescription(Model):
     :type key: str
     :param value: The extension value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'key': {'key': 'Key', 'type': 'str'},

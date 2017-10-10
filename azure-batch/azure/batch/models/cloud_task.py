@@ -63,6 +63,16 @@ class CloudTask(Model):
      shell in the command line, for example using "cmd /c MyCommand" in Windows
      or "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
+    :param container_settings: The settings for the container under which the
+     task runs. If the pool that will run this task has containerConfiguration
+     set, this must be set as well. If the pool that will run this task doesn't
+     have containerConfiguration set, this must not be set. When this is
+     specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR
+     (the root of Azure Batch directories on the node) are mapped into the
+     container, all task environment variables are mapped into the container,
+     and the task command line is executed in the container.
+    :type container_settings: :class:`TaskContainerSettings
+     <azure.batch.models.TaskContainerSettings>`
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. For
      multi-instance tasks, the resource files will only be downloaded to the
@@ -147,6 +157,7 @@ class CloudTask(Model):
         'previous_state': {'key': 'previousState', 'type': 'TaskState'},
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
+        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
         'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
@@ -162,7 +173,7 @@ class CloudTask(Model):
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.url = url
@@ -175,6 +186,7 @@ class CloudTask(Model):
         self.previous_state = previous_state
         self.previous_state_transition_time = previous_state_transition_time
         self.command_line = command_line
+        self.container_settings = container_settings
         self.resource_files = resource_files
         self.output_files = output_files
         self.environment_settings = environment_settings

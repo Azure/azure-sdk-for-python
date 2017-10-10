@@ -17,7 +17,7 @@ class ClusterManifest(Model):
 
     :param manifest: The contents of the cluster manifest file.
     :type manifest: str
-    """ 
+    """
 
     _attribute_map = {
         'manifest': {'key': 'Manifest', 'type': 'str'},

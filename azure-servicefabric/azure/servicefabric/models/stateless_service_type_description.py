@@ -32,17 +32,17 @@ class StatelessServiceTypeDescription(ServiceTypeDescription):
     :param extensions:
     :type extensions: list of :class:`ServiceTypeExtensionDescription
      <azure.servicefabric.models.ServiceTypeExtensionDescription>`
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param use_implicit_host: A flag indicating if this type is not
-     implemented and hosted by a user service process, but is implicitly
-     hosted by a system created process. This value is true for services
-     using the guest executable services, false otherwise.
+     implemented and hosted by a user service process, but is implicitly hosted
+     by a system created process. This value is true for services using the
+     guest executable services, false otherwise.
     :type use_implicit_host: bool
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -51,11 +51,11 @@ class StatelessServiceTypeDescription(ServiceTypeDescription):
         'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'use_implicit_host': {'key': 'UseImplicitHost', 'type': 'bool'},
     }
 
     def __init__(self, is_stateful=None, service_type_name=None, placement_constraints=None, service_placement_policies=None, extensions=None, use_implicit_host=None):
         super(StatelessServiceTypeDescription, self).__init__(is_stateful=is_stateful, service_type_name=service_type_name, placement_constraints=placement_constraints, service_placement_policies=service_placement_policies, extensions=extensions)
         self.use_implicit_host = use_implicit_host
-        self.Kind = 'Stateless'
+        self.kind = 'Stateless'

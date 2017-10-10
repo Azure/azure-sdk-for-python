@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CodePackageEntryPoint(Model):
-    """Information about setup or main entry point of a code package deployed on
-    a Service Fabric node.
+    """Information about setup or main entry point of a code package deployed on a
+    Service Fabric node.
 
-    :param entry_point_location: The location of entry point executable on
-     the node.
+    :param entry_point_location: The location of entry point executable on the
+     node.
     :type entry_point_location: str
     :param process_id: The process id of the entry point.
     :type process_id: str
@@ -30,13 +30,13 @@ class CodePackageEntryPoint(Model):
      <azure.servicefabric.models.CodePackageEntryPointStatistics>`
     :param status: Possible values include: 'Invalid', 'Pending', 'Starting',
      'Started', 'Stopping', 'Stopped'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param next_activation_time: The time (in UTC) when the entry point
      executable will be run next.
     :type next_activation_time: datetime
     :param instance_id:
     :type instance_id: str
-    """ 
+    """
 
     _attribute_map = {
         'entry_point_location': {'key': 'EntryPointLocation', 'type': 'str'},

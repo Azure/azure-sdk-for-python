@@ -21,7 +21,7 @@ class AadMetadataObject(Model):
     :param metadata:
     :type metadata: :class:`AadMetadata
      <azure.servicefabric.models.AadMetadata>`
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},

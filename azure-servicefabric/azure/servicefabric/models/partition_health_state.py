@@ -18,10 +18,11 @@ class PartitionHealthState(EntityHealthState):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},

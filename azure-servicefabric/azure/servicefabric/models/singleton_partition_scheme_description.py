@@ -16,14 +16,14 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     """Describes the partition scheme of a singleton-partitioned, or
     non-partitioned service.
 
-    :param PartitionScheme: Polymorphic Discriminator
-    :type PartitionScheme: str
-    """ 
+    :param partition_scheme: Polymorphic Discriminator
+    :type partition_scheme: str
+    """
 
     _validation = {
-        'PartitionScheme': {'required': True},
+        'partition_scheme': {'required': True},
     }
 
     def __init__(self):
         super(SingletonPartitionSchemeDescription, self).__init__()
-        self.PartitionScheme = 'Singleton'
+        self.partition_scheme = 'Singleton'

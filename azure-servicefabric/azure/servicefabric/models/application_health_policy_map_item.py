@@ -21,7 +21,7 @@ class ApplicationHealthPolicyMapItem(Model):
     :param value:
     :type value: :class:`ApplicationHealthPolicy
      <azure.servicefabric.models.ApplicationHealthPolicy>`
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},

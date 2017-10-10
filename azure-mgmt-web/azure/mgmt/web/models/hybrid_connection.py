@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class HybridConnection(Resource):
+class HybridConnection(ProxyOnlyResource):
     """Hybrid Connection contract. This is used to configure a Hybrid Connection.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class HybridConnection(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param service_bus_namespace: The name of the Service Bus namespace.
     :type service_bus_namespace: str
     :param relay_name: The name of the Service Bus relay.
@@ -47,20 +43,22 @@ class HybridConnection(Resource):
      authenticate to Service Bus. In ARM this key will not be returned
      normally, use the POST /listKeys API instead.
     :type send_key_value: str
+    :param service_bus_suffix: The suffix for the service bus endpoint. By
+     default this is .servicebus.windows.net
+    :type service_bus_suffix: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'relay_name': {'key': 'properties.relayName', 'type': 'str'},
         'relay_arm_uri': {'key': 'properties.relayArmUri', 'type': 'str'},
@@ -68,10 +66,11 @@ class HybridConnection(Resource):
         'port': {'key': 'properties.port', 'type': 'int'},
         'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
+        'service_bus_suffix': {'key': 'properties.serviceBusSuffix', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, service_bus_namespace=None, relay_name=None, relay_arm_uri=None, hostname=None, port=None, send_key_name=None, send_key_value=None):
-        super(HybridConnection, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, kind=None, service_bus_namespace=None, relay_name=None, relay_arm_uri=None, hostname=None, port=None, send_key_name=None, send_key_value=None, service_bus_suffix=None):
+        super(HybridConnection, self).__init__(kind=kind)
         self.service_bus_namespace = service_bus_namespace
         self.relay_name = relay_name
         self.relay_arm_uri = relay_arm_uri
@@ -79,3 +78,4 @@ class HybridConnection(Resource):
         self.port = port
         self.send_key_name = send_key_name
         self.send_key_value = send_key_value
+        self.service_bus_suffix = service_bus_suffix

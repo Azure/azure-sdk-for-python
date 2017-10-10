@@ -17,11 +17,11 @@ class PartitionQuorumLossProgress(Model):
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
+    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param invoke_quorum_loss_result:
     :type invoke_quorum_loss_result: :class:`InvokeQuorumLossResult
      <azure.servicefabric.models.InvokeQuorumLossResult>`
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'State', 'type': 'str'},

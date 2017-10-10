@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class PartitionSchemeDescription(Model):
     """Describes how the service is partitioned.
 
-    :param PartitionScheme: Polymorphic Discriminator
-    :type PartitionScheme: str
-    """ 
+    :param partition_scheme: Polymorphic Discriminator
+    :type partition_scheme: str
+    """
 
     _validation = {
-        'PartitionScheme': {'required': True},
+        'partition_scheme': {'required': True},
     }
 
     _attribute_map = {
-        'PartitionScheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
     }
 
     _subtype_map = {
-        'PartitionScheme': {'Named': 'NamedPartitionSchemeDescription', 'Singleton': 'SingletonPartitionSchemeDescription', 'UniformInt64Range': 'UniformInt64RangePartitionSchemeDescription'}
+        'partition_scheme': {'Named': 'NamedPartitionSchemeDescription', 'Singleton': 'SingletonPartitionSchemeDescription', 'UniformInt64Range': 'UniformInt64RangePartitionSchemeDescription'}
     }
 
     def __init__(self):
-        self.PartitionScheme = None
+        self.partition_scheme = None

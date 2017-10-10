@@ -17,7 +17,7 @@ class FabricConfigVersionInfo(Model):
 
     :param config_version: The config version of Service Fabric.
     :type config_version: str
-    """ 
+    """
 
     _attribute_map = {
         'config_version': {'key': 'ConfigVersion', 'type': 'str'},

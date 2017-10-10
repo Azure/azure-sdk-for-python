@@ -21,11 +21,12 @@ class ClusterUpgradeDescriptionObject(Model):
     :type code_version: str
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str
+    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str
+    :type rolling_upgrade_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_replica_set_check_timeout_in_seconds:
     :type upgrade_replica_set_check_timeout_in_seconds: long
     :param force_restart:
@@ -46,7 +47,7 @@ class ClusterUpgradeDescriptionObject(Model):
     :type application_health_policy_map: list of
      :class:`ApplicationHealthPolicyMapItem
      <azure.servicefabric.models.ApplicationHealthPolicyMapItem>`
-    """ 
+    """
 
     _attribute_map = {
         'config_version': {'key': 'ConfigVersion', 'type': 'str'},

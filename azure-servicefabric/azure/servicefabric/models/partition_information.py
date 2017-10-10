@@ -18,23 +18,23 @@ class PartitionInformation(Model):
 
     :param id:
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
-    """ 
+    :param service_partition_kind: Polymorphic Discriminator
+    :type service_partition_kind: str
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
-        'ServicePartitionKind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServicePartitionKind': {'Int64Range': 'Int64RangePartitionInformation', 'Named': 'NamedPartitionInformation', 'Singleton': 'SingletonPartitionInformation'}
+        'service_partition_kind': {'Int64Range': 'Int64RangePartitionInformation', 'Named': 'NamedPartitionInformation', 'Singleton': 'SingletonPartitionInformation'}
     }
 
     def __init__(self, id=None):
         self.id = id
-        self.ServicePartitionKind = None
+        self.service_partition_kind = None

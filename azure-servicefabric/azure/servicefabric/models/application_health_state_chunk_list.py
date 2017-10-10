@@ -13,20 +13,19 @@ from .entity_health_state_chunk_list import EntityHealthStateChunkList
 
 
 class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
-    """The list of application health state chunks in the cluster that respect
-    the input filters in the chunk query. Returned by get cluster health
-    state chunks query.
+    """The list of application health state chunks in the cluster that respect the
+    input filters in the chunk query. Returned by get cluster health state
+    chunks query.
     .
 
-    :param total_count: Total number of entity health state objects that
-     match the specified filters from the cluster health chunk query
-     description.
+    :param total_count: Total number of entity health state objects that match
+     the specified filters from the cluster health chunk query description.
     :type total_count: long
-    :param items: The list of application health state chunks that respect
-     the input filters in the chunk query.
+    :param items: The list of application health state chunks that respect the
+     input filters in the chunk query.
     :type items: list of :class:`ApplicationHealthStateChunk
      <azure.servicefabric.models.ApplicationHealthStateChunk>`
-    """ 
+    """
 
     _attribute_map = {
         'total_count': {'key': 'TotalCount', 'type': 'long'},

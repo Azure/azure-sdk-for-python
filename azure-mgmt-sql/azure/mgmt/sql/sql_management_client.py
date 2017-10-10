@@ -49,6 +49,7 @@ from .operations.sync_agents_operations import SyncAgentsOperations
 from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
+from .operations.database_operations import DatabaseOperations
 from . import models
 
 
@@ -165,6 +166,8 @@ class SqlManagementClient(object):
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
+    :ivar database_operations: DatabaseOperations operations
+    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -256,4 +259,6 @@ class SqlManagementClient(object):
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)

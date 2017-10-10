@@ -17,12 +17,12 @@ class ResolvedServiceEndpoint(Model):
 
     :param kind: Possible values include: 'Invalid', 'Stateless',
      'StatefulPrimary', 'StatefulSecondary'
-    :type kind: str
+    :type kind: str or :class:`enum <azure.servicefabric.models.enum>`
     :param address: The address of the endpoint. If the endpoint has multiple
-     listeners the address is a JSON object with one property per listener
-     with the value as the address of that listener.
+     listeners the address is a JSON object with one property per listener with
+     the value as the address of that listener.
     :type address: str
-    """ 
+    """
 
     _attribute_map = {
         'kind': {'key': 'Kind', 'type': 'str'},
