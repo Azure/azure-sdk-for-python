@@ -20,8 +20,7 @@ class ZoneDeleteResult(Model):
     :type azure_async_operation: str
     :param status: Possible values include: 'InProgress', 'Succeeded',
      'Failed'
-    :type status: str or :class:`OperationStatus
-     <azure.mgmt.dns.models.OperationStatus>`
+    :type status: str or ~azure.mgmt.dns.models.OperationStatus
     :param status_code: Possible values include: 'Continue',
      'SwitchingProtocols', 'OK', 'Created', 'Accepted',
      'NonAuthoritativeInformation', 'NoContent', 'ResetContent',
@@ -36,8 +35,7 @@ class ZoneDeleteResult(Model):
      'ExpectationFailed', 'UpgradeRequired', 'InternalServerError',
      'NotImplemented', 'BadGateway', 'ServiceUnavailable', 'GatewayTimeout',
      'HttpVersionNotSupported'
-    :type status_code: str or :class:`HttpStatusCode
-     <azure.mgmt.dns.models.HttpStatusCode>`
+    :type status_code: str or ~azure.mgmt.dns.models.HttpStatusCode
     :param request_id:
     :type request_id: str
     """

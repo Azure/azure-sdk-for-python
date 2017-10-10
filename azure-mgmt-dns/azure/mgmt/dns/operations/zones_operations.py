@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -48,7 +48,7 @@ class ZonesOperations(object):
         :type zone_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate
          operation.
-        :type parameters: :class:`Zone <azure.mgmt.dns.models.Zone>`
+        :type parameters: ~azure.mgmt.dns.models.Zone
         :param if_match: The etag of the DNS zone. Omit this value to always
          overwrite the current zone. Specify the last-seen etag value to
          prevent accidentally overwritting any concurrent changes.
@@ -62,9 +62,9 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Zone <azure.mgmt.dns.models.Zone>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Zone or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.dns.models.Zone or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -137,12 +137,11 @@ class ZonesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         ZoneDeleteResult or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ZoneDeleteResult
-         <azure.mgmt.dns.models.ZoneDeleteResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.dns.models.ZoneDeleteResult]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -228,9 +227,9 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Zone <azure.mgmt.dns.models.Zone>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Zone or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.dns.models.Zone or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -290,7 +289,8 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ZonePaged <azure.mgmt.dns.models.ZonePaged>`
+        :return: An iterator like instance of Zone
+        :rtype: ~azure.mgmt.dns.models.ZonePaged[~azure.mgmt.dns.models.Zone]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -358,7 +358,8 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ZonePaged <azure.mgmt.dns.models.ZonePaged>`
+        :return: An iterator like instance of Zone
+        :rtype: ~azure.mgmt.dns.models.ZonePaged[~azure.mgmt.dns.models.Zone]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
