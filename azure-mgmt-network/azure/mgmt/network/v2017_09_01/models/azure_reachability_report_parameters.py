@@ -16,12 +16,12 @@ class AzureReachabilityReportParameters(Model):
     """Geographic and time constraints for Azure reachability report.
 
     :param provider_location:
-    :type provider_location: :class:`AzureReachabilityReportLocation
-     <azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLocation>`
+    :type provider_location:
+     ~azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLocation
     :param providers: List of Internet service providers.
-    :type providers: list of str
+    :type providers: list[str]
     :param azure_locations: Optional Azure regions to scope the query to.
-    :type azure_locations: list of str
+    :type azure_locations: list[str]
     :param start_time: The start time for the Azure reachability report.
     :type start_time: datetime
     :param end_time: The end time for the Azure reachability report.

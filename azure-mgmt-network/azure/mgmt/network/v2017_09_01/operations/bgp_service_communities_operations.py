@@ -44,10 +44,9 @@ class BgpServiceCommunitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BgpServiceCommunity
-         <azure.mgmt.network.v2017_09_01.models.BgpServiceCommunity>`
-        :rtype: :class:`BgpServiceCommunityPaged
-         <azure.mgmt.network.v2017_09_01.models.BgpServiceCommunityPaged>`
+        :return: An iterator like instance of BgpServiceCommunity
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.BgpServiceCommunityPaged[~azure.mgmt.network.v2017_09_01.models.BgpServiceCommunity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
