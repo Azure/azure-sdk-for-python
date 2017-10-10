@@ -26,13 +26,14 @@ class DeployedCodePackageInfo(Model):
     :type service_package_activation_id: str
     :param host_type: Possible values include: 'Invalid', 'ExeHost',
      'ContainerHost'
-    :type host_type: str
+    :type host_type: str or :class:`enum <azure.servicefabric.models.enum>`
     :param host_isolation_mode: Possible values include: 'None', 'Process',
      'HyperV'
-    :type host_isolation_mode: str
+    :type host_isolation_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param run_frequency_interval: The interval at which code package is run.
      This is used for periodic code package.
     :type run_frequency_interval: str
@@ -42,7 +43,7 @@ class DeployedCodePackageInfo(Model):
     :param main_entry_point:
     :type main_entry_point: :class:`CodePackageEntryPoint
      <azure.servicefabric.models.CodePackageEntryPoint>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

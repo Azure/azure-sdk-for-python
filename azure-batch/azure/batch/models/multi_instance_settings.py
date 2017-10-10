@@ -18,7 +18,7 @@ class MultiInstanceSettings(Model):
     Multi-instance tasks are commonly used to support MPI tasks.
 
     :param number_of_instances: The number of compute nodes required by the
-     task.
+     task. If omitted, the default is 1.
     :type number_of_instances: int
     :param coordination_command_line: The command line to run on all the
      compute nodes to enable them to coordinate when the primary runs the main
@@ -39,7 +39,7 @@ class MultiInstanceSettings(Model):
     """
 
     _validation = {
-        'number_of_instances': {'required': True},
+        'coordination_command_line': {'required': True},
     }
 
     _attribute_map = {
@@ -48,7 +48,7 @@ class MultiInstanceSettings(Model):
         'common_resource_files': {'key': 'commonResourceFiles', 'type': '[ResourceFile]'},
     }
 
-    def __init__(self, number_of_instances, coordination_command_line=None, common_resource_files=None):
+    def __init__(self, coordination_command_line, number_of_instances=None, common_resource_files=None):
         self.number_of_instances = number_of_instances
         self.coordination_command_line = coordination_command_line
         self.common_resource_files = common_resource_files

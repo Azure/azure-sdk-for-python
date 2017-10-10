@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.5.0 (2017-09-26)
+++++++++++++++++++
+
+**Features**
+
+- Availability Zones
+- Add network_watchers.get_azure_reachability_report
+- Add network_watchers.list_available_providers
+- Add virtual_network_gateways.supported_vpn_devices
+- Add virtual_network_gateways.vpn_device_configuration_script
+
 1.5.0rc1 (2017-09-18)
 +++++++++++++++++++++
 

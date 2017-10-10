@@ -15,15 +15,15 @@ from .replicator_status import ReplicatorStatus
 class SecondaryReplicatorStatus(ReplicatorStatus):
     """SecondaryReplicatorStatus.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param replication_queue_status:
     :type replication_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
     :param last_replication_operation_received_time_utc: The last time-stamp
      (UTC) at which a replication operation was received from the primary.
-     UTC 0 represents an invalid value, indicating that a replication
-     operation message was never received.
+     UTC 0 represents an invalid value, indicating that a replication operation
+     message was never received.
     :type last_replication_operation_received_time_utc: datetime
     :param is_in_build: Value that indicates whether the replica is currently
      being built.
@@ -31,8 +31,8 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     :param copy_queue_status:
     :type copy_queue_status: :class:`ReplicatorQueueStatus
      <azure.servicefabric.models.ReplicatorQueueStatus>`
-    :param last_copy_operation_received_time_utc: The last time-stamp (UTC)
-     at which a copy operation was received from the primary.
+    :param last_copy_operation_received_time_utc: The last time-stamp (UTC) at
+     which a copy operation was received from the primary.
      UTC 0 represents an invalid value, indicating that a copy operation
      message was never received.
     :type last_copy_operation_received_time_utc: datetime
@@ -41,14 +41,14 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
      UTC 0 represents an invalid value, indicating that an acknowledgment
      message was never sent.
     :type last_acknowledgement_sent_time_utc: datetime
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
         'last_replication_operation_received_time_utc': {'key': 'LastReplicationOperationReceivedTimeUtc', 'type': 'iso-8601'},
         'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
@@ -58,7 +58,7 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     }
 
     _subtype_map = {
-        'Kind': {'ActiveSecondary': 'SecondaryActiveReplicatorStatus', 'IdleSecondary': 'SecondaryIdleReplicatorStatus'}
+        'kind': {'ActiveSecondary': 'SecondaryActiveReplicatorStatus', 'IdleSecondary': 'SecondaryIdleReplicatorStatus'}
     }
 
     def __init__(self, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None):
@@ -69,4 +69,4 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
         self.copy_queue_status = copy_queue_status
         self.last_copy_operation_received_time_utc = last_copy_operation_received_time_utc
         self.last_acknowledgement_sent_time_utc = last_acknowledgement_sent_time_utc
-        self.Kind = 'SecondaryReplicatorStatus'
+        self.kind = 'SecondaryReplicatorStatus'

@@ -15,20 +15,20 @@ from .partition_safety_check import PartitionSafetyCheck
 class WaitForInbuildReplicaSafetyCheck(PartitionSafetyCheck):
     """Safety check that waits for the replica build operation to finish. This
     indiciates that there is a replica that is going through the copy or is
-    providing data for building another replica. Bring the node down will
-    abort this copy operation which are typoically expensive involving data
+    providing data for building another replica. Bring the node down will abort
+    this copy operation which are typoically expensive involving data
     movements.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     def __init__(self, partition_id=None):
         super(WaitForInbuildReplicaSafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'WaitForInbuildReplica'
+        self.kind = 'WaitForInbuildReplica'

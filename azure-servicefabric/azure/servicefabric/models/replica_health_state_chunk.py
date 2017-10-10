@@ -21,10 +21,10 @@ class ReplicaHealthStateChunk(EntityHealthStateChunk):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param replica_or_instance_id:
     :type replica_or_instance_id: str
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

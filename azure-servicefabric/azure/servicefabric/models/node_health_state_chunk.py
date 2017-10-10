@@ -19,10 +19,10 @@ class NodeHealthStateChunk(EntityHealthStateChunk):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param node_name:
     :type node_name: str
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},

@@ -1,0 +1,22 @@
+# See for instructions on this file https://help.github.com/articles/about-codeowners/
+
+* @lmazuel
+
+/azure-batch/ @annatisch @matthchr
+/azure-keyvault/ @schaabs
+/azure-mgmt-batch/ @annatisch @matthchr
+/azure-mgmt-batchai/ @AlexanderYukhanov
+/azure-mgmt-cdn/ @tjprescott
+/azure-mgmt-containerregistry/ @djyou 
+/azure-mgmt-cosmosdb/ @dmakwana
+/azure-mgmt-datafactory/ @hvermis
+/azure-mgmt-datalake-analytics/ @ro-joowan
+/azure-mgmt-datalake-store/ @ro-joowan
+/azure-mgmt-eventgrid/ @kalyanaj
+/azure-mgmt-keyvault/ @schaabs
+/azure-mgmt-machinelearningcompute/ @shutchings
+/azure-mgmt-recoveryservicesbackup/ @dragonfly91
+/azure-mgmt-servicefabric/ @QingChenmsft
+/azure-mgmt-sql/ @jaredmoo
+/azure-mgmt-web/ @yugangw-msft
+/azure-servicefabric/ @samedder

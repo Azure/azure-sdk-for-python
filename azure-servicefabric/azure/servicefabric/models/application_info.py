@@ -25,14 +25,18 @@ class ApplicationInfo(Model):
     :type type_version: str
     :param status: Possible values include: 'Invalid', 'Ready', 'Upgrading',
      'Creating', 'Deleting', 'Failed'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param parameters:
     :type parameters: list of :class:`ApplicationParameter
      <azure.servicefabric.models.ApplicationParameter>`
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
-    """ 
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param application_definition_kind: Possible values include: 'Invalid',
+     'ServiceFabricApplicationDescription', 'Compose'
+    :type application_definition_kind: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
@@ -42,9 +46,10 @@ class ApplicationInfo(Model):
         'status': {'key': 'Status', 'type': 'str'},
         'parameters': {'key': 'Parameters', 'type': '[ApplicationParameter]'},
         'health_state': {'key': 'HealthState', 'type': 'str'},
+        'application_definition_kind': {'key': 'ApplicationDefinitionKind', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, type_version=None, status=None, parameters=None, health_state=None):
+    def __init__(self, id=None, name=None, type_name=None, type_version=None, status=None, parameters=None, health_state=None, application_definition_kind=None):
         self.id = id
         self.name = name
         self.type_name = type_name
@@ -52,3 +57,4 @@ class ApplicationInfo(Model):
         self.status = status
         self.parameters = parameters
         self.health_state = health_state
+        self.application_definition_kind = application_definition_kind

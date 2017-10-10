@@ -22,9 +22,9 @@ class NodeAgentSku(Model):
 
     :param id: The ID of the node agent SKU.
     :type id: str
-    :param verified_image_references: The list of images verified to be
-     compatible with this node agent SKU. This collection is not exhaustive
-     (the node agent may be compatible with other images).
+    :param verified_image_references: The list of Azure Marketplace images
+     verified to be compatible with this node agent SKU. This collection is not
+     exhaustive (the node agent may be compatible with other images).
     :type verified_image_references: list of :class:`ImageReference
      <azure.batch.models.ImageReference>`
     :param os_type: The type of operating system (e.g. Windows or Linux)

@@ -18,22 +18,22 @@ class Int64RangePartitionInformation(PartitionInformation):
 
     :param id:
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
+    :param service_partition_kind: Polymorphic Discriminator
+    :type service_partition_kind: str
     :param low_key: Specifies the minimum key value handled by this partition.
     :type low_key: str
     :param high_key: Specifies the maximum key value handled by this
      partition.
     :type high_key: str
-    """ 
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
-        'ServicePartitionKind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
         'low_key': {'key': 'LowKey', 'type': 'str'},
         'high_key': {'key': 'HighKey', 'type': 'str'},
     }
@@ -42,4 +42,4 @@ class Int64RangePartitionInformation(PartitionInformation):
         super(Int64RangePartitionInformation, self).__init__(id=id)
         self.low_key = low_key
         self.high_key = high_key
-        self.ServicePartitionKind = 'Int64Range'
+        self.service_partition_kind = 'Int64Range'

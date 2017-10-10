@@ -17,21 +17,21 @@ class SafetyCheck(Model):
     with the operations. These checks ensure the availability of the service
     and the reliability of the state.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'PartitionSafetyCheck': 'PartitionSafetyCheck', 'EnsureSeedNodeQuorum': 'SeedNodeSafetyCheck'}
+        'kind': {'PartitionSafetyCheck': 'PartitionSafetyCheck', 'EnsureSeedNodeQuorum': 'SeedNodeSafetyCheck'}
     }
 
     def __init__(self):
-        self.Kind = None
+        self.kind = None

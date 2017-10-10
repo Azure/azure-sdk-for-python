@@ -19,23 +19,33 @@ class ApplicationTypeInfo(Model):
     :type name: str
     :param version:
     :type version: str
-    :param status: Possible values include: 'Invalid', 'Provisioning',
-     'Available', 'Unprovisioning', 'Failed'
-    :type status: str
     :param default_parameter_list:
     :type default_parameter_list: list of :class:`ApplicationParameter
      <azure.servicefabric.models.ApplicationParameter>`
-    """ 
+    :param status: Possible values include: 'Invalid', 'Provisioning',
+     'Available', 'Unprovisioning', 'Failed'
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param status_details:
+    :type status_details: str
+    :param application_type_definition_kind: Possible values include:
+     'Invalid', 'ServiceFabricApplicationPackage', 'Compose'
+    :type application_type_definition_kind: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'version': {'key': 'Version', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
         'default_parameter_list': {'key': 'DefaultParameterList', 'type': '[ApplicationParameter]'},
+        'status': {'key': 'Status', 'type': 'str'},
+        'status_details': {'key': 'StatusDetails', 'type': 'str'},
+        'application_type_definition_kind': {'key': 'ApplicationTypeDefinitionKind', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None, status=None, default_parameter_list=None):
+    def __init__(self, name=None, version=None, default_parameter_list=None, status=None, status_details=None, application_type_definition_kind=None):
         self.name = name
         self.version = version
-        self.status = status
         self.default_parameter_list = default_parameter_list
+        self.status = status
+        self.status_details = status_details
+        self.application_type_definition_kind = application_type_definition_kind

@@ -13,9 +13,11 @@ from msrest.serialization import Model
 
 
 class CertificateListOptions(Model):
-    """Additional parameters for the Certificate_list operation.
+    """Additional parameters for list operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause. For more information on
+     constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str

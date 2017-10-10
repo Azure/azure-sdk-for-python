@@ -48,7 +48,7 @@ class RemoteReplicatorStatus(Model):
     :type remote_replicator_acknowledgement_status:
      :class:`RemoteReplicatorAcknowledgementStatus
      <azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},

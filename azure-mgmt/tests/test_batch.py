@@ -34,11 +34,11 @@ from msrestazure.azure_active_directory import AADTokenCredentials
 from azure.common.credentials import ServicePrincipalCredentials
 
 
-AZURE_BATCH_ACCOUNT = 'pythonsdktest'
+AZURE_BATCH_ACCOUNT = 'pythonsdktest3'
 AZURE_RESOURCE_GROUP = 'python_batch_sdk_test'
 AZURE_LOCATION = 'brazilsouth'
-AZURE_STORAGE_ACCOUNT = 'batchpythonsdktest'
-AZURE_KEY_VAULT = 'batchpythonsdktest'
+AZURE_STORAGE_ACCOUNT = 'batchpythonsdktest3'
+AZURE_KEY_VAULT = 'batchpythonsdktest3'
 AZURE_TENANT_ID = 'microsoft.onmicrosoft.com'
 OUTPUT_CONTAINER = 'batch-sdk-test-outputs'
 EXISTING_RESOURCES = False
@@ -645,6 +645,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             {'name': 'test-user-2', 'password': 'kt#_gahr!@aGERDXA',
              'elevation_level': batch.models.ElevationLevel.admin}
         ]
+
         with BatchPool(self.live, self.batch_client_sk, 'python_test_pool_1', user_accounts=users) as pool_id:
             with BatchPool(self.live, self.batch_client_sk, 'python_test_pool_2',
                            target_low_priority_nodes=2) as pool_id_2:
@@ -660,25 +661,64 @@ class BatchMgmtTestCase(RecordingTestCase):
                                       self.batch_client_sk.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
-                _m = "Test Create Pool with Custom VHD"
+                _m = "Test Create Pool with Custom Image"
                 LOG.debug(_m)
                 pool_config = batch.models.VirtualMachineConfiguration(
                     node_agent_sku_id="batch.node.ubuntu 16.04",
-                    os_disk={'image_uris': ['http://image-A', 'http://image-B']})
+                    image_reference=batch.models.ImageReference(
+                        virtual_machine_image_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage"))
                 pool = batch.models.PoolAddParameter(
-                    'no_pool', 'Standard_A1',
+                    'vmconfig_pool', 'Standard_A1',
                     virtual_machine_configuration=pool_config)
                 self.assertBatchError(_e, _m, 'InvalidPropertyValue',
                                       self.batch_client_sk.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
+                _m = "Test Create Pool with OSDisk"
+                LOG.debug(_m)
+                pool_config = batch.models.VirtualMachineConfiguration(
+                    node_agent_sku_id="batch.node.ubuntu 16.04",
+                    image_reference=batch.models.ImageReference(
+                        publisher="Canonical",
+                        offer="UbuntuServer",
+                        sku="16.04-LTS"),
+                    os_disk=batch.models.OSDisk(
+                        caching=batch.models.CachingType.read_write))
+                with BatchPool(self.live, self.batch_client_sk,
+                               'osdisk_pool', virtual_machine_configuration=pool_config) as osdisk_pool:
+                    pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, osdisk_pool)
+                    self.assertEqual(
+                        _e, _m, pool.virtual_machine_configuration.os_disk.caching,
+                        pool_config.os_disk.caching)
+
+                _m = "Test Create Pool with Data Disk"
+                LOG.debug(_m)
+                pool_config = batch.models.VirtualMachineConfiguration(
+                    node_agent_sku_id="batch.node.ubuntu 16.04",
+                    image_reference=batch.models.ImageReference(
+                        publisher="Canonical",
+                        offer="UbuntuServer",
+                        sku="16.04-LTS"),
+                    data_disks=[batch.models.DataDisk(lun=1, disk_size_gb=50)])
+                with BatchPool(self.live, self.batch_client_sk, 'datadisk_pool',
+                               virtual_machine_configuration=pool_config) as datadisk_pool:
+                    pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, datadisk_pool)
+                    self.assertEqual(
+                        _e, _m, pool.virtual_machine_configuration.data_disks[0].lun,
+                        pool_config.data_disks[0].lun)
+                    self.assertEqual(
+                        _e, _m, pool.virtual_machine_configuration.data_disks[0].disk_size_gb,
+                        pool_config.data_disks[0].disk_size_gb)
+
                 _m = "Test Create Pool with application licenses"
                 LOG.debug(_m)
-                pool_config = batch.models.CloudServiceConfiguration('4')
-                pool = batch.models.PoolAddParameter('no_pool', 'small',
-                    cloud_service_configuration=pool_config,
-                    application_licenses=["maya"])
-                self.assertBatchError(_e, _m, 'Forbidden',
+                with BatchPool(self.live, self.batch_client_sk,
+                               'app_licenses_pool',
+                               application_licenses=["maya"]) as app_pool:
+                    pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, app_pool)
+                    self.assertEqual(_e, _m, pool.application_licenses[0], 'maya')
+
+                self.assertBatchError(_e, _m, 'UnsupportedProperty',
                                       self.batch_client_sk.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
@@ -802,8 +842,8 @@ class BatchMgmtTestCase(RecordingTestCase):
                         print("Waiting for pool state to become steady")
                         time.sleep(20)
                         pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
-                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 0)
-                    self.assertEqual(_e, _m, pool.target_low_priority_nodes, 2)  # TODO: Why?
+                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 3)
+                    # self.assertEqual(_e, _m, pool.target_low_priority_nodes, 0)  # TODO: Why
 
                 _m = "Test Get All Pools Lifetime Statistics"
                 LOG.debug(_m)
@@ -812,10 +852,10 @@ class BatchMgmtTestCase(RecordingTestCase):
                 if stats:
                     self.assertEqual(_e, _m, stats.url, "https://{}.{}.batch.azure.com/lifetimepoolstats".format(
                         AZURE_BATCH_ACCOUNT, AZURE_LOCATION))
-                    self.assertTrue(_e, _m, stats.resource_stats.avg_cpu_percentage > 0.0)
-                    self.assertTrue(_e, _m, stats.resource_stats.network_read_gi_b > 0.0)
-                    self.assertTrue(_e, _m, stats.resource_stats.disk_write_gi_b > 0.0)
-                    self.assertTrue(_e, _m, stats.resource_stats.peak_disk_gi_b > 0.0)
+                    self.assertTrue(_e, _m, stats.resource_stats.avg_cpu_percentage is not None)
+                    self.assertTrue(_e, _m, stats.resource_stats.network_read_gi_b is not None)
+                    self.assertTrue(_e, _m, stats.resource_stats.disk_write_gi_b is not None)
+                    self.assertTrue(_e, _m, stats.resource_stats.peak_disk_gi_b is not None)
 
                 _m = "Test Get Pool Usage Info"  #TODO: Test with real usage metrics
                 LOG.debug('TODO: ' + _m)
@@ -885,7 +925,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 self.assertEqual(_e, _m, len(nodes), 1)
                 if nodes:
                     self.assertTrue(_e, _m, isinstance(nodes[0], batch.models.ComputeNode))
-                    self.assertEqual(_e, _m, len(nodes[0].endpoint_configuration.inbound_endpoints), 1)
+                    self.assertEqual(_e, _m, len(nodes[0].endpoint_configuration.inbound_endpoints), 2)
                     self.assertEqual(_e, _m, nodes[0].endpoint_configuration.inbound_endpoints[0].name, 'TestEndpointConfig.0')
                     self.assertEqual(_e, _m, nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
 
@@ -998,7 +1038,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             image_reference=batch.models.ImageReference(
                 publisher="MicrosoftWindowsServer",
                 offer="WindowsServer",
-                sku="2016-Datacenter")
+                sku="2016-Datacenter-smalldisk")
         )
         with BatchPool(self.live,
                        self.batch_client_sk,
@@ -1087,6 +1127,15 @@ class BatchMgmtTestCase(RecordingTestCase):
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job_2', task)
             self.assertIsNone(_e, _m, response)
 
+            _m = "Test Create Task with container settings"
+            LOG.debug(_m)
+            task = batch.models.TaskAddParameter(
+                id='python_task_containers',
+                command_line='cat /etc/centos-release',
+                container_settings=batch.models.TaskContainerSettings(image_name='centos'))
+            response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job', task)
+            self.assertIsNone(_e, _m, response)
+
             _m = "Test Get Task with Auto Complete and Auto User and Token Settings"
             LOG.debug(_m)
             task = self.assertRuns(_e, _m, self.batch_client_sk.task.get, 'python_test_job_2', 'python_task_with_auto_complete')
@@ -1147,6 +1196,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             self.assertIsNone(_e, _m, response)
 
             _m = "Test for Complete Output Files"
+
             LOG.debug(_m)
             task = self.batch_client_sk.task.get('python_test_job_2', 'python_task_1')
             if self.live and task:
@@ -1225,7 +1275,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test List Tasks"
             LOG.debug(_m)
             tasks = self.assertList(_e, _m, self.batch_client_sk.task.list, 'python_test_job')
-            self.assertEqual(_e, _m, len(tasks), 5)
+            self.assertEqual(_e, _m, len(tasks), 6)
             task_ids = [t.id for t in tasks]
 
             _m = "Test Get Task"
@@ -1421,6 +1471,8 @@ class BatchPool(object):
                         time.sleep(30)
 
             except Exception as err:
+                if err is batch.models.BatchErrorException and err.batch_error.code == 'PoolExists':
+                    return self.id
                 try:
                     self.client.pool.delete(self.id)
                 except:

@@ -20,7 +20,7 @@ class ChaosContextMapItem(Model):
     :type key: str
     :param value: The value for a ChaosContextMapItem.
     :type value: str
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},

@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class PartitionLoadInformation(Model):
-    """Represents load information for a partition, which contains the primary
-    and secondary reported load metrics.
+    """Represents load information for a partition, which contains the primary and
+    secondary reported load metrics.
     In case there is no load reported, PartitionLoadInformation will contain
     the default load for the service of the partition.
     For default loads, LoadMetricReport's LastReportedUtc is set to 0.
@@ -22,8 +22,8 @@ class PartitionLoadInformation(Model):
 
     :param partition_id:
     :type partition_id: str
-    :param primary_load_metric_reports: Array of load reports from the
-     primary replica for this partition.
+    :param primary_load_metric_reports: Array of load reports from the primary
+     replica for this partition.
     :type primary_load_metric_reports: list of :class:`LoadMetricReport
      <azure.servicefabric.models.LoadMetricReport>`
     :param secondary_load_metric_reports: Array of aggregated load reports
@@ -31,7 +31,7 @@ class PartitionLoadInformation(Model):
      Array only contains the latest reported load for each metric.
     :type secondary_load_metric_reports: list of :class:`LoadMetricReport
      <azure.servicefabric.models.LoadMetricReport>`
-    """ 
+    """
 
     _attribute_map = {
         'partition_id': {'key': 'PartitionId', 'type': 'str'},

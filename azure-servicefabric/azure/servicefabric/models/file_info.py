@@ -20,13 +20,13 @@ class FileInfo(Model):
     :param file_version:
     :type file_version: :class:`FileVersion
      <azure.servicefabric.models.FileVersion>`
-    :param modified_date: The date and time when the image store file was
-     last modified.
+    :param modified_date: The date and time when the image store file was last
+     modified.
     :type modified_date: datetime
-    :param store_relative_path: The file path relative to the image store
-     root path.
+    :param store_relative_path: The file path relative to the image store root
+     path.
     :type store_relative_path: str
-    """ 
+    """
 
     _attribute_map = {
         'file_size': {'key': 'FileSize', 'type': 'str'},

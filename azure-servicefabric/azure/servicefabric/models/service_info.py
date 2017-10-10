@@ -25,18 +25,19 @@ class ServiceInfo(Model):
     :type manifest_version: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str
+    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
     :param service_status: Possible values include: 'Unknown', 'Active',
      'Upgrading', 'Deleting', 'Creating', 'Failed'
-    :type service_status: str
+    :type service_status: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Polymorphic Discriminator
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -47,11 +48,11 @@ class ServiceInfo(Model):
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'service_status': {'key': 'ServiceStatus', 'type': 'str'},
         'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServiceInfo', 'Stateless': 'StatelessServiceInfo'}
+        'service_kind': {'Stateful': 'StatefulServiceInfo', 'Stateless': 'StatelessServiceInfo'}
     }
 
     def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None):
@@ -62,4 +63,4 @@ class ServiceInfo(Model):
         self.health_state = health_state
         self.service_status = service_status
         self.is_service_group = is_service_group
-        self.ServiceKind = None
+        self.service_kind = None

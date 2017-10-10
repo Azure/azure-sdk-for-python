@@ -16,16 +16,16 @@ class RestartNodeDescription(Model):
     """Describes the parameters to restart a Service Fabric node.
 
     :param node_instance_id: The instance id of the target node. If instance
-     id is specified the node is restarted only if it matches with the
-     current instance of the node. A default value of "0" would match any
-     instance id. The instance id can be obtained using get node query.
-     Default value: "0" .
+     id is specified the node is restarted only if it matches with the current
+     instance of the node. A default value of "0" would match any instance id.
+     The instance id can be obtained using get node query. Default value: "0" .
     :type node_instance_id: str
     :param create_fabric_dump: Specify True to create a dump of the fabric
      node process. This is case sensitive. Possible values include: 'False',
      'True'. Default value: "False" .
-    :type create_fabric_dump: str
-    """ 
+    :type create_fabric_dump: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    """
 
     _validation = {
         'node_instance_id': {'required': True},

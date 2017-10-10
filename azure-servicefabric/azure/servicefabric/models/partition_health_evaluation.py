@@ -20,27 +20,28 @@ class PartitionHealthEvaluation(HealthEvaluation):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    :type aggregated_health_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param partition_id:
     :type partition_id: str
     :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
      <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
@@ -49,4 +50,4 @@ class PartitionHealthEvaluation(HealthEvaluation):
         super(PartitionHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
         self.partition_id = partition_id
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'Partition'
+        self.kind = 'Partition'

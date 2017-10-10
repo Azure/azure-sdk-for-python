@@ -20,14 +20,14 @@ class ReissueCertificateOrderRequest(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
     :param location: Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
     :type tags: dict
     :param key_size: Certificate Key Size.
@@ -44,7 +44,9 @@ class ReissueCertificateOrderRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -60,8 +62,8 @@ class ReissueCertificateOrderRequest(Resource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
-        super(ReissueCertificateOrderRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, kind=None, tags=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
+        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags)
         self.key_size = key_size
         self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
         self.csr = csr

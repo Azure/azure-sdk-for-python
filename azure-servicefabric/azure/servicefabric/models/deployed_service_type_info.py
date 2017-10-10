@@ -24,10 +24,10 @@ class DeployedServiceTypeInfo(Model):
     :type code_package_name: str
     :param status: Possible values include: 'Invalid', 'Disabled', 'Enabled',
      'Registered'
-    :type status: str
+    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
     :param service_package_activation_id:
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},

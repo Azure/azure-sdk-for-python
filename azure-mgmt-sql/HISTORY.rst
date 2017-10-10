@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.8.1 (2017-10-04)
+++++++++++++++++++
+
+**Features**
+
+- Add database.cancel operation
+- Add database.list_by_database
+
 0.8.0 (2017-09-07)
 ++++++++++++++++++
 

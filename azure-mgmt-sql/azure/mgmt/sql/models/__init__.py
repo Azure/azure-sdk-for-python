@@ -90,6 +90,7 @@ from .sync_group_schema import SyncGroupSchema
 from .sync_group import SyncGroup
 from .sync_member import SyncMember
 from .virtual_network_rule import VirtualNetworkRule
+from .database_operation import DatabaseOperation
 from .restore_point_paged import RestorePointPaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
@@ -125,6 +126,7 @@ from .sync_group_log_properties_paged import SyncGroupLogPropertiesPaged
 from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
+from .database_operation_paged import DatabaseOperationPaged
 from .sql_management_client_enums import (
     BackupLongTermRetentionPolicyState,
     RestorePointType,
@@ -173,6 +175,7 @@ from .sql_management_client_enums import (
     SyncGroupState,
     SyncDirection,
     SyncMemberState,
+    ManagementOperationState,
 )
 
 __all__ = [
@@ -257,6 +260,7 @@ __all__ = [
     'SyncGroup',
     'SyncMember',
     'VirtualNetworkRule',
+    'DatabaseOperation',
     'RestorePointPaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
@@ -292,6 +296,7 @@ __all__ = [
     'SyncGroupPaged',
     'SyncMemberPaged',
     'VirtualNetworkRulePaged',
+    'DatabaseOperationPaged',
     'BackupLongTermRetentionPolicyState',
     'RestorePointType',
     'CapabilityStatus',
@@ -339,4 +344,5 @@ __all__ = [
     'SyncGroupState',
     'SyncDirection',
     'SyncMemberState',
+    'ManagementOperationState',
 ]

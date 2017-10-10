@@ -23,7 +23,7 @@ class ImageStoreContent(Model):
      represents subfolders found under the given image store relative path.
     :type store_folders: list of :class:`FolderInfo
      <azure.servicefabric.models.FolderInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'store_files': {'key': 'StoreFiles', 'type': '[FileInfo]'},

@@ -16,26 +16,26 @@ class PartitionSafetyCheck(SafetyCheck):
     """Represents a safety check for the service partition being performed by
     service fabric before continuing with operations.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'EnsureAvailability': 'EnsureAvailabilitySafetyCheck', 'EnsurePartitionQuorum': 'EnsurePartitionQurumSafetyCheck', 'WaitForInbuildReplica': 'WaitForInbuildReplicaSafetyCheck', 'WaitForPrimaryPlacement': 'WaitForPrimaryPlacementSafetyCheck', 'WaitForPrimarySwap': 'WaitForPrimarySwapSafetyCheck', 'WaitForReconfiguration': 'WaitForReconfigurationSafetyCheck'}
+        'kind': {'EnsureAvailability': 'EnsureAvailabilitySafetyCheck', 'EnsurePartitionQuorum': 'EnsurePartitionQurumSafetyCheck', 'WaitForInbuildReplica': 'WaitForInbuildReplicaSafetyCheck', 'WaitForPrimaryPlacement': 'WaitForPrimaryPlacementSafetyCheck', 'WaitForPrimarySwap': 'WaitForPrimarySwapSafetyCheck', 'WaitForReconfiguration': 'WaitForReconfigurationSafetyCheck'}
     }
 
     def __init__(self, partition_id=None):
         super(PartitionSafetyCheck, self).__init__()
         self.partition_id = partition_id
-        self.Kind = 'PartitionSafetyCheck'
+        self.kind = 'PartitionSafetyCheck'

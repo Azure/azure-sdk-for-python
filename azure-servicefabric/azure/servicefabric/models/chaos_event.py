@@ -17,24 +17,24 @@ class ChaosEvent(Model):
 
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Polymorphic Discriminator
+    :type kind: str
+    """
 
     _validation = {
         'time_stamp_utc': {'required': True},
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'ExecutingFaults': 'ExecutingFaultsChaosEvent', 'Started': 'StartedChaosEvent', 'Stopped': 'StoppedChaosEvent', 'TestError': 'TestErrorChaosEvent', 'ValidationFailed': 'ValidationFailedChaosEvent', 'Waiting': 'WaitingChaosEvent'}
+        'kind': {'ExecutingFaults': 'ExecutingFaultsChaosEvent', 'Started': 'StartedChaosEvent', 'Stopped': 'StoppedChaosEvent', 'TestError': 'TestErrorChaosEvent', 'ValidationFailed': 'ValidationFailedChaosEvent', 'Waiting': 'WaitingChaosEvent'}
     }
 
     def __init__(self, time_stamp_utc):
         self.time_stamp_utc = time_stamp_utc
-        self.Kind = None
+        self.kind = None

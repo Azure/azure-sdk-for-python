@@ -16,8 +16,8 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     """Describes a partitioning scheme where an integer range is allocated evenly
     across a number of partitions.
 
-    :param PartitionScheme: Polymorphic Discriminator
-    :type PartitionScheme: str
+    :param partition_scheme: Polymorphic Discriminator
+    :type partition_scheme: str
     :param count: The number of partitions.
     :type count: int
     :param low_key: String indicating the lower bound of the partition key
@@ -28,17 +28,17 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
      range that
      should be split between the partition ‘Count’
     :type high_key: str
-    """ 
+    """
 
     _validation = {
-        'PartitionScheme': {'required': True},
+        'partition_scheme': {'required': True},
         'count': {'required': True},
         'low_key': {'required': True},
         'high_key': {'required': True},
     }
 
     _attribute_map = {
-        'PartitionScheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
         'count': {'key': 'Count', 'type': 'int'},
         'low_key': {'key': 'LowKey', 'type': 'str'},
         'high_key': {'key': 'HighKey', 'type': 'str'},
@@ -49,4 +49,4 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         self.count = count
         self.low_key = low_key
         self.high_key = high_key
-        self.PartitionScheme = 'UniformInt64Range'
+        self.partition_scheme = 'UniformInt64Range'

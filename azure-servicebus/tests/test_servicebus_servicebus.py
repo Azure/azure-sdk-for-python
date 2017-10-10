@@ -56,18 +56,11 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
     def setUp(self):
         super(ServiceBusServiceBusTest, self).setUp()
 
-        if self.settings.SERVICEBUS_AUTH_TYPE.lower() == 'sas':
-            self.sbs = ServiceBusService(
-                self.settings.SERVICEBUS_NAME,
-                shared_access_key_name=self.settings.SERVICEBUS_SAS_KEY_NAME,
-                shared_access_key_value=self.settings.SERVICEBUS_SAS_KEY_VALUE,
-            )
-        else:
-            self.sbs = ServiceBusService(
-                self.settings.SERVICEBUS_NAME,
-                account_key=self.settings.SERVICEBUS_ACS_KEY,
-                issuer='owner',
-            )
+        self.sbs = ServiceBusService(
+            self.settings.SERVICEBUS_NAME,
+            shared_access_key_name=self.settings.SERVICEBUS_SAS_KEY_NAME,
+            shared_access_key_value=self.settings.SERVICEBUS_SAS_KEY_VALUE,
+        )
 
         self._set_service_options(self.sbs, self.settings)
 
@@ -137,6 +130,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Assert
 
+    @unittest.skip('ACS is deprecated and this test cannot be run live anymore')
     def test_create_service_bus_env_variables(self):
         # Arrange
         os.environ[AZURE_SERVICEBUS_NAMESPACE] = self.settings.SERVICEBUS_NAME

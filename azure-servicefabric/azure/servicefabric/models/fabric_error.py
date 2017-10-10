@@ -22,7 +22,7 @@ class FabricError(Model):
     :param error:
     :type error: :class:`FabricErrorError
      <azure.servicefabric.models.FabricErrorError>`
-    """ 
+    """
 
     _validation = {
         'error': {'required': True},

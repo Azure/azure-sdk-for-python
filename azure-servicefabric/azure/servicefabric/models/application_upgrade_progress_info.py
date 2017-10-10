@@ -25,24 +25,25 @@ class ApplicationUpgradeProgressInfo(Model):
     :type upgrade_domains: list of :class:`UpgradeDomainInfo
      <azure.servicefabric.models.UpgradeDomainInfo>`
     :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted',
-     'RollingForwardPending', 'RollingForwardInProgress',
-     'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str
+     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
+     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param next_upgrade_domain:
     :type next_upgrade_domain: str
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str
+    :type rolling_upgrade_mode: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_description:
     :type upgrade_description: :class:`ApplicationUpgradeDescription
      <azure.servicefabric.models.ApplicationUpgradeDescription>`
     :param upgrade_duration_in_milliseconds: The estimated total amount of
      time spent processing the overall upgrade.
     :type upgrade_duration_in_milliseconds: str
-    :param upgrade_domain_duration_in_milliseconds: The estimated total
-     amount of time spent processing the current upgrade domain.
+    :param upgrade_domain_duration_in_milliseconds: The estimated total amount
+     of time spent processing the current upgrade domain.
     :type upgrade_domain_duration_in_milliseconds: str
     :param unhealthy_evaluations:
     :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
@@ -59,7 +60,8 @@ class ApplicationUpgradeProgressInfo(Model):
     :type failure_timestamp_utc: str
     :param failure_reason: Possible values include: 'None', 'Interrupted',
      'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str
+    :type failure_reason: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param upgrade_domain_progress_at_failure:
     :type upgrade_domain_progress_at_failure:
      :class:`FailureUpgradeDomainProgressInfo
@@ -67,7 +69,7 @@ class ApplicationUpgradeProgressInfo(Model):
     :param upgrade_status_details: Additional detailed information about the
      status of the pending upgrade.
     :type upgrade_status_details: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},

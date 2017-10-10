@@ -18,7 +18,7 @@ class ChaosEventWrapper(Model):
     :param chaos_event:
     :type chaos_event: :class:`ChaosEvent
      <azure.servicefabric.models.ChaosEvent>`
-    """ 
+    """
 
     _attribute_map = {
         'chaos_event': {'key': 'ChaosEvent', 'type': 'ChaosEvent'},

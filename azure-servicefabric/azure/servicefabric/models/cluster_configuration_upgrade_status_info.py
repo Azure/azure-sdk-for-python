@@ -16,17 +16,17 @@ class ClusterConfigurationUpgradeStatusInfo(Model):
     """Information about a standalone cluster configuration upgrade status.
 
     :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted',
-     'RollingForwardPending', 'RollingForwardInProgress',
-     'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str
+     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
+     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or :class:`enum
+     <azure.servicefabric.models.enum>`
     :param progress_status: The cluster manifest version.
     :type progress_status: int
     :param config_version: The cluster configuration version.
     :type config_version: str
     :param details: The cluster upgrade status details.
     :type details: str
-    """ 
+    """
 
     _attribute_map = {
         'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},

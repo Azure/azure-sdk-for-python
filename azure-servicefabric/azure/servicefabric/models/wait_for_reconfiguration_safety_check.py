@@ -13,19 +13,19 @@ from .partition_safety_check import PartitionSafetyCheck
 
 
 class WaitForReconfigurationSafetyCheck(PartitionSafetyCheck):
-    """Safety check that waits for the current reconfiguration of the partition
-    to be completed before starting an upgrade.
+    """Safety check that waits for the current reconfiguration of the partition to
+    be completed before starting an upgrade.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     :param partition_id:
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     def __init__(self, partition_id=None):
         super(WaitForReconfigurationSafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'WaitForReconfiguration'
+        self.kind = 'WaitForReconfiguration'

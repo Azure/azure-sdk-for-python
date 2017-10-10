@@ -23,7 +23,7 @@ class PagedServiceInfoList(Model):
     :param items:
     :type items: list of :class:`ServiceInfo
      <azure.servicefabric.models.ServiceInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},

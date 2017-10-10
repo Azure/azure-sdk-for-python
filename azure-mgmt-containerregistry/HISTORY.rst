@@ -3,11 +3,20 @@
 Release History
 ===============
 
+1.0.0 (2017-09-22)
+++++++++++++++++++
+
+* New default API version 2017-10-01.
+* Remove support for API Version 2017-06-01-preview
+* New support for managed registries with three Managed SKUs.
+* New support for registry webhooks and replications.
+* Rename Basic SKU to Classic SKU.
+
 0.3.1 (2017-06-30)
 ++++++++++++++++++
 
-- support for registry SKU update (2017-06-01-preview)
-- new listUsages API to get the quota usages for a container registry (2017-06-01-preview)
+* Support for registry SKU update (2017-06-01-preview)
+* New listUsages API to get the quota usages for a container registry (2017-06-01-preview)
 
 0.3.0 (2017-06-15)
 ++++++++++++++++++

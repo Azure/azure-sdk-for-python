@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobGetTaskCountsOptions(Model):
-    """Additional parameters for the Job_get_task_counts operation.
+    """Additional parameters for get_task_counts operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
