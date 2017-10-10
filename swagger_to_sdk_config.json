@@ -195,7 +195,7 @@
       "markdown": "specification/dns/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.dns",
-        "package-version": "1.0.1"
+        "package-version": "1.1.0"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns",
       "build_dir": "azure-mgmt-dns"
