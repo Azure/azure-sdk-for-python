@@ -87,13 +87,6 @@ class AzureMgmtTestCase(RecordingTestCase):
                 credentials=None,
                 **kwargs
             )
-        # Whatever the client, if accept_language is not str, fail
-        with self.assertRaises(TypeError):
-            client = client_class(
-                credentials=self.settings.get_credentials(),
-                accept_language=42,
-                **kwargs
-            )
 
         # Real client creation
         client = client_class(
@@ -110,13 +103,6 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.create_basic_client(
                 client_class,
                 subscription_id=None,
-                **kwargs
-            )
-        # Whatever the client, if subscription_id is not a string, fail
-        with self.assertRaises(TypeError):
-            self.create_basic_client(
-                client_class,
-                subscription_id=42,
                 **kwargs
             )
 
