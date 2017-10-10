@@ -49,10 +49,9 @@ class DefaultSecurityRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SecurityRule
-         <azure.mgmt.network.v2017_06_01.models.SecurityRule>`
-        :rtype: :class:`SecurityRulePaged
-         <azure.mgmt.network.v2017_06_01.models.SecurityRulePaged>`
+        :return: An iterator like instance of SecurityRule
+        :rtype:
+         ~azure.mgmt.network.v2017_06_01.models.SecurityRulePaged[~azure.mgmt.network.v2017_06_01.models.SecurityRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -124,13 +123,9 @@ class DefaultSecurityRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SecurityRule
-         <azure.mgmt.network.v2017_06_01.models.SecurityRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SecurityRule
-         <azure.mgmt.network.v2017_06_01.models.SecurityRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SecurityRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_06_01.models.SecurityRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

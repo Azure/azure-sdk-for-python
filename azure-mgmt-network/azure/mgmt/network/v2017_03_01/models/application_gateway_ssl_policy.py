@@ -17,9 +17,8 @@ class ApplicationGatewaySslPolicy(Model):
 
     :param disabled_ssl_protocols: SSL protocols to be disabled on application
      gateway.
-    :type disabled_ssl_protocols: list of str or
-     :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewaySslProtocol>`
+    :type disabled_ssl_protocols: list[str or
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewaySslProtocol]
     """
 
     _attribute_map = {

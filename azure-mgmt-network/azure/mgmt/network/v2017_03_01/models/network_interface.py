@@ -27,21 +27,20 @@ class NetworkInterface(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param virtual_machine: The reference of a virtual machine.
-    :type virtual_machine: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type virtual_machine: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
-    :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.v2017_03_01.models.NetworkSecurityGroup>`
+    :type network_security_group:
+     ~azure.mgmt.network.v2017_03_01.models.NetworkSecurityGroup
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
-    :type ip_configurations: list of :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_03_01.models.NetworkInterfaceIPConfiguration>`
+    :type ip_configurations:
+     list[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceIPConfiguration]
     :param dns_settings: The DNS settings in network interface.
-    :type dns_settings: :class:`NetworkInterfaceDnsSettings
-     <azure.mgmt.network.v2017_03_01.models.NetworkInterfaceDnsSettings>`
+    :type dns_settings:
+     ~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceDnsSettings
     :param mac_address: The MAC address of the network interface.
     :type mac_address: str
     :param primary: Gets whether this is a primary network interface on a

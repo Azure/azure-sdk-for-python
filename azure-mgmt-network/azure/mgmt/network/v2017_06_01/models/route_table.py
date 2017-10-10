@@ -27,13 +27,11 @@ class RouteTable(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param routes: Collection of routes contained within a route table.
-    :type routes: list of :class:`Route
-     <azure.mgmt.network.v2017_06_01.models.Route>`
+    :type routes: list[~azure.mgmt.network.v2017_06_01.models.Route]
     :ivar subnets: A collection of references to subnets.
-    :vartype subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2017_06_01.models.Subnet>`
+    :vartype subnets: list[~azure.mgmt.network.v2017_06_01.models.Subnet]
     :param provisioning_state: The provisioning state of the resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

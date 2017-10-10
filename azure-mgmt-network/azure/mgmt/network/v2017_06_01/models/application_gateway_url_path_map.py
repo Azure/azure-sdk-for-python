@@ -20,19 +20,19 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :type id: str
     :param default_backend_address_pool: Default backend address pool resource
      of URL path map.
-    :type default_backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type default_backend_address_pool:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param default_backend_http_settings: Default backend http settings
      resource of URL path map.
-    :type default_backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type default_backend_http_settings:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param default_redirect_configuration: Default redirect configuration
      resource of URL path map.
-    :type default_redirect_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type default_redirect_configuration:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param path_rules: Path rule of URL path map resource.
-    :type path_rules: list of :class:`ApplicationGatewayPathRule
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayPathRule>`
+    :type path_rules:
+     list[~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayPathRule]
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

@@ -27,7 +27,7 @@ class ApplicationSecurityGroup(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar resource_guid: The resource GUID property of the application
      security group resource. It uniquely identifies a resource, even if the
      user changes its name or migrate the resource across subscriptions or
