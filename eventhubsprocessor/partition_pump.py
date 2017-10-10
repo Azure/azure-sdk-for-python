@@ -1,13 +1,8 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-import asyncio
-# from asyncio import Lock
 from abc import  abstractmethod
-from eph import EventProcessorHost
-from lease import Lease
-from abstract_event_processor import DummyEventProcessor
-from partition_context import PartitionContext
+from eventhubsprocessor.partition_context import PartitionContext
 
 class PartitionPump():
     """
@@ -51,9 +46,9 @@ class PartitionPump():
         except Exception as err:
             # If the processor won't create or open, only thing we can do here is pass the buck.
             # Null it out so we don't try to operate on it further.
+            await self.process_error_async(err)
             self.processor = None
             self.set_pump_status("OpenFailed")
-            await self.process_error_async(err)
 
         # If Open Async Didn't Fail call OnOpenAsync
         if self.pump_status == "Opening":
@@ -126,17 +121,3 @@ class PartitionPump():
         Passes error to the event processor for processing.
         """
         return self.processor.process_error_async(self.partition_context, error)
-
-# Test
-if __name__ == "__main__":
-    # Simulate pump
-    HOST = EventProcessorHost(DummyEventProcessor, "fake eventHubPath", "fake consumerGroupName")
-    LEASE = Lease()
-    LEASE.with_partition_id("1")
-    PP = PartitionPump(HOST, LEASE)
-    # Run simulation event loop
-    LOOP = asyncio.get_event_loop()
-    LOOP.run_until_complete(PP.open_async())    # Simulate Open
-    LOOP.run_until_complete(PP.process_events_async(["event1", "event2"]))  # Simulate Process
-    LOOP.run_until_complete(PP.close_async("Finished")) # Simulate Close
-    LOOP.close()

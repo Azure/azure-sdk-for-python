@@ -1,29 +1,49 @@
-from lease import Lease
+"""
+Author: Aaron (Ari) Bornstien
+"""
+from eventhubsprocessor.lease import Lease
 class AzureBlobLease(Lease):
+    """
+    Azure Blob Lease
+    """
 
     def __init__(self):
-        pass
+        """
+        Init Azure Blob Lease
+        """
+        super()
+        Lease.__init__()
+        self.blob = None
+        self.offset = None
 
-    def withBlob(self, partitionId, blob):
-        Lease.__init__().withPartitionId(partitionId)
-        self.Blob = blob
+    def with_blob(self, partition_id, blob):
+        """
+        Init Azure Blob Lease with existing blob
+        """
+        self.with_partition_id(partition_id)
+        self.blob = blob
 
-    def withSource(self, azure_blob_lease):
-        Lease.__init__().withSource(azure_blob_lease)
-        self.Offset = azure_blob_lease.Offset
-        self.SequenceNumber = azure_blob_lease.SequenceNumber
-        self.Blob = azure_blob_lease.Blob
+    def with_source(self, azure_blob_lease):
+        """
+        Init Azure Blob Lease from existing
+        """
+        super(self, azure_blob_lease)
+        self.offset = azure_blob_lease.offset
+        self.sequence_number = azure_blob_lease.sequence_number
+        self.blob = azure_blob_lease.blob
     
-    def withSourceBlob(self, azure_blob_lease, blob):
-        Lease.__init__().withSource(azure_blob_lease)
-        self.Offset = azure_blob_lease.Offset
-        self.SequenceNumber = azure_blob_lease.SequenceNumber
-		self.Blob = blob
-		
-	# do not serialize
-    def getBlob(self):
-        returnself.Blob
+    def with_source_blob(self, azure_blob_lease, blob):
+        """
+        Init Azure Blob Lease from existing source with new blob
+        """
+        self.with_source(azure_blob_lease)
+        self.offset = azure_blob_lease.offset
+        self.sequence_number = azure_blob_lease.sequence_number
+        self.blob = blob
 
-    # Check and return azure blob lease state using storage api
-    def IsExpired():
-        
+    def is_expired(self):
+        """
+        Check and return azure blob lease state using storage api
+        """
+        pass
+    

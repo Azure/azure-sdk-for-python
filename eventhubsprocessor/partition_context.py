@@ -1,8 +1,6 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-import asyncio
-from asyncio import Lock
 
 class PartitionContext:
     """

@@ -5,10 +5,13 @@ class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.
     """
-    def __init__(self, event_processor, eh_connection_string, consumer_group_name, eh_options=None):
+    def __init__(self, event_processor, eh_connection_string, consumer_group_name, lease_manager = None, eh_options=None):
         self.event_processor = event_processor
         self.eh_connection_string = eh_connection_string
         self.consumer_group_name = consumer_group_name
+        self.lease_manager = lease_manager
+        self.id = "uuid"
+        self.host_name = "default"
         self.eh_options = eh_options or EPHOptions()
 
 class EPHOptions:

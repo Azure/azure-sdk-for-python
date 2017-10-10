@@ -1,15 +1,10 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-import asyncio
 from queue import Queue
 from threading import Thread
-from eph import EventProcessorHost
-from lease import Lease
 from eventhubs.client import EventHubClient, EventData, Receiver
-from partition_pump import PartitionPump
-from abstract_event_processor import DummyEventProcessor
-# from partition_context import PartitionContext
+from eventhubsprocessor.partition_pump import PartitionPump
 
 class EventHubPartitionPump(PartitionPump):
     """Pulls and messages from lease partition from eventhub and sends them to processor """
@@ -84,9 +79,12 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.clean_up_clients_async()
 
-# runs the event client to pull n messages and put them in to an event queue for processing then terminate may want to replace the n message mechanism with a time out 
 class PartitionReceiveHandler(Receiver):
-    """Handler to process  """
+    """
+    Runs the event client to pull n messages and put them in to an
+    event queue for processing then terminate. Will want to replace the
+    n message mechanism with a time out associated with the leasee 
+    """
     def __init__(self, consumer_group, partition, offset, eh_partition_pump):
         super(PartitionReceiveHandler, self).__init__(consumer_group, partition, offset)
         self.eh_partition_pump = eh_partition_pump
@@ -105,13 +103,17 @@ class PartitionReceiveHandler(Receiver):
         and be able to receive a new batch of messages with which to make the next OnEvents
         call.The pump gains nothing by running faster than OnEvents. 
         """
-        if self._msg_count < self.max_batch_size:
-            self.last_offset = EventData.offset(message)
-            self.last_sn = EventData.sequence_number(message)
-            self.eh_partition_pump.msg_queue.put(message)
-            self._msg_count += 1
-            print(message, self._msg_count)
-        else:
+        try:
+            if self._msg_count < self.max_batch_size:
+                self.last_offset = EventData.offset(message)
+                self.last_sn = EventData.sequence_number(message)
+                self.eh_partition_pump.msg_queue.put(message)
+                self._msg_count += 1
+                print(message, self._msg_count)
+            else:
+                self.client.stop()
+        except:
+            # TBI Push Error to QUEUE
             self.client.stop()
 
 class PartitionReceiver:
@@ -153,18 +155,3 @@ class PartitionReceiver:
             await self.eh_partition_pump.process_error_async(error) # We would like to deliver all errors in the pump to error handler.     
         finally:                    
             self.eh_partition_pump.set_pump_status("Errored")
-
-# Test
-if __name__ == "__main__":
-    # Simulate Eventhub Pump
-    ADDRESS = ("ADDRESS HERE")
-    CONSUMER_GROUP = "$Default"
-    HOST = EventProcessorHost(DummyEventProcessor, ADDRESS, CONSUMER_GROUP)
-    LEASE = Lease()
-    LEASE.with_partition_id("1")
-    EPP = EventHubPartitionPump(HOST, LEASE)
-    # Run Simulation Event Loop
-    LOOP = asyncio.get_event_loop()
-    LOOP.run_until_complete(EPP.open_async())   # Simulate Open
-    LOOP.run_until_complete(EPP.close_async("Finished")) # Simulate Close
-    LOOP.close()
