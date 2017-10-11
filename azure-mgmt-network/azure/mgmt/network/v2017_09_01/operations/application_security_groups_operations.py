@@ -48,14 +48,10 @@ class ApplicationSecurityGroupsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -131,13 +127,10 @@ class ApplicationSecurityGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationSecurityGroup or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -194,20 +187,16 @@ class ApplicationSecurityGroupsOperations(object):
         :type application_security_group_name: str
         :param parameters: Parameters supplied to the create or update
          ApplicationSecurityGroup operation.
-        :type parameters: :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
+        :type parameters:
+         ~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ApplicationSecurityGroup or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -291,10 +280,9 @@ class ApplicationSecurityGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
-        :rtype: :class:`ApplicationSecurityGroupPaged
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroupPaged>`
+        :return: An iterator like instance of ApplicationSecurityGroup
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroupPaged[~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -358,10 +346,9 @@ class ApplicationSecurityGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ApplicationSecurityGroup
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
-        :rtype: :class:`ApplicationSecurityGroupPaged
-         <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroupPaged>`
+        :return: An iterator like instance of ApplicationSecurityGroup
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroupPaged[~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

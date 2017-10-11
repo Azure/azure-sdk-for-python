@@ -19,11 +19,11 @@ class AzureReachabilityReport(Model):
      report. Can be Country, State or City.
     :type aggregation_level: str
     :param provider_location:
-    :type provider_location: :class:`AzureReachabilityReportLocation
-     <azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLocation>`
+    :type provider_location:
+     ~azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLocation
     :param reachability_report: List of Azure reachability report items.
-    :type reachability_report: list of :class:`AzureReachabilityReportItem
-     <azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportItem>`
+    :type reachability_report:
+     list[~azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportItem]
     """
 
     _validation = {

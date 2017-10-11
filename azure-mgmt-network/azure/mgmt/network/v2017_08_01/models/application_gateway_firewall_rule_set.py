@@ -27,7 +27,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param provisioning_state: The provisioning state of the web application
      firewall rule set.
     :type provisioning_state: str
@@ -38,8 +38,8 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :type rule_set_version: str
     :param rule_groups: The rule groups of the web application firewall rule
      set.
-    :type rule_groups: list of :class:`ApplicationGatewayFirewallRuleGroup
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleGroup>`
+    :type rule_groups:
+     list[~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleGroup]
     """
 
     _validation = {

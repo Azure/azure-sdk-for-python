@@ -16,8 +16,8 @@ class ExpressRouteCircuitsArpTableListResult(Model):
     """Response for ListArpTable associated with the Express Route Circuits API.
 
     :param value: Gets list of the ARP table.
-    :type value: list of :class:`ExpressRouteCircuitArpTable
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitArpTable>`
+    :type value:
+     list[~azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitArpTable]
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """

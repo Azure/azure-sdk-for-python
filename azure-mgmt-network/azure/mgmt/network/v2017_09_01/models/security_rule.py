@@ -21,8 +21,8 @@ class SecurityRule(SubResource):
     :type description: str
     :param protocol: Network protocol this rule applies to. Possible values
      are 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp', '*'
-    :type protocol: str or :class:`SecurityRuleProtocol
-     <azure.mgmt.network.v2017_09_01.models.SecurityRuleProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2017_09_01.models.SecurityRuleProtocol
     :param source_port_range: The source port or range. Integer or range
      between 0 and 65535. Asterix '*' can also be used to match all ports.
     :type source_port_range: str
@@ -36,12 +36,11 @@ class SecurityRule(SubResource):
      this is an ingress rule, specifies where network traffic originates from.
     :type source_address_prefix: str
     :param source_address_prefixes: The CIDR or source IP ranges.
-    :type source_address_prefixes: list of str
+    :type source_address_prefixes: list[str]
     :param source_application_security_groups: The application security group
      specified as source.
-    :type source_application_security_groups: list of
-     :class:`ApplicationSecurityGroup
-     <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
+    :type source_application_security_groups:
+     list[~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup]
     :param destination_address_prefix: The destination address prefix. CIDR or
      destination IP range. Asterix '*' can also be used to match all source
      IPs. Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and
@@ -49,20 +48,19 @@ class SecurityRule(SubResource):
     :type destination_address_prefix: str
     :param destination_address_prefixes: The destination address prefixes.
      CIDR or destination IP ranges.
-    :type destination_address_prefixes: list of str
+    :type destination_address_prefixes: list[str]
     :param destination_application_security_groups: The application security
      group specified as destination.
-    :type destination_application_security_groups: list of
-     :class:`ApplicationSecurityGroup
-     <azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup>`
+    :type destination_application_security_groups:
+     list[~azure.mgmt.network.v2017_09_01.models.ApplicationSecurityGroup]
     :param source_port_ranges: The source port ranges.
-    :type source_port_ranges: list of str
+    :type source_port_ranges: list[str]
     :param destination_port_ranges: The destination port ranges.
-    :type destination_port_ranges: list of str
+    :type destination_port_ranges: list[str]
     :param access: The network traffic is allowed or denied. Possible values
      are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`SecurityRuleAccess
-     <azure.mgmt.network.v2017_09_01.models.SecurityRuleAccess>`
+    :type access: str or
+     ~azure.mgmt.network.v2017_09_01.models.SecurityRuleAccess
     :param priority: The priority of the rule. The value can be between 100
      and 4096. The priority number must be unique for each rule in the
      collection. The lower the priority number, the higher the priority of the
@@ -72,8 +70,8 @@ class SecurityRule(SubResource):
      rule will be evaluated on incoming or outcoming traffic. Possible values
      are: 'Inbound' and 'Outbound'. Possible values include: 'Inbound',
      'Outbound'
-    :type direction: str or :class:`SecurityRuleDirection
-     <azure.mgmt.network.v2017_09_01.models.SecurityRuleDirection>`
+    :type direction: str or
+     ~azure.mgmt.network.v2017_09_01.models.SecurityRuleDirection
     :param provisioning_state: The provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -87,8 +85,6 @@ class SecurityRule(SubResource):
 
     _validation = {
         'protocol': {'required': True},
-        'source_address_prefix': {'required': True},
-        'destination_address_prefix': {'required': True},
         'access': {'required': True},
         'direction': {'required': True},
     }
@@ -115,7 +111,7 @@ class SecurityRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, source_address_prefixes=None, source_application_security_groups=None, destination_address_prefixes=None, destination_application_security_groups=None, source_port_ranges=None, destination_port_ranges=None, priority=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, protocol, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, source_address_prefix=None, source_address_prefixes=None, source_application_security_groups=None, destination_address_prefix=None, destination_address_prefixes=None, destination_application_security_groups=None, source_port_ranges=None, destination_port_ranges=None, priority=None, provisioning_state=None, name=None, etag=None):
         super(SecurityRule, self).__init__(id=id)
         self.description = description
         self.protocol = protocol

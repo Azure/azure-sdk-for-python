@@ -48,10 +48,9 @@ class LoadBalancerProbesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Probe
-         <azure.mgmt.network.v2017_09_01.models.Probe>`
-        :rtype: :class:`ProbePaged
-         <azure.mgmt.network.v2017_09_01.models.ProbePaged>`
+        :return: An iterator like instance of Probe
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ProbePaged[~azure.mgmt.network.v2017_09_01.models.Probe]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -121,11 +120,9 @@ class LoadBalancerProbesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Probe <azure.mgmt.network.v2017_09_01.models.Probe>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Probe <azure.mgmt.network.v2017_09_01.models.Probe>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Probe or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_09_01.models.Probe or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
