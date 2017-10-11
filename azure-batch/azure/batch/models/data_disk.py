@@ -29,8 +29,7 @@ class DataDisk(Model):
      options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
-    :type caching: str or :class:`CachingType
-     <azure.batch.models.CachingType>`
+    :type caching: str or ~azure.batch.models.CachingType
     :param disk_size_gb: The initial disk size in gigabytes.
     :type disk_size_gb: int
     :param storage_account_type: The storage account type to be used for the
@@ -39,8 +38,7 @@ class DataDisk(Model):
      storage.
      Premium_LRS - The data disk should use premium locally redundant storage.
      Possible values include: 'Standard_LRS', 'Premium_LRS'
-    :type storage_account_type: str or :class:`StorageAccountType
-     <azure.batch.models.StorageAccountType>`
+    :type storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
     _validation = {

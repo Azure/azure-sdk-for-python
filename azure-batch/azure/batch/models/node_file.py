@@ -22,8 +22,7 @@ class NodeFile(Model):
     :param is_directory: Whether the object represents a directory.
     :type is_directory: bool
     :param properties: The file properties.
-    :type properties: :class:`FileProperties
-     <azure.batch.models.FileProperties>`
+    :type properties: ~azure.batch.models.FileProperties
     """
 
     _attribute_map = {

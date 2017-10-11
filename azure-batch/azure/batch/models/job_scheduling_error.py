@@ -17,8 +17,7 @@ class JobSchedulingError(Model):
 
     :param category: The category of the job scheduling error. Possible values
      include: 'userError', 'serverError'
-    :type category: str or :class:`ErrorCategory
-     <azure.batch.models.ErrorCategory>`
+    :type category: str or ~azure.batch.models.ErrorCategory
     :param code: An identifier for the job scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
     :type code: str
@@ -27,8 +26,7 @@ class JobSchedulingError(Model):
     :type message: str
     :param details: A list of additional error details related to the
      scheduling error.
-    :type details: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :type details: list[~azure.batch.models.NameValuePair]
     """
 
     _validation = {

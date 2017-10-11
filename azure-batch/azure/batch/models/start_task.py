@@ -29,21 +29,17 @@ class StartTask(Model):
      node) are mapped into the container, all task environment variables are
      mapped into the container, and the task command line is executed in the
      container.
-    :type container_settings: :class:`TaskContainerSettings
-     <azure.batch.models.TaskContainerSettings>`
+    :type container_settings: ~azure.batch.models.TaskContainerSettings
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
-    :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type resource_files: list[~azure.batch.models.ResourceFile]
     :param environment_settings: A list of environment variable settings for
      the start task.
-    :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param user_identity: The user identity under which the start task runs.
      If omitted, the task runs as a non-administrative user unique to the task.
-    :type user_identity: :class:`UserIdentity
-     <azure.batch.models.UserIdentity>`
+    :type user_identity: ~azure.batch.models.UserIdentity
     :param max_task_retry_count: The maximum number of times the task may be
      retried. The Batch service retries a task if its exit code is nonzero.
      Note that this value specifically controls the number of retries. The

@@ -22,8 +22,7 @@ class TaskAddResult(Model):
      servererror - Task failed to add due to a server error and can be retried
      without modification. Possible values include: 'success', 'clientError',
      'serverError'
-    :type status: str or :class:`TaskAddStatus
-     <azure.batch.models.TaskAddStatus>`
+    :type status: str or ~azure.batch.models.TaskAddStatus
     :param task_id: The ID of the task for which this is the result.
     :type task_id: str
     :param e_tag: The ETag of the task, if the task was successfully added.
@@ -37,7 +36,7 @@ class TaskAddResult(Model):
     :param location: The URL of the task, if the task was successfully added.
     :type location: str
     :param error: The error encountered while attempting to add the task.
-    :type error: :class:`BatchError <azure.batch.models.BatchError>`
+    :type error: ~azure.batch.models.BatchError
     """
 
     _validation = {

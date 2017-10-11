@@ -54,18 +54,15 @@ class FileOperations(object):
         :type recursive: bool
         :param file_delete_from_task_options: Additional parameters for the
          operation
-        :type file_delete_from_task_options: :class:`FileDeleteFromTaskOptions
-         <azure.batch.models.FileDeleteFromTaskOptions>`
+        :type file_delete_from_task_options:
+         ~azure.batch.models.FileDeleteFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -143,8 +140,8 @@ class FileOperations(object):
         :type file_path: str
         :param file_get_from_task_options: Additional parameters for the
          operation
-        :type file_get_from_task_options: :class:`FileGetFromTaskOptions
-         <azure.batch.models.FileGetFromTaskOptions>`
+        :type file_get_from_task_options:
+         ~azure.batch.models.FileGetFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -155,11 +152,8 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -269,18 +263,14 @@ class FileOperations(object):
         :param file_get_properties_from_task_options: Additional parameters
          for the operation
         :type file_get_properties_from_task_options:
-         :class:`FileGetPropertiesFromTaskOptions
-         <azure.batch.models.FileGetPropertiesFromTaskOptions>`
+         ~azure.batch.models.FileGetPropertiesFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -382,18 +372,14 @@ class FileOperations(object):
         :param file_delete_from_compute_node_options: Additional parameters
          for the operation
         :type file_delete_from_compute_node_options:
-         :class:`FileDeleteFromComputeNodeOptions
-         <azure.batch.models.FileDeleteFromComputeNodeOptions>`
+         ~azure.batch.models.FileDeleteFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -472,8 +458,7 @@ class FileOperations(object):
         :param file_get_from_compute_node_options: Additional parameters for
          the operation
         :type file_get_from_compute_node_options:
-         :class:`FileGetFromComputeNodeOptions
-         <azure.batch.models.FileGetFromComputeNodeOptions>`
+         ~azure.batch.models.FileGetFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -484,11 +469,8 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -597,18 +579,14 @@ class FileOperations(object):
         :param file_get_properties_from_compute_node_options: Additional
          parameters for the operation
         :type file_get_properties_from_compute_node_options:
-         :class:`FileGetPropertiesFromComputeNodeOptions
-         <azure.batch.models.FileGetPropertiesFromComputeNodeOptions>`
+         ~azure.batch.models.FileGetPropertiesFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -703,16 +681,16 @@ class FileOperations(object):
         :type recursive: bool
         :param file_list_from_task_options: Additional parameters for the
          operation
-        :type file_list_from_task_options: :class:`FileListFromTaskOptions
-         <azure.batch.models.FileListFromTaskOptions>`
+        :type file_list_from_task_options:
+         ~azure.batch.models.FileListFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NodeFile
-         <azure.batch.models.NodeFile>`
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :return: An iterator like instance of NodeFile
+        :rtype:
+         ~azure.batch.models.NodeFilePaged[~azure.batch.models.NodeFile]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -813,16 +791,15 @@ class FileOperations(object):
         :param file_list_from_compute_node_options: Additional parameters for
          the operation
         :type file_list_from_compute_node_options:
-         :class:`FileListFromComputeNodeOptions
-         <azure.batch.models.FileListFromComputeNodeOptions>`
+         ~azure.batch.models.FileListFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NodeFile
-         <azure.batch.models.NodeFile>`
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :return: An iterator like instance of NodeFile
+        :rtype:
+         ~azure.batch.models.NodeFilePaged[~azure.batch.models.NodeFile]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

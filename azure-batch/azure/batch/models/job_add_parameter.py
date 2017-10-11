@@ -30,8 +30,7 @@ class JobAddParameter(Model):
      highest priority. The default value is 0.
     :type priority: int
     :param constraints: The execution constraints for the job.
-    :type constraints: :class:`JobConstraints
-     <azure.batch.models.JobConstraints>`
+    :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: Details of a Job Manager task to be launched when
      the job is started. If the job does not specify a Job Manager task, the
      user must explicitly add tasks to the job. If the job does specify a Job
@@ -45,13 +44,11 @@ class JobAddParameter(Model):
      required for the job.) For example, a Job Manager task might download a
      file specified as a parameter, analyze the contents of that file and
      submit additional tasks based on those contents.
-    :type job_manager_task: :class:`JobManagerTask
-     <azure.batch.models.JobManagerTask>`
+    :type job_manager_task: ~azure.batch.models.JobManagerTask
     :param job_preparation_task: The Job Preparation task. If a job has a Job
      Preparation task, the Batch service will run the Job Preparation task on a
      compute node before starting any tasks of that job on that compute node.
-    :type job_preparation_task: :class:`JobPreparationTask
-     <azure.batch.models.JobPreparationTask>`
+    :type job_preparation_task: ~azure.batch.models.JobPreparationTask
     :param job_release_task: The Job Release task. A Job Release task cannot
      be specified without also specifying a Job Preparation task for the job.
      The Batch service runs the Job Release task on the compute nodes that have
@@ -59,19 +56,17 @@ class JobAddParameter(Model):
      is to undo changes to compute nodes made by the Job Preparation task.
      Example activities include deleting local files, or shutting down services
      that were started as part of job preparation.
-    :type job_release_task: :class:`JobReleaseTask
-     <azure.batch.models.JobReleaseTask>`
+    :type job_release_task: ~azure.batch.models.JobReleaseTask
     :param common_environment_settings: The list of common environment
      variable settings. These environment variables are set for all tasks in
      the job (including the Job Manager, Job Preparation and Job Release
      tasks). Individual tasks can override an environment setting specified
      here by specifying the same setting name with a different value.
-    :type common_environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type common_environment_settings:
+     list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: The pool on which the Batch service runs the job's
      tasks.
-    :type pool_info: :class:`PoolInformation
-     <azure.batch.models.PoolInformation>`
+    :type pool_info: ~azure.batch.models.PoolInformation
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. Note that if a job
      contains no tasks, then all tasks are considered complete. This option is
@@ -83,8 +78,7 @@ class JobAddParameter(Model):
      terminated or disabled by some other means. terminateJob - terminate the
      job. The job's terminateReason is set to 'AllTasksComplete'. The default
      is noAction. Possible values include: 'noAction', 'terminateJob'
-    :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
-     <azure.batch.models.OnAllTasksComplete>`
+    :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if has a
      failureInfo. A failureInfo is set if the task completes with a non-zero
@@ -95,13 +89,11 @@ class JobAddParameter(Model):
      collection. (This may still result in no action being taken, if that is
      what the task specifies.) The default is noAction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
-    :type on_task_failure: str or :class:`OnTaskFailure
-     <azure.batch.models.OnTaskFailure>`
+    :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     :param uses_task_dependencies: Whether tasks in the job can define
      dependencies on each other. The default is false.
     :type uses_task_dependencies: bool

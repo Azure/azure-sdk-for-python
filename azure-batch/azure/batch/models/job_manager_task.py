@@ -54,26 +54,21 @@ class JobManagerTask(Model):
      are mapped into the container, all task environment variables are mapped
      into the container, and the task command line is executed in the
      container.
-    :type container_settings: :class:`TaskContainerSettings
-     <azure.batch.models.TaskContainerSettings>`
+    :type container_settings: ~azure.batch.models.TaskContainerSettings
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
-    :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type resource_files: list[~azure.batch.models.ResourceFile]
     :param output_files: A list of files that the Batch service will upload
      from the compute node after running the command line. For multi-instance
      tasks, the files will only be uploaded from the compute node on which the
      primary task is executed.
-    :type output_files: list of :class:`OutputFile
-     <azure.batch.models.OutputFile>`
+    :type output_files: list[~azure.batch.models.OutputFile]
     :param environment_settings: A list of environment variable settings for
      the Job Manager task.
-    :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param constraints: Constraints that apply to the Job Manager task.
-    :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+    :type constraints: ~azure.batch.models.TaskConstraints
     :param kill_job_on_completion: Whether completion of the Job Manager task
      signifies completion of the entire job. If true, when the Job Manager task
      completes, the Batch service marks the job as complete. If any tasks are
@@ -92,8 +87,7 @@ class JobManagerTask(Model):
     :param user_identity: The user identity under which the Job Manager task
      runs. If omitted, the task runs as a non-administrative user unique to the
      task.
-    :type user_identity: :class:`UserIdentity
-     <azure.batch.models.UserIdentity>`
+    :type user_identity: ~azure.batch.models.UserIdentity
     :param run_exclusive: Whether the Job Manager task requires exclusive use
      of the compute node where it runs. If true, no other tasks will run on the
      same compute node for as long as the Job Manager is running. If false,
@@ -110,9 +104,8 @@ class JobManagerTask(Model):
      re-downloaded; the existing copy on the compute node is used. If a
      referenced application package cannot be installed, for example because
      the package has been deleted or because download failed, the task fails.
-    :type application_package_references: list of
-     :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+    :type application_package_references:
+     list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
      token that the task can use to perform Batch service operations. If this
      property is set, the Batch service provides the task with an
@@ -122,8 +115,8 @@ class JobManagerTask(Model):
      that the task can carry out using the token depend on the settings. For
      example, a task can request job permissions in order to add other tasks to
      the job, or check the status of the job or of other tasks under the job.
-    :type authentication_token_settings: :class:`AuthenticationTokenSettings
-     <azure.batch.models.AuthenticationTokenSettings>`
+    :type authentication_token_settings:
+     ~azure.batch.models.AuthenticationTokenSettings
     :param allow_low_priority_node: Whether the Job Manager task may run on a
      low-priority compute node. The default value is false.
     :type allow_low_priority_node: bool
