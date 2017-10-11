@@ -49,17 +49,15 @@ class PoolOperations(object):
         :param pool_list_usage_metrics_options: Additional parameters for the
          operation
         :type pool_list_usage_metrics_options:
-         :class:`PoolListUsageMetricsOptions
-         <azure.batch.models.PoolListUsageMetricsOptions>`
+         ~azure.batch.models.PoolListUsageMetricsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PoolUsageMetrics
-         <azure.batch.models.PoolUsageMetrics>`
-        :rtype: :class:`PoolUsageMetricsPaged
-         <azure.batch.models.PoolUsageMetricsPaged>`
+        :return: An iterator like instance of PoolUsageMetrics
+        :rtype:
+         ~azure.batch.models.PoolUsageMetricsPaged[~azure.batch.models.PoolUsageMetrics]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -160,18 +158,15 @@ class PoolOperations(object):
         :param pool_get_all_lifetime_statistics_options: Additional parameters
          for the operation
         :type pool_get_all_lifetime_statistics_options:
-         :class:`PoolGetAllLifetimeStatisticsOptions
-         <azure.batch.models.PoolGetAllLifetimeStatisticsOptions>`
+         ~azure.batch.models.PoolGetAllLifetimeStatisticsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PoolStatistics or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.PoolStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -248,21 +243,16 @@ class PoolOperations(object):
         logs accessible to Microsoft Support engineers.
 
         :param pool: The pool to be added.
-        :type pool: :class:`PoolAddParameter
-         <azure.batch.models.PoolAddParameter>`
+        :type pool: ~azure.batch.models.PoolAddParameter
         :param pool_add_options: Additional parameters for the operation
-        :type pool_add_options: :class:`PoolAddOptions
-         <azure.batch.models.PoolAddOptions>`
+        :type pool_add_options: ~azure.batch.models.PoolAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -331,16 +321,15 @@ class PoolOperations(object):
         """Lists all of the pools in the specified account.
 
         :param pool_list_options: Additional parameters for the operation
-        :type pool_list_options: :class:`PoolListOptions
-         <azure.batch.models.PoolListOptions>`
+        :type pool_list_options: ~azure.batch.models.PoolListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CloudPool
-         <azure.batch.models.CloudPool>`
-        :rtype: :class:`CloudPoolPaged <azure.batch.models.CloudPoolPaged>`
+        :return: An iterator like instance of CloudPool
+        :rtype:
+         ~azure.batch.models.CloudPoolPaged[~azure.batch.models.CloudPool]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -450,18 +439,14 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to delete.
         :type pool_id: str
         :param pool_delete_options: Additional parameters for the operation
-        :type pool_delete_options: :class:`PoolDeleteOptions
-         <azure.batch.models.PoolDeleteOptions>`
+        :type pool_delete_options: ~azure.batch.models.PoolDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -549,18 +534,14 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_exists_options: Additional parameters for the operation
-        :type pool_exists_options: :class:`PoolExistsOptions
-         <azure.batch.models.PoolExistsOptions>`
+        :type pool_exists_options: ~azure.batch.models.PoolExistsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -652,18 +633,15 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_get_options: Additional parameters for the operation
-        :type pool_get_options: :class:`PoolGetOptions
-         <azure.batch.models.PoolGetOptions>`
+        :type pool_get_options: ~azure.batch.models.PoolGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CloudPool <azure.batch.models.CloudPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CloudPool <azure.batch.models.CloudPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CloudPool or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -777,21 +755,16 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to update.
         :type pool_id: str
         :param pool_patch_parameter: The parameters for the request.
-        :type pool_patch_parameter: :class:`PoolPatchParameter
-         <azure.batch.models.PoolPatchParameter>`
+        :type pool_patch_parameter: ~azure.batch.models.PoolPatchParameter
         :param pool_patch_options: Additional parameters for the operation
-        :type pool_patch_options: :class:`PoolPatchOptions
-         <azure.batch.models.PoolPatchOptions>`
+        :type pool_patch_options: ~azure.batch.models.PoolPatchOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -889,18 +862,14 @@ class PoolOperations(object):
         :param pool_disable_auto_scale_options: Additional parameters for the
          operation
         :type pool_disable_auto_scale_options:
-         :class:`PoolDisableAutoScaleOptions
-         <azure.batch.models.PoolDisableAutoScaleOptions>`
+         ~azure.batch.models.PoolDisableAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -981,8 +950,7 @@ class PoolOperations(object):
         :param pool_enable_auto_scale_options: Additional parameters for the
          operation
         :type pool_enable_auto_scale_options:
-         :class:`PoolEnableAutoScaleOptions
-         <azure.batch.models.PoolEnableAutoScaleOptions>`
+         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param auto_scale_formula: The formula for the desired number of
          compute nodes in the pool. The formula is checked for validity before
          it is applied to the pool. If the formula is not valid, the Batch
@@ -1008,11 +976,8 @@ class PoolOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1123,18 +1088,15 @@ class PoolOperations(object):
         :param pool_evaluate_auto_scale_options: Additional parameters for the
          operation
         :type pool_evaluate_auto_scale_options:
-         :class:`PoolEvaluateAutoScaleOptions
-         <azure.batch.models.PoolEvaluateAutoScaleOptions>`
+         ~azure.batch.models.PoolEvaluateAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AutoScaleRun or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.AutoScaleRun or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1228,21 +1190,16 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to resize.
         :type pool_id: str
         :param pool_resize_parameter: The parameters for the request.
-        :type pool_resize_parameter: :class:`PoolResizeParameter
-         <azure.batch.models.PoolResizeParameter>`
+        :type pool_resize_parameter: ~azure.batch.models.PoolResizeParameter
         :param pool_resize_options: Additional parameters for the operation
-        :type pool_resize_options: :class:`PoolResizeOptions
-         <azure.batch.models.PoolResizeOptions>`
+        :type pool_resize_options: ~azure.batch.models.PoolResizeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1347,18 +1304,15 @@ class PoolOperations(object):
         :type pool_id: str
         :param pool_stop_resize_options: Additional parameters for the
          operation
-        :type pool_stop_resize_options: :class:`PoolStopResizeOptions
-         <azure.batch.models.PoolStopResizeOptions>`
+        :type pool_stop_resize_options:
+         ~azure.batch.models.PoolStopResizeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1456,23 +1410,18 @@ class PoolOperations(object):
         :param pool_update_properties_parameter: The parameters for the
          request.
         :type pool_update_properties_parameter:
-         :class:`PoolUpdatePropertiesParameter
-         <azure.batch.models.PoolUpdatePropertiesParameter>`
+         ~azure.batch.models.PoolUpdatePropertiesParameter
         :param pool_update_properties_options: Additional parameters for the
          operation
         :type pool_update_properties_options:
-         :class:`PoolUpdatePropertiesOptions
-         <azure.batch.models.PoolUpdatePropertiesOptions>`
+         ~azure.batch.models.PoolUpdatePropertiesOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1570,18 +1519,15 @@ class PoolOperations(object):
         :type target_os_version: str
         :param pool_upgrade_os_options: Additional parameters for the
          operation
-        :type pool_upgrade_os_options: :class:`PoolUpgradeOsOptions
-         <azure.batch.models.PoolUpgradeOsOptions>`
+        :type pool_upgrade_os_options:
+         ~azure.batch.models.PoolUpgradeOsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1682,22 +1628,18 @@ class PoolOperations(object):
          nodes.
         :type pool_id: str
         :param node_remove_parameter: The parameters for the request.
-        :type node_remove_parameter: :class:`NodeRemoveParameter
-         <azure.batch.models.NodeRemoveParameter>`
+        :type node_remove_parameter: ~azure.batch.models.NodeRemoveParameter
         :param pool_remove_nodes_options: Additional parameters for the
          operation
-        :type pool_remove_nodes_options: :class:`PoolRemoveNodesOptions
-         <azure.batch.models.PoolRemoveNodesOptions>`
+        :type pool_remove_nodes_options:
+         ~azure.batch.models.PoolRemoveNodesOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

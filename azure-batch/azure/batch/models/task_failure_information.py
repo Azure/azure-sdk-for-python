@@ -17,8 +17,7 @@ class TaskFailureInformation(Model):
 
     :param category: The category of the task error. Possible values include:
      'userError', 'serverError'
-    :type category: str or :class:`ErrorCategory
-     <azure.batch.models.ErrorCategory>`
+    :type category: str or ~azure.batch.models.ErrorCategory
     :param code: An identifier for the task error. Codes are invariant and are
      intended to be consumed programmatically.
     :type code: str
@@ -26,8 +25,7 @@ class TaskFailureInformation(Model):
      suitable for display in a user interface.
     :type message: str
     :param details: A list of additional details related to the error.
-    :type details: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :type details: list[~azure.batch.models.NameValuePair]
     """
 
     _validation = {

@@ -33,8 +33,8 @@ class TaskCounts(Model):
      Tasks API. The validationStatus may be unvalidated if the job contains
      more than 200,000 tasks. Possible values include: 'validated',
      'unvalidated'
-    :type validation_status: str or :class:`TaskCountValidationStatus
-     <azure.batch.models.TaskCountValidationStatus>`
+    :type validation_status: str or
+     ~azure.batch.models.TaskCountValidationStatus
     """
 
     _validation = {

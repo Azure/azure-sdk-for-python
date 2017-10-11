@@ -22,8 +22,7 @@ class TaskSchedulingPolicy(Model):
      the pool.
      spread - Tasks should be assigned evenly across all nodes in the pool.
      Possible values include: 'spread', 'pack'
-    :type node_fill_type: str or :class:`ComputeNodeFillType
-     <azure.batch.models.ComputeNodeFillType>`
+    :type node_fill_type: str or ~azure.batch.models.ComputeNodeFillType
     """
 
     _validation = {

@@ -50,7 +50,7 @@ class CloudPool(Model):
      is, some nodes in the pool have not yet been upgraded). While upgrading,
      the pool may be able to run tasks (with reduced capacity) but this is not
      guaranteed. Possible values include: 'active', 'deleting', 'upgrading'
-    :type state: str or :class:`PoolState <azure.batch.models.PoolState>`
+    :type state: str or ~azure.batch.models.PoolState
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
@@ -64,8 +64,7 @@ class CloudPool(Model):
      stopping - The pool was resizing, but the user has requested that the
      resize be stopped, but the stop request has not yet been completed.
      Possible values include: 'steady', 'resizing', 'stopping'
-    :type allocation_state: str or :class:`AllocationState
-     <azure.batch.models.AllocationState>`
+    :type allocation_state: str or ~azure.batch.models.AllocationState
     :param allocation_state_transition_time: The time at which the pool
      entered its current allocation state.
     :type allocation_state_transition_time: datetime
@@ -89,13 +88,13 @@ class CloudPool(Model):
      exclusive and one of the properties must be specified. This property
      cannot be specified if the Batch account was created with its
      poolAllocationMode property set to 'UserSubscription'.
-    :type cloud_service_configuration: :class:`CloudServiceConfiguration
-     <azure.batch.models.CloudServiceConfiguration>`
+    :type cloud_service_configuration:
+     ~azure.batch.models.CloudServiceConfiguration
     :param virtual_machine_configuration: The virtual machine configuration
      for the pool. This property and cloudServiceConfiguration are mutually
      exclusive and one of the properties must be specified.
-    :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <azure.batch.models.VirtualMachineConfiguration>`
+    :type virtual_machine_configuration:
+     ~azure.batch.models.VirtualMachineConfiguration
     :param resize_timeout: The timeout for allocation of compute nodes to the
      pool. This is the timeout for the most recent resize operation. (The
      initial sizing when the pool is created counts as a resize.) The default
@@ -105,8 +104,7 @@ class CloudPool(Model):
      last resize on the pool. This property is set only if one or more errors
      occurred during the last pool resize, and only when the pool
      allocationState is Steady.
-    :type resize_errors: list of :class:`ResizeError
-     <azure.batch.models.ResizeError>`
+    :type resize_errors: list[~azure.batch.models.ResizeError]
     :param current_dedicated_nodes: The number of dedicated compute nodes
      currently in the pool.
     :type current_dedicated_nodes: int
@@ -138,19 +136,17 @@ class CloudPool(Model):
     :param auto_scale_run: The results and errors from the last execution of
      the autoscale formula. This property is set only if the pool automatically
      scales, i.e. enableAutoScale is true.
-    :type auto_scale_run: :class:`AutoScaleRun
-     <azure.batch.models.AutoScaleRun>`
+    :type auto_scale_run: ~azure.batch.models.AutoScaleRun
     :param enable_inter_node_communication: Whether the pool permits direct
      communication between nodes. This imposes restrictions on which nodes can
      be assigned to the pool. Specifying this value can reduce the chance of
      the requested number of nodes to be allocated in the pool.
     :type enable_inter_node_communication: bool
     :param network_configuration: The network configuration for the pool.
-    :type network_configuration: :class:`NetworkConfiguration
-     <azure.batch.models.NetworkConfiguration>`
+    :type network_configuration: ~azure.batch.models.NetworkConfiguration
     :param start_task: A task specified to run on each compute node as it
      joins the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: ~azure.batch.models.StartTask
     :param certificate_references: The list of certificates to be installed on
      each compute node in the pool. For Windows compute nodes, the Batch
      service installs the certificates to the specified certificate store and
@@ -160,37 +156,33 @@ class CloudPool(Model):
      location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and certificates are placed in that directory.
-    :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+    :type certificate_references:
+     list[~azure.batch.models.CertificateReference]
     :param application_package_references: The list of application packages to
      be installed on each compute node in the pool.
-    :type application_package_references: list of
-     :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+    :type application_package_references:
+     list[~azure.batch.models.ApplicationPackageReference]
     :param application_licenses: The list of application licenses the Batch
      service will make available on each compute node in the pool. The list of
      application licenses must be a subset of available Batch service
      application licenses. If a license is requested which is not supported,
      pool creation will fail.
-    :type application_licenses: list of str
+    :type application_licenses: list[str]
     :param max_tasks_per_node: The maximum number of tasks that can run
      concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
     :param task_scheduling_policy: How tasks are distributed across compute
      nodes in a pool.
-    :type task_scheduling_policy: :class:`TaskSchedulingPolicy
-     <azure.batch.models.TaskSchedulingPolicy>`
+    :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
     :param user_accounts: The list of user accounts to be created on each node
      in the pool.
-    :type user_accounts: list of :class:`UserAccount
-     <azure.batch.models.UserAccount>`
+    :type user_accounts: list[~azure.batch.models.UserAccount]
     :param metadata: A list of name-value pairs associated with the pool as
      metadata.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: Utilization and resource usage statistics for the entire
      lifetime of the pool.
-    :type stats: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
+    :type stats: ~azure.batch.models.PoolStatistics
     """
 
     _attribute_map = {

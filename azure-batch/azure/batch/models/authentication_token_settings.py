@@ -21,8 +21,7 @@ class AuthenticationTokenSettings(Model):
      operations. Currently the only supported value for the access property is
      'job', which grants access to all operations related to the job which
      contains the task.
-    :type access: list of str or :class:`AccessScope
-     <azure.batch.models.AccessScope>`
+    :type access: list[str or ~azure.batch.models.AccessScope]
     """
 
     _attribute_map = {

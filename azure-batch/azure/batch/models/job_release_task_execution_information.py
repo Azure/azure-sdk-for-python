@@ -29,8 +29,7 @@ class JobReleaseTaskExecutionInformation(Model):
      completed - the task has exited, or the Batch service was unable to start
      the task due to task preparation errors (such as resource file download
      failures). Possible values include: 'running', 'completed'
-    :type state: str or :class:`JobReleaseTaskState
-     <azure.batch.models.JobReleaseTaskState>`
+    :type state: str or ~azure.batch.models.JobReleaseTaskState
     :param task_root_directory: The root directory of the Job Release task on
      the compute node. You can use this path to retrieve files created by the
      task, such as log files.
@@ -50,18 +49,16 @@ class JobReleaseTaskExecutionInformation(Model):
     :param container_info: Information about the container under which the
      task is executing. This property is set only if the task runs in a
      container context.
-    :type container_info: :class:`TaskContainerExecutionInformation
-     <azure.batch.models.TaskContainerExecutionInformation>`
+    :type container_info:
+     ~azure.batch.models.TaskContainerExecutionInformation
     :param failure_info: Information describing the task failure, if any. This
      property is set only if the task is in the completed state and encountered
      a failure.
-    :type failure_info: :class:`TaskFailureInformation
-     <azure.batch.models.TaskFailureInformation>`
+    :type failure_info: ~azure.batch.models.TaskFailureInformation
     :param result: The result of the task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
      Possible values include: 'success', 'failure'
-    :type result: str or :class:`TaskExecutionResult
-     <azure.batch.models.TaskExecutionResult>`
+    :type result: str or ~azure.batch.models.TaskExecutionResult
     """
 
     _validation = {

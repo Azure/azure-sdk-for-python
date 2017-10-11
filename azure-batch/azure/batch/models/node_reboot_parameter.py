@@ -29,8 +29,8 @@ class NodeRebootParameter(Model):
      waiting. Restart the node when all task retention periods have expired.
      The default value is requeue. Possible values include: 'requeue',
      'terminate', 'taskCompletion', 'retainedData'
-    :type node_reboot_option: str or :class:`ComputeNodeRebootOption
-     <azure.batch.models.ComputeNodeRebootOption>`
+    :type node_reboot_option: str or
+     ~azure.batch.models.ComputeNodeRebootOption
     """
 
     _attribute_map = {

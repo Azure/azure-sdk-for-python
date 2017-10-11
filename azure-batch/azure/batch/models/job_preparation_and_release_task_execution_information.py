@@ -25,14 +25,12 @@ class JobPreparationAndReleaseTaskExecutionInformation(Model):
     :param job_preparation_task_execution_info: Information about the
      execution status of the Job Preparation task on this compute node.
     :type job_preparation_task_execution_info:
-     :class:`JobPreparationTaskExecutionInformation
-     <azure.batch.models.JobPreparationTaskExecutionInformation>`
+     ~azure.batch.models.JobPreparationTaskExecutionInformation
     :param job_release_task_execution_info: Information about the execution
      status of the Job Release task on this compute node. This property is set
      only if the Job Release task has run on the node.
     :type job_release_task_execution_info:
-     :class:`JobReleaseTaskExecutionInformation
-     <azure.batch.models.JobReleaseTaskExecutionInformation>`
+     ~azure.batch.models.JobReleaseTaskExecutionInformation
     """
 
     _attribute_map = {

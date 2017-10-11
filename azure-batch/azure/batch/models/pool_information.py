@@ -33,8 +33,7 @@ class PoolInformation(Model):
      Any user actions that affect the lifetime of the auto pool while the job
      is active will result in unexpected behavior. You must specify either the
      pool ID or the auto pool specification, but not both.
-    :type auto_pool_specification: :class:`AutoPoolSpecification
-     <azure.batch.models.AutoPoolSpecification>`
+    :type auto_pool_specification: ~azure.batch.models.AutoPoolSpecification
     """
 
     _attribute_map = {

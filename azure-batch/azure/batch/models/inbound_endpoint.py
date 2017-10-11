@@ -19,8 +19,7 @@ class InboundEndpoint(Model):
     :type name: str
     :param protocol: The protocol of the endpoint. Possible values include:
      'tcp', 'udp'
-    :type protocol: str or :class:`InboundEndpointProtocol
-     <azure.batch.models.InboundEndpointProtocol>`
+    :type protocol: str or ~azure.batch.models.InboundEndpointProtocol
     :param public_ip_address: The public IP address of the compute node.
     :type public_ip_address: str
     :param public_fqdn: The public fully qualified domain name for the compute

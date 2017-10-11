@@ -17,8 +17,7 @@ class ComputeNodeEndpointConfiguration(Model):
 
     :param inbound_endpoints: The list of inbound endpoints that are
      accessible on the compute node.
-    :type inbound_endpoints: list of :class:`InboundEndpoint
-     <azure.batch.models.InboundEndpoint>`
+    :type inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
     """
 
     _validation = {

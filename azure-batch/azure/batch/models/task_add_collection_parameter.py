@@ -20,8 +20,7 @@ class TaskAddCollectionParameter(Model):
      example if each task has 100's of resource files or environment
      variables), the request will fail with code 'RequestBodyTooLarge' and
      should be retried again with fewer tasks.
-    :type value: list of :class:`TaskAddParameter
-     <azure.batch.models.TaskAddParameter>`
+    :type value: list[~azure.batch.models.TaskAddParameter]
     """
 
     _validation = {

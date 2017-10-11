@@ -19,8 +19,7 @@ class SubtaskInformation(Model):
     :type id: int
     :param node_info: Information about the compute node on which the subtask
      ran.
-    :type node_info: :class:`ComputeNodeInformation
-     <azure.batch.models.ComputeNodeInformation>`
+    :type node_info: ~azure.batch.models.ComputeNodeInformation
     :param start_time: The time at which the subtask started running. If the
      subtask has been restarted or retried, this is the most recent time at
      which the subtask started running.
@@ -41,25 +40,22 @@ class SubtaskInformation(Model):
     :param container_info: Information about the container under which the
      task is executing. This property is set only if the task runs in a
      container context.
-    :type container_info: :class:`TaskContainerExecutionInformation
-     <azure.batch.models.TaskContainerExecutionInformation>`
+    :type container_info:
+     ~azure.batch.models.TaskContainerExecutionInformation
     :param failure_info: Information describing the task failure, if any. This
      property is set only if the task is in the completed state and encountered
      a failure.
-    :type failure_info: :class:`TaskFailureInformation
-     <azure.batch.models.TaskFailureInformation>`
+    :type failure_info: ~azure.batch.models.TaskFailureInformation
     :param state: The current state of the subtask. Possible values include:
      'preparing', 'running', 'completed'
-    :type state: str or :class:`SubtaskState
-     <azure.batch.models.SubtaskState>`
+    :type state: str or ~azure.batch.models.SubtaskState
     :param state_transition_time: The time at which the subtask entered its
      current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the subtask. This property is
      not set if the subtask is in its initial running state. Possible values
      include: 'preparing', 'running', 'completed'
-    :type previous_state: str or :class:`SubtaskState
-     <azure.batch.models.SubtaskState>`
+    :type previous_state: str or ~azure.batch.models.SubtaskState
     :param previous_state_transition_time: The time at which the subtask
      entered its previous state. This property is not set if the subtask is in
      its initial running state.
@@ -67,8 +63,7 @@ class SubtaskInformation(Model):
     :param result: The result of the task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
      Possible values include: 'success', 'failure'
-    :type result: str or :class:`TaskExecutionResult
-     <azure.batch.models.TaskExecutionResult>`
+    :type result: str or ~azure.batch.models.TaskExecutionResult
     """
 
     _attribute_map = {

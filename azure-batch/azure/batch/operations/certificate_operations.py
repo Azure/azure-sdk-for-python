@@ -39,22 +39,18 @@ class CertificateOperations(object):
         """Adds a certificate to the specified account.
 
         :param certificate: The certificate to be added.
-        :type certificate: :class:`CertificateAddParameter
-         <azure.batch.models.CertificateAddParameter>`
+        :type certificate: ~azure.batch.models.CertificateAddParameter
         :param certificate_add_options: Additional parameters for the
          operation
-        :type certificate_add_options: :class:`CertificateAddOptions
-         <azure.batch.models.CertificateAddOptions>`
+        :type certificate_add_options:
+         ~azure.batch.models.CertificateAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -125,17 +121,16 @@ class CertificateOperations(object):
 
         :param certificate_list_options: Additional parameters for the
          operation
-        :type certificate_list_options: :class:`CertificateListOptions
-         <azure.batch.models.CertificateListOptions>`
+        :type certificate_list_options:
+         ~azure.batch.models.CertificateListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Certificate
-         <azure.batch.models.Certificate>`
-        :rtype: :class:`CertificatePaged
-         <azure.batch.models.CertificatePaged>`
+        :return: An iterator like instance of Certificate
+        :rtype:
+         ~azure.batch.models.CertificatePaged[~azure.batch.models.Certificate]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -240,18 +235,14 @@ class CertificateOperations(object):
         :param certificate_cancel_deletion_options: Additional parameters for
          the operation
         :type certificate_cancel_deletion_options:
-         :class:`CertificateCancelDeletionOptions
-         <azure.batch.models.CertificateCancelDeletionOptions>`
+         ~azure.batch.models.CertificateCancelDeletionOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -339,18 +330,15 @@ class CertificateOperations(object):
         :type thumbprint: str
         :param certificate_delete_options: Additional parameters for the
          operation
-        :type certificate_delete_options: :class:`CertificateDeleteOptions
-         <azure.batch.models.CertificateDeleteOptions>`
+        :type certificate_delete_options:
+         ~azure.batch.models.CertificateDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -425,18 +413,16 @@ class CertificateOperations(object):
         :type thumbprint: str
         :param certificate_get_options: Additional parameters for the
          operation
-        :type certificate_get_options: :class:`CertificateGetOptions
-         <azure.batch.models.CertificateGetOptions>`
+        :type certificate_get_options:
+         ~azure.batch.models.CertificateGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Certificate <azure.batch.models.Certificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Certificate <azure.batch.models.Certificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Certificate or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.Certificate or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

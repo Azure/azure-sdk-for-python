@@ -57,20 +57,16 @@ class JobPreparationTask(Model):
      directories on the node) are mapped into the container, all task
      environment variables are mapped into the container, and the task command
      line is executed in the container.
-    :type container_settings: :class:`TaskContainerSettings
-     <azure.batch.models.TaskContainerSettings>`
+    :type container_settings: ~azure.batch.models.TaskContainerSettings
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
-    :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type resource_files: list[~azure.batch.models.ResourceFile]
     :param environment_settings: A list of environment variable settings for
      the Job Preparation task.
-    :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param constraints: Constraints that apply to the Job Preparation task.
-    :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+    :type constraints: ~azure.batch.models.TaskConstraints
     :param wait_for_success: Whether the Batch service should wait for the Job
      Preparation task to complete successfully before scheduling any other
      tasks of the job on the compute node. A Job Preparation task has completed
@@ -90,8 +86,7 @@ class JobPreparationTask(Model):
      task runs. If omitted, the task runs as a non-administrative user unique
      to the task on Windows nodes, or a a non-administrative user unique to the
      pool on Linux nodes.
-    :type user_identity: :class:`UserIdentity
-     <azure.batch.models.UserIdentity>`
+    :type user_identity: ~azure.batch.models.UserIdentity
     :param rerun_on_node_reboot_after_success: Whether the Batch service
      should rerun the Job Preparation task after a compute node reboots. The
      Job Preparation task is always rerun if a compute node is reimaged, or if
