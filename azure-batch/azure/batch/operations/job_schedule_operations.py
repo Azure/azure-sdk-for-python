@@ -43,18 +43,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_exists_options: Additional parameters for the
          operation
-        :type job_schedule_exists_options: :class:`JobScheduleExistsOptions
-         <azure.batch.models.JobScheduleExistsOptions>`
+        :type job_schedule_exists_options:
+         ~azure.batch.models.JobScheduleExistsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -154,18 +151,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_delete_options: Additional parameters for the
          operation
-        :type job_schedule_delete_options: :class:`JobScheduleDeleteOptions
-         <azure.batch.models.JobScheduleDeleteOptions>`
+        :type job_schedule_delete_options:
+         ~azure.batch.models.JobScheduleDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -254,20 +248,16 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_get_options: Additional parameters for the
          operation
-        :type job_schedule_get_options: :class:`JobScheduleGetOptions
-         <azure.batch.models.JobScheduleGetOptions>`
+        :type job_schedule_get_options:
+         ~azure.batch.models.JobScheduleGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CloudJobSchedule
-         <azure.batch.models.CloudJobSchedule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CloudJobSchedule
-         <azure.batch.models.CloudJobSchedule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CloudJobSchedule or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudJobSchedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -383,22 +373,19 @@ class JobScheduleOperations(object):
         :param job_schedule_id: The ID of the job schedule to update.
         :type job_schedule_id: str
         :param job_schedule_patch_parameter: The parameters for the request.
-        :type job_schedule_patch_parameter: :class:`JobSchedulePatchParameter
-         <azure.batch.models.JobSchedulePatchParameter>`
+        :type job_schedule_patch_parameter:
+         ~azure.batch.models.JobSchedulePatchParameter
         :param job_schedule_patch_options: Additional parameters for the
          operation
-        :type job_schedule_patch_options: :class:`JobSchedulePatchOptions
-         <azure.batch.models.JobSchedulePatchOptions>`
+        :type job_schedule_patch_options:
+         ~azure.batch.models.JobSchedulePatchOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -501,22 +488,18 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_update_parameter: The parameters for the request.
         :type job_schedule_update_parameter:
-         :class:`JobScheduleUpdateParameter
-         <azure.batch.models.JobScheduleUpdateParameter>`
+         ~azure.batch.models.JobScheduleUpdateParameter
         :param job_schedule_update_options: Additional parameters for the
          operation
-        :type job_schedule_update_options: :class:`JobScheduleUpdateOptions
-         <azure.batch.models.JobScheduleUpdateOptions>`
+        :type job_schedule_update_options:
+         ~azure.batch.models.JobScheduleUpdateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -614,18 +597,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_disable_options: Additional parameters for the
          operation
-        :type job_schedule_disable_options: :class:`JobScheduleDisableOptions
-         <azure.batch.models.JobScheduleDisableOptions>`
+        :type job_schedule_disable_options:
+         ~azure.batch.models.JobScheduleDisableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -717,18 +697,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_enable_options: Additional parameters for the
          operation
-        :type job_schedule_enable_options: :class:`JobScheduleEnableOptions
-         <azure.batch.models.JobScheduleEnableOptions>`
+        :type job_schedule_enable_options:
+         ~azure.batch.models.JobScheduleEnableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -821,18 +798,14 @@ class JobScheduleOperations(object):
         :param job_schedule_terminate_options: Additional parameters for the
          operation
         :type job_schedule_terminate_options:
-         :class:`JobScheduleTerminateOptions
-         <azure.batch.models.JobScheduleTerminateOptions>`
+         ~azure.batch.models.JobScheduleTerminateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -921,22 +894,18 @@ class JobScheduleOperations(object):
         """Adds a job schedule to the specified account.
 
         :param cloud_job_schedule: The job schedule to be added.
-        :type cloud_job_schedule: :class:`JobScheduleAddParameter
-         <azure.batch.models.JobScheduleAddParameter>`
+        :type cloud_job_schedule: ~azure.batch.models.JobScheduleAddParameter
         :param job_schedule_add_options: Additional parameters for the
          operation
-        :type job_schedule_add_options: :class:`JobScheduleAddOptions
-         <azure.batch.models.JobScheduleAddOptions>`
+        :type job_schedule_add_options:
+         ~azure.batch.models.JobScheduleAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1006,17 +975,16 @@ class JobScheduleOperations(object):
 
         :param job_schedule_list_options: Additional parameters for the
          operation
-        :type job_schedule_list_options: :class:`JobScheduleListOptions
-         <azure.batch.models.JobScheduleListOptions>`
+        :type job_schedule_list_options:
+         ~azure.batch.models.JobScheduleListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CloudJobSchedule
-         <azure.batch.models.CloudJobSchedule>`
-        :rtype: :class:`CloudJobSchedulePaged
-         <azure.batch.models.CloudJobSchedulePaged>`
+        :return: An iterator like instance of CloudJobSchedule
+        :rtype:
+         ~azure.batch.models.CloudJobSchedulePaged[~azure.batch.models.CloudJobSchedule]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

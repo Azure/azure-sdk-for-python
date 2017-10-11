@@ -20,8 +20,7 @@ class PoolEndpointConfiguration(Model):
      maximum number of inbound NAT pools per Batch pool is 5. If the maximum
      number of inbound NAT pools is exceeded the request fails with HTTP status
      code 400.
-    :type inbound_nat_pools: list of :class:`InboundNATPool
-     <azure.batch.models.InboundNATPool>`
+    :type inbound_nat_pools: list[~azure.batch.models.InboundNATPool]
     """
 
     _validation = {

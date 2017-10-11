@@ -26,8 +26,7 @@ class DeleteCertificateError(Model):
      pools and nodes referencing this certificate. However, if a large number
      of resources reference the certificate, the list contains only about the
      first hundred.
-    :type values: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :type values: list[~azure.batch.models.NameValuePair]
     """
 
     _attribute_map = {

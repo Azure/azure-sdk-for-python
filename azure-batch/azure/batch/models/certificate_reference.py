@@ -31,8 +31,7 @@ class CertificateReference(Model):
      visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and certificates are placed
      in that directory. Possible values include: 'currentUser', 'localMachine'
-    :type store_location: str or :class:`CertificateStoreLocation
-     <azure.batch.models.CertificateStoreLocation>`
+    :type store_location: str or ~azure.batch.models.CertificateStoreLocation
     :param store_name: The name of the certificate store on the compute node
      into which to install the certificate. This property is applicable only
      for pools configured with Windows nodes (that is, created with
@@ -48,8 +47,7 @@ class CertificateReference(Model):
      remoteuser - The accounts under which users remotely access the node.
      You can specify more than one visibility in this collection. The default
      is all accounts.
-    :type visibility: list of str or :class:`CertificateVisibility
-     <azure.batch.models.CertificateVisibility>`
+    :type visibility: list[str or ~azure.batch.models.CertificateVisibility]
     """
 
     _validation = {

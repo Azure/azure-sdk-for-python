@@ -24,8 +24,7 @@ class UserIdentity(Model):
     :param auto_user: The auto user under which the task is run. The userName
      and autoUser properties are mutually exclusive; you must specify one but
      not both.
-    :type auto_user: :class:`AutoUserSpecification
-     <azure.batch.models.AutoUserSpecification>`
+    :type auto_user: ~azure.batch.models.AutoUserSpecification
     """
 
     _attribute_map = {

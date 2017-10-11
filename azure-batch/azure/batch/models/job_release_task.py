@@ -56,17 +56,14 @@ class JobReleaseTask(Model):
      the node) are mapped into the container, all task environment variables
      are mapped into the container, and the task command line is executed in
      the container.
-    :type container_settings: :class:`TaskContainerSettings
-     <azure.batch.models.TaskContainerSettings>`
+    :type container_settings: ~azure.batch.models.TaskContainerSettings
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. Files listed
      under this element are located in the task's working directory.
-    :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type resource_files: list[~azure.batch.models.ResourceFile]
     :param environment_settings: A list of environment variable settings for
      the Job Release task.
-    :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param max_wall_clock_time: The maximum elapsed time that the Job Release
      task may run on a given compute node, measured from the time the task
      starts. If the task does not complete within the time limit, the Batch
@@ -84,8 +81,7 @@ class JobReleaseTask(Model):
     :param user_identity: The user identity under which the Job Release task
      runs. If omitted, the task runs as a non-administrative user unique to the
      task.
-    :type user_identity: :class:`UserIdentity
-     <azure.batch.models.UserIdentity>`
+    :type user_identity: ~azure.batch.models.UserIdentity
     """
 
     _validation = {

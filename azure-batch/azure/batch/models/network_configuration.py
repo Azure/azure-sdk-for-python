@@ -45,8 +45,8 @@ class NetworkConfiguration(Model):
     :param endpoint_configuration: The configuration for endpoints on compute
      nodes in the Batch pool. Pool endpoint configuration is only supported on
      pools with the virtualMachineConfiguration property.
-    :type endpoint_configuration: :class:`PoolEndpointConfiguration
-     <azure.batch.models.PoolEndpointConfiguration>`
+    :type endpoint_configuration:
+     ~azure.batch.models.PoolEndpointConfiguration
     """
 
     _attribute_map = {

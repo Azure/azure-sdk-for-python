@@ -25,8 +25,7 @@ class NetworkSecurityGroupRule(Model):
     :type priority: int
     :param access: The action that should be taken for a specified IP address,
      subnet range or tag. Possible values include: 'allow', 'deny'
-    :type access: str or :class:`NetworkSecurityGroupRuleAccess
-     <azure.batch.models.NetworkSecurityGroupRuleAccess>`
+    :type access: str or ~azure.batch.models.NetworkSecurityGroupRuleAccess
     :param source_address_prefix: The source address prefix or tag to match
      for the rule. Valid values are a single IP address (i.e. 10.10.10.10), IP
      subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If

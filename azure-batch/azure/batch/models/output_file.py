@@ -35,12 +35,10 @@ class OutputFile(Model):
      Linux) are expanded prior to the pattern being applied.
     :type file_pattern: str
     :param destination: The destination for the output file(s).
-    :type destination: :class:`OutputFileDestination
-     <azure.batch.models.OutputFileDestination>`
+    :type destination: ~azure.batch.models.OutputFileDestination
     :param upload_options: Additional options for the upload operation,
      including under what conditions to perform the upload.
-    :type upload_options: :class:`OutputFileUploadOptions
-     <azure.batch.models.OutputFileUploadOptions>`
+    :type upload_options: ~azure.batch.models.OutputFileUploadOptions
     """
 
     _validation = {

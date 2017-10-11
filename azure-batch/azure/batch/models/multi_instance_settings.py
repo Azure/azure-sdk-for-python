@@ -34,8 +34,7 @@ class MultiInstanceSettings(Model):
      that these resource files are not downloaded to the task working
      directory, but instead are downloaded to the task root directory (one
      directory above the working directory).
-    :type common_resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type common_resource_files: list[~azure.batch.models.ResourceFile]
     """
 
     _validation = {

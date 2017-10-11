@@ -17,22 +17,18 @@ class ExitConditions(Model):
 
     :param exit_codes: A list of individual task exit codes and how the Batch
      service should respond to them.
-    :type exit_codes: list of :class:`ExitCodeMapping
-     <azure.batch.models.ExitCodeMapping>`
+    :type exit_codes: list[~azure.batch.models.ExitCodeMapping]
     :param exit_code_ranges: A list of task exit code ranges and how the Batch
      service should respond to them.
-    :type exit_code_ranges: list of :class:`ExitCodeRangeMapping
-     <azure.batch.models.ExitCodeRangeMapping>`
+    :type exit_code_ranges: list[~azure.batch.models.ExitCodeRangeMapping]
     :param pre_processing_error: How the Batch service should respond if the
      task fails to start due to an error.
-    :type pre_processing_error: :class:`ExitOptions
-     <azure.batch.models.ExitOptions>`
+    :type pre_processing_error: ~azure.batch.models.ExitOptions
     :param file_upload_error: How the Batch service should respond if a file
      upload error occurs. If the task exited with an exit code that was
      specified via exitCodes or exitCodeRanges, and then encountered a file
      upload error, then the action specified by the exit code takes precedence.
-    :type file_upload_error: :class:`ExitOptions
-     <azure.batch.models.ExitOptions>`
+    :type file_upload_error: ~azure.batch.models.ExitOptions
     :param default: How the Batch service should respond if the task fails
      with an exit condition not covered by any of the other properties. This
      value is used if the task exits with any nonzero exit code not listed in
@@ -41,7 +37,7 @@ class ExitConditions(Model):
      error if the fileUploadError property is not present. If you want
      non-default behaviour on exit code 0, you must list it explicitly using
      the exitCodes or exitCodeRanges collection.
-    :type default: :class:`ExitOptions <azure.batch.models.ExitOptions>`
+    :type default: ~azure.batch.models.ExitOptions
     """
 
     _attribute_map = {

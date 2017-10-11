@@ -18,8 +18,7 @@ class TaskUpdateParameter(Model):
     :param constraints: Constraints that apply to this task. If omitted, the
      task is given the default constraints. For multi-instance tasks, updating
      the retention time applies only to the primary task and not subtasks.
-    :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+    :type constraints: ~azure.batch.models.TaskConstraints
     """
 
     _attribute_map = {

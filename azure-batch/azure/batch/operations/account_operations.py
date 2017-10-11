@@ -41,17 +41,15 @@ class AccountOperations(object):
         :param account_list_node_agent_skus_options: Additional parameters for
          the operation
         :type account_list_node_agent_skus_options:
-         :class:`AccountListNodeAgentSkusOptions
-         <azure.batch.models.AccountListNodeAgentSkusOptions>`
+         ~azure.batch.models.AccountListNodeAgentSkusOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NodeAgentSku
-         <azure.batch.models.NodeAgentSku>`
-        :rtype: :class:`NodeAgentSkuPaged
-         <azure.batch.models.NodeAgentSkuPaged>`
+        :return: An iterator like instance of NodeAgentSku
+        :rtype:
+         ~azure.batch.models.NodeAgentSkuPaged[~azure.batch.models.NodeAgentSku]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

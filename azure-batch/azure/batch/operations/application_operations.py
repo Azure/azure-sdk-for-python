@@ -46,17 +46,16 @@ class ApplicationOperations(object):
 
         :param application_list_options: Additional parameters for the
          operation
-        :type application_list_options: :class:`ApplicationListOptions
-         <azure.batch.models.ApplicationListOptions>`
+        :type application_list_options:
+         ~azure.batch.models.ApplicationListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ApplicationSummary
-         <azure.batch.models.ApplicationSummary>`
-        :rtype: :class:`ApplicationSummaryPaged
-         <azure.batch.models.ApplicationSummaryPaged>`
+        :return: An iterator like instance of ApplicationSummary
+        :rtype:
+         ~azure.batch.models.ApplicationSummaryPaged[~azure.batch.models.ApplicationSummary]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -144,20 +143,16 @@ class ApplicationOperations(object):
         :type application_id: str
         :param application_get_options: Additional parameters for the
          operation
-        :type application_get_options: :class:`ApplicationGetOptions
-         <azure.batch.models.ApplicationGetOptions>`
+        :type application_get_options:
+         ~azure.batch.models.ApplicationGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationSummary
-         <azure.batch.models.ApplicationSummary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationSummary
-         <azure.batch.models.ApplicationSummary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationSummary or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.ApplicationSummary or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
