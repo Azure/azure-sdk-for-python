@@ -240,7 +240,7 @@
       "markdown": "specification/iothub/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.iothub",
-        "package-version": "0.3.0"
+        "package-version": "0.4.0"
       },
       "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub",
       "build_dir": "azure-mgmt-iothub"
