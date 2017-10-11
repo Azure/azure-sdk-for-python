@@ -22,17 +22,16 @@ class BackendAddressPool(SubResource):
     :type id: str
     :ivar backend_ip_configurations: Gets collection of references to IP
      addresses defined in network interfaces.
-    :vartype backend_ip_configurations: list of
-     :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
+    :vartype backend_ip_configurations:
+     list[~azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration]
     :ivar load_balancing_rules: Gets load balancing rules that use this
      backend address pool.
-    :vartype load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+    :vartype load_balancing_rules:
+     list[~azure.mgmt.network.v2017_08_01.models.SubResource]
     :ivar outbound_nat_rule: Gets outbound rules that use this backend address
      pool.
-    :vartype outbound_nat_rule: :class:`SubResource
-     <azure.mgmt.network.v2017_08_01.models.SubResource>`
+    :vartype outbound_nat_rule:
+     ~azure.mgmt.network.v2017_08_01.models.SubResource
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

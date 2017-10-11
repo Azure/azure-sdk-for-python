@@ -23,14 +23,13 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :param private_ip_allocation_method: The private IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
-    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_03_01.models.IPAllocationMethod>`
+    :type private_ip_allocation_method: str or
+     ~azure.mgmt.network.v2017_03_01.models.IPAllocationMethod
     :param subnet: The reference of the subnet resource.
-    :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type subnet: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param public_ip_address: The reference of the public IP resource.
-    :type public_ip_address: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type public_ip_address:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str

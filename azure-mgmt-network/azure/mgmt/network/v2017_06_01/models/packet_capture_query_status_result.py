@@ -24,14 +24,14 @@ class PacketCaptureQueryStatusResult(Model):
     :param packet_capture_status: The status of the packet capture session.
      Possible values include: 'NotStarted', 'Running', 'Stopped', 'Error',
      'Unknown'
-    :type packet_capture_status: str or :class:`PcStatus
-     <azure.mgmt.network.v2017_06_01.models.PcStatus>`
+    :type packet_capture_status: str or
+     ~azure.mgmt.network.v2017_06_01.models.PcStatus
     :param stop_reason: The reason the current packet capture session was
      stopped.
     :type stop_reason: str
     :param packet_capture_error: List of errors of packet capture session.
-    :type packet_capture_error: list of str or :class:`PcError
-     <azure.mgmt.network.v2017_06_01.models.PcError>`
+    :type packet_capture_error: list[str or
+     ~azure.mgmt.network.v2017_06_01.models.PcError]
     """
 
     _attribute_map = {
