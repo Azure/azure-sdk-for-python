@@ -18,7 +18,7 @@ class RouteProperties(Model):
 
     :param name: The name of the route. The name can only include alphanumeric
      characters, periods, underscores, hyphens, has a maximum length of 64
-     characters,  and must be unique.
+     characters, and must be unique.
     :type name: str
     :param source: The source that the routing rule is to be applied to, such
      as DeviceMessages. Possible values include: 'DeviceMessages',
@@ -27,7 +27,7 @@ class RouteProperties(Model):
      <azure.mgmt.iothub.models.RoutingSource>`
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
-     grammar, See:
+     grammar, see:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
     :type condition: str
     :param endpoint_names: The list of endpoints to which messages that
@@ -38,7 +38,7 @@ class RouteProperties(Model):
     """
 
     _validation = {
-        'name': {'required': True, 'pattern': '^[A-Za-z0-9-._]{1,64}$'},
+        'name': {'required': True, 'pattern': r'^[A-Za-z0-9-._]{1,64}$'},
         'source': {'required': True},
         'endpoint_names': {'required': True, 'max_items': 1, 'min_items': 1},
         'is_enabled': {'required': True},

@@ -33,15 +33,22 @@ class RoutingEndpoints(Model):
      built-in Event Hubs endpoint.
     :type event_hubs: list of :class:`RoutingEventHubProperties
      <azure.mgmt.iothub.models.RoutingEventHubProperties>`
+    :param storage_containers: The list of storage container endpoints that
+     IoT hub routes messages to, based on the routing rules.
+    :type storage_containers: list of
+     :class:`RoutingStorageContainerProperties
+     <azure.mgmt.iothub.models.RoutingStorageContainerProperties>`
     """
 
     _attribute_map = {
         'service_bus_queues': {'key': 'serviceBusQueues', 'type': '[RoutingServiceBusQueueEndpointProperties]'},
         'service_bus_topics': {'key': 'serviceBusTopics', 'type': '[RoutingServiceBusTopicEndpointProperties]'},
         'event_hubs': {'key': 'eventHubs', 'type': '[RoutingEventHubProperties]'},
+        'storage_containers': {'key': 'storageContainers', 'type': '[RoutingStorageContainerProperties]'},
     }
 
-    def __init__(self, service_bus_queues=None, service_bus_topics=None, event_hubs=None):
+    def __init__(self, service_bus_queues=None, service_bus_topics=None, event_hubs=None, storage_containers=None):
         self.service_bus_queues = service_bus_queues
         self.service_bus_topics = service_bus_topics
         self.event_hubs = event_hubs
+        self.storage_containers = storage_containers

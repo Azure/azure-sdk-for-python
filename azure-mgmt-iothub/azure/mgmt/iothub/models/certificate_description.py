@@ -12,42 +12,43 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """The common properties of an Azure resource.
+class CertificateDescription(Model):
+    """The X509 Certificate.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param properties:
+    :type properties: :class:`CertificateProperties
+     <azure.mgmt.iothub.models.CertificateProperties>`
     :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the certificate.
     :vartype name: str
+    :ivar etag: The entity tag.
+    :vartype etag: str
     :ivar type: The resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: The resource tags.
-    :type tags: dict
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True},
+        'etag': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'CertificateProperties'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, properties=None):
+        self.properties = properties
         self.id = None
         self.name = None
+        self.etag = None
         self.type = None
-        self.location = location
-        self.tags = tags

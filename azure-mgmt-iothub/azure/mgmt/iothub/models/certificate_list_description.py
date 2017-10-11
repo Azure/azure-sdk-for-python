@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class IotHubSkuDescriptionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`IotHubSkuDescription <azure.mgmt.iothub.models.IotHubSkuDescription>` object
+class CertificateListDescription(Model):
+    """The JSON-serialized array of Certificate objects.
+
+    :param value: The array of Certificate objects.
+    :type value: list of :class:`CertificateDescription
+     <azure.mgmt.iothub.models.CertificateDescription>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[IotHubSkuDescription]'}
+        'value': {'key': 'value', 'type': '[CertificateDescription]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(IotHubSkuDescriptionPaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None):
+        self.value = value
