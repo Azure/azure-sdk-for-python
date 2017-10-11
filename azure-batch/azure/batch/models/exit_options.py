@@ -29,7 +29,7 @@ class ExitOptions(Model):
      property value error; if you are calling the REST API directly, the HTTP
      status code is 400 (Bad Request). Possible values include: 'none',
      'disable', 'terminate'
-    :type job_action: str or :class:`JobAction <azure.batch.models.JobAction>`
+    :type job_action: str or ~azure.batch.models.JobAction
     :param dependency_action: An action that the Batch service performs on
      tasks that depend on this task. Values are:
      satisfy - Satisfy the task's dependencies.
@@ -40,8 +40,7 @@ class ExitOptions(Model):
      task request fails with an invalid property value error; if you are
      calling the REST API directly, the HTTP status code is 400  (Bad Request).
      Possible values include: 'satisfy', 'block'
-    :type dependency_action: str or :class:`DependencyAction
-     <azure.batch.models.DependencyAction>`
+    :type dependency_action: str or ~azure.batch.models.DependencyAction
     """
 
     _attribute_map = {

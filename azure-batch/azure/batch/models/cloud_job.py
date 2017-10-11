@@ -42,7 +42,7 @@ class CloudJob(Model):
     :param state: The current state of the job. Possible values include:
      'active', 'disabling', 'disabled', 'enabling', 'terminating', 'completed',
      'deleting'
-    :type state: str or :class:`JobState <azure.batch.models.JobState>`
+    :type state: str or ~azure.batch.models.JobState
     :param state_transition_time: The time at which the job entered its
      current state.
     :type state_transition_time: datetime
@@ -50,8 +50,7 @@ class CloudJob(Model):
      set if the job is in its initial Active state. Possible values include:
      'active', 'disabling', 'disabled', 'enabling', 'terminating', 'completed',
      'deleting'
-    :type previous_state: str or :class:`JobState
-     <azure.batch.models.JobState>`
+    :type previous_state: str or ~azure.batch.models.JobState
     :param previous_state_transition_time: The time at which the job entered
      its previous state. This property is not set if the job is in its initial
      Active state.
@@ -61,39 +60,33 @@ class CloudJob(Model):
      highest priority. The default value is 0.
     :type priority: int
     :param constraints: The execution constraints for the job.
-    :type constraints: :class:`JobConstraints
-     <azure.batch.models.JobConstraints>`
+    :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: Details of a Job Manager task to be launched when
      the job is started.
-    :type job_manager_task: :class:`JobManagerTask
-     <azure.batch.models.JobManagerTask>`
+    :type job_manager_task: ~azure.batch.models.JobManagerTask
     :param job_preparation_task: The Job Preparation task. The Job Preparation
      task is a special task run on each node before any other task of the job.
-    :type job_preparation_task: :class:`JobPreparationTask
-     <azure.batch.models.JobPreparationTask>`
+    :type job_preparation_task: ~azure.batch.models.JobPreparationTask
     :param job_release_task: The Job Release task. The Job Release task is a
      special task run at the end of the job on each node that has run any other
      task of the job.
-    :type job_release_task: :class:`JobReleaseTask
-     <azure.batch.models.JobReleaseTask>`
+    :type job_release_task: ~azure.batch.models.JobReleaseTask
     :param common_environment_settings: The list of common environment
      variable settings. These environment variables are set for all tasks in
      the job (including the Job Manager, Job Preparation and Job Release
      tasks). Individual tasks can override an environment setting specified
      here by specifying the same setting name with a different value.
-    :type common_environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type common_environment_settings:
+     list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: The pool settings associated with the job.
-    :type pool_info: :class:`PoolInformation
-     <azure.batch.models.PoolInformation>`
+    :type pool_info: ~azure.batch.models.PoolInformation
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. noAction - do
      nothing. The job remains active unless terminated or disabled by some
      other means. terminateJob - terminate the job. The job's terminateReason
      is set to 'AllTasksComplete'. The default is noAction. Possible values
      include: 'noAction', 'terminateJob'
-    :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
-     <azure.batch.models.OnAllTasksComplete>`
+    :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if has a
      failureInfo. A failureInfo is set if the task completes with a non-zero
@@ -104,19 +97,16 @@ class CloudJob(Model):
      collection. (This may still result in no action being taken, if that is
      what the task specifies.) The default is noAction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
-    :type on_task_failure: str or :class:`OnTaskFailure
-     <azure.batch.models.OnTaskFailure>`
+    :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     :param execution_info: The execution information for the job.
-    :type execution_info: :class:`JobExecutionInformation
-     <azure.batch.models.JobExecutionInformation>`
+    :type execution_info: ~azure.batch.models.JobExecutionInformation
     :param stats: Resource usage statistics for the entire lifetime of the
      job.
-    :type stats: :class:`JobStatistics <azure.batch.models.JobStatistics>`
+    :type stats: ~azure.batch.models.JobStatistics
     """
 
     _attribute_map = {

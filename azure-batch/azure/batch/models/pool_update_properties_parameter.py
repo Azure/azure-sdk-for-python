@@ -19,7 +19,7 @@ class PoolUpdatePropertiesParameter(Model):
      pool. The task runs when the node is added to the pool or when the node is
      restarted. If this element is present, it overwrites any existing start
      task. If omitted, any existing start task is removed from the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: ~azure.batch.models.StartTask
     :param certificate_references: A list of certificates to be installed on
      each compute node in the pool. This list replaces any existing certificate
      references configured on the pool. If you specify an empty collection, any
@@ -32,8 +32,8 @@ class PoolUpdatePropertiesParameter(Model):
      'remoteUser', a 'certs' directory is created in the user's home directory
      (e.g., /home/{user-name}/certs) and certificates are placed in that
      directory.
-    :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+    :type certificate_references:
+     list[~azure.batch.models.CertificateReference]
     :param application_package_references: A list of application packages to
      be installed on each compute node in the pool. The list replaces any
      existing application package references on the pool. Changes to
@@ -42,15 +42,13 @@ class PoolUpdatePropertiesParameter(Model):
      they are rebooted or reimaged. If omitted, or if you specify an empty
      collection, any existing application packages references are removed from
      the pool.
-    :type application_package_references: list of
-     :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+    :type application_package_references:
+     list[~azure.batch.models.ApplicationPackageReference]
     :param metadata: A list of name-value pairs associated with the pool as
      metadata. This list replaces any existing metadata configured on the pool.
      If omitted, or if you specify an empty collection, any existing metadata
      is removed from the pool.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _validation = {

@@ -38,8 +38,7 @@ class JobSpecification(Model):
      properties to set onAllTasksComplete to terminateJob once you have
      finished adding tasks. The default is noAction. Possible values include:
      'noAction', 'terminateJob'
-    :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
-     <azure.batch.models.OnAllTasksComplete>`
+    :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
      task fails in a job created under this schedule. A task is considered to
      have failed if it have failed if has a failureInfo. A failureInfo is set
@@ -47,26 +46,22 @@ class JobSpecification(Model):
      count, or if there was an error starting the task, for example due to a
      resource file download error. The default is noAction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
-    :type on_task_failure: str or :class:`OnTaskFailure
-     <azure.batch.models.OnTaskFailure>`
+    :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param constraints: The execution constraints for jobs created under this
      schedule.
-    :type constraints: :class:`JobConstraints
-     <azure.batch.models.JobConstraints>`
+    :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: The details of a Job Manager task to be launched
      when a job is started under this schedule. If the job does not specify a
      Job Manager task, the user must explicitly add tasks to the job using the
      Task API. If the job does specify a Job Manager task, the Batch service
      creates the Job Manager task when the job is created, and will try to
      schedule the Job Manager task before scheduling other tasks in the job.
-    :type job_manager_task: :class:`JobManagerTask
-     <azure.batch.models.JobManagerTask>`
+    :type job_manager_task: ~azure.batch.models.JobManagerTask
     :param job_preparation_task: The Job Preparation task for jobs created
      under this schedule. If a job has a Job Preparation task, the Batch
      service will run the Job Preparation task on a compute node before
      starting any tasks of that job on that compute node.
-    :type job_preparation_task: :class:`JobPreparationTask
-     <azure.batch.models.JobPreparationTask>`
+    :type job_preparation_task: ~azure.batch.models.JobPreparationTask
     :param job_release_task: The Job Release task for jobs created under this
      schedule. The primary purpose of the Job Release task is to undo changes
      to compute nodes made by the Job Preparation task. Example activities
@@ -75,25 +70,22 @@ class JobSpecification(Model):
      also specifying a Job Preparation task for the job. The Batch service runs
      the Job Release task on the compute nodes that have run the Job
      Preparation task.
-    :type job_release_task: :class:`JobReleaseTask
-     <azure.batch.models.JobReleaseTask>`
+    :type job_release_task: ~azure.batch.models.JobReleaseTask
     :param common_environment_settings: A list of common environment variable
      settings. These environment variables are set for all tasks in jobs
      created under this schedule (including the Job Manager, Job Preparation
      and Job Release tasks). Individual tasks can override an environment
      setting specified here by specifying the same setting name with a
      different value.
-    :type common_environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type common_environment_settings:
+     list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: The pool on which the Batch service runs the tasks of
      jobs created under this schedule.
-    :type pool_info: :class:`PoolInformation
-     <azure.batch.models.PoolInformation>`
+    :type pool_info: ~azure.batch.models.PoolInformation
     :param metadata: A list of name-value pairs associated with each job
      created under this schedule as metadata. The Batch service does not assign
      any meaning to metadata; it is solely for the use of user code.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _validation = {

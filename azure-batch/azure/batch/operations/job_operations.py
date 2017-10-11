@@ -46,18 +46,15 @@ class JobOperations(object):
         :param job_get_all_lifetime_statistics_options: Additional parameters
          for the operation
         :type job_get_all_lifetime_statistics_options:
-         :class:`JobGetAllLifetimeStatisticsOptions
-         <azure.batch.models.JobGetAllLifetimeStatisticsOptions>`
+         ~azure.batch.models.JobGetAllLifetimeStatisticsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobStatistics <azure.batch.models.JobStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobStatistics <azure.batch.models.JobStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobStatistics or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.JobStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -142,18 +139,14 @@ class JobOperations(object):
         :param job_id: The ID of the job to delete.
         :type job_id: str
         :param job_delete_options: Additional parameters for the operation
-        :type job_delete_options: :class:`JobDeleteOptions
-         <azure.batch.models.JobDeleteOptions>`
+        :type job_delete_options: ~azure.batch.models.JobDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -241,18 +234,15 @@ class JobOperations(object):
         :param job_id: The ID of the job.
         :type job_id: str
         :param job_get_options: Additional parameters for the operation
-        :type job_get_options: :class:`JobGetOptions
-         <azure.batch.models.JobGetOptions>`
+        :type job_get_options: ~azure.batch.models.JobGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CloudJob <azure.batch.models.CloudJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CloudJob <azure.batch.models.CloudJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CloudJob or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -365,21 +355,16 @@ class JobOperations(object):
         :param job_id: The ID of the job whose properties you want to update.
         :type job_id: str
         :param job_patch_parameter: The parameters for the request.
-        :type job_patch_parameter: :class:`JobPatchParameter
-         <azure.batch.models.JobPatchParameter>`
+        :type job_patch_parameter: ~azure.batch.models.JobPatchParameter
         :param job_patch_options: Additional parameters for the operation
-        :type job_patch_options: :class:`JobPatchOptions
-         <azure.batch.models.JobPatchOptions>`
+        :type job_patch_options: ~azure.batch.models.JobPatchOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -479,21 +464,16 @@ class JobOperations(object):
         :param job_id: The ID of the job whose properties you want to update.
         :type job_id: str
         :param job_update_parameter: The parameters for the request.
-        :type job_update_parameter: :class:`JobUpdateParameter
-         <azure.batch.models.JobUpdateParameter>`
+        :type job_update_parameter: ~azure.batch.models.JobUpdateParameter
         :param job_update_options: Additional parameters for the operation
-        :type job_update_options: :class:`JobUpdateOptions
-         <azure.batch.models.JobUpdateOptions>`
+        :type job_update_options: ~azure.batch.models.JobUpdateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -604,21 +584,16 @@ class JobOperations(object):
          terminate - Terminate running tasks. The tasks will not run again.
          wait - Allow currently running tasks to complete. Possible values
          include: 'requeue', 'terminate', 'wait'
-        :type disable_tasks: str or :class:`DisableJobOption
-         <azure.batch.models.DisableJobOption>`
+        :type disable_tasks: str or ~azure.batch.models.DisableJobOption
         :param job_disable_options: Additional parameters for the operation
-        :type job_disable_options: :class:`JobDisableOptions
-         <azure.batch.models.JobDisableOptions>`
+        :type job_disable_options: ~azure.batch.models.JobDisableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -721,18 +696,14 @@ class JobOperations(object):
         :param job_id: The ID of the job to enable.
         :type job_id: str
         :param job_enable_options: Additional parameters for the operation
-        :type job_enable_options: :class:`JobEnableOptions
-         <azure.batch.models.JobEnableOptions>`
+        :type job_enable_options: ~azure.batch.models.JobEnableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -828,8 +799,7 @@ class JobOperations(object):
         :param job_id: The ID of the job to terminate.
         :type job_id: str
         :param job_terminate_options: Additional parameters for the operation
-        :type job_terminate_options: :class:`JobTerminateOptions
-         <azure.batch.models.JobTerminateOptions>`
+        :type job_terminate_options: ~azure.batch.models.JobTerminateOptions
         :param terminate_reason: The text you want to appear as the job's
          TerminateReason. The default is 'UserTerminate'.
         :type terminate_reason: str
@@ -838,11 +808,8 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -952,21 +919,16 @@ class JobOperations(object):
         Support engineers.
 
         :param job: The job to be added.
-        :type job: :class:`JobAddParameter
-         <azure.batch.models.JobAddParameter>`
+        :type job: ~azure.batch.models.JobAddParameter
         :param job_add_options: Additional parameters for the operation
-        :type job_add_options: :class:`JobAddOptions
-         <azure.batch.models.JobAddOptions>`
+        :type job_add_options: ~azure.batch.models.JobAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1035,16 +997,15 @@ class JobOperations(object):
         """Lists all of the jobs in the specified account.
 
         :param job_list_options: Additional parameters for the operation
-        :type job_list_options: :class:`JobListOptions
-         <azure.batch.models.JobListOptions>`
+        :type job_list_options: ~azure.batch.models.JobListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CloudJob
-         <azure.batch.models.CloudJob>`
-        :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :return: An iterator like instance of CloudJob
+        :rtype:
+         ~azure.batch.models.CloudJobPaged[~azure.batch.models.CloudJob]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1143,16 +1104,15 @@ class JobOperations(object):
         :param job_list_from_job_schedule_options: Additional parameters for
          the operation
         :type job_list_from_job_schedule_options:
-         :class:`JobListFromJobScheduleOptions
-         <azure.batch.models.JobListFromJobScheduleOptions>`
+         ~azure.batch.models.JobListFromJobScheduleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CloudJob
-         <azure.batch.models.CloudJob>`
-        :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :return: An iterator like instance of CloudJob
+        :rtype:
+         ~azure.batch.models.CloudJobPaged[~azure.batch.models.CloudJob]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1262,18 +1222,16 @@ class JobOperations(object):
         :param job_list_preparation_and_release_task_status_options:
          Additional parameters for the operation
         :type job_list_preparation_and_release_task_status_options:
-         :class:`JobListPreparationAndReleaseTaskStatusOptions
-         <azure.batch.models.JobListPreparationAndReleaseTaskStatusOptions>`
+         ~azure.batch.models.JobListPreparationAndReleaseTaskStatusOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
-         :class:`JobPreparationAndReleaseTaskExecutionInformation
-         <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>`
-        :rtype: :class:`JobPreparationAndReleaseTaskExecutionInformationPaged
-         <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformationPaged>`
+         JobPreparationAndReleaseTaskExecutionInformation
+        :rtype:
+         ~azure.batch.models.JobPreparationAndReleaseTaskExecutionInformationPaged[~azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1377,18 +1335,16 @@ class JobOperations(object):
         :type job_id: str
         :param job_get_task_counts_options: Additional parameters for the
          operation
-        :type job_get_task_counts_options: :class:`JobGetTaskCountsOptions
-         <azure.batch.models.JobGetTaskCountsOptions>`
+        :type job_get_task_counts_options:
+         ~azure.batch.models.JobGetTaskCountsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TaskCounts <azure.batch.models.TaskCounts>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TaskCounts <azure.batch.models.TaskCounts>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TaskCounts or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.TaskCounts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

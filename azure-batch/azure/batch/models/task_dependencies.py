@@ -24,12 +24,11 @@ class TaskDependencies(Model):
      exceeds the maximum length, the Add Task request fails with error code
      TaskDependencyListTooLong. In this case consider using task ID ranges
      instead.
-    :type task_ids: list of str
+    :type task_ids: list[str]
     :param task_id_ranges: The list of task ID ranges that this task depends
      on. All tasks in all ranges must complete successfully before the
      dependent task can be scheduled.
-    :type task_id_ranges: list of :class:`TaskIdRange
-     <azure.batch.models.TaskIdRange>`
+    :type task_id_ranges: list[~azure.batch.models.TaskIdRange]
     """
 
     _attribute_map = {

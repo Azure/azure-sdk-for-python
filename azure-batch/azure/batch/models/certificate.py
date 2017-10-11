@@ -25,16 +25,14 @@ class Certificate(Model):
     :type url: str
     :param state: The current state of the certificate. Possible values
      include: 'active', 'deleting', 'deleteFailed'
-    :type state: str or :class:`CertificateState
-     <azure.batch.models.CertificateState>`
+    :type state: str or ~azure.batch.models.CertificateState
     :param state_transition_time: The time at which the certificate entered
      its current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the certificate. This
      property is not set if the certificate is in its initial active state.
      Possible values include: 'active', 'deleting', 'deleteFailed'
-    :type previous_state: str or :class:`CertificateState
-     <azure.batch.models.CertificateState>`
+    :type previous_state: str or ~azure.batch.models.CertificateState
     :param previous_state_transition_time: The time at which the certificate
      entered its previous state. This property is not set if the certificate is
      in its initial Active state.
@@ -45,8 +43,7 @@ class Certificate(Model):
     :param delete_certificate_error: The error that occurred on the last
      attempt to delete this certificate. This property is set only if the
      certificate is in the DeleteFailed state.
-    :type delete_certificate_error: :class:`DeleteCertificateError
-     <azure.batch.models.DeleteCertificateError>`
+    :type delete_certificate_error: ~azure.batch.models.DeleteCertificateError
     """
 
     _attribute_map = {

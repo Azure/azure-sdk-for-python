@@ -29,8 +29,8 @@ class NodeReimageParameter(Model):
      waiting. Reimage the node when all task retention periods have expired.
      The default value is requeue. Possible values include: 'requeue',
      'terminate', 'taskCompletion', 'retainedData'
-    :type node_reimage_option: str or :class:`ComputeNodeReimageOption
-     <azure.batch.models.ComputeNodeReimageOption>`
+    :type node_reimage_option: str or
+     ~azure.batch.models.ComputeNodeReimageOption
     """
 
     _attribute_map = {

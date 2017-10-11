@@ -69,14 +69,14 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest.modeler",
-        "version": "2.0.18",
+        "version": "2.1.22",
         "dependencies": {
-          "dotnet-2.0.0": "^1.1.0"
+          "dotnet-2.0.0": "^1.4.4"
         },
         "optionalDependencies": {},
         "devDependencies": {
           "coffee-script": "^1.11.1",
-          "dotnet-sdk-2.0.0": "^1.1.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
           "gulp": "^3.9.1",
           "gulp-filter": "^5.0.0",
           "gulp-line-ending-corrector": "^1.0.1",
@@ -93,22 +93,22 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
-        "_shasum": "b8e853f83b99b2a37ad534cb8463da5de4b11418",
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
+        "_shasum": "ca425289fa38a210d279729048a4a91673f09c67",
         "_shrinkwrap": null,
         "bin": null,
-        "_id": "@microsoft.azure/autorest.modeler@2.0.18",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
+        "_id": "@microsoft.azure/autorest.modeler@2.1.22",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
         "_requested": {
           "type": "directory",
           "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler"
+          "raw": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler"
         },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler",
-        "_where": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.18/node_modules/@microsoft.azure/autorest.modeler"
+        "_spec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler",
+        "_where": "/root/.autorest/@microsoft.azure_autorest.modeler@2.1.22/node_modules/@microsoft.azure/autorest.modeler"
       },
       "extensionManager": {
         "installationPath": "/root/.autorest",
@@ -120,16 +120,16 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest.python",
-        "version": "2.0.13",
+        "version": "2.0.17",
         "dependencies": {
-          "dotnet-2.0.0": "^1.1.0"
+          "dotnet-2.0.0": "^1.4.4"
         },
         "optionalDependencies": {},
         "devDependencies": {
           "@microsoft.azure/autorest.testserver": "^1.9.0",
           "autorest": "^2.0.0",
           "coffee-script": "^1.11.1",
-          "dotnet-sdk-2.0.0": "^1.1.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
           "gulp": "^3.9.1",
           "gulp-filter": "^5.0.0",
           "gulp-line-ending-corrector": "^1.0.1",
@@ -146,22 +146,22 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
-        "_shasum": "ddbbf3e3f1f90ae4132b687cfa8450425ab4ffcd",
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
+        "_shasum": "84a951c19c502343726cfe33cf43cefa76219b39",
         "_shrinkwrap": null,
         "bin": null,
-        "_id": "@microsoft.azure/autorest.python@2.0.13",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
+        "_id": "@microsoft.azure/autorest.python@2.0.17",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
         "_requested": {
           "type": "directory",
           "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python"
+          "raw": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python"
         },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python",
-        "_where": "/root/.autorest/@microsoft.azure_autorest.python@2.0.13/node_modules/@microsoft.azure/autorest.python"
+        "_spec": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python",
+        "_where": "/root/.autorest/@microsoft.azure_autorest.python@2.0.17/node_modules/@microsoft.azure/autorest.python"
       },
       "extensionManager": {
         "installationPath": "/root/.autorest",
@@ -173,11 +173,11 @@
   "autorest_bootstrap": {
     "dependencies": {
       "autorest": {
-        "version": "2.0.4144",
+        "version": "2.0.4147",
         "from": "autorest@latest",
-        "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4144.tgz"
+        "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4147.tgz"
       }
     }
   },
-  "date": "2017-09-28T16:19:31Z"
+  "date": "2017-10-11T07:37:08Z"
 }

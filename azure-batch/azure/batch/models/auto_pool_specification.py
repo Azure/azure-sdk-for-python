@@ -32,8 +32,7 @@ class AutoPoolSpecification(Model):
      it creates the job. If the 'job' option is applied to a job schedule, the
      Batch service creates a new auto pool for every job created on the
      schedule. Possible values include: 'jobSchedule', 'job'
-    :type pool_lifetime_option: str or :class:`PoolLifetimeOption
-     <azure.batch.models.PoolLifetimeOption>`
+    :type pool_lifetime_option: str or ~azure.batch.models.PoolLifetimeOption
     :param keep_alive: Whether to keep an auto pool alive after its lifetime
      expires. If false, the Batch service deletes the pool once its lifetime
      (as determined by the poolLifetimeOption setting) expires; that is, when
@@ -42,8 +41,7 @@ class AutoPoolSpecification(Model):
      created with this option.
     :type keep_alive: bool
     :param pool: The pool specification for the auto pool.
-    :type pool: :class:`PoolSpecification
-     <azure.batch.models.PoolSpecification>`
+    :type pool: ~azure.batch.models.PoolSpecification
     """
 
     _validation = {

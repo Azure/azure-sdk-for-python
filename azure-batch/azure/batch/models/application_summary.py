@@ -21,7 +21,7 @@ class ApplicationSummary(Model):
     :param display_name: The display name for the application.
     :type display_name: str
     :param versions: The list of available versions of the application.
-    :type versions: list of str
+    :type versions: list[str]
     """
 
     _validation = {

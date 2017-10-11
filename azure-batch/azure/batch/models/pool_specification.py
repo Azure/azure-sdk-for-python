@@ -42,16 +42,16 @@ class PoolSpecification(Model):
      the REST API directly, the HTTP status code is 400 (Bad Request). This
      property cannot be specified if the Batch account was created with its
      poolAllocationMode property set to 'UserSubscription'.
-    :type cloud_service_configuration: :class:`CloudServiceConfiguration
-     <azure.batch.models.CloudServiceConfiguration>`
+    :type cloud_service_configuration:
+     ~azure.batch.models.CloudServiceConfiguration
     :param virtual_machine_configuration: The virtual machine configuration
      for the pool. This property must be specified if the pool needs to be
      created with Azure IaaS VMs. This property and cloudServiceConfiguration
      are mutually exclusive and one of the properties must be specified. If
      neither is specified then the Batch service returns an error; if you are
      calling the REST API directly, the HTTP status code is 400 (Bad Request).
-    :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <azure.batch.models.VirtualMachineConfiguration>`
+    :type virtual_machine_configuration:
+     ~azure.batch.models.VirtualMachineConfiguration
     :param max_tasks_per_node: The maximum number of tasks that can run
      concurrently on a single compute node in the pool. The default value is 1.
      The maximum value of this setting depends on the size of the compute nodes
@@ -59,8 +59,7 @@ class PoolSpecification(Model):
     :type max_tasks_per_node: int
     :param task_scheduling_policy: How tasks are distributed across compute
      nodes in a pool.
-    :type task_scheduling_policy: :class:`TaskSchedulingPolicy
-     <azure.batch.models.TaskSchedulingPolicy>`
+    :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
     :param resize_timeout: The timeout for allocation of compute nodes to the
      pool. This timeout applies only to manual scaling; it has no effect when
      enableAutoScale is set to true. The default value is 15 minutes. The
@@ -106,12 +105,11 @@ class PoolSpecification(Model):
      default value is false.
     :type enable_inter_node_communication: bool
     :param network_configuration: The network configuration for the pool.
-    :type network_configuration: :class:`NetworkConfiguration
-     <azure.batch.models.NetworkConfiguration>`
+    :type network_configuration: ~azure.batch.models.NetworkConfiguration
     :param start_task: A task to run on each compute node as it joins the
      pool. The task runs when the node is added to the pool or when the node is
      restarted.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: ~azure.batch.models.StartTask
     :param certificate_references: A list of certificates to be installed on
      each compute node in the pool. For Windows compute nodes, the Batch
      service installs the certificates to the specified certificate store and
@@ -121,28 +119,25 @@ class PoolSpecification(Model):
      location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and certificates are placed in that directory.
-    :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+    :type certificate_references:
+     list[~azure.batch.models.CertificateReference]
     :param application_package_references: The list of application packages to
      be installed on each compute node in the pool.
-    :type application_package_references: list of
-     :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+    :type application_package_references:
+     list[~azure.batch.models.ApplicationPackageReference]
     :param application_licenses: The list of application licenses the Batch
      service will make available on each compute node in the pool. The list of
      application licenses must be a subset of available Batch service
      application licenses. If a license is requested which is not supported,
      pool creation will fail.
-    :type application_licenses: list of str
+    :type application_licenses: list[str]
     :param user_accounts: The list of user accounts to be created on each node
      in the pool.
-    :type user_accounts: list of :class:`UserAccount
-     <azure.batch.models.UserAccount>`
+    :type user_accounts: list[~azure.batch.models.UserAccount]
     :param metadata: A list of name-value pairs associated with the pool as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _validation = {
