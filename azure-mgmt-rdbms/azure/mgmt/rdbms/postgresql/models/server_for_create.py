@@ -16,14 +16,14 @@ class ServerForCreate(Model):
     """Represents a server to be created.
 
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: :class:`Sku <azure.mgmt.rdbms.postgresql.models.Sku>`
+    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
     :param properties: Properties of the server.
-    :type properties: :class:`ServerPropertiesForCreate
-     <azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate>`
+    :type properties:
+     ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
     :param location: The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

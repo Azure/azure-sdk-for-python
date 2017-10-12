@@ -16,8 +16,7 @@ class OperationListResult(Model):
     """A list of resource provider operations.
 
     :param value: The list of resource provider operations.
-    :type value: list of :class:`Operation
-     <azure.mgmt.rdbms.mysql.models.Operation>`
+    :type value: list[~azure.mgmt.rdbms.mysql.models.Operation]
     """
 
     _attribute_map = {

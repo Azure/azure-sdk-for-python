@@ -27,7 +27,7 @@ class TrackedResource(ProxyResource):
     :param location: The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
