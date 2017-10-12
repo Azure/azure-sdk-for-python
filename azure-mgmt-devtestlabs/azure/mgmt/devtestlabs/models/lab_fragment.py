@@ -27,20 +27,19 @@ class LabFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param lab_storage_type: Type of storage used by the lab. It can be either
      Premium or Standard. Default is Premium. Possible values include:
      'Standard', 'Premium'
-    :type lab_storage_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
+    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     :param premium_data_disks: The setting to enable usage of premium data
      disks.
      When its value is 'Enabled', creation of standard or premium data disks is
      allowed.
      When its value is 'Disabled', only creation of standard data disks is
      allowed. Possible values include: 'Disabled', 'Enabled'
-    :type premium_data_disks: str or :class:`PremiumDataDisk
-     <azure.mgmt.devtestlabs.models.PremiumDataDisk>`
+    :type premium_data_disks: str or
+     ~azure.mgmt.devtestlabs.models.PremiumDataDisk
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

@@ -17,8 +17,8 @@ class NotifyParameters(Model):
 
     :param event_name: The type of event (i.e. AutoShutdown, Cost). Possible
      values include: 'AutoShutdown', 'Cost'
-    :type event_name: str or :class:`NotificationChannelEventType
-     <azure.mgmt.devtestlabs.models.NotificationChannelEventType>`
+    :type event_name: str or
+     ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
     :param json_payload: Properties for the notification in json format.
     :type json_payload: str
     """
