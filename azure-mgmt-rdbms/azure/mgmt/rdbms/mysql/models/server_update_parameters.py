@@ -16,7 +16,7 @@ class ServerUpdateParameters(Model):
     """Parameters allowd to update for a server.
 
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: :class:`Sku <azure.mgmt.rdbms.mysql.models.Sku>`
+    :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
     :param storage_mb: The max storage allowed for a server.
     :type storage_mb: long
     :param administrator_login_password: The password of the administrator
@@ -24,14 +24,13 @@ class ServerUpdateParameters(Model):
     :type administrator_login_password: str
     :param version: The version of a server. Possible values include: '5.6',
      '5.7'
-    :type version: str or :class:`ServerVersion
-     <azure.mgmt.rdbms.mysql.models.ServerVersion>`
+    :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
-    :type ssl_enforcement: str or :class:`SslEnforcementEnum
-     <azure.mgmt.rdbms.mysql.models.SslEnforcementEnum>`
+    :type ssl_enforcement: str or
+     ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
     :param tags: Application-specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

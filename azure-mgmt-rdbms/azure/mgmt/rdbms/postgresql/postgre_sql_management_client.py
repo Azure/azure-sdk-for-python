@@ -15,9 +15,13 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
+from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
+from .operations.performance_tiers_operations import PerformanceTiersOperations
+from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
 from .operations.operations import Operations
 from . import models
 
@@ -33,18 +37,20 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
+    :param virtual_network_rule_name: The name of the virtual network rule.
+    :type virtual_network_rule_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, virtual_network_rule_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
+        if virtual_network_rule_name is None:
+            raise ValueError("Parameter 'virtual_network_rule_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -55,26 +61,35 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.virtual_network_rule_name = virtual_network_rule_name
 
 
 class PostgreSQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations.
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, log files and configurations.
 
     :ivar config: Configuration for client.
     :vartype config: PostgreSQLManagementClientConfiguration
 
     :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :vartype servers: azure.mgmt.rdbms.postgresql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.rdbms.postgresql.operations.FirewallRulesOperations
+    :ivar virtual_network_rules: VirtualNetworkRules operations
+    :vartype virtual_network_rules: azure.mgmt.rdbms.postgresql.operations.VirtualNetworkRulesOperations
     :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
+    :vartype databases: azure.mgmt.rdbms.postgresql.operations.DatabasesOperations
     :ivar configurations: Configurations operations
-    :vartype configurations: .operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.rdbms.postgresql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
-    :vartype log_files: .operations.LogFilesOperations
+    :vartype log_files: azure.mgmt.rdbms.postgresql.operations.LogFilesOperations
+    :ivar performance_tiers: PerformanceTiers operations
+    :vartype performance_tiers: azure.mgmt.rdbms.postgresql.operations.PerformanceTiersOperations
+    :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
+    :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
+    :ivar check_name_availability: CheckNameAvailability operations
+    :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,13 +97,15 @@ class PostgreSQLManagementClient(object):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
+    :param virtual_network_rule_name: The name of the virtual network rule.
+    :type virtual_network_rule_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, virtual_network_rule_name, base_url=None):
 
-        self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, virtual_network_rule_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -100,11 +117,19 @@ class PostgreSQLManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.performance_tiers = PerformanceTiersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
