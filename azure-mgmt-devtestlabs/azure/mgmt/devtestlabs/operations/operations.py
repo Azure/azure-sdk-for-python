@@ -36,9 +36,11 @@ class Operations(object):
         self.config = config
 
     def get(
-            self, name, custom_headers=None, raw=False, **operation_config):
+            self, location_name, name, custom_headers=None, raw=False, **operation_config):
         """Get operation.
 
+        :param location_name: The name of the location.
+        :type location_name: str
         :param name: The name of the operation.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
@@ -55,7 +57,7 @@ class Operations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DevTestLab/locations/{locationName}/operations/{name}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'locationName': self._serialize.url("self.config.location_name", self.config.location_name, 'str'),
+            'locationName': self._serialize.url("location_name", location_name, 'str'),
             'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
