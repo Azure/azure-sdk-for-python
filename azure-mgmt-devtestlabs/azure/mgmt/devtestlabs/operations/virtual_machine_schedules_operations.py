@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -62,8 +62,9 @@ class VirtualMachineSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SchedulePaged
-         <azure.mgmt.devtestlabs.models.SchedulePaged>`
+        :return: An iterator like instance of Schedule
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.SchedulePaged[~azure.mgmt.devtestlabs.models.Schedule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -147,9 +148,9 @@ class VirtualMachineSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -212,16 +213,15 @@ class VirtualMachineSchedulesOperations(object):
         :param name: The name of the schedule.
         :type name: str
         :param schedule: A schedule.
-        :type schedule: :class:`Schedule
-         <azure.mgmt.devtestlabs.models.Schedule>`
+        :type schedule: ~azure.mgmt.devtestlabs.models.Schedule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -292,9 +292,8 @@ class VirtualMachineSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -348,16 +347,15 @@ class VirtualMachineSchedulesOperations(object):
         :param name: The name of the schedule.
         :type name: str
         :param schedule: A schedule.
-        :type schedule: :class:`ScheduleFragment
-         <azure.mgmt.devtestlabs.models.ScheduleFragment>`
+        :type schedule: ~azure.mgmt.devtestlabs.models.ScheduleFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -424,11 +422,10 @@ class VirtualMachineSchedulesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

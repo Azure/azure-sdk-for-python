@@ -18,8 +18,8 @@ class ArtifactInstallPropertiesFragment(Model):
     :param artifact_id: The artifact's identifier.
     :type artifact_id: str
     :param parameters: The parameters of the artifact.
-    :type parameters: list of :class:`ArtifactParameterPropertiesFragment
-     <azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment>`
+    :type parameters:
+     list[~azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment]
     :param status: The status of the artifact.
     :type status: str
     :param deployment_status_message: The status message from the deployment.

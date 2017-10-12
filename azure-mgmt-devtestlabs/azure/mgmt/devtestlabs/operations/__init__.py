@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .labs_operations import LabsOperations
+from .operations import Operations
 from .global_schedules_operations import GlobalSchedulesOperations
 from .artifact_sources_operations import ArtifactSourcesOperations
 from .arm_templates_operations import ArmTemplatesOperations
@@ -33,6 +34,7 @@ from .virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
     'LabsOperations',
+    'Operations',
     'GlobalSchedulesOperations',
     'ArtifactSourcesOperations',
     'ArmTemplatesOperations',

@@ -27,11 +27,10 @@ class Disk(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param disk_type: The storage type for the disk (i.e. Standard, Premium).
      Possible values include: 'Standard', 'Premium'
-    :type disk_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
+    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     :param disk_size_gi_b: The size of the disk in GibiBytes.
     :type disk_size_gi_b: int
     :param leased_by_lab_vm_id: The resource ID of the VM to which this disk

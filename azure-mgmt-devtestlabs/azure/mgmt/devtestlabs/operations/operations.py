@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PolicySetsOperations(object):
-    """PolicySetsOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,37 +35,27 @@ class PolicySetsOperations(object):
 
         self.config = config
 
-    def evaluate_policies(
-            self, resource_group_name, lab_name, name, policies=None, custom_headers=None, raw=False, **operation_config):
-        """Evaluates lab policy.
+    def get(
+            self, name, custom_headers=None, raw=False, **operation_config):
+        """Get operation.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab.
-        :type lab_name: str
-        :param name: The name of the policy set.
+        :param name: The name of the operation.
         :type name: str
-        :param policies: Policies to evaluate.
-        :type policies:
-         list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EvaluatePoliciesResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse or
+        :return: OperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.OperationResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)
-
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/policysets/{name}/evaluatePolicies'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DevTestLab/locations/{locationName}/operations/{name}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'locationName': self._serialize.url("self.config.location_name", self.config.location_name, 'str'),
             'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -84,13 +74,9 @@ class PolicySetsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(evaluate_policies_request, 'EvaluatePoliciesRequest')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -100,7 +86,7 @@ class PolicySetsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EvaluatePoliciesResponse', response)
+            deserialized = self._deserialize('OperationResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

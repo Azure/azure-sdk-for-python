@@ -17,8 +17,7 @@ class NotificationSettings(Model):
 
     :param status: If notifications are enabled for this schedule (i.e.
      Enabled, Disabled). Possible values include: 'Disabled', 'Enabled'
-    :type status: str or :class:`NotificationStatus
-     <azure.mgmt.devtestlabs.models.NotificationStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.NotificationStatus
     :param time_in_minutes: Time in minutes before event at which notification
      will be sent.
     :type time_in_minutes: int
