@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ServerPaged(Paged):
+class PerformanceTierPropertiesPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Server <azure.mgmt.rdbms.postgresql.models.Server>` object
+    A paging container for iterating over a list of :class:`PerformanceTierProperties <azure.mgmt.rdbms.mysql.models.PerformanceTierProperties>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Server]'}
+        'current_page': {'key': 'value', 'type': '[PerformanceTierProperties]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ServerPaged, self).__init__(*args, **kwargs)
+        super(PerformanceTierPropertiesPaged, self).__init__(*args, **kwargs)

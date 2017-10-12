@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ServerPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Server <azure.mgmt.rdbms.postgresql.models.Server>` object
+class NameAvailabilityRequest(Model):
+    """Request from client to check resource name availability.
+
+    :param name: Resource name to verify.
+    :type name: str
+    :param type: Resource type used for verification.
+    :type type: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Server]'}
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ServerPaged, self).__init__(*args, **kwargs)
+    def __init__(self, name=None, type=None):
+        self.name = name
+        self.type = type
