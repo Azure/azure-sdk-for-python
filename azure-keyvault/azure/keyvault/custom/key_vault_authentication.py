@@ -7,7 +7,7 @@ import threading
 import requests
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
-from azure.keyvault import HttpBearerChallenge
+from azure.keyvault import HttpChallenge
 from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
 from msrest.authentication import OAuthTokenAuthentication
 
@@ -75,20 +75,25 @@ class KeyVaultAuthBase(AuthBase):
             self._thread_local.auth_attempted = False
             return response
 
-        auth_header = response.headers.get('www-authenticate', '')
-
-        # if the response auth header is not a bearer challenge do not auth and return response
-        if not HttpBearerChallenge.is_bearer_challenge(auth_header):
-            self._thread_local.auth_attempted = False
-            return response
-
         # If we've already attempted to auth for this request once, do not auth and return response
         if self._thread_local.auth_attempted:
             self._thread_local.auth_attempted = False
             return response
 
+        auth_header = response.headers.get('www-authenticate', '')
+
         # Otherwise authenticate and retry the request
         self._thread_local.auth_attempted = True
+
+        # check if the header
+
+        # parse the challenge
+        challenge = HttpChallenge(auth_header)
+
+        # if the response auth header is not a bearer challenge do not auth and return response
+        if challenge.is_bearer_challenge():
+            self._thread_local.auth_attempted = False
+            return response
 
         if self._thread_local.pos is not None:
             # Rewind the file position indicator of the body to where
