@@ -48,20 +48,16 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription ID.
     :type subscription_id: str
-    :param location_name: The name of the location.
-    :type location_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if location_name is None:
-            raise ValueError("Parameter 'location_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -72,7 +68,6 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.location_name = location_name
 
 
 class DevTestLabsClient(object):
@@ -131,15 +126,13 @@ class DevTestLabsClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription ID.
     :type subscription_id: str
-    :param location_name: The name of the location.
-    :type location_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = DevTestLabsClientConfiguration(credentials, subscription_id, location_name, base_url)
+        self.config = DevTestLabsClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
