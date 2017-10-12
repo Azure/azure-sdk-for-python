@@ -17,7 +17,7 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     account.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param max_degree_of_parallelism: the maximum supported degree of
      parallelism for this account.
     :type max_degree_of_parallelism: int
@@ -33,23 +33,23 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
      'Commitment_5000AUHours', 'Commitment_10000AUHours',
      'Commitment_50000AUHours', 'Commitment_100000AUHours',
      'Commitment_500000AUHours'
-    :type new_tier: str or :class:`TierType
-     <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :type new_tier: str or
+     ~azure.mgmt.datalake.analytics.account.models.TierType
     :param firewall_state: The current state of the IP address firewall for
      this Data Lake Analytics account. Possible values include: 'Enabled',
      'Disabled'
-    :type firewall_state: str or :class:`FirewallState
-     <azure.mgmt.datalake.analytics.account.models.FirewallState>`
+    :type firewall_state: str or
+     ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :param firewall_allow_azure_ips: The current state of allowing or
      disallowing IPs originating within Azure through the firewall. If the
      firewall is disabled, this is not enforced. Possible values include:
      'Enabled', 'Disabled'
-    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
-     <azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState>`
+    :type firewall_allow_azure_ips: str or
+     ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake Analytics account.
-    :type firewall_rules: list of :class:`FirewallRule
-     <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
+    :type firewall_rules:
+     list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
     :param max_degree_of_parallelism_per_job: the maximum supported degree of
      parallelism per job for this account.
     :type max_degree_of_parallelism_per_job: int
@@ -58,8 +58,8 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     :type min_priority_per_job: int
     :param compute_policies: the list of existing compute policies to update
      in this account.
-    :type compute_policies: list of :class:`ComputePolicy
-     <azure.mgmt.datalake.analytics.account.models.ComputePolicy>`
+    :type compute_policies:
+     list[~azure.mgmt.datalake.analytics.account.models.ComputePolicy]
     """
 
     _validation = {
