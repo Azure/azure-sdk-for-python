@@ -48,20 +48,16 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual
          network gateway connection operation.
-        :type parameters: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
+        :type parameters:
+         ~azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkGatewayConnection or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -151,13 +147,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: VirtualNetworkGatewayConnection or ClientRawResponse if
          raw=true
-        :rtype: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -215,14 +209,10 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -301,15 +291,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ConnectionSharedKey or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ConnectionSharedKey(value=value)
@@ -402,13 +388,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConnectionSharedKey
-         <azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConnectionSharedKey or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_09_01.models.ConnectionSharedKey or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -466,11 +448,9 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection>`
-        :rtype: :class:`VirtualNetworkGatewayConnectionPaged
-         <azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnectionPaged>`
+        :return: An iterator like instance of VirtualNetworkGatewayConnection
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnectionPaged[~azure.mgmt.network.v2017_09_01.models.VirtualNetworkGatewayConnection]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -542,15 +522,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ConnectionResetSharedKey
-         <azure.mgmt.network.v2017_09_01.models.ConnectionResetSharedKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ConnectionResetSharedKey or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.ConnectionResetSharedKey]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ConnectionResetSharedKey(key_length=key_length)

@@ -26,31 +26,29 @@ class IpsecPolicy(Model):
     :param ipsec_encryption: The IPSec encryption algorithm (IKE phase 1).
      Possible values include: 'None', 'DES', 'DES3', 'AES128', 'AES192',
      'AES256', 'GCMAES128', 'GCMAES192', 'GCMAES256'
-    :type ipsec_encryption: str or :class:`IpsecEncryption
-     <azure.mgmt.network.v2017_08_01.models.IpsecEncryption>`
+    :type ipsec_encryption: str or
+     ~azure.mgmt.network.v2017_08_01.models.IpsecEncryption
     :param ipsec_integrity: The IPSec integrity algorithm (IKE phase 1).
      Possible values include: 'MD5', 'SHA1', 'SHA256', 'GCMAES128',
      'GCMAES192', 'GCMAES256'
-    :type ipsec_integrity: str or :class:`IpsecIntegrity
-     <azure.mgmt.network.v2017_08_01.models.IpsecIntegrity>`
+    :type ipsec_integrity: str or
+     ~azure.mgmt.network.v2017_08_01.models.IpsecIntegrity
     :param ike_encryption: The IKE encryption algorithm (IKE phase 2).
      Possible values include: 'DES', 'DES3', 'AES128', 'AES192', 'AES256'
-    :type ike_encryption: str or :class:`IkeEncryption
-     <azure.mgmt.network.v2017_08_01.models.IkeEncryption>`
+    :type ike_encryption: str or
+     ~azure.mgmt.network.v2017_08_01.models.IkeEncryption
     :param ike_integrity: The IKE integrity algorithm (IKE phase 2). Possible
      values include: 'MD5', 'SHA1', 'SHA256', 'SHA384'
-    :type ike_integrity: str or :class:`IkeIntegrity
-     <azure.mgmt.network.v2017_08_01.models.IkeIntegrity>`
+    :type ike_integrity: str or
+     ~azure.mgmt.network.v2017_08_01.models.IkeIntegrity
     :param dh_group: The DH Groups used in IKE Phase 1 for initial SA.
      Possible values include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14',
      'DHGroup2048', 'ECP256', 'ECP384', 'DHGroup24'
-    :type dh_group: str or :class:`DhGroup
-     <azure.mgmt.network.v2017_08_01.models.DhGroup>`
+    :type dh_group: str or ~azure.mgmt.network.v2017_08_01.models.DhGroup
     :param pfs_group: The DH Groups used in IKE Phase 2 for new child SA.
      Possible values include: 'None', 'PFS1', 'PFS2', 'PFS2048', 'ECP256',
      'ECP384', 'PFS24'
-    :type pfs_group: str or :class:`PfsGroup
-     <azure.mgmt.network.v2017_08_01.models.PfsGroup>`
+    :type pfs_group: str or ~azure.mgmt.network.v2017_08_01.models.PfsGroup
     """
 
     _validation = {

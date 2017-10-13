@@ -17,8 +17,7 @@ class VerificationIPFlowResult(Model):
 
     :param access: Indicates whether the traffic is allowed or denied.
      Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`Access
-     <azure.mgmt.network.v2016_12_01.models.Access>`
+    :type access: str or ~azure.mgmt.network.v2016_12_01.models.Access
     :param rule_name: Name of the rule. If input is not matched against any
      security rule, it is not displayed.
     :type rule_name: str

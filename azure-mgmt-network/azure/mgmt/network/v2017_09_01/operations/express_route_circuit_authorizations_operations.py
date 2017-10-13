@@ -50,14 +50,10 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -136,13 +132,11 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: ExpressRouteCircuitAuthorization or ClientRawResponse if
          raw=true
-        :rtype: :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -203,20 +197,15 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param authorization_parameters: Parameters supplied to the create or
          update express route circuit authorization operation.
         :type authorization_parameters:
-         :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
+         ~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ExpressRouteCircuitAuthorization or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -305,11 +294,9 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ExpressRouteCircuitAuthorization
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
-        :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
-         <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorizationPaged>`
+        :return: An iterator like instance of ExpressRouteCircuitAuthorization
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorizationPaged[~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

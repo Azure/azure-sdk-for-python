@@ -47,14 +47,10 @@ class PublicIPAddressesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -131,13 +127,9 @@ class PublicIPAddressesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PublicIPAddress or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -195,20 +187,16 @@ class PublicIPAddressesOperations(object):
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public
          IP address operation.
-        :type parameters: :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
+        :type parameters:
+         ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         PublicIPAddress or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -292,10 +280,9 @@ class PublicIPAddressesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
-        :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddressPaged>`
+        :return: An iterator like instance of PublicIPAddress
+        :rtype:
+         ~azure.mgmt.network.v2015_06_15.models.PublicIPAddressPaged[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -359,10 +346,9 @@ class PublicIPAddressesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PublicIPAddress
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
-        :rtype: :class:`PublicIPAddressPaged
-         <azure.mgmt.network.v2015_06_15.models.PublicIPAddressPaged>`
+        :return: An iterator like instance of PublicIPAddress
+        :rtype:
+         ~azure.mgmt.network.v2015_06_15.models.PublicIPAddressPaged[~azure.mgmt.network.v2015_06_15.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

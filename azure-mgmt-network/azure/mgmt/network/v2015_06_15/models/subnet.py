@@ -21,15 +21,14 @@ class Subnet(SubResource):
     :type address_prefix: str
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
-    :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup>`
+    :type network_security_group:
+     ~azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup
     :param route_table: The reference of the RouteTable resource.
-    :type route_table: :class:`RouteTable
-     <azure.mgmt.network.v2015_06_15.models.RouteTable>`
+    :type route_table: ~azure.mgmt.network.v2015_06_15.models.RouteTable
     :param ip_configurations: Gets an array of references to the network
      interface IP configurations using subnet.
-    :type ip_configurations: list of :class:`IPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.IPConfiguration>`
+    :type ip_configurations:
+     list[~azure.mgmt.network.v2015_06_15.models.IPConfiguration]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
