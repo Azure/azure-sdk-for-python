@@ -104,7 +104,7 @@ class PartitionReceiveHandler(Receiver):
         call.The pump gains nothing by running faster than OnEvents. 
         """
         try:
-            if self._msg_count < self.max_batch_size:
+            if self._msg_count < self.max_batch_size and not self.eh_partition_pump.lease.is_expired():
                 self.last_offset = EventData.offset(message)
                 self.last_sn = EventData.sequence_number(message)
                 self.eh_partition_pump.msg_queue.put(message)

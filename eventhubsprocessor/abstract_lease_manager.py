@@ -14,23 +14,6 @@ class AbstractLeaseManager(ABC):
     def __init__(self, lease_renew_interval, lease_duration):
         self.lease_renew_interval = lease_renew_interval
         self.lease_duration = lease_duration
-        
-    @abstractmethod
-    def get_lease_renew_interval(self):
-        """
-        Allows a lease manager implementation to specify to PartitionManager how often it should
-        scan leases and renew them. In order to redistribute leases in a timely fashion after a
-        host ceases operating, we recommend a relatively short interval, such as ten seconds.
-        Should be less than half of the lease length, to prevent accidental expiration.
-        """
-        pass
-
-    @abstractmethod
-    async def lease_store_exists_async(self):
-        """
-        Does the lease store exist?
-        """
-        pass
 
     @abstractmethod
     async def create_lease_store_if_not_exists_async(self):
@@ -69,13 +52,13 @@ class AbstractLeaseManager(ABC):
     async def create_lease_if_not_exists_async(self, partition_id):
         """
         Create in the store the lease info for the given partition, if it does not exist.
-        Do nothing if it does exist in the store already. 
+        Do nothing if it does exist in the store already.
         (Returns) the existing or newly-created lease info for the partition
         """
         pass
 
     @abstractmethod
-    async def deleteLeaseAsync(self, lease):
+    async def delete_lease_async(self, lease):
         """
         Delete the lease info for the given partition from the store.
         If there is no stored lease for the given partition, that is treated as success.
@@ -91,7 +74,6 @@ class AbstractLeaseManager(ABC):
         (Returns) true if the lease was acquired successfully, false if not
         """
         pass
-
 
     @abstractmethod
     async def renew_lease_async(self, lease):

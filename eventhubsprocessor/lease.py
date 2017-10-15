@@ -35,7 +35,7 @@ class Lease:
         Determines whether the lease is expired. By default lease never expires.
         Deriving class implements the lease expiry logic.
         """
-        return False #TBI
+        return False
 
     def increment_epoch(self):
         """

@@ -12,14 +12,6 @@ class AbstractCheckpointManager(ABC):
         pass
 
     @abstractmethod
-    async def checkpoint_store_exists_async(self):
-        """
-        Does the checkpoint store exist?
-        (Returns) true if it exists, false if not
-        """
-        pass
-
-    @abstractmethod
     async def create_checkpoint_store_if_not_exists_async(self):
         """
         Create the checkpoint store if it doesn't exist. Do nothing if it does exist.

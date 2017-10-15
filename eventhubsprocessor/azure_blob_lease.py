@@ -1,6 +1,7 @@
 """
 Author: Aaron (Ari) Bornstien
 """
+import json
 from eventhubsprocessor.lease import Lease
 class AzureBlobLease(Lease):
     """
@@ -12,38 +13,50 @@ class AzureBlobLease(Lease):
         Init Azure Blob Lease
         """
         super()
-        Lease.__init__()
-        self.blob = None
+        Lease.__init__(self)
         self.offset = None
+        self.state = lambda: None
 
-    def with_blob(self, partition_id, blob):
+    def serializable(self):
+        """
+        Returns Serialiazble instance of __dict__
+        """
+        serial = self.__dict__.copy()
+        del serial['state']
+        return serial
+
+    def with_lease(self, lease):
+        """
+        Init with exisiting lease
+        """
+        super().with_source(lease)
+
+    def with_blob(self, blob):
         """
         Init Azure Blob Lease with existing blob
         """
-        self.with_partition_id(partition_id)
-        self.blob = blob
+        content = json.loads(blob.content)
+        self.partition_id = content["partition_id"]
+        self.owner = content["owner"]
+        self.token = content["token"]
+        self.epoch = content["epoch"]
+        self.offset = content["offset"]
+        self.sequence_number = content["sequence_number"]
 
-    def with_source(self, azure_blob_lease):
+    def with_source(self, lease):
         """
         Init Azure Blob Lease from existing
         """
-        super(self, azure_blob_lease)
-        self.offset = azure_blob_lease.offset
-        self.sequence_number = azure_blob_lease.sequence_number
-        self.blob = azure_blob_lease.blob
-    
-    def with_source_blob(self, azure_blob_lease, blob):
-        """
-        Init Azure Blob Lease from existing source with new blob
-        """
-        self.with_source(azure_blob_lease)
-        self.offset = azure_blob_lease.offset
-        self.sequence_number = azure_blob_lease.sequence_number
-        self.blob = blob
+        super().with_source(lease)
+        self.offset = lease.offset
+        self.sequence_number = lease.sequence_number
 
     def is_expired(self):
         """
         Check and return azure blob lease state using storage api
         """
-        pass
+        current_state = self.state()
+        if current_state:
+            return current_state != "leased"
+        return False
     

@@ -1,25 +1,59 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-from abstract_lease_manager import AbstractLeaseManager
-from abstract_checkpoint_manager import AbstractCheckpointManager
+import re
+import json
+import uuid
+from azure.storage.blob import BlockBlobService
+from eventhubsprocessor.azure_blob_lease import AzureBlobLease
+from eventhubsprocessor.checkpoint import Checkpoint
+from eventhubsprocessor.abstract_lease_manager import AbstractLeaseManager
+from eventhubsprocessor.abstract_checkpoint_manager import AbstractCheckpointManager
 
 class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeaseManager):
     """
-    Manages checkpoints and lease with azure storage blobs
+    Manages checkpoints and lease with azure storage blobs. In this implementation,
+    checkpoints are data that's actually in the lease blob, so checkpoint operations
+    turn into lease operations under the covers.
     """
-    def __init__(self, lease_renew_interval, lease_duration):
-        AbstractCheckpointManager.__init__()
-        AbstractLeaseManager.__init__(lease_renew_interval, lease_duration)
+    def __init__(self, storage_account_name, storage_account_key, lease_container_name,
+                 storage_blob_prefix, lease_renew_interval=10, lease_duration=30):
+        AbstractCheckpointManager.__init__(self)
+        AbstractLeaseManager.__init__(self, lease_renew_interval, lease_duration)
+        self.storage_account_name = storage_account_name
+        self.storage_account_key = storage_account_key
+        self.lease_container_name = lease_container_name
+        self.storage_blob_prefix = storage_blob_prefix
+        self.storage_client = None
+        self.consumer_group_directory = None
+        self.host = None
+        self.storage_max_execution_time = 120
+
+        # Validate storage inputs
+        if not self.storage_account_name or not self.storage_account_key:
+            raise ValueError("Need a valid storage account name and key")
+        if not re.compile(r"^[a-z0-9](([a-z0-9\-[^\-])){1,61}[a-z0-9]$").match(self.lease_container_name):
+            raise ValueError("Azure Storage lease container name is invalid.\
+                              Please check naming conventions at\
+                              https:# msdn.microsoft.com/en-us/library/azure/dd135715.aspx")
+
+        if self.storage_blob_prefix:
+            self.storage_blob_prefix.replace(" ", "") # Convert all-whitespace to empty string.
+        else:
+            self.storage_blob_prefix = "" # Convert null prefix to empty string.
+
+    def initialize(self, host):
+        """
+        The EventProcessorHost can't pass itself to the AzureStorageCheckpointLeaseManager
+        constructor because it is still being constructed. Do other initialization here
+        also because it might throw and hence we don't want it in the constructor.
+        """
+        self.host = host
+        self.storage_client = BlockBlobService(account_name=self.storage_account_name,
+                                               account_key=self.storage_account_key)
+        self.consumer_group_directory = self.storage_blob_prefix + self.host.consumer_group_name
 
     # Checkpoint Managment Methods
-
-    async def checkpoint_store_exists_async(self):
-        """
-        Does the checkpoint store exist?
-        (Returns) true if it exists, false if not
-        """
-        pass
 
     async def create_checkpoint_store_if_not_exists_async(self):
         """
@@ -27,15 +61,21 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         (Returns) true if the checkpoint store already exists or was created OK, false
         if there was a failure
         """
-        pass
+        await self.create_lease_store_if_not_exists_async()
 
-    def get_checkpoint_async(self, partition_id):
+    async def get_checkpoint_async(self, partition_id):
         """
         Get the checkpoint data associated with the given partition.
         Could return null if no checkpoint has been created for that partition.
         (Returns) Given partition checkpoint info, or null if none has been previously stored.
         """
-        pass
+        lease = await self.get_lease_async(partition_id)
+        checkpoint = None
+        if lease:
+            if lease.offset:
+                checkpoint = Checkpoint(partition_id, lease.offset,
+                                        lease.sequence_number)
+        return checkpoint
 
     async def create_checkpoint_if_not_exists_async(self, partition_id):
         """
@@ -43,52 +83,50 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         The offset/sequenceNumber for a freshly-created checkpoint should be set to StartOfStream/0.
         (Returns) The checkpoint for the given partition, whether newly created or already existing.
         """
-        pass
+        await self.create_lease_if_not_exists_async(partition_id)
+        checkpoint = Checkpoint(partition_id)
+        return checkpoint
 
     async def update_checkpoint_async(self, lease, checkpoint):
         """
         Update the checkpoint in the store with the offset/sequenceNumber in the provided checkpoint
         checkpoint:offset/sequeceNumber to update the store with.
         """
-        pass
+        new_lease = AzureBlobLease()
+        new_lease.with_source(lease)
+        new_lease.offset = checkpoint.offset
+        new_lease.sequence_number = checkpoint.sequence_number
+        await self.update_lease_async(new_lease)
 
     async def delete_checkpoint_async(self, partition_id):
         """
         Delete the stored checkpoint for the given partition. If there is no stored checkpoint
         for the given partition, that is treated as success.
         """
-        pass
+        return  # Make this a no-op to avoid deleting leases by accident.
 
     # Lease Managment Methods
-
-    def get_lease_renew_interval(self):
-        """
-        Allows a lease manager implementation to specify to PartitionManager how often it should
-        scan leases and renew them. In order to redistribute leases in a timely fashion after a
-        host ceases operating, we recommend a relatively short interval, such as ten seconds.
-        Should be less than half of the lease length, to prevent accidental expiration.
-        """
-        pass
-
-    async def lease_store_exists_async(self):
-        """
-        Does the lease store exist?
-        """
-        pass
 
     async def create_lease_store_if_not_exists_async(self):
         """
         Create the lease store if it does not exist, do nothing if it does exist.
         (Returns) true if the lease store already exists or was created successfully, false if not
         """
-        pass
+        try:
+            self.storage_client.create_container(self.lease_container_name)
+
+        except Exception as err:
+            print(err)
+            raise err
+                    
+        return True
 
     async def delete_lease_store_async(self):
         """
         Not used by EventProcessorHost, but a convenient function to have for testing.
         (Returns) true if the lease store was deleted successfully, false if not
         """
-        pass
+        return "Not Supported in Python"
 
     async def get_lease_async(self, partition_id):
         """
@@ -96,7 +134,24 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         Can return null if no lease has been created in the store for the specified partition.
         (Returns) lease info for the partition, or null
         """
-        pass
+        try:
+            blob = self.storage_client.get_blob_to_text(self.lease_container_name, partition_id)
+            lease = AzureBlobLease()
+            lease.with_blob(blob)
+            def state():
+                """
+                Allow lease to curry storage_client to get state
+                """
+                try:
+                    return self.storage_client.get_blob_to_text(self.lease_container_name,
+                                                                partition_id).properties.lease.state
+                except Exception as err:
+                    print(err)
+
+            lease.state = state
+            return lease
+        except Exception as err:
+            print(err)
 
     def get_all_leases(self):
         """
@@ -104,7 +159,11 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         A typical implementation could just call get_lease_async() on all partitions.
         (Returns) list of lease info.
         """
-        pass
+        lease_futures = []
+        partition_ids = self.host.partition_manager.get_partition_ids_async().result()
+        for partition_id in partition_ids:
+            lease_futures.append(self.get_lease_async(partition_id))
+        return lease_futures
 
     async def create_lease_if_not_exists_async(self, partition_id):
         """
@@ -112,14 +171,28 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         Do nothing if it does exist in the store already.
         (Returns) the existing or newly-created lease info for the partition
         """
-        pass
+        return_lease = None
+        try:
+            return_lease = AzureBlobLease()
+            return_lease.partition_id = partition_id
+            json_lease = json.dumps(return_lease.serializable())
+            self.storage_client.create_blob_from_text(self.lease_container_name,
+                                                      partition_id, json_lease)
+        except Exception:
+            try:
+                return_lease = await self.get_lease_async(partition_id)
+            except Exception as err:
+                print(err) # Manage centralized exception handling
+                raise err
+        return return_lease
 
-    async def deleteLeaseAsync(self, lease):
+    async def delete_lease_async(self, lease):
         """
         Delete the lease info for the given partition from the store.
         If there is no stored lease for the given partition, that is treated as success.
         """
-        pass
+        self.storage_client.delete_blob(self.lease_container_name, lease.partition_id,
+                                        lease_id=lease.token)
 
     async def acquire_lease_async(self, lease):
         """
@@ -128,7 +201,38 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         Lease-stealing is how partitions are redistributed when additional hosts are started.
         (Returns) true if the lease was acquired successfully, false if not
         """
-        pass
+        retval = True
+        new_lease_id = str(uuid.uuid4())
+        partition_id = lease.partition_id
+        try:
+            if lease.state() == "leased": # Figure out how to refresh state with out getting lease twice 
+                if not lease.token:
+                    # We reach here in a race condition: when this instance of EventProcessorHost
+                    # scanned the lease blobs, this partition was unowned (token is empty) but
+                    # between then and now, another instance of EPH has established a lease
+                    # (getLeaseState() is LEASED). We normally enforcethat we only steal the lease
+                    # if it is still owned by the instance which owned it when we scanned, but we
+                    # can't do that when we don't know who owns it. The safest thing to do is just
+                    # fail the acquisition. If that means that one EPH instance gets more partitions
+                    # than it should, rebalancing will take care of that quickly enough.
+                    retval = False
+                else:
+                    self.storage_client.change_blob_lease(self.lease_container_name,
+                                                          partition_id, lease.token,
+                                                          new_lease_id)
+                    lease.token = new_lease_id
+            else:
+                lease.token = self.storage_client.acquire_blob_lease(self.lease_container_name,
+                                                                     partition_id,
+                                                                     self.lease_duration,
+                                                                     new_lease_id)
+        except Exception as err:
+            print(err) # add centralized error logging
+            raise err
+
+        lease.owner = self.host.host_name
+        lease.increment_epoch()
+        return retval
 
     async def renew_lease_async(self, lease):
         """
@@ -137,7 +241,15 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         You will have to call getLease() and then acquireLease() again.
         (Returns) true if the lease was renewed successfully, false if not
         """
-        pass
+        try:
+            self.storage_client.renew_blob_lease(self.lease_container_name,
+                                                 lease.partition_id,
+                                                 lease.token,
+                                                 timeout=self.lease_renew_interval)
+        except Exception as err:
+            print(err) # add centralized error logging
+            raise err
+        return True
 
     async def release_lease_async(self, lease):
         """
@@ -145,7 +257,25 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         releasing it is unnecessary, and will fail if attempted.
         (Returns) true if the lease was released successfully, false if not
         """
-        pass
+        try:
+            lease_id = lease.token
+            released_copy = AzureBlobLease()
+            released_copy.with_lease(lease)
+            released_copy.token = None
+            released_copy.owner = None
+            released_copy.state = None
+            self.storage_client.create_blob_from_text(self.lease_container_name,
+                                                      lease.partition_id,
+                                                      json.dumps(released_copy.serializable()),
+                                                      lease_id=lease_id)
+            self.storage_client.release_blob_lease(self.lease_container_name,
+                                                   lease.partition_id,
+                                                   lease_id)
+        except Exception as err:
+            print(err) # add centralized error logging
+            raise err
+        return True
+
 
     async def update_lease_async(self, lease):
         """
@@ -155,4 +285,21 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         avoid lease expiration during the process.
         (Returns) true if the updated was performed successfully, false if not.
         """
-        pass
+        if lease is None:
+            return False
+
+        if not lease.token:
+            return False
+
+        # First, renew the lease to make sure the update will go through.
+        await self.renew_lease_async(lease)
+        try:
+            self.storage_client.create_blob_from_text(self.lease_container_name,
+                                                      lease.partition_id,
+                                                      json.dumps(lease.serializable()),
+                                                      lease_id=lease.token)
+
+        except Exception as err:
+            print(err) # add centralized error logging
+            raise err
+        return True

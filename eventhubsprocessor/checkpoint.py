@@ -5,21 +5,7 @@ class Checkpoint:
     """
     Contains checkpoint metadata
     """
-    def __init__(self):
-        self.partition_id = None
-        self.offset = None
-        self.sequence_number = None
-
-    def with_defaults(self, partition_id):
-        """
-        Creates a new Checkpoint for a particular partition id.
-        """
-        # self.custom(partition_id, PartitionReceiver.StartOfStream, 0)
-
-    def custom(self, partition_id, offset, sequence_number):
-        """
-        Creates a new Checkpoint for a particular partition ID, with the offset and sequence number.
-        """
+    def __init__(self, partition_id, offset="-1", sequence_number="0"):
         self.partition_id = partition_id
         self.offset = offset
         self.sequence_number = sequence_number
