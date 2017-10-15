@@ -9,46 +9,42 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ContainerService(Resource):
-    """Container service.
+class OrchestratorVersionProfileListResult(Model):
+    """The list of versions for supported orchestrators.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Id of the orchestrator version profile list result.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Name of the orchestrator version profile list result.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
-    :param properties: Properties of the container service.
-    :type properties: :class:`ContainerServiceProperties
-     <azure.mgmt.containerservice.models.ContainerServiceProperties>`
+    :param properties: The properties of an orchestrator version profile.
+    :type properties: :class:`OrchestratorVersionProfileProperties
+     <azure.mgmt.containerservice.models.OrchestratorVersionProfileProperties>`
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ContainerServiceProperties'},
+        'properties': {'key': 'properties', 'type': 'OrchestratorVersionProfileProperties'},
     }
 
-    def __init__(self, location, tags=None, properties=None):
-        super(ContainerService, self).__init__(location=location, tags=tags)
+    def __init__(self, properties):
+        self.id = None
+        self.name = None
+        self.type = None
         self.properties = properties
