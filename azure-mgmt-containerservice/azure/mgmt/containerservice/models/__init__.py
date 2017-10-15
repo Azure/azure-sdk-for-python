@@ -11,6 +11,7 @@
 
 from .resource import Resource
 from .container_service_custom_profile import ContainerServiceCustomProfile
+from .key_vault_secret_ref import KeyVaultSecretRef
 from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
 from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
 from .container_service_master_profile import ContainerServiceMasterProfile
@@ -21,16 +22,32 @@ from .container_service_ssh_configuration import ContainerServiceSshConfiguratio
 from .container_service_linux_profile import ContainerServiceLinuxProfile
 from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
 from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
+from .container_service_properties import ContainerServiceProperties
 from .container_service import ContainerService
+from .orchestrator_profile import OrchestratorProfile
+from .pool_upgrade_profile import PoolUpgradeProfile
+from .upgrade_profile_properties import UpgradeProfileProperties
+from .upgrade_profile import UpgradeProfile
+from .access_profile import AccessProfile
+from .managed_cluster_properties_access_profiles import ManagedClusterPropertiesAccessProfiles
+from .managed_cluster_properties import ManagedClusterProperties
+from .managed_cluster import ManagedCluster
+from .orchestrator_version_profile import OrchestratorVersionProfile
+from .orchestrator_version_profile_properties import OrchestratorVersionProfileProperties
+from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
+from .managed_cluster_paged import ManagedClusterPaged
 from .container_service_client_enums import (
-    ContainerServiceOrchestratorTypes,
+    ContainerServiceStorageProfileTypes,
     ContainerServiceVMSizeTypes,
+    ContainerServiceOrchestratorTypes,
+    OSType,
 )
 
 __all__ = [
     'Resource',
     'ContainerServiceCustomProfile',
+    'KeyVaultSecretRef',
     'ContainerServiceServicePrincipalProfile',
     'ContainerServiceOrchestratorProfile',
     'ContainerServiceMasterProfile',
@@ -41,8 +58,23 @@ __all__ = [
     'ContainerServiceLinuxProfile',
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
+    'ContainerServiceProperties',
     'ContainerService',
+    'OrchestratorProfile',
+    'PoolUpgradeProfile',
+    'UpgradeProfileProperties',
+    'UpgradeProfile',
+    'AccessProfile',
+    'ManagedClusterPropertiesAccessProfiles',
+    'ManagedClusterProperties',
+    'ManagedCluster',
+    'OrchestratorVersionProfile',
+    'OrchestratorVersionProfileProperties',
+    'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
-    'ContainerServiceOrchestratorTypes',
+    'ManagedClusterPaged',
+    'ContainerServiceStorageProfileTypes',
     'ContainerServiceVMSizeTypes',
+    'ContainerServiceOrchestratorTypes',
+    'OSType',
 ]

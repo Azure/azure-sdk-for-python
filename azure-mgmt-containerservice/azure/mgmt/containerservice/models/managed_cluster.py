@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class ContainerService(Resource):
-    """Container service.
+class ManagedCluster(Resource):
+    """Managed cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,9 +28,9 @@ class ContainerService(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param properties: Properties of the container service.
-    :type properties: :class:`ContainerServiceProperties
-     <azure.mgmt.containerservice.models.ContainerServiceProperties>`
+    :param properties: Properties of a managed cluster.
+    :type properties: :class:`ManagedClusterProperties
+     <azure.mgmt.containerservice.models.ManagedClusterProperties>`
     """
 
     _validation = {
@@ -46,9 +46,9 @@ class ContainerService(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ContainerServiceProperties'},
+        'properties': {'key': 'properties', 'type': 'ManagedClusterProperties'},
     }
 
     def __init__(self, location, tags=None, properties=None):
-        super(ContainerService, self).__init__(location=location, tags=tags)
+        super(ManagedCluster, self).__init__(location=location, tags=tags)
         self.properties = properties
