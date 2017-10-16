@@ -20,8 +20,7 @@ class Sku(Model):
     :type name: str
     :param tier: The tier of the particular SKU, e.g. Basic. Possible values
      include: 'Basic', 'Standard'
-    :type tier: str or :class:`SkuTier
-     <azure.mgmt.rdbms.postgresql.models.SkuTier>`
+    :type tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
     :param capacity: The scale up/out capacity, representing server's compute
      units.
     :type capacity: int

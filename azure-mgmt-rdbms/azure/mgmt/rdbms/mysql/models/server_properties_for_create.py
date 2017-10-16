@@ -15,16 +15,19 @@ from msrest.serialization import Model
 class ServerPropertiesForCreate(Model):
     """The properties used to create a new server.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ServerPropertiesForDefaultCreate,
+    ServerPropertiesForRestore
+
     :param storage_mb: The maximum storage allowed for a server.
     :type storage_mb: long
     :param version: Server version. Possible values include: '5.6', '5.7'
-    :type version: str or :class:`ServerVersion
-     <azure.mgmt.rdbms.mysql.models.ServerVersion>`
+    :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
-    :type ssl_enforcement: str or :class:`SslEnforcementEnum
-     <azure.mgmt.rdbms.mysql.models.SslEnforcementEnum>`
-    :param create_mode: Polymorphic Discriminator
+    :type ssl_enforcement: str or
+     ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
+    :param create_mode: Constant filled by server.
     :type create_mode: str
     """
 
