@@ -17,11 +17,9 @@ class AutoHealActions(Model):
 
     :param action_type: Predefined action to be taken. Possible values
      include: 'Recycle', 'LogEvent', 'CustomAction'
-    :type action_type: str or :class:`AutoHealActionType
-     <azure.mgmt.web.models.AutoHealActionType>`
+    :type action_type: str or ~azure.mgmt.web.models.AutoHealActionType
     :param custom_action: Custom action to be taken.
-    :type custom_action: :class:`AutoHealCustomAction
-     <azure.mgmt.web.models.AutoHealCustomAction>`
+    :type custom_action: ~azure.mgmt.web.models.AutoHealCustomAction
     :param min_process_execution_time: Minimum time the process must execute
      before taking the action
     :type min_process_execution_time: str

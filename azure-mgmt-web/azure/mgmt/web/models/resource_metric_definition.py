@@ -27,22 +27,22 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar resource_metric_definition_name: Name of the metric.
-    :vartype resource_metric_definition_name: :class:`ResourceMetricName
-     <azure.mgmt.web.models.ResourceMetricName>`
+    :vartype resource_metric_definition_name:
+     ~azure.mgmt.web.models.ResourceMetricName
     :ivar unit: Unit of the metric.
     :vartype unit: str
     :ivar primary_aggregation_type: Primary aggregation type.
     :vartype primary_aggregation_type: str
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
-    :vartype metric_availabilities: list of :class:`ResourceMetricAvailability
-     <azure.mgmt.web.models.ResourceMetricAvailability>`
+    :vartype metric_availabilities:
+     list[~azure.mgmt.web.models.ResourceMetricAvailability]
     :ivar resource_uri: Resource URI.
     :vartype resource_uri: str
     :ivar resource_metric_definition_id: Resource ID.
     :vartype resource_metric_definition_id: str
     :ivar properties: Properties.
-    :vartype properties: dict
+    :vartype properties: dict[str, str]
     """
 
     _validation = {

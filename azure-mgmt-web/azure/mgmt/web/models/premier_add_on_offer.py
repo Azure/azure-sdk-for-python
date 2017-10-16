@@ -43,8 +43,7 @@ class PremierAddOnOffer(ProxyOnlyResource):
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',
      'Standard', 'Premium'
     :type web_hosting_plan_restrictions: str or
-     :class:`AppServicePlanRestrictions
-     <azure.mgmt.web.models.AppServicePlanRestrictions>`
+     ~azure.mgmt.web.models.AppServicePlanRestrictions
     :param privacy_policy_url: Privacy policy URL.
     :type privacy_policy_url: str
     :param legal_terms_url: Legal terms URL.

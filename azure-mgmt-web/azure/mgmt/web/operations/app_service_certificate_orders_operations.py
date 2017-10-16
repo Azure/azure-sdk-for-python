@@ -47,11 +47,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
-        :rtype: :class:`AppServiceCertificateOrderPaged
-         <azure.mgmt.web.models.AppServiceCertificateOrderPaged>`
+        :return: An iterator like instance of AppServiceCertificateOrder
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -113,18 +111,14 @@ class AppServiceCertificateOrdersOperations(object):
         :param app_service_certificate_order: Information for a certificate
          order.
         :type app_service_certificate_order:
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
+         ~azure.mgmt.web.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -179,11 +173,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
-        :rtype: :class:`AppServiceCertificateOrderPaged
-         <azure.mgmt.web.models.AppServiceCertificateOrderPaged>`
+        :return: An iterator like instance of AppServiceCertificateOrder
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -253,13 +245,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AppServiceCertificateOrder or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateOrder or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -319,20 +307,15 @@ class AppServiceCertificateOrdersOperations(object):
         :param certificate_distinguished_name: Distinguished name to to use
          for the certificate order.
         :type certificate_distinguished_name:
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
+         ~azure.mgmt.web.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         AppServiceCertificateOrder or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateOrder]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -423,11 +406,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -482,11 +462,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>`
-        :rtype: :class:`AppServiceCertificateResourcePaged
-         <azure.mgmt.web.models.AppServiceCertificateResourcePaged>`
+        :return: An iterator like instance of AppServiceCertificateResource
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateResourcePaged[~azure.mgmt.web.models.AppServiceCertificateResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -559,13 +537,10 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: AppServiceCertificateResource or ClientRawResponse if
          raw=true
-        :rtype: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -626,20 +601,16 @@ class AppServiceCertificateOrdersOperations(object):
         :param name: Name of the certificate.
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id.
-        :type key_vault_certificate: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>`
+        :type key_vault_certificate:
+         ~azure.mgmt.web.models.AppServiceCertificateResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         AppServiceCertificateResource or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -733,11 +704,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -790,18 +758,14 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue.
         :type reissue_certificate_order_request:
-         :class:`ReissueCertificateOrderRequest
-         <azure.mgmt.web.models.ReissueCertificateOrderRequest>`
+         ~azure.mgmt.web.models.ReissueCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -857,18 +821,14 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters
         :type renew_certificate_order_request:
-         :class:`RenewCertificateOrderRequest
-         <azure.mgmt.web.models.RenewCertificateOrderRequest>`
+         ~azure.mgmt.web.models.RenewCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -927,11 +887,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -988,11 +945,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         name_identifier = models.NameIdentifier(name=name)
@@ -1057,11 +1011,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteSeal <azure.mgmt.web.models.SiteSeal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteSeal <azure.mgmt.web.models.SiteSeal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteSeal or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSeal or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         site_seal_request = models.SiteSealRequest(light_theme=light_theme, locale=locale)
@@ -1129,11 +1081,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1188,13 +1137,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`CertificateOrderAction
-         <azure.mgmt.web.models.CertificateOrderAction>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`CertificateOrderAction
-         <azure.mgmt.web.models.CertificateOrderAction>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.CertificateOrderAction] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1256,13 +1201,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`CertificateEmail
-         <azure.mgmt.web.models.CertificateEmail>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`CertificateEmail
-         <azure.mgmt.web.models.CertificateEmail>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.CertificateEmail] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

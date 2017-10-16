@@ -27,9 +27,9 @@ class SlotConfigNamesResource(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param connection_string_names: List of connection string names.
-    :type connection_string_names: list of str
+    :type connection_string_names: list[str]
     :param app_setting_names: List of application settings names.
-    :type app_setting_names: list of str
+    :type app_setting_names: list[str]
     """
 
     _validation = {

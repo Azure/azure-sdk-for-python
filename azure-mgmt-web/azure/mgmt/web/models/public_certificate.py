@@ -31,8 +31,7 @@ class PublicCertificate(ProxyOnlyResource):
     :param public_certificate_location: Public Certificate Location. Possible
      values include: 'CurrentUserMy', 'LocalMachineMy', 'Unknown'
     :type public_certificate_location: str or
-     :class:`PublicCertificateLocation
-     <azure.mgmt.web.models.PublicCertificateLocation>`
+     ~azure.mgmt.web.models.PublicCertificateLocation
     :ivar thumbprint: Certificate Thumbprint
     :vartype thumbprint: str
     """

@@ -35,8 +35,7 @@ class VnetInfo(ProxyOnlyResource):
      Point-To-Site VPN connection.
     :type cert_blob: str
     :ivar routes: The routes that this Virtual Network connection uses.
-    :vartype routes: list of :class:`VnetRoute
-     <azure.mgmt.web.models.VnetRoute>`
+    :vartype routes: list[~azure.mgmt.web.models.VnetRoute]
     :ivar resync_required: <code>true</code> if a resync is required;
      otherwise, <code>false</code>.
     :vartype resync_required: bool

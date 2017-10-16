@@ -27,8 +27,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param latest_run: Latest job run information.
-    :type latest_run: :class:`TriggeredJobRun
-     <azure.mgmt.web.models.TriggeredJobRun>`
+    :type latest_run: ~azure.mgmt.web.models.TriggeredJobRun
     :param history_url: History URL.
     :type history_url: str
     :param scheduler_logs_url: Scheduler Logs URL.
@@ -44,8 +43,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type job_type: str or :class:`WebJobType
-     <azure.mgmt.web.models.WebJobType>`
+    :type job_type: str or ~azure.mgmt.web.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?

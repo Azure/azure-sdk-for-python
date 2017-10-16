@@ -40,13 +40,11 @@ class MetricSpecification(Model):
     :param is_internal:
     :type is_internal: bool
     :param dimensions:
-    :type dimensions: list of :class:`Dimension
-     <azure.mgmt.web.models.Dimension>`
+    :type dimensions: list[~azure.mgmt.web.models.Dimension]
     :param category:
     :type category: str
     :param availabilities:
-    :type availabilities: list of :class:`MetricAvailability
-     <azure.mgmt.web.models.MetricAvailability>`
+    :type availabilities: list[~azure.mgmt.web.models.MetricAvailability]
     """
 
     _attribute_map = {
