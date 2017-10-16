@@ -30,8 +30,6 @@ class AppServiceEnvironmentResource(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param app_service_environment_resource_name: Name of the App Service
      Environment.
     :type app_service_environment_resource_name: str
@@ -173,7 +171,6 @@ class AppServiceEnvironmentResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'app_service_environment_resource_name': {'key': 'properties.name', 'type': 'str'},
         'app_service_environment_resource_location': {'key': 'properties.location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
@@ -211,8 +208,8 @@ class AppServiceEnvironmentResource(Resource):
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, identity=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
-        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
+    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
         self.app_service_environment_resource_name = app_service_environment_resource_name
         self.app_service_environment_resource_location = app_service_environment_resource_location
         self.provisioning_state = None

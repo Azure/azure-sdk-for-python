@@ -19,7 +19,6 @@ from .name_identifier import NameIdentifier
 from .proxy_only_resource import ProxyOnlyResource
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
-from .resource_identity import ResourceIdentity
 from .resource import Resource
 from .site_seal import SiteSeal
 from .site_seal_request import SiteSealRequest
@@ -235,7 +234,6 @@ from .web_site_management_client_enums import (
     ProvisioningState,
     CertificateOrderStatus,
     CertificateOrderActionType,
-    ManagedServiceIdentityType,
     DomainStatus,
     AzureResourceType,
     CustomHostNameDnsRecordType,
@@ -298,7 +296,6 @@ __all__ = [
     'ProxyOnlyResource',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
-    'ResourceIdentity',
     'Resource',
     'SiteSeal',
     'SiteSealRequest',
@@ -513,7 +510,6 @@ __all__ = [
     'ProvisioningState',
     'CertificateOrderStatus',
     'CertificateOrderActionType',
-    'ManagedServiceIdentityType',
     'DomainStatus',
     'AzureResourceType',
     'CustomHostNameDnsRecordType',

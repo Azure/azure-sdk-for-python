@@ -30,8 +30,6 @@ class PremierAddOn(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param sku: SKU.
     :type sku: str
     :param product: Product.
@@ -64,7 +62,6 @@ class PremierAddOn(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
@@ -75,8 +72,8 @@ class PremierAddOn(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, identity=None, sku=None, product=None, vendor=None, premier_add_on_name=None, premier_add_on_location=None, premier_add_on_tags=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
+    def __init__(self, location, kind=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_name=None, premier_add_on_location=None, premier_add_on_tags=None, marketplace_publisher=None, marketplace_offer=None):
+        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags)
         self.sku = sku
         self.product = product
         self.vendor = vendor

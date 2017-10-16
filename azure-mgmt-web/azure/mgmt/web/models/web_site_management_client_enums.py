@@ -74,11 +74,6 @@ class CertificateOrderActionType(Enum):
     unknown = "Unknown"
 
 
-class ManagedServiceIdentityType(Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class DomainStatus(Enum):
 
     active = "Active"

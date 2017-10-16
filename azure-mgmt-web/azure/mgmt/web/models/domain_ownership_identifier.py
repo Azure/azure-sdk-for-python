@@ -30,8 +30,6 @@ class DomainOwnershipIdentifier(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param ownership_id: Ownership Id.
     :type ownership_id: str
     """
@@ -50,10 +48,9 @@ class DomainOwnershipIdentifier(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'ownership_id': {'key': 'properties.ownershipId', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, identity=None, ownership_id=None):
-        super(DomainOwnershipIdentifier, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
+    def __init__(self, location, kind=None, tags=None, ownership_id=None):
+        super(DomainOwnershipIdentifier, self).__init__(kind=kind, location=location, tags=tags)
         self.ownership_id = ownership_id
