@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -55,12 +55,11 @@ class ConfigurationsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         Configuration or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Configuration
-         <azure.mgmt.rdbms.mysql.models.Configuration>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mysql.models.Configuration]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.Configuration(value=value, source=source)
@@ -146,18 +145,16 @@ class ConfigurationsOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param configuration_name: The name of the server configuration to be
-         retrieved.
+        :param configuration_name: The name of the server configuration.
         :type configuration_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Configuration
-         <azure.mgmt.rdbms.mysql.models.Configuration>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Configuration or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.rdbms.mysql.models.Configuration or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -219,8 +216,9 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConfigurationPaged
-         <azure.mgmt.rdbms.mysql.models.ConfigurationPaged>`
+        :return: An iterator like instance of Configuration
+        :rtype:
+         ~azure.mgmt.rdbms.mysql.models.ConfigurationPaged[~azure.mgmt.rdbms.mysql.models.Configuration]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

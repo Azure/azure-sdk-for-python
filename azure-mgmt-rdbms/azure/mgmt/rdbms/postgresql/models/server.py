@@ -27,9 +27,9 @@ class Server(TrackedResource):
     :param location: The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: :class:`Sku <azure.mgmt.rdbms.postgresql.models.Sku>`
+    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
     :param administrator_login: The administrator's login name of a server.
      Can only be specified when the server is being created (and is required
      for creation).
@@ -37,16 +37,15 @@ class Server(TrackedResource):
     :param storage_mb: The maximum storage allowed for a server.
     :type storage_mb: long
     :param version: Server version. Possible values include: '9.5', '9.6'
-    :type version: str or :class:`ServerVersion
-     <azure.mgmt.rdbms.postgresql.models.ServerVersion>`
+    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
-    :type ssl_enforcement: str or :class:`SslEnforcementEnum
-     <azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum>`
+    :type ssl_enforcement: str or
+     ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
     :param user_visible_state: A state of a server that is visible to user.
      Possible values include: 'Ready', 'Dropping', 'Disabled'
-    :type user_visible_state: str or :class:`ServerState
-     <azure.mgmt.rdbms.postgresql.models.ServerState>`
+    :type user_visible_state: str or
+     ~azure.mgmt.rdbms.postgresql.models.ServerState
     :param fully_qualified_domain_name: The fully qualified domain name of a
      server.
     :type fully_qualified_domain_name: str
