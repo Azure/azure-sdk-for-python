@@ -20,8 +20,8 @@ class UpdateSystemServicesResponse(Model):
 
     :ivar update_status: Update status. Possible values include: 'Unknown',
      'Updating', 'Creating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
-    :vartype update_status: str or :class:`OperationStatus
-     <azure.mgmt.machinelearningcompute.models.OperationStatus>`
+    :vartype update_status: str or
+     ~azure.mgmt.machinelearningcompute.models.OperationStatus
     :ivar update_started_on: The date and time when the last system services
      update was started.
     :vartype update_started_on: datetime

@@ -16,17 +16,13 @@ class KubernetesClusterProperties(Model):
     """Kubernetes cluster specific properties.
 
     :param service_principal: The Azure Service Principal used by Kubernetes
-    :type service_principal: :class:`ServicePrincipalProperties
-     <azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties>`
+    :type service_principal:
+     ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
     """
-
-    _validation = {
-        'service_principal': {'required': True},
-    }
 
     _attribute_map = {
         'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
     }
 
-    def __init__(self, service_principal):
+    def __init__(self, service_principal=None):
         self.service_principal = service_principal
