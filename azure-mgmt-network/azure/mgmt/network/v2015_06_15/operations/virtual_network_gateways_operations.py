@@ -48,20 +48,16 @@ class VirtualNetworkGatewaysOperations(object):
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual
          network gateway operation.
-        :type parameters: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
+        :type parameters:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkGateway or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -150,13 +146,9 @@ class VirtualNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualNetworkGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -214,14 +206,10 @@ class VirtualNetworkGatewaysOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -294,10 +282,9 @@ class VirtualNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
-        :rtype: :class:`VirtualNetworkGatewayPaged
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayPaged>`
+        :return: An iterator like instance of VirtualNetworkGateway
+        :rtype:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayPaged[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -363,20 +350,16 @@ class VirtualNetworkGatewaysOperations(object):
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway vip address supplied to the
          begin reset of the active-active feature enabled gateway.
-        :type parameters: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
+        :type parameters:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkGateway or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -462,18 +445,15 @@ class VirtualNetworkGatewaysOperations(object):
         :param processor_architecture: VPN client Processor Architecture.
          Possible values are: 'AMD64' and 'X86'. Possible values include:
          'Amd64', 'X86'
-        :type processor_architecture: str or :class:`ProcessorArchitecture
-         <azure.mgmt.network.v2015_06_15.models.ProcessorArchitecture>`
+        :type processor_architecture: str or
+         ~azure.mgmt.network.v2015_06_15.models.ProcessorArchitecture
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.VpnClientParameters(processor_architecture=processor_architecture)

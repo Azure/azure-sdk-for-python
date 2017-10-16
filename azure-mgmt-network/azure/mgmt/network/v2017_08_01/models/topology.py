@@ -26,8 +26,8 @@ class Topology(Model):
     :ivar last_modified: The datetime when the topology was last modified.
     :vartype last_modified: datetime
     :param resources:
-    :type resources: list of :class:`TopologyResource
-     <azure.mgmt.network.v2017_08_01.models.TopologyResource>`
+    :type resources:
+     list[~azure.mgmt.network.v2017_08_01.models.TopologyResource]
     """
 
     _validation = {
