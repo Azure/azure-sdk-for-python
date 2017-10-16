@@ -30,6 +30,8 @@ class Certificate(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :ivar friendly_name: Friendly name of the certificate.
     :vartype friendly_name: str
     :ivar subject_name: Subject name of the certificate.
@@ -113,6 +115,7 @@ class Certificate(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
@@ -136,8 +139,8 @@ class Certificate(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
-        super(Certificate, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+        super(Certificate, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.friendly_name = None
         self.subject_name = None
         self.host_names = host_names

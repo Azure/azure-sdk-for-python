@@ -30,6 +30,8 @@ class Resource(Model):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     """
 
     _validation = {
@@ -46,12 +48,14 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
     }
 
-    def __init__(self, location, kind=None, tags=None):
+    def __init__(self, location, kind=None, tags=None, identity=None):
         self.id = None
         self.name = None
         self.kind = kind
         self.location = location
         self.type = None
         self.tags = tags
+        self.identity = identity

@@ -30,6 +30,8 @@ class AppServiceCertificateOrder(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
      ~azure.mgmt.web.models.AppServiceCertificate]
@@ -109,6 +111,7 @@ class AppServiceCertificateOrder(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
         'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
         'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
@@ -130,8 +133,8 @@ class AppServiceCertificateOrder(Resource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, kind=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
-        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
+        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
         self.domain_verification_token = None

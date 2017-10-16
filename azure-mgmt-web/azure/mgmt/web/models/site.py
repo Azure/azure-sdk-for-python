@@ -30,6 +30,8 @@ class Site(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :ivar state: Current state of the app.
     :vartype state: str
     :ivar host_names: Hostnames associated with the app.
@@ -166,6 +168,7 @@ class Site(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
         'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
@@ -201,8 +204,8 @@ class Site(Resource):
         'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, micro_service="WebSites", gateway_site_name=None):
-        super(Site, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, micro_service="WebSites", gateway_site_name=None):
+        super(Site, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
