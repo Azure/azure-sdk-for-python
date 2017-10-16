@@ -46,11 +46,8 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -99,10 +96,9 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CsmOperationDescription
-         <azure.mgmt.web.models.CsmOperationDescription>`
-        :rtype: :class:`CsmOperationDescriptionPaged
-         <azure.mgmt.web.models.CsmOperationDescriptionPaged>`
+        :return: An iterator like instance of CsmOperationDescription
+        :rtype:
+         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -162,11 +158,8 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

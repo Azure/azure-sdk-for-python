@@ -29,28 +29,29 @@ class Domain(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param contact_admin: Administrative contact.
-    :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_admin: ~azure.mgmt.web.models.Contact
     :param contact_billing: Billing contact.
-    :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_billing: ~azure.mgmt.web.models.Contact
     :param contact_registrant: Registrant contact.
-    :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_registrant: ~azure.mgmt.web.models.Contact
     :param contact_tech: Technical contact.
-    :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_tech: ~azure.mgmt.web.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
-    :vartype registration_status: str or :class:`DomainStatus
-     <azure.mgmt.web.models.DomainStatus>`
+    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :ivar name_servers: Name servers.
-    :vartype name_servers: list of str
+    :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
      domain; otherwise, <code>false</code>.
     :type privacy: bool
@@ -71,22 +72,19 @@ class Domain(Resource):
     :vartype ready_for_dns_record_management: bool
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
-    :vartype managed_host_names: list of :class:`HostName
-     <azure.mgmt.web.models.HostName>`
+    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
     :param consent: Legal agreement consent.
-    :type consent: :class:`DomainPurchaseConsent
-     <azure.mgmt.web.models.DomainPurchaseConsent>`
+    :type consent: ~azure.mgmt.web.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
-    :vartype domain_not_renewable_reasons: list of str
+    :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or :class:`DnsType <azure.mgmt.web.models.DnsType>`
+    :type dns_type: str or ~azure.mgmt.web.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or :class:`DnsType
-     <azure.mgmt.web.models.DnsType>`
+    :type target_dns_type: str or ~azure.mgmt.web.models.DnsType
     :ivar auth_code:
     :vartype auth_code: str
     """
@@ -115,6 +113,7 @@ class Domain(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
         'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
         'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
@@ -137,8 +136,8 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
-        super(Domain, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
+        super(Domain, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

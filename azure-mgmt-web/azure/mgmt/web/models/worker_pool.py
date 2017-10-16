@@ -22,15 +22,14 @@ class WorkerPool(Model):
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated app hosting. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: VM size of the worker pool instances.
     :type worker_size: str
     :param worker_count: Number of instances in the worker pool.
     :type worker_count: int
     :ivar instance_names: Names of all instances in the worker pool (read
      only).
-    :vartype instance_names: list of str
+    :vartype instance_names: list[str]
     """
 
     _validation = {
