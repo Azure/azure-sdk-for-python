@@ -86,7 +86,6 @@ class ContainerServiceMasterProfile(Model):
     """
 
     _validation = {
-        'count': {'required': True},
         'dns_prefix': {'required': True},
         'vm_size': {'required': True},
         'fqdn': {'readonly': True},
