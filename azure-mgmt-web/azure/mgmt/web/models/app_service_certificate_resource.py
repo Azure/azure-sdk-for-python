@@ -31,6 +31,8 @@ class AppServiceCertificateResource(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -60,13 +62,14 @@ class AppServiceCertificateResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, location, kind=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
-        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, key_vault_id=None, key_vault_secret_name=None):
+        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None
