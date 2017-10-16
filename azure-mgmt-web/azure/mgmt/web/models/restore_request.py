@@ -38,8 +38,7 @@ class RestoreRequest(ProxyOnlyResource):
     :type site_name: str
     :param databases: Collection of databases which should be restored. This
      list has to match the list of databases included in the backup.
-    :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
     :param ignore_conflicting_host_names: Changes a logic when restoring an
      app with custom domains. <code>true</code> to remove custom domains
      automatically. If <code>false</code>, custom domains are added to
@@ -54,8 +53,8 @@ class RestoreRequest(ProxyOnlyResource):
     :type app_service_plan: str
     :param operation_type: Operation type. Possible values include: 'Default',
      'Clone', 'Relocation', 'Snapshot'. Default value: "Default" .
-    :type operation_type: str or :class:`BackupRestoreOperationType
-     <azure.mgmt.web.models.BackupRestoreOperationType>`
+    :type operation_type: str or
+     ~azure.mgmt.web.models.BackupRestoreOperationType
     :param adjust_connection_strings: <code>true</code> if
      SiteConfig.ConnectionStrings should be set in new app; otherwise,
      <code>false</code>.

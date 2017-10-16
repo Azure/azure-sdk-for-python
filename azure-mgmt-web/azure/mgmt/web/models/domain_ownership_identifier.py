@@ -29,7 +29,7 @@ class DomainOwnershipIdentifier(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param ownership_id: Ownership Id.
     :type ownership_id: str
     """

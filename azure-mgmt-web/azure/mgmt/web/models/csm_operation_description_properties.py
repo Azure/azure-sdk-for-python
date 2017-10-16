@@ -16,8 +16,7 @@ class CsmOperationDescriptionProperties(Model):
     """CsmOperationDescriptionProperties.
 
     :param service_specification:
-    :type service_specification: :class:`ServiceSpecification
-     <azure.mgmt.web.models.ServiceSpecification>`
+    :type service_specification: ~azure.mgmt.web.models.ServiceSpecification
     """
 
     _attribute_map = {

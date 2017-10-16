@@ -16,8 +16,8 @@ class ServiceSpecification(Model):
     """ServiceSpecification.
 
     :param metric_specifications:
-    :type metric_specifications: list of :class:`MetricSpecification
-     <azure.mgmt.web.models.MetricSpecification>`
+    :type metric_specifications:
+     list[~azure.mgmt.web.models.MetricSpecification]
     """
 
     _attribute_map = {

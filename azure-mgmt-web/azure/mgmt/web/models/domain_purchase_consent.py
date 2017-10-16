@@ -19,7 +19,7 @@ class DomainPurchaseConsent(Model):
     :param agreement_keys: List of applicable legal agreement keys. This list
      can be retrieved using ListLegalAgreements API under
      <code>TopLevelDomain</code> resource.
-    :type agreement_keys: list of str
+    :type agreement_keys: list[str]
     :param agreed_by: Client IP address.
     :type agreed_by: str
     :param agreed_at: Timestamp when the agreements were accepted.

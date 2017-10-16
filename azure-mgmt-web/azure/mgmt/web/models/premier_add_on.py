@@ -29,7 +29,7 @@ class PremierAddOn(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: SKU.
     :type sku: str
     :param product: Product.
@@ -41,7 +41,7 @@ class PremierAddOn(Resource):
     :param premier_add_on_location: Location.
     :type premier_add_on_location: str
     :param premier_add_on_tags: Tags.
-    :type premier_add_on_tags: dict
+    :type premier_add_on_tags: dict[str, str]
     :param marketplace_publisher: Marketplace publisher.
     :type marketplace_publisher: str
     :param marketplace_offer: Marketplace offer.
