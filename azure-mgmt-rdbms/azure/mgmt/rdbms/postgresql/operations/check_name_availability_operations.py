@@ -36,7 +36,7 @@ class CheckNameAvailabilityOperations(object):
         self.config = config
 
     def execute(
-            self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
+            self, name, type=None, custom_headers=None, raw=False, **operation_config):
         """Check the availability of name for resource.
 
         :param name: Resource name to verify.

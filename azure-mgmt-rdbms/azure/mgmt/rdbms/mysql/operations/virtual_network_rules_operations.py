@@ -37,7 +37,7 @@ class VirtualNetworkRulesOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -46,6 +46,9 @@ class VirtualNetworkRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param virtual_network_rule_name: The name of the virtual network
+         rule.
+        :type virtual_network_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -62,7 +65,7 @@ class VirtualNetworkRulesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'virtualNetworkRuleName': self._serialize.url("self.config.virtual_network_rule_name", self.config.virtual_network_rule_name, 'str')
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,7 +104,7 @@ class VirtualNetworkRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an existing virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -110,6 +113,9 @@ class VirtualNetworkRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param virtual_network_rule_name: The name of the virtual network
+         rule.
+        :type virtual_network_rule_name: str
         :param virtual_network_subnet_id: The ARM resource id of the virtual
          network subnet.
         :type virtual_network_subnet_id: str
@@ -134,7 +140,7 @@ class VirtualNetworkRulesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'virtualNetworkRuleName': self._serialize.url("self.config.virtual_network_rule_name", self.config.virtual_network_rule_name, 'str')
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -202,7 +208,7 @@ class VirtualNetworkRulesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the virtual network rule with the given name.
 
         :param resource_group_name: The name of the resource group that
@@ -211,6 +217,9 @@ class VirtualNetworkRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param virtual_network_rule_name: The name of the virtual network
+         rule.
+        :type virtual_network_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -225,7 +234,7 @@ class VirtualNetworkRulesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'virtualNetworkRuleName': self._serialize.url("self.config.virtual_network_rule_name", self.config.virtual_network_rule_name, 'str'),
+            'virtualNetworkRuleName': self._serialize.url("virtual_network_rule_name", virtual_network_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
