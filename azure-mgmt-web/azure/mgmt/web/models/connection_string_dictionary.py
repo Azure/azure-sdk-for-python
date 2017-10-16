@@ -27,7 +27,8 @@ class ConnectionStringDictionary(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param properties: Connection strings.
-    :type properties: dict
+    :type properties: dict[str,
+     ~azure.mgmt.web.models.ConnStringValueTypePair]
     """
 
     _validation = {

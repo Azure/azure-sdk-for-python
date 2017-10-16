@@ -38,8 +38,7 @@ class BackupItem(ProxyOnlyResource):
     :ivar status: Backup status. Possible values include: 'InProgress',
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
-    :vartype status: str or :class:`BackupItemStatus
-     <azure.mgmt.web.models.BackupItemStatus>`
+    :vartype status: str or ~azure.mgmt.web.models.BackupItemStatus
     :ivar size_in_bytes: Size of the backup in bytes.
     :vartype size_in_bytes: long
     :ivar created: Timestamp of the backup creation.
@@ -47,8 +46,7 @@ class BackupItem(ProxyOnlyResource):
     :ivar log: Details regarding this backup. Might contain an error message.
     :vartype log: str
     :ivar databases: List of databases included in the backup.
-    :vartype databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :vartype databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
     :ivar scheduled: True if this backup has been created due to a schedule
      being triggered.
     :vartype scheduled: bool

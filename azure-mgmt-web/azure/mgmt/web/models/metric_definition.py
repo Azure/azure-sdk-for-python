@@ -34,8 +34,8 @@ class MetricDefinition(ProxyOnlyResource):
     :vartype primary_aggregation_type: str
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
-    :vartype metric_availabilities: list of :class:`MetricAvailabilily
-     <azure.mgmt.web.models.MetricAvailabilily>`
+    :vartype metric_availabilities:
+     list[~azure.mgmt.web.models.MetricAvailabilily]
     :ivar display_name: Friendly name shown in the UI.
     :vartype display_name: str
     """

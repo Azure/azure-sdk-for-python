@@ -18,13 +18,11 @@ class CsmOperationDescription(Model):
     :param name:
     :type name: str
     :param display:
-    :type display: :class:`CsmOperationDisplay
-     <azure.mgmt.web.models.CsmOperationDisplay>`
+    :type display: ~azure.mgmt.web.models.CsmOperationDisplay
     :param origin:
     :type origin: str
     :param properties:
-    :type properties: :class:`CsmOperationDescriptionProperties
-     <azure.mgmt.web.models.CsmOperationDescriptionProperties>`
+    :type properties: ~azure.mgmt.web.models.CsmOperationDescriptionProperties
     """
 
     _attribute_map = {

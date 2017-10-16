@@ -36,8 +36,7 @@ class WebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type job_type: str or :class:`WebJobType
-     <azure.mgmt.web.models.WebJobType>`
+    :type job_type: str or ~azure.mgmt.web.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?

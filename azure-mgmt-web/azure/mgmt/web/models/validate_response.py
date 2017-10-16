@@ -18,8 +18,7 @@ class ValidateResponse(Model):
     :param status: Result of validation.
     :type status: str
     :param error: Error details for the case when validation fails.
-    :type error: :class:`ValidateResponseError
-     <azure.mgmt.web.models.ValidateResponseError>`
+    :type error: ~azure.mgmt.web.models.ValidateResponseError
     """
 
     _attribute_map = {

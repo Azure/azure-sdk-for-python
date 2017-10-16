@@ -29,7 +29,7 @@ class CertificateOrderAction(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param certificate_order_action_type: Action type. Possible values
      include: 'CertificateIssued', 'CertificateOrderCanceled',
      'CertificateOrderCreated', 'CertificateRevoked',
@@ -37,8 +37,7 @@ class CertificateOrderAction(Resource):
      'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
      'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
     :type certificate_order_action_type: str or
-     :class:`CertificateOrderActionType
-     <azure.mgmt.web.models.CertificateOrderActionType>`
+     ~azure.mgmt.web.models.CertificateOrderActionType
     :param created_at: Time at which the certificate action was performed.
     :type created_at: datetime
     """

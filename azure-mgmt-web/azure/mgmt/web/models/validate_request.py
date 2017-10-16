@@ -19,8 +19,7 @@ class ValidateRequest(Model):
     :type name: str
     :param type: Resource type used for verification. Possible values include:
      'ServerFarm', 'Site'
-    :type type: str or :class:`ValidateResourceTypes
-     <azure.mgmt.web.models.ValidateResourceTypes>`
+    :type type: str or ~azure.mgmt.web.models.ValidateResourceTypes
     :param location: Expected location of the resource.
     :type location: str
     :param server_farm_id: ARM resource ID of an App Service plan that would
