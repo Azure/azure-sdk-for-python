@@ -96,7 +96,7 @@ class ContainerServiceAgentPoolProfile(Model):
 
     _validation = {
         'name': {'required': True},
-        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'fqdn': {'readonly': True},
     }
