@@ -18,8 +18,7 @@ class SslConfiguration(Model):
 
     :param status: SSL status. Allowed values are Enabled and Disabled.
      Possible values include: 'Enabled', 'Disabled'. Default value: "Enabled" .
-    :type status: str or :class:`Status
-     <azure.mgmt.machinelearningcompute.models.Status>`
+    :type status: str or ~azure.mgmt.machinelearningcompute.models.Status
     :param cert: The SSL cert data in PEM format encoded as base64 string
     :type cert: str
     :param key: The SSL key data in PEM format encoded as base64 string. This

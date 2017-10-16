@@ -44,13 +44,9 @@ class MachineLearningComputeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AvailableOperations
-         <azure.mgmt.machinelearningcompute.models.AvailableOperations>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AvailableOperations
-         <azure.mgmt.machinelearningcompute.models.AvailableOperations>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AvailableOperations or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.machinelearningcompute.models.AvailableOperations
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

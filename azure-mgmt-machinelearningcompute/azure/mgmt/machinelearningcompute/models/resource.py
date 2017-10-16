@@ -27,7 +27,7 @@ class Resource(Model):
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

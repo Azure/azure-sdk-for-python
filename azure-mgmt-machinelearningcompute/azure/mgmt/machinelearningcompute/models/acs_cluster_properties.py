@@ -22,14 +22,14 @@ class AcsClusterProperties(Model):
     :vartype cluster_fqdn: str
     :param orchestrator_type: Type of orchestrator. It cannot be changed once
      the cluster is created. Possible values include: 'Kubernetes', 'None'
-    :type orchestrator_type: str or :class:`OrchestratorType
-     <azure.mgmt.machinelearningcompute.models.OrchestratorType>`
+    :type orchestrator_type: str or
+     ~azure.mgmt.machinelearningcompute.models.OrchestratorType
     :param orchestrator_properties: Orchestrator specific properties
-    :type orchestrator_properties: :class:`KubernetesClusterProperties
-     <azure.mgmt.machinelearningcompute.models.KubernetesClusterProperties>`
+    :type orchestrator_properties:
+     ~azure.mgmt.machinelearningcompute.models.KubernetesClusterProperties
     :param system_services: The system services deployed to the cluster
-    :type system_services: list of :class:`SystemService
-     <azure.mgmt.machinelearningcompute.models.SystemService>`
+    :type system_services:
+     list[~azure.mgmt.machinelearningcompute.models.SystemService]
     :param master_count: The number of master nodes in the container service.
      Default value: 1 .
     :type master_count: int
@@ -52,8 +52,8 @@ class AcsClusterProperties(Model):
      'Standard_DS11', 'Standard_DS12', 'Standard_DS13', 'Standard_DS14',
      'Standard_GS1', 'Standard_GS2', 'Standard_GS3', 'Standard_GS4',
      'Standard_GS5'. Default value: "Standard_D3_v2" .
-    :type agent_vm_size: str or :class:`AgentVMSizeTypes
-     <azure.mgmt.machinelearningcompute.models.AgentVMSizeTypes>`
+    :type agent_vm_size: str or
+     ~azure.mgmt.machinelearningcompute.models.AgentVMSizeTypes
     """
 
     _validation = {
