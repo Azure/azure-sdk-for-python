@@ -9,7 +9,7 @@ from msrest.pipeline import ClientRawResponse
 from .key_vault_authentication import KeyVaultAuthBase, KeyVaultAuthentication
 from ..key_vault_client import KeyVaultClient as KeyVaultClientBase
 from ..models import KeyVaultErrorException
-from msrestazure.azure_active_directory import AADMixin
+from msrest.authentication import BasicTokenAuthentication
 
 
 class CustomKeyVaultClient(KeyVaultClientBase):
@@ -27,7 +27,7 @@ class CustomKeyVaultClient(KeyVaultClientBase):
         """
 
         # if the supplied credentials instance is not derived from KeyVaultAuthBase but is an AAD credential type
-        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, AADMixin):
+        if not isinstance(credentials, KeyVaultAuthBase) and isinstance(credentials, BasicTokenAuthentication):
 
             # wrap the supplied credentials with a KeyVaultAuthentication instance. Use that for the credentials supplied to the base client
             credentials = KeyVaultAuthentication(credentials=credentials)
