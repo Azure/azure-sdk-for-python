@@ -32,8 +32,7 @@ class TriggeredJobRun(ProxyOnlyResource):
     :vartype triggered_job_run_name: str
     :param status: Job status. Possible values include: 'Success', 'Failed',
      'Error'
-    :type status: str or :class:`TriggeredWebJobStatus
-     <azure.mgmt.web.models.TriggeredWebJobStatus>`
+    :type status: str or ~azure.mgmt.web.models.TriggeredWebJobStatus
     :param start_time: Start time.
     :type start_time: datetime
     :param end_time: End time.

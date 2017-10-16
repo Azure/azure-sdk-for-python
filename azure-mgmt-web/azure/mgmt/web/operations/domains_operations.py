@@ -49,13 +49,10 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DomainAvailablilityCheckResult
-         <azure.mgmt.web.models.DomainAvailablilityCheckResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: DomainAvailablilityCheckResult or ClientRawResponse if
          raw=true
-        :rtype: :class:`DomainAvailablilityCheckResult
-         <azure.mgmt.web.models.DomainAvailablilityCheckResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.DomainAvailablilityCheckResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         identifier = models.NameIdentifier(name=name)
@@ -116,9 +113,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Domain
-         <azure.mgmt.web.models.Domain>`
-        :rtype: :class:`DomainPaged <azure.mgmt.web.models.DomainPaged>`
+        :return: An iterator like instance of Domain
+        :rtype:
+         ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -182,13 +179,10 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DomainControlCenterSsoRequest
-         <azure.mgmt.web.models.DomainControlCenterSsoRequest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: DomainControlCenterSsoRequest or ClientRawResponse if
          raw=true
-        :rtype: :class:`DomainControlCenterSsoRequest
-         <azure.mgmt.web.models.DomainControlCenterSsoRequest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.DomainControlCenterSsoRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -248,10 +242,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NameIdentifier
-         <azure.mgmt.web.models.NameIdentifier>`
-        :rtype: :class:`NameIdentifierPaged
-         <azure.mgmt.web.models.NameIdentifierPaged>`
+        :return: An iterator like instance of NameIdentifier
+        :rtype:
+         ~azure.mgmt.web.models.NameIdentifierPaged[~azure.mgmt.web.models.NameIdentifier]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
@@ -323,9 +316,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Domain
-         <azure.mgmt.web.models.Domain>`
-        :rtype: :class:`DomainPaged <azure.mgmt.web.models.DomainPaged>`
+        :return: An iterator like instance of Domain
+        :rtype:
+         ~azure.mgmt.web.models.DomainPaged[~azure.mgmt.web.models.Domain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -395,11 +388,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Domain <azure.mgmt.web.models.Domain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Domain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Domain or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -457,18 +448,15 @@ class DomainsOperations(object):
         :param domain_name: Name of the domain.
         :type domain_name: str
         :param domain: Domain registration information.
-        :type domain: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :type domain: ~azure.mgmt.web.models.Domain
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Domain <azure.mgmt.web.models.Domain>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Domain or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.Domain]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -563,11 +551,8 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -624,11 +609,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>`
-        :rtype: :class:`DomainOwnershipIdentifierPaged
-         <azure.mgmt.web.models.DomainOwnershipIdentifierPaged>`
+        :return: An iterator like instance of DomainOwnershipIdentifier
+        :rtype:
+         ~azure.mgmt.web.models.DomainOwnershipIdentifierPaged[~azure.mgmt.web.models.DomainOwnershipIdentifier]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -701,13 +684,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -771,20 +750,16 @@ class DomainsOperations(object):
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the
          domain ownership properties.
-        :type domain_ownership_identifier: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>`
+        :type domain_ownership_identifier:
+         ~azure.mgmt.web.models.DomainOwnershipIdentifier
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -853,11 +828,8 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -914,20 +886,16 @@ class DomainsOperations(object):
         :type name: str
         :param domain_ownership_identifier: A JSON representation of the
          domain ownership properties.
-        :type domain_ownership_identifier: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>`
+        :type domain_ownership_identifier:
+         ~azure.mgmt.web.models.DomainOwnershipIdentifier
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DomainOwnershipIdentifier
-         <azure.mgmt.web.models.DomainOwnershipIdentifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DomainOwnershipIdentifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DomainOwnershipIdentifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

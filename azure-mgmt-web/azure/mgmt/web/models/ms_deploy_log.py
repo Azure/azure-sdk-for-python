@@ -27,8 +27,7 @@ class MSDeployLog(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar entries: List of log entry messages
-    :vartype entries: list of :class:`MSDeployLogEntry
-     <azure.mgmt.web.models.MSDeployLogEntry>`
+    :vartype entries: list[~azure.mgmt.web.models.MSDeployLogEntry]
     """
 
     _validation = {

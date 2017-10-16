@@ -32,8 +32,8 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :type title: str
     :param site_extension_info_type: Site extension type. Possible values
      include: 'Gallery', 'WebRoot'
-    :type site_extension_info_type: str or :class:`SiteExtensionType
-     <azure.mgmt.web.models.SiteExtensionType>`
+    :type site_extension_info_type: str or
+     ~azure.mgmt.web.models.SiteExtensionType
     :param summary: Summary description.
     :type summary: str
     :param description: Detailed description.
@@ -51,7 +51,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :param feed_url: Feed URL.
     :type feed_url: str
     :param authors: List of authors.
-    :type authors: list of str
+    :type authors: list[str]
     :param installation_args: Installer command line parameters.
     :type installation_args: str
     :param published_date_time: Published timestamp.

@@ -20,13 +20,12 @@ class GlobalCsmSkuDescription(Model):
     :param tier: Service Tier of the resource SKU.
     :type tier: str
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: :class:`SkuCapacity <azure.mgmt.web.models.SkuCapacity>`
+    :type capacity: ~azure.mgmt.web.models.SkuCapacity
     :param locations: Locations of the SKU.
-    :type locations: list of str
+    :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list of :class:`Capability
-     <azure.mgmt.web.models.Capability>`
+    :type capabilities: list[~azure.mgmt.web.models.Capability]
     """
 
     _attribute_map = {

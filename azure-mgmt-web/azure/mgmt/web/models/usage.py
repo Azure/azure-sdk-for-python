@@ -42,8 +42,7 @@ class Usage(ProxyOnlyResource):
     :vartype next_reset_time: datetime
     :ivar compute_mode: Compute mode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :vartype compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+    :vartype compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :ivar site_mode: Site mode used for this usage.
     :vartype site_mode: str
     """

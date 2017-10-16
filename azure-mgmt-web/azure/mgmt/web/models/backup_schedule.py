@@ -27,8 +27,7 @@ class BackupSchedule(Model):
      executed (e.g. for weekly backup, this should be set to Day and
      FrequencyInterval should be set to 7). Possible values include: 'Day',
      'Hour'. Default value: "Day" .
-    :type frequency_unit: str or :class:`FrequencyUnit
-     <azure.mgmt.web.models.FrequencyUnit>`
+    :type frequency_unit: str or ~azure.mgmt.web.models.FrequencyUnit
     :param keep_at_least_one_backup: True if the retention policy should
      always keep at least one backup in the storage account, regardless how old
      it is; false otherwise. Default value: True .
