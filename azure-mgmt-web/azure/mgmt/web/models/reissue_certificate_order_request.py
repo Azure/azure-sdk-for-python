@@ -30,6 +30,8 @@ class ReissueCertificateOrderRequest(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param delay_existing_revoke_in_hours: Delay in hours to revoke existing
@@ -56,14 +58,15 @@ class ReissueCertificateOrderRequest(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'delay_existing_revoke_in_hours': {'key': 'properties.delayExistingRevokeInHours', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, kind=None, tags=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
-        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
+        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.key_size = key_size
         self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
         self.csr = csr

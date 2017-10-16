@@ -30,6 +30,8 @@ class Domain(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param contact_admin: Administrative contact.
     :type contact_admin: ~azure.mgmt.web.models.Contact
     :param contact_billing: Billing contact.
@@ -111,6 +113,7 @@ class Domain(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
         'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
         'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
@@ -133,8 +136,8 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
-        super(Domain, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
+        super(Domain, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

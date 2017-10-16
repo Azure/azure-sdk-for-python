@@ -30,6 +30,8 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param app_service_plan_name: Name for the App Service plan.
     :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
@@ -96,6 +98,7 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
@@ -114,8 +117,8 @@ class AppServicePlan(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, kind=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
-        super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, location, kind=None, tags=None, identity=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
+        super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
         self.app_service_plan_name = app_service_plan_name
         self.worker_tier_name = worker_tier_name
         self.status = None
