@@ -27,17 +27,13 @@ class SiteLogsConfig(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param application_logs: Application logs configuration.
-    :type application_logs: :class:`ApplicationLogsConfig
-     <azure.mgmt.web.models.ApplicationLogsConfig>`
+    :type application_logs: ~azure.mgmt.web.models.ApplicationLogsConfig
     :param http_logs: HTTP logs configuration.
-    :type http_logs: :class:`HttpLogsConfig
-     <azure.mgmt.web.models.HttpLogsConfig>`
+    :type http_logs: ~azure.mgmt.web.models.HttpLogsConfig
     :param failed_requests_tracing: Failed requests tracing configuration.
-    :type failed_requests_tracing: :class:`EnabledConfig
-     <azure.mgmt.web.models.EnabledConfig>`
+    :type failed_requests_tracing: ~azure.mgmt.web.models.EnabledConfig
     :param detailed_error_messages: Detailed error messages configuration.
-    :type detailed_error_messages: :class:`EnabledConfig
-     <azure.mgmt.web.models.EnabledConfig>`
+    :type detailed_error_messages: ~azure.mgmt.web.models.EnabledConfig
     """
 
     _validation = {

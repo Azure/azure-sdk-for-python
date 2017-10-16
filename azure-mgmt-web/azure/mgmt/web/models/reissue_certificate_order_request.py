@@ -29,7 +29,7 @@ class ReissueCertificateOrderRequest(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param delay_existing_revoke_in_hours: Delay in hours to revoke existing

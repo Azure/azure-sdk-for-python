@@ -28,8 +28,7 @@ class TriggeredJobHistory(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param triggered_job_runs: List of triggered web job runs.
-    :type triggered_job_runs: list of :class:`TriggeredJobRun
-     <azure.mgmt.web.models.TriggeredJobRun>`
+    :type triggered_job_runs: list[~azure.mgmt.web.models.TriggeredJobRun]
     """
 
     _validation = {

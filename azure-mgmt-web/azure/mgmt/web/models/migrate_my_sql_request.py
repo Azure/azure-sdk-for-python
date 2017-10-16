@@ -30,8 +30,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :type connection_string: str
     :param migration_type: The type of migration operation to be done.
      Possible values include: 'LocalToRemote', 'RemoteToLocal'
-    :type migration_type: str or :class:`MySqlMigrationType
-     <azure.mgmt.web.models.MySqlMigrationType>`
+    :type migration_type: str or ~azure.mgmt.web.models.MySqlMigrationType
     """
 
     _validation = {

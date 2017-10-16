@@ -35,15 +35,13 @@ class BackupRequest(ProxyOnlyResource):
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
      periodically.
-    :type backup_schedule: :class:`BackupSchedule
-     <azure.mgmt.web.models.BackupSchedule>`
+    :type backup_schedule: ~azure.mgmt.web.models.BackupSchedule
     :param databases: Databases included in the backup.
-    :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
     :param backup_request_type: Type of the backup. Possible values include:
      'Default', 'Clone', 'Relocation', 'Snapshot'
-    :type backup_request_type: str or :class:`BackupRestoreOperationType
-     <azure.mgmt.web.models.BackupRestoreOperationType>`
+    :type backup_request_type: str or
+     ~azure.mgmt.web.models.BackupRestoreOperationType
     """
 
     _validation = {

@@ -43,15 +43,13 @@ class ProcessInfo(ProxyOnlyResource):
     :param parent: Parent process.
     :type parent: str
     :param children: Child process list.
-    :type children: list of str
+    :type children: list[str]
     :param threads: Thread list.
-    :type threads: list of :class:`ProcessThreadInfo
-     <azure.mgmt.web.models.ProcessThreadInfo>`
+    :type threads: list[~azure.mgmt.web.models.ProcessThreadInfo]
     :param open_file_handles: List of open files.
-    :type open_file_handles: list of str
+    :type open_file_handles: list[str]
     :param modules: List of modules.
-    :type modules: list of :class:`ProcessModuleInfo
-     <azure.mgmt.web.models.ProcessModuleInfo>`
+    :type modules: list[~azure.mgmt.web.models.ProcessModuleInfo]
     :param file_name: File name of this process.
     :type file_name: str
     :param command_line: Command line.
@@ -93,7 +91,7 @@ class ProcessInfo(ProxyOnlyResource):
     :param time_stamp: Time stamp.
     :type time_stamp: datetime
     :param environment_variables: List of environment variables.
-    :type environment_variables: dict
+    :type environment_variables: dict[str, str]
     :param is_scm_site: Is this the SCM site?
     :type is_scm_site: bool
     :param is_web_job: Is this a Web Job?

@@ -44,8 +44,7 @@ class VnetRoute(ProxyOnlyResource):
      STATIC - Static route set on the app only
      These values will be used for syncing an app's routes with those from a
      Virtual Network. Possible values include: 'DEFAULT', 'INHERITED', 'STATIC'
-    :type route_type: str or :class:`RouteType
-     <azure.mgmt.web.models.RouteType>`
+    :type route_type: str or ~azure.mgmt.web.models.RouteType
     """
 
     _validation = {
