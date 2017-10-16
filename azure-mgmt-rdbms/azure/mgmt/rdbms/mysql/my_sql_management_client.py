@@ -37,20 +37,16 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
-    :param virtual_network_rule_name: The name of the virtual network rule.
-    :type virtual_network_rule_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, virtual_network_rule_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if virtual_network_rule_name is None:
-            raise ValueError("Parameter 'virtual_network_rule_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -61,7 +57,6 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.virtual_network_rule_name = virtual_network_rule_name
 
 
 class MySQLManagementClient(object):
@@ -97,15 +92,13 @@ class MySQLManagementClient(object):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
-    :param virtual_network_rule_name: The name of the virtual network rule.
-    :type virtual_network_rule_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, virtual_network_rule_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = MySQLManagementClientConfiguration(credentials, subscription_id, virtual_network_rule_name, base_url)
+        self.config = MySQLManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
