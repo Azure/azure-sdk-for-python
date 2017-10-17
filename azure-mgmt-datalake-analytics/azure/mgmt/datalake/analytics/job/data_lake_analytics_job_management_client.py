@@ -39,8 +39,6 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if adla_job_dns_suffix is None:
             raise ValueError("Parameter 'adla_job_dns_suffix' must not be None.")
-        if not isinstance(adla_job_dns_suffix, str):
-            raise TypeError("Parameter 'adla_job_dns_suffix' must be str.")
         base_url = 'https://{accountName}.{adlaJobDnsSuffix}'
 
         super(DataLakeAnalyticsJobManagementClientConfiguration, self).__init__(base_url)

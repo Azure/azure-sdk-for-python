@@ -14,6 +14,8 @@ from .firewall_rules_operations import FirewallRulesOperations
 from .storage_accounts_operations import StorageAccountsOperations
 from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .account_operations import AccountOperations
+from .locations_operations import LocationsOperations
+from .operations import Operations
 
 __all__ = [
     'ComputePoliciesOperations',
@@ -21,4 +23,6 @@ __all__ = [
     'StorageAccountsOperations',
     'DataLakeStoreAccountsOperations',
     'AccountOperations',
+    'LocationsOperations',
+    'Operations',
 ]

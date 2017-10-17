@@ -16,38 +16,37 @@ class DataLakeStoreAccountUpdateParameters(Model):
     """Data Lake Store account information to update.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param firewall_state: The current state of the IP address firewall for
      this Data Lake store account. Disabling the firewall does not remove
      existing rules, they will just be ignored until the firewall is
      re-enabled. Possible values include: 'Enabled', 'Disabled'
-    :type firewall_state: str or :class:`FirewallState
-     <azure.mgmt.datalake.store.models.FirewallState>`
+    :type firewall_state: str or
+     ~azure.mgmt.datalake.store.models.FirewallState
     :param trusted_id_provider_state: The current state of the trusted
      identity provider feature for this Data Lake store account. Disabling
      trusted identity provider functionality does not remove the providers,
      they will just be ignored until this feature is re-enabled. Possible
      values include: 'Enabled', 'Disabled'
-    :type trusted_id_provider_state: str or :class:`TrustedIdProviderState
-     <azure.mgmt.datalake.store.models.TrustedIdProviderState>`
+    :type trusted_id_provider_state: str or
+     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
     :param new_tier: the commitment tier to use for next month. Possible
      values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
      'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
-    :type new_tier: str or :class:`TierType
-     <azure.mgmt.datalake.store.models.TierType>`
+    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     :param firewall_allow_azure_ips: The current state of allowing or
      disallowing IPs originating within Azure through the firewall. If the
      firewall is disabled, this is not enforced. Possible values include:
      'Enabled', 'Disabled'
-    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
-     <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
+    :type firewall_allow_azure_ips: str or
+     ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
     :param encryption_config: Used for rotation of user managed Key Vault
      keys. Can only be used to rotate a user managed encryption Key Vault key.
-    :type encryption_config: :class:`UpdateEncryptionConfig
-     <azure.mgmt.datalake.store.models.UpdateEncryptionConfig>`
+    :type encryption_config:
+     ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
     """
 
     _attribute_map = {

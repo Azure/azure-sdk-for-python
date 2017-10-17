@@ -70,9 +70,27 @@ class DataLakeStoreAccountStatus(Enum):
     resuming = "Resuming"
     deleting = "Deleting"
     deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
 
 
 class DataLakeStoreAccountState(Enum):
 
     active = "Active"
     suspended = "Suspended"
+
+
+class SubscriptionState(Enum):
+
+    registered = "Registered"
+    suspended = "Suspended"
+    deleted = "Deleted"
+    unregistered = "Unregistered"
+    warned = "Warned"
+
+
+class OperationOrigin(Enum):
+
+    user = "user"
+    system = "system"
+    usersystem = "user,system"

@@ -69,11 +69,9 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`DataLakeAnalyticsAccountBasic
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasic>`
-        :rtype: :class:`DataLakeAnalyticsAccountBasicPaged
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasicPaged>`
+        :return: An iterator like instance of DataLakeAnalyticsAccountBasic
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasicPaged[~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasic]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -169,11 +167,9 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`DataLakeAnalyticsAccountBasic
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasic>`
-        :rtype: :class:`DataLakeAnalyticsAccountBasicPaged
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasicPaged>`
+        :return: An iterator like instance of DataLakeAnalyticsAccountBasic
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasicPaged[~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountBasic]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -252,20 +248,16 @@ class AccountOperations(object):
         :type account_name: str
         :param parameters: Parameters supplied to the create Data Lake
          Analytics account operation.
-        :type parameters: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         DataLakeAnalyticsAccount or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -353,20 +345,16 @@ class AccountOperations(object):
         :type account_name: str
         :param parameters: Parameters supplied to the update Data Lake
          Analytics account operation.
-        :type parameters: :class:`DataLakeAnalyticsAccountUpdateParameters
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         DataLakeAnalyticsAccount or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -458,14 +446,10 @@ class AccountOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -542,13 +526,10 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DataLakeAnalyticsAccount or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -587,6 +568,73 @@ class AccountOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('DataLakeAnalyticsAccount', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def check_name_availability(
+            self, location, name, custom_headers=None, raw=False, **operation_config):
+        """Checks whether the specified account name is available or taken.
+
+        :param location: The Resource location without whitespace.
+        :type location: str
+        :param name: the Data Lake Analytics name to check availability for.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: NameAvailabilityInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.NameAvailabilityInformation
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.CheckNameAvailabilityParameters(name=name)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/checkNameAvailability'
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckNameAvailabilityParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NameAvailabilityInformation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

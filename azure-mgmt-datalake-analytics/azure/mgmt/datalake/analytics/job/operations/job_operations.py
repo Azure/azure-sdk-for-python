@@ -49,13 +49,9 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobStatistics
-         <azure.mgmt.datalake.analytics.job.models.JobStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobStatistics
-         <azure.mgmt.datalake.analytics.job.models.JobStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobStatistics or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.job.models.JobStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -108,20 +104,17 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: JobInfo ID.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobDataPath
-         <azure.mgmt.datalake.analytics.job.models.JobDataPath>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobDataPath
-         <azure.mgmt.datalake.analytics.job.models.JobDataPath>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobDataPath or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.job.models.JobDataPath or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -176,20 +169,16 @@ class JobOperations(object):
          job operations on.
         :type account_name: str
         :param parameters: The parameters to build a job.
-        :type parameters: :class:`BuildJobParameters
-         <azure.mgmt.datalake.analytics.job.models.BuildJobParameters>`
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.job.models.BuildJobParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobInformation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.job.models.JobInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -245,18 +234,16 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: JobInfo ID to cancel.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -302,23 +289,20 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: The job ID (a GUID) for the job being submitted.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param parameters: The parameters to submit a job.
-        :type parameters: :class:`CreateJobParameters
-         <azure.mgmt.datalake.analytics.job.models.CreateJobParameters>`
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.job.models.CreateJobParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobInformation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.job.models.JobInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -382,13 +366,9 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobInformation
-         <azure.mgmt.datalake.analytics.job.models.JobInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobInformation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.job.models.JobInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -468,10 +448,9 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`JobInformationBasic
-         <azure.mgmt.datalake.analytics.job.models.JobInformationBasic>`
-        :rtype: :class:`JobInformationBasicPaged
-         <azure.mgmt.datalake.analytics.job.models.JobInformationBasicPaged>`
+        :return: An iterator like instance of JobInformationBasic
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobInformationBasicPaged[~azure.mgmt.datalake.analytics.job.models.JobInformationBasic]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

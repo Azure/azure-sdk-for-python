@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UpdateFirewallRuleParameters(Model):
-    """Data Lake Analytics firewall rule update parameters.
+    """Data Lake Store firewall rule update parameters.
 
     :param start_ip_address: the start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.

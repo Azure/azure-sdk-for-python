@@ -12,33 +12,28 @@
 from msrest.serialization import Model
 
 
-class JobDataPath(Model):
-    """A Data Lake Analytics job data path item.
+class OperationListResult(Model):
+    """The list of available operations for Data Lake Store.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar job_id: the id of the job this data is for.
-    :vartype job_id: str
-    :ivar command: the command that this job data relates to.
-    :vartype command: str
-    :ivar paths: the list of paths to all of the job data.
-    :vartype paths: list[str]
+    :ivar value: the results of the list operation.
+    :vartype value: list[~azure.mgmt.datalake.store.models.Operation]
+    :ivar next_link: the link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'job_id': {'readonly': True},
-        'command': {'readonly': True},
-        'paths': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'command': {'key': 'command', 'type': 'str'},
-        'paths': {'key': 'paths', 'type': '[str]'},
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self):
-        self.job_id = None
-        self.command = None
-        self.paths = None
+        self.value = None
+        self.next_link = None

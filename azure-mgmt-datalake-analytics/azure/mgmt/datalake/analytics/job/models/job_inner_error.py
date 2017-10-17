@@ -23,8 +23,8 @@ class JobInnerError(Model):
     :ivar severity: the severity level of the failure. Possible values
      include: 'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated',
      'UserWarning'
-    :vartype severity: str or :class:`SeverityTypes
-     <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
+    :vartype severity: str or
+     ~azure.mgmt.datalake.analytics.job.models.SeverityTypes
     :ivar details: the details of the error message.
     :vartype details: str
     :ivar component: the component that failed.
@@ -48,6 +48,10 @@ class JobInnerError(Model):
     :vartype source: str
     :ivar description: the error message description
     :vartype description: str
+    :ivar inner_error: the inner error of this specific job error message, if
+     any.
+    :vartype inner_error:
+     ~azure.mgmt.datalake.analytics.job.models.JobInnerError
     """
 
     _validation = {
@@ -62,6 +66,7 @@ class JobInnerError(Model):
         'resolution': {'readonly': True},
         'source': {'readonly': True},
         'description': {'readonly': True},
+        'inner_error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -76,6 +81,7 @@ class JobInnerError(Model):
         'resolution': {'key': 'resolution', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'inner_error': {'key': 'innerError', 'type': 'JobInnerError'},
     }
 
     def __init__(self):
@@ -90,3 +96,4 @@ class JobInnerError(Model):
         self.resolution = None
         self.source = None
         self.description = None
+        self.inner_error = None

@@ -52,20 +52,15 @@ class FirewallRulesOperations(object):
         :type firewall_rule_name: str
         :param parameters: Parameters supplied to create or update the
          firewall rule.
-        :type parameters: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
+        :type parameters: ~azure.mgmt.datalake.store.models.FirewallRule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.FirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -141,13 +136,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.FirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -223,11 +214,8 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -284,13 +272,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.FirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -353,10 +337,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
-        :rtype: :class:`FirewallRulePaged
-         <azure.mgmt.datalake.store.models.FirewallRulePaged>`
+        :return: An iterator like instance of FirewallRule
+        :rtype:
+         ~azure.mgmt.datalake.store.models.FirewallRulePaged[~azure.mgmt.datalake.store.models.FirewallRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -55,10 +55,9 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-        :rtype: :class:`JobRecurrenceInformationPaged
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformationPaged>`
+        :return: An iterator like instance of JobRecurrenceInformation
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformationPaged[~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -138,13 +137,10 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobRecurrenceInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

@@ -17,11 +17,10 @@ class BaseJobParameters(Model):
 
     :param type: the job type of the current job (Hive or USql). Possible
      values include: 'USql', 'Hive'
-    :type type: str or :class:`JobType
-     <azure.mgmt.datalake.analytics.job.models.JobType>`
+    :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
     :param properties: the job specific properties.
-    :type properties: :class:`CreateJobProperties
-     <azure.mgmt.datalake.analytics.job.models.CreateJobProperties>`
+    :type properties:
+     ~azure.mgmt.datalake.analytics.job.models.CreateJobProperties
     """
 
     _validation = {
