@@ -28,9 +28,42 @@ class ContainerService(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param properties: Properties of the container service.
-    :type properties: :class:`ContainerServiceProperties
-     <azure.mgmt.containerservice.models.ContainerServiceProperties>`
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response.
+    :vartype provisioning_state: str
+    :param orchestrator_profile: Profile for the container service
+     orchestrator.
+    :type orchestrator_profile: :class:`ContainerServiceOrchestratorProfile
+     <azure.mgmt.containerservice.models.ContainerServiceOrchestratorProfile>`
+    :param custom_profile: Properties to configure a custom container service
+     cluster.
+    :type custom_profile: :class:`ContainerServiceCustomProfile
+     <azure.mgmt.containerservice.models.ContainerServiceCustomProfile>`
+    :param service_principal_profile: Information about a service principal
+     identity for the cluster to use for manipulating Azure APIs. Exact one of
+     secret or keyVaultSecretRef need to be specified.
+    :type service_principal_profile:
+     :class:`ContainerServiceServicePrincipalProfile
+     <azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile>`
+    :param master_profile: Profile for the container service master.
+    :type master_profile: :class:`ContainerServiceMasterProfile
+     <azure.mgmt.containerservice.models.ContainerServiceMasterProfile>`
+    :param agent_pool_profiles: Properties of the agent pool.
+    :type agent_pool_profiles: list of
+     :class:`ContainerServiceAgentPoolProfile
+     <azure.mgmt.containerservice.models.ContainerServiceAgentPoolProfile>`
+    :param windows_profile: Profile for Windows VMs in the container service
+     cluster.
+    :type windows_profile: :class:`ContainerServiceWindowsProfile
+     <azure.mgmt.containerservice.models.ContainerServiceWindowsProfile>`
+    :param linux_profile: Profile for Linux VMs in the container service
+     cluster.
+    :type linux_profile: :class:`ContainerServiceLinuxProfile
+     <azure.mgmt.containerservice.models.ContainerServiceLinuxProfile>`
+    :param diagnostics_profile: Profile for diagnostics in the container
+     service cluster.
+    :type diagnostics_profile: :class:`ContainerServiceDiagnosticsProfile
+     <azure.mgmt.containerservice.models.ContainerServiceDiagnosticsProfile>`
     """
 
     _validation = {
@@ -38,6 +71,10 @@ class ContainerService(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'orchestrator_profile': {'required': True},
+        'master_profile': {'required': True},
+        'linux_profile': {'required': True},
     }
 
     _attribute_map = {
@@ -46,9 +83,25 @@ class ContainerService(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ContainerServiceProperties'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'orchestrator_profile': {'key': 'properties.orchestratorProfile', 'type': 'ContainerServiceOrchestratorProfile'},
+        'custom_profile': {'key': 'properties.customProfile', 'type': 'ContainerServiceCustomProfile'},
+        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
+        'master_profile': {'key': 'properties.masterProfile', 'type': 'ContainerServiceMasterProfile'},
+        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ContainerServiceAgentPoolProfile]'},
+        'windows_profile': {'key': 'properties.windowsProfile', 'type': 'ContainerServiceWindowsProfile'},
+        'linux_profile': {'key': 'properties.linuxProfile', 'type': 'ContainerServiceLinuxProfile'},
+        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'ContainerServiceDiagnosticsProfile'},
     }
 
-    def __init__(self, location, tags=None, properties=None):
+    def __init__(self, location, orchestrator_profile, master_profile, linux_profile, tags=None, custom_profile=None, service_principal_profile=None, agent_pool_profiles=None, windows_profile=None, diagnostics_profile=None):
         super(ContainerService, self).__init__(location=location, tags=tags)
-        self.properties = properties
+        self.provisioning_state = None
+        self.orchestrator_profile = orchestrator_profile
+        self.custom_profile = custom_profile
+        self.service_principal_profile = service_principal_profile
+        self.master_profile = master_profile
+        self.agent_pool_profiles = agent_pool_profiles
+        self.windows_profile = windows_profile
+        self.linux_profile = linux_profile
+        self.diagnostics_profile = diagnostics_profile
