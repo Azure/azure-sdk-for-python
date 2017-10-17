@@ -61,7 +61,8 @@ class ContainerServiceMasterProfile(Model):
      'Standard_H16r', 'Standard_H8', 'Standard_H8m', 'Standard_L16s',
      'Standard_L32s', 'Standard_L4s', 'Standard_L8s', 'Standard_M128s',
      'Standard_M64ms', 'Standard_NC12', 'Standard_NC24', 'Standard_NC24r',
-     'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
+     'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'. Default
+     value: "Standard_D2_v2" .
     :type vm_size: str or :class:`ContainerServiceVMSizeTypes
      <azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes>`
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
@@ -87,7 +88,6 @@ class ContainerServiceMasterProfile(Model):
 
     _validation = {
         'dns_prefix': {'required': True},
-        'vm_size': {'required': True},
         'fqdn': {'readonly': True},
     }
 
@@ -102,7 +102,7 @@ class ContainerServiceMasterProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, dns_prefix, vm_size, count=1, os_disk_size_gb=None, vnet_subnet_id=None, first_consecutive_static_ip="10.240.255.5", storage_profile=None):
+    def __init__(self, dns_prefix, count=1, vm_size="Standard_D2_v2", os_disk_size_gb=None, vnet_subnet_id=None, first_consecutive_static_ip="10.240.255.5", storage_profile=None):
         self.count = count
         self.dns_prefix = dns_prefix
         self.vm_size = vm_size
