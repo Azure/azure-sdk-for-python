@@ -18,25 +18,24 @@ class LoadBalancingRule(SubResource):
     :param id: Resource Identifier.
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
-    :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type frontend_ip_configuration:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param backend_address_pool: A reference to a pool of DIPs. Inbound
      traffic is randomly load balanced across IPs in the backend IPs.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param probe: The reference of the load balancer probe used by the load
      balancing rule.
-    :type probe: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type probe: ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param protocol: The transport protocol for the external endpoint.
      Possible values are 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
-    :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.v2015_06_15.models.TransportProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2015_06_15.models.TransportProtocol
     :param load_distribution: The load distribution policy for this rule.
      Possible values are 'Default', 'SourceIP', and 'SourceIPProtocol'.
      Possible values include: 'Default', 'SourceIP', 'SourceIPProtocol'
-    :type load_distribution: str or :class:`LoadDistribution
-     <azure.mgmt.network.v2015_06_15.models.LoadDistribution>`
+    :type load_distribution: str or
+     ~azure.mgmt.network.v2015_06_15.models.LoadDistribution
     :param frontend_port: The port for the external endpoint. Port numbers for
      each rule must be unique within the Load Balancer. Acceptable values are
      between 1 and 65534.

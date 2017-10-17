@@ -17,14 +17,13 @@ class ExpressRouteCircuitPeeringConfig(Model):
 
     :param advertised_public_prefixes: The reference of
      AdvertisedPublicPrefixes.
-    :type advertised_public_prefixes: list of str
+    :type advertised_public_prefixes: list[str]
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
      the Peering resource. Possible values are 'NotConfigured', 'Configuring',
      'Configured', and 'ValidationNeeded'. Possible values include:
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
-     :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     ~azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :param customer_asn: The CustomerASN of the peering.
     :type customer_asn: int
     :param routing_registry_name: The RoutingRegistryName of the

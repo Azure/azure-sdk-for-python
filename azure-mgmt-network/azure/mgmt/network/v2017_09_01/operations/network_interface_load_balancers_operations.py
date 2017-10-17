@@ -48,10 +48,9 @@ class NetworkInterfaceLoadBalancersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`LoadBalancer
-         <azure.mgmt.network.v2017_09_01.models.LoadBalancer>`
-        :rtype: :class:`LoadBalancerPaged
-         <azure.mgmt.network.v2017_09_01.models.LoadBalancerPaged>`
+        :return: An iterator like instance of LoadBalancer
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.LoadBalancerPaged[~azure.mgmt.network.v2017_09_01.models.LoadBalancer]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

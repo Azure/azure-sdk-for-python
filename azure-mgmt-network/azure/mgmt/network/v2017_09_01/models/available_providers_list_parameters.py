@@ -17,7 +17,7 @@ class AvailableProvidersListParameters(Model):
     providers.
 
     :param azure_locations: A list of Azure regions.
-    :type azure_locations: list of str
+    :type azure_locations: list[str]
     :param country: The country for available providers list.
     :type country: str
     :param state: The state for available providers list.
