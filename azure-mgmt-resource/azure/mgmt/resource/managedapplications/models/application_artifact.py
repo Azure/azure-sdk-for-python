@@ -21,8 +21,8 @@ class ApplicationArtifact(Model):
     :type uri: str
     :param type: The managed application artifact type. Possible values
      include: 'Template', 'Custom'
-    :type type: str or :class:`ApplicationArtifactType
-     <azure.mgmt.resource.managedapplications.models.ApplicationArtifactType>`
+    :type type: str or
+     ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
     _attribute_map = {
