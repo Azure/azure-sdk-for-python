@@ -22,10 +22,9 @@ class RoleDefinitionProperties(Model):
     :param type: The role type.
     :type type: str
     :param permissions: Role definition permissions.
-    :type permissions: list of :class:`Permission
-     <azure.mgmt.authorization.models.Permission>`
+    :type permissions: list[~azure.mgmt.authorization.models.Permission]
     :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list of str
+    :type assignable_scopes: list[str]
     """
 
     _attribute_map = {

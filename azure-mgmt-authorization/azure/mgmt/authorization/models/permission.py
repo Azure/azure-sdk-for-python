@@ -16,9 +16,9 @@ class Permission(Model):
     """Role definition permissions.
 
     :param actions: Allowed actions.
-    :type actions: list of str
+    :type actions: list[str]
     :param not_actions: Denied actions.
-    :type not_actions: list of str
+    :type not_actions: list[str]
     """
 
     _attribute_map = {

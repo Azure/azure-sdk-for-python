@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -49,10 +49,9 @@ class ProviderOperationsMetadataOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProviderOperationsMetadata
-         <azure.mgmt.authorization.models.ProviderOperationsMetadata>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ProviderOperationsMetadata or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.ProviderOperationsMetadata or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -111,8 +110,9 @@ class ProviderOperationsMetadataOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProviderOperationsMetadataPaged
-         <azure.mgmt.authorization.models.ProviderOperationsMetadataPaged>`
+        :return: An iterator like instance of ProviderOperationsMetadata
+        :rtype:
+         ~azure.mgmt.authorization.models.ProviderOperationsMetadataPaged[~azure.mgmt.authorization.models.ProviderOperationsMetadata]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
