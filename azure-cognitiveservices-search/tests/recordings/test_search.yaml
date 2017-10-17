@@ -6,9 +6,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.17
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
           azure-entitysearch/0.1.0]
-      X-BingApis-SDK: [EntitySearch.Python.1.0]
+      X-BingApis-SDK: ['true']
+      X-BingApis-SDK-Client: [Python-SDK]
     method: GET
     uri: https://api.cognitive.microsoft.com/bing/v7.0/entities?mkt=en-us&q=seahawks
   response:
@@ -22,7 +23,7 @@ interactions:
         "en.wikipedia.org", "url": "http:\/\/en.wikipedia.org\/wiki\/Seattle_Seahawks"},
         {"_type": "ContractualRules\/MediaAttribution", "targetPropertyName": "image",
         "mustBeCloseToContent": true, "url": "http:\/\/en.wikipedia.org\/wiki\/Seattle_Seahawks"}],
-        "webSearchUrl": "https:\/\/www.bing.com\/search?q=Seattle+Seahawks&filters=sid:%221bf844db-8225-f90c-a78e-1787fb8af0ce%22&elv=AXXfrEiqqD9r3GuelwApuloZS*89uwtNYuKwKAKwt3LL9E3DU!mIP*gAP567!20ZsdonfuwhlxRZhzRUT3cwTx7WTfAGko6JdTK6BfnfNwRY",
+        "webSearchUrl": "https:\/\/www.bing.com\/search?q=Seattle+Seahawks&filters=sid:%221bf844db-8225-f90c-a78e-1787fb8af0ce%22&elv=AXXfrEiqqD9r3GuelwApulrcq5J6qratqwNhjycKKTE1DuXA59Sbs2hmDr3DH*v9vBFH8Zs0PSwebf6qeYFgHRJqMbqK3a0783jgykO3hG70",
         "name": "Seattle Seahawks", "url": "http:\/\/www.seahawks.com\/", "image":
         {"_type": "ImageObject", "name": "Seattle Seahawks", "thumbnailUrl": "https:\/\/www.bing.com\/th?id=A7be21a11ac3ee68c3bb0c0fc5eab06c4&w=110&h=110&c=7&rs=1&qlt=95&cdv=1&pid=16.1",
         "provider": [{"_type": "Organization", "url": "http:\/\/en.wikipedia.org\/wiki\/Seattle_Seahawks"}],
@@ -38,24 +39,24 @@ interactions:
         {"_type": "Entities\/EntityPresentationInfo", "entityScenario": "DominantEntity",
         "entityTypeHints": ["SportsTeam", "Organization"]}, "bingId": "1bf844db-8225-f90c-a78e-1787fb8af0ce"}]}}'}
     headers:
-      apim-request-id: [1c9e9242-59c2-48f4-b26b-62866f6890d8]
+      apim-request-id: [626b8bb8-c264-423a-bc5e-c0a6f7c7844d]
       bingapis-market: [en-US]
-      bingapis-sessionid: [0F4F552A01274FF7AEB37B399B88CE52]
-      bingapis-traceid: [64BAB848FBFD4B82841CDA61E921C843]
+      bingapis-sessionid: [EA1D08EBFC0A4CA4ABB376A4C13D26AB]
+      bingapis-traceid: [900200537E5E4072B16B874C988B0914]
       cache-control: ['private, max-age=0']
       content-length: ['2401']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 16 Oct 2017 22:34:17 GMT']
-      expires: ['Mon, 16 Oct 2017 22:33:18 GMT']
+      date: ['Tue, 17 Oct 2017 22:30:50 GMT']
+      expires: ['Tue, 17 Oct 2017 22:29:50 GMT']
       p3p: [CP="NON UNI COM NAV STA LOC CURa DEVa PSAa PSDa OUR IND"]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains; preload]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-msapi-userstate: ['2681']
-      x-msedge-clientid: [3B37E12D089A687F0727EA3009A169C5]
-      x-msedge-ref: ['Ref A: 64BAB848FBFD4B82841CDA61E921C843 Ref B: SN1EDGE0213 Ref
-          C: 2017-10-16T22:34:18Z']
+      x-msapi-userstate: [e7e3]
+      x-msedge-clientid: [347E1A111CB76CB62903110F1D8C6D64]
+      x-msedge-ref: ['Ref A: 900200537E5E4072B16B874C988B0914 Ref B: SN1EDGE1114 Ref
+          C: 2017-10-17T22:30:51Z']
     status: {code: 200, message: OK}
 version: 1
