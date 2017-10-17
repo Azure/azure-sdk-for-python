@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class UpgradeProfileProperties(Model):
     """Control plane and agent pool upgrade profiles.
 
-    :param control_plane_profile:
+    :param control_plane_profile: The list of available upgrade versions for
+     the control plane.
     :type control_plane_profile: :class:`PoolUpgradeProfile
      <azure.mgmt.containerservice.models.PoolUpgradeProfile>`
-    :param agent_pool_profiles:
+    :param agent_pool_profiles: The list of available upgrade versions for
+     agent pools.
     :type agent_pool_profiles: list of :class:`PoolUpgradeProfile
      <azure.mgmt.containerservice.models.PoolUpgradeProfile>`
     """
