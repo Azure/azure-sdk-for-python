@@ -17,18 +17,16 @@ class VpnClientConfiguration(Model):
 
     :param vpn_client_address_pool: The reference of the address space
      resource which represents Address space for P2S VpnClient.
-    :type vpn_client_address_pool: :class:`AddressSpace
-     <azure.mgmt.network.v2016_12_01.models.AddressSpace>`
+    :type vpn_client_address_pool:
+     ~azure.mgmt.network.v2016_12_01.models.AddressSpace
     :param vpn_client_root_certificates: VpnClientRootCertificate for virtual
      network gateway.
-    :type vpn_client_root_certificates: list of
-     :class:`VpnClientRootCertificate
-     <azure.mgmt.network.v2016_12_01.models.VpnClientRootCertificate>`
+    :type vpn_client_root_certificates:
+     list[~azure.mgmt.network.v2016_12_01.models.VpnClientRootCertificate]
     :param vpn_client_revoked_certificates: VpnClientRevokedCertificate for
      Virtual network gateway.
-    :type vpn_client_revoked_certificates: list of
-     :class:`VpnClientRevokedCertificate
-     <azure.mgmt.network.v2016_12_01.models.VpnClientRevokedCertificate>`
+    :type vpn_client_revoked_certificates:
+     list[~azure.mgmt.network.v2016_12_01.models.VpnClientRevokedCertificate]
     """
 
     _attribute_map = {

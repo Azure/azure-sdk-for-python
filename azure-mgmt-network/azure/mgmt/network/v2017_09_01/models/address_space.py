@@ -18,7 +18,7 @@ class AddressSpace(Model):
 
     :param address_prefixes: A list of address blocks reserved for this
      virtual network in CIDR notation.
-    :type address_prefixes: list of str
+    :type address_prefixes: list[str]
     """
 
     _attribute_map = {

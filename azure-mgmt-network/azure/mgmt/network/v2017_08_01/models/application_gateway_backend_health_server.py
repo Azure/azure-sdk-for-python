@@ -18,12 +18,12 @@ class ApplicationGatewayBackendHealthServer(Model):
     :param address: IP address or FQDN of backend server.
     :type address: str
     :param ip_configuration: Reference of IP configuration of backend server.
-    :type ip_configuration: :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
+    :type ip_configuration:
+     ~azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration
     :param health: Health of backend server. Possible values include:
      'Unknown', 'Up', 'Down', 'Partial', 'Draining'
-    :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthServerHealth>`
+    :type health: str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthServerHealth
     """
 
     _attribute_map = {

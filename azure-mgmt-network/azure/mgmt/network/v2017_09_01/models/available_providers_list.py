@@ -16,8 +16,8 @@ class AvailableProvidersList(Model):
     """List of available countries with details.
 
     :param countries: List of available countries.
-    :type countries: list of :class:`AvailableProvidersListCountry
-     <azure.mgmt.network.v2017_09_01.models.AvailableProvidersListCountry>`
+    :type countries:
+     list[~azure.mgmt.network.v2017_09_01.models.AvailableProvidersListCountry]
     """
 
     _validation = {

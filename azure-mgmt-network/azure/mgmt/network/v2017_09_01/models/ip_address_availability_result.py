@@ -19,7 +19,7 @@ class IPAddressAvailabilityResult(Model):
     :type available: bool
     :param available_ip_addresses: Contains other available private IP
      addresses if the asked for address is taken.
-    :type available_ip_addresses: list of str
+    :type available_ip_addresses: list[str]
     """
 
     _attribute_map = {

@@ -24,8 +24,8 @@ class FlowLogInformation(Model):
     :param enabled: Flag to enable/disable flow logging.
     :type enabled: bool
     :param retention_policy:
-    :type retention_policy: :class:`RetentionPolicyParameters
-     <azure.mgmt.network.v2017_08_01.models.RetentionPolicyParameters>`
+    :type retention_policy:
+     ~azure.mgmt.network.v2017_08_01.models.RetentionPolicyParameters
     """
 
     _validation = {
