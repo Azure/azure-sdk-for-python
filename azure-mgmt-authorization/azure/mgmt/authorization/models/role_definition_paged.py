@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RoleDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of RoleDefinition object
+    A paging container for iterating over a list of :class:`RoleDefinition <azure.mgmt.authorization.models.RoleDefinition>` object
     """
 
     _attribute_map = {
