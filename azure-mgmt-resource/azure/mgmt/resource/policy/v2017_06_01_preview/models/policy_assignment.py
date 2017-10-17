@@ -25,7 +25,7 @@ class PolicyAssignment(Model):
     :param scope: The scope for the policy assignment.
     :type scope: str
     :param not_scopes: The policy's excluded scopes.
-    :type not_scopes: list of str
+    :type not_scopes: list[str]
     :param parameters: Required if a parameter is used in policy rule.
     :type parameters: object
     :param description: This message will be part of response in case of
@@ -40,8 +40,8 @@ class PolicyAssignment(Model):
     :ivar name: The name of the policy assignment.
     :vartype name: str
     :param sku: The policy sku.
-    :type sku: :class:`PolicySku
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySku>`
+    :type sku:
+     ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySku
     """
 
     _validation = {
