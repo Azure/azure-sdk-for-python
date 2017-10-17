@@ -25,12 +25,10 @@ class PoolUpgradeProfile(Model):
     :param name: Pool name.
     :type name: str
     :param os_type: OsType to be used to specify os type. Choose from Linux
-     and Windows. Default to Linux. Possible values include: 'Linux',
-     'Windows'. Default value: "Linux" .
-    :type os_type: str or :class:`OSType
-     <azure.mgmt.containerservice.models.OSType>`
-    :param upgrades: List of orchestrator types and versions available for
-     upgrade.
+     and Windows. Default to Linux. Possible values include: 'Linux', 'Windows'
+    :type os_type: str or :class:`ContainerServiceOSTypes
+     <azure.mgmt.containerservice.models.ContainerServiceOSTypes>`
+    :param upgrades:
     :type upgrades: list of :class:`OrchestratorProfile
      <azure.mgmt.containerservice.models.OrchestratorProfile>`
     """
@@ -51,7 +49,7 @@ class PoolUpgradeProfile(Model):
 
     orchestrator_type = "Kubernetes"
 
-    def __init__(self, orchestrator_version, name=None, os_type="Linux", upgrades=None):
+    def __init__(self, orchestrator_version, os_type, name=None, upgrades=None):
         self.orchestrator_version = orchestrator_version
         self.name = name
         self.os_type = os_type

@@ -192,12 +192,12 @@ class ManagedClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`UpgradeProfile
-         <azure.mgmt.containerservice.models.UpgradeProfile>` or
+        :return: :class:`ManagedClusterUpgradeProfile
+         <azure.mgmt.containerservice.models.ManagedClusterUpgradeProfile>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`UpgradeProfile
-         <azure.mgmt.containerservice.models.UpgradeProfile>` or
+        :rtype: :class:`ManagedClusterUpgradeProfile
+         <azure.mgmt.containerservice.models.ManagedClusterUpgradeProfile>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -236,7 +236,7 @@ class ManagedClustersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UpgradeProfile', response)
+            deserialized = self._deserialize('ManagedClusterUpgradeProfile', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

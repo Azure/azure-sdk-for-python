@@ -31,6 +31,9 @@ from .access_profile import AccessProfile
 from .managed_cluster_properties_access_profiles import ManagedClusterPropertiesAccessProfiles
 from .managed_cluster_properties import ManagedClusterProperties
 from .managed_cluster import ManagedCluster
+from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
+from .managed_cluster_upgrade_profile_properties import ManagedClusterUpgradeProfileProperties
+from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
 from .orchestrator_version_profile import OrchestratorVersionProfile
 from .orchestrator_version_profile_properties import OrchestratorVersionProfileProperties
 from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
@@ -41,6 +44,7 @@ from .container_service_client_enums import (
     ContainerServiceVMSizeTypes,
     ContainerServiceOrchestratorTypes,
     OSType,
+    ContainerServiceOSTypes,
 )
 
 __all__ = [
@@ -66,6 +70,9 @@ __all__ = [
     'ManagedClusterPropertiesAccessProfiles',
     'ManagedClusterProperties',
     'ManagedCluster',
+    'ManagedClusterPoolUpgradeProfile',
+    'ManagedClusterUpgradeProfileProperties',
+    'ManagedClusterUpgradeProfile',
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileProperties',
     'OrchestratorVersionProfileListResult',
@@ -75,4 +82,5 @@ __all__ = [
     'ContainerServiceVMSizeTypes',
     'ContainerServiceOrchestratorTypes',
     'OSType',
+    'ContainerServiceOSTypes',
 ]
