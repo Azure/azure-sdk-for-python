@@ -27,15 +27,13 @@ class ApplicationPatchable(GenericResource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku
-     <azure.mgmt.resource.managedapplications.models.Sku>`
+    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.resource.managedapplications.models.Identity>`
+    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     :param managed_resource_group_id: The managed resource group Id.
     :type managed_resource_group_id: str
     :param application_definition_id: The fully qualified path of managed
@@ -51,14 +49,13 @@ class ApplicationPatchable(GenericResource):
      Possible values include: 'Accepted', 'Running', 'Ready', 'Creating',
      'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
      'Updating'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.resource.managedapplications.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.resource.managedapplications.models.ProvisioningState
     :param ui_definition_uri: The blob URI where the UI definition file is
      located.
     :type ui_definition_uri: str
     :param plan: The plan information.
-    :type plan: :class:`PlanPatchable
-     <azure.mgmt.resource.managedapplications.models.PlanPatchable>`
+    :type plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
     :param kind: The kind of the managed application. Allowed values are
      MarketPlace and ServiceCatalog.
     :type kind: str

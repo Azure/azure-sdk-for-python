@@ -16,8 +16,8 @@ class Dependency(Model):
     """Deployment dependency information.
 
     :param depends_on: The list of dependencies.
-    :type depends_on: list of :class:`BasicDependency
-     <azure.mgmt.resource.resources.v2016_02_01.models.BasicDependency>`
+    :type depends_on:
+     list[~azure.mgmt.resource.resources.v2016_02_01.models.BasicDependency]
     :param id: The ID of the dependency.
     :type id: str
     :param resource_type: The dependency resource type.

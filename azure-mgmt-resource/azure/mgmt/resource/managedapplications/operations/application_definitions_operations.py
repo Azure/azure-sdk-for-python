@@ -50,13 +50,10 @@ class ApplicationDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -114,14 +111,10 @@ class ApplicationDefinitionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -194,20 +187,16 @@ class ApplicationDefinitionsOperations(object):
         :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update an
          managed application definition.
-        :type parameters: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
+        :type parameters:
+         ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ApplicationDefinition or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -293,10 +282,9 @@ class ApplicationDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-        :rtype: :class:`ApplicationDefinitionPaged
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinitionPaged>`
+        :return: An iterator like instance of ApplicationDefinition
+        :rtype:
+         ~azure.mgmt.resource.managedapplications.models.ApplicationDefinitionPaged[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -363,13 +351,10 @@ class ApplicationDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -424,14 +409,10 @@ class ApplicationDefinitionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
@@ -501,20 +482,16 @@ class ApplicationDefinitionsOperations(object):
         :type application_definition_id: str
         :param parameters: Parameters supplied to the create or update a
          managed application definition.
-        :type parameters: :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
+        :type parameters:
+         ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ApplicationDefinition
-         <azure.mgmt.resource.managedapplications.models.ApplicationDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ApplicationDefinition or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
