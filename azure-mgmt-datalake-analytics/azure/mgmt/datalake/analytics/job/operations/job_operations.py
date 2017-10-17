@@ -108,7 +108,8 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: JobInfo ID.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -245,7 +246,8 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: JobInfo ID to cancel.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -302,7 +304,8 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: The job ID (a GUID) for the job being submitted.
+        :param job_identity: Job identifier. Uniquely identifies the job
+         across all jobs submitted to the service.
         :type job_identity: str
         :param parameters: The parameters to submit a job.
         :type parameters: :class:`CreateJobParameters
