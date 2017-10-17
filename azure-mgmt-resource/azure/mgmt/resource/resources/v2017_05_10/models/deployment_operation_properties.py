@@ -29,14 +29,14 @@ class DeploymentOperationProperties(Model):
     :ivar status_message: Operation status message.
     :vartype status_message: object
     :ivar target_resource: The target resource.
-    :vartype target_resource: :class:`TargetResource
-     <azure.mgmt.resource.resources.v2017_05_10.models.TargetResource>`
+    :vartype target_resource:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.TargetResource
     :ivar request: The HTTP request message.
-    :vartype request: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v2017_05_10.models.HttpMessage>`
+    :vartype request:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.HttpMessage
     :ivar response: The HTTP response message.
-    :vartype response: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v2017_05_10.models.HttpMessage>`
+    :vartype response:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.HttpMessage
     """
 
     _validation = {

@@ -18,13 +18,13 @@ class ResourceGroupPatchable(Model):
     :param name: The name of the resource group.
     :type name: str
     :param properties:
-    :type properties: :class:`ResourceGroupProperties
-     <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupProperties
     :param managed_by: The ID of the resource that manages this resource
      group.
     :type managed_by: str
     :param tags: The tags attached to the resource group.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {

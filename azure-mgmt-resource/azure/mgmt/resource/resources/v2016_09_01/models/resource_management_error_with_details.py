@@ -25,8 +25,8 @@ class ResourceManagementErrorWithDetails(Model):
     :ivar target: The target of the error.
     :vartype target: str
     :ivar details: Validation error.
-    :vartype details: list of :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v2016_09_01.models.ResourceManagementErrorWithDetails>`
+    :vartype details:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.ResourceManagementErrorWithDetails]
     """
 
     _validation = {

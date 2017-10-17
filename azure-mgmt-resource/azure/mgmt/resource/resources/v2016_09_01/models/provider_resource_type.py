@@ -19,14 +19,14 @@ class ProviderResourceType(Model):
     :type resource_type: str
     :param locations: The collection of locations where this resource type can
      be created.
-    :type locations: list of str
+    :type locations: list[str]
     :param aliases: The aliases that are supported by this resource type.
-    :type aliases: list of :class:`AliasType
-     <azure.mgmt.resource.resources.v2016_09_01.models.AliasType>`
+    :type aliases:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.AliasType]
     :param api_versions: The API version.
-    :type api_versions: list of str
+    :type api_versions: list[str]
     :param properties: The properties.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _attribute_map = {

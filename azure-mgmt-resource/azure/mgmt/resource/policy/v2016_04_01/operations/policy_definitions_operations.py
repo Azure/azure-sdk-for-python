@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -43,17 +43,17 @@ class PolicyDefinitionsOperations(object):
          create.
         :type policy_definition_name: str
         :param parameters: The policy definition properties.
-        :type parameters: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition>`
+        :type parameters:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -114,9 +114,8 @@ class PolicyDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -166,10 +165,10 @@ class PolicyDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -225,8 +224,9 @@ class PolicyDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyDefinitionPaged
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinitionPaged>`
+        :return: An iterator like instance of PolicyDefinition
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinitionPaged[~azure.mgmt.resource.policy.v2016_04_01.models.PolicyDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

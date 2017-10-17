@@ -21,8 +21,8 @@ class PolicySetDefinition(Model):
     :param policy_type: The type of policy definition. Possible values are
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
-    :type policy_type: str or :class:`PolicyType
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyType>`
+    :type policy_type: str or
+     ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyType
     :param display_name: The display name of the policy set definition.
     :type display_name: str
     :param description: The policy set definition description.
@@ -33,8 +33,8 @@ class PolicySetDefinition(Model):
      in policy definition references.
     :type parameters: object
     :param policy_definitions: An array of policy definition references.
-    :type policy_definitions: list of :class:`PolicyDefinitionReference
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinitionReference>`
+    :type policy_definitions:
+     list[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinitionReference]
     :ivar id: The ID of the policy set definition.
     :vartype id: str
     :ivar name: The name of the policy set definition.

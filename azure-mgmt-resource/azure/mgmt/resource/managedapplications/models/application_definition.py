@@ -27,33 +27,31 @@ class ApplicationDefinition(GenericResource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku
-     <azure.mgmt.resource.managedapplications.models.Sku>`
+    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.resource.managedapplications.models.Identity>`
+    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     :param lock_level: The managed application lock level. Possible values
      include: 'CanNotDelete', 'ReadOnly', 'None'
-    :type lock_level: str or :class:`ApplicationLockLevel
-     <azure.mgmt.resource.managedapplications.models.ApplicationLockLevel>`
+    :type lock_level: str or
+     ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
     :param display_name: The managed application definition display name.
     :type display_name: str
     :param is_enabled: A value indicating whether the package is enabled or
      not.
     :type is_enabled: str
     :param authorizations: The managed application provider authorizations.
-    :type authorizations: list of :class:`ApplicationProviderAuthorization
-     <azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization>`
+    :type authorizations:
+     list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
     :param artifacts: The collection of managed application artifacts. The
      portal will use the files specified as artifacts to construct the user
      experience of creating a managed application from a managed application
      definition.
-    :type artifacts: list of :class:`ApplicationArtifact
-     <azure.mgmt.resource.managedapplications.models.ApplicationArtifact>`
+    :type artifacts:
+     list[~azure.mgmt.resource.managedapplications.models.ApplicationArtifact]
     :param description: The managed application definition description.
     :type description: str
     :param package_file_uri: The managed application definition package file

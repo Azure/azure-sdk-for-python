@@ -21,13 +21,13 @@ class PolicyDefinition(Model):
     :param policy_type: The type of policy definition. Possible values are
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
-    :type policy_type: str or :class:`PolicyType
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyType>`
+    :type policy_type: str or
+     ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyType
     :param mode: The policy definition mode. Possible values are NotSpecified,
      Indexed, and All. Possible values include: 'NotSpecified', 'Indexed',
      'All'
-    :type mode: str or :class:`PolicyMode
-     <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyMode>`
+    :type mode: str or
+     ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyMode
     :param display_name: The display name of the policy definition.
     :type display_name: str
     :param description: The policy definition description.
