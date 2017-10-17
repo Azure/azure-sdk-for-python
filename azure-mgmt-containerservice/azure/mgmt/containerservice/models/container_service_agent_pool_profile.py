@@ -62,8 +62,7 @@ class ContainerServiceAgentPoolProfile(Model):
      'Standard_H16r', 'Standard_H8', 'Standard_H8m', 'Standard_L16s',
      'Standard_L32s', 'Standard_L4s', 'Standard_L8s', 'Standard_M128s',
      'Standard_M64ms', 'Standard_NC12', 'Standard_NC24', 'Standard_NC24r',
-     'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'. Default
-     value: "Standard_D2_v2" .
+     'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or :class:`ContainerServiceVMSizeTypes
      <azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes>`
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
@@ -98,6 +97,7 @@ class ContainerServiceAgentPoolProfile(Model):
     _validation = {
         'name': {'required': True},
         'count': {'maximum': 100, 'minimum': 1},
+        'vm_size': {'required': True},
         'fqdn': {'readonly': True},
     }
 
@@ -114,7 +114,7 @@ class ContainerServiceAgentPoolProfile(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, name, count=1, vm_size="Standard_D2_v2", os_disk_size_gb=None, dns_prefix=None, ports=None, storage_profile=None, vnet_subnet_id=None, os_type="Linux"):
+    def __init__(self, name, vm_size, count=1, os_disk_size_gb=None, dns_prefix=None, ports=None, storage_profile=None, vnet_subnet_id=None, os_type="Linux"):
         self.name = name
         self.count = count
         self.vm_size = vm_size
