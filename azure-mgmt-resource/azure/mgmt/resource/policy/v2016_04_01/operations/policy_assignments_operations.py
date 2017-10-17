@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -49,10 +49,10 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -110,17 +110,17 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: The name of the policy assignment.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment.
-        :type parameters: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
+        :type parameters:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -183,10 +183,10 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -245,8 +245,9 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
+        :return: An iterator like instance of PolicyAssignment
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -255,7 +256,7 @@ class PolicyAssignmentsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyAssignments'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -326,8 +327,9 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
+        :return: An iterator like instance of PolicyAssignment
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -336,7 +338,7 @@ class PolicyAssignmentsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyassignments'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -398,8 +400,9 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
+        :return: An iterator like instance of PolicyAssignment
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -474,10 +477,10 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -539,17 +542,17 @@ class PolicyAssignmentsOperations(object):
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment.
-        :type parameters: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
+        :type parameters:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -617,10 +620,10 @@ class PolicyAssignmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PolicyAssignment or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
