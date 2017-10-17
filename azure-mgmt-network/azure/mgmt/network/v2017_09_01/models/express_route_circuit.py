@@ -27,10 +27,9 @@ class ExpressRouteCircuit(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The SKU.
-    :type sku: :class:`ExpressRouteCircuitSku
-     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitSku>`
+    :type sku: ~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitSku
     :param allow_classic_operations: Allow classic operations
     :type allow_classic_operations: bool
     :param circuit_provisioning_state: The CircuitProvisioningState state of
@@ -42,22 +41,20 @@ class ExpressRouteCircuit(Resource):
      Possible values include: 'NotProvisioned', 'Provisioning', 'Provisioned',
      'Deprovisioning'
     :type service_provider_provisioning_state: str or
-     :class:`ServiceProviderProvisioningState
-     <azure.mgmt.network.v2017_09_01.models.ServiceProviderProvisioningState>`
+     ~azure.mgmt.network.v2017_09_01.models.ServiceProviderProvisioningState
     :param authorizations: The list of authorizations.
-    :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
-     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization>`
+    :type authorizations:
+     list[~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitAuthorization]
     :param peerings: The list of peerings.
-    :type peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering>`
+    :type peerings:
+     list[~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitPeering]
     :param service_key: The ServiceKey.
     :type service_key: str
     :param service_provider_notes: The ServiceProviderNotes.
     :type service_provider_notes: str
     :param service_provider_properties: The ServiceProviderProperties.
     :type service_provider_properties:
-     :class:`ExpressRouteCircuitServiceProviderProperties
-     <azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitServiceProviderProperties>`
+     ~azure.mgmt.network.v2017_09_01.models.ExpressRouteCircuitServiceProviderProperties
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

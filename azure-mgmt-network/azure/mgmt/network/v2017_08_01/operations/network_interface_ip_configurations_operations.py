@@ -48,11 +48,9 @@ class NetworkInterfaceIPConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`NetworkInterfaceIPConfiguration
-         <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
-        :rtype: :class:`NetworkInterfaceIPConfigurationPaged
-         <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfigurationPaged>`
+        :return: An iterator like instance of NetworkInterfaceIPConfiguration
+        :rtype:
+         ~azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfigurationPaged[~azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -122,13 +120,11 @@ class NetworkInterfaceIPConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkInterfaceIPConfiguration
-         <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: NetworkInterfaceIPConfiguration or ClientRawResponse if
          raw=true
-        :rtype: :class:`NetworkInterfaceIPConfiguration
-         <azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.network.v2017_08_01.models.NetworkInterfaceIPConfiguration
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

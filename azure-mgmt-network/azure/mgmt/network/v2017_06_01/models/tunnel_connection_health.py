@@ -24,8 +24,7 @@ class TunnelConnectionHealth(Model):
      Possible values include: 'Unknown', 'Connecting', 'Connected',
      'NotConnected'
     :vartype connection_status: str or
-     :class:`VirtualNetworkGatewayConnectionStatus
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus>`
+     ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this
      connection
     :vartype ingress_bytes_transferred: long

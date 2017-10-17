@@ -12,16 +12,16 @@
 from msrest.serialization import Model
 
 
-class GatewayRouteListResult(Model):
-    """List of virtual network gateway routes.
+class TagsObject(Model):
+    """Tags object for patch operations.
 
-    :param value: List of gateway routes
-    :type value: list[~azure.mgmt.network.v2017_03_01.models.GatewayRoute]
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GatewayRoute]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, tags=None):
+        self.tags = tags

@@ -20,8 +20,8 @@ class AzureReachabilityReportItem(Model):
     :param azure_location: The Azure region.
     :type azure_location: str
     :param latencies: List of latency details for each of the time series.
-    :type latencies: list of :class:`AzureReachabilityReportLatencyInfo
-     <azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLatencyInfo>`
+    :type latencies:
+     list[~azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLatencyInfo]
     """
 
     _attribute_map = {
