@@ -86,7 +86,11 @@ class PartitionPump():
             await self.process_error_async(err) #put exception condition handleing here
 
         if reason == "LeaseLost":
-            pass #release the lease here
+            try:
+                print("Lease Lost releasing ownership")
+                await self.host.storage_manager.release_lease_async(self.partition_context.lease)
+            except Exception as err:
+                pass
 
         self.set_pump_status("Closed")
 
@@ -120,4 +124,4 @@ class PartitionPump():
         """
         Passes error to the event processor for processing.
         """
-        return self.processor.process_error_async(self.partition_context, error)
+        await self.processor.process_error_async(self.partition_context, error)

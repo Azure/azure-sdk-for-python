@@ -7,7 +7,9 @@ from eventhubs.client import EventHubClient, EventData, Receiver
 from eventhubsprocessor.partition_pump import PartitionPump
 
 class EventHubPartitionPump(PartitionPump):
-    """Pulls and messages from lease partition from eventhub and sends them to processor """
+    """
+    Pulls and messages from lease partition from eventhub and sends them to processor
+    """
     def __init__(self, host, lease):
         PartitionPump.__init__(self, host, lease)
         self.msg_queue = None
@@ -49,7 +51,7 @@ class EventHubPartitionPump(PartitionPump):
         throws EventHubsException, IOException, InterruptedException, ExecutionException
         """
         start_at = await self.partition_context.get_initial_offset_async()
-        epoch = self.lease.epoch
+        epoch = self.partition_context.lease.epoch
         self.msg_queue = Queue()
         # Create event hub client and receive handler and set options
         self.partition_receive_handler = PartitionReceiveHandler(self.partition_context.consumer_group_name,
@@ -83,7 +85,7 @@ class PartitionReceiveHandler(Receiver):
     """
     Runs the event client to pull n messages and put them in to an
     event queue for processing then terminate. Will want to replace the
-    n message mechanism with a time out associated with the leasee 
+    on message mechanism with a time out associated with the leasee 
     """
     def __init__(self, consumer_group, partition, offset, eh_partition_pump):
         super(PartitionReceiveHandler, self).__init__(consumer_group, partition, offset)
@@ -101,19 +103,20 @@ class PartitionReceiveHandler(Receiver):
         creates a new EventHubClient, using that thread to call OnEvents does no harm.
         Even if OnEvents is slow, the pump will get control back each time OnEvents returns,
         and be able to receive a new batch of messages with which to make the next OnEvents
-        call.The pump gains nothing by running faster than OnEvents. 
+        call.The pump gains nothing by running faster than OnEvents.
         """
         try:
-            if self._msg_count < self.max_batch_size and not self.eh_partition_pump.lease.is_expired():
+            if self._msg_count < self.max_batch_size:
                 self.last_offset = EventData.offset(message)
                 self.last_sn = EventData.sequence_number(message)
                 self.eh_partition_pump.msg_queue.put(message)
                 self._msg_count += 1
-                print(message, self._msg_count)
+                print("Message #{} pushed to queue".format(self._msg_count))
             else:
                 self.client.stop()
-        except:
+        except Exception as err:
             # TBI Push Error to QUEUE
+            print(err)
             self.client.stop()
 
 class PartitionReceiver:
@@ -143,7 +146,6 @@ class PartitionReceiver:
         # a new batch of messages with which to make the next OnEvents call.The pump gains nothing
         # by running faster than OnEvents.
         """
-        print(events)
         await self.eh_partition_pump.process_events_async(events)
 
     async def process_error_async(self, error):
@@ -153,5 +155,5 @@ class PartitionReceiver:
         """ 
         try:     
             await self.eh_partition_pump.process_error_async(error) # We would like to deliver all errors in the pump to error handler.     
-        finally:                    
+        finally:                   
             self.eh_partition_pump.set_pump_status("Errored")

@@ -7,19 +7,24 @@ class MockEventProcessor(AbstractEventProcessor):
     """
     Mock Implmentation of AbstractEventProcessor for testing
     """
-
+    def __init__(self):
+        """
+        Init Event processor
+        """
+        self._msg_counter = 0
     async def open_async(self, context):
         """
         Called by processor host to initialize the event processor.
         """
-        print("connection established")
+        print("Connection established")
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        print("connection closed")
+        print("Connection closed (reason, id, offset , sq_number)", reason,
+              context.partition_id, context.offset, context.sequence_number)
 
     async def process_events_async(self, context, messages):
         """
@@ -27,7 +32,12 @@ class MockEventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        print("events processed", messages)
+        print("Events processed", messages)
+        if self._msg_counter == 9:
+            await context.checkpoint_async()
+            self._msg_counter = 0
+        else:
+            self._msg_counter += 1
 
     async def process_error_async(self, context, error):
         """
@@ -36,4 +46,5 @@ class MockEventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        print("Error ", error)
+        print("Event Processor Error ", error)
+        await context.host.close_async()

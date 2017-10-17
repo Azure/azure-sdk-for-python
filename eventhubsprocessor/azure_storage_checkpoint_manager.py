@@ -17,7 +17,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     turn into lease operations under the covers.
     """
     def __init__(self, storage_account_name, storage_account_key, lease_container_name,
-                 storage_blob_prefix, lease_renew_interval=10, lease_duration=30):
+                 storage_blob_prefix=None, lease_renew_interval=10, lease_duration=30):
         AbstractCheckpointManager.__init__(self)
         AbstractLeaseManager.__init__(self, lease_renew_interval, lease_duration)
         self.storage_account_name = storage_account_name
@@ -146,21 +146,21 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     return self.storage_client.get_blob_to_text(self.lease_container_name,
                                                                 partition_id).properties.lease.state
                 except Exception as err:
-                    print(err)
+                    print("Failed to get lease state", err, partition_id)
 
             lease.state = state
             return lease
         except Exception as err:
-            print(err)
+            print("Failed to get lease", err, partition_id)
 
-    def get_all_leases(self):
+    async def get_all_leases(self):
         """
         Return the lease info for all partitions.
         A typical implementation could just call get_lease_async() on all partitions.
         (Returns) list of lease info.
         """
         lease_futures = []
-        partition_ids = self.host.partition_manager.get_partition_ids_async().result()
+        partition_ids = await self.host.partition_manager.get_partition_ids_async()
         for partition_id in partition_ids:
             lease_futures.append(self.get_lease_async(partition_id))
         return lease_futures
@@ -182,7 +182,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             try:
                 return_lease = await self.get_lease_async(partition_id)
             except Exception as err:
-                print(err) # Manage centralized exception handling
+                print("Failed to create lease ", err) # Manage centralized exception handling
                 raise err
         return return_lease
 
@@ -227,8 +227,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                                      self.lease_duration,
                                                                      new_lease_id)
         except Exception as err:
-            print(err) # add centralized error logging
-            raise err
+            print("Failed to acquire lease", err, partition_id, lease.token) # add centralized error logging
+            return False
 
         lease.owner = self.host.host_name
         lease.increment_epoch()
@@ -247,7 +247,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                  lease.token,
                                                  timeout=self.lease_renew_interval)
         except Exception as err:
-            print(err) # add centralized error logging
+            print("Failed to renew lease", err, lease.partition_id, lease.token) # add centralized error logging
             raise err
         return True
 
@@ -272,8 +272,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                    lease.partition_id,
                                                    lease_id)
         except Exception as err:
-            print(err) # add centralized error logging
-            raise err
+            print("Failed to relaese lease", err, lease.partition_id, lease_id) # add centralized error logging
+            return False
         return True
 
 

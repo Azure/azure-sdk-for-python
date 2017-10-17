@@ -7,7 +7,8 @@ import asyncio
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
 from eventhubsprocessor.eph import EventProcessorHost
-from eventhubsprocessor.lease import Lease
+from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventhubsprocessor.azure_blob_lease import AzureBlobLease
 from eventhubsprocessor.eh_partition_pump import EventHubPartitionPump
 
 class PartitionPumpTestCase(unittest.TestCase):
@@ -20,11 +21,17 @@ class PartitionPumpTestCase(unittest.TestCase):
         super(PartitionPumpTestCase, self).__init__(*args, **kwargs)
         self._credentials = MockCredentials()
         self._consumer_group = "$Default"
+        self._storage_clm = AzureStorageCheckpointLeaseManager(self._credentials.storage_account,
+                                                self._credentials.storage_key,
+                                                self._credentials.lease_container)
+                                                
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
-                                        self._consumer_group)
-        self._lease = Lease()
+                                        self._consumer_group, storage_manager=self._storage_clm)
+        
+        self._lease = AzureBlobLease()
         self._lease.with_partition_id("1")
         self._partition_pump = EventHubPartitionPump(self._host, self._lease)
+
         self._loop = asyncio.get_event_loop()
 
     def test_epp_async(self):
