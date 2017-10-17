@@ -22,8 +22,8 @@ class ClassicAdministrator(Model):
     :param type: The type of the administrator.
     :type type: str
     :param properties: Properties for the classic administrator.
-    :type properties: :class:`ClassicAdministratorProperties
-     <azure.mgmt.authorization.models.ClassicAdministratorProperties>`
+    :type properties:
+     ~azure.mgmt.authorization.models.ClassicAdministratorProperties
     """
 
     _attribute_map = {
