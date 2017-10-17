@@ -20,8 +20,8 @@ class ComputePolicyCreateOrUpdateParameters(Model):
     :type object_id: str
     :param object_type: The type of AAD object the object identifier refers
      to. Possible values include: 'User', 'Group', 'ServicePrincipal'
-    :type object_type: str or :class:`AADObjectType
-     <azure.mgmt.datalake.analytics.account.models.AADObjectType>`
+    :type object_type: str or
+     ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :param max_degree_of_parallelism_per_job: The maximum degree of
      parallelism per job this user can use to submit jobs. This property, the
      min priority per job property, or both must be passed.
