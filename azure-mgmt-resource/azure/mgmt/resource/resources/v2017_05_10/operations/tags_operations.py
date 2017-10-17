@@ -48,11 +48,8 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -104,13 +101,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TagValue
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagValue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TagValue
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagValue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TagValue or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.TagValue or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -173,13 +166,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TagDetails
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagDetails>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TagDetails
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagDetails>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TagDetails or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.TagDetails
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -240,11 +229,8 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -292,10 +278,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TagDetails
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagDetails>`
-        :rtype: :class:`TagDetailsPaged
-         <azure.mgmt.resource.resources.v2017_05_10.models.TagDetailsPaged>`
+        :return: An iterator like instance of TagDetails
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.TagDetailsPaged[~azure.mgmt.resource.resources.v2017_05_10.models.TagDetails]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

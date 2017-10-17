@@ -20,8 +20,8 @@ class DeploymentExtended(Model):
     :param name: The name of the deployment.
     :type name: str
     :param properties: Deployment properties.
-    :type properties: :class:`DeploymentPropertiesExtended
-     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentPropertiesExtended>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentPropertiesExtended
     """
 
     _validation = {

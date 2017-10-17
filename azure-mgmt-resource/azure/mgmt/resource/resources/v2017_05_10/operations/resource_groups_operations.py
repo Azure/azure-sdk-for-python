@@ -48,11 +48,8 @@ class ResourceGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: bool or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -101,20 +98,17 @@ class ResourceGroupsOperations(object):
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update a
          resource group.
-        :type parameters: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>`
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceGroup or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -179,14 +173,10 @@ class ResourceGroupsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -259,13 +249,10 @@ class ResourceGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceGroup or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -323,20 +310,17 @@ class ResourceGroupsOperations(object):
          The name is case insensitive.
         :type resource_group_name: str
         :param parameters: Parameters supplied to update a resource group.
-        :type parameters: :class:`ResourceGroupPatchable
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupPatchable>`
+        :type parameters:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupPatchable
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceGroup or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -395,7 +379,7 @@ class ResourceGroupsOperations(object):
         :param resources: The IDs of the resources. The only supported string
          currently is '*' (all resources). Future updates will support
          exporting specific resources.
-        :type resources: list of str
+        :type resources: list[str]
         :param options: The export template options. Supported values include
          'IncludeParameterDefaultValue', 'IncludeComments' or
          'IncludeParameterDefaultValue, IncludeComments
@@ -405,13 +389,10 @@ class ResourceGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceGroupExportResult
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupExportResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceGroupExportResult
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupExportResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceGroupExportResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupExportResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ExportTemplateRequest(resources=resources, options=options)
@@ -476,10 +457,9 @@ class ResourceGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>`
-        :rtype: :class:`ResourceGroupPaged
-         <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupPaged>`
+        :return: An iterator like instance of ResourceGroup
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupPaged[~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

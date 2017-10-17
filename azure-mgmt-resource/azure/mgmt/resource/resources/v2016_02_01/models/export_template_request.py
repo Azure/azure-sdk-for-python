@@ -18,7 +18,7 @@ class ExportTemplateRequest(Model):
     :param resources: The ids of the resources. The only supported string
      currently is '*' (all resources). Future api updates will support
      exporting specific resources.
-    :type resources: list of str
+    :type resources: list[str]
     :param options: The export template options. Supported values include
      'IncludeParameterDefaultValue', 'IncludeComments' or
      'IncludeParameterDefaultValue, IncludeComments
