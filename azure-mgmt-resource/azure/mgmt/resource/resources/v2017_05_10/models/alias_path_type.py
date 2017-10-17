@@ -18,7 +18,7 @@ class AliasPathType(Model):
     :param path: The path of an alias.
     :type path: str
     :param api_versions: The API versions.
-    :type api_versions: list of str
+    :type api_versions: list[str]
     """
 
     _attribute_map = {
