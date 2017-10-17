@@ -19,8 +19,7 @@ class EffectiveRouteListResult(Model):
     sending a request.
 
     :param value: A list of effective routes.
-    :type value: list of :class:`EffectiveRoute
-     <azure.mgmt.network.v2017_09_01.models.EffectiveRoute>`
+    :type value: list[~azure.mgmt.network.v2017_09_01.models.EffectiveRoute]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """

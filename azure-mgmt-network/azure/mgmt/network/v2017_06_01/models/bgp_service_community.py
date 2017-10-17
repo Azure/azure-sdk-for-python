@@ -27,12 +27,12 @@ class BgpServiceCommunity(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param service_name: The name of the bgp community. e.g. Skype.
     :type service_name: str
     :param bgp_communities: Get a list of bgp communities.
-    :type bgp_communities: list of :class:`BGPCommunity
-     <azure.mgmt.network.v2017_06_01.models.BGPCommunity>`
+    :type bgp_communities:
+     list[~azure.mgmt.network.v2017_06_01.models.BGPCommunity]
     """
 
     _validation = {

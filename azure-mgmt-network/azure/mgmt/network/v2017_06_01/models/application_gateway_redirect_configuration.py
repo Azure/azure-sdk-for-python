@@ -20,12 +20,11 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :param redirect_type: Supported http redirection types - Permanent,
      Temporary, Found, SeeOther. Possible values include: 'Permanent', 'Found',
      'SeeOther', 'Temporary'
-    :type redirect_type: str or :class:`ApplicationGatewayRedirectType
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType>`
+    :type redirect_type: str or
+     ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType
     :param target_listener: Reference to a listener to redirect the request
      to.
-    :type target_listener: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type target_listener: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param target_url: Url to redirect the request to.
     :type target_url: str
     :param include_path: Include path in the redirected url.
@@ -34,15 +33,14 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :type include_query_string: bool
     :param request_routing_rules: Request routing specifying redirect
      configuration.
-    :type request_routing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type request_routing_rules:
+     list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param url_path_maps: Url path maps specifying default redirect
      configuration.
-    :type url_path_maps: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type url_path_maps:
+     list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param path_rules: Path rules specifying redirect configuration.
-    :type path_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type path_rules: list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
     :type name: str

@@ -25,7 +25,7 @@ class BGPCommunity(Model):
      https://docs.microsoft.com/en-us/azure/expressroute/expressroute-routing.
     :type community_value: str
     :param community_prefixes: The prefixes that the bgp community contains.
-    :type community_prefixes: list of str
+    :type community_prefixes: list[str]
     """
 
     _attribute_map = {
