@@ -22,7 +22,6 @@ from .container_service_ssh_configuration import ContainerServiceSshConfiguratio
 from .container_service_linux_profile import ContainerServiceLinuxProfile
 from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
 from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
-from .container_service_properties import ContainerServiceProperties
 from .container_service import ContainerService
 from .orchestrator_profile import OrchestratorProfile
 from .pool_upgrade_profile import PoolUpgradeProfile
@@ -58,7 +57,6 @@ __all__ = [
     'ContainerServiceLinuxProfile',
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
-    'ContainerServiceProperties',
     'ContainerService',
     'OrchestratorProfile',
     'PoolUpgradeProfile',
