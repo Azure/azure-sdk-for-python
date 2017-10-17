@@ -24,7 +24,7 @@ class UpgradeProfile(Model):
     :vartype name: str
     :ivar type: Type of upgrade profile.
     :vartype type: str
-    :param properties:
+    :param properties: Properties of upgrade profile.
     :type properties: :class:`UpgradeProfileProperties
      <azure.mgmt.containerservice.models.UpgradeProfileProperties>`
     """
