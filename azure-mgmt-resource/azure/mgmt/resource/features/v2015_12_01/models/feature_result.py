@@ -18,8 +18,8 @@ class FeatureResult(Model):
     :param name: The name of the feature.
     :type name: str
     :param properties: Properties of the previewed feature.
-    :type properties: :class:`FeatureProperties
-     <azure.mgmt.resource.features.v2015_12_01.models.FeatureProperties>`
+    :type properties:
+     ~azure.mgmt.resource.features.v2015_12_01.models.FeatureProperties
     :param id: The resource ID of the feature.
     :type id: str
     :param type: The resource type of the feature.

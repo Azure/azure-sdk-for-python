@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -45,8 +45,9 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResultPaged
-         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged>`
+        :return: An iterator like instance of FeatureResult
+        :rtype:
+         ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -112,8 +113,9 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResultPaged
-         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged>`
+        :return: An iterator like instance of FeatureResult
+        :rtype:
+         ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -181,10 +183,9 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResult
-         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: FeatureResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -244,10 +245,9 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResult
-         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: FeatureResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
