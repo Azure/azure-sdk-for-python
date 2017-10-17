@@ -16,8 +16,8 @@ class ApplicationGatewayAvailableWafRuleSetsResult(Model):
     """Response for ApplicationGatewayAvailableWafRuleSets API service call.
 
     :param value: The list of application gateway rule sets.
-    :type value: list of :class:`ApplicationGatewayFirewallRuleSet
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleSet>`
+    :type value:
+     list[~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayFirewallRuleSet]
     """
 
     _attribute_map = {

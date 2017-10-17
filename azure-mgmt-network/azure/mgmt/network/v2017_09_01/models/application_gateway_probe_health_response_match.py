@@ -20,7 +20,7 @@ class ApplicationGatewayProbeHealthResponseMatch(Model):
     :type body: str
     :param status_codes: Allowed ranges of healthy status codes. Default range
      of healthy status codes is 200-399.
-    :type status_codes: list of str
+    :type status_codes: list[str]
     """
 
     _attribute_map = {

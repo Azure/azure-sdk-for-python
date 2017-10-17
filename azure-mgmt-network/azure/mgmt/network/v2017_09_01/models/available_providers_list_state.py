@@ -18,10 +18,10 @@ class AvailableProvidersListState(Model):
     :param state_name: The state name.
     :type state_name: str
     :param providers: A list of Internet service providers.
-    :type providers: list of str
+    :type providers: list[str]
     :param cities: List of available cities or towns in the state.
-    :type cities: list of :class:`AvailableProvidersListCity
-     <azure.mgmt.network.v2017_09_01.models.AvailableProvidersListCity>`
+    :type cities:
+     list[~azure.mgmt.network.v2017_09_01.models.AvailableProvidersListCity]
     """
 
     _attribute_map = {

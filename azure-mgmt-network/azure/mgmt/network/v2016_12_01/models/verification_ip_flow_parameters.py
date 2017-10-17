@@ -20,12 +20,10 @@ class VerificationIPFlowParameters(Model):
     :type target_resource_id: str
     :param direction: The direction of the packet represented as a 5-tuple.
      Possible values include: 'Inbound', 'Outbound'
-    :type direction: str or :class:`Direction
-     <azure.mgmt.network.v2016_12_01.models.Direction>`
+    :type direction: str or ~azure.mgmt.network.v2016_12_01.models.Direction
     :param protocol: Protocol to be verified on. Possible values include:
      'TCP', 'UDP'
-    :type protocol: str or :class:`Protocol
-     <azure.mgmt.network.v2016_12_01.models.Protocol>`
+    :type protocol: str or ~azure.mgmt.network.v2016_12_01.models.Protocol
     :param local_port: The local port. Acceptable values are a single integer
      in the range (0-65535). Support for * for the source port, which depends
      on the direction.

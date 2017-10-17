@@ -48,10 +48,9 @@ class LoadBalancerBackendAddressPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>`
-        :rtype: :class:`BackendAddressPoolPaged
-         <azure.mgmt.network.v2017_09_01.models.BackendAddressPoolPaged>`
+        :return: An iterator like instance of BackendAddressPool
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.BackendAddressPoolPaged[~azure.mgmt.network.v2017_09_01.models.BackendAddressPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -122,13 +121,9 @@ class LoadBalancerBackendAddressPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_09_01.models.BackendAddressPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackendAddressPool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_09_01.models.BackendAddressPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
