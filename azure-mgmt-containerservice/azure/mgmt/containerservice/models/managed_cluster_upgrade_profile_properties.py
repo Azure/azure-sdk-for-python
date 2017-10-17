@@ -12,15 +12,18 @@
 from msrest.serialization import Model
 
 
-class UpgradeProfileProperties(Model):
+class ManagedClusterUpgradeProfileProperties(Model):
     """Control plane and agent pool upgrade profiles.
 
-    :param control_plane_profile:
-    :type control_plane_profile: :class:`PoolUpgradeProfile
-     <azure.mgmt.containerservice.models.PoolUpgradeProfile>`
-    :param agent_pool_profiles:
-    :type agent_pool_profiles: list of :class:`PoolUpgradeProfile
-     <azure.mgmt.containerservice.models.PoolUpgradeProfile>`
+    :param control_plane_profile: The list of available upgrade versions for
+     the control plane.
+    :type control_plane_profile: :class:`ManagedClusterPoolUpgradeProfile
+     <azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile>`
+    :param agent_pool_profiles: The list of available upgrade versions for
+     agent pools.
+    :type agent_pool_profiles: list of
+     :class:`ManagedClusterPoolUpgradeProfile
+     <azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile>`
     """
 
     _validation = {
@@ -29,8 +32,8 @@ class UpgradeProfileProperties(Model):
     }
 
     _attribute_map = {
-        'control_plane_profile': {'key': 'controlPlaneProfile', 'type': 'PoolUpgradeProfile'},
-        'agent_pool_profiles': {'key': 'agentPoolProfiles', 'type': '[PoolUpgradeProfile]'},
+        'control_plane_profile': {'key': 'controlPlaneProfile', 'type': 'ManagedClusterPoolUpgradeProfile'},
+        'agent_pool_profiles': {'key': 'agentPoolProfiles', 'type': '[ManagedClusterPoolUpgradeProfile]'},
     }
 
     def __init__(self, control_plane_profile, agent_pool_profiles):

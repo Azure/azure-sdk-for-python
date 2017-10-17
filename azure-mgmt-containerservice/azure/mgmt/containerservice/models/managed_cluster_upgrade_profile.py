@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class UpgradeProfile(Model):
+class ManagedClusterUpgradeProfile(Model):
     """The list of available upgrades for compute pools.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,9 +24,9 @@ class UpgradeProfile(Model):
     :vartype name: str
     :ivar type: Type of upgrade profile.
     :vartype type: str
-    :param properties:
-    :type properties: :class:`UpgradeProfileProperties
-     <azure.mgmt.containerservice.models.UpgradeProfileProperties>`
+    :param properties: Properties of upgrade profile.
+    :type properties: :class:`ManagedClusterUpgradeProfileProperties
+     <azure.mgmt.containerservice.models.ManagedClusterUpgradeProfileProperties>`
     """
 
     _validation = {
@@ -40,7 +40,7 @@ class UpgradeProfile(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'UpgradeProfileProperties'},
+        'properties': {'key': 'properties', 'type': 'ManagedClusterUpgradeProfileProperties'},
     }
 
     def __init__(self, properties):
