@@ -30,6 +30,7 @@ class EntitiesOperations(object):
         self._deserialize = deserializer
 
         self.config = config
+        self.x_bing_apis_sdk = "true"
 
     def search(
             self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, response_filter=None, response_format=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
@@ -250,6 +251,7 @@ class EntitiesOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
         if accept_language is not None:
             header_parameters['Accept-Language'] = self._serialize.header("accept_language", accept_language, 'str')
         if pragma is not None:
