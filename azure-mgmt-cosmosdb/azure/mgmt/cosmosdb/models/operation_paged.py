@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class FailoverPolicies(Model):
-    """The list of new failover policies for the failover priority change.
-
-    :param failover_policies: List of failover policies.
-    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.cosmosdb.models.Operation>` object
     """
 
     _attribute_map = {
-        'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
-    def __init__(self, failover_policies=None):
-        self.failover_policies = failover_policies
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
