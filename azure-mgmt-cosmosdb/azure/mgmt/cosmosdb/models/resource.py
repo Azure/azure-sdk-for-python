@@ -28,7 +28,7 @@ class Resource(Model):
      belongs.
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
