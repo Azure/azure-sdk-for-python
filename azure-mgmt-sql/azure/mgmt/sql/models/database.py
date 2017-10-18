@@ -175,6 +175,10 @@ class Database(TrackedResource):
      ignored. Not supported for DataWarehouse edition. Possible values include:
      'AdventureWorksLT'
     :type sample_name: str or ~azure.mgmt.sql.models.SampleName
+    :param zone_redundant: Whether or not this database is zone redundant,
+     which means the replicas of this database will be spread across multiple
+     availability zones.
+    :type zone_redundant: bool
     """
 
     _validation = {
@@ -229,9 +233,10 @@ class Database(TrackedResource):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'read_scale': {'key': 'properties.readScale', 'type': 'ReadScale'},
         'sample_name': {'key': 'properties.sampleName', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
+    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None, zone_redundant=None):
         super(Database, self).__init__(tags=tags, location=location)
         self.kind = None
         self.collation = collation
