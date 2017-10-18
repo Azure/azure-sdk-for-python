@@ -18,7 +18,7 @@ class DhcpOptions(Model):
     options.
 
     :param dns_servers: The list of DNS servers IP addresses.
-    :type dns_servers: list of str
+    :type dns_servers: list[str]
     """
 
     _attribute_map = {

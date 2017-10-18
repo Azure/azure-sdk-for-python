@@ -27,22 +27,21 @@ class NetworkSecurityGroup(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param security_rules: A collection of security rules of the network
      security group.
-    :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2015_06_15.models.SecurityRule>`
+    :type security_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
     :param default_security_rules: The default security rules of network
      security group.
-    :type default_security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2015_06_15.models.SecurityRule>`
+    :type default_security_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
     :param network_interfaces: A collection of references to network
      interfaces.
-    :type network_interfaces: list of :class:`NetworkInterface
-     <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
+    :type network_interfaces:
+     list[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
     :param subnets: A collection of references to subnets.
-    :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2015_06_15.models.Subnet>`
+    :type subnets: list[~azure.mgmt.network.v2015_06_15.models.Subnet]
     :param resource_guid: The resource GUID property of the network security
      group resource.
     :type resource_guid: str

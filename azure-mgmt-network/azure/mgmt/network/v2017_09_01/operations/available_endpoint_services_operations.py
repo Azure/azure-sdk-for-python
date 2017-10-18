@@ -46,10 +46,9 @@ class AvailableEndpointServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EndpointServiceResult
-         <azure.mgmt.network.v2017_09_01.models.EndpointServiceResult>`
-        :rtype: :class:`EndpointServiceResultPaged
-         <azure.mgmt.network.v2017_09_01.models.EndpointServiceResultPaged>`
+        :return: An iterator like instance of EndpointServiceResult
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.EndpointServiceResultPaged[~azure.mgmt.network.v2017_09_01.models.EndpointServiceResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

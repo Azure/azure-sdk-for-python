@@ -66,8 +66,6 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -220,13 +218,10 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DnsNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2017_03_01.models.DnsNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-01"
