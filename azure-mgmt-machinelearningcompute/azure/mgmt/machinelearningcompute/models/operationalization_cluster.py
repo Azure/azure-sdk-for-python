@@ -27,7 +27,7 @@ class OperationalizationCluster(Resource):
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param description: The description of the cluster.
     :type description: str
     :ivar created_on: The date and time when the cluster was created.
@@ -38,33 +38,33 @@ class OperationalizationCluster(Resource):
      are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
      values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
      'Succeeded', 'Failed', 'Canceled'
-    :vartype provisioning_state: str or :class:`OperationStatus
-     <azure.mgmt.machinelearningcompute.models.OperationStatus>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningcompute.models.OperationStatus
     :ivar provisioning_errors: List of provisioning errors reported by the
      resource provider.
-    :vartype provisioning_errors: list of :class:`ErrorResponseWrapper
-     <azure.mgmt.machinelearningcompute.models.ErrorResponseWrapper>`
+    :vartype provisioning_errors:
+     list[~azure.mgmt.machinelearningcompute.models.ErrorResponseWrapper]
     :param cluster_type: The cluster type. Possible values include: 'ACS',
      'Local'
-    :type cluster_type: str or :class:`ClusterType
-     <azure.mgmt.machinelearningcompute.models.ClusterType>`
+    :type cluster_type: str or
+     ~azure.mgmt.machinelearningcompute.models.ClusterType
     :param storage_account: Storage Account properties.
-    :type storage_account: :class:`StorageAccountProperties
-     <azure.mgmt.machinelearningcompute.models.StorageAccountProperties>`
+    :type storage_account:
+     ~azure.mgmt.machinelearningcompute.models.StorageAccountProperties
     :param container_registry: Container Registry properties.
-    :type container_registry: :class:`ContainerRegistryProperties
-     <azure.mgmt.machinelearningcompute.models.ContainerRegistryProperties>`
+    :type container_registry:
+     ~azure.mgmt.machinelearningcompute.models.ContainerRegistryProperties
     :param container_service: Parameters for the Azure Container Service
      cluster.
-    :type container_service: :class:`AcsClusterProperties
-     <azure.mgmt.machinelearningcompute.models.AcsClusterProperties>`
+    :type container_service:
+     ~azure.mgmt.machinelearningcompute.models.AcsClusterProperties
     :param app_insights: AppInsights configuration.
-    :type app_insights: :class:`AppInsightsProperties
-     <azure.mgmt.machinelearningcompute.models.AppInsightsProperties>`
+    :type app_insights:
+     ~azure.mgmt.machinelearningcompute.models.AppInsightsProperties
     :param global_service_configuration: Contains global configuration for the
      web services in the cluster.
-    :type global_service_configuration: :class:`GlobalServiceConfiguration
-     <azure.mgmt.machinelearningcompute.models.GlobalServiceConfiguration>`
+    :type global_service_configuration:
+     ~azure.mgmt.machinelearningcompute.models.GlobalServiceConfiguration
     """
 
     _validation = {
