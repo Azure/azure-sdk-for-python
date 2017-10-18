@@ -3,6 +3,29 @@
 Release History
 ===============
 
+1.6.0 (2017-XX-XX)
+++++++++++++++++++
+
+UNRELEASED
+
+**Bug fixes**
+
+- Accept space in location for "usage" (i.e. "west us").
+- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups 
+  are mutually exclusive and one only is needed, meaning none of them is required 
+  by itself. Thus, sourceAddressPrefix is not required anymore.
+- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups 
+  are mutually exclusive and one only is needed, meaning none of them is required 
+  by itself. Thus, destinationAddressPrefix is not required anymore.
+- Client now accept unicode string as a valid subscription_id parameter
+
+**Features**
+
+- Add update_tags to most of the resources
+- Add operations group to list all available rest API operations
+- NetworkInterfaces_ListVirtualMachineScaleSetIpConfigurations
+- NetworkInterfaces_GetVirtualMachineScaleSetIpConfiguration
+
 1.5.0 (2017-09-26)
 ++++++++++++++++++
 
