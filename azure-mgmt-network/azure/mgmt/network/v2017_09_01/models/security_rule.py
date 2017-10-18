@@ -87,8 +87,6 @@ class SecurityRule(SubResource):
 
     _validation = {
         'protocol': {'required': True},
-        'source_address_prefix': {'required': True},
-        'destination_address_prefix': {'required': True},
         'access': {'required': True},
         'direction': {'required': True},
     }
@@ -115,7 +113,7 @@ class SecurityRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, source_address_prefixes=None, source_application_security_groups=None, destination_address_prefixes=None, destination_application_security_groups=None, source_port_ranges=None, destination_port_ranges=None, priority=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, protocol, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, source_address_prefix=None, source_address_prefixes=None, source_application_security_groups=None, destination_address_prefix=None, destination_address_prefixes=None, destination_application_security_groups=None, source_port_ranges=None, destination_port_ranges=None, priority=None, provisioning_state=None, name=None, etag=None):
         super(SecurityRule, self).__init__(id=id)
         self.description = description
         self.protocol = protocol
