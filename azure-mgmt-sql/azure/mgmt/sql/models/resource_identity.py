@@ -23,8 +23,7 @@ class ResourceIdentity(Model):
     :param type: The identity type. Set this to 'SystemAssigned' in order to
      automatically create and assign an Azure Active Directory principal for
      the resource. Possible values include: 'SystemAssigned'
-    :type type: str or :class:`IdentityType
-     <azure.mgmt.sql.models.IdentityType>`
+    :type type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
     """

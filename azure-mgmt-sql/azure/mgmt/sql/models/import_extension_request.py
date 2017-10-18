@@ -24,8 +24,7 @@ class ImportExtensionRequest(Model):
     :type type: str
     :param storage_key_type: The type of the storage key to use. Possible
      values include: 'StorageAccessKey', 'SharedAccessKey'
-    :type storage_key_type: str or :class:`StorageKeyType
-     <azure.mgmt.sql.models.StorageKeyType>`
+    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
     :param storage_key: The storage key to use.  If storage key type is
      SharedAccessKey, it must be preceded with a "?."
     :type storage_key: str
@@ -38,8 +37,8 @@ class ImportExtensionRequest(Model):
     :type administrator_login_password: str
     :param authentication_type: The authentication type. Possible values
      include: 'SQL', 'ADPassword'. Default value: "SQL" .
-    :type authentication_type: str or :class:`AuthenticationType
-     <azure.mgmt.sql.models.AuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.sql.models.AuthenticationType
     :ivar operation_mode: The type of import operation being performed. This
      is always Import. Default value: "Import" .
     :vartype operation_mode: str

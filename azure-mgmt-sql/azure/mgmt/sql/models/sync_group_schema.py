@@ -16,8 +16,7 @@ class SyncGroupSchema(Model):
     """Properties of sync group schema.
 
     :param tables: List of tables in sync group schema.
-    :type tables: list of :class:`SyncGroupSchemaTable
-     <azure.mgmt.sql.models.SyncGroupSchemaTable>`
+    :type tables: list[~azure.mgmt.sql.models.SyncGroupSchemaTable]
     :param master_sync_member_name: Name of master sync member where the
      schema is from.
     :type master_sync_member_name: str

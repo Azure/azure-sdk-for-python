@@ -27,8 +27,8 @@ class RecommendedElasticPool(ProxyResource):
     :ivar database_edition: The edition of the recommended elastic pool. The
      ElasticPoolEdition enumeration contains all the valid editions. Possible
      values include: 'Basic', 'Standard', 'Premium'
-    :vartype database_edition: str or :class:`ElasticPoolEdition
-     <azure.mgmt.sql.models.ElasticPoolEdition>`
+    :vartype database_edition: str or
+     ~azure.mgmt.sql.models.ElasticPoolEdition
     :param dtu: The DTU for the recommended elastic pool.
     :type dtu: float
     :param database_dtu_min: The minimum DTU for the database.
@@ -48,12 +48,11 @@ class RecommendedElasticPool(ProxyResource):
     :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
     :vartype max_observed_storage_mb: float
     :ivar databases: The list of databases in this pool. Expanded property
-    :vartype databases: list of :class:`Database
-     <azure.mgmt.sql.models.Database>`
+    :vartype databases: list[~azure.mgmt.sql.models.Database]
     :ivar metrics: The list of databases housed in the server. Expanded
      property
-    :vartype metrics: list of :class:`RecommendedElasticPoolMetric
-     <azure.mgmt.sql.models.RecommendedElasticPoolMetric>`
+    :vartype metrics:
+     list[~azure.mgmt.sql.models.RecommendedElasticPoolMetric]
     """
 
     _validation = {

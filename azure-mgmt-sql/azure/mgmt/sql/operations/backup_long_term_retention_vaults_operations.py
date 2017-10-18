@@ -53,13 +53,9 @@ class BackupLongTermRetentionVaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupLongTermRetentionVault
-         <azure.mgmt.sql.models.BackupLongTermRetentionVault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupLongTermRetentionVault
-         <azure.mgmt.sql.models.BackupLongTermRetentionVault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupLongTermRetentionVault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.BackupLongTermRetentionVault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -122,15 +118,11 @@ class BackupLongTermRetentionVaultsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`BackupLongTermRetentionVault
-         <azure.mgmt.sql.models.BackupLongTermRetentionVault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         BackupLongTermRetentionVault or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.BackupLongTermRetentionVault]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BackupLongTermRetentionVault(recovery_services_vault_resource_id=recovery_services_vault_resource_id)

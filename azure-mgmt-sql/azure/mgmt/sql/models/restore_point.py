@@ -26,8 +26,8 @@ class RestorePoint(ProxyResource):
     :vartype type: str
     :ivar restore_point_type: The restore point type of the database restore
      point. Possible values include: 'DISCRETE', 'CONTINUOUS'
-    :vartype restore_point_type: str or :class:`RestorePointType
-     <azure.mgmt.sql.models.RestorePointType>`
+    :vartype restore_point_type: str or
+     ~azure.mgmt.sql.models.RestorePointType
     :ivar restore_point_creation_date: Restore point creation time (ISO8601
      format). Populated when restorePointType = CONTINUOUS. Null otherwise.
     :vartype restore_point_creation_date: datetime

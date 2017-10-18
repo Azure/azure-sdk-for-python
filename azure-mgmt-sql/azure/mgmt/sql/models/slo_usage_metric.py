@@ -21,8 +21,8 @@ class SloUsageMetric(Model):
     :ivar service_level_objective: The serviceLevelObjective for SLO usage
      metric. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
      'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
-    :vartype service_level_objective: str or :class:`ServiceObjectiveName
-     <azure.mgmt.sql.models.ServiceObjectiveName>`
+    :vartype service_level_objective: str or
+     ~azure.mgmt.sql.models.ServiceObjectiveName
     :ivar service_level_objective_id: The serviceLevelObjectiveId for SLO
      usage metric.
     :vartype service_level_objective_id: str

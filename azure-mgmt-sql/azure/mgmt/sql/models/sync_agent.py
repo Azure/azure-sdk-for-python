@@ -33,8 +33,7 @@ class SyncAgent(ProxyResource):
     :vartype last_alive_time: datetime
     :ivar state: State of the sync agent. Possible values include: 'Online',
      'Offline', 'NeverConnected'
-    :vartype state: str or :class:`SyncAgentState
-     <azure.mgmt.sql.models.SyncAgentState>`
+    :vartype state: str or ~azure.mgmt.sql.models.SyncAgentState
     :ivar is_up_to_date: If the sync agent version is up to date.
     :vartype is_up_to_date: bool
     :ivar expiry_time: Expiration time of the sync agent version.

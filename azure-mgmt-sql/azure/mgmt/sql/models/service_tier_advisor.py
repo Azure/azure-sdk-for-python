@@ -42,8 +42,8 @@ class ServiceTierAdvisor(ProxyResource):
     :vartype max_size_in_gb: float
     :ivar service_level_objective_usage_metrics: Gets or sets
      serviceLevelObjectiveUsageMetrics for the service tier advisor.
-    :vartype service_level_objective_usage_metrics: list of
-     :class:`SloUsageMetric <azure.mgmt.sql.models.SloUsageMetric>`
+    :vartype service_level_objective_usage_metrics:
+     list[~azure.mgmt.sql.models.SloUsageMetric]
     :ivar current_service_level_objective: Gets or sets
      currentServiceLevelObjective for service tier advisor.
     :vartype current_service_level_objective: str

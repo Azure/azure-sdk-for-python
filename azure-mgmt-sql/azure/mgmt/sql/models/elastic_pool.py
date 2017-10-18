@@ -25,7 +25,7 @@ class ElasticPool(TrackedResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: Resource location.
     :type location: str
     :ivar creation_date: The creation date of the elastic pool (ISO8601
@@ -33,12 +33,10 @@ class ElasticPool(TrackedResource):
     :vartype creation_date: datetime
     :ivar state: The state of the elastic pool. Possible values include:
      'Creating', 'Ready', 'Disabled'
-    :vartype state: str or :class:`ElasticPoolState
-     <azure.mgmt.sql.models.ElasticPoolState>`
+    :vartype state: str or ~azure.mgmt.sql.models.ElasticPoolState
     :param edition: The edition of the elastic pool. Possible values include:
      'Basic', 'Standard', 'Premium'
-    :type edition: str or :class:`ElasticPoolEdition
-     <azure.mgmt.sql.models.ElasticPoolEdition>`
+    :type edition: str or ~azure.mgmt.sql.models.ElasticPoolEdition
     :param dtu: The total shared DTU for the database elastic pool.
     :type dtu: int
     :param database_dtu_max: The maximum DTU any one database can consume.

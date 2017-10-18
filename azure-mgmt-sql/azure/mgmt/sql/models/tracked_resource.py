@@ -25,7 +25,7 @@ class TrackedResource(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: Resource location.
     :type location: str
     """

@@ -46,13 +46,9 @@ class CapabilitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LocationCapabilities
-         <azure.mgmt.sql.models.LocationCapabilities>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LocationCapabilities
-         <azure.mgmt.sql.models.LocationCapabilities>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LocationCapabilities or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.LocationCapabilities or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
