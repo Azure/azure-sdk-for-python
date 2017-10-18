@@ -16,7 +16,7 @@ class ResourceUpdate(Model):
     """The Resource model definition.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {

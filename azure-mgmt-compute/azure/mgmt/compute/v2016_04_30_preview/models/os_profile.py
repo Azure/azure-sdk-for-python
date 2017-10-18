@@ -28,14 +28,14 @@ class OSProfile(Model):
      65535 bytes
     :type custom_data: str
     :param windows_configuration: The Windows configuration of the OS profile.
-    :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.v2016_04_30_preview.models.WindowsConfiguration>`
+    :type windows_configuration:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.WindowsConfiguration
     :param linux_configuration: The Linux configuration of the OS profile.
-    :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.v2016_04_30_preview.models.LinuxConfiguration>`
+    :type linux_configuration:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.LinuxConfiguration
     :param secrets: The list of certificates for addition to the VM.
-    :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.v2016_04_30_preview.models.VaultSecretGroup>`
+    :type secrets:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.VaultSecretGroup]
     """
 
     _attribute_map = {

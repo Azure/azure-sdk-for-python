@@ -21,8 +21,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param status: The extension handler status.
-    :type status: :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
+    :type status: ~azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus
     """
 
     _attribute_map = {

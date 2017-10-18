@@ -16,11 +16,9 @@ class ApiError(Model):
     """Api error.
 
     :param details: The Api error details
-    :type details: list of :class:`ApiErrorBase
-     <azure.mgmt.compute.v2015_06_15.models.ApiErrorBase>`
+    :type details: list[~azure.mgmt.compute.v2015_06_15.models.ApiErrorBase]
     :param innererror: The Api inner error
-    :type innererror: :class:`InnerError
-     <azure.mgmt.compute.v2015_06_15.models.InnerError>`
+    :type innererror: ~azure.mgmt.compute.v2015_06_15.models.InnerError
     :param code: The error code.
     :type code: str
     :param target: The target of the particular error.

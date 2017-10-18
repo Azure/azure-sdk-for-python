@@ -27,25 +27,23 @@ class Disk(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar managed_by: A relative URI containing the ID of the VM that has the
      disk attached.
     :vartype managed_by: str
     :param sku:
-    :type sku: :class:`DiskSku
-     <azure.mgmt.compute.v2017_03_30.models.DiskSku>`
+    :type sku: ~azure.mgmt.compute.v2017_03_30.models.DiskSku
     :param zones: The Logical zone list for Disk.
-    :type zones: list of str
+    :type zones: list[str]
     :ivar time_created: The time when the disk was created.
     :vartype time_created: datetime
     :param os_type: The Operating System type. Possible values include:
      'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     :param creation_data: Disk source information. CreationData information
      cannot be changed after the disk has been created.
-    :type creation_data: :class:`CreationData
-     <azure.mgmt.compute.v2017_03_30.models.CreationData>`
+    :type creation_data: ~azure.mgmt.compute.v2017_03_30.models.CreationData
     :param disk_size_gb: If creationData.createOption is Empty, this field is
      mandatory and it indicates the size of the VHD to create. If this field is
      present for updates or creation with other options, it indicates a resize.
@@ -53,8 +51,8 @@ class Disk(Resource):
      can only increase the disk's size.
     :type disk_size_gb: int
     :param encryption_settings: Encryption settings for disk or snapshot
-    :type encryption_settings: :class:`EncryptionSettings
-     <azure.mgmt.compute.v2017_03_30.models.EncryptionSettings>`
+    :type encryption_settings:
+     ~azure.mgmt.compute.v2017_03_30.models.EncryptionSettings
     :ivar provisioning_state: The disk provisioning state.
     :vartype provisioning_state: str
     """

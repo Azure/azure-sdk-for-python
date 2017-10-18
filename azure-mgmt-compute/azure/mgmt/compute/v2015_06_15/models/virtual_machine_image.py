@@ -22,16 +22,14 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param location: The supported Azure location of the resource.
     :type location: str
     :param tags: The tags attached to the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param plan:
-    :type plan: :class:`PurchasePlan
-     <azure.mgmt.compute.v2015_06_15.models.PurchasePlan>`
+    :type plan: ~azure.mgmt.compute.v2015_06_15.models.PurchasePlan
     :param os_disk_image:
-    :type os_disk_image: :class:`OSDiskImage
-     <azure.mgmt.compute.v2015_06_15.models.OSDiskImage>`
+    :type os_disk_image: ~azure.mgmt.compute.v2015_06_15.models.OSDiskImage
     :param data_disk_images:
-    :type data_disk_images: list of :class:`DataDiskImage
-     <azure.mgmt.compute.v2015_06_15.models.DataDiskImage>`
+    :type data_disk_images:
+     list[~azure.mgmt.compute.v2015_06_15.models.DataDiskImage]
     """
 
     _validation = {

@@ -27,7 +27,7 @@ class VirtualMachineExtension(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param force_update_tag: How the extension handler should be forced to
      update even if the extension configuration has not changed.
     :type force_update_tag: str
@@ -53,8 +53,8 @@ class VirtualMachineExtension(Resource):
      the response.
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
-    :type instance_view: :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView>`
+    :type instance_view:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtensionInstanceView
     """
 
     _validation = {

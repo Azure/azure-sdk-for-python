@@ -16,8 +16,7 @@ class GrantAccessData(Model):
     """Data used for requesting a SAS.
 
     :param access: Possible values include: 'None', 'Read'
-    :type access: str or :class:`AccessLevel
-     <azure.mgmt.compute.v2017_03_30.models.AccessLevel>`
+    :type access: str or ~azure.mgmt.compute.v2017_03_30.models.AccessLevel
     :param duration_in_seconds: Time duration in seconds until the SAS access
      expires.
     :type duration_in_seconds: int

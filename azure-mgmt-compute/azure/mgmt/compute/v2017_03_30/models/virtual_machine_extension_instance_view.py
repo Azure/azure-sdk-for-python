@@ -23,11 +23,11 @@ class VirtualMachineExtensionInstanceView(Model):
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param substatuses: The resource status information.
-    :type substatuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
+    :type substatuses:
+     list[~azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus]
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus]
     """
 
     _attribute_map = {

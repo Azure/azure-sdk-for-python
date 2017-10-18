@@ -32,22 +32,22 @@ class ResourceSku(Model):
     :ivar kind: The Kind of resources that are supported in this SKU.
     :vartype kind: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
-    :vartype capacity: :class:`ResourceSkuCapacity
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapacity>`
+    :vartype capacity:
+     ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapacity
     :ivar locations: The set of locations that the SKU is available.
-    :vartype locations: list of str
+    :vartype locations: list[str]
     :ivar api_versions: The api versions that support this SKU.
-    :vartype api_versions: list of str
+    :vartype api_versions: list[str]
     :ivar costs: Metadata for retrieving price info.
-    :vartype costs: list of :class:`ResourceSkuCosts
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuCosts>`
+    :vartype costs:
+     list[~azure.mgmt.compute.v2017_03_30.models.ResourceSkuCosts]
     :ivar capabilities: A name value pair to describe the capability.
-    :vartype capabilities: list of :class:`ResourceSkuCapabilities
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapabilities>`
+    :vartype capabilities:
+     list[~azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapabilities]
     :ivar restrictions: The restrictions because of which SKU cannot be used.
      This is empty if there are no restrictions.
-    :vartype restrictions: list of :class:`ResourceSkuRestrictions
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictions>`
+    :vartype restrictions:
+     list[~azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictions]
     """
 
     _validation = {
