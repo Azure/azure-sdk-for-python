@@ -204,7 +204,7 @@
       "markdown": "specification/cosmos-db/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.cosmosdb",
-        "package-version": "0.2.0"
+        "package-version": "0.2.1"
       },
       "output_dir": "azure-mgmt-cosmosdb/azure/mgmt/cosmosdb",
       "build_dir": "azure-mgmt-cosmosdb"
