@@ -31,8 +31,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :param state: Specifies the state of the policy. If state is Enabled,
      storageEndpoint and storageAccountAccessKey are required. Possible values
      include: 'New', 'Enabled', 'Disabled'
-    :type state: str or :class:`SecurityAlertPolicyState
-     <azure.mgmt.sql.models.SecurityAlertPolicyState>`
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies the semicolon-separated list of alerts
      that are disabled, or empty string to disable no alerts. Possible values:
      Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly; Usage_Anomaly.
@@ -43,8 +42,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :param email_account_admins: Specifies that the alert is sent to the
      account administrators. Possible values include: 'Enabled', 'Disabled'
     :type email_account_admins: str or
-     :class:`SecurityAlertPolicyEmailAccountAdmins
-     <azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins>`
+     ~azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all
      Threat Detection audit logs. If state is Enabled, storageEndpoint is
@@ -60,8 +58,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :param use_server_default: Specifies whether to use the default server
      policy. Possible values include: 'Enabled', 'Disabled'
     :type use_server_default: str or
-     :class:`SecurityAlertPolicyUseServerDefault
-     <azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault>`
+     ~azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault
     """
 
     _validation = {

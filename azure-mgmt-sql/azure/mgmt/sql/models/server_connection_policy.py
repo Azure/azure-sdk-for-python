@@ -30,8 +30,7 @@ class ServerConnectionPolicy(ProxyResource):
     :vartype location: str
     :param connection_type: The server connection type. Possible values
      include: 'Default', 'Proxy', 'Redirect'
-    :type connection_type: str or :class:`ServerConnectionType
-     <azure.mgmt.sql.models.ServerConnectionType>`
+    :type connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
     """
 
     _validation = {

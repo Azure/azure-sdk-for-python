@@ -22,12 +22,10 @@ class LocationCapabilities(Model):
     :vartype name: str
     :ivar status: Azure SQL Database's status for the location. Possible
      values include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_server_versions: The list of supported server versions.
-    :vartype supported_server_versions: list of
-     :class:`ServerVersionCapability
-     <azure.mgmt.sql.models.ServerVersionCapability>`
+    :vartype supported_server_versions:
+     list[~azure.mgmt.sql.models.ServerVersionCapability]
     """
 
     _validation = {

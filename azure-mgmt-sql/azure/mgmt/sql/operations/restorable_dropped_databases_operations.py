@@ -53,13 +53,9 @@ class RestorableDroppedDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RestorableDroppedDatabase
-         <azure.mgmt.sql.models.RestorableDroppedDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RestorableDroppedDatabase
-         <azure.mgmt.sql.models.RestorableDroppedDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RestorableDroppedDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.RestorableDroppedDatabase or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -121,11 +117,9 @@ class RestorableDroppedDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`RestorableDroppedDatabase
-         <azure.mgmt.sql.models.RestorableDroppedDatabase>`
-        :rtype: :class:`RestorableDroppedDatabasePaged
-         <azure.mgmt.sql.models.RestorableDroppedDatabasePaged>`
+        :return: An iterator like instance of RestorableDroppedDatabase
+        :rtype:
+         ~azure.mgmt.sql.models.RestorableDroppedDatabasePaged[~azure.mgmt.sql.models.RestorableDroppedDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

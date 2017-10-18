@@ -53,10 +53,9 @@ class EncryptionProtectorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EncryptionProtector
-         <azure.mgmt.sql.models.EncryptionProtector>`
-        :rtype: :class:`EncryptionProtectorPaged
-         <azure.mgmt.sql.models.EncryptionProtectorPaged>`
+        :return: An iterator like instance of EncryptionProtector
+        :rtype:
+         ~azure.mgmt.sql.models.EncryptionProtectorPaged[~azure.mgmt.sql.models.EncryptionProtector]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -126,13 +125,9 @@ class EncryptionProtectorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`EncryptionProtector
-         <azure.mgmt.sql.models.EncryptionProtector>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`EncryptionProtector
-         <azure.mgmt.sql.models.EncryptionProtector>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: EncryptionProtector or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.EncryptionProtector or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -190,20 +185,15 @@ class EncryptionProtectorsOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The requested encryption protector resource state.
-        :type parameters: :class:`EncryptionProtector
-         <azure.mgmt.sql.models.EncryptionProtector>`
+        :type parameters: ~azure.mgmt.sql.models.EncryptionProtector
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EncryptionProtector
-         <azure.mgmt.sql.models.EncryptionProtector>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         EncryptionProtector or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.EncryptionProtector]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

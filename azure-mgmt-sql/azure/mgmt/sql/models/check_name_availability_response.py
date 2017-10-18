@@ -29,8 +29,7 @@ class CheckNameAvailabilityResponse(Model):
     :ivar reason: The reason code explaining why the name is unavailable. Will
      be null if the name is available. Possible values include: 'Invalid',
      'AlreadyExists'
-    :vartype reason: str or :class:`CheckNameAvailabilityReason
-     <azure.mgmt.sql.models.CheckNameAvailabilityReason>`
+    :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
     """
 
     _validation = {

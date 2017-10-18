@@ -53,10 +53,9 @@ class RestorePointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RestorePoint
-         <azure.mgmt.sql.models.RestorePoint>`
-        :rtype: :class:`RestorePointPaged
-         <azure.mgmt.sql.models.RestorePointPaged>`
+        :return: An iterator like instance of RestorePoint
+        :rtype:
+         ~azure.mgmt.sql.models.RestorePointPaged[~azure.mgmt.sql.models.RestorePoint]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -382,6 +382,15 @@ class SyncMemberState(Enum):
     un_reprovisioned = "UnReprovisioned"
 
 
+class VirtualNetworkRuleState(Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    deleting = "Deleting"
+    unknown = "Unknown"
+
+
 class ManagementOperationState(Enum):
 
     pending = "Pending"

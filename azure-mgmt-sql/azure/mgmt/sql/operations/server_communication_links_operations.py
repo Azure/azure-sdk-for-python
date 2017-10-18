@@ -54,11 +54,8 @@ class ServerCommunicationLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -116,13 +113,9 @@ class ServerCommunicationLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServerCommunicationLink
-         <azure.mgmt.sql.models.ServerCommunicationLink>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServerCommunicationLink
-         <azure.mgmt.sql.models.ServerCommunicationLink>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServerCommunicationLink or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerCommunicationLink or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -187,15 +180,11 @@ class ServerCommunicationLinksOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ServerCommunicationLink
-         <azure.mgmt.sql.models.ServerCommunicationLink>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ServerCommunicationLink or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerCommunicationLink]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ServerCommunicationLink(partner_server=partner_server)
@@ -286,10 +275,9 @@ class ServerCommunicationLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ServerCommunicationLink
-         <azure.mgmt.sql.models.ServerCommunicationLink>`
-        :rtype: :class:`ServerCommunicationLinkPaged
-         <azure.mgmt.sql.models.ServerCommunicationLinkPaged>`
+        :return: An iterator like instance of ServerCommunicationLink
+        :rtype:
+         ~azure.mgmt.sql.models.ServerCommunicationLinkPaged[~azure.mgmt.sql.models.ServerCommunicationLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
