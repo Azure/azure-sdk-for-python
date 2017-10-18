@@ -20,8 +20,8 @@ class ManagedDiskParameters(SubResource):
     :param storage_account_type: Specifies the storage account type for the
      managed disk. Possible values are: Standard_LRS or Premium_LRS. Possible
      values include: 'Standard_LRS', 'Premium_LRS'
-    :type storage_account_type: str or :class:`StorageAccountTypes
-     <azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes>`
+    :type storage_account_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes
     """
 
     _attribute_map = {

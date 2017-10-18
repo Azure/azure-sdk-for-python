@@ -16,11 +16,10 @@ class ImageStorageProfile(Model):
     """Describes a storage profile.
 
     :param os_disk: The OS disk.
-    :type os_disk: :class:`ImageOSDisk
-     <azure.mgmt.compute.v2016_04_30_preview.models.ImageOSDisk>`
+    :type os_disk: ~azure.mgmt.compute.v2016_04_30_preview.models.ImageOSDisk
     :param data_disks: The data disks.
-    :type data_disks: list of :class:`ImageDataDisk
-     <azure.mgmt.compute.v2016_04_30_preview.models.ImageDataDisk>`
+    :type data_disks:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.ImageDataDisk]
     """
 
     _validation = {

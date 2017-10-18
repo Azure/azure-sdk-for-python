@@ -46,20 +46,16 @@ class VirtualMachineScaleSetsOperations(object):
          update.
         :type vm_scale_set_name: str
         :param parameters: The scale set object.
-        :type parameters: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
+        :type parameters:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachineScaleSet or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -144,20 +140,16 @@ class VirtualMachineScaleSetsOperations(object):
          update.
         :type vm_scale_set_name: str
         :param parameters: The scale set object.
-        :type parameters: :class:`VirtualMachineScaleSetUpdate
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdate>`
+        :type parameters:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachineScaleSet or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -241,15 +233,11 @@ class VirtualMachineScaleSetsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -331,13 +319,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachineScaleSet or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -398,19 +382,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
@@ -499,19 +479,15 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: The virtual machine scale set instance ids.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
@@ -599,13 +575,11 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineScaleSetInstanceView
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: VirtualMachineScaleSetInstanceView or ClientRawResponse if
          raw=true
-        :rtype: :class:`VirtualMachineScaleSetInstanceView
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -662,10 +636,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
-        :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSet
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -731,10 +704,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
-        :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSet
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -801,11 +773,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`VirtualMachineScaleSetSku
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSku>`
-        :rtype: :class:`VirtualMachineScaleSetSkuPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSkuPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSetSku
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSkuPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -875,19 +845,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
@@ -979,19 +945,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
@@ -1083,19 +1045,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
@@ -1185,19 +1143,15 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: The virtual machine scale set instance ids.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
@@ -1285,19 +1239,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
@@ -1390,19 +1340,15 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None

@@ -20,21 +20,18 @@ class DataDisk(Model):
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2015_06_15.models.VirtualHardDisk>`
+    :type vhd: ~azure.mgmt.compute.v2015_06_15.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. This virtual hard
      disk will be copied before using it to attach to the virtual machine. If
      SourceImage is provided, the destination virtual hard disk must not exist.
-    :type image: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2015_06_15.models.VirtualHardDisk>`
+    :type image: ~azure.mgmt.compute.v2015_06_15.models.VirtualHardDisk
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2015_06_15.models.CachingTypes>`
+    :type caching: str or ~azure.mgmt.compute.v2015_06_15.models.CachingTypes
     :param create_option: The create option. Possible values include:
      'fromImage', 'empty', 'attach'
-    :type create_option: str or :class:`DiskCreateOptionTypes
-     <azure.mgmt.compute.v2015_06_15.models.DiskCreateOptionTypes>`
+    :type create_option: str or
+     ~azure.mgmt.compute.v2015_06_15.models.DiskCreateOptionTypes
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for existing OS and Data disks.
     :type disk_size_gb: int

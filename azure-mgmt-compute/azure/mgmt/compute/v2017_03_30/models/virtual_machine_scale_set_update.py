@@ -16,19 +16,17 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     """Describes a Virtual Machine Scale Set.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
-    :type sku: :class:`Sku <azure.mgmt.compute.v2017_03_30.models.Sku>`
+    :type sku: ~azure.mgmt.compute.v2017_03_30.models.Sku
     :param plan: The purchase plan when deploying a virtual machine scale set
      from VM Marketplace images.
-    :type plan: :class:`Plan <azure.mgmt.compute.v2017_03_30.models.Plan>`
+    :type plan: ~azure.mgmt.compute.v2017_03_30.models.Plan
     :param upgrade_policy: The upgrade policy.
-    :type upgrade_policy: :class:`UpgradePolicy
-     <azure.mgmt.compute.v2017_03_30.models.UpgradePolicy>`
+    :type upgrade_policy: ~azure.mgmt.compute.v2017_03_30.models.UpgradePolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
-     :class:`VirtualMachineScaleSetUpdateVMProfile
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateVMProfile>`
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateVMProfile
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
@@ -37,8 +35,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :type single_placement_group: bool
     :param identity: The identity of the virtual machine scale set, if
      configured.
-    :type identity: :class:`VirtualMachineScaleSetIdentity
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetIdentity>`
+    :type identity:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetIdentity
     """
 
     _attribute_map = {

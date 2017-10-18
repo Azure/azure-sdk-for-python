@@ -27,8 +27,7 @@ class OperationStatusResponse(Model):
     :ivar end_time: End time of the operation
     :vartype end_time: datetime
     :ivar error: Api error
-    :vartype error: :class:`ApiError
-     <azure.mgmt.compute.v2016_03_30.models.ApiError>`
+    :vartype error: ~azure.mgmt.compute.v2016_03_30.models.ApiError
     """
 
     _validation = {

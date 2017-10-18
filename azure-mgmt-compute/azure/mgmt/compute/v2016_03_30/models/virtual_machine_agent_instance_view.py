@@ -19,12 +19,11 @@ class VirtualMachineAgentInstanceView(Model):
     :type vm_agent_version: str
     :param extension_handlers: The virtual machine extension handler instance
      view.
-    :type extension_handlers: list of
-     :class:`VirtualMachineExtensionHandlerInstanceView
-     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionHandlerInstanceView>`
+    :type extension_handlers:
+     list[~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionHandlerInstanceView]
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus]
     """
 
     _attribute_map = {

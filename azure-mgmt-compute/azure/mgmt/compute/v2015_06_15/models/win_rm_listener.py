@@ -17,8 +17,8 @@ class WinRMListener(Model):
 
     :param protocol: The Protocol used by the WinRM listener. Http and Https
      are supported. Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ProtocolTypes
-     <azure.mgmt.compute.v2015_06_15.models.ProtocolTypes>`
+    :type protocol: str or
+     ~azure.mgmt.compute.v2015_06_15.models.ProtocolTypes
     :param certificate_url: The Certificate URL in KMS for Https listeners.
      Should be null for Http listeners.
     :type certificate_url: str

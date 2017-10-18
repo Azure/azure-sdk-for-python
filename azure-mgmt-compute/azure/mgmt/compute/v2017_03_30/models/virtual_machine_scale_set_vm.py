@@ -27,39 +27,38 @@ class VirtualMachineScaleSetVM(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
     :ivar sku: The virtual machine SKU.
-    :vartype sku: :class:`Sku <azure.mgmt.compute.v2017_03_30.models.Sku>`
+    :vartype sku: ~azure.mgmt.compute.v2017_03_30.models.Sku
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
     :ivar vm_id: Azure VM unique ID.
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
-    :vartype instance_view: :class:`VirtualMachineInstanceView
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineInstanceView>`
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineInstanceView
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
-    :type hardware_profile: :class:`HardwareProfile
-     <azure.mgmt.compute.v2017_03_30.models.HardwareProfile>`
+    :type hardware_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
-    :type storage_profile: :class:`StorageProfile
-     <azure.mgmt.compute.v2017_03_30.models.StorageProfile>`
+    :type storage_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.StorageProfile
     :param os_profile: Specifies the operating system settings for the virtual
      machine.
-    :type os_profile: :class:`OSProfile
-     <azure.mgmt.compute.v2017_03_30.models.OSProfile>`
+    :type os_profile: ~azure.mgmt.compute.v2017_03_30.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
-    :type network_profile: :class:`NetworkProfile
-     <azure.mgmt.compute.v2017_03_30.models.NetworkProfile>`
+    :type network_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.NetworkProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      <br><br>Minimum api-version: 2015-06-15.
-    :type diagnostics_profile: :class:`DiagnosticsProfile
-     <azure.mgmt.compute.v2017_03_30.models.DiagnosticsProfile>`
+    :type diagnostics_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set
      that the virtual machine should be assigned to. Virtual machines specified
      in the same availability set are allocated to different nodes to maximize
@@ -71,8 +70,7 @@ class VirtualMachineScaleSetVM(Resource):
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
      time. An existing VM cannot be added to an availability set.
-    :type availability_set: :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type availability_set: ~azure.mgmt.compute.v2017_03_30.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -93,10 +91,10 @@ class VirtualMachineScaleSetVM(Resource):
      marketplace image that you want to use and then click **Want to deploy
      programmatically, Get Started ->**. Enter any required information and
      then click **Save**.
-    :type plan: :class:`Plan <azure.mgmt.compute.v2017_03_30.models.Plan>`
+    :type plan: ~azure.mgmt.compute.v2017_03_30.models.Plan
     :ivar resources: The virtual machine child extension resources.
-    :vartype resources: list of :class:`VirtualMachineExtension
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtension>`
+    :vartype resources:
+     list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtension]
     """
 
     _validation = {

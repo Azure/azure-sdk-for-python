@@ -16,14 +16,14 @@ class VirtualMachineScaleSetUpdateStorageProfile(Model):
     """Describes a virtual machine scale set storage profile.
 
     :param image_reference: The image reference.
-    :type image_reference: :class:`ImageReference
-     <azure.mgmt.compute.v2017_03_30.models.ImageReference>`
+    :type image_reference:
+     ~azure.mgmt.compute.v2017_03_30.models.ImageReference
     :param os_disk: The OS disk.
-    :type os_disk: :class:`VirtualMachineScaleSetUpdateOSDisk
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateOSDisk>`
+    :type os_disk:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateOSDisk
     :param data_disks: The data disks.
-    :type data_disks: list of :class:`VirtualMachineScaleSetDataDisk
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetDataDisk>`
+    :type data_disks:
+     list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetDataDisk]
     """
 
     _attribute_map = {

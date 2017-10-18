@@ -19,26 +19,26 @@ class VirtualMachineScaleSetOSDisk(Model):
     :type name: str
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes>`
+    :type caching: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes
     :param create_option: The create option. Possible values include:
      'fromImage', 'empty', 'attach'
-    :type create_option: str or :class:`DiskCreateOptionTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOptionTypes>`
+    :type create_option: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOptionTypes
     :param os_type: The Operating System type. Possible values include:
      'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not exist.
-    :type image: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualHardDisk>`
+    :type image:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualHardDisk
     :param vhd_containers: The list of virtual hard disk container uris.
-    :type vhd_containers: list of str
+    :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: :class:`VirtualMachineScaleSetManagedDiskParameters
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetManagedDiskParameters>`
+    :type managed_disk:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _validation = {
