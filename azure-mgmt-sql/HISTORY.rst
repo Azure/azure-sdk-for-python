@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.8.2 (2017-10-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for state and migration flag properties for SQL Vnet rules
+
 0.8.1 (2017-10-04)
 ++++++++++++++++++
 
