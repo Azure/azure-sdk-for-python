@@ -48,20 +48,16 @@ class LocalNetworkGatewaysOperations(object):
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local
          network gateway operation.
-        :type parameters: :class:`LocalNetworkGateway
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>`
+        :type parameters:
+         ~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`LocalNetworkGateway
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         LocalNetworkGateway or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -150,13 +146,9 @@ class LocalNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LocalNetworkGateway
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LocalNetworkGateway
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LocalNetworkGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -214,14 +206,10 @@ class LocalNetworkGatewaysOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -294,10 +282,9 @@ class LocalNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`LocalNetworkGateway
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway>`
-        :rtype: :class:`LocalNetworkGatewayPaged
-         <azure.mgmt.network.v2017_06_01.models.LocalNetworkGatewayPaged>`
+        :return: An iterator like instance of LocalNetworkGateway
+        :rtype:
+         ~azure.mgmt.network.v2017_06_01.models.LocalNetworkGatewayPaged[~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -27,13 +27,12 @@ class ExpressRouteServiceProvider(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param peering_locations: Get a list of peering locations.
-    :type peering_locations: list of str
+    :type peering_locations: list[str]
     :param bandwidths_offered: Gets bandwidths offered.
-    :type bandwidths_offered: list of
-     :class:`ExpressRouteServiceProviderBandwidthsOffered
-     <azure.mgmt.network.v2017_06_01.models.ExpressRouteServiceProviderBandwidthsOffered>`
+    :type bandwidths_offered:
+     list[~azure.mgmt.network.v2017_06_01.models.ExpressRouteServiceProviderBandwidthsOffered]
     :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
     """

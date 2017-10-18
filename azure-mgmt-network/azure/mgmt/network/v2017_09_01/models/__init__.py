@@ -59,6 +59,7 @@ from .application_gateway_available_waf_rule_sets_result import ApplicationGatew
 from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
 from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
 from .resource import Resource
+from .tags_object import TagsObject
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .endpoint_service_result import EndpointServiceResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
@@ -328,6 +329,7 @@ __all__ = [
     'ApplicationGatewayAvailableSslOptions',
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
+    'TagsObject',
     'DnsNameAvailabilityResult',
     'EndpointServiceResult',
     'ExpressRouteCircuitAuthorization',
