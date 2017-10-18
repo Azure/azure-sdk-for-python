@@ -35,13 +35,13 @@ class VirtualNetworkPeering(SubResource):
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual
      network.
-    :type remote_virtual_network: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type remote_virtual_network:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param peering_state: The status of the virtual network peering. Possible
      values are 'Initiated', 'Connected', and 'Disconnected'. Possible values
      include: 'Initiated', 'Connected', 'Disconnected'
-    :type peering_state: str or :class:`VirtualNetworkPeeringState
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkPeeringState>`
+    :type peering_state: str or
+     ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkPeeringState
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource

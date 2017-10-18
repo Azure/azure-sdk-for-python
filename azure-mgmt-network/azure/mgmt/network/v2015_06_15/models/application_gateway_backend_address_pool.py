@@ -19,12 +19,11 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :type id: str
     :param backend_ip_configurations: Collection of references to IPs defined
      in network interfaces.
-    :type backend_ip_configurations: list of
-     :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.NetworkInterfaceIPConfiguration>`
+    :type backend_ip_configurations:
+     list[~azure.mgmt.network.v2015_06_15.models.NetworkInterfaceIPConfiguration]
     :param backend_addresses: Backend addresses
-    :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendAddress>`
+    :type backend_addresses:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendAddress]
     :param provisioning_state: Provisioning state of the backend address pool
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

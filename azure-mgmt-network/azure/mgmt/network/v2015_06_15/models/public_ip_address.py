@@ -27,19 +27,19 @@ class PublicIPAddress(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param public_ip_allocation_method: The public IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
-    :type public_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2015_06_15.models.IPAllocationMethod>`
+    :type public_ip_allocation_method: str or
+     ~azure.mgmt.network.v2015_06_15.models.IPAllocationMethod
     :param ip_configuration:
-    :type ip_configuration: :class:`IPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.IPConfiguration>`
+    :type ip_configuration:
+     ~azure.mgmt.network.v2015_06_15.models.IPConfiguration
     :param dns_settings: The FQDN of the DNS record associated with the public
      IP address.
-    :type dns_settings: :class:`PublicIPAddressDnsSettings
-     <azure.mgmt.network.v2015_06_15.models.PublicIPAddressDnsSettings>`
+    :type dns_settings:
+     ~azure.mgmt.network.v2015_06_15.models.PublicIPAddressDnsSettings
     :param ip_address:
     :type ip_address: str
     :param idle_timeout_in_minutes: The idle timeout of the public IP address.

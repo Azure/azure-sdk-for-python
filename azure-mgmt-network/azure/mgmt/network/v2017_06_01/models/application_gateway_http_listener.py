@@ -19,20 +19,18 @@ class ApplicationGatewayHttpListener(SubResource):
     :type id: str
     :param frontend_ip_configuration: Frontend IP configuration resource of an
      application gateway.
-    :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type frontend_ip_configuration:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param frontend_port: Frontend port resource of an application gateway.
-    :type frontend_port: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type frontend_port: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param protocol: Protocol. Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
     :param host_name: Host name of HTTP listener.
     :type host_name: str
     :param ssl_certificate: SSL certificate resource of an application
      gateway.
-    :type ssl_certificate: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type ssl_certificate: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param require_server_name_indication: Applicable only if protocol is
      https. Enables SNI for multi-hosting.
     :type require_server_name_indication: bool

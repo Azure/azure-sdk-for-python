@@ -18,8 +18,8 @@ class ApplicationGatewayProbe(SubResource):
     :param id: Resource ID.
     :type id: str
     :param protocol: Protocol. Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
     :type host: str
     :param path: Relative path of probe. Valid path starts from '/'. Probe is
@@ -44,8 +44,8 @@ class ApplicationGatewayProbe(SubResource):
      healthy. Default value is 0.
     :type min_servers: int
     :param match: Criterion for classifying a healthy probe response.
-    :type match: :class:`ApplicationGatewayProbeHealthResponseMatch
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayProbeHealthResponseMatch>`
+    :type match:
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayProbeHealthResponseMatch
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

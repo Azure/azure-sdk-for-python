@@ -17,17 +17,16 @@ class ExpressRouteCircuitPeeringConfig(Model):
 
     :param advertised_public_prefixes: The reference of
      AdvertisedPublicPrefixes.
-    :type advertised_public_prefixes: list of str
+    :type advertised_public_prefixes: list[str]
     :param advertised_communities: The communities of bgp peering. Spepcified
      for microsoft peering
-    :type advertised_communities: list of str
+    :type advertised_communities: list[str]
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
      the Peering resource. Possible values are 'NotConfigured', 'Configuring',
      'Configured', and 'ValidationNeeded'. Possible values include:
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
-     :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     ~azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :param legacy_mode: The legacy mode of the peering.
     :type legacy_mode: int
     :param customer_asn: The CustomerASN of the peering.

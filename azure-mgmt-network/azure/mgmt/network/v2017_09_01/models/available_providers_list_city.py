@@ -18,7 +18,7 @@ class AvailableProvidersListCity(Model):
     :param city_name: The city or town name.
     :type city_name: str
     :param providers: A list of Internet service providers.
-    :type providers: list of str
+    :type providers: list[str]
     """
 
     _attribute_map = {

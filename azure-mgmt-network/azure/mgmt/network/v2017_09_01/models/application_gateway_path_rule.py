@@ -18,19 +18,19 @@ class ApplicationGatewayPathRule(SubResource):
     :param id: Resource ID.
     :type id: str
     :param paths: Path rules of URL path map.
-    :type paths: list of str
+    :type paths: list[str]
     :param backend_address_pool: Backend address pool resource of URL path map
      path rule.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2017_09_01.models.SubResource
     :param backend_http_settings: Backend http settings resource of URL path
      map path rule.
-    :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2017_09_01.models.SubResource
     :param redirect_configuration: Redirect configuration resource of URL path
      map path rule.
-    :type redirect_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :type redirect_configuration:
+     ~azure.mgmt.network.v2017_09_01.models.SubResource
     :param provisioning_state: Path rule of URL path map resource. Possible
      values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

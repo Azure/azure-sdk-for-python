@@ -18,8 +18,7 @@ class PacketCaptureFilter(Model):
 
     :param protocol: Protocol to be filtered on. Possible values include:
      'TCP', 'UDP', 'Any'. Default value: "Any" .
-    :type protocol: str or :class:`PcProtocol
-     <azure.mgmt.network.v2016_12_01.models.PcProtocol>`
+    :type protocol: str or ~azure.mgmt.network.v2016_12_01.models.PcProtocol
     :param local_ip_address: Local IP Address to be filtered on. Notation:
      "127.0.0.1" for single address entry. "127.0.0.1-127.0.0.255" for range.
      "127.0.0.1;127.0.0.5"? for multiple entries. Multiple ranges not currently
