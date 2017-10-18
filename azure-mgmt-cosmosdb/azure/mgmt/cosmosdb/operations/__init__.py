@@ -10,7 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .database_accounts_operations import DatabaseAccountsOperations
+from .operations import Operations
 
 __all__ = [
     'DatabaseAccountsOperations',
+    'Operations',
 ]

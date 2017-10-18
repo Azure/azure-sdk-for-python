@@ -12,16 +12,21 @@
 from msrest.serialization import Model
 
 
-class DatabaseAccountPatchParameters(Model):
-    """Parameters for patching Azure Cosmos DB database account properties.
+class Operation(Model):
+    """REST API operation.
 
-    :param tags:
-    :type tags: dict
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.cosmosdb.models.OperationDisplay>`
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, tags=None):
-        self.tags = tags
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display
