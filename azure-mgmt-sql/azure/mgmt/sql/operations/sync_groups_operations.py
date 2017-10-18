@@ -48,10 +48,9 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncDatabaseIdProperties
-         <azure.mgmt.sql.models.SyncDatabaseIdProperties>`
-        :rtype: :class:`SyncDatabaseIdPropertiesPaged
-         <azure.mgmt.sql.models.SyncDatabaseIdPropertiesPaged>`
+        :return: An iterator like instance of SyncDatabaseIdProperties
+        :rtype:
+         ~azure.mgmt.sql.models.SyncDatabaseIdPropertiesPaged[~azure.mgmt.sql.models.SyncDatabaseIdProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -123,14 +122,10 @@ class SyncGroupsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -214,10 +209,9 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncFullSchemaProperties
-         <azure.mgmt.sql.models.SyncFullSchemaProperties>`
-        :rtype: :class:`SyncFullSchemaPropertiesPaged
-         <azure.mgmt.sql.models.SyncFullSchemaPropertiesPaged>`
+        :return: An iterator like instance of SyncFullSchemaProperties
+        :rtype:
+         ~azure.mgmt.sql.models.SyncFullSchemaPropertiesPaged[~azure.mgmt.sql.models.SyncFullSchemaProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -303,10 +297,9 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncGroupLogProperties
-         <azure.mgmt.sql.models.SyncGroupLogProperties>`
-        :rtype: :class:`SyncGroupLogPropertiesPaged
-         <azure.mgmt.sql.models.SyncGroupLogPropertiesPaged>`
+        :return: An iterator like instance of SyncGroupLogProperties
+        :rtype:
+         ~azure.mgmt.sql.models.SyncGroupLogPropertiesPaged[~azure.mgmt.sql.models.SyncGroupLogProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -388,11 +381,8 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -453,11 +443,8 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -518,11 +505,9 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SyncGroup <azure.mgmt.sql.models.SyncGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SyncGroup <azure.mgmt.sql.models.SyncGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SyncGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.SyncGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -586,19 +571,15 @@ class SyncGroupsOperations(object):
         :param sync_group_name: The name of the sync group.
         :type sync_group_name: str
         :param parameters: The requested sync group resource state.
-        :type parameters: :class:`SyncGroup <azure.mgmt.sql.models.SyncGroup>`
+        :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SyncGroup
-         <azure.mgmt.sql.models.SyncGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns SyncGroup or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.SyncGroup]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -693,14 +674,10 @@ class SyncGroupsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -780,19 +757,15 @@ class SyncGroupsOperations(object):
         :param sync_group_name: The name of the sync group.
         :type sync_group_name: str
         :param parameters: The requested sync group resource state.
-        :type parameters: :class:`SyncGroup <azure.mgmt.sql.models.SyncGroup>`
+        :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SyncGroup
-         <azure.mgmt.sql.models.SyncGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns SyncGroup or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.SyncGroup]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -885,9 +858,9 @@ class SyncGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncGroup
-         <azure.mgmt.sql.models.SyncGroup>`
-        :rtype: :class:`SyncGroupPaged <azure.mgmt.sql.models.SyncGroupPaged>`
+        :return: An iterator like instance of SyncGroup
+        :rtype:
+         ~azure.mgmt.sql.models.SyncGroupPaged[~azure.mgmt.sql.models.SyncGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

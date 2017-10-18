@@ -25,12 +25,11 @@ class Server(TrackedResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: Resource location.
     :type location: str
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: :class:`ResourceIdentity
-     <azure.mgmt.sql.models.ResourceIdentity>`
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
      experience.
     :vartype kind: str

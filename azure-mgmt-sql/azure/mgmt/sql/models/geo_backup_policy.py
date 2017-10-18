@@ -26,8 +26,7 @@ class GeoBackupPolicy(ProxyResource):
     :vartype type: str
     :param state: The state of the geo backup policy. Possible values include:
      'Disabled', 'Enabled'
-    :type state: str or :class:`GeoBackupPolicyState
-     <azure.mgmt.sql.models.GeoBackupPolicyState>`
+    :type state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
     :ivar storage_type: The storage type of the geo backup policy.
     :vartype storage_type: str
     :ivar kind: Kind of geo backup policy.  This is metadata used for the

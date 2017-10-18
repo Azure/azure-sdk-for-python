@@ -49,20 +49,16 @@ class ServerConnectionPoliciesOperations(object):
         :type server_name: str
         :param connection_type: The server connection type. Possible values
          include: 'Default', 'Proxy', 'Redirect'
-        :type connection_type: str or :class:`ServerConnectionType
-         <azure.mgmt.sql.models.ServerConnectionType>`
+        :type connection_type: str or
+         ~azure.mgmt.sql.models.ServerConnectionType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServerConnectionPolicy
-         <azure.mgmt.sql.models.ServerConnectionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServerConnectionPolicy
-         <azure.mgmt.sql.models.ServerConnectionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServerConnectionPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerConnectionPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ServerConnectionPolicy(connection_type=connection_type)
@@ -132,13 +128,9 @@ class ServerConnectionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServerConnectionPolicy
-         <azure.mgmt.sql.models.ServerConnectionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServerConnectionPolicy
-         <azure.mgmt.sql.models.ServerConnectionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServerConnectionPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerConnectionPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

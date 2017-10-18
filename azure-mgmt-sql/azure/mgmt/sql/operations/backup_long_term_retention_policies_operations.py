@@ -55,13 +55,10 @@ class BackupLongTermRetentionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupLongTermRetentionPolicy
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: BackupLongTermRetentionPolicy or ClientRawResponse if
          raw=true
-        :rtype: :class:`BackupLongTermRetentionPolicy
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.sql.models.BackupLongTermRetentionPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -123,23 +120,19 @@ class BackupLongTermRetentionPoliciesOperations(object):
         :type database_name: str
         :param state: The status of the backup long term retention policy.
          Possible values include: 'Disabled', 'Enabled'
-        :type state: str or :class:`BackupLongTermRetentionPolicyState
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicyState>`
+        :type state: str or
+         ~azure.mgmt.sql.models.BackupLongTermRetentionPolicyState
         :param recovery_services_backup_policy_resource_id: The azure recovery
          services backup protection policy resource id
         :type recovery_services_backup_policy_resource_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`BackupLongTermRetentionPolicy
-         <azure.mgmt.sql.models.BackupLongTermRetentionPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         BackupLongTermRetentionPolicy or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.BackupLongTermRetentionPolicy]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BackupLongTermRetentionPolicy(state=state, recovery_services_backup_policy_resource_id=recovery_services_backup_policy_resource_id)

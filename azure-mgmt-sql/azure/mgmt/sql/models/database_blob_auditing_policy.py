@@ -29,8 +29,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :param state: Specifies the state of the policy. If state is Enabled,
      storageEndpoint and storageAccountAccessKey are required. Possible values
      include: 'Enabled', 'Disabled'
-    :type state: str or :class:`BlobAuditingPolicyState
-     <azure.mgmt.sql.models.BlobAuditingPolicyState>`
+    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
      storageEndpoint is required.
@@ -44,7 +43,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type retention_days: int
     :param audit_actions_and_groups: Specifies the Actions and Actions-Groups
      to audit.
-    :type audit_actions_and_groups: list of str
+    :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.
     :type storage_account_subscription_id: str

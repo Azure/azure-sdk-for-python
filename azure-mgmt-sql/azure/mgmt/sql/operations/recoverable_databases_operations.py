@@ -53,13 +53,9 @@ class RecoverableDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RecoverableDatabase
-         <azure.mgmt.sql.models.RecoverableDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RecoverableDatabase
-         <azure.mgmt.sql.models.RecoverableDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RecoverableDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.RecoverableDatabase or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -121,10 +117,9 @@ class RecoverableDatabasesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RecoverableDatabase
-         <azure.mgmt.sql.models.RecoverableDatabase>`
-        :rtype: :class:`RecoverableDatabasePaged
-         <azure.mgmt.sql.models.RecoverableDatabasePaged>`
+        :return: An iterator like instance of RecoverableDatabase
+        :rtype:
+         ~azure.mgmt.sql.models.RecoverableDatabasePaged[~azure.mgmt.sql.models.RecoverableDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
