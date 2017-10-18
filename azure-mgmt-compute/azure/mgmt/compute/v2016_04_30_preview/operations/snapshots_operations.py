@@ -47,20 +47,16 @@ class SnapshotsOperations(object):
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk
          operation.
-        :type snapshot: :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>`
+        :type snapshot:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Snapshot or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -146,20 +142,16 @@ class SnapshotsOperations(object):
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch
          snapshot operation.
-        :type snapshot: :class:`SnapshotUpdate
-         <azure.mgmt.compute.v2016_04_30_preview.models.SnapshotUpdate>`
+        :type snapshot:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Snapshot or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -248,13 +240,9 @@ class SnapshotsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Snapshot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -312,15 +300,11 @@ class SnapshotsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -400,10 +384,9 @@ class SnapshotsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>`
-        :rtype: :class:`SnapshotPaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.SnapshotPaged>`
+        :return: An iterator like instance of Snapshot
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotPaged[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -466,10 +449,9 @@ class SnapshotsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Snapshot
-         <azure.mgmt.compute.v2016_04_30_preview.models.Snapshot>`
-        :rtype: :class:`SnapshotPaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.SnapshotPaged>`
+        :return: An iterator like instance of Snapshot
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotPaged[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -532,23 +514,19 @@ class SnapshotsOperations(object):
          subscription and resource group.
         :type snapshot_name: str
         :param access: Possible values include: 'None', 'Read'
-        :type access: str or :class:`AccessLevel
-         <azure.mgmt.compute.v2016_04_30_preview.models.AccessLevel>`
+        :type access: str or
+         ~azure.mgmt.compute.v2016_04_30_preview.models.AccessLevel
         :param duration_in_seconds: Time duration in seconds until the SAS
          access expires.
         :type duration_in_seconds: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AccessUri
-         <azure.mgmt.compute.v2016_04_30_preview.models.AccessUri>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns AccessUri or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.AccessUri]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         grant_access_data = models.GrantAccessData(access=access, duration_in_seconds=duration_in_seconds)
@@ -635,15 +613,11 @@ class SnapshotsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

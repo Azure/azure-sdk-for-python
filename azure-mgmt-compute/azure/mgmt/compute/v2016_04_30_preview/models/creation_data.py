@@ -17,15 +17,15 @@ class CreationData(Model):
 
     :param create_option: Possible values include: 'Empty', 'Attach',
      'FromImage', 'Import', 'Copy', 'Restore'
-    :type create_option: str or :class:`DiskCreateOption
-     <azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption>`
+    :type create_option: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
     :param storage_account_id: If createOption is Import, the Azure Resource
      Manager identifier of the storage account containing the blob to import as
      a disk. Required only if the blob is in a different subscription
     :type storage_account_id: str
     :param image_reference: Disk source information.
-    :type image_reference: :class:`ImageDiskReference
-     <azure.mgmt.compute.v2016_04_30_preview.models.ImageDiskReference>`
+    :type image_reference:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.ImageDiskReference
     :param source_uri: If creationOption is Import, this is a SAS URI to a
      blob to be imported into a managed disk. If creationOption is Copy, this
      is a relative Uri containing the id of the source snapshot to be copied

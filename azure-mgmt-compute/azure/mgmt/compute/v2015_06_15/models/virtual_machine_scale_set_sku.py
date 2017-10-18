@@ -21,10 +21,10 @@ class VirtualMachineScaleSetSku(Model):
     :ivar resource_type: The type of resource the sku applies to.
     :vartype resource_type: str
     :ivar sku: The Sku.
-    :vartype sku: :class:`Sku <azure.mgmt.compute.v2015_06_15.models.Sku>`
+    :vartype sku: ~azure.mgmt.compute.v2015_06_15.models.Sku
     :ivar capacity: Available scaling information.
-    :vartype capacity: :class:`VirtualMachineScaleSetSkuCapacity
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetSkuCapacity>`
+    :vartype capacity:
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetSkuCapacity
     """
 
     _validation = {

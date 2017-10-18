@@ -52,13 +52,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachineExtensionImage or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -119,13 +116,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -192,13 +186,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineExtensionImage]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

@@ -22,20 +22,20 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
-    :type vm_agent: :class:`VirtualMachineAgentInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineAgentInstanceView>`
+    :type vm_agent:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineAgentInstanceView
     :param disks: The disks information.
-    :type disks: list of :class:`DiskInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.DiskInstanceView>`
+    :type disks:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.DiskInstanceView]
     :param extensions: The extensions information.
-    :type extensions: list of :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView>`
+    :type extensions:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView]
     :param boot_diagnostics: The boot diagnostics.
-    :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.BootDiagnosticsInstanceView>`
+    :type boot_diagnostics:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.BootDiagnosticsInstanceView
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus]
     :param placement_group_id: The placement group in which the VM is running.
      If the VM is deallocated it will not have a placementGroupId.
     :type placement_group_id: str

@@ -22,29 +22,26 @@ class OSDisk(Model):
      that is included in the disk if creating a VM from user-image or a
      specialized VHD. <br><br> Possible values are: <br><br> **Windows**
      <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     :param encryption_settings: Specifies the encryption settings for the OS
      Disk. <br><br> Minimum api-version: 2015-06-15
-    :type encryption_settings: :class:`DiskEncryptionSettings
-     <azure.mgmt.compute.v2017_03_30.models.DiskEncryptionSettings>`
+    :type encryption_settings:
+     ~azure.mgmt.compute.v2017_03_30.models.DiskEncryptionSettings
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk>`
+    :type vhd: ~azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard
      disk will be copied before being attached to the virtual machine. If
      SourceImage is provided, the destination virtual hard drive must not
      exist.
-    :type image: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk>`
+    :type image: ~azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2017_03_30.models.CachingTypes>`
+    :type caching: str or ~azure.mgmt.compute.v2017_03_30.models.CachingTypes
     :param create_option: Specifies how the virtual machine should be
      created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
@@ -53,15 +50,15 @@ class OSDisk(Model):
      image, you also use the imageReference element described above. If you are
      using a marketplace image, you  also use the plan element previously
      described. Possible values include: 'FromImage', 'Empty', 'Attach'
-    :type create_option: str or :class:`DiskCreateOptionTypes
-     <azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes>`
+    :type create_option: str or
+     ~azure.mgmt.compute.v2017_03_30.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
      gigabytes. This element can be used to overwrite the name of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: :class:`ManagedDiskParameters
-     <azure.mgmt.compute.v2017_03_30.models.ManagedDiskParameters>`
+    :type managed_disk:
+     ~azure.mgmt.compute.v2017_03_30.models.ManagedDiskParameters
     """
 
     _validation = {

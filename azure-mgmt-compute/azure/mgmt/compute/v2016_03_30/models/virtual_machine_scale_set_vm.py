@@ -27,38 +27,36 @@ class VirtualMachineScaleSetVM(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
     :ivar sku: The virtual machine SKU.
-    :vartype sku: :class:`Sku <azure.mgmt.compute.v2016_03_30.models.Sku>`
+    :vartype sku: ~azure.mgmt.compute.v2016_03_30.models.Sku
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
     :ivar vm_id: Azure VM unique ID.
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
-    :vartype instance_view: :class:`VirtualMachineInstanceView
-     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineInstanceView>`
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineInstanceView
     :param hardware_profile: The hardware profile.
-    :type hardware_profile: :class:`HardwareProfile
-     <azure.mgmt.compute.v2016_03_30.models.HardwareProfile>`
+    :type hardware_profile:
+     ~azure.mgmt.compute.v2016_03_30.models.HardwareProfile
     :param storage_profile: The storage profile.
-    :type storage_profile: :class:`StorageProfile
-     <azure.mgmt.compute.v2016_03_30.models.StorageProfile>`
+    :type storage_profile:
+     ~azure.mgmt.compute.v2016_03_30.models.StorageProfile
     :param os_profile: The OS profile.
-    :type os_profile: :class:`OSProfile
-     <azure.mgmt.compute.v2016_03_30.models.OSProfile>`
+    :type os_profile: ~azure.mgmt.compute.v2016_03_30.models.OSProfile
     :param network_profile: The network profile.
-    :type network_profile: :class:`NetworkProfile
-     <azure.mgmt.compute.v2016_03_30.models.NetworkProfile>`
+    :type network_profile:
+     ~azure.mgmt.compute.v2016_03_30.models.NetworkProfile
     :param diagnostics_profile: The diagnostics profile.
-    :type diagnostics_profile: :class:`DiagnosticsProfile
-     <azure.mgmt.compute.v2016_03_30.models.DiagnosticsProfile>`
+    :type diagnostics_profile:
+     ~azure.mgmt.compute.v2016_03_30.models.DiagnosticsProfile
     :param availability_set: The reference Id of the availability set to which
      this virtual machine belongs.
-    :type availability_set: :class:`SubResource
-     <azure.mgmt.compute.v2016_03_30.models.SubResource>`
+    :type availability_set: ~azure.mgmt.compute.v2016_03_30.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -67,10 +65,10 @@ class VirtualMachineScaleSetVM(Resource):
     :type license_type: str
     :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.
-    :type plan: :class:`Plan <azure.mgmt.compute.v2016_03_30.models.Plan>`
+    :type plan: ~azure.mgmt.compute.v2016_03_30.models.Plan
     :ivar resources: The virtual machine child extension resources.
-    :vartype resources: list of :class:`VirtualMachineExtension
-     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtension>`
+    :vartype resources:
+     list[~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtension]
     """
 
     _validation = {

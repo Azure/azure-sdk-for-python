@@ -27,8 +27,8 @@ class VirtualMachineScaleSetIdentity(Model):
     :param type: The type of identity used for the virtual machine scale set.
      Currently, the only supported type is 'SystemAssigned', which implicitly
      creates an identity. Possible values include: 'SystemAssigned'
-    :type type: str or :class:`ResourceIdentityType
-     <azure.mgmt.compute.v2016_03_30.models.ResourceIdentityType>`
+    :type type: str or
+     ~azure.mgmt.compute.v2016_03_30.models.ResourceIdentityType
     """
 
     _validation = {

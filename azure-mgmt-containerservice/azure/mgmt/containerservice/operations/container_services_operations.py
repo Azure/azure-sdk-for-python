@@ -50,10 +50,9 @@ class ContainerServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>`
-        :rtype: :class:`ContainerServicePaged
-         <azure.mgmt.containerservice.models.ContainerServicePaged>`
+        :return: An iterator like instance of ContainerService
+        :rtype:
+         ~azure.mgmt.containerservice.models.ContainerServicePaged[~azure.mgmt.containerservice.models.ContainerService]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -120,20 +119,15 @@ class ContainerServicesOperations(object):
         :type container_service_name: str
         :param parameters: Parameters supplied to the Create or Update a
          Container Service operation.
-        :type parameters: :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>`
+        :type parameters: ~azure.mgmt.containerservice.models.ContainerService
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ContainerService or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.models.ContainerService]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -229,13 +223,9 @@ class ContainerServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContainerService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerservice.models.ContainerService or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -300,14 +290,10 @@ class ContainerServicesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -385,10 +371,9 @@ class ContainerServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContainerService
-         <azure.mgmt.containerservice.models.ContainerService>`
-        :rtype: :class:`ContainerServicePaged
-         <azure.mgmt.containerservice.models.ContainerServicePaged>`
+        :return: An iterator like instance of ContainerService
+        :rtype:
+         ~azure.mgmt.containerservice.models.ContainerServicePaged[~azure.mgmt.containerservice.models.ContainerService]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

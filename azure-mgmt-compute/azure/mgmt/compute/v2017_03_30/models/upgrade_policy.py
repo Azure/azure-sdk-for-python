@@ -21,12 +21,11 @@ class UpgradePolicy(Model):
      You do this by using the manualUpgrade action.<br /><br /> **Automatic** -
      All virtual machines in the scale set are  automatically updated at the
      same time. Possible values include: 'Automatic', 'Manual', 'Rolling'
-    :type mode: str or :class:`UpgradeMode
-     <azure.mgmt.compute.v2017_03_30.models.UpgradeMode>`
+    :type mode: str or ~azure.mgmt.compute.v2017_03_30.models.UpgradeMode
     :param rolling_upgrade_policy: The configuration parameters used while
      performing a rolling upgrade.
-    :type rolling_upgrade_policy: :class:`RollingUpgradePolicy
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradePolicy>`
+    :type rolling_upgrade_policy:
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradePolicy
     :param automatic_os_upgrade: Whether OS upgrades should automatically be
      applied to scale set instances in a rolling fashion when a newer version
      of the image becomes available.
