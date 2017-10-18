@@ -22,13 +22,11 @@ class ElasticPoolEditionCapability(Model):
     :vartype name: str
     :ivar status: The status of the elastic pool edition. Possible values
      include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_elastic_pool_dtus: The list of supported elastic pool DTU
      levels for the edition.
-    :vartype supported_elastic_pool_dtus: list of
-     :class:`ElasticPoolDtuCapability
-     <azure.mgmt.sql.models.ElasticPoolDtuCapability>`
+    :vartype supported_elastic_pool_dtus:
+     list[~azure.mgmt.sql.models.ElasticPoolDtuCapability]
     """
 
     _validation = {

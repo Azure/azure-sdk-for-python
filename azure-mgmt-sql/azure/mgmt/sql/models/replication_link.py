@@ -40,13 +40,11 @@ class ReplicationLink(ProxyResource):
     :ivar role: The role of the database in the replication link. Possible
      values include: 'Primary', 'Secondary', 'NonReadableSecondary', 'Source',
      'Copy'
-    :vartype role: str or :class:`ReplicationRole
-     <azure.mgmt.sql.models.ReplicationRole>`
+    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar partner_role: The role of the partner database in the replication
      link. Possible values include: 'Primary', 'Secondary',
      'NonReadableSecondary', 'Source', 'Copy'
-    :vartype partner_role: str or :class:`ReplicationRole
-     <azure.mgmt.sql.models.ReplicationRole>`
+    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar start_time: The start time for the replication link.
     :vartype start_time: datetime
     :ivar percent_complete: The percentage of seeding complete for the
@@ -54,8 +52,7 @@ class ReplicationLink(ProxyResource):
     :vartype percent_complete: int
     :ivar replication_state: The replication state for the replication link.
      Possible values include: 'PENDING', 'SEEDING', 'CATCH_UP', 'SUSPENDED'
-    :vartype replication_state: str or :class:`ReplicationState
-     <azure.mgmt.sql.models.ReplicationState>`
+    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     """
 
     _validation = {

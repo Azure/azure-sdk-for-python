@@ -16,8 +16,7 @@ class SyncGroupSchemaTable(Model):
     """Properties of table in sync group schema.
 
     :param columns: List of columns in sync group schema.
-    :type columns: list of :class:`SyncGroupSchemaTableColumn
-     <azure.mgmt.sql.models.SyncGroupSchemaTableColumn>`
+    :type columns: list[~azure.mgmt.sql.models.SyncGroupSchemaTableColumn]
     :param quoted_name: Quoted name of sync group schema table.
     :type quoted_name: str
     """

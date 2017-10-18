@@ -22,13 +22,11 @@ class EditionCapability(Model):
     :vartype name: str
     :ivar status: The status of the edition. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_service_level_objectives: The list of supported service
      objectives for the edition.
-    :vartype supported_service_level_objectives: list of
-     :class:`ServiceObjectiveCapability
-     <azure.mgmt.sql.models.ServiceObjectiveCapability>`
+    :vartype supported_service_level_objectives:
+     list[~azure.mgmt.sql.models.ServiceObjectiveCapability]
     """
 
     _validation = {

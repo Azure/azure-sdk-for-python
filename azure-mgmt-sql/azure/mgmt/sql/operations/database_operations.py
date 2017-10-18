@@ -54,11 +54,8 @@ class DatabaseOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -116,10 +113,9 @@ class DatabaseOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`DatabaseOperation
-         <azure.mgmt.sql.models.DatabaseOperation>`
-        :rtype: :class:`DatabaseOperationPaged
-         <azure.mgmt.sql.models.DatabaseOperationPaged>`
+        :return: An iterator like instance of DatabaseOperation
+        :rtype:
+         ~azure.mgmt.sql.models.DatabaseOperationPaged[~azure.mgmt.sql.models.DatabaseOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

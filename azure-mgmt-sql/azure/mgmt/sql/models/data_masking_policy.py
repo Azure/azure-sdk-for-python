@@ -26,8 +26,7 @@ class DataMaskingPolicy(ProxyResource):
     :vartype type: str
     :param data_masking_state: The state of the data masking policy. Possible
      values include: 'Disabled', 'Enabled'
-    :type data_masking_state: str or :class:`DataMaskingState
-     <azure.mgmt.sql.models.DataMaskingState>`
+    :type data_masking_state: str or ~azure.mgmt.sql.models.DataMaskingState
     :param exempt_principals: The list of the exempt principals. Specifies the
      semicolon-separated list of database users for which the data masking
      policy does not apply. The specified users receive data results without

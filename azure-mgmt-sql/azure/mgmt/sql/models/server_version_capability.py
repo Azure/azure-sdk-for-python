@@ -22,16 +22,14 @@ class ServerVersionCapability(Model):
     :vartype name: str
     :ivar status: The status of the server version. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_editions: The list of supported database editions.
-    :vartype supported_editions: list of :class:`EditionCapability
-     <azure.mgmt.sql.models.EditionCapability>`
+    :vartype supported_editions:
+     list[~azure.mgmt.sql.models.EditionCapability]
     :ivar supported_elastic_pool_editions: The list of supported elastic pool
      editions.
-    :vartype supported_elastic_pool_editions: list of
-     :class:`ElasticPoolEditionCapability
-     <azure.mgmt.sql.models.ElasticPoolEditionCapability>`
+    :vartype supported_elastic_pool_editions:
+     list[~azure.mgmt.sql.models.ElasticPoolEditionCapability]
     """
 
     _validation = {

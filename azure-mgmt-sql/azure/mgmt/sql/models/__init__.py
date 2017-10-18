@@ -175,6 +175,7 @@ from .sql_management_client_enums import (
     SyncGroupState,
     SyncDirection,
     SyncMemberState,
+    VirtualNetworkRuleState,
     ManagementOperationState,
 )
 
@@ -344,5 +345,6 @@ __all__ = [
     'SyncGroupState',
     'SyncDirection',
     'SyncMemberState',
+    'VirtualNetworkRuleState',
     'ManagementOperationState',
 ]

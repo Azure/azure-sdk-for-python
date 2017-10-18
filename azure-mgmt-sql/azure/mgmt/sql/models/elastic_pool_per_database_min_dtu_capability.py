@@ -22,8 +22,7 @@ class ElasticPoolPerDatabaseMinDtuCapability(Model):
     :vartype limit: long
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     """
 
     _validation = {
