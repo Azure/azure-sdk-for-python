@@ -12,18 +12,20 @@
 from msrest.serialization import Model
 
 
-class DatabaseAccountListConnectionStringsResult(Model):
-    """The connection strings for the given database account.
+class Operation(Model):
+    """REST API operation.
 
-    :param connection_strings: An array that contains the connection strings
-     for the Cosmos DB account.
-    :type connection_strings:
-     list[~azure.mgmt.cosmosdb.models.DatabaseAccountConnectionString]
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.cosmosdb.models.OperationDisplay
     """
 
     _attribute_map = {
-        'connection_strings': {'key': 'connectionStrings', 'type': '[DatabaseAccountConnectionString]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, connection_strings=None):
-        self.connection_strings = connection_strings
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display
