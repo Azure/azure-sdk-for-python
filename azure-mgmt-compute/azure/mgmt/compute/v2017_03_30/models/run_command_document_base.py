@@ -21,8 +21,8 @@ class RunCommandDocumentBase(Model):
     :type id: str
     :param os_type: The Operating System type. Possible values include:
      'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     :param label: The VM run command label.
     :type label: str
     :param description: The VM run command description.

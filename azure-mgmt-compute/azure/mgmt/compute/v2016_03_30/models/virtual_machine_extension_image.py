@@ -27,7 +27,7 @@ class VirtualMachineExtensionImage(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param operating_system: The operating system this extension supports.
     :type operating_system: str
     :param compute_role: The type of role (IaaS or PaaS) this extension

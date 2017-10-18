@@ -47,15 +47,11 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -138,15 +134,11 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -229,13 +221,10 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RollingUpgradeStatusInfo
-         <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RollingUpgradeStatusInfo
-         <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RollingUpgradeStatusInfo or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradeStatusInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

@@ -27,37 +27,35 @@ class ContainerService(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: the current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
     :param orchestrator_profile: Properties of the orchestrator.
-    :type orchestrator_profile: :class:`ContainerServiceOrchestratorProfile
-     <azure.mgmt.containerservice.models.ContainerServiceOrchestratorProfile>`
+    :type orchestrator_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceOrchestratorProfile
     :param custom_profile: Properties for custom clusters.
-    :type custom_profile: :class:`ContainerServiceCustomProfile
-     <azure.mgmt.containerservice.models.ContainerServiceCustomProfile>`
+    :type custom_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceCustomProfile
     :param service_principal_profile: Properties for cluster service
      principals.
     :type service_principal_profile:
-     :class:`ContainerServiceServicePrincipalProfile
-     <azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile>`
+     ~azure.mgmt.containerservice.models.ContainerServiceServicePrincipalProfile
     :param master_profile: Properties of master agents.
-    :type master_profile: :class:`ContainerServiceMasterProfile
-     <azure.mgmt.containerservice.models.ContainerServiceMasterProfile>`
+    :type master_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceMasterProfile
     :param agent_pool_profiles: Properties of the agent pool.
-    :type agent_pool_profiles: list of
-     :class:`ContainerServiceAgentPoolProfile
-     <azure.mgmt.containerservice.models.ContainerServiceAgentPoolProfile>`
+    :type agent_pool_profiles:
+     list[~azure.mgmt.containerservice.models.ContainerServiceAgentPoolProfile]
     :param windows_profile: Properties of Windows VMs.
-    :type windows_profile: :class:`ContainerServiceWindowsProfile
-     <azure.mgmt.containerservice.models.ContainerServiceWindowsProfile>`
+    :type windows_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceWindowsProfile
     :param linux_profile: Properties of Linux VMs.
-    :type linux_profile: :class:`ContainerServiceLinuxProfile
-     <azure.mgmt.containerservice.models.ContainerServiceLinuxProfile>`
+    :type linux_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceLinuxProfile
     :param diagnostics_profile: Properties of the diagnostic agent.
-    :type diagnostics_profile: :class:`ContainerServiceDiagnosticsProfile
-     <azure.mgmt.containerservice.models.ContainerServiceDiagnosticsProfile>`
+    :type diagnostics_profile:
+     ~azure.mgmt.containerservice.models.ContainerServiceDiagnosticsProfile
     """
 
     _validation = {

@@ -27,21 +27,20 @@ class RollingUpgradeStatusInfo(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar policy: The rolling upgrade policies applied for this upgrade.
-    :vartype policy: :class:`RollingUpgradePolicy
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradePolicy>`
+    :vartype policy:
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradePolicy
     :ivar running_status: Information about the current running state of the
      overall upgrade.
-    :vartype running_status: :class:`RollingUpgradeRunningStatus
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeRunningStatus>`
+    :vartype running_status:
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradeRunningStatus
     :ivar progress: Information about the number of virtual machine instances
      in each upgrade state.
-    :vartype progress: :class:`RollingUpgradeProgressInfo
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeProgressInfo>`
+    :vartype progress:
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradeProgressInfo
     :ivar error: Error details for this upgrade, if there are any.
-    :vartype error: :class:`ApiError
-     <azure.mgmt.compute.v2017_03_30.models.ApiError>`
+    :vartype error: ~azure.mgmt.compute.v2017_03_30.models.ApiError
     """
 
     _validation = {

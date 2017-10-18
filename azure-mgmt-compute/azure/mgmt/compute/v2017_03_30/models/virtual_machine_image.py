@@ -25,16 +25,14 @@ class VirtualMachineImage(VirtualMachineImageResource):
      For more information about using tags, see [Using tags to organize your
      Azure
      resources](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md).
-    :type tags: dict
+    :type tags: dict[str, str]
     :param plan:
-    :type plan: :class:`PurchasePlan
-     <azure.mgmt.compute.v2017_03_30.models.PurchasePlan>`
+    :type plan: ~azure.mgmt.compute.v2017_03_30.models.PurchasePlan
     :param os_disk_image:
-    :type os_disk_image: :class:`OSDiskImage
-     <azure.mgmt.compute.v2017_03_30.models.OSDiskImage>`
+    :type os_disk_image: ~azure.mgmt.compute.v2017_03_30.models.OSDiskImage
     :param data_disk_images:
-    :type data_disk_images: list of :class:`DataDiskImage
-     <azure.mgmt.compute.v2017_03_30.models.DataDiskImage>`
+    :type data_disk_images:
+     list[~azure.mgmt.compute.v2017_03_30.models.DataDiskImage]
     """
 
     _validation = {

@@ -16,21 +16,21 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :param os_profile: The virtual machine scale set OS profile.
-    :type os_profile: :class:`VirtualMachineScaleSetUpdateOSProfile
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateOSProfile>`
+    :type os_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateOSProfile
     :param storage_profile: The virtual machine scale set storage profile.
-    :type storage_profile: :class:`VirtualMachineScaleSetUpdateStorageProfile
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateStorageProfile>`
+    :type storage_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateStorageProfile
     :param network_profile: The virtual machine scale set network profile.
-    :type network_profile: :class:`VirtualMachineScaleSetUpdateNetworkProfile
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateNetworkProfile>`
+    :type network_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateNetworkProfile
     :param diagnostics_profile: The virtual machine scale set diagnostics
      profile.
-    :type diagnostics_profile: :class:`DiagnosticsProfile
-     <azure.mgmt.compute.v2017_03_30.models.DiagnosticsProfile>`
+    :type diagnostics_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.DiagnosticsProfile
     :param extension_profile: The virtual machine scale set extension profile.
-    :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionProfile>`
+    :type extension_profile:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str

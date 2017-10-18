@@ -26,8 +26,7 @@ class Usage(Model):
     :param limit: The maximum permitted usage of the resource.
     :type limit: long
     :param name: The name of the type of usage.
-    :type name: :class:`UsageName
-     <azure.mgmt.compute.v2015_06_15.models.UsageName>`
+    :type name: ~azure.mgmt.compute.v2015_06_15.models.UsageName
     """
 
     _validation = {

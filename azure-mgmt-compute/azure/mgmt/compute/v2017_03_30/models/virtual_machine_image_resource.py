@@ -25,7 +25,7 @@ class VirtualMachineImageResource(SubResource):
      For more information about using tags, see [Using tags to organize your
      Azure
      resources](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md).
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

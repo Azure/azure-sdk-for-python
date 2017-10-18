@@ -38,8 +38,8 @@ class ContainerServiceAgentPoolProfile(Model):
      'Standard_DS11', 'Standard_DS12', 'Standard_DS13', 'Standard_DS14',
      'Standard_GS1', 'Standard_GS2', 'Standard_GS3', 'Standard_GS4',
      'Standard_GS5'
-    :type vm_size: str or :class:`ContainerServiceVMSizeTypes
-     <azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes>`
+    :type vm_size: str or
+     ~azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes
     :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
      pool.
     :type dns_prefix: str
