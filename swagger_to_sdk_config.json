@@ -99,9 +99,9 @@
         "add-credentials": true,
         "azure-arm": false
       },
-      "output_dir": "azure-cognitiveservices/azure/cognitiveservices/search/entitysearch",
-      "generated_relative_base_directory": "azure-cognitiveservices/azure/cognitiveservices/search/entitysearch",
-      "build_dir": "azure-cognitiveservices/azure/cognitiveservices/search/entitysearch"
+      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
+      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch"
     },    
     "commerce": {
       "markdown": "specification/commerce/resource-manager/readme.md",
@@ -625,7 +625,7 @@
         "azure-arm": false
       },
       "output_dir": "azure-servicefabric/azure/servicefabric",
-      "generated_relative_base_directory": "service_fabric_client_ap_is",
+      "generated_relative_base_directory": "azure/servicefabric",
       "build_dir": "azure-servicefabric"      
     },
     "servicefabric.mgmt": {
