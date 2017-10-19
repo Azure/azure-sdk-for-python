@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.8.1"
+from msrest.paging import Paged
 
+
+class ServerDnsAliasPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerDnsAlias <azure.mgmt.sql.models.ServerDnsAlias>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerDnsAlias]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerDnsAliasPaged, self).__init__(*args, **kwargs)
