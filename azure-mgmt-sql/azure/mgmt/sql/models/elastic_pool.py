@@ -45,6 +45,10 @@ class ElasticPool(TrackedResource):
     :type database_dtu_min: int
     :param storage_mb: Gets storage limit for the database elastic pool in MB.
     :type storage_mb: int
+    :param zone_redundant: Whether or not this database elastic pool is zone
+     redundant, which means the replicas of this database will be spread across
+     multiple availability zones.
+    :type zone_redundant: bool
     :ivar kind: Kind of elastic pool.  This is metadata used for the Azure
      portal experience.
     :vartype kind: str
@@ -73,10 +77,11 @@ class ElasticPool(TrackedResource):
         'database_dtu_max': {'key': 'properties.databaseDtuMax', 'type': 'int'},
         'database_dtu_min': {'key': 'properties.databaseDtuMin', 'type': 'int'},
         'storage_mb': {'key': 'properties.storageMB', 'type': 'int'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None):
+    def __init__(self, location, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None, zone_redundant=None):
         super(ElasticPool, self).__init__(tags=tags, location=location)
         self.creation_date = None
         self.state = None
@@ -85,4 +90,5 @@ class ElasticPool(TrackedResource):
         self.database_dtu_max = database_dtu_max
         self.database_dtu_min = database_dtu_min
         self.storage_mb = storage_mb
+        self.zone_redundant = zone_redundant
         self.kind = None
