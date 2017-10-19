@@ -11,7 +11,7 @@
 from os.path import dirname, join, realpath
 
 from azure.cognitiveservices.vision.face import FaceAPI
-from msrest.authentication import CognitiveServicesAuthentication
+#from msrest.authentication import CognitiveServicesAuthentication
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
