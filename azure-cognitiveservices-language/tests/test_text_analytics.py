@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsAPI
-from msrest.authentication import CognitiveServicesAuthentication
+#from msrest.authentication import CognitiveServicesAuthentication
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
