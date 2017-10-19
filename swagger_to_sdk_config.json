@@ -103,6 +103,17 @@
       "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
       "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch"
     },    
+    "cognitiveservices.vision.face": {
+      "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.face",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/face",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/face",
+      "build_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/face"
+    },
     "commerce": {
       "markdown": "specification/commerce/resource-manager/readme.md",
       "autorest_options": {
