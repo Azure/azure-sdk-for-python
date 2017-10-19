@@ -14,13 +14,10 @@ try:
 except ImportError:
     # Python 2 compatibility
     from urlparse import urlparse
-import azure.mgmt.resource.resources.models
-import azure.mgmt.recoveryservices
-from azure.mgmt.recoveryservices.models import (StorageModelType, Vault, Sku, SkuName, VaultProperties,
-                                                VaultExtendedInfoResource, VaultUsage, EnhancedSecurityState
-                                                      )
-from msrestazure.azure_exceptions import CloudError
-from testutils.common_recordingtestcase import RecordingTestCase
+
+from azure.mgmt.recoveryservices.models import (Vault, Sku, SkuName, VaultProperties,
+                                                VaultExtendedInfoResource,
+                                                )
 
 
 class MgmtRecoveryServicesTestDefinition(object):
