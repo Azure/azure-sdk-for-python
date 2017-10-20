@@ -23,7 +23,7 @@ class ContainerGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01-preview".
+    :ivar api_version: Client API version. Constant value: "2017-10-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class ContainerGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01-preview"
+        self.api_version = "2017-10-01-preview"
 
         self.config = config
 
@@ -49,10 +49,9 @@ class ContainerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>`
-        :rtype: :class:`ContainerGroupPaged
-         <azure.mgmt.containerinstance.models.ContainerGroupPaged>`
+        :return: An iterator like instance of ContainerGroup
+        :rtype:
+         ~azure.mgmt.containerinstance.models.ContainerGroupPaged[~azure.mgmt.containerinstance.models.ContainerGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -115,18 +114,16 @@ class ContainerGroupsOperations(object):
         including containers, image registry credentials, restart policy, IP
         address type, OS type, state, and volumes.
 
-        :param resource_group_name: The name of the resource group that
-         contains the container group.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>`
-        :rtype: :class:`ContainerGroupPaged
-         <azure.mgmt.containerinstance.models.ContainerGroupPaged>`
+        :return: An iterator like instance of ContainerGroup
+        :rtype:
+         ~azure.mgmt.containerinstance.models.ContainerGroupPaged[~azure.mgmt.containerinstance.models.ContainerGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -190,8 +187,7 @@ class ContainerGroupsOperations(object):
         credentials, restart policy, IP address type, OS type, state, and
         volumes.
 
-        :param resource_group_name: The name of the resource group that
-         contains the container group.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param container_group_name: The name of the container group.
         :type container_group_name: str
@@ -200,13 +196,9 @@ class ContainerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContainerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -258,28 +250,22 @@ class ContainerGroupsOperations(object):
 
         Create or update container groups with specified configurations.
 
-        :param resource_group_name: The name of the resource group to contain
-         the container group to be created or updated.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param container_group_name: The name of the container group to be
-         created or updated.
+        :param container_group_name: The name of the container group.
         :type container_group_name: str
         :param container_group: The properties of the container group to be
          created or updated.
-        :type container_group: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>`
+        :type container_group:
+         ~azure.mgmt.containerinstance.models.ContainerGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContainerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -339,24 +325,18 @@ class ContainerGroupsOperations(object):
         resource group. The operation does not delete other resources provided
         by the user, such as volumes.
 
-        :param resource_group_name: The name of the resource group that
-         contains the container group.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param container_group_name: The name of the container group to be
-         deleted.
+        :param container_group_name: The name of the container group.
         :type container_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContainerGroup
-         <azure.mgmt.containerinstance.models.ContainerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContainerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

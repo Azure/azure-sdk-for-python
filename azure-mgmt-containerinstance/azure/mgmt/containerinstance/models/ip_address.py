@@ -19,8 +19,7 @@ class IpAddress(Model):
     sending a request.
 
     :param ports: The list of ports exposed on the container group.
-    :type ports: list of :class:`Port
-     <azure.mgmt.containerinstance.models.Port>`
+    :type ports: list[~azure.mgmt.containerinstance.models.Port]
     :ivar type: Specifies if the IP is exposed to the public internet. Default
      value: "Public" .
     :vartype type: str

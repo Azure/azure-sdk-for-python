@@ -27,7 +27,7 @@ class Resource(Model):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
