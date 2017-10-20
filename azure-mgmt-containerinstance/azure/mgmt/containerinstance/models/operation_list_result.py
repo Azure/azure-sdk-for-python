@@ -9,35 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ContainerNetworkProtocol(Enum):
+class OperationListResult(Model):
+    """The operation list response that contains all operations for Azure
+    Container Instance service.
 
-    tcp = "TCP"
-    udp = "UDP"
+    :param value: The list of operations.
+    :type value: list[~azure.mgmt.containerinstance.models.Operation]
+    """
 
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
 
-class ContainerGroupRestartPolicy(Enum):
-
-    always = "Always"
-    on_failure = "OnFailure"
-    never = "Never"
-
-
-class ContainerGroupNetworkProtocol(Enum):
-
-    tcp = "TCP"
-    udp = "UDP"
-
-
-class OperatingSystemTypes(Enum):
-
-    windows = "Windows"
-    linux = "Linux"
-
-
-class ContainerInstanceOperationsOrigin(Enum):
-
-    user = "User"
-    system = "System"
+    def __init__(self, value=None):
+        self.value = value

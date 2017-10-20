@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ContainerEvent(Model):
-    """A container instance event.
+class Event(Model):
+    """A container group or container instance event.
 
     :param count: The count of the event.
     :type count: int
@@ -21,6 +21,8 @@ class ContainerEvent(Model):
     :type first_timestamp: datetime
     :param last_timestamp: The date-time of the latest logged event.
     :type last_timestamp: datetime
+    :param name: The event name.
+    :type name: str
     :param message: The event message.
     :type message: str
     :param type: The event type.
@@ -31,13 +33,15 @@ class ContainerEvent(Model):
         'count': {'key': 'count', 'type': 'int'},
         'first_timestamp': {'key': 'firstTimestamp', 'type': 'iso-8601'},
         'last_timestamp': {'key': 'lastTimestamp', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, count=None, first_timestamp=None, last_timestamp=None, message=None, type=None):
+    def __init__(self, count=None, first_timestamp=None, last_timestamp=None, name=None, message=None, type=None):
         self.count = count
         self.first_timestamp = first_timestamp
         self.last_timestamp = last_timestamp
+        self.name = name
         self.message = message
         self.type = type

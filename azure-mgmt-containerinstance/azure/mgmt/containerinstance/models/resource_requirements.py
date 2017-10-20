@@ -16,11 +16,9 @@ class ResourceRequirements(Model):
     """The resource requirements.
 
     :param requests: The resource requests of this container instance.
-    :type requests: :class:`ResourceRequests
-     <azure.mgmt.containerinstance.models.ResourceRequests>`
+    :type requests: ~azure.mgmt.containerinstance.models.ResourceRequests
     :param limits: The resource limits of this container instance.
-    :type limits: :class:`ResourceLimits
-     <azure.mgmt.containerinstance.models.ResourceLimits>`
+    :type limits: ~azure.mgmt.containerinstance.models.ResourceLimits
     """
 
     _validation = {
