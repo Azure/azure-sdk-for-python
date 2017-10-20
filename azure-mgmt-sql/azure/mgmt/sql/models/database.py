@@ -264,3 +264,4 @@ class Database(TrackedResource):
         self.failover_group_id = None
         self.read_scale = read_scale
         self.sample_name = sample_name
+        self.zone_redundant = zone_redundant

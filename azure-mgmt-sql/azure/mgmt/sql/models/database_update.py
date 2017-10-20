@@ -103,8 +103,7 @@ class DatabaseUpdate(Resource):
      referred to by operationId: "Capabilities_ListByLocation.". Possible
      values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
      'Stretch', 'DataWarehouse', 'System', 'System2'
-    :type edition: str or :class:`DatabaseEdition
-     <azure.mgmt.sql.models.DatabaseEdition>`
+    :type edition: str or ~azure.mgmt.sql.models.DatabaseEdition
     :param max_size_bytes: The max size of the database expressed in bytes. If
      createMode is not Default, this value is ignored. To see possible values,
      query the capabilities API
@@ -256,3 +255,4 @@ class DatabaseUpdate(Resource):
         self.failover_group_id = None
         self.read_scale = read_scale
         self.sample_name = sample_name
+        self.zone_redundant = zone_redundant
