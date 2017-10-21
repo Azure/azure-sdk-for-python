@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ContainerLogsOperations(object):
-    """ContainerLogsOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,49 +36,29 @@ class ContainerLogsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, container_group_name, container_name, tail=None, custom_headers=None, raw=False, **operation_config):
-        """Get the logs for a specified container instance.
+            self, custom_headers=None, raw=False, **operation_config):
+        """List the operations for Azure Container Instance service.
 
-        Get the logs for a specified container instance in a specified resource
-        group and container group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param container_group_name: The name of the container group.
-        :type container_group_name: str
-        :param container_name: The name of the container instance.
-        :type container_name: str
-        :param tail: The number of lines to show from the tail of the
-         container instance log. If not provided, all available logs are shown
-         up to 4mb.
-        :type tail: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Logs <azure.mgmt.containerinstance.models.Logs>` or
+        :return: :class:`OperationListResult
+         <azure.mgmt.containerinstance.models.OperationListResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Logs <azure.mgmt.containerinstance.models.Logs>` or
+        :rtype: :class:`OperationListResult
+         <azure.mgmt.containerinstance.models.OperationListResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/logs'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = '/providers/Microsoft.ContainerInstance/operations'
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if tail is not None:
-            query_parameters['tail'] = self._serialize.query("tail", tail, 'int')
 
         # Construct headers
         header_parameters = {}
@@ -102,7 +82,7 @@ class ContainerLogsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Logs', response)
+            deserialized = self._deserialize('OperationListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

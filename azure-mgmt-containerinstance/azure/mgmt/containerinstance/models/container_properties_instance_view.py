@@ -15,29 +15,39 @@ from msrest.serialization import Model
 class ContainerPropertiesInstanceView(Model):
     """The instance view of the container instance. Only valid in response.
 
-    :param restart_count: The number of times that the container instance has
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar restart_count: The number of times that the container instance has
      been restarted.
-    :type restart_count: int
-    :param current_state: Current container instance state.
-    :type current_state: :class:`ContainerState
+    :vartype restart_count: int
+    :ivar current_state: Current container instance state.
+    :vartype current_state: :class:`ContainerState
      <azure.mgmt.containerinstance.models.ContainerState>`
-    :param previous_state: Previous container instance state.
-    :type previous_state: :class:`ContainerState
+    :ivar previous_state: Previous container instance state.
+    :vartype previous_state: :class:`ContainerState
      <azure.mgmt.containerinstance.models.ContainerState>`
-    :param events: The events of the container instance.
-    :type events: list of :class:`ContainerEvent
-     <azure.mgmt.containerinstance.models.ContainerEvent>`
+    :ivar events: The events of the container instance.
+    :vartype events: list of :class:`Event
+     <azure.mgmt.containerinstance.models.Event>`
     """
+
+    _validation = {
+        'restart_count': {'readonly': True},
+        'current_state': {'readonly': True},
+        'previous_state': {'readonly': True},
+        'events': {'readonly': True},
+    }
 
     _attribute_map = {
         'restart_count': {'key': 'restartCount', 'type': 'int'},
         'current_state': {'key': 'currentState', 'type': 'ContainerState'},
         'previous_state': {'key': 'previousState', 'type': 'ContainerState'},
-        'events': {'key': 'events', 'type': '[ContainerEvent]'},
+        'events': {'key': 'events', 'type': '[Event]'},
     }
 
-    def __init__(self, restart_count=None, current_state=None, previous_state=None, events=None):
-        self.restart_count = restart_count
-        self.current_state = current_state
-        self.previous_state = previous_state
-        self.events = events
+    def __init__(self):
+        self.restart_count = None
+        self.current_state = None
+        self.previous_state = None
+        self.events = None

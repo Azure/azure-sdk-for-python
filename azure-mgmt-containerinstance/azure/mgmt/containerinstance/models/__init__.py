@@ -12,7 +12,7 @@
 from .container_port import ContainerPort
 from .environment_variable import EnvironmentVariable
 from .container_state import ContainerState
-from .container_event import ContainerEvent
+from .event import Event
 from .container_properties_instance_view import ContainerPropertiesInstanceView
 from .resource_requests import ResourceRequests
 from .resource_limits import ResourceLimits
@@ -24,21 +24,27 @@ from .volume import Volume
 from .image_registry_credential import ImageRegistryCredential
 from .port import Port
 from .ip_address import IpAddress
+from .container_group_properties_instance_view import ContainerGroupPropertiesInstanceView
 from .container_group import ContainerGroup
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .logs import Logs
 from .resource import Resource
 from .container_group_paged import ContainerGroupPaged
 from .container_instance_management_client_enums import (
-    ContainerRestartPolicy,
+    ContainerNetworkProtocol,
+    ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
     OperatingSystemTypes,
+    ContainerInstanceOperationsOrigin,
 )
 
 __all__ = [
     'ContainerPort',
     'EnvironmentVariable',
     'ContainerState',
-    'ContainerEvent',
+    'Event',
     'ContainerPropertiesInstanceView',
     'ResourceRequests',
     'ResourceLimits',
@@ -50,11 +56,17 @@ __all__ = [
     'ImageRegistryCredential',
     'Port',
     'IpAddress',
+    'ContainerGroupPropertiesInstanceView',
     'ContainerGroup',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'Logs',
     'Resource',
     'ContainerGroupPaged',
-    'ContainerRestartPolicy',
+    'ContainerNetworkProtocol',
+    'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',
     'OperatingSystemTypes',
+    'ContainerInstanceOperationsOrigin',
 ]
