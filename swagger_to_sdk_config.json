@@ -306,23 +306,14 @@
       "output_dir": "azure-mgmt-media/azure/mgmt/media",
       "build_dir": "azure-mgmt-media"
     },
-    "monitor.mgmt": {
+    "monitor": {
       "markdown": "specification/monitor/resource-manager/readme.md",
       "autorest_options": {
-        "package-version": "0.3.0"
+        "package-version": "0.4.0"
       },
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor",
       "build_dir": "azure-mgmt-monitor",
       "generated_relative_base_directory": "python/azure/mgmt/monitor"
-    },
-    "monitor.data": {
-      "markdown": "specification/monitor/data-plane/readme.md",
-      "autorest_options": {
-        "package-version": "0.4.0"
-      },
-      "output_dir": "azure-monitor/azure/monitor",
-      "build_dir": "azure-monitor",
-      "generated_relative_base_directory": "python/azure/monitor"
     },
     "network.2015-06-15": {
       "markdown": "specification/network/resource-manager/readme.md",

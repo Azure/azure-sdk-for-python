@@ -17,15 +17,13 @@ class ThresholdRuleCondition(RuleCondition):
 
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
-    :type data_source: :class:`RuleDataSource
-     <azure.mgmt.monitor.models.RuleDataSource>`
-    :param odatatype: Polymorphic Discriminator
+    :type data_source: ~azure.mgmt.monitor.models.RuleDataSource
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     :param operator: the operator used to compare the data and the threshold.
      Possible values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
      'LessThanOrEqual'
-    :type operator: str or :class:`ConditionOperator
-     <azure.mgmt.monitor.models.ConditionOperator>`
+    :type operator: str or ~azure.mgmt.monitor.models.ConditionOperator
     :param threshold: the threshold value that activates the alert.
     :type threshold: float
     :param window_size: the period of time (in ISO 8601 duration format) that
@@ -36,8 +34,8 @@ class ThresholdRuleCondition(RuleCondition):
      are collected should be combined over time. The default value is the
      PrimaryAggregationType of the Metric. Possible values include: 'Average',
      'Minimum', 'Maximum', 'Total', 'Last'
-    :type time_aggregation: str or :class:`TimeAggregationOperator
-     <azure.mgmt.monitor.models.TimeAggregationOperator>`
+    :type time_aggregation: str or
+     ~azure.mgmt.monitor.models.TimeAggregationOperator
     """
 
     _validation = {

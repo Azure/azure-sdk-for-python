@@ -56,14 +56,14 @@ class RecurrentSchedule(Model):
     :type time_zone: str
     :param days: the collection of days that the profile takes effect on.
      Possible values are Sunday through Saturday.
-    :type days: list of str
+    :type days: list[str]
     :param hours: A collection of hours that the profile takes effect on.
      Values supported are 0 to 23 on the 24-hour clock (AM/PM times are not
      supported).
-    :type hours: list of int
+    :type hours: list[int]
     :param minutes: A collection of minutes at which the profile takes effect
      at.
-    :type minutes: list of int
+    :type minutes: list[int]
     """
 
     _validation = {

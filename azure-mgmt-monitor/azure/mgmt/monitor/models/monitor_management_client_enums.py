@@ -82,8 +82,52 @@ class TimeAggregationOperator(Enum):
     last = "Last"
 
 
+class CategoryType(Enum):
+
+    metrics = "Metrics"
+    logs = "Logs"
+
+
 class ReceiverStatus(Enum):
 
     not_specified = "NotSpecified"
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class EventLevel(Enum):
+
+    critical = "Critical"
+    error = "Error"
+    warning = "Warning"
+    informational = "Informational"
+    verbose = "Verbose"
+
+
+class Unit(Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    percent = "Percent"
+    milli_seconds = "MilliSeconds"
+    byte_seconds = "ByteSeconds"
+    unspecified = "Unspecified"
+
+
+class AggregationType(Enum):
+
+    none = "None"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+
+class ResultType(Enum):
+
+    data = "Data"
+    metadata = "Metadata"
