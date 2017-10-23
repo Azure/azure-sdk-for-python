@@ -9,7 +9,6 @@ import unittest
 import datetime
 
 import azure.mgmt.monitor
-import azure.monitor
 
 from azure.mgmt.monitor.models import (
     ThresholdRuleCondition,
@@ -26,11 +25,8 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtMonitorTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
+        self.client = self.create_mgmt_client(
             azure.mgmt.monitor.MonitorManagementClient
-        )
-        self.data_client = self.create_mgmt_client(
-            azure.monitor.MonitorClient
         )
 
     @ResourceGroupPreparer()
@@ -52,7 +48,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         ])
         select = "eventName,operationName"
         filter = filter.format(resource_group.name)
-        activity_logs = list(self.data_client.activity_logs.list(
+        activity_logs = list(self.client.activity_logs.list(
             filter=filter,
             select=select
         ))
@@ -73,7 +69,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete"
         ).format(self.settings.SUBSCRIPTION_ID)
 
-        metrics = list(self.data_client.metric_definitions.list(
+        metrics = list(self.client.metric_definitions.list(
             resource_id,
         ))
         self.assertGreaterEqual(len(metrics), 1)
@@ -97,7 +93,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "timeGrain eq duration'PT1H'"
         ])
 
-        metrics = list(self.data_client.metrics.list(
+        metrics = list(self.client.metrics.list(
             resource_id,
             filter=filter
         ))
@@ -147,7 +143,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         )
 
         rule_name = 'MyPyTestAlertRule'
-        my_alert = self.mgmt_client.alert_rules.create_or_update(
+        my_alert = self.client.alert_rules.create_or_update(
             resource_group.name,
             rule_name,
             {
@@ -162,16 +158,16 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             }
         )
 
-        my_alert = self.mgmt_client.alert_rules.get(
+        my_alert = self.client.alert_rules.get(
             resource_group.name,
             rule_name
         )
 
-        my_alerts = list(self.mgmt_client.alert_rules.list_by_resource_group(
+        my_alerts = list(self.client.alert_rules.list_by_resource_group(
             resource_group.name
         ))
 
-        self.mgmt_client.alert_rules.delete(
+        self.client.alert_rules.delete(
             resource_group.name,
             rule_name
         )
@@ -179,10 +175,10 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
     @unittest.skip("Known bug")
     def test_tenants_event(self):
-        tenant_events = list(self.data_client.tenant_events.list())
+        tenant_events = list(self.client.tenant_events.list())
 
     def test_event_categories(self):
-        event_categories = list(self.data_client.event_categories.list())
+        event_categories = list(self.client.event_categories.list())
 
         for cat in event_categories:
             # azure.monitor.models.LocalizableString
@@ -200,7 +196,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             "providers/Microsoft.DocumentDb/databaseAccounts/pymonitortest"
         ).format(self.settings.SUBSCRIPTION_ID)
 
-        usage_metrics = list(self.data_client.usage_metrics.list(
+        usage_metrics = list(self.client.usage_metrics.list(
             resource_id,
         ))
         for item in usage_metrics:
@@ -217,7 +213,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
     def test_log_profile(self):
         profile_name = self.get_resource_name('pyprofile')
 
-        profile = self.mgmt_client.log_profiles.create_or_update(
+        profile = self.client.log_profiles.create_or_update(
             profile_name,
             {
                 "storage_account_id": "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest",
@@ -239,15 +235,15 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         )
         self.assertEqual(profile.name, profile_name)
 
-        profile = self.mgmt_client.log_profiles.get(
+        profile = self.client.log_profiles.get(
             profile_name,
         )
         self.assertEqual(profile.name, profile_name)
 
-        profiles = list(self.mgmt_client.log_profiles.list())
+        profiles = list(self.client.log_profiles.list())
         self.assertEqual(len(profiles), 1)
 
-        self.mgmt_client.log_profiles.delete(profile_name)
+        self.client.log_profiles.delete(profile_name)
 
     @unittest.skip("Known bug")
     @ResourceGroupPreparer()
@@ -255,7 +251,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         as_name = "setting1"
         resource_id = "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest/"
 
-        as_obj = self.mgmt_client.autoscale_settings.create_or_update(
+        as_obj = self.client.autoscale_settings.create_or_update(
             resource_group.name,
             as_name,
             {
@@ -292,19 +288,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         )
         self.assertEqual(as_obj.name, as_name)
 
-        as_obj = self.mgmt_client.autoscale_settings.get(
+        as_obj = self.client.autoscale_settings.get(
             resource_group.name,
             as_name
         )
         self.assertEqual(as_obj.name, as_name)
 
-        ass = list(self.mgmt_client.autoscale_settings.list_by_resource_group(
+        ass = list(self.client.autoscale_settings.list_by_resource_group(
             resource_group.name
         ))
         self.assertEqual(len(ass), 1)
         self.assertEqual(ass[0].name, as_name)
 
-        self.mgmt_client.autoscale_settings.delete(
+        self.client.autoscale_settings.delete(
             resource_group.name,
             as_name
         )

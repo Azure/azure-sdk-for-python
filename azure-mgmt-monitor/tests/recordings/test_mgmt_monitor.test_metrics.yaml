@@ -9,7 +9,6 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
           msrest_azure/0.4.3 insightsclient/0.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [53ee6b76-ad02-11e6-8527-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricDefinitions?api-version=2016-03-01
   response:
@@ -54,7 +53,6 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
           msrest_azure/0.4.3 insightsclient/0.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [542992b8-ad02-11e6-9e65-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metrics?api-version=2016-09-01&$filter=%28name.value%20eq%20%27Percentage%20CPU%27%29%20and%20%28aggregationType%20eq%20%27Total%27%29%20and%20startTime%20eq%202016-11-16%20and%20endTime%20eq%202016-11-17%20and%20timeGrain%20eq%20duration%27PT1H%27
   response:
@@ -78,4 +76,32 @@ interactions:
       x-ms-request-id: ['{ef70224b-4230-43b9-9124-112b2a1d16f9}']
       x-ms-routing-request-id: ['WESTUS2:20161117T201340Z:ef70224b-4230-43b9-9124-112b2a1d16f9']
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.16299-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.11 monitormanagementclient/0.4.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricDefinitions?api-version=2017-05-01-preview
+  response:
+    body: {string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
+        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['129']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 23 Oct 2017 21:16:02 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [9a40ade4-8901-4f00-9c52-878c2a026a24]
+      x-ms-failure-cause: [gateway]
+      x-ms-request-id: [9a40ade4-8901-4f00-9c52-878c2a026a24]
+      x-ms-routing-request-id: ['WESTUS2:20171023T211602Z:9a40ade4-8901-4f00-9c52-878c2a026a24']
+    status: {code: 404, message: Not Found}
 version: 1
