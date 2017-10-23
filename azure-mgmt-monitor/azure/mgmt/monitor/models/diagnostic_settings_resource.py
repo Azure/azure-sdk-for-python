@@ -9,25 +9,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class ServiceDiagnosticSettingsResourcePatch(Model):
-    """Service diagnostic setting resource for patch operations.
+class DiagnosticSettingsResource(ProxyOnlyResource):
+    """The diagnostic setting resource.
 
-    :param tags: Resource tags
-    :type tags: dict
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param storage_account_id: The resource ID of the storage account to which
      you would like to send Diagnostic Logs.
     :type storage_account_id: str
-    :param service_bus_rule_id: The service bus rule ID of the service bus
-     namespace in which you would like to have Event Hubs created for streaming
-     Diagnostic Logs. The rule ID is of the format: '{service bus resource
-     ID}/authorizationrules/{key name}'.
-    :type service_bus_rule_id: str
     :param event_hub_authorization_rule_id: The resource Id for the event hub
      authorization rule.
     :type event_hub_authorization_rule_id: str
+    :param event_hub_name: The name of the event hub. If none is specified,
+     the default event hub will be selected.
+    :type event_hub_name: str
     :param metrics: the list of metric settings.
     :type metrics: list of :class:`MetricSettings
      <azure.mgmt.monitor.models.MetricSettings>`
@@ -41,21 +46,29 @@ class ServiceDiagnosticSettingsResourcePatch(Model):
     :type workspace_id: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
-        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
         'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
+        'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
         'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
         'logs': {'key': 'properties.logs', 'type': '[LogSettings]'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, storage_account_id=None, service_bus_rule_id=None, event_hub_authorization_rule_id=None, metrics=None, logs=None, workspace_id=None):
-        self.tags = tags
+    def __init__(self, storage_account_id=None, event_hub_authorization_rule_id=None, event_hub_name=None, metrics=None, logs=None, workspace_id=None):
+        super(DiagnosticSettingsResource, self).__init__()
         self.storage_account_id = storage_account_id
-        self.service_bus_rule_id = service_bus_rule_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
+        self.event_hub_name = event_hub_name
         self.metrics = metrics
         self.logs = logs
         self.workspace_id = workspace_id

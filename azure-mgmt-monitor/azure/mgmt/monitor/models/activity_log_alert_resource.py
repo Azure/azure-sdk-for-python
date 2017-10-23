@@ -36,7 +36,7 @@ class ActivityLogAlertResource(Resource):
      an activity log alert is not enabled, then none of its actions will be
      activated. Default value: True .
     :type enabled: bool
-    :param condition: The conditon that will cause this alert to activate.
+    :param condition: The condition that will cause this alert to activate.
     :type condition: :class:`ActivityLogAlertAllOfCondition
      <azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition>`
     :param actions: The actions that will activate when the condition is met.
