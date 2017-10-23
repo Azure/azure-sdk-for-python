@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class ContainerPort(Model):
     """The port exposed on the container instance.
 
+    :param protocol: The protocol associated with the port. Possible values
+     include: 'TCP', 'UDP'
+    :type protocol: str or :class:`ContainerNetworkProtocol
+     <azure.mgmt.containerinstance.models.ContainerNetworkProtocol>`
     :param port: The port number exposed within the container group.
     :type port: int
     """
@@ -24,8 +28,10 @@ class ContainerPort(Model):
     }
 
     _attribute_map = {
+        'protocol': {'key': 'protocol', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, port):
+    def __init__(self, port, protocol=None):
+        self.protocol = protocol
         self.port = port
