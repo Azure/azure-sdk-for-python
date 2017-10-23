@@ -27,21 +27,19 @@ class ActivityLogAlertResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param scopes: A list of resourceIds that will be used as prefixes. The
      alert will only apply to activityLogs with resourceIds that fall under one
      of these prefixes. This list must include at least one item.
-    :type scopes: list of str
+    :type scopes: list[str]
     :param enabled: Indicates whether this activity log alert is enabled. If
      an activity log alert is not enabled, then none of its actions will be
      activated. Default value: True .
     :type enabled: bool
-    :param condition: The conditon that will cause this alert to activate.
-    :type condition: :class:`ActivityLogAlertAllOfCondition
-     <azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition>`
+    :param condition: The condition that will cause this alert to activate.
+    :type condition: ~azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition
     :param actions: The actions that will activate when the condition is met.
-    :type actions: :class:`ActivityLogAlertActionList
-     <azure.mgmt.monitor.models.ActivityLogAlertActionList>`
+    :type actions: ~azure.mgmt.monitor.models.ActivityLogAlertActionList
     :param description: A description of this activity log alert.
     :type description: str
     """

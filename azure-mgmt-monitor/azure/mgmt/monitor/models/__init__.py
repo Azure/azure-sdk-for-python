@@ -24,6 +24,9 @@ from .autoscale_notification import AutoscaleNotification
 from .autoscale_setting_resource import AutoscaleSettingResource
 from .autoscale_setting_resource_patch import AutoscaleSettingResourcePatch
 from .error_response import ErrorResponse, ErrorResponseException
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .incident import Incident
 from .rule_data_source import RuleDataSource
 from .rule_condition import RuleCondition
@@ -42,10 +45,13 @@ from .alert_rule_resource_patch import AlertRuleResourcePatch
 from .retention_policy import RetentionPolicy
 from .log_profile_resource import LogProfileResource
 from .log_profile_resource_patch import LogProfileResourcePatch
+from .proxy_only_resource import ProxyOnlyResource
 from .metric_settings import MetricSettings
 from .log_settings import LogSettings
-from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
-from .service_diagnostic_settings_resource_patch import ServiceDiagnosticSettingsResourcePatch
+from .diagnostic_settings_resource import DiagnosticSettingsResource
+from .diagnostic_settings_resource_collection import DiagnosticSettingsResourceCollection
+from .diagnostic_settings_category_resource import DiagnosticSettingsCategoryResource
+from .diagnostic_settings_category_resource_collection import DiagnosticSettingsCategoryResourceCollection
 from .email_receiver import EmailReceiver
 from .sms_receiver import SmsReceiver
 from .webhook_receiver import WebhookReceiver
@@ -57,12 +63,26 @@ from .activity_log_alert_action_group import ActivityLogAlertActionGroup
 from .activity_log_alert_action_list import ActivityLogAlertActionList
 from .activity_log_alert_resource import ActivityLogAlertResource
 from .activity_log_alert_patch_body import ActivityLogAlertPatchBody
+from .localizable_string import LocalizableString
+from .sender_authorization import SenderAuthorization
+from .http_request_info import HttpRequestInfo
+from .event_data import EventData
+from .metric_availability import MetricAvailability
+from .metric_definition import MetricDefinition
+from .metric_value import MetricValue
+from .metadata_value import MetadataValue
+from .time_series_element import TimeSeriesElement
+from .metric import Metric
+from .response import Response
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
 from .log_profile_resource_paged import LogProfileResourcePaged
 from .action_group_resource_paged import ActionGroupResourcePaged
 from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
+from .event_data_paged import EventDataPaged
+from .localizable_string_paged import LocalizableStringPaged
+from .metric_definition_paged import MetricDefinitionPaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
@@ -72,7 +92,12 @@ from .monitor_management_client_enums import (
     RecurrenceFrequency,
     ConditionOperator,
     TimeAggregationOperator,
+    CategoryType,
     ReceiverStatus,
+    EventLevel,
+    Unit,
+    AggregationType,
+    ResultType,
 )
 
 __all__ = [
@@ -91,6 +116,9 @@ __all__ = [
     'AutoscaleSettingResource',
     'AutoscaleSettingResourcePatch',
     'ErrorResponse', 'ErrorResponseException',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'Incident',
     'RuleDataSource',
     'RuleCondition',
@@ -109,10 +137,13 @@ __all__ = [
     'RetentionPolicy',
     'LogProfileResource',
     'LogProfileResourcePatch',
+    'ProxyOnlyResource',
     'MetricSettings',
     'LogSettings',
-    'ServiceDiagnosticSettingsResource',
-    'ServiceDiagnosticSettingsResourcePatch',
+    'DiagnosticSettingsResource',
+    'DiagnosticSettingsResourceCollection',
+    'DiagnosticSettingsCategoryResource',
+    'DiagnosticSettingsCategoryResourceCollection',
     'EmailReceiver',
     'SmsReceiver',
     'WebhookReceiver',
@@ -124,12 +155,26 @@ __all__ = [
     'ActivityLogAlertActionList',
     'ActivityLogAlertResource',
     'ActivityLogAlertPatchBody',
+    'LocalizableString',
+    'SenderAuthorization',
+    'HttpRequestInfo',
+    'EventData',
+    'MetricAvailability',
+    'MetricDefinition',
+    'MetricValue',
+    'MetadataValue',
+    'TimeSeriesElement',
+    'Metric',
+    'Response',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
     'LogProfileResourcePaged',
     'ActionGroupResourcePaged',
     'ActivityLogAlertResourcePaged',
+    'EventDataPaged',
+    'LocalizableStringPaged',
+    'MetricDefinitionPaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
@@ -138,5 +183,10 @@ __all__ = [
     'RecurrenceFrequency',
     'ConditionOperator',
     'TimeAggregationOperator',
+    'CategoryType',
     'ReceiverStatus',
+    'EventLevel',
+    'Unit',
+    'AggregationType',
+    'ResultType',
 ]

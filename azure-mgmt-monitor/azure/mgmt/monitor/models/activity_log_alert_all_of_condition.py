@@ -17,8 +17,8 @@ class ActivityLogAlertAllOfCondition(Model):
     are met.
 
     :param all_of: The list of activity log alert conditions.
-    :type all_of: list of :class:`ActivityLogAlertLeafCondition
-     <azure.mgmt.monitor.models.ActivityLogAlertLeafCondition>`
+    :type all_of:
+     list[~azure.mgmt.monitor.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
