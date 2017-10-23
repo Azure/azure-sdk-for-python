@@ -133,11 +133,11 @@
     "containerservice": {
       "markdown": "specification/compute/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-container-service-2017-01",
+        "tag": "package-container-service-2017-09",
         "title": "ContainerServiceClient",
         "description": "The Container Service Client.",
         "namespace": "azure.mgmt.containerservice",
-        "package-version": "1.0.0"
+        "package-version": "2.0.0"
       },
       "output_dir": "azure-mgmt-containerservice/azure/mgmt/containerservice",
       "build_dir": "azure-mgmt-containerservice",
