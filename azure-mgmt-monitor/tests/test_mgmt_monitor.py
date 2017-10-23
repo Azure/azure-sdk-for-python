@@ -65,8 +65,8 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
             "subscriptions/{}/"
-            "resourceGroups/DoNotDeleteGroup/"
-            "providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete"
+            "resourceGroups/azvmc632/"
+            "providers/Microsoft.Compute/virtualMachines/azvmc632"
         ).format(self.settings.SUBSCRIPTION_ID)
 
         metrics = list(self.client.metric_definitions.list(
@@ -82,33 +82,30 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             )
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2016, 11, 17)
+        today = datetime.date(2017, 10, 23)
         yesterday = today - datetime.timedelta(days=1)
 
-        filter = " and ".join([
-            "(name.value eq 'Percentage CPU')",
-            "(aggregationType eq 'Total')",
-            "startTime eq {}".format(yesterday),
-            "endTime eq {}".format(today),
-            "timeGrain eq duration'PT1H'"
-        ])
-
-        metrics = list(self.client.metrics.list(
+        metrics = self.client.metrics.list(
             resource_id,
-            filter=filter
-        ))
-        self.assertGreaterEqual(len(metrics), 1)
-        for item in metrics:
+            timespan="{}/{}".format(yesterday, today),
+            interval='PT1H',
+            metric='Percentage CPU',
+            aggregation='Total'
+        )
+        self.assertGreaterEqual(len(metrics.value), 1)
+        for item in metrics.value:
             self.assertIsNotNone(item.name)
             self.assertIsNotNone(item.unit)
-            for data in item.data:
-                self.assertIsNotNone(data.time_stamp)
-                self.assertIsNotNone(data.total)
+            for timeserie in item.timeseries:
+                for data in timeserie.data:
+                    self.assertIsNotNone(data.time_stamp)
+                    self.assertIsNotNone(data.total)
 
-        for item in metrics:
+        for item in metrics.value:
             print("{} ({})".format(item.name.localized_value, item.unit.name))
-            for data in item.data:
-                print("{}: {}".format(data.time_stamp, data.total))
+            for timeserie in item.timeseries:
+                for data in timeserie.data:
+                    print("{}: {}".format(data.time_stamp, data.total))
 
     @ResourceGroupPreparer()
     def test_alert_rules(self, resource_group, location):
