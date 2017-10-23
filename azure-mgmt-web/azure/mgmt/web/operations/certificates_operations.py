@@ -375,7 +375,8 @@ class CertificatesOperations(object):
         :type name: str
         :param certificate_envelope: Details of certificate, if it exists
          already.
-        :type certificate_envelope: ~azure.mgmt.web.models.Certificate
+        :type certificate_envelope:
+         ~azure.mgmt.web.models.CertificatePatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -410,7 +411,7 @@ class CertificatesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(certificate_envelope, 'Certificate')
+        body_content = self._serialize.body(certificate_envelope, 'CertificatePatchResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)

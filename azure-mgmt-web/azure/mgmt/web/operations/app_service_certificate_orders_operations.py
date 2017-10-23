@@ -446,6 +446,80 @@ class AppServiceCertificateOrdersOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def update(
+            self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
+        """Create or update a certificate purchase order.
+
+        Create or update a certificate purchase order.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
+        :param certificate_distinguished_name: Distinguished name to to use
+         for the certificate order.
+        :type certificate_distinguished_name:
+         ~azure.mgmt.web.models.AppServiceCertificateOrderPatchResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AppServiceCertificateOrder or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateOrder or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(certificate_distinguished_name, 'AppServiceCertificateOrderPatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceCertificateOrder', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('AppServiceCertificateOrder', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_certificates(
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """List all certificates associated with a certificate order.
@@ -745,6 +819,83 @@ class AppServiceCertificateOrdersOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def update_certificate(
+            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a certificate and associates with key vault secret.
+
+        Creates or updates a certificate and associates with key vault secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
+        :param name: Name of the certificate.
+        :type name: str
+        :param key_vault_certificate: Key vault certificate resource Id.
+        :type key_vault_certificate:
+         ~azure.mgmt.web.models.AppServiceCertificatePatchResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AppServiceCertificateResource or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(key_vault_certificate, 'AppServiceCertificatePatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceCertificateResource', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('AppServiceCertificateResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def reissue(
             self, resource_group_name, certificate_order_name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """Reissue an existing certificate order.
@@ -1002,9 +1153,10 @@ class AppServiceCertificateOrdersOperations(object):
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order.
         :type certificate_order_name: str
-        :param light_theme: Theme
+        :param light_theme: If <code>true</code> use the light color theme for
+         site seal; otherwise, use the default color theme.
         :type light_theme: bool
-        :param locale: Locale
+        :param locale: Locale of site seal.
         :type locale: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

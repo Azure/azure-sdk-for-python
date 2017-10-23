@@ -47,9 +47,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AppServiceEnvironment
+        :return: An iterator like instance of AppServiceEnvironmentResource
         :rtype:
-         ~azure.mgmt.web.models.AppServiceEnvironmentPaged[~azure.mgmt.web.models.AppServiceEnvironment]
+         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -93,11 +93,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -116,9 +116,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AppServiceEnvironment
+        :return: An iterator like instance of AppServiceEnvironmentResource
         :rtype:
-         ~azure.mgmt.web.models.AppServiceEnvironmentPaged[~azure.mgmt.web.models.AppServiceEnvironment]
+         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -163,11 +163,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -418,6 +418,81 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+
+    def update(
+            self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update an App Service Environment.
+
+        Create or update an App Service Environment.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param hosting_environment_envelope: Configuration details of the App
+         Service Environment.
+        :type hosting_environment_envelope:
+         ~azure.mgmt.web.models.AppServiceEnvironmentPatchResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AppServiceEnvironmentResource or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(hosting_environment_envelope, 'AppServiceEnvironmentPatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def list_capacities(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1072,6 +1147,79 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+
+    def update_multi_role_pool(
+            self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update a multi-role pool.
+
+        Create or update a multi-role pool.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param multi_role_pool_envelope: Properties of the multi-role pool.
+        :type multi_role_pool_envelope:
+         ~azure.mgmt.web.models.WorkerPoolResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(multi_role_pool_envelope, 'WorkerPoolResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def list_multi_role_pool_instance_metric_definitions(
             self, resource_group_name, name, instance, custom_headers=None, raw=False, **operation_config):
@@ -2319,6 +2467,81 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+
+    def update_worker_pool(
+            self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update a worker pool.
+
+        Create or update a worker pool.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param worker_pool_name: Name of the worker pool.
+        :type worker_pool_name: str
+        :param worker_pool_envelope: Properties of the worker pool.
+        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'workerPoolName': self._serialize.url("worker_pool_name", worker_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(worker_pool_envelope, 'WorkerPoolResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def list_worker_pool_instance_metric_definitions(
             self, resource_group_name, name, worker_pool_name, instance, custom_headers=None, raw=False, **operation_config):

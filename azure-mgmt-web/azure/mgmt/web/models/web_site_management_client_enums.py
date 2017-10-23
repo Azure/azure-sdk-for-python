@@ -74,11 +74,6 @@ class CertificateOrderActionType(Enum):
     unknown = "Unknown"
 
 
-class ManagedServiceIdentityType(Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class DomainStatus(Enum):
 
     active = "Active"
@@ -156,6 +151,45 @@ class Channels(Enum):
     email = "Email"
     webhook = "Webhook"
     all = "All"
+
+
+class HostingEnvironmentStatus(Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(Enum):
+
+    default = "Default"
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+    d1 = "D1"
+    d2 = "D2"
+    d3 = "D3"
+
+
+class AccessControlEntryAction(Enum):
+
+    permit = "Permit"
+    deny = "Deny"
 
 
 class AppServicePlanRestrictions(Enum):
@@ -421,46 +455,11 @@ class TriggeredWebJobStatus(Enum):
     error = "Error"
 
 
-class HostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
-
-
-class WorkerSizeOptions(Enum):
-
-    default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
-
-
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
 class StatusOptions(Enum):
 
     ready = "Ready"
     pending = "Pending"
+    creating = "Creating"
 
 
 class SkuName(Enum):

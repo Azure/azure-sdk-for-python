@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class Certificate(Resource):
-    """SSL certificate for an app.
+class CertificatePatchResource(ProxyOnlyResource):
+    """ARM resource for a certificate.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,8 @@ class Certificate(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :ivar friendly_name: Friendly name of the certificate.
     :vartype friendly_name: str
     :ivar subject_name: Subject name of the certificate.
@@ -85,7 +81,6 @@ class Certificate(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
         'friendly_name': {'readonly': True},
         'subject_name': {'readonly': True},
@@ -107,9 +102,7 @@ class Certificate(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
@@ -132,8 +125,8 @@ class Certificate(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
-        super(Certificate, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+        super(CertificatePatchResource, self).__init__(kind=kind)
         self.friendly_name = None
         self.subject_name = None
         self.host_names = host_names
