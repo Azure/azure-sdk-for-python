@@ -593,6 +593,78 @@ class DomainsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def update(
+            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a domain.
+
+        Creates or updates a domain.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param domain_name: Name of the domain.
+        :type domain_name: str
+        :param domain: Domain registration information.
+        :type domain: ~azure.mgmt.web.models.DomainPatchResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Domain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Domain or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(domain, 'DomainPatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [202, 200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 202:
+            deserialized = self._deserialize('Domain', response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Domain', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_ownership_identifiers(
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Lists domain ownership identifiers.
@@ -734,7 +806,7 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update_ownership_identifier(
-            self, resource_group_name, domain_name, name, domain_ownership_identifier, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
@@ -748,10 +820,10 @@ class DomainsOperations(object):
         :type domain_name: str
         :param name: Name of identifier.
         :type name: str
-        :param domain_ownership_identifier: A JSON representation of the
-         domain ownership properties.
-        :type domain_ownership_identifier:
-         ~azure.mgmt.web.models.DomainOwnershipIdentifier
+        :param kind: Kind of resource.
+        :type kind: str
+        :param ownership_id: Ownership Id.
+        :type ownership_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -762,6 +834,8 @@ class DomainsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {
@@ -870,7 +944,7 @@ class DomainsOperations(object):
             return client_raw_response
 
     def update_ownership_identifier(
-            self, resource_group_name, domain_name, name, domain_ownership_identifier, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
@@ -884,10 +958,10 @@ class DomainsOperations(object):
         :type domain_name: str
         :param name: Name of identifier.
         :type name: str
-        :param domain_ownership_identifier: A JSON representation of the
-         domain ownership properties.
-        :type domain_ownership_identifier:
-         ~azure.mgmt.web.models.DomainOwnershipIdentifier
+        :param kind: Kind of resource.
+        :type kind: str
+        :param ownership_id: Ownership Id.
+        :type ownership_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -898,6 +972,8 @@ class DomainsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {

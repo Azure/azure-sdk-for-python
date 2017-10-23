@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class AppServicePlan(Resource):
-    """App Service plan.
+class AppServicePlanPatchResource(ProxyOnlyResource):
+    """ARM resource for a app service plan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,14 +24,11 @@ class AppServicePlan(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param app_service_plan_name: Name for the App Service plan.
-    :type app_service_plan_name: str
+    :param app_service_plan_patch_resource_name: Name for the App Service
+     plan.
+    :type app_service_plan_patch_resource_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -77,14 +74,11 @@ class AppServicePlan(Resource):
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.web.models.ProvisioningState
-    :param sku:
-    :type sku: ~azure.mgmt.web.models.SkuDescription
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
@@ -99,10 +93,8 @@ class AppServicePlan(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
+        'app_service_plan_patch_resource_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -119,12 +111,11 @@ class AppServicePlan(Resource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
-        'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, kind=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
-        super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags)
-        self.app_service_plan_name = app_service_plan_name
+    def __init__(self, kind=None, app_service_plan_patch_resource_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None):
+        super(AppServicePlanPatchResource, self).__init__(kind=kind)
+        self.app_service_plan_patch_resource_name = app_service_plan_patch_resource_name
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None
@@ -141,4 +132,3 @@ class AppServicePlan(Resource):
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None
-        self.sku = sku

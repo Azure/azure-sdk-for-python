@@ -13,13 +13,14 @@ from .app_service_certificate import AppServiceCertificate
 from .app_service_certificate_resource import AppServiceCertificateResource
 from .certificate_details import CertificateDetails
 from .app_service_certificate_order import AppServiceCertificateOrder
+from .app_service_certificate_order_patch_resource import AppServiceCertificateOrderPatchResource
+from .app_service_certificate_patch_resource import AppServiceCertificatePatchResource
 from .certificate_email import CertificateEmail
 from .certificate_order_action import CertificateOrderAction
 from .name_identifier import NameIdentifier
 from .proxy_only_resource import ProxyOnlyResource
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
-from .resource_identity import ResourceIdentity
 from .resource import Resource
 from .site_seal import SiteSeal
 from .site_seal_request import SiteSealRequest
@@ -31,12 +32,14 @@ from .domain import Domain
 from .domain_availablility_check_result import DomainAvailablilityCheckResult
 from .domain_control_center_sso_request import DomainControlCenterSsoRequest
 from .domain_ownership_identifier import DomainOwnershipIdentifier
+from .domain_patch_resource import DomainPatchResource
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
 from .tld_legal_agreement import TldLegalAgreement
 from .top_level_domain import TopLevelDomain
 from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
 from .hosting_environment_profile import HostingEnvironmentProfile
 from .certificate import Certificate
+from .certificate_patch_resource import CertificatePatchResource
 from .deleted_site import DeletedSite
 from .csm_operation_display import CsmOperationDisplay
 from .dimension import Dimension
@@ -47,9 +50,18 @@ from .csm_operation_description_properties import CsmOperationDescriptionPropert
 from .csm_operation_description import CsmOperationDescription
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
+from .virtual_network_profile import VirtualNetworkProfile
+from .worker_pool import WorkerPool
+from .virtual_ip_mapping import VirtualIPMapping
+from .stamp_capacity import StampCapacity
+from .network_access_control_entry import NetworkAccessControlEntry
+from .name_value_pair import NameValuePair
+from .app_service_environment import AppServiceEnvironment
 from .capability import Capability
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .geo_region import GeoRegion
+from .hosting_environment_deployment_info import HostingEnvironmentDeploymentInfo
+from .deployment_locations import DeploymentLocations
 from .sku_capacity import SkuCapacity
 from .global_csm_sku_description import GlobalCsmSkuDescription
 from .premier_add_on_offer import PremierAddOnOffer
@@ -112,9 +124,9 @@ from .ms_deploy import MSDeploy
 from .ms_deploy_log_entry import MSDeployLogEntry
 from .ms_deploy_log import MSDeployLog
 from .ms_deploy_status import MSDeployStatus
+from .managed_service_identity import ManagedServiceIdentity
 from .migrate_my_sql_request import MigrateMySqlRequest
 from .migrate_my_sql_status import MigrateMySqlStatus
-from .name_value_pair import NameValuePair
 from .vnet_route import VnetRoute
 from .vnet_info import VnetInfo
 from .relay_service_connection_entity import RelayServiceConnectionEntity
@@ -154,6 +166,7 @@ from .site_configuration_snapshot_info import SiteConfigurationSnapshotInfo
 from .site_extension_info import SiteExtensionInfo
 from .site_instance import SiteInstance
 from .site_logs_config import SiteLogsConfig
+from .site_patch_resource import SitePatchResource
 from .site_php_error_log_flag import SitePhpErrorLogFlag
 from .site_source_control import SiteSourceControl
 from .slot_config_names_resource import SlotConfigNamesResource
@@ -168,14 +181,9 @@ from .triggered_web_job import TriggeredWebJob
 from .vnet_gateway import VnetGateway
 from .web_app_collection import WebAppCollection
 from .web_job import WebJob
-from .virtual_ip_mapping import VirtualIPMapping
 from .address_response import AddressResponse
-from .virtual_network_profile import VirtualNetworkProfile
-from .worker_pool import WorkerPool
-from .stamp_capacity import StampCapacity
-from .network_access_control_entry import NetworkAccessControlEntry
-from .app_service_environment import AppServiceEnvironment
 from .app_service_environment_resource import AppServiceEnvironmentResource
+from .app_service_environment_patch_resource import AppServiceEnvironmentPatchResource
 from .sku_description import SkuDescription
 from .app_service_plan import AppServicePlan
 from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
@@ -184,6 +192,7 @@ from .metric_definition import MetricDefinition
 from .sku_info import SkuInfo
 from .usage import Usage
 from .worker_pool_resource import WorkerPoolResource
+from .app_service_plan_patch_resource import AppServicePlanPatchResource
 from .hybrid_connection_limits import HybridConnectionLimits
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
 from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
@@ -201,6 +210,7 @@ from .premier_add_on_offer_paged import PremierAddOnOfferPaged
 from .site_paged import SitePaged
 from .backup_item_paged import BackupItemPaged
 from .site_config_resource_paged import SiteConfigResourcePaged
+from .site_configuration_snapshot_info_paged import SiteConfigurationSnapshotInfoPaged
 from .continuous_web_job_paged import ContinuousWebJobPaged
 from .deployment_paged import DeploymentPaged
 from .identifier_paged import IdentifierPaged
@@ -221,7 +231,7 @@ from .triggered_web_job_paged import TriggeredWebJobPaged
 from .triggered_job_history_paged import TriggeredJobHistoryPaged
 from .csm_usage_quota_paged import CsmUsageQuotaPaged
 from .web_job_paged import WebJobPaged
-from .app_service_environment_paged import AppServiceEnvironmentPaged
+from .app_service_environment_resource_paged import AppServiceEnvironmentResourcePaged
 from .stamp_capacity_paged import StampCapacityPaged
 from .worker_pool_resource_paged import WorkerPoolResourcePaged
 from .sku_info_paged import SkuInfoPaged
@@ -235,7 +245,6 @@ from .web_site_management_client_enums import (
     ProvisioningState,
     CertificateOrderStatus,
     CertificateOrderActionType,
-    ManagedServiceIdentityType,
     DomainStatus,
     AzureResourceType,
     CustomHostNameDnsRecordType,
@@ -245,6 +254,11 @@ from .web_site_management_client_enums import (
     ResourceScopeType,
     NotificationLevel,
     Channels,
+    HostingEnvironmentStatus,
+    InternalLoadBalancingMode,
+    ComputeModeOptions,
+    WorkerSizeOptions,
+    AccessControlEntryAction,
     AppServicePlanRestrictions,
     InAvailabilityReasonType,
     CheckNameResourceTypes,
@@ -278,11 +292,6 @@ from .web_site_management_client_enums import (
     CloneAbilityResult,
     SiteExtensionType,
     TriggeredWebJobStatus,
-    HostingEnvironmentStatus,
-    InternalLoadBalancingMode,
-    ComputeModeOptions,
-    WorkerSizeOptions,
-    AccessControlEntryAction,
     StatusOptions,
     SkuName,
 )
@@ -292,13 +301,14 @@ __all__ = [
     'AppServiceCertificateResource',
     'CertificateDetails',
     'AppServiceCertificateOrder',
+    'AppServiceCertificateOrderPatchResource',
+    'AppServiceCertificatePatchResource',
     'CertificateEmail',
     'CertificateOrderAction',
     'NameIdentifier',
     'ProxyOnlyResource',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
-    'ResourceIdentity',
     'Resource',
     'SiteSeal',
     'SiteSealRequest',
@@ -310,12 +320,14 @@ __all__ = [
     'DomainAvailablilityCheckResult',
     'DomainControlCenterSsoRequest',
     'DomainOwnershipIdentifier',
+    'DomainPatchResource',
     'DomainRecommendationSearchParameters',
     'TldLegalAgreement',
     'TopLevelDomain',
     'TopLevelDomainAgreementOption',
     'HostingEnvironmentProfile',
     'Certificate',
+    'CertificatePatchResource',
     'DeletedSite',
     'CsmOperationDisplay',
     'Dimension',
@@ -326,9 +338,18 @@ __all__ = [
     'CsmOperationDescription',
     'Recommendation',
     'RecommendationRule',
+    'VirtualNetworkProfile',
+    'WorkerPool',
+    'VirtualIPMapping',
+    'StampCapacity',
+    'NetworkAccessControlEntry',
+    'NameValuePair',
+    'AppServiceEnvironment',
     'Capability',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
+    'HostingEnvironmentDeploymentInfo',
+    'DeploymentLocations',
     'SkuCapacity',
     'GlobalCsmSkuDescription',
     'PremierAddOnOffer',
@@ -391,9 +412,9 @@ __all__ = [
     'MSDeployLogEntry',
     'MSDeployLog',
     'MSDeployStatus',
+    'ManagedServiceIdentity',
     'MigrateMySqlRequest',
     'MigrateMySqlStatus',
-    'NameValuePair',
     'VnetRoute',
     'VnetInfo',
     'RelayServiceConnectionEntity',
@@ -433,6 +454,7 @@ __all__ = [
     'SiteExtensionInfo',
     'SiteInstance',
     'SiteLogsConfig',
+    'SitePatchResource',
     'SitePhpErrorLogFlag',
     'SiteSourceControl',
     'SlotConfigNamesResource',
@@ -447,14 +469,9 @@ __all__ = [
     'VnetGateway',
     'WebAppCollection',
     'WebJob',
-    'VirtualIPMapping',
     'AddressResponse',
-    'VirtualNetworkProfile',
-    'WorkerPool',
-    'StampCapacity',
-    'NetworkAccessControlEntry',
-    'AppServiceEnvironment',
     'AppServiceEnvironmentResource',
+    'AppServiceEnvironmentPatchResource',
     'SkuDescription',
     'AppServicePlan',
     'HostingEnvironmentDiagnostics',
@@ -463,6 +480,7 @@ __all__ = [
     'SkuInfo',
     'Usage',
     'WorkerPoolResource',
+    'AppServicePlanPatchResource',
     'HybridConnectionLimits',
     'AppServiceCertificateOrderPaged',
     'AppServiceCertificateResourcePaged',
@@ -480,6 +498,7 @@ __all__ = [
     'SitePaged',
     'BackupItemPaged',
     'SiteConfigResourcePaged',
+    'SiteConfigurationSnapshotInfoPaged',
     'ContinuousWebJobPaged',
     'DeploymentPaged',
     'IdentifierPaged',
@@ -500,7 +519,7 @@ __all__ = [
     'TriggeredJobHistoryPaged',
     'CsmUsageQuotaPaged',
     'WebJobPaged',
-    'AppServiceEnvironmentPaged',
+    'AppServiceEnvironmentResourcePaged',
     'StampCapacityPaged',
     'WorkerPoolResourcePaged',
     'SkuInfoPaged',
@@ -513,7 +532,6 @@ __all__ = [
     'ProvisioningState',
     'CertificateOrderStatus',
     'CertificateOrderActionType',
-    'ManagedServiceIdentityType',
     'DomainStatus',
     'AzureResourceType',
     'CustomHostNameDnsRecordType',
@@ -523,6 +541,11 @@ __all__ = [
     'ResourceScopeType',
     'NotificationLevel',
     'Channels',
+    'HostingEnvironmentStatus',
+    'InternalLoadBalancingMode',
+    'ComputeModeOptions',
+    'WorkerSizeOptions',
+    'AccessControlEntryAction',
     'AppServicePlanRestrictions',
     'InAvailabilityReasonType',
     'CheckNameResourceTypes',
@@ -556,11 +579,6 @@ __all__ = [
     'CloneAbilityResult',
     'SiteExtensionType',
     'TriggeredWebJobStatus',
-    'HostingEnvironmentStatus',
-    'InternalLoadBalancingMode',
-    'ComputeModeOptions',
-    'WorkerSizeOptions',
-    'AccessControlEntryAction',
     'StatusOptions',
     'SkuName',
 ]

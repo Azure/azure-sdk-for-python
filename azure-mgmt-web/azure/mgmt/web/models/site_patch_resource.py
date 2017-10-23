@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class Site(Resource):
-    """A web app, a mobile app backend, or an API app.
+class SitePatchResource(ProxyOnlyResource):
+    """ARM resource for a site.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,8 @@ class Site(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :ivar state: Current state of the app.
     :vartype state: str
     :ivar host_names: Hostnames associated with the app.
@@ -134,14 +130,11 @@ class Site(Resource):
      requests. Issues redirect for
      http requests
     :type https_only: bool
-    :param identity:
-    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
         'state': {'readonly': True},
         'host_names': {'readonly': True},
@@ -166,9 +159,7 @@ class Site(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
         'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
@@ -201,11 +192,10 @@ class Site(Resource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, identity=None):
-        super(Site, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None):
+        super(SitePatchResource, self).__init__(kind=kind)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
@@ -238,4 +228,3 @@ class Site(Resource):
         self.default_host_name = None
         self.slot_swap_status = None
         self.https_only = https_only
-        self.identity = identity
