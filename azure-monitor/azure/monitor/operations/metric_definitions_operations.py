@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,7 +22,7 @@ class MetricDefinitionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,29 +30,23 @@ class MetricDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2017-05-01-preview"
 
         self.config = config
 
     def list(
-            self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, custom_headers=None, raw=False, **operation_config):
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: Reduces the set of data collected by retrieving
-         particular metric definitions from all the definitions available for
-         the resource.<br>For example, to get just the definition for the 'CPU
-         percentage' counter: $filter=name.value eq '\\Processor(_Total)\\%
-         Processor Time'.<br>Multiple metrics can be retrieved by joining
-         together *'name eq <value>'* clauses separated by *or* logical
-         operators.<br>**NOTE**: No other syntax is allowed.
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`MetricDefinition
+         <azure.monitor.models.MetricDefinition>`
         :rtype: :class:`MetricDefinitionPaged
          <azure.monitor.models.MetricDefinitionPaged>`
         :raises:
@@ -71,8 +65,6 @@ class MetricDefinitionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link

@@ -40,3 +40,9 @@ class AggregationType(Enum):
     minimum = "Minimum"
     maximum = "Maximum"
     total = "Total"
+
+
+class ResultType(Enum):
+
+    data = "Data"
+    metadata = "Metadata"

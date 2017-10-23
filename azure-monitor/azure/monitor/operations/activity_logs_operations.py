@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -71,6 +71,8 @@ class ActivityLogsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`EventData
+         <azure.monitor.models.EventData>`
         :rtype: :class:`EventDataPaged <azure.monitor.models.EventDataPaged>`
         :raises:
          :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
