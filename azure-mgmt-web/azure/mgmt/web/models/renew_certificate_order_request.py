@@ -30,8 +30,6 @@ class RenewCertificateOrderRequest(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param csr: Csr to be used for re-key operation.
@@ -55,14 +53,13 @@ class RenewCertificateOrderRequest(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, kind=None, tags=None, identity=None, key_size=None, csr=None, is_private_key_external=None):
-        super(RenewCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
+    def __init__(self, location, kind=None, tags=None, key_size=None, csr=None, is_private_key_external=None):
+        super(RenewCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags)
         self.key_size = key_size
         self.csr = csr
         self.is_private_key_external = is_private_key_external

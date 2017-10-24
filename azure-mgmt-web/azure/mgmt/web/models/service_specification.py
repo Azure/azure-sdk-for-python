@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServiceSpecification(Model):
-    """ServiceSpecification.
+    """Resource metrics service provided by Microsoft.Insights resource provider.
 
     :param metric_specifications:
     :type metric_specifications:

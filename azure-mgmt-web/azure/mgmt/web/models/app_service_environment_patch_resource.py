@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class AppServiceEnvironmentResource(Resource):
-    """App Service Environment ARM resource.
+class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
+    """ARM resource for a app service enviroment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,18 +24,13 @@ class AppServiceEnvironmentResource(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param app_service_environment_resource_name: Name of the App Service
-     Environment.
-    :type app_service_environment_resource_name: str
-    :param app_service_environment_resource_location: Location of the App
-     Service Environment, e.g. "West US".
-    :type app_service_environment_resource_location: str
+    :param app_service_environment_patch_resource_name: Name of the App
+     Service Environment.
+    :type app_service_environment_patch_resource_name: str
+    :param location: Location of the App Service Environment, e.g. "West US".
+    :type location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
@@ -142,10 +137,9 @@ class AppServiceEnvironmentResource(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
-        'app_service_environment_resource_name': {'required': True},
-        'app_service_environment_resource_location': {'required': True},
+        'app_service_environment_patch_resource_name': {'required': True},
+        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'virtual_network': {'required': True},
@@ -171,11 +165,9 @@ class AppServiceEnvironmentResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_environment_resource_name': {'key': 'properties.name', 'type': 'str'},
-        'app_service_environment_resource_location': {'key': 'properties.location', 'type': 'str'},
+        'app_service_environment_patch_resource_name': {'key': 'properties.name', 'type': 'str'},
+        'location': {'key': 'properties.location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
         'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
@@ -212,10 +204,10 @@ class AppServiceEnvironmentResource(Resource):
         'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
-        super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
-        self.app_service_environment_resource_name = app_service_environment_resource_name
-        self.app_service_environment_resource_location = app_service_environment_resource_location
+    def __init__(self, app_service_environment_patch_resource_name, location, virtual_network, worker_pools, kind=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
+        super(AppServiceEnvironmentPatchResource, self).__init__(kind=kind)
+        self.app_service_environment_patch_resource_name = app_service_environment_patch_resource_name
+        self.location = location
         self.provisioning_state = None
         self.status = None
         self.vnet_name = vnet_name

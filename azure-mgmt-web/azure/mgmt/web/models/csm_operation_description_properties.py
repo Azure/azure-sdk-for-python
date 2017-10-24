@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CsmOperationDescriptionProperties(Model):
-    """CsmOperationDescriptionProperties.
+    """Properties available for a Microsoft.Web resource provider operation.
 
     :param service_specification:
     :type service_specification: ~azure.mgmt.web.models.ServiceSpecification
