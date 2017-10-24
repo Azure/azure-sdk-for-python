@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.1 (2017-10-24)
+++++++++++++++++++
+
+* Adding a deprecation warning, this package is replaced by "azure-mgmt-monitor"
+
 0.3.0 (2017-04-19)
 ++++++++++++++++++
 
