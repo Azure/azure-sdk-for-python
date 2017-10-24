@@ -1,8 +1,11 @@
 import os.path
 import sys
 
+import pytest
+
 sys.path += [os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))]
 
+pytest.importorskip('swaggertosdk')
 from build_sdk import *
 
 def test_guess_autorest_options():

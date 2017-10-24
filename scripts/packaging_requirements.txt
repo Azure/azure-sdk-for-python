@@ -1,2 +1,2 @@
 cookiecutter
-git+https://github.com/lmazuel/swagger-to-sdk
+git+https://github.com/lmazuel/swagger-to-sdk;python_version>="3.6"
