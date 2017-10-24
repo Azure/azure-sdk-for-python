@@ -50,7 +50,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :param using_sdk: Using SDK?
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: object
+    :type settings: dict[str, object]
     """
 
     _validation = {
@@ -75,7 +75,7 @@ class ContinuousWebJob(ProxyOnlyResource):
         'job_type': {'key': 'properties.jobType', 'type': 'WebJobType'},
         'error': {'key': 'properties.error', 'type': 'str'},
         'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
     def __init__(self, kind=None, status=None, detailed_status=None, log_url=None, run_command=None, url=None, extra_info_url=None, job_type=None, error=None, using_sdk=None, settings=None):

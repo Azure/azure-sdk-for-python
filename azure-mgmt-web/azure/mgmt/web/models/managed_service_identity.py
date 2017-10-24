@@ -12,32 +12,32 @@
 from msrest.serialization import Model
 
 
-class ResourceIdentity(Model):
-    """Identity for the resource.
+class ManagedServiceIdentity(Model):
+    """Managed service identity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
+    :param type: Type of managed service identity.
+    :type type: object
+    :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
+    :ivar principal_id: Principal Id of managed service identity.
+    :vartype principal_id: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
+        'principal_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'object'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ManagedServiceIdentityType'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
     def __init__(self, type=None):
-        self.principal_id = None
-        self.tenant_id = None
         self.type = type
+        self.tenant_id = None
+        self.principal_id = None

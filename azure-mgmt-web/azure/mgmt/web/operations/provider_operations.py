@@ -89,7 +89,11 @@ class ProviderOperations(object):
 
     def list_operations(
             self, custom_headers=None, raw=False, **operation_config):
-        """
+        """Gets all available operations for the Microsoft.Web resource provider.
+        Also exposes resource metric definitions.
+
+        Gets all available operations for the Microsoft.Web resource provider.
+        Also exposes resource metric definitions.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

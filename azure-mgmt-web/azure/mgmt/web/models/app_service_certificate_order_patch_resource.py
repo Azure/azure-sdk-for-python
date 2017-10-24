@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class AppServiceCertificateOrder(Resource):
-    """SSL certificate purchase order.
+class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
+    """ARM resource for a certificate order that is purchased through Azure.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,8 @@ class AppServiceCertificateOrder(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
      ~azure.mgmt.web.models.AppServiceCertificate]
@@ -85,7 +81,6 @@ class AppServiceCertificateOrder(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
         'validity_in_years': {'maximum': 3, 'minimum': 1},
@@ -106,9 +101,7 @@ class AppServiceCertificateOrder(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
         'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
         'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
@@ -130,8 +123,8 @@ class AppServiceCertificateOrder(Resource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, kind=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
-        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
+        super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
         self.domain_verification_token = None
