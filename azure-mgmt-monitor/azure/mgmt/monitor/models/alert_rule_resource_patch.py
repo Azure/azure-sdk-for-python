@@ -19,7 +19,7 @@ class AlertRuleResourcePatch(Model):
     sending a request.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param name: the name of the alert rule.
     :type name: str
     :param description: the description of the alert rule that will be
@@ -30,12 +30,10 @@ class AlertRuleResourcePatch(Model):
     :type is_enabled: bool
     :param condition: the condition that results in the alert rule being
      activated.
-    :type condition: :class:`RuleCondition
-     <azure.mgmt.monitor.models.RuleCondition>`
+    :type condition: ~azure.mgmt.monitor.models.RuleCondition
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
-    :type actions: list of :class:`RuleAction
-     <azure.mgmt.monitor.models.RuleAction>`
+    :type actions: list[~azure.mgmt.monitor.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: datetime
     """
