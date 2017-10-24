@@ -17,9 +17,8 @@ class LocationThresholdRuleCondition(RuleCondition):
 
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
-    :type data_source: :class:`RuleDataSource
-     <azure.mgmt.monitor.models.RuleDataSource>`
-    :param odatatype: Polymorphic Discriminator
+    :type data_source: ~azure.mgmt.monitor.models.RuleDataSource
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     :param window_size: the period of time (in ISO 8601 duration format) that
      is used to monitor alert activity based on the threshold. If specified

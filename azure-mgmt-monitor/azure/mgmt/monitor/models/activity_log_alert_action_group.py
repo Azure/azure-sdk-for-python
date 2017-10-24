@@ -20,7 +20,7 @@ class ActivityLogAlertActionGroup(Model):
     :type action_group_id: str
     :param webhook_properties: the dictionary of custom properties to include
      with the post operation. These data are appended to the webhook payload.
-    :type webhook_properties: dict
+    :type webhook_properties: dict[str, str]
     """
 
     _validation = {
