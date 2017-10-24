@@ -27,7 +27,7 @@ class PublicCertificate(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param blob: Public Certificate byte array
-    :type blob: str
+    :type blob: bytearray
     :param public_certificate_location: Public Certificate Location. Possible
      values include: 'CurrentUserMy', 'LocalMachineMy', 'Unknown'
     :type public_certificate_location: str or
@@ -48,7 +48,7 @@ class PublicCertificate(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'blob': {'key': 'properties.blob', 'type': 'str'},
+        'blob': {'key': 'properties.blob', 'type': 'bytearray'},
         'public_certificate_location': {'key': 'properties.publicCertificateLocation', 'type': 'PublicCertificateLocation'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }

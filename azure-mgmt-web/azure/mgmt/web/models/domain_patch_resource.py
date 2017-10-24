@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class Domain(Resource):
-    """Information about a domain.
+class DomainPatchResource(ProxyOnlyResource):
+    """ARM resource for a domain.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,8 @@ class Domain(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param contact_admin: Administrative contact.
     :type contact_admin: ~azure.mgmt.web.models.Contact
     :param contact_billing: Billing contact.
@@ -90,7 +86,6 @@ class Domain(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -107,9 +102,7 @@ class Domain(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
         'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
         'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
@@ -132,8 +125,8 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None, auth_code=None):
-        super(Domain, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None, auth_code=None):
+        super(DomainPatchResource, self).__init__(kind=kind)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

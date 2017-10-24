@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class DomainOwnershipIdentifier(Resource):
+class DomainOwnershipIdentifier(ProxyOnlyResource):
     """Domain ownership Identifier.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,14 +24,8 @@ class DomainOwnershipIdentifier(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.web.models.ResourceIdentity
     :param ownership_id: Ownership Id.
     :type ownership_id: str
     """
@@ -39,7 +33,6 @@ class DomainOwnershipIdentifier(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
     }
 
@@ -47,13 +40,10 @@ class DomainOwnershipIdentifier(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'ownership_id': {'key': 'properties.ownershipId', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, identity=None, ownership_id=None):
-        super(DomainOwnershipIdentifier, self).__init__(kind=kind, location=location, tags=tags, identity=identity)
+    def __init__(self, kind=None, ownership_id=None):
+        super(DomainOwnershipIdentifier, self).__init__(kind=kind)
         self.ownership_id = ownership_id

@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MetricAvailability(Model):
-    """Retention policy of a resource metric.
-
-    :param time_grain:
-    :type time_grain: str
-    :param blob_duration:
-    :type blob_duration: str
+class AppServiceEnvironmentResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AppServiceEnvironmentResource <azure.mgmt.web.models.AppServiceEnvironmentResource>` object
     """
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AppServiceEnvironmentResource]'}
     }
 
-    def __init__(self, time_grain=None, blob_duration=None):
-        self.time_grain = time_grain
-        self.blob_duration = blob_duration
+    def __init__(self, *args, **kwargs):
+
+        super(AppServiceEnvironmentResourcePaged, self).__init__(*args, **kwargs)

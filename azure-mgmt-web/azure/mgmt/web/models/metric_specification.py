@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MetricSpecification(Model):
-    """MetricSpecification.
+    """Definition of a single resource metric.
 
     :param name:
     :type name: str
