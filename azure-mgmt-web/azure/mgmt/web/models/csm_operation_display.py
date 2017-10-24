@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CsmOperationDisplay(Model):
-    """CsmOperationDisplay.
+    """Meta data about operation used for display in portal.
 
     :param provider:
     :type provider: str

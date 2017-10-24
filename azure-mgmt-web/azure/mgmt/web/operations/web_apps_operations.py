@@ -224,7 +224,7 @@ class WebAppsOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -421,7 +421,7 @@ class WebAppsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200, 204, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -429,6 +429,103 @@ class WebAppsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def update(
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Unique name of the app to create or update. To create or
+         update a deployment slot, use the {slot} parameter.
+        :type name: str
+        :param site_envelope: A JSON representation of the app properties. See
+         example.
+        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Site or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Site or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if skip_dns_registration is not None:
+            query_parameters['skipDnsRegistration'] = self._serialize.query("skip_dns_registration", skip_dns_registration, 'bool')
+        if skip_custom_domain_verification is not None:
+            query_parameters['skipCustomDomainVerification'] = self._serialize.query("skip_custom_domain_verification", skip_custom_domain_verification, 'bool')
+        if force_dns_registration is not None:
+            query_parameters['forceDnsRegistration'] = self._serialize.query("force_dns_registration", force_dns_registration, 'bool')
+        if ttl_in_seconds is not None:
+            query_parameters['ttlInSeconds'] = self._serialize.query("ttl_in_seconds", ttl_in_seconds, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_envelope, 'SitePatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Site', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Site', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def analyze_custom_hostname(
             self, resource_group_name, name, host_name=None, custom_headers=None, raw=False, **operation_config):
@@ -2623,50 +2720,59 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of SiteConfigurationSnapshotInfo
+        :rtype:
+         ~azure.mgmt.web.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/web/snapshots'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/web/snapshots'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('[SiteConfigurationSnapshotInfo]', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SiteConfigurationSnapshotInfoPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SiteConfigurationSnapshotInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2799,6 +2905,142 @@ class WebAppsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def get_web_site_container_logs(
+            self, resource_group_name, name, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Gets the last lines of docker logs for the given site.
+
+        Gets the last lines of docker logs for the given site.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/containerlogs'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204, 200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_container_logs_zip(
+            self, resource_group_name, name, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Gets the ZIP archived docker log files for the given site.
+
+        Gets the ZIP archived docker log files for the given site.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/containerlogs/zip/download'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204, 200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_continuous_web_jobs(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List continuous web jobs for an app, or a deployment slot.
@@ -2873,7 +3115,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_continuous_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
         Gets a continuous web job by its ID for an app, or a deployment slot.
@@ -2883,9 +3125,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2909,7 +3149,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -2943,7 +3182,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def delete_continuous_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
         Delete a continuous web job by its ID for an app, or a deployment slot.
@@ -2953,9 +3192,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2978,7 +3215,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -3005,7 +3241,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def start_continuous_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Start a continuous web job for an app, or a deployment slot.
 
         Start a continuous web job for an app, or a deployment slot.
@@ -3015,9 +3251,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3040,7 +3274,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -3067,7 +3300,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def stop_continuous_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Stop a continuous web job for an app, or a deployment slot.
 
         Stop a continuous web job for an app, or a deployment slot.
@@ -3077,9 +3310,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3102,7 +3333,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -6045,7 +6275,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_instance_process_dump(
-            self, resource_group_name, name, process_id, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, instance_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -6066,10 +6296,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6109,7 +6344,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -6201,7 +6436,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_instance_process_module(
-            self, resource_group_name, name, process_id, base_address, instance_id, base_address1, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, base_address, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
@@ -6221,8 +6456,6 @@ class WebAppsOperations(object):
          value of the name property in the JSON response from "GET
          api/sites/{siteName}/instances".
         :type instance_id: str
-        :param base_address1:
-        :type base_address1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -6234,20 +6467,19 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/processes/{processId}/modules/{base_address}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/processes/{processId}/modules/{baseAddress}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'processId': self._serialize.url("process_id", process_id, 'str'),
+            'baseAddress': self._serialize.url("base_address", base_address, 'str'),
             'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'base_address': self._serialize.url("base_address1", base_address1, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['baseAddress'] = self._serialize.query("base_address", base_address, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -7245,7 +7477,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -7868,7 +8100,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_process_dump(
-            self, resource_group_name, name, process_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -7885,10 +8117,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7927,7 +8164,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -8014,7 +8251,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_process_module(
-            self, resource_group_name, name, process_id, base_address, base_address1, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, base_address, custom_headers=None, raw=False, **operation_config):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
@@ -8030,8 +8267,6 @@ class WebAppsOperations(object):
         :type process_id: str
         :param base_address: Module base address.
         :type base_address: str
-        :param base_address1:
-        :type base_address1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8043,19 +8278,18 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/processes/{processId}/modules/{base_address}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/processes/{processId}/modules/{baseAddress}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'processId': self._serialize.url("process_id", process_id, 'str'),
-            'base_address': self._serialize.url("base_address1", base_address1, 'str'),
+            'baseAddress': self._serialize.url("base_address", base_address, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['baseAddress'] = self._serialize.query("base_address", base_address, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -8881,7 +9115,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_site_extension(
-            self, resource_group_name, name, site_extension_id, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, custom_headers=None, raw=False, **operation_config):
         """Get site extension information by its ID for a web site, or a
         deployment slot.
 
@@ -8895,8 +9129,6 @@ class WebAppsOperations(object):
         :type name: str
         :param site_extension_id: Site extension name.
         :type site_extension_id: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8908,18 +9140,17 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -8953,7 +9184,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def install_site_extension(
-            self, resource_group_name, name, site_extension_id, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, custom_headers=None, raw=False, **operation_config):
         """Install site extension on a web site, or a deployment slot.
 
         Install site extension on a web site, or a deployment slot.
@@ -8965,8 +9196,6 @@ class WebAppsOperations(object):
         :type name: str
         :param site_extension_id: Site extension name.
         :type site_extension_id: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8978,18 +9207,17 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -9048,7 +9276,7 @@ class WebAppsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_site_extension(
-            self, resource_group_name, name, site_extension_id, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, custom_headers=None, raw=False, **operation_config):
         """Remove a site extension from a web site, or a deployment slot.
 
         Remove a site extension from a web site, or a deployment slot.
@@ -9060,8 +9288,6 @@ class WebAppsOperations(object):
         :type name: str
         :param site_extension_id: Site extension name.
         :type site_extension_id: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -9072,18 +9298,17 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -9233,7 +9458,7 @@ class WebAppsOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -9438,7 +9663,7 @@ class WebAppsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200, 204, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -9446,6 +9671,107 @@ class WebAppsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def update_slot(
+            self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Unique name of the app to create or update. To create or
+         update a deployment slot, use the {slot} parameter.
+        :type name: str
+        :param site_envelope: A JSON representation of the app properties. See
+         example.
+        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource
+        :param slot: Name of the deployment slot to create or update. By
+         default, this API attempts to create or modify the production slot.
+        :type slot: str
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Site or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Site or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if skip_dns_registration is not None:
+            query_parameters['skipDnsRegistration'] = self._serialize.query("skip_dns_registration", skip_dns_registration, 'bool')
+        if skip_custom_domain_verification is not None:
+            query_parameters['skipCustomDomainVerification'] = self._serialize.query("skip_custom_domain_verification", skip_custom_domain_verification, 'bool')
+        if force_dns_registration is not None:
+            query_parameters['forceDnsRegistration'] = self._serialize.query("force_dns_registration", force_dns_registration, 'bool')
+        if ttl_in_seconds is not None:
+            query_parameters['ttlInSeconds'] = self._serialize.query("ttl_in_seconds", ttl_in_seconds, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_envelope, 'SitePatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Site', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Site', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def analyze_custom_hostname_slot(
             self, resource_group_name, name, slot, host_name=None, custom_headers=None, raw=False, **operation_config):
@@ -11619,51 +11945,60 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of SiteConfigurationSnapshotInfo
+        :rtype:
+         ~azure.mgmt.web.models.SiteConfigurationSnapshotInfoPaged[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/web/snapshots'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/web/snapshots'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('[SiteConfigurationSnapshotInfo]', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SiteConfigurationSnapshotInfoPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SiteConfigurationSnapshotInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -11804,6 +12139,150 @@ class WebAppsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def get_web_site_container_logs_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Gets the last lines of docker logs for the given site.
+
+        Gets the last lines of docker logs for the given site.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/containerlogs'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204, 200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_container_logs_zip_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Gets the ZIP archived docker log files for the given site.
+
+        Gets the ZIP archived docker log files for the given site.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/containerlogs/zip/download'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204, 200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_continuous_web_jobs_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """List continuous web jobs for an app, or a deployment slot.
@@ -11882,7 +12361,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_continuous_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
         Gets a continuous web job by its ID for an app, or a deployment slot.
@@ -11892,13 +12371,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -11914,15 +12391,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -11956,7 +12432,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def delete_continuous_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
         Delete a continuous web job by its ID for an app, or a deployment slot.
@@ -11966,13 +12442,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -11987,15 +12461,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -12022,7 +12495,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def start_continuous_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Start a continuous web job for an app, or a deployment slot.
 
         Start a continuous web job for an app, or a deployment slot.
@@ -12032,13 +12505,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -12053,15 +12524,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -12088,7 +12558,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def stop_continuous_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Stop a continuous web job for an app, or a deployment slot.
 
         Stop a continuous web job for an app, or a deployment slot.
@@ -12098,13 +12568,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -12119,15 +12587,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -15230,7 +15697,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_instance_process_dump_slot(
-            self, resource_group_name, name, process_id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, slot, instance_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -15254,10 +15721,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15298,7 +15770,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -15394,7 +15866,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_instance_process_module_slot(
-            self, resource_group_name, name, process_id, base_address, slot, instance_id, base_address1, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, base_address, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
@@ -15417,8 +15889,6 @@ class WebAppsOperations(object):
          value of the name property in the JSON response from "GET
          api/sites/{siteName}/instances".
         :type instance_id: str
-        :param base_address1:
-        :type base_address1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -15430,21 +15900,20 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/processes/{processId}/modules/{base_address}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/processes/{processId}/modules/{baseAddress}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'processId': self._serialize.url("process_id", process_id, 'str'),
+            'baseAddress': self._serialize.url("base_address", base_address, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
             'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'base_address': self._serialize.url("base_address1", base_address1, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['baseAddress'] = self._serialize.query("base_address", base_address, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -16292,7 +16761,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -16951,7 +17420,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_process_dump_slot(
-            self, resource_group_name, name, process_id, slot, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, slot, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -16971,10 +17440,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17014,7 +17488,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -17105,7 +17579,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_process_module_slot(
-            self, resource_group_name, name, process_id, base_address, slot, base_address1, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, base_address, slot, custom_headers=None, raw=False, **operation_config):
         """Get process information by its ID for a specific scaled-out instance in
         a web site.
 
@@ -17124,8 +17598,6 @@ class WebAppsOperations(object):
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API returns deployments for the production slot.
         :type slot: str
-        :param base_address1:
-        :type base_address1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -17137,20 +17609,19 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/processes/{processId}/modules/{base_address}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/processes/{processId}/modules/{baseAddress}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'processId': self._serialize.url("process_id", process_id, 'str'),
+            'baseAddress': self._serialize.url("base_address", base_address, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'base_address': self._serialize.url("base_address1", base_address1, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['baseAddress'] = self._serialize.query("base_address", base_address, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -18020,7 +18491,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_site_extension_slot(
-            self, resource_group_name, name, site_extension_id, slot, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, slot, custom_headers=None, raw=False, **operation_config):
         """Get site extension information by its ID for a web site, or a
         deployment slot.
 
@@ -18037,8 +18508,6 @@ class WebAppsOperations(object):
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -18050,19 +18519,18 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -18096,7 +18564,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def install_site_extension_slot(
-            self, resource_group_name, name, site_extension_id, slot, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, slot, custom_headers=None, raw=False, **operation_config):
         """Install site extension on a web site, or a deployment slot.
 
         Install site extension on a web site, or a deployment slot.
@@ -18111,8 +18579,6 @@ class WebAppsOperations(object):
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -18124,19 +18590,18 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -18195,7 +18660,7 @@ class WebAppsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_site_extension_slot(
-            self, resource_group_name, name, site_extension_id, slot, extension_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_extension_id, slot, custom_headers=None, raw=False, **operation_config):
         """Remove a site extension from a web site, or a deployment slot.
 
         Remove a site extension from a web site, or a deployment slot.
@@ -18210,8 +18675,6 @@ class WebAppsOperations(object):
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param extension_name:
-        :type extension_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -18222,19 +18685,18 @@ class WebAppsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{extensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{siteExtensionId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
+            'siteExtensionId': self._serialize.url("site_extension_id", site_extension_id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -18748,6 +19210,84 @@ class WebAppsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def update_source_control_slot(
+            self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
+        """Updates the source control configuration of an app.
+
+        Updates the source control configuration of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param site_source_control: JSON representation of a SiteSourceControl
+         object. See example.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API will update the source control configuration for the
+         production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SiteSourceControl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSourceControl or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def start_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """Starts an app (or deployment slot, if specified).
@@ -19066,7 +19606,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_triggered_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
         Gets a triggered web job by its ID for an app, or a deployment slot.
@@ -19076,13 +19616,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -19098,15 +19636,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -19140,7 +19677,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def delete_triggered_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
         Delete a triggered web job by its ID for an app, or a deployment slot.
@@ -19150,13 +19687,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -19171,15 +19706,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -19206,7 +19740,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def list_triggered_web_job_history_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """List a triggered web job's history for an app, or a deployment slot.
 
         List a triggered web job's history for an app, or a deployment slot.
@@ -19216,13 +19750,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -19241,15 +19773,14 @@ class WebAppsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
                     'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -19289,7 +19820,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_triggered_web_job_history_slot(
-            self, resource_group_name, name, web_job_id, id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, id, slot, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job's history by its ID for an app, , or a
         deployment slot.
 
@@ -19301,15 +19832,13 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param id: History ID.
         :type id: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -19325,16 +19854,15 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
+            'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
             'id': self._serialize.url("id", id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -19368,7 +19896,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def run_triggered_web_job_slot(
-            self, resource_group_name, name, web_job_id, slot, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, slot, custom_headers=None, raw=False, **operation_config):
         """Run a triggered web job for an app, or a deployment slot.
 
         Run a triggered web job for an app, or a deployment slot.
@@ -19378,13 +19906,11 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API deletes a deployment for the production slot.
         :type slot: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -19399,15 +19925,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -20741,6 +21266,79 @@ class WebAppsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def update_source_control(
+            self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
+        """Updates the source control configuration of an app.
+
+        Updates the source control configuration of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param site_source_control: JSON representation of a SiteSourceControl
+         object. See example.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SiteSourceControl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSourceControl or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def start(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Starts an app (or deployment slot, if specified).
@@ -21039,7 +21637,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_triggered_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
         Gets a triggered web job by its ID for an app, or a deployment slot.
@@ -21049,9 +21647,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -21075,7 +21671,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -21109,7 +21704,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def delete_triggered_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
         Delete a triggered web job by its ID for an app, or a deployment slot.
@@ -21119,9 +21714,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -21144,7 +21737,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -21171,7 +21763,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def list_triggered_web_job_history(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """List a triggered web job's history for an app, or a deployment slot.
 
         List a triggered web job's history for an app, or a deployment slot.
@@ -21181,9 +21773,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -21210,7 +21800,6 @@ class WebAppsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -21250,7 +21839,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def get_triggered_web_job_history(
-            self, resource_group_name, name, web_job_id, id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, id, custom_headers=None, raw=False, **operation_config):
         """Gets a triggered web job's history by its ID for an app, , or a
         deployment slot.
 
@@ -21262,12 +21851,10 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
+        :param web_job_name: Name of Web Job.
+        :type web_job_name: str
         :param id: History ID.
         :type id: str
-        :param web_job_name:
-        :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -21283,15 +21870,14 @@ class WebAppsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'id': self._serialize.url("id", id, 'str'),
             'webJobName': self._serialize.url("web_job_name", web_job_name, 'str'),
+            'id': self._serialize.url("id", id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -21325,7 +21911,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def run_triggered_web_job(
-            self, resource_group_name, name, web_job_id, web_job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, web_job_name, custom_headers=None, raw=False, **operation_config):
         """Run a triggered web job for an app, or a deployment slot.
 
         Run a triggered web job for an app, or a deployment slot.
@@ -21335,9 +21921,7 @@ class WebAppsOperations(object):
         :type resource_group_name: str
         :param name: Site name.
         :type name: str
-        :param web_job_id: Web job ID.
-        :type web_job_id: str
-        :param web_job_name:
+        :param web_job_name: Name of Web Job.
         :type web_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -21360,7 +21944,6 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['webJobId'] = self._serialize.query("web_job_id", web_job_id, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

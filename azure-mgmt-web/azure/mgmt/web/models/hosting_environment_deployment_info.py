@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class SiteSealRequest(Model):
-    """Site seal request.
+class HostingEnvironmentDeploymentInfo(Model):
+    """Information needed to create resources on an App Service Environment.
 
-    :param light_theme: If <code>true</code> use the light color theme for
-     site seal; otherwise, use the default color theme.
-    :type light_theme: bool
-    :param locale: Locale of site seal.
-    :type locale: str
+    :param name: Name of the App Service Environment.
+    :type name: str
+    :param location: Location of the App Service Environment.
+    :type location: str
     """
 
     _attribute_map = {
-        'light_theme': {'key': 'lightTheme', 'type': 'bool'},
-        'locale': {'key': 'locale', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, light_theme=None, locale=None):
-        self.light_theme = light_theme
-        self.locale = locale
+    def __init__(self, name=None, location=None):
+        self.name = name
+        self.location = location

@@ -13,7 +13,9 @@ from msrest.serialization import Model
 
 
 class Dimension(Model):
-    """Dimension.
+    """Dimension of a resource metric. For e.g. instance specific HTTP requests
+    for a web app,
+    where instance name is dimension of the metric HTTP request.
 
     :param name:
     :type name: str

@@ -74,9 +74,98 @@ class CertificateOrderActionType(Enum):
     unknown = "Unknown"
 
 
-class ManagedServiceIdentityType(Enum):
+class RouteType(Enum):
 
-    system_assigned = "SystemAssigned"
+    default = "DEFAULT"
+    inherited = "INHERITED"
+    static = "STATIC"
+
+
+class AutoHealActionType(Enum):
+
+    recycle = "Recycle"
+    log_event = "LogEvent"
+    custom_action = "CustomAction"
+
+
+class ConnectionStringType(Enum):
+
+    my_sql = "MySql"
+    sql_server = "SQLServer"
+    sql_azure = "SQLAzure"
+    custom = "Custom"
+    notification_hub = "NotificationHub"
+    service_bus = "ServiceBus"
+    event_hub = "EventHub"
+    api_hub = "ApiHub"
+    doc_db = "DocDb"
+    redis_cache = "RedisCache"
+    postgre_sql = "PostgreSQL"
+
+
+class ScmType(Enum):
+
+    none = "None"
+    dropbox = "Dropbox"
+    tfs = "Tfs"
+    local_git = "LocalGit"
+    git_hub = "GitHub"
+    code_plex_git = "CodePlexGit"
+    code_plex_hg = "CodePlexHg"
+    bitbucket_git = "BitbucketGit"
+    bitbucket_hg = "BitbucketHg"
+    external_git = "ExternalGit"
+    external_hg = "ExternalHg"
+    one_drive = "OneDrive"
+    vso = "VSO"
+
+
+class ManagedPipelineMode(Enum):
+
+    integrated = "Integrated"
+    classic = "Classic"
+
+
+class SiteLoadBalancing(Enum):
+
+    weighted_round_robin = "WeightedRoundRobin"
+    least_requests = "LeastRequests"
+    least_response_time = "LeastResponseTime"
+    weighted_total_traffic = "WeightedTotalTraffic"
+    request_hash = "RequestHash"
+
+
+class SslState(Enum):
+
+    disabled = "Disabled"
+    sni_enabled = "SniEnabled"
+    ip_based_enabled = "IpBasedEnabled"
+
+
+class HostType(Enum):
+
+    standard = "Standard"
+    repository = "Repository"
+
+
+class UsageState(Enum):
+
+    normal = "Normal"
+    exceeded = "Exceeded"
+
+
+class SiteAvailabilityState(Enum):
+
+    normal = "Normal"
+    limited = "Limited"
+    disaster_recovery_mode = "DisasterRecoveryMode"
+
+
+class StatusOptions(Enum):
+
+    ready = "Ready"
+    pending = "Pending"
+    creating = "Creating"
 
 
 class DomainStatus(Enum):
@@ -132,6 +221,54 @@ class DomainType(Enum):
 
     regular = "Regular"
     soft_deleted = "SoftDeleted"
+
+
+class HostingEnvironmentStatus(Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(Enum):
+
+    default = "Default"
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+    d1 = "D1"
+    d2 = "D2"
+    d3 = "D3"
+
+
+class AccessControlEntryAction(Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class OperationStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
 
 
 class ResourceScopeType(Enum):
@@ -196,13 +333,6 @@ class LogLevel(Enum):
     error = "Error"
 
 
-class AutoHealActionType(Enum):
-
-    recycle = "Recycle"
-    log_event = "LogEvent"
-    custom_action = "CustomAction"
-
-
 class BackupItemStatus(Enum):
 
     in_progress = "InProgress"
@@ -239,21 +369,6 @@ class BackupRestoreOperationType(Enum):
     snapshot = "Snapshot"
 
 
-class ConnectionStringType(Enum):
-
-    my_sql = "MySql"
-    sql_server = "SQLServer"
-    sql_azure = "SQLAzure"
-    custom = "Custom"
-    notification_hub = "NotificationHub"
-    service_bus = "ServiceBus"
-    event_hub = "EventHub"
-    api_hub = "ApiHub"
-    doc_db = "DocDb"
-    redis_cache = "RedisCache"
-    postgre_sql = "PostgreSQL"
-
-
 class ContinuousWebJobStatus(Enum):
 
     initializing = "Initializing"
@@ -283,19 +398,6 @@ class DnsVerificationTestResult(Enum):
     skipped = "Skipped"
 
 
-class SslState(Enum):
-
-    disabled = "Disabled"
-    sni_enabled = "SniEnabled"
-    ip_based_enabled = "IpBasedEnabled"
-
-
-class HostType(Enum):
-
-    standard = "Standard"
-    repository = "Repository"
-
-
 class MSDeployLogEntryType(Enum):
 
     message = "Message"
@@ -318,72 +420,11 @@ class MySqlMigrationType(Enum):
     remote_to_local = "RemoteToLocal"
 
 
-class OperationStatus(Enum):
-
-    in_progress = "InProgress"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    timed_out = "TimedOut"
-    created = "Created"
-
-
-class RouteType(Enum):
-
-    default = "DEFAULT"
-    inherited = "INHERITED"
-    static = "STATIC"
-
-
 class PublicCertificateLocation(Enum):
 
     current_user_my = "CurrentUserMy"
     local_machine_my = "LocalMachineMy"
     unknown = "Unknown"
-
-
-class UsageState(Enum):
-
-    normal = "Normal"
-    exceeded = "Exceeded"
-
-
-class SiteAvailabilityState(Enum):
-
-    normal = "Normal"
-    limited = "Limited"
-    disaster_recovery_mode = "DisasterRecoveryMode"
-
-
-class ScmType(Enum):
-
-    none = "None"
-    dropbox = "Dropbox"
-    tfs = "Tfs"
-    local_git = "LocalGit"
-    git_hub = "GitHub"
-    code_plex_git = "CodePlexGit"
-    code_plex_hg = "CodePlexHg"
-    bitbucket_git = "BitbucketGit"
-    bitbucket_hg = "BitbucketHg"
-    external_git = "ExternalGit"
-    external_hg = "ExternalHg"
-    one_drive = "OneDrive"
-    vso = "VSO"
-
-
-class ManagedPipelineMode(Enum):
-
-    integrated = "Integrated"
-    classic = "Classic"
-
-
-class SiteLoadBalancing(Enum):
-
-    weighted_round_robin = "WeightedRoundRobin"
-    least_requests = "LeastRequests"
-    least_response_time = "LeastResponseTime"
-    weighted_total_traffic = "WeightedTotalTraffic"
-    request_hash = "RequestHash"
 
 
 class UnauthenticatedClientAction(Enum):
@@ -419,48 +460,6 @@ class TriggeredWebJobStatus(Enum):
     success = "Success"
     failed = "Failed"
     error = "Error"
-
-
-class HostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
-
-
-class WorkerSizeOptions(Enum):
-
-    default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
-
-
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
-class StatusOptions(Enum):
-
-    ready = "Ready"
-    pending = "Pending"
 
 
 class SkuName(Enum):

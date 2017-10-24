@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CsmOperationDescription(Model):
-    """CsmOperationDescription.
+    """Description of an operation available for Microsoft.Web resource provider.
 
     :param name:
     :type name: str

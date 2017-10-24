@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AppServiceEnvironmentPaged(Paged):
+class SiteConfigurationSnapshotInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AppServiceEnvironment <azure.mgmt.web.models.AppServiceEnvironment>` object
+    A paging container for iterating over a list of :class:`SiteConfigurationSnapshotInfo <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AppServiceEnvironment]'}
+        'current_page': {'key': 'value', 'type': '[SiteConfigurationSnapshotInfo]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AppServiceEnvironmentPaged, self).__init__(*args, **kwargs)
+        super(SiteConfigurationSnapshotInfoPaged, self).__init__(*args, **kwargs)

@@ -120,6 +120,9 @@ class AppServiceEnvironment(Model):
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
     :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
+     ASE db
+    :type user_whitelisted_ip_ranges: list[str]
     """
 
     _validation = {
@@ -182,9 +185,10 @@ class AppServiceEnvironment(Model):
         'suspended': {'key': 'suspended', 'type': 'bool'},
         'dynamic_cache_enabled': {'key': 'dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'clusterSettings', 'type': '[NameValuePair]'},
+        'user_whitelisted_ip_ranges': {'key': 'userWhitelistedIpRanges', 'type': '[str]'},
     }
 
-    def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+    def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
         self.name = name
         self.location = location
         self.provisioning_state = None
@@ -220,3 +224,4 @@ class AppServiceEnvironment(Model):
         self.suspended = suspended
         self.dynamic_cache_enabled = dynamic_cache_enabled
         self.cluster_settings = cluster_settings
+        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges
