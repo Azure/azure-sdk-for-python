@@ -27,21 +27,27 @@ class EditionCapability(Model):
      objectives for the edition.
     :vartype supported_service_level_objectives:
      list[~azure.mgmt.sql.models.ServiceObjectiveCapability]
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     edition.
+    :vartype zone_redundant: bool
     """
 
     _validation = {
         'name': {'readonly': True},
         'status': {'readonly': True},
         'supported_service_level_objectives': {'readonly': True},
+        'zone_redundant': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'supported_service_level_objectives': {'key': 'supportedServiceLevelObjectives', 'type': '[ServiceObjectiveCapability]'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
     }
 
     def __init__(self):
         self.name = None
         self.status = None
         self.supported_service_level_objectives = None
+        self.zone_redundant = None
