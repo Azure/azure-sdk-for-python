@@ -12,22 +12,21 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceDiagnosticsProfile(Model):
-    """Profile for diagnostics on the container service cluster.
+class OrchestratorVersionProfileProperties(Model):
+    """The properties of an orchestrator version profile.
 
-    :param vm_diagnostics: Profile for diagnostics on the container service
-     VMs.
-    :type vm_diagnostics: :class:`ContainerServiceVMDiagnostics
-     <azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics>`
+    :param orchestrators: List of orchstrator version profiles.
+    :type orchestrators: :class:`OrchestratorVersionProfile
+     <azure.mgmt.containerservice.models.OrchestratorVersionProfile>`
     """
 
     _validation = {
-        'vm_diagnostics': {'required': True},
+        'orchestrators': {'required': True},
     }
 
     _attribute_map = {
-        'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
+        'orchestrators': {'key': 'orchestrators', 'type': 'OrchestratorVersionProfile'},
     }
 
-    def __init__(self, vm_diagnostics):
-        self.vm_diagnostics = vm_diagnostics
+    def __init__(self, orchestrators):
+        self.orchestrators = orchestrators

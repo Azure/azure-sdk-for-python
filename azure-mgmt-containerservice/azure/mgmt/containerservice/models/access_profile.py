@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from msrest.serialization import Model
 
+
+class AccessProfile(Model):
+    """Profile for enabling a user to access a managed cluster.
+
+    :param kube_config: Base64-encoded Kubernetes configuration file.
+    :type kube_config: str
+    """
+
+    _attribute_map = {
+        'kube_config': {'key': 'kubeConfig', 'type': 'str'},
+    }
+
+    def __init__(self, kube_config=None):
+        self.kube_config = kube_config
