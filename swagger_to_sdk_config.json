@@ -56,9 +56,8 @@
     "cdn": {
       "markdown": "specification/cdn/resource-manager/readme.md",
       "autorest_options": {
-        "tag": "package-2016-10",
         "namespace": "azure.mgmt.cdn",
-        "package-version": "1.0.0"
+        "package-version": "2.0.0"
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn",
       "build_dir": "azure-mgmt-cdn"
