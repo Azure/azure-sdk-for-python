@@ -141,6 +141,13 @@ from .available_providers_list_city import AvailableProvidersListCity
 from .available_providers_list_state import AvailableProvidersListState
 from .available_providers_list_country import AvailableProvidersListCountry
 from .available_providers_list import AvailableProvidersList
+from .operation_display import OperationDisplay
+from .availability import Availability
+from .dimension import Dimension
+from .metric_specification import MetricSpecification
+from .log_specification import LogSpecification
+from .operation_properties_format_service_specification import OperationPropertiesFormatServiceSpecification
+from .operation import Operation
 from .patch_route_filter_rule import PatchRouteFilterRule
 from .patch_route_filter import PatchRouteFilter
 from .bgp_community import BGPCommunity
@@ -195,6 +202,7 @@ from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
 from .packet_capture_result_paged import PacketCaptureResultPaged
+from .operation_paged import OperationPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_filter_paged import RouteFilterPaged
 from .route_filter_rule_paged import RouteFilterRulePaged
@@ -411,6 +419,13 @@ __all__ = [
     'AvailableProvidersListState',
     'AvailableProvidersListCountry',
     'AvailableProvidersList',
+    'OperationDisplay',
+    'Availability',
+    'Dimension',
+    'MetricSpecification',
+    'LogSpecification',
+    'OperationPropertiesFormatServiceSpecification',
+    'Operation',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -465,6 +480,7 @@ __all__ = [
     'SecurityRulePaged',
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
+    'OperationPaged',
     'PublicIPAddressPaged',
     'RouteFilterPaged',
     'RouteFilterRulePaged',
