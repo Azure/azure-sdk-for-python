@@ -27,7 +27,7 @@ class LabVirtualMachineFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param notes: The notes of the virtual machine.
     :type notes: str
     :param owner_object_id: The object identifier of the owner of the virtual
@@ -71,27 +71,26 @@ class LabVirtualMachineFragment(Resource):
      is to be created without a public IP address.
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list of :class:`ArtifactInstallPropertiesFragment
-     <azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment>`
+    :type artifacts:
+     list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
     :param artifact_deployment_status: The artifact deployment status for the
      virtual machine.
     :type artifact_deployment_status:
-     :class:`ArtifactDeploymentStatusPropertiesFragment
-     <azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment>`
+     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
     :param gallery_image_reference: The Microsoft Azure Marketplace image
      reference of the virtual machine.
-    :type gallery_image_reference: :class:`GalleryImageReferenceFragment
-     <azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment>`
+    :type gallery_image_reference:
+     ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
     :param compute_vm: The compute virtual machine properties.
-    :type compute_vm: :class:`ComputeVmPropertiesFragment
-     <azure.mgmt.devtestlabs.models.ComputeVmPropertiesFragment>`
+    :type compute_vm:
+     ~azure.mgmt.devtestlabs.models.ComputeVmPropertiesFragment
     :param network_interface: The network interface properties.
-    :type network_interface: :class:`NetworkInterfacePropertiesFragment
-     <azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment>`
+    :type network_interface:
+     ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
     :param applicable_schedule: The applicable schedule for the virtual
      machine.
-    :type applicable_schedule: :class:`ApplicableScheduleFragment
-     <azure.mgmt.devtestlabs.models.ApplicableScheduleFragment>`
+    :type applicable_schedule:
+     ~azure.mgmt.devtestlabs.models.ApplicableScheduleFragment
     :param expiration_date: The expiration date for VM.
     :type expiration_date: datetime
     :param allow_claim: Indicates whether another user can take ownership of
@@ -104,8 +103,7 @@ class LabVirtualMachineFragment(Resource):
      virtual machine. Output property only. Possible values include:
      'FromCustomImage', 'FromGalleryImage'
     :type virtual_machine_creation_source: str or
-     :class:`VirtualMachineCreationSource
-     <azure.mgmt.devtestlabs.models.VirtualMachineCreationSource>`
+     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains
      this virtual machine, if any.
     :type environment_id: str

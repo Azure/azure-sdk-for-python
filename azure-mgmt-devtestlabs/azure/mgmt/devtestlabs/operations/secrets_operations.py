@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -61,8 +61,9 @@ class SecretsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretPaged
-         <azure.mgmt.devtestlabs.models.SecretPaged>`
+        :return: An iterator like instance of Secret
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.SecretPaged[~azure.mgmt.devtestlabs.models.Secret]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -146,9 +147,9 @@ class SecretsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Secret <azure.mgmt.devtestlabs.models.Secret>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Secret or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Secret or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -211,15 +212,15 @@ class SecretsOperations(object):
         :param name: The name of the secret.
         :type name: str
         :param secret: A secret.
-        :type secret: :class:`Secret <azure.mgmt.devtestlabs.models.Secret>`
+        :type secret: ~azure.mgmt.devtestlabs.models.Secret
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Secret <azure.mgmt.devtestlabs.models.Secret>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Secret or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Secret or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -290,9 +291,8 @@ class SecretsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

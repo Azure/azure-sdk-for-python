@@ -18,15 +18,14 @@ class GenerateArmTemplateRequest(Model):
     :param virtual_machine_name: The resource name of the virtual machine.
     :type virtual_machine_name: str
     :param parameters: The parameters of the ARM template.
-    :type parameters: list of :class:`ParameterInfo
-     <azure.mgmt.devtestlabs.models.ParameterInfo>`
+    :type parameters: list[~azure.mgmt.devtestlabs.models.ParameterInfo]
     :param location: The location of the virtual machine.
     :type location: str
     :param file_upload_options: Options for uploading the files for the
      artifact. UploadFilesAndGenerateSasTokens is the default value. Possible
      values include: 'UploadFilesAndGenerateSasTokens', 'None'
-    :type file_upload_options: str or :class:`FileUploadOptions
-     <azure.mgmt.devtestlabs.models.FileUploadOptions>`
+    :type file_upload_options: str or
+     ~azure.mgmt.devtestlabs.models.FileUploadOptions
     """
 
     _attribute_map = {

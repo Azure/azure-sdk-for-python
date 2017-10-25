@@ -12,17 +12,20 @@
 from msrest.serialization import Model
 
 
-class EvaluatePoliciesRequest(Model):
-    """Request body for evaluating a policy set.
+class OperationError(Model):
+    """Error details for the operation in case of a failure.
 
-    :param policies: Policies to evaluate.
-    :type policies:
-     list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
+    :param code: The error code of the operation error.
+    :type code: str
+    :param message: The error message of the operation error.
+    :type message: str
     """
 
     _attribute_map = {
-        'policies': {'key': 'policies', 'type': '[EvaluatePoliciesProperties]'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, policies=None):
-        self.policies = policies
+    def __init__(self, code=None, message=None):
+        self.code = code
+        self.message = message

@@ -18,8 +18,8 @@ class EnvironmentDeploymentProperties(Model):
     :param arm_template_id: The Azure Resource Manager template's identifier.
     :type arm_template_id: str
     :param parameters: The parameters of the Azure Resource Manager template.
-    :type parameters: list of :class:`ArmTemplateParameterProperties
-     <azure.mgmt.devtestlabs.models.ArmTemplateParameterProperties>`
+    :type parameters:
+     list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterProperties]
     """
 
     _attribute_map = {

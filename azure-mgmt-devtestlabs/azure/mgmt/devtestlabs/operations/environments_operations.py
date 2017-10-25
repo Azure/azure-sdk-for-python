@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -62,8 +62,9 @@ class EnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DtlEnvironmentPaged
-         <azure.mgmt.devtestlabs.models.DtlEnvironmentPaged>`
+        :return: An iterator like instance of DtlEnvironment
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.DtlEnvironmentPaged[~azure.mgmt.devtestlabs.models.DtlEnvironment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -147,10 +148,9 @@ class EnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DtlEnvironment
-         <azure.mgmt.devtestlabs.models.DtlEnvironment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DtlEnvironment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.DtlEnvironment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -215,17 +215,15 @@ class EnvironmentsOperations(object):
         :type name: str
         :param dtl_environment: An environment, which is essentially an ARM
          template deployment.
-        :type dtl_environment: :class:`DtlEnvironment
-         <azure.mgmt.devtestlabs.models.DtlEnvironment>`
+        :type dtl_environment: ~azure.mgmt.devtestlabs.models.DtlEnvironment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         DtlEnvironment or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`DtlEnvironment
-         <azure.mgmt.devtestlabs.models.DtlEnvironment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.devtestlabs.models.DtlEnvironment]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -317,11 +315,10 @@ class EnvironmentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
