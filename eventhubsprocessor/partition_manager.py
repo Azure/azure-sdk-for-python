@@ -17,7 +17,7 @@ class PartitionManager:
         self.partition_pumps = {}
         self.partition_ids = None
         self.run_task = None
-        self.cancellation_token = CancellationToken() 
+        self.cancellation_token = CancellationToken()
 
     async def get_partition_ids_async(self):
         """
@@ -67,13 +67,13 @@ class PartitionManager:
         try:
             await self.run_loop_async(self.cancellation_token)
         except Exception as err:
-            print("run loop failed ", err) # TBI add unified error handling
+            print("run loop failed ", repr(err)) # TBI add unified error handling
 
         try:
             print(self.host.guid, "Shutting down all pumps")
             await self.remove_all_pumps_async("Shutdown")
         except Exception as err:
-            raise Exception("failed to remove all pumps", err) # TBI add unified error handling
+            raise Exception("failed to remove all pumps", repr(err)) # TBI add unified error handling
 
     async def initialize_stores_async(self):
         """
@@ -134,16 +134,18 @@ class PartitionManager:
                         try:
                             print("Trying to renew lease.", self.host.guid,
                                   possible_lease.partition_id)
-                            await lease_manager.renew_lease_async(possible_lease)
-                            our_lease_count += 1
+                            if await lease_manager.renew_lease_async(possible_lease):
+                                our_lease_count += 1
+                            else: 
+                                leases_owned_by_others.append(possible_lease)
                         except Exception as err: #Update to LeaseLostException:
-                            print("Lease lost exception", err, self.host.guid, possible_lease.partition_id)
+                            print("Lease lost exception", repr(err), self.host.guid, possible_lease.partition_id)
                             leases_owned_by_others.append(possible_lease)
                     else:
                         leases_owned_by_others.append(possible_lease)
 
                 except Exception as err:
-                    raise Exception("Error checking leases", err) #Unified error handling TBI
+                    print("Failure during getting/acquiring/renewing lease, skipping", err) #Unified error handling TBI
 
             # Grab more leases if available and needed for load balancing
             leases_owned_by_others_count = len(leases_owned_by_others)
@@ -151,14 +153,13 @@ class PartitionManager:
                 steal_this_lease = self.which_lease_to_steal(leases_owned_by_others, our_lease_count)
                 if steal_this_lease:
                     try:
-                        #there is a bug here (find out why i can't steal the lease)
                         print("Lease to steal", steal_this_lease.serializable())
                         if await lease_manager.acquire_lease_async(steal_this_lease):
                             print("Stole lease sucessfully", self.host.guid, steal_this_lease.partition_id)
                         else:
                             print("Failed to steal lease for partition ", self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:
-                        print("Failed to steal lease", err) #Unified error handling TBI
+                        print("Failed to steal lease", repr(err)) #Unified error handling TBI
 
             for partition_id in all_leases:
                 try:
@@ -182,8 +183,12 @@ class PartitionManager:
             if captured_pump.pump_status == "Errored" or captured_pump.pump_status == "IsClosing":
                 # The existing pump is bad. Remove it.
                 await self.remove_pump_async(partition_id, "Shutdown")
-            else: #Pump is working, just replace the lease.
-                captured_pump.set_lease(lease)
+            else: # Pump is working, just replace the lease. 
+                # Note (this doesn't work because of the way set_lease
+                # is configured in python for now restart the pump with new lease
+                # captured_pump.set_lease(lease)
+                await self.remove_pump_async(partition_id, "Restart")
+                await self.create_new_pump_async(partition_id, lease)
         else:
             await self.create_new_pump_async(partition_id, lease)
 

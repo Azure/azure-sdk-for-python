@@ -83,8 +83,10 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         The offset/sequenceNumber for a freshly-created checkpoint should be set to StartOfStream/0.
         (Returns) The checkpoint for the given partition, whether newly created or already existing.
         """
-        await self.create_lease_if_not_exists_async(partition_id)
-        checkpoint = Checkpoint(partition_id)
+        checkpoint = await self.get_checkpoint_async(partition_id)
+        if not checkpoint:
+            await self.create_lease_if_not_exists_async(partition_id)
+            checkpoint = Checkpoint(partition_id)
         return checkpoint
 
     async def update_checkpoint_async(self, lease, checkpoint):
@@ -143,8 +145,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                 Allow lease to curry storage_client to get state
                 """
                 try:
-                    return self.storage_client.get_blob_to_text(self.lease_container_name,
-                                                                partition_id).properties.lease.state
+                    return self.storage_client.get_blob_properties(self.lease_container_name,
+                                                                   partition_id).properties.lease.state
                 except Exception as err:
                     print("Failed to get lease state", err, partition_id)
 
@@ -176,13 +178,15 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             return_lease = AzureBlobLease()
             return_lease.partition_id = partition_id
             json_lease = json.dumps(return_lease.serializable())
+            print("Creating Lease ", self.lease_container_name,
+                  partition_id, json_lease)
             self.storage_client.create_blob_from_text(self.lease_container_name,
                                                       partition_id, json_lease)
         except Exception:
             try:
                 return_lease = await self.get_lease_async(partition_id)
             except Exception as err:
-                print("Failed to create lease ", err) # Manage centralized exception handling
+                print("Failed to create lease ", repr(err)) # Manage centralized exception handling
                 raise err
         return return_lease
 
@@ -217,11 +221,13 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     # than it should, rebalancing will take care of that quickly enough.
                     retval = False
                 else:
+                    print(self.host.guid, lease.partition_id, "Need to ChangeLease")
                     self.storage_client.change_blob_lease(self.lease_container_name,
                                                           partition_id, lease.token,
                                                           new_lease_id)
                     lease.token = new_lease_id
             else:
+                print(self.host.guid, lease.partition_id, "Need to AcquireLease")
                 lease.token = self.storage_client.acquire_blob_lease(self.lease_container_name,
                                                                      partition_id,
                                                                      self.lease_duration,
@@ -244,11 +250,14 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         try:
             self.storage_client.renew_blob_lease(self.lease_container_name,
                                                  lease.partition_id,
-                                                 lease.token,
+                                                 lease_id=lease.token,
                                                  timeout=self.lease_renew_interval)
         except Exception as err:
-            print("Failed to renew lease", err, lease.partition_id, lease.token) # add centralized error logging
-            raise err
+            if "LeaseIdMismatchWithLeaseOperation" in str(err):
+                print("LeaseLost")
+            else:
+                print("Failed to renew lease on partition {} with token {} {}".format(lease.partition_id, lease.token, repr(err))) # add centralized error logging
+            return False
         return True
 
     async def release_lease_async(self, lease):
@@ -258,6 +267,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         (Returns) true if the lease was released successfully, false if not
         """
         try:
+            print(self.host.guid, lease.partition_id, "Releasing lease")
             lease_id = lease.token
             released_copy = AzureBlobLease()
             released_copy.with_lease(lease)
@@ -272,7 +282,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                    lease.partition_id,
                                                    lease_id)
         except Exception as err:
-            print("Failed to relaese lease", err, lease.partition_id, lease_id) # add centralized error logging
+            print("Failed to release lease", err, lease.partition_id, lease_id) # add centralized error logging
             return False
         return True
 
@@ -290,16 +300,20 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
 
         if not lease.token:
             return False
+        
+        print(self.host.guid, lease.partition_id, "Updating lease")
 
         # First, renew the lease to make sure the update will go through.
-        await self.renew_lease_async(lease)
-        try:
-            self.storage_client.create_blob_from_text(self.lease_container_name,
-                                                      lease.partition_id,
-                                                      json.dumps(lease.serializable()),
-                                                      lease_id=lease.token)
+        if await self.renew_lease_async(lease):
+            try:
+                self.storage_client.create_blob_from_text(self.lease_container_name,
+                                                        lease.partition_id,
+                                                        json.dumps(lease.serializable()),
+                                                        lease_id=lease.token)
 
-        except Exception as err:
-            print(err) # add centralized error logging
-            raise err
+            except Exception as err:
+                print("Failed to update lease", self.host.guid, lease.partition_id,repr(err)) # add centralized error logging
+                raise err
+        else:
+            return False
         return True

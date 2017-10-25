@@ -50,13 +50,10 @@ class EventHubPartitionPump(PartitionPump):
         Responsible for establishing connection to event hub client
         throws EventHubsException, IOException, InterruptedException, ExecutionException
         """
-        start_at = await self.partition_context.get_initial_offset_async()
-        epoch = self.partition_context.lease.epoch
+        await self.partition_context.get_initial_offset_async()
         self.msg_queue = Queue()
         # Create event hub client and receive handler and set options
-        self.partition_receive_handler = PartitionReceiveHandler(self.partition_context.consumer_group_name,
-                                                                 self.partition_context.partition_id, start_at, self)
-        self.partition_receive_handler.prefetch = self.host.eh_options.prefetch_count
+        self.partition_receive_handler = PartitionReceiveHandler(self)
         self.eh_client = EventHubClient(self.host.eh_connection_string,
                                         self.partition_receive_handler)
         self.partition_receive_handler.client = self.eh_client
@@ -67,7 +64,7 @@ class EventHubPartitionPump(PartitionPump):
         Resets the pump swallows all exceptions
         """
         if self.partition_receiver:
-            # Taking the lock means that there is no ProcessEventsAsync call in progress. (Lock TBI)
+            # Taking the lock means that there is no ProcessEventsAsync call in progress. (Lock TBD)
             if self.eh_client:
                 self.eh_client.stop()
                 self.partition_receiver = None
@@ -87,14 +84,19 @@ class PartitionReceiveHandler(Receiver):
     event queue for processing then terminate. Will want to replace the
     on message mechanism with a time out associated with the leasee 
     """
-    def __init__(self, consumer_group, partition, offset, eh_partition_pump):
-        super(PartitionReceiveHandler, self).__init__(consumer_group, partition, offset)
+    def __init__(self, eh_partition_pump):
+        super(PartitionReceiveHandler, self).__init__(eh_partition_pump.partition_context.consumer_group_name, 
+                                                      eh_partition_pump.partition_context.partition_id,
+                                                      eh_partition_pump.partition_context.offset)
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eh_options.max_batch_size
         self._msg_count = 0
         self.total = 0
-        self.last_sn = -1
-        self.last_offset = offset
+        self.last_sn = eh_partition_pump.partition_context.sequence_number
+        self.last_offset = eh_partition_pump.partition_context.offset
+        self.prefetch = eh_partition_pump.host.eh_options.prefetch_count
+        self.client = None
+
 
     def on_event_data(self, message):
         """
@@ -106,17 +108,15 @@ class PartitionReceiveHandler(Receiver):
         call.The pump gains nothing by running faster than OnEvents.
         """
         try:
-            if self._msg_count < self.max_batch_size:
-                self.last_offset = EventData.offset(message)
-                self.last_sn = EventData.sequence_number(message)
-                self.eh_partition_pump.msg_queue.put(message)
-                self._msg_count += 1
-                print("Message #{} pushed to queue".format(self._msg_count))
-            else:
-                self.client.stop()
+            self.last_offset = EventData.offset(message)
+            self.last_sn = EventData.sequence_number(message)
+            self.eh_partition_pump.msg_queue.put(message)
+            self._msg_count += 1
+            # print("Message #{} pushed to queue".format(self._msg_count))
         except Exception as err:
             # TBI Push Error to QUEUE
-            print(err)
+            print("Eventhub Client Error", self.eh_partition_pump.partition_context.partition_id,
+                  repr(err))
             self.client.stop()
 
 class PartitionReceiver:
@@ -126,16 +126,16 @@ class PartitionReceiver:
     def __init__(self, eh_partition_pump):
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eh_options.max_batch_size
-        self._msg_count = 0
+        self.msg_count = 0
 
     async def run(self):
         """
         Runs the async partion reciever event loop to retrive messages from the event queue
         """
-        while self._msg_count < self.max_batch_size:
+        while self.msg_count < self.max_batch_size:
             msg = self.eh_partition_pump.msg_queue.get()
             await self.process_events_async([msg])
-            self._msg_count += 1
+            self.msg_count += 1
 
     async def process_events_async(self, events):
         """
@@ -152,8 +152,8 @@ class PartitionReceiver:
         """
         Handles processing errors this is never called since python recieve client doesn't
         have error handling implemented (TBD add fault pump handling)
-        """ 
-        try:     
+        """
+        try:
             await self.eh_partition_pump.process_error_async(error) # We would like to deliver all errors in the pump to error handler.     
-        finally:                   
+        finally:
             self.eh_partition_pump.set_pump_status("Errored")

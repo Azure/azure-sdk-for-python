@@ -35,7 +35,7 @@ class PartitionContext:
             # No checkpoint was ever stored. Use the initialOffsetProvider instead 
             # defaults to "-1"
             self.offset = self.host.eh_options.initial_offset_provider
-            self.sequence_number = 0
+            self.sequence_number = -1
         else:
             self.offset = starting_checkpoint.offset
             self.sequence_number = starting_checkpoint.sequence_number
@@ -65,7 +65,7 @@ class PartitionContext:
             #We have never seen this sequence number yet
             raise Exception("ArgumentOutOfRangeException event_data x-opt-sequence-number")
 
-        return self.persist_checkpoint_async(Checkpoint(self.partition_id,
+        await self.persist_checkpoint_async(Checkpoint(self.partition_id,
                                                         event_data[0].annotations["x-opt-offset"],
                                                         event_data[0].annotations["x-opt-sequence-number"]))
 
@@ -88,8 +88,9 @@ class PartitionContext:
             in_store_checkpoint = await self.host.storage_manager.get_checkpoint_async(checkpoint.partition_id)
             if not in_store_checkpoint or (checkpoint.sequence_number >= in_store_checkpoint.sequence_number):
                 if not in_store_checkpoint:
+                    print("persisting checkpoint")
                     await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
-                
+
                 await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint)
 
                 self.lease.offset = checkpoint.offset
