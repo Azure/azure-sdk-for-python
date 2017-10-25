@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -47,6 +47,8 @@ class AccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CognitiveServicesAccount
+         <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
         :raises:
@@ -111,6 +113,8 @@ class AccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of :class:`CognitiveServicesAccount
+         <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
         :raises:
