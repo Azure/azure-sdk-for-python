@@ -17,8 +17,8 @@ class IntegrationRuntimeRegenerateKeyParameters(Model):
 
     :param key_name: The name of the authentication key to regenerate.
      Possible values include: 'authKey1', 'authKey2'
-    :type key_name: str or :class:`IntegrationRuntimeAuthKeyName
-     <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName>`
+    :type key_name: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
     """
 
     _attribute_map = {

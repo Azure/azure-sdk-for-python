@@ -59,10 +59,9 @@ class ActivityRunsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ActivityRun
-         <azure.mgmt.datafactory.models.ActivityRun>`
-        :rtype: :class:`ActivityRunPaged
-         <azure.mgmt.datafactory.models.ActivityRunPaged>`
+        :return: An iterator like instance of ActivityRun
+        :rtype:
+         ~azure.mgmt.datafactory.models.ActivityRunPaged[~azure.mgmt.datafactory.models.ActivityRun]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

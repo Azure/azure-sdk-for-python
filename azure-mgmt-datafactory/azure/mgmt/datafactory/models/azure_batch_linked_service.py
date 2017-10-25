@@ -16,18 +16,17 @@ class AzureBatchLinkedService(LinkedService):
     """Azure Batch linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param account_name: The Azure Batch account name. Type: string (or
      Expression with resultType string).
     :type account_name: object
     :param access_key: The Azure Batch account access key.
-    :type access_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type access_key: ~azure.mgmt.datafactory.models.SecureString
     :param batch_uri: The Azure Batch URI. Type: string (or Expression with
      resultType string).
     :type batch_uri: object
@@ -35,8 +34,8 @@ class AzureBatchLinkedService(LinkedService):
      with resultType string).
     :type pool_name: object
     :param linked_service_name: The Azure Storage linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

@@ -15,7 +15,7 @@ from .copy_translator import CopyTranslator
 class TabularTranslator(CopyTranslator):
     """A copy activity tabular translator.
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param column_mappings: Column mappings. Type: string (or Expression with
      resultType string).

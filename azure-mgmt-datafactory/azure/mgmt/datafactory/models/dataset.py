@@ -16,17 +16,27 @@ class Dataset(Model):
     """The Azure Data Factory nested object which identifies data within different
     data stores, such as tables, files, folders, and documents.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: HttpDataset, AzureSearchIndexDataset, WebTableDataset,
+    SqlServerTableDataset, RelationalTableDataset, OracleTableDataset,
+    ODataResourceDataset, MongoDbCollectionDataset, FileShareDataset,
+    AzureDataLakeStoreDataset, DynamicsEntityDataset,
+    DocumentDbCollectionDataset, CustomDataset, CassandraTableDataset,
+    AzureSqlDWTableDataset, AzureSqlTableDataset, AzureTableDataset,
+    AzureBlobDataset, AmazonS3Dataset
+
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     """
 

@@ -15,6 +15,12 @@ from msrest.serialization import Model
 class CopySink(Model):
     """A copy activity sink.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DynamicsSink, OdbcSink, AzureSearchIndexSink,
+    AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlSink,
+    DocumentDbCollectionSink, FileSystemSink, BlobSink, AzureTableSink,
+    AzureQueueSink
+
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
     :type write_batch_size: object
@@ -29,7 +35,7 @@ class CopySink(Model):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -46,7 +52,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink'}
+        'type': {'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink'}
     }
 
     def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):

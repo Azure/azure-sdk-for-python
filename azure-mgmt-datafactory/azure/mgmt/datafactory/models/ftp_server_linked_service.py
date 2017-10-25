@@ -16,11 +16,11 @@ class FtpServerLinkedService(LinkedService):
     """A FTP server Linked Service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param host: Host name of the FTP server. Type: string (or Expression with
      resultType string).
@@ -31,14 +31,13 @@ class FtpServerLinkedService(LinkedService):
     :type port: object
     :param authentication_type: The authentication type to be used to connect
      to the FTP server. Possible values include: 'Basic', 'Anonymous'
-    :type authentication_type: str or :class:`FtpAuthenticationType
-     <azure.mgmt.datafactory.models.FtpAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.FtpAuthenticationType
     :param user_name: Username to logon the FTP server. Type: string (or
      Expression with resultType string).
     :type user_name: object
     :param password: Password to logon the FTP server.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

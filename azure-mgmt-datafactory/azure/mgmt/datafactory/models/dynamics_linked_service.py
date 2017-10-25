@@ -16,11 +16,11 @@ class DynamicsLinkedService(LinkedService):
     """Dynamics linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param deployment_type: The deployment type of the Dynamics instance.
      'Online' for Dynamics Online and 'OnPremisesWithIfd' for Dynamics
@@ -47,8 +47,8 @@ class DynamicsLinkedService(LinkedService):
      (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics instance.
-    :type password: :class:`AzureKeyVaultSecretReference
-     <azure.mgmt.datafactory.models.AzureKeyVaultSecretReference>`
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     """
 
     _validation = {

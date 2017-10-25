@@ -29,12 +29,12 @@ class AzureSearchIndexSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param write_behavior: Specify the write behavior when upserting documents
      into Azure Search Index. Possible values include: 'Merge', 'Upload'
-    :type write_behavior: str or :class:`AzureSearchIndexWriteBehaviorType
-     <azure.mgmt.datafactory.models.AzureSearchIndexWriteBehaviorType>`
+    :type write_behavior: str or
+     ~azure.mgmt.datafactory.models.AzureSearchIndexWriteBehaviorType
     """
 
     _validation = {

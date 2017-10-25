@@ -17,8 +17,7 @@ class ScheduleTriggerRecurrence(Model):
 
     :param frequency: The frequency. Possible values include: 'NotSpecified',
      'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.datafactory.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.datafactory.models.RecurrenceFrequency
     :param interval: The interval.
     :type interval: int
     :param start_time: The start time.
@@ -28,8 +27,7 @@ class ScheduleTriggerRecurrence(Model):
     :param time_zone: The time zone.
     :type time_zone: str
     :param schedule: The recurrence schedule.
-    :type schedule: :class:`RecurrenceSchedule
-     <azure.mgmt.datafactory.models.RecurrenceSchedule>`
+    :type schedule: ~azure.mgmt.datafactory.models.RecurrenceSchedule
     """
 
     _attribute_map = {

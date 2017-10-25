@@ -12,8 +12,11 @@
 from .copy_sink import CopySink
 
 
-class DocumentDbCollectionSink(CopySink):
-    """A copy activity Document Database Collection sink.
+class DynamicsSink(CopySink):
+    """A copy activity Dynamics sink.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
@@ -31,13 +34,18 @@ class DocumentDbCollectionSink(CopySink):
     :type sink_retry_wait: object
     :param type: Constant filled by server.
     :type type: str
-    :param nesting_separator: Nested properties separator. Default is . (dot).
-     Type: string (or Expression with resultType string).
-    :type nesting_separator: object
+    :ivar write_behavior: The write behavior for the operation. Default value:
+     "Upsert" .
+    :vartype write_behavior: str
+    :param ignore_null_values: The flag indicating whether ignore null values
+     from input dataset (except key fields) during write operation. Default is
+     false. Type: boolean (or Expression with resultType boolean).
+    :type ignore_null_values: object
     """
 
     _validation = {
         'type': {'required': True},
+        'write_behavior': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -46,10 +54,13 @@ class DocumentDbCollectionSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
-    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, nesting_separator=None):
-        super(DocumentDbCollectionSink, self).__init__(write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.nesting_separator = nesting_separator
-        self.type = 'DocumentDbCollectionSink'
+    write_behavior = "Upsert"
+
+    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, ignore_null_values=None):
+        super(DynamicsSink, self).__init__(write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
+        self.ignore_null_values = ignore_null_values
+        self.type = 'DynamicsSink'

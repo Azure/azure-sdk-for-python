@@ -17,12 +17,11 @@ class PipelineRunQueryOrderBy(Model):
 
     :param order_by: Parameter name to be used for order by. Possible values
      include: 'RunStart', 'RunEnd'
-    :type order_by: str or :class:`PipelineRunQueryOrderByField
-     <azure.mgmt.datafactory.models.PipelineRunQueryOrderByField>`
+    :type order_by: str or
+     ~azure.mgmt.datafactory.models.PipelineRunQueryOrderByField
     :param order: Sorting order of the parameter. Possible values include:
      'ASC', 'DESC'
-    :type order: str or :class:`PipelineRunQueryOrder
-     <azure.mgmt.datafactory.models.PipelineRunQueryOrder>`
+    :type order: str or ~azure.mgmt.datafactory.models.PipelineRunQueryOrder
     """
 
     _validation = {

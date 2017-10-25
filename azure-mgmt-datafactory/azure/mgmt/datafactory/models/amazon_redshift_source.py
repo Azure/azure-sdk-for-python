@@ -22,7 +22,7 @@ class AmazonRedshiftSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: Database query. Type: string (or Expression with resultType
      string).
@@ -31,8 +31,8 @@ class AmazonRedshiftSource(CopySource):
      interim Amazon S3 when copying from Amazon Redshift with unload. With
      this, data from Amazon Redshift source will be unloaded into S3 first and
      then copied into the targeted sink from the interim S3.
-    :type redshift_unload_settings: :class:`RedshiftUnloadSettings
-     <azure.mgmt.datafactory.models.RedshiftUnloadSettings>`
+    :type redshift_unload_settings:
+     ~azure.mgmt.datafactory.models.RedshiftUnloadSettings
     """
 
     _validation = {

@@ -20,8 +20,8 @@ class StoredProcedureParameter(Model):
     :type value: object
     :param type: Stored procedure parameter type. Possible values include:
      'String', 'Int', 'Decimal', 'Guid', 'Boolean', 'Date'
-    :type type: str or :class:`StoredProcedureParameterType
-     <azure.mgmt.datafactory.models.StoredProcedureParameterType>`
+    :type type: str or
+     ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
 
     _validation = {

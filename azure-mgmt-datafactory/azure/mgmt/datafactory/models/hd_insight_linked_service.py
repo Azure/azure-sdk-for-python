@@ -16,11 +16,11 @@ class HDInsightLinkedService(LinkedService):
     """HDInsight linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param cluster_uri: HDInsight cluster URI. Type: string (or Expression
      with resultType string).
@@ -29,15 +29,14 @@ class HDInsightLinkedService(LinkedService):
      with resultType string).
     :type user_name: object
     :param password: HDInsight cluster password.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param linked_service_name: The Azure Storage linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param hcatalog_linked_service_name: A reference to the Azure SQL linked
      service that points to the HCatalog database.
-    :type hcatalog_linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type hcatalog_linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

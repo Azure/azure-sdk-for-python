@@ -17,12 +17,28 @@ class LinkedService(Model):
     credential which can be used to connect with related store or compute
     resource.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureDataLakeAnalyticsLinkedService,
+    HDInsightOnDemandLinkedService, SapHanaLinkedService, SapBWLinkedService,
+    SftpServerLinkedService, FtpServerLinkedService, HttpLinkedService,
+    AzureSearchLinkedService, CustomDataSourceLinkedService,
+    AmazonRedshiftLinkedService, AmazonS3LinkedService,
+    SalesforceLinkedService, AzureDataLakeStoreLinkedService,
+    MongoDbLinkedService, CassandraLinkedService, WebLinkedService,
+    ODataLinkedService, HdfsLinkedService, OdbcLinkedService,
+    AzureMLLinkedService, TeradataLinkedService, Db2LinkedService,
+    SybaseLinkedService, PostgreSqlLinkedService, MySqlLinkedService,
+    OracleLinkedService, FileServerLinkedService, HDInsightLinkedService,
+    DynamicsLinkedService, CosmosDbLinkedService, AzureKeyVaultLinkedService,
+    AzureBatchLinkedService, AzureSqlDatabaseLinkedService,
+    SqlServerLinkedService, AzureSqlDWLinkedService, AzureStorageLinkedService
+
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

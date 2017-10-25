@@ -15,7 +15,11 @@ from msrest.serialization import Model
 class DatasetCompression(Model):
     """The compression method used on a dataset.
 
-    :param type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DatasetDeflateCompression, DatasetGZipCompression,
+    DatasetBZip2Compression
+
+    :param type: Constant filled by server.
     :type type: str
     """
 

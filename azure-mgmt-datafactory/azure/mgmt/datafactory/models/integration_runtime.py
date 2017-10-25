@@ -16,9 +16,12 @@ class IntegrationRuntime(Model):
     """Azure Data Factory nested object which serves as a compute resource for
     activities.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SelfHostedIntegrationRuntime, ManagedIntegrationRuntime
+
     :param description: Integration runtime description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

@@ -16,11 +16,11 @@ class HttpLinkedService(LinkedService):
     """Linked service for an HTTP source.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param url: The base URL of the HTTP endpoint, e.g.
      http://www.microsoft.com. Type: string (or Expression with resultType
@@ -29,15 +29,14 @@ class HttpLinkedService(LinkedService):
     :param authentication_type: The authentication type to be used to connect
      to the HTTP server. Possible values include: 'Basic', 'Anonymous',
      'Digest', 'Windows', 'ClientCertificate'
-    :type authentication_type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.datafactory.models.HttpAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.HttpAuthenticationType
     :param user_name: User name for Basic, Digest, or Windows authentication.
      Type: string (or Expression with resultType string).
     :type user_name: object
     :param password: Password for Basic, Digest, Windows, or ClientCertificate
      with EmbeddedCertData authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param embedded_cert_data: Base64 encoded certificate data for
      ClientCertificate authentication. For on-premises copy with
      ClientCertificate authentication, either CertThumbprint or

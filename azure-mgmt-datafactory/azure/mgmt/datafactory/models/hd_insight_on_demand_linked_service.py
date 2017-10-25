@@ -16,11 +16,11 @@ class HDInsightOnDemandLinkedService(LinkedService):
     """HDInsight ondemand linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param cluster_size: Number of worker/data nodes in the cluster.
      Suggestion value: 4. Type: string (or Expression with resultType string).
@@ -36,8 +36,8 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :type version: object
     :param linked_service_name: Azure Storage linked service to be used by the
      on-demand cluster for storing and processing data.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param host_subscription_id: The customer’s subscription to host the
      cluster. Type: string (or Expression with resultType string).
     :type host_subscription_id: object
@@ -45,8 +45,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
      hostSubscriptionId. Type: string (or Expression with resultType string).
     :type service_principal_id: object
     :param service_principal_key: The key for the service principal id.
-    :type service_principal_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
     :param tenant: The Tenant id/name to which the service principal belongs.
      Type: string (or Expression with resultType string).
     :type tenant: object
@@ -61,27 +60,24 @@ class HDInsightOnDemandLinkedService(LinkedService):
      (or Expression with resultType string).
     :type cluster_user_name: object
     :param cluster_password: The password to access the cluster.
-    :type cluster_password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type cluster_password: ~azure.mgmt.datafactory.models.SecureString
     :param cluster_ssh_user_name: The username to SSH remotely connect to
      cluster’s node (for Linux). Type: string (or Expression with resultType
      string).
     :type cluster_ssh_user_name: object
     :param cluster_ssh_password: The password to SSH remotely connect
      cluster’s node (for Linux).
-    :type cluster_ssh_password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type cluster_ssh_password: ~azure.mgmt.datafactory.models.SecureString
     :param additional_linked_service_names: Specifies additional storage
      accounts for the HDInsight linked service so that the Data Factory service
      can register them on your behalf.
-    :type additional_linked_service_names: list of
-     :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type additional_linked_service_names:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :param hcatalog_linked_service_name: The name of Azure SQL linked service
      that point to the HCatalog database. The on-demand HDInsight cluster is
      created by using the Azure SQL database as the metastore.
-    :type hcatalog_linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type hcatalog_linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param cluster_type: The cluster type. Type: string (or Expression with
      resultType string).
     :type cluster_type: object

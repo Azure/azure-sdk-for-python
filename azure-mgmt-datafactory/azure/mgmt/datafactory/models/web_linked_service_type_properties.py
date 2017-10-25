@@ -16,11 +16,15 @@ class WebLinkedServiceTypeProperties(Model):
     """Base definition of WebLinkedServiceTypeProperties, this typeProperties is
     polymorphic based on authenticationType, so not flattened in SDK models.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: WebClientCertificateAuthentication,
+    WebBasicAuthentication, WebAnonymousAuthentication
+
     :param url: The URL of the web service endpoint, e.g.
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Polymorphic Discriminator
+    :param authentication_type: Constant filled by server.
     :type authentication_type: str
     """
 

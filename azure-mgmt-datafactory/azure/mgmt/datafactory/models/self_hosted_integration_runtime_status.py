@@ -21,9 +21,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
-    :vartype state: str or :class:`IntegrationRuntimeState
-     <azure.mgmt.datafactory.models.IntegrationRuntimeState>`
-    :param type: Polymorphic Discriminator
+    :vartype state: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeState
+    :param type: Constant filled by server.
     :type type: str
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
@@ -35,13 +35,12 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      integration runtime nodes exist). Possible values include: 'NotSet',
      'SslEncrypted', 'NotEncrypted'
     :vartype internal_channel_encryption: str or
-     :class:`IntegrationRuntimeInternalChannelEncryptionMode
-     <azure.mgmt.datafactory.models.IntegrationRuntimeInternalChannelEncryptionMode>`
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeInternalChannelEncryptionMode
     :ivar version: Version of the integration runtime.
     :vartype version: str
     :param nodes: The list of nodes for this integration runtime.
-    :type nodes: list of :class:`SelfHostedIntegrationRuntimeNode
-     <azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode>`
+    :type nodes:
+     list[~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode]
     :ivar scheduled_update_date: The date at which the integration runtime
      will be scheduled to update, in ISO8601 format.
     :vartype scheduled_update_date: datetime
@@ -52,14 +51,14 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype local_time_zone_offset: str
     :ivar capabilities: Object with additional information about integration
      runtime capabilities.
-    :vartype capabilities: dict
+    :vartype capabilities: dict[str, str]
     :ivar service_urls: The URLs for the services used in integration runtime
      backend service.
-    :vartype service_urls: list of str
+    :vartype service_urls: list[str]
     :ivar auto_update: Whether Self-hosted integration runtime auto update has
      been turned on. Possible values include: 'On', 'Off'
-    :vartype auto_update: str or :class:`IntegrationRuntimeAutoUpdate
-     <azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate>`
+    :vartype auto_update: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
     """
 
     _validation = {

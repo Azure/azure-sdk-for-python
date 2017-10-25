@@ -21,14 +21,12 @@ class UntilActivity(ControlActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param expression: An expression that would evaluate to Boolean. The loop
      will continue until this expression evaluates to true
-    :type expression: :class:`Expression
-     <azure.mgmt.datafactory.models.Expression>`
+    :type expression: ~azure.mgmt.datafactory.models.Expression
     :param timeout: Specifies the timeout for the activity to run. If there is
      no value specified, it takes the value of TimeSpan.FromDays(7) which is 1
      week as default. Type: string (or Expression with resultType string),
@@ -37,8 +35,7 @@ class UntilActivity(ControlActivity):
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type timeout: object
     :param activities: List of activities to execute.
-    :type activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
     _validation = {

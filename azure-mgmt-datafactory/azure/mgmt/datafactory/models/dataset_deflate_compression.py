@@ -15,12 +15,11 @@ from .dataset_compression import DatasetCompression
 class DatasetDeflateCompression(DatasetCompression):
     """The Deflate compression method used on a dataset.
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param level: The Deflate compression level. Possible values include:
      'Optimal', 'Fastest'
-    :type level: str or :class:`DatasetCompressionLevel
-     <azure.mgmt.datafactory.models.DatasetCompressionLevel>`
+    :type level: str or ~azure.mgmt.datafactory.models.DatasetCompressionLevel
     """
 
     _validation = {
