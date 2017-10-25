@@ -27,8 +27,7 @@ class SmsReceiver(Model):
     :type phone_number: str
     :ivar status: The status of the receiver. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled'
-    :vartype status: str or :class:`ReceiverStatus
-     <azure.mgmt.monitor.models.ReceiverStatus>`
+    :vartype status: str or ~azure.mgmt.monitor.models.ReceiverStatus
     """
 
     _validation = {

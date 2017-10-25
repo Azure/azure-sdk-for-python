@@ -16,7 +16,7 @@ class LogProfileResourcePatch(Model):
     """The log profile resource for patch operations.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param storage_account_id: the resource id of the storage account to which
      you would like to send the Activity Log.
     :type storage_account_id: str
@@ -28,14 +28,13 @@ class LogProfileResourcePatch(Model):
     :param locations: List of regions for which Activity Log events should be
      stored or streamed. It is a comma separated list of valid ARM locations
      including the 'global' location.
-    :type locations: list of str
+    :type locations: list[str]
     :param categories: the categories of the logs. These categories are
      created as is convenient to the user. Some values are: 'Write', 'Delete',
      and/or 'Action.'
-    :type categories: list of str
+    :type categories: list[str]
     :param retention_policy: the retention policy for the events in the log.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.monitor.models.RetentionPolicy>`
+    :type retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
     """
 
     _validation = {

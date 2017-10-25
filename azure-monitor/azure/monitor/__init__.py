@@ -8,6 +8,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+import warnings
 
 from .monitor_client import MonitorClient
 from .version import VERSION
@@ -16,3 +17,7 @@ __all__ = ['MonitorClient']
 
 __version__ = VERSION
 
+warnings.warn(
+    "This package is deprecated and replaced by azure-mgmt-monitor>=0.4.0",
+    DeprecationWarning
+)

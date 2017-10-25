@@ -27,26 +27,23 @@ class ActionGroupResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param group_short_name: The short name of the action group. This will be
      used in SMS messages.
     :type group_short_name: str
     :param enabled: Indicates whether this action group is enabled. If an
-     action group is not enabled, then none of its receviers will receive
+     action group is not enabled, then none of its receivers will receive
      communications. Default value: True .
     :type enabled: bool
     :param email_receivers: The list of email receivers that are part of this
      action group.
-    :type email_receivers: list of :class:`EmailReceiver
-     <azure.mgmt.monitor.models.EmailReceiver>`
+    :type email_receivers: list[~azure.mgmt.monitor.models.EmailReceiver]
     :param sms_receivers: The list of SMS receivers that are part of this
      action group.
-    :type sms_receivers: list of :class:`SmsReceiver
-     <azure.mgmt.monitor.models.SmsReceiver>`
+    :type sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiver]
     :param webhook_receivers: The list of webhook receivers that are part of
      this action group.
-    :type webhook_receivers: list of :class:`WebhookReceiver
-     <azure.mgmt.monitor.models.WebhookReceiver>`
+    :type webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiver]
     """
 
     _validation = {

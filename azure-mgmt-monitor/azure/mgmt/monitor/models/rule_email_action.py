@@ -16,15 +16,15 @@ class RuleEmailAction(RuleAction):
     """Specifies the action to send email when the rule condition is evaluated.
     The discriminator is always RuleEmailAction in this case.
 
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     :param send_to_service_owners: Whether the administrators (service and
-     co-adiminstrators) of the service should be notified when the alert is
+     co-administrators) of the service should be notified when the alert is
      activated.
     :type send_to_service_owners: bool
     :param custom_emails: the list of administrator's custom email addresses
-     notifiy of the activation of the alert.
-    :type custom_emails: list of str
+     to notify of the activation of the alert.
+    :type custom_emails: list[str]
     """
 
     _validation = {
