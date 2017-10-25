@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EdgeNodesOperations(object):
-    """EdgeNodesOperations operations.
+class ResourceUsageOperations(object):
+    """ResourceUsageOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,17 +36,17 @@ class EdgeNodesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Edgenodes are the global Point of Presence (POP) locations used to
-        deliver CDN content to end users.
+        """Check the quota and actual usage of the CDN profiles under the given
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of EdgeNode
+        :return: An iterator like instance of ResourceUsage
         :rtype:
-         ~azure.mgmt.cdn.models.EdgeNodePaged[~azure.mgmt.cdn.models.EdgeNode]
+         ~azure.mgmt.cdn.models.ResourceUsagePaged[~azure.mgmt.cdn.models.ResourceUsage]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -54,7 +54,11 @@ class EdgeNodesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Cdn/edgenodes'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/checkResourceUsage'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -75,7 +79,7 @@ class EdgeNodesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
+            request = self._client.post(url, query_parameters)
             response = self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -85,11 +89,11 @@ class EdgeNodesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EdgeNodePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ResourceUsagePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.EdgeNodePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ResourceUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

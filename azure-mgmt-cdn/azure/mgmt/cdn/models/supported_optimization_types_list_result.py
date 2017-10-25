@@ -12,27 +12,25 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """CDN REST API operation.
+class SupportedOptimizationTypesListResult(Model):
+    """The result of the GetSupportedOptimizationTypes API.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
-    :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.cdn.models.OperationDisplay
+    :ivar supported_optimization_types: Supported optimization types for a
+     profile.
+    :vartype supported_optimization_types: list[str or
+     ~azure.mgmt.cdn.models.OptimizationType]
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'supported_optimization_types': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'supported_optimization_types': {'key': 'supportedOptimizationTypes', 'type': '[str]'},
     }
 
-    def __init__(self, display=None):
-        self.name = None
-        self.display = display
+    def __init__(self):
+        self.supported_optimization_types = None

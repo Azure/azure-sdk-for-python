@@ -29,6 +29,15 @@ class ProfileResourceState(Enum):
     disabled = "Disabled"
 
 
+class OptimizationType(Enum):
+
+    general_web_delivery = "GeneralWebDelivery"
+    general_media_streaming = "GeneralMediaStreaming"
+    video_on_demand_media_streaming = "VideoOnDemandMediaStreaming"
+    large_file_download = "LargeFileDownload"
+    dynamic_site_acceleration = "DynamicSiteAcceleration"
+
+
 class EndpointResourceState(Enum):
 
     creating = "Creating"
@@ -74,6 +83,20 @@ class CustomHttpsProvisioningState(Enum):
     disabling = "Disabling"
     disabled = "Disabled"
     failed = "Failed"
+
+
+class CustomHttpsProvisioningSubstate(Enum):
+
+    submitting_domain_control_validation_request = "SubmittingDomainControlValidationRequest"
+    pending_domain_control_validation_request_approval = "PendingDomainControlValidationREquestApproval"
+    domain_control_validation_request_approved = "DomainControlValidationRequestApproved"
+    domain_control_validation_request_rejected = "DomainControlValidationRequestRejected"
+    domain_control_validation_request_timed_out = "DomainControlValidationRequestTimedOut"
+    issuing_certificate = "IssuingCertificate"
+    deploying_certificate = "DeployingCertificate"
+    certificate_deployed = "CertificateDeployed"
+    deleting_certificate = "DeletingCertificate"
+    certificate_deleted = "CertificateDeleted"
 
 
 class ResourceType(Enum):
