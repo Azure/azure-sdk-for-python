@@ -18,13 +18,11 @@ class ScaleAction(Model):
     :param direction: the scale direction. Whether the scaling action
      increases or decreases the number of instances. Possible values include:
      'None', 'Increase', 'Decrease'
-    :type direction: str or :class:`ScaleDirection
-     <azure.mgmt.monitor.models.ScaleDirection>`
+    :type direction: str or ~azure.mgmt.monitor.models.ScaleDirection
     :param type: the type of action that should occur when the scale rule
      fires. Possible values include: 'ChangeCount', 'PercentChangeCount',
      'ExactCount'
-    :type type: str or :class:`ScaleType
-     <azure.mgmt.monitor.models.ScaleType>`
+    :type type: str or ~azure.mgmt.monitor.models.ScaleType
     :param value: the number of instances that are involved in the scaling
      action. This value must be 1 or greater. The default value is 1. Default
      value: "1" .

@@ -18,7 +18,7 @@ class WebhookNotification(Model):
     :param service_uri: the service address to receive the notification.
     :type service_uri: str
     :param properties: a property bag of settings. This value can be empty.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _attribute_map = {
