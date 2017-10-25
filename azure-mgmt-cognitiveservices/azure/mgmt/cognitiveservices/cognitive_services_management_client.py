@@ -13,7 +13,6 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.cognitive_services_accounts_operations import CognitiveServicesAccountsOperations
 from .operations.accounts_operations import AccountsOperations
 from .operations.operations import Operations
 from .operations.check_sku_availability_operations import CheckSkuAvailabilityOperations
@@ -30,13 +29,11 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param location: Resource location.
-    :type location: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -44,10 +41,6 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if location is None:
-            raise ValueError("Parameter 'location' must not be None.")
-        if not isinstance(location, str):
-            raise TypeError("Parameter 'location' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -58,7 +51,6 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.location = location
 
 
 class CognitiveServicesManagementClient(object):
@@ -67,29 +59,25 @@ class CognitiveServicesManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: CognitiveServicesManagementClientConfiguration
 
-    :ivar cognitive_services_accounts: CognitiveServicesAccounts operations
-    :vartype cognitive_services_accounts: .operations.CognitiveServicesAccountsOperations
     :ivar accounts: Accounts operations
-    :vartype accounts: .operations.AccountsOperations
+    :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
     :ivar check_sku_availability: CheckSkuAvailability operations
-    :vartype check_sku_availability: .operations.CheckSkuAvailabilityOperations
+    :vartype check_sku_availability: azure.mgmt.cognitiveservices.operations.CheckSkuAvailabilityOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param location: Resource location.
-    :type location: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, location, base_url)
+        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -97,8 +85,6 @@ class CognitiveServicesManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.cognitive_services_accounts = CognitiveServicesAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
