@@ -47,10 +47,9 @@ class LinkedServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`LinkedServiceResource
-         <azure.mgmt.datafactory.models.LinkedServiceResource>`
-        :rtype: :class:`LinkedServiceResourcePaged
-         <azure.mgmt.datafactory.models.LinkedServiceResourcePaged>`
+        :return: An iterator like instance of LinkedServiceResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.LinkedServiceResourcePaged[~azure.mgmt.datafactory.models.LinkedServiceResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -115,8 +114,7 @@ class LinkedServicesOperations(object):
         :param linked_service_name: The linked service name.
         :type linked_service_name: str
         :param properties: Properties of linked service.
-        :type properties: :class:`LinkedService
-         <azure.mgmt.datafactory.models.LinkedService>`
+        :type properties: ~azure.mgmt.datafactory.models.LinkedService
         :param if_match: ETag of the linkedService entity.  Should only be
          specified for update, for which it should match existing entity or can
          be * for unconditional update.
@@ -126,13 +124,9 @@ class LinkedServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LinkedServiceResource
-         <azure.mgmt.datafactory.models.LinkedServiceResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LinkedServiceResource
-         <azure.mgmt.datafactory.models.LinkedServiceResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LinkedServiceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -201,13 +195,9 @@ class LinkedServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LinkedServiceResource
-         <azure.mgmt.datafactory.models.LinkedServiceResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LinkedServiceResource
-         <azure.mgmt.datafactory.models.LinkedServiceResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LinkedServiceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -268,11 +258,8 @@ class LinkedServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

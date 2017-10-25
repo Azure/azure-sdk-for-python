@@ -29,7 +29,7 @@ class SqlSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
      Type: string (or Expression with resultType string).
@@ -41,7 +41,8 @@ class SqlSink(CopySink):
      with resultType string).
     :type pre_copy_script: object
     :param stored_procedure_parameters: SQL stored procedure parameters.
-    :type stored_procedure_parameters: dict
+    :type stored_procedure_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
     """
 
     _validation = {

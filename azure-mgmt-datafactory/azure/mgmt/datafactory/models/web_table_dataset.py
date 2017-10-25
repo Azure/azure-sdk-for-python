@@ -21,11 +21,12 @@ class WebTableDataset(Dataset):
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param index: The zero-based index of the table in the web page. Type:
      integer (or Expression with resultType integer), minimum: 0.

@@ -22,7 +22,7 @@ class WebSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

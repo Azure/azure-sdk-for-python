@@ -21,14 +21,14 @@ class JsonFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param file_pattern: File pattern of JSON. To be more specific, the way of
      separating a collection of JSON objects. The default value is
      'setOfObjects'. It is case-sensitive. Possible values include:
      'setOfObjects', 'arrayOfObjects'
-    :type file_pattern: str or :class:`JsonFormatFilePattern
-     <azure.mgmt.datafactory.models.JsonFormatFilePattern>`
+    :type file_pattern: str or
+     ~azure.mgmt.datafactory.models.JsonFormatFilePattern
     :param nesting_separator: The character used to separate nesting levels.
      Default value is '.' (dot). Type: string (or Expression with resultType
      string).

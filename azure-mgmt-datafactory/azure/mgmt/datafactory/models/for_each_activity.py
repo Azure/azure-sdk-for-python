@@ -21,19 +21,16 @@ class ForEachActivity(ControlActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param is_sequential: Should the loop be executed in sequence or in
      parallel (max 20)
     :type is_sequential: bool
     :param items: Collection to iterate.
-    :type items: :class:`Expression
-     <azure.mgmt.datafactory.models.Expression>`
+    :type items: ~azure.mgmt.datafactory.models.Expression
     :param activities: List of activities to execute .
-    :type activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
     _validation = {

@@ -21,23 +21,23 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
-    :vartype state: str or :class:`IntegrationRuntimeState
-     <azure.mgmt.datafactory.models.IntegrationRuntimeState>`
-    :param type: Polymorphic Discriminator
+    :vartype state: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeState
+    :param type: Constant filled by server.
     :type type: str
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
     :vartype create_time: datetime
     :ivar nodes: The list of nodes for managed integration runtime.
-    :vartype nodes: list of :class:`ManagedIntegrationRuntimeNode
-     <azure.mgmt.datafactory.models.ManagedIntegrationRuntimeNode>`
+    :vartype nodes:
+     list[~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeNode]
     :ivar other_errors: The errors that occurred on this integration runtime.
-    :vartype other_errors: list of :class:`ManagedIntegrationRuntimeError
-     <azure.mgmt.datafactory.models.ManagedIntegrationRuntimeError>`
+    :vartype other_errors:
+     list[~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeError]
     :ivar last_operation: The last operation result that occurred on this
      integration runtime.
-    :vartype last_operation: :class:`ManagedIntegrationRuntimeOperationResult
-     <azure.mgmt.datafactory.models.ManagedIntegrationRuntimeOperationResult>`
+    :vartype last_operation:
+     ~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeOperationResult
     """
 
     _validation = {

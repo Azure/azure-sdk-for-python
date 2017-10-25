@@ -16,20 +16,23 @@ class Trigger(Model):
     """Azure data factory nested object which contains information about creating
     pipeline run.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BlobTrigger, ScheduleTrigger
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param description: Trigger description.
     :type description: str
     :param pipelines: Pipelines that need to be started.
-    :type pipelines: list of :class:`TriggerPipelineReference
-     <azure.mgmt.datafactory.models.TriggerPipelineReference>`
+    :type pipelines:
+     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :ivar runtime_state: Indicates if trigger is running or not. Updated when
      Start/Stop APIs are called on the Trigger. Possible values include:
      'Started', 'Stopped', 'Disabled'
-    :vartype runtime_state: str or :class:`TriggerRuntimeState
-     <azure.mgmt.datafactory.models.TriggerRuntimeState>`
-    :param type: Polymorphic Discriminator
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param type: Constant filled by server.
     :type type: str
     """
 

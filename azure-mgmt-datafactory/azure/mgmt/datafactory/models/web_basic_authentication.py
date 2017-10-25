@@ -20,14 +20,13 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Polymorphic Discriminator
+    :param authentication_type: Constant filled by server.
     :type authentication_type: str
     :param username: User name for Basic authentication. Type: string (or
      Expression with resultType string).
     :type username: object
     :param password: The password for Basic authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     """
 
     _validation = {

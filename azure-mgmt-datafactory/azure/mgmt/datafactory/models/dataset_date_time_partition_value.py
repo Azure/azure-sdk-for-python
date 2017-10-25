@@ -15,7 +15,7 @@ from .dataset_partition_value import DatasetPartitionValue
 class DatasetDateTimePartitionValue(DatasetPartitionValue):
     """The date/time value of a partition.
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param date_property: Name of variable containing date. Type: string (or
      Expression with resultType string).

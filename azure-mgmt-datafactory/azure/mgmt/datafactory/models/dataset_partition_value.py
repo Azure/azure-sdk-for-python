@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class DatasetPartitionValue(Model):
     """The value of a partition.
 
-    :param type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DatasetDateTimePartitionValue
+
+    :param type: Constant filled by server.
     :type type: str
     """
 

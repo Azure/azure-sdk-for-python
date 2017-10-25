@@ -21,7 +21,7 @@ class AvroFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

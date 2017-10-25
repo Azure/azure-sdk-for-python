@@ -16,19 +16,19 @@ class MongoDbLinkedService(LinkedService):
     """Linked service for MongoDb data source.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param server: The IP address or server name of the MongoDB server. Type:
      string (or Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the MongoDB database. Possible values include: 'Basic', 'Anonymous'
-    :type authentication_type: str or :class:`MongoDbAuthenticationType
-     <azure.mgmt.datafactory.models.MongoDbAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.MongoDbAuthenticationType
     :param database_name: The name of the MongoDB database that you want to
      access. Type: string (or Expression with resultType string).
     :type database_name: object
@@ -36,8 +36,7 @@ class MongoDbLinkedService(LinkedService):
      with resultType string).
     :type username: object
     :param password: Password for authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param auth_source: Database to verify the username and password. Type:
      string (or Expression with resultType string).
     :type auth_source: object

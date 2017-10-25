@@ -9,19 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_key_vault_reference import AzureKeyVaultReference
+from .secret_base import SecretBase
 
 
-class AzureKeyVaultSecretReference(AzureKeyVaultReference):
-    """Azure Key Vault Secret properties.
+class AzureKeyVaultSecretReference(SecretBase):
+    """Azure Key Vault secret reference.
 
-    :param store: The Azure Key Vault LinkedService.
-    :type store: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
-    :param secret_name: The name of secret in Azure Key Vault. Type: string
-     (or Expression with resultType string).
+    :param store: The Azure Key Vault linked service reference.
+    :type store: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param secret_name: The name of the secret in Azure Key Vault. Type:
+     string (or Expression with resultType string).
     :type secret_name: object
     :param secret_version: The version of the secret in Azure Key Vault. The
      default value is the latest version of the secret. Type: string (or
@@ -30,20 +29,21 @@ class AzureKeyVaultSecretReference(AzureKeyVaultReference):
     """
 
     _validation = {
-        'store': {'required': True},
         'type': {'required': True},
+        'store': {'required': True},
         'secret_name': {'required': True},
     }
 
     _attribute_map = {
-        'store': {'key': 'store', 'type': 'LinkedServiceReference'},
         'type': {'key': 'type', 'type': 'str'},
+        'store': {'key': 'store', 'type': 'LinkedServiceReference'},
         'secret_name': {'key': 'secretName', 'type': 'object'},
         'secret_version': {'key': 'secretVersion', 'type': 'object'},
     }
 
     def __init__(self, store, secret_name, secret_version=None):
-        super(AzureKeyVaultSecretReference, self).__init__(store=store)
+        super(AzureKeyVaultSecretReference, self).__init__()
+        self.store = store
         self.secret_name = secret_name
         self.secret_version = secret_version
         self.type = 'AzureKeyVaultSecret'

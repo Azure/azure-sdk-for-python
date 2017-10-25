@@ -17,8 +17,7 @@ class ParameterSpecification(Model):
 
     :param type: Parameter type. Possible values include: 'Object', 'String',
      'Int', 'Float', 'Bool', 'Array'
-    :type type: str or :class:`ParameterType
-     <azure.mgmt.datafactory.models.ParameterType>`
+    :type type: str or ~azure.mgmt.datafactory.models.ParameterType
     :param default_value: Default value of parameter.
     :type default_value: object
     """

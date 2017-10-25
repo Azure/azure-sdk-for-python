@@ -16,18 +16,17 @@ class AzureSearchLinkedService(LinkedService):
     """Linked service for Windows Azure Search Service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param url: URL for Azure Search service. Type: string (or Expression with
      resultType string).
     :type url: object
     :param key: Admin Key for Azure Search service
-    :type key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type key: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

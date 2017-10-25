@@ -43,13 +43,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationListResponse
-         <azure.mgmt.datafactory.models.OperationListResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationListResponse
-         <azure.mgmt.datafactory.models.OperationListResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationListResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.OperationListResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

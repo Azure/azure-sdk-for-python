@@ -20,15 +20,13 @@ class ExecutePipelineActivity(ControlActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param pipeline: Pipeline reference.
-    :type pipeline: :class:`PipelineReference
-     <azure.mgmt.datafactory.models.PipelineReference>`
+    :type pipeline: ~azure.mgmt.datafactory.models.PipelineReference
     :param parameters: Pipeline parameters.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     :param wait_on_completion: Defines whether activity execution will wait
      for the dependent pipeline execution to finish. Default is false.
     :type wait_on_completion: bool

@@ -20,9 +20,8 @@ class WaitActivity(ControlActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param wait_time_in_seconds: Duration in seconds.
     :type wait_time_in_seconds: int

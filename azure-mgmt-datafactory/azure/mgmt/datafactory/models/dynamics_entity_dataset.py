@@ -21,11 +21,12 @@ class DynamicsEntityDataset(Dataset):
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param entity_name: The logical name of the entity. Type: string (or
      Expression with resultType string).

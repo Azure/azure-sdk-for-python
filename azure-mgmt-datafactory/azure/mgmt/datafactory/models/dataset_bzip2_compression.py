@@ -15,7 +15,7 @@ from .dataset_compression import DatasetCompression
 class DatasetBZip2Compression(DatasetCompression):
     """The BZip2 compression method used on a dataset.
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

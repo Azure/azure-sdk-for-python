@@ -16,18 +16,17 @@ class AzureMLLinkedService(LinkedService):
     """Azure ML Web Service linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param ml_endpoint: The Batch Execution REST URL for an Azure ML Web
      Service endpoint. Type: string (or Expression with resultType string).
     :type ml_endpoint: object
     :param api_key: The API key for accessing the Azure ML model endpoint.
-    :type api_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type api_key: ~azure.mgmt.datafactory.models.SecureString
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
      ML Web Service endpoint. Type: string (or Expression with resultType
      string).
@@ -39,8 +38,7 @@ class AzureMLLinkedService(LinkedService):
     :param service_principal_key: The key of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
      web service.
-    :type service_principal_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
     :type tenant: object

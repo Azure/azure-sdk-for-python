@@ -16,8 +16,8 @@ class IntegrationRuntimeStatusListResponse(Model):
     """A list of integration runtime status.
 
     :param value: List of integration runtime status.
-    :type value: list of :class:`IntegrationRuntimeStatusResponse
-     <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>`
+    :type value:
+     list[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
     :param next_link: The link to the next page of results, if any remaining
      results exist.
     :type next_link: str

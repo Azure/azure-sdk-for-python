@@ -29,12 +29,12 @@ class AzureDataLakeStoreSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink. Possible
      values include: 'PreserveHierarchy', 'FlattenHierarchy', 'MergeFiles'
-    :type copy_behavior: str or :class:`CopyBehaviorType
-     <azure.mgmt.datafactory.models.CopyBehaviorType>`
+    :type copy_behavior: str or
+     ~azure.mgmt.datafactory.models.CopyBehaviorType
     """
 
     _validation = {

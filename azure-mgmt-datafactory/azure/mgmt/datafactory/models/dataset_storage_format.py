@@ -15,13 +15,17 @@ from msrest.serialization import Model
 class DatasetStorageFormat(Model):
     """The format definition of a storage.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ParquetFormat, OrcFormat, AvroFormat, JsonFormat,
+    TextFormat
+
     :param serializer: Serializer. Type: string (or Expression with resultType
      string).
     :type serializer: object
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

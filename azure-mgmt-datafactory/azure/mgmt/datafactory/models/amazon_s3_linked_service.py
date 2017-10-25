@@ -16,11 +16,11 @@ class AmazonS3LinkedService(LinkedService):
     """Linked service for Amazon S3.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param access_key_id: The access key identifier of the Amazon S3 Identity
      and Access Management (IAM) user. Type: string (or Expression with
@@ -28,8 +28,7 @@ class AmazonS3LinkedService(LinkedService):
     :type access_key_id: object
     :param secret_access_key: The secret access key of the Amazon S3 Identity
      and Access Management (IAM) user.
-    :type secret_access_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type secret_access_key: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

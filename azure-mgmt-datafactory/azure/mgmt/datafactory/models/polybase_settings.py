@@ -17,8 +17,8 @@ class PolybaseSettings(Model):
 
     :param reject_type: Reject type. Possible values include: 'value',
      'percentage'
-    :type reject_type: str or :class:`PolybaseSettingsRejectType
-     <azure.mgmt.datafactory.models.PolybaseSettingsRejectType>`
+    :type reject_type: str or
+     ~azure.mgmt.datafactory.models.PolybaseSettingsRejectType
     :param reject_value: Specifies the value or the percentage of rows that
      can be rejected before the query fails. Type: number (or Expression with
      resultType number), minimum: 0.

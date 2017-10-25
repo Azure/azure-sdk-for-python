@@ -16,30 +16,27 @@ class OdbcLinkedService(LinkedService):
     """Open Database Connectivity (ODBC) linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param connection_string: The non-access credential portion of the
      connection string as well as an optional encrypted credential.
-    :type connection_string: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type connection_string: ~azure.mgmt.datafactory.models.SecureString
     :param authentication_type: Type of authentication used to connect to the
      ODBC data store. Possible values are: Anonymous and Basic. Type: string
      (or Expression with resultType string).
     :type authentication_type: object
     :param credential: The access credential portion of the connection string
      specified in driver-specific property-value format.
-    :type credential: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type credential: ~azure.mgmt.datafactory.models.SecureString
     :param user_name: User name for Basic authentication. Type: string (or
      Expression with resultType string).
     :type user_name: object
     :param password: Password for Basic authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

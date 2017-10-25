@@ -15,21 +15,27 @@ from .activity import Activity
 class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DataLakeAnalyticsUSQLActivity,
+    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
+    GetMetadataActivity, WebActivity, LookupActivity,
+    SqlServerStoredProcedureActivity, CustomActivity, HDInsightSparkActivity,
+    HDInsightStreamingActivity, HDInsightMapReduceActivity,
+    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     """
 
     _validation = {

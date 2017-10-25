@@ -17,8 +17,8 @@ class IntegrationRuntimeSsisProperties(Model):
 
     :param catalog_info: Catalog information for managed dedicated integration
      runtime.
-    :type catalog_info: :class:`IntegrationRuntimeSsisCatalogInfo
-     <azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogInfo>`
+    :type catalog_info:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogInfo
     """
 
     _attribute_map = {

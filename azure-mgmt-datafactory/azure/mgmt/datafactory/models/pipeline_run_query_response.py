@@ -16,8 +16,7 @@ class PipelineRunQueryResponse(Model):
     """A list pipeline runs.
 
     :param value: List of pipeline runs.
-    :type value: list of :class:`PipelineRun
-     <azure.mgmt.datafactory.models.PipelineRun>`
+    :type value: list[~azure.mgmt.datafactory.models.PipelineRun]
     :param continuation_token: The continuation token for getting the next
      page of results, if any remaining results exist, null otherwise.
     :type continuation_token: str

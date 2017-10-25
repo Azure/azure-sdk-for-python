@@ -16,11 +16,11 @@ class HdfsLinkedService(LinkedService):
     """Hadoop Distributed File System (HDFS) linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param url: The URL of the HDFS service endpoint, e.g.
      http://myhostname:50070/webhdfs/v1 . Type: string (or Expression with
@@ -38,8 +38,7 @@ class HdfsLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password for Windows authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     """
 
     _validation = {
