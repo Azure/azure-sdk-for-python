@@ -30,15 +30,16 @@ class Endpoint(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param origin_host_header: The host header CDN sends along with content
      requests to origin. The default value is the host name of the origin.
     :type origin_host_header: str
-    :param origin_path: The path used when CDN sends request to origin.
+    :param origin_path: A directory path on the origin that CDN can use to
+     retreive content from, e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
      compression applies. The value should be a valid MIME type.
-    :type content_types_to_compress: list of str
+    :type content_types_to_compress: list[str]
     :param is_compression_enabled: Indicates whether content compression is
      enabled on CDN. Default value is false. If compression is enabled, content
      will be served as compressed if user requests for a compressed version.
@@ -53,32 +54,38 @@ class Endpoint(Resource):
      endpoint. Default value is true. At least one protocol (HTTP or HTTPS)
      must be allowed.
     :type is_https_allowed: bool
-    :param query_string_caching_behavior: Defines the query string caching
-     behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
-     'UseQueryString', 'NotSet'
+    :param query_string_caching_behavior: Defines how CDN caches requests that
+     include query strings. You can ignore any query strings when caching,
+     bypass caching to prevent requests that contain query strings from being
+     cached, or cache every request with a unique URL. Possible values include:
+     'IgnoreQueryString', 'BypassCaching', 'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
-     :class:`QueryStringCachingBehavior
-     <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
-    :param optimization_type: Customer can specify what scenario they want
-     this CDN endpoint to optimize, e.g. Download, Media services. With this
-     information we can apply scenario driven optimization.
-    :type optimization_type: str
-    :param geo_filters: List of rules defining user geo access within a CDN
-     endpoint. Each geo filter defines an acess rule to a specified path or
+     ~azure.mgmt.cdn.models.QueryStringCachingBehavior
+    :param optimization_type: Specifies what scenario the customer wants this
+     CDN endpoint to optimize for, e.g. Download, Media services. With this
+     information, CDN can apply scenario driven optimization. Possible values
+     include: 'GeneralWebDelivery', 'GeneralMediaStreaming',
+     'VideoOnDemandMediaStreaming', 'LargeFileDownload',
+     'DynamicSiteAcceleration'
+    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+    :param probe_path: Path to a file hosted on the origin which helps
+     accelerate delivery of the dynamic content and calculate the most optimal
+     routes for the CDN. This is relative to the origin path.
+    :type probe_path: str
+    :param geo_filters: List of rules defining the user's geo access within a
+     CDN endpoint. Each geo filter defines an acess rule to a specified path or
      content, e.g. block APAC for path /pictures/
-    :type geo_filters: list of :class:`GeoFilter
-     <azure.mgmt.cdn.models.GeoFilter>`
+    :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
     :ivar host_name: The host name of the endpoint structured as
      {endpointName}.{DNSZone}, e.g. consoto.azureedge.net
     :vartype host_name: str
     :param origins: The source of the content being delivered via CDN.
-    :type origins: list of :class:`DeepCreatedOrigin
-     <azure.mgmt.cdn.models.DeepCreatedOrigin>`
+    :type origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
     :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
-    :vartype resource_state: str or :class:`EndpointResourceState
-     <azure.mgmt.cdn.models.EndpointResourceState>`
+    :vartype resource_state: str or
+     ~azure.mgmt.cdn.models.EndpointResourceState
     :ivar provisioning_state: Provisioning status of the endpoint.
     :vartype provisioning_state: str
     """
@@ -108,6 +115,7 @@ class Endpoint(Resource):
         'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
         'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'QueryStringCachingBehavior'},
         'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
@@ -115,7 +123,7 @@ class Endpoint(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, origins, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, geo_filters=None):
+    def __init__(self, location, origins, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, probe_path=None, geo_filters=None):
         super(Endpoint, self).__init__(location=location, tags=tags)
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path
@@ -125,6 +133,7 @@ class Endpoint(Resource):
         self.is_https_allowed = is_https_allowed
         self.query_string_caching_behavior = query_string_caching_behavior
         self.optimization_type = optimization_type
+        self.probe_path = probe_path
         self.geo_filters = geo_filters
         self.host_name = None
         self.origins = origins

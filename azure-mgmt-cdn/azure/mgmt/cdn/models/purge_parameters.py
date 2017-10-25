@@ -17,7 +17,7 @@ class PurgeParameters(Model):
 
     :param content_paths: The path to the content to be purged. Can describe a
      file path or a wild card directory.
-    :type content_paths: list of str
+    :type content_paths: list[str]
     """
 
     _validation = {

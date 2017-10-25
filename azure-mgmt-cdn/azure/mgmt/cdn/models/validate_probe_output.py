@@ -10,44 +10,37 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
 
 
-class ErrorResponse(Model):
-    """Error reponse indicates CDN service is not able to process the incoming
-    request. The reason is provided in the error message.
+class ValidateProbeOutput(Model):
+    """Output of the validate probe API.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
+    :ivar is_valid: Indicates whether the probe URL is accepted or not.
+    :vartype is_valid: bool
+    :ivar error_code: Specifies the error code when the probe url is not
+     accepted.
+    :vartype error_code: str
+    :ivar message: The detailed error message describing why the probe URL is
+     not accepted.
     :vartype message: str
     """
 
     _validation = {
-        'code': {'readonly': True},
+        'is_valid': {'readonly': True},
+        'error_code': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
+        'is_valid': {'key': 'isValid', 'type': 'bool'},
+        'error_code': {'key': 'errorCode', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self):
-        self.code = None
+        self.is_valid = None
+        self.error_code = None
         self.message = None
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

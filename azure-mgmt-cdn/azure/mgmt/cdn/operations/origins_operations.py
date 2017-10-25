@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -23,7 +23,7 @@ class OriginsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2016-10-02. Constant value: "2016-10-02".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class OriginsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-10-02"
+        self.api_version = "2017-04-02"
 
         self.config = config
 
@@ -53,7 +53,9 @@ class OriginsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OriginPaged <azure.mgmt.cdn.models.OriginPaged>`
+        :return: An iterator like instance of Origin
+        :rtype:
+         ~azure.mgmt.cdn.models.OriginPaged[~azure.mgmt.cdn.models.Origin]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -63,7 +65,7 @@ class OriginsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -129,16 +131,16 @@ class OriginsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Origin <azure.mgmt.cdn.models.Origin>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Origin or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.Origin or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'originName': self._serialize.url("origin_name", origin_name, 'str'),
@@ -195,23 +197,23 @@ class OriginsOperations(object):
          endpoint.
         :type origin_name: str
         :param origin_update_properties: Origin properties
-        :type origin_update_properties: :class:`OriginUpdateParameters
-         <azure.mgmt.cdn.models.OriginUpdateParameters>`
+        :type origin_update_properties:
+         ~azure.mgmt.cdn.models.OriginUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns Origin or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Origin <azure.mgmt.cdn.models.Origin>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.Origin]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'originName': self._serialize.url("origin_name", origin_name, 'str'),
