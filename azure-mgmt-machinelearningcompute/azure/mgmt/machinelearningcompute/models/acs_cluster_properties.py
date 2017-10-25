@@ -59,7 +59,6 @@ class AcsClusterProperties(Model):
     _validation = {
         'cluster_fqdn': {'readonly': True},
         'orchestrator_type': {'required': True},
-        'orchestrator_properties': {'required': True},
         'master_count': {'maximum': 5, 'minimum': 1},
         'agent_count': {'maximum': 100, 'minimum': 1},
     }
@@ -74,7 +73,7 @@ class AcsClusterProperties(Model):
         'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
     }
 
-    def __init__(self, orchestrator_type, orchestrator_properties, system_services=None, master_count=1, agent_count=2, agent_vm_size="Standard_D3_v2"):
+    def __init__(self, orchestrator_type, orchestrator_properties=None, system_services=None, master_count=1, agent_count=2, agent_vm_size="Standard_D3_v2"):
         self.cluster_fqdn = None
         self.orchestrator_type = orchestrator_type
         self.orchestrator_properties = orchestrator_properties
