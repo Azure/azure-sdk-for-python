@@ -103,6 +103,17 @@
       "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
       "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch"
     },    
+    "cognitiveservices.search.websearch": {
+      "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.search.websearch",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/websearch",
+      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch"
+    },
     "cognitiveservices.vision.face": {
       "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
       "autorest_options": {
