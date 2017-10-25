@@ -20,13 +20,6 @@
 			"azure.keyvault"
 		]
 	},
-	"azure-monitor": {
-		"service_name": "Monitoring",
-		"category ": "Client",
-		"namespaces": [
-			"azure.monitor"
-		]
-	},
 	"azure-servicebus": {
 		"service_name": "Service Bus",
 		"category ": "Client"
