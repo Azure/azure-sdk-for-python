@@ -12,20 +12,24 @@
 from msrest.serialization import Model
 
 
-class ErrorModelError(Model):
-    """The error detail .
+class PropertyBatchInfo(Model):
+    """Information about the results of a property batch.
 
-    :param code: The error code
-    :type code: str
-    :param message: The error message
-    :type message: str
+    :param kind: Polymorphic Discriminator
+    :type kind: str
     """
 
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'kind': {'required': True},
     }
 
-    def __init__(self, code=None, message=None):
-        self.code = code
-        self.message = message
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'Successful': 'SuccessfulPropertyBatchInfo', 'Failed': 'FailedPropertyBatchInfo'}
+    }
+
+    def __init__(self):
+        self.kind = None

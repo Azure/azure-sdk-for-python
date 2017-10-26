@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ClusterPaged(Paged):
+class NameDescription(Model):
+    """Describes a Service Fabric name.
+
+    :param name:
+    :type name: str
     """
-    A paging container for iterating over a list of :class:`Cluster <azure.mgmt.servicefabric.models.Cluster>` object
-    """
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Cluster]'}
+    _validation = {
+        'name': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+    }
 
-        super(ClusterPaged, self).__init__(*args, **kwargs)
+    def __init__(self, name):
+        self.name = name

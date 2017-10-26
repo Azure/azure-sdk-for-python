@@ -9,19 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ClusterCodeVersionsResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ClusterCodeVersionsResult <azure.mgmt.servicefabric.models.ClusterCodeVersionsResult>` object
+class ClusterListResult(Model):
+    """Cluster list results.
+
+    :param value:
+    :type value: list of :class:`Cluster
+     <azure.mgmt.servicefabric.models.Cluster>`
+    :param next_link: The URL to use for getting the next set of results.
+    :type next_link: str
     """
 
     _attribute_map = {
+        'value': {'key': 'value', 'type': '[Cluster]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ClusterCodeVersionsResult]'}
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ClusterCodeVersionsResultPaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None, next_link=None):
+        self.value = value
+        self.next_link = next_link
