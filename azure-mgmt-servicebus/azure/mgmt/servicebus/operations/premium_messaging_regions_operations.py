@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class PremiumMessagingRegionsOperations(object):
+    """PremiumMessagingRegionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,17 +36,17 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available ServiceBus REST API operations.
+        """Gets the available premium messaging regions for servicebus .
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Operation
-         <azure.mgmt.servicebus.models.Operation>`
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.servicebus.models.OperationPaged>`
+        :return: An iterator like instance of :class:`PremiumMessagingRegions
+         <azure.mgmt.servicebus.models.PremiumMessagingRegions>`
+        :rtype: :class:`PremiumMessagingRegionsPaged
+         <azure.mgmt.servicebus.models.PremiumMessagingRegionsPaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -54,7 +54,11 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.ServiceBus/operations'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/premiumMessagingRegions'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -85,11 +89,11 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PremiumMessagingRegionsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PremiumMessagingRegionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

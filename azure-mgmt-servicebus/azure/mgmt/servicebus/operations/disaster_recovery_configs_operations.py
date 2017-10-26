@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class RulesOperations(object):
-    """RulesOperations operations.
+class DisasterRecoveryConfigsOperations(object):
+    """DisasterRecoveryConfigsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,27 +34,24 @@ class RulesOperations(object):
 
         self.config = config
 
-    def list_by_subscriptions(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
-        """List all the rules within given topic-subscription.
+    def list(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all Alias(Disaster Recovery configurations).
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param topic_name: The topic name.
-        :type topic_name: str
-        :param subscription_name: The subscription name.
-        :type subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Rule
-         <azure.mgmt.servicebus.models.Rule>`
-        :rtype: :class:`RulePaged <azure.mgmt.servicebus.models.RulePaged>`
+        :return: An iterator like instance of :class:`ArmDisasterRecovery
+         <azure.mgmt.servicebus.models.ArmDisasterRecovery>`
+        :rtype: :class:`ArmDisasterRecoveryPaged
+         <azure.mgmt.servicebus.models.ArmDisasterRecoveryPaged>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -62,12 +59,10 @@ class RulesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-                    'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -101,53 +96,52 @@ class RulesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RulePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ArmDisasterRecoveryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.RulePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ArmDisasterRecoveryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new rule and updates an existing rule.
+            self, resource_group_name, namespace_name, alias, partner_namespace=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a new Alias(Disaster Recovery configuration).
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param topic_name: The topic name.
-        :type topic_name: str
-        :param subscription_name: The subscription name.
-        :type subscription_name: str
-        :param rule_name: The rule name.
-        :type rule_name: str
-        :param parameters: Parameters supplied to create a rule.
-        :type parameters: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param partner_namespace: Primary/Secondary eventhub namespace name,
+         which is part of GEO DR pairning
+        :type partner_namespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
+        :return: :class:`ArmDisasterRecovery
+         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
+        :rtype: :class:`ArmDisasterRecovery
+         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
+        parameters = models.ArmDisasterRecovery(partner_namespace=partner_namespace)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -167,20 +161,20 @@ class RulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Rule')
+        body_content = self._serialize.body(parameters, 'ArmDisasterRecovery')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Rule', response)
+            deserialized = self._deserialize('ArmDisasterRecovery', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -189,20 +183,16 @@ class RulesOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing rule.
+            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+        """Deletes an Alias(Disaster Recovery configuration).
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param topic_name: The topic name.
-        :type topic_name: str
-        :param subscription_name: The subscription name.
-        :type subscription_name: str
-        :param rule_name: The rule name.
-        :type rule_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -217,13 +207,11 @@ class RulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -246,7 +234,7 @@ class RulesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -254,41 +242,38 @@ class RulesOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the description for the specified rule.
+            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+        """Retrieves Alias(Disaster Recovery configuration) for primary or
+        secondary namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param topic_name: The topic name.
-        :type topic_name: str
-        :param subscription_name: The subscription name.
-        :type subscription_name: str
-        :param rule_name: The rule name.
-        :type rule_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
+        :return: :class:`ArmDisasterRecovery
+         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
+        :rtype: :class:`ArmDisasterRecovery
+         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -317,10 +302,130 @@ class RulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Rule', response)
+            deserialized = self._deserialize('ArmDisasterRecovery', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+
+    def break_pairing(
+            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+        """This operation disables the Disaster Recovery and stops replicating
+        changes from primary to secondary namespaces.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def fail_over(
+            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+        """envokes GEO DR failover and reconfigure the alias to point to the
+        secondary namespace.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
+        :param alias: The Disaster Recovery configuration name
+        :type alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'alias': self._serialize.url("alias", alias, 'str', max_length=50, min_length=1),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
