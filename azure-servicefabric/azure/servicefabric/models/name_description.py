@@ -9,5 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "6.0.2"
+from msrest.serialization import Model
 
+
+class NameDescription(Model):
+    """Describes a Service Fabric name.
+
+    :param name:
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+    }
+
+    def __init__(self, name):
+        self.name = name

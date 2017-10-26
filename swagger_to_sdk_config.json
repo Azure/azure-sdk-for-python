@@ -588,13 +588,13 @@
       "autorest_options": {
         "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/6.0/servicefabric.json",
         "namespace": "azure.servicefabric",
-        "package-version": "6.0.1",
+        "package-version": "6.0.2",
         "add-credentials": true,
         "azure-arm": false
       },
       "output_dir": "azure-servicefabric/azure/servicefabric",
-      "generated_relative_base_directory": "service_fabric_client_ap_is",
-      "build_dir": "azure-servicefabric"      
+      "generated_relative_base_directory": "azure/servicefabric",
+      "build_dir": "azure-servicefabric"
     },
     "servicefabric.mgmt": {
       "markdown": "specification/servicefabric/resource-manager/readme.md",
