@@ -88,14 +88,14 @@ class ClientHandler(Handler):
             self.start(self.container)
 
 class ReceiverHandler(ClientHandler):
-    def __init__(self, handler, source, selector, prefetch=300):
+    def __init__(self, receiver, source, selector):
         super(ReceiverHandler, self).__init__("recv")
-        self.handler = handler
+        self.receiver = receiver
         self.source = source
         self.selector = selector
         self.handlers = []
-        if prefetch:
-            self.handlers.append(CFlowController(prefetch))
+        if receiver.prefetch:
+            self.handlers.append(CFlowController(receiver.prefetch))
         self.handlers.append(IncomingMessageHandler(True, self))
 
     def on_start(self):
@@ -104,10 +104,11 @@ class ReceiverHandler(ClientHandler):
             self.source,
             name=self._get_link_name(),
             handler=self,
-            options=self.handler.selector(self.selector))
+            options=self.receiver.selector(self.selector))
+        self.receiver.on_start(self.link)
 
     def on_message(self, event):
-        self.handler.on_message(event)
+        self.receiver.on_message(event)
 
     def on_link_local_open(self, event):
         logging.info("%s: link local open. name=%s source=%s offset=%s",

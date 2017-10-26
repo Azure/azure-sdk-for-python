@@ -76,7 +76,7 @@ class EventHubClient(Container):
         self._free_connection(True)
         super(EventHubClient, self).stop()
 
-    def subscribe(self, receiver, consumer_group, partition, offset=None, prefetch=300):
+    def subscribe(self, receiver, consumer_group, partition, offset=None):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -89,15 +89,12 @@ class EventHubClient(Container):
 
         @param offset: the initial L{Offset} to receive events.
 
-        @param prefetch: the number of events that will be proactively prefetched
-        by the library into a local buffer queue.
-
         """
         _source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
         _selector = None
         if offset is not None:
             _selector = OffsetUtil.selector(offset.value, offset.inclusive)
-        _handler = ReceiverHandler(receiver, _source, _selector, prefetch)
+        _handler = ReceiverHandler(receiver, _source, _selector)
         self.clients.append(_handler)
         return self
 
@@ -226,9 +223,18 @@ class Sender(SenderHandler):
 class Receiver(object):
     """
     Implements an L{EventData} receiver.
+
+    @param prefetch: the number of events that will be proactively prefetched
+    by the library into a local buffer queue.
+
     """
-    def __init__(self):
+    def __init__(self, prefetch=300):
         self.offset = None
+        self.prefetch = prefetch
+
+    def on_start(self, link):
+        """ Handle link start """
+        pass
 
     def on_message(self, event):
         """Proess message received event"""
