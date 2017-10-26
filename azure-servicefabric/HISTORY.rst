@@ -13,7 +13,9 @@ Release History
 
 **Features**
 
-- add create_name, get_name_exists_info, delete_name, get_sub_name_info_list, get_property_info_list, put_property, get_property_info, delete_property, submit_property_batch
+- add create_name, get_name_exists_info, delete_name, get_sub_name_info_list,
+  get_property_info_list, put_property, get_property_info, delete_property,
+  submit_property_batch
 
 6.0.1 (2017-09-28)
 ++++++++++++++++++
