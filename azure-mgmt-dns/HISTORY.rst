@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.2.0 (2017-10-26)
+++++++++++++++++++
+
+- add record_type CAA
+- remove pointless return type of delete
+
+Api version moves from 2016-04-01 to 2017-09-01
+
 1.1.0 (2017-10-10)
 ++++++++++++++++++
 
