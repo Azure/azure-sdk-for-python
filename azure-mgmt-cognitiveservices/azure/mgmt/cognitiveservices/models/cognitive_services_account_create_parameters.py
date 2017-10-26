@@ -16,15 +16,14 @@ class CognitiveServicesAccountCreateParameters(Model):
     """The parameters to provide for the account.
 
     :param sku: Required. Gets or sets the SKU of the resource.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
      values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
      'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
      'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
      'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
      'TextTranslation', 'WebLM'
-    :type kind: str or :class:`Kind
-     <azure.mgmt.cognitiveservices.models.Kind>`
+    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
     :param location: Required. Gets or sets the location of the resource. This
      will be one of the supported and registered Azure Geo Regions (e.g. West
      US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
@@ -36,7 +35,7 @@ class CognitiveServicesAccountCreateParameters(Model):
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties: Must exist in the request. Must be an empty object.
      Must not be null.
     :type properties: object
