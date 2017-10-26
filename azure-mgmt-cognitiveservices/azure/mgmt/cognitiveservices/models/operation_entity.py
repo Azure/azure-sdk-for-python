@@ -18,8 +18,7 @@ class OperationEntity(Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: The operation supported by Cognitive Services.
-    :type display: :class:`OperationDisplayInfo
-     <azure.mgmt.cognitiveservices.models.OperationDisplayInfo>`
+    :type display: ~azure.mgmt.cognitiveservices.models.OperationDisplayInfo
     :param origin: The origin of the operation.
     :type origin: str
     :param properties: Additional properties.

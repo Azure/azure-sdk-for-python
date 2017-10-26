@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -44,8 +44,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationEntityPaged
-         <azure.mgmt.cognitiveservices.models.OperationEntityPaged>`
+        :return: An iterator like instance of OperationEntity
+        :rtype:
+         ~azure.mgmt.cognitiveservices.models.OperationEntityPaged[~azure.mgmt.cognitiveservices.models.OperationEntity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
