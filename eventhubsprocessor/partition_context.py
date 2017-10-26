@@ -1,7 +1,7 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-
+import logging
 from eventhubsprocessor.checkpoint import Checkpoint
 
 class PartitionContext:
@@ -88,7 +88,7 @@ class PartitionContext:
             in_store_checkpoint = await self.host.storage_manager.get_checkpoint_async(checkpoint.partition_id)
             if not in_store_checkpoint or (checkpoint.sequence_number >= in_store_checkpoint.sequence_number):
                 if not in_store_checkpoint:
-                    print("persisting checkpoint")
+                    logging.info("persisting checkpoint %s", str(checkpoint.__dict__))
                     await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
                 await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint)

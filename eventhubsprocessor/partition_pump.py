@@ -2,6 +2,7 @@
 Author: Aaron (Ari) Bornstien
 """
 from abc import  abstractmethod
+import logging
 import asyncio
 from eventhubsprocessor.partition_context import PartitionContext
 
@@ -27,10 +28,10 @@ class PartitionPump():
 
     def set_pump_status(self, status):
         """
-        Updates pump status and prints/logs update to console
+        Updates pump status and logs update to console
         """
         self.pump_status = status
-        print(status, "partition ", self.lease.partition_id)
+        logging.info("%s partition %s", status, self.lease.partition_id)
 
     def set_lease(self, new_lease):
         """
@@ -95,7 +96,7 @@ class PartitionPump():
 
         if reason == "LeaseLost":
             try:
-                print("Lease Lost releasing ownership")
+                logging.info("Lease Lost releasing ownership")
                 await self.host.storage_manager.release_lease_async(self.partition_context.lease)
             except Exception as err:
                 pass

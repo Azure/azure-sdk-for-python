@@ -1,6 +1,7 @@
 """
 Author: Aaron (Ari) Bornstien
 """
+import logging
 from queue import Queue
 from threading import Thread
 from eventhubs.client import EventHubClient, EventData, Receiver
@@ -110,13 +111,15 @@ class PartitionReceiveHandler(Receiver):
             if not self.eh_partition_pump.pump_status == "Errored" or self.eh_partition_pump.pump_status == "IsClosing":
                 self.last_offset = EventData.offset(message)
                 self.last_sn = EventData.sequence_number(message)
-                self.eh_partition_pump.msg_queue.put(message)
+                if self.eh_partition_pump.msg_queue:
+                    self.eh_partition_pump.msg_queue.put(message)
             else:
                 self.client.stop()
         except Exception as err:
             # TBI Push Error to QUEUE
-            print("Eventhub Client Error", self.eh_partition_pump.partition_context.partition_id,
-                  repr(err))
+            logging.error("Eventhub Client Error %s %s",
+                          self.eh_partition_pump.partition_context.partition_id,
+                          repr(err))
             self.client.stop()
 
 class PartitionReceiver:
@@ -133,8 +136,9 @@ class PartitionReceiver:
         """
         # Implement pull max batch from queue instead of one message at a time
         while not self.eh_partition_pump.pump_status == "Errored" or self.eh_partition_pump.pump_status == "IsClosing":
-            msg = self.eh_partition_pump.msg_queue.get()
-            await self.process_events_async([msg])
+            if self.eh_partition_pump.msg_queue:
+                msg = self.eh_partition_pump.msg_queue.get()
+                await self.process_events_async([msg])
 
     async def process_events_async(self, events):
         """

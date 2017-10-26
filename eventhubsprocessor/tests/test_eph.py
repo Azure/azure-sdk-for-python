@@ -3,6 +3,7 @@ Author: Aaron (Ari) Bornstien
 """
 
 import unittest
+import logging
 import asyncio
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
@@ -26,14 +27,20 @@ class EventProcessorHostTestCase(unittest.TestCase):
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
                                         self._consumer_group, storage_manager=self._storage_clm,
                                         eh_rest_auth=self._credentials.eh_auth)
+        logging.basicConfig(filename='eph.log', level=logging.INFO, 
+                            format='%(asctime)s %(message)s')
         self._loop = asyncio.get_event_loop()
-
 
     def test_start(self):
         """
         Test that the processing host starts correctly
         """
-        self._loop.run_until_complete(self._host.open_async())
+        try:
+            self._loop.run_until_complete(self._host.open_async())
+            self._loop.run_until_complete(self._host.close_async())
+        finally:
+            self._loop.stop()
+
 
 if __name__ == '__main__':
     unittest.main()

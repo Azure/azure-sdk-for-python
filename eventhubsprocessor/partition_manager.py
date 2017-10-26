@@ -1,10 +1,13 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-import requests, time, asyncio
+import time
+import logging
+import asyncio
 import concurrent.futures
 from collections import Counter
 from bs4 import BeautifulSoup
+import requests
 from eventhubsprocessor.eh_partition_pump import EventHubPartitionPump
 from eventhubsprocessor.cancellation_token import CancellationToken
 
@@ -49,7 +52,7 @@ class PartitionManager:
             raise Exception("A PartitionManager cannot be started multiple times.")
 
         partition_count = await self.initialize_stores_async()
-        print(self.host.guid, "PartitionCount: {}".format(partition_count))
+        logging.info("%s PartitionCount: %s", self.host.guid, partition_count)
         self.pump_executor = concurrent.futures.ThreadPoolExecutor(max_workers=partition_count)
 
         self.run_task = await self.run_async()
@@ -70,10 +73,10 @@ class PartitionManager:
         try:
             await self.run_loop_async(self.cancellation_token)
         except Exception as err:
-            print("run loop failed ", repr(err)) # TBI add unified error handling
+            logging.error("Run loop failed %s", repr(err)) # TBI add unified error handling
 
         try:
-            print(self.host.guid, "Shutting down all pumps")
+            logging.info("Shutting down all pumps %s", self.host.guid)
             await self.remove_all_pumps_async("Shutdown")
         except Exception as err:
             raise Exception("failed to remove all pumps", repr(err)) # TBI add unified error handling
@@ -104,7 +107,7 @@ class PartitionManager:
                 await func(partition_id)
                 created_okay = True
             except Exception as err:
-                print(self.host.guid, partition_id, retry_message, err)
+                logging.error("%s %s %s %s", retry_message, self.host.guid, partition_id, err)
                 retry_count += 1
         if not created_okay:
             raise Exception(self.host.guid, final_failure_message)
@@ -128,7 +131,7 @@ class PartitionManager:
                     possible_lease = await get_lease_task
                     all_leases[possible_lease.partition_id] = possible_lease
                     if possible_lease.is_expired():
-                        print("Trying to aquire lease", self.host.guid, possible_lease.partition_id)
+                        logging.info("Trying to aquire lease %s %s", self.host.guid, possible_lease.partition_id)
                         if await lease_manager.acquire_lease_async(possible_lease):
                             our_lease_count += 1
                         else:
@@ -136,20 +139,21 @@ class PartitionManager:
 
                     elif possible_lease.owner == self.host.host_name:
                         try:
-                            print("Trying to renew lease.", self.host.guid,
-                                  possible_lease.partition_id)
+                            logging.info("Trying to renew lease %s %s", self.host.guid,
+                                         possible_lease.partition_id)
                             if await lease_manager.renew_lease_async(possible_lease):
                                 our_lease_count += 1
-                            else: 
+                            else:
                                 leases_owned_by_others.append(possible_lease)
                         except Exception as err: #Update to LeaseLostException:
-                            print("Lease lost exception", repr(err), self.host.guid, possible_lease.partition_id)
+                            logging.error("Lease lost exception %s %s %s", repr(err),
+                                          self.host.guid, possible_lease.partition_id)
                             leases_owned_by_others.append(possible_lease)
                     else:
                         leases_owned_by_others.append(possible_lease)
 
                 except Exception as err:
-                    print("Failure during getting/acquiring/renewing lease, skipping", err) #Unified error handling TBI
+                    logging.error("Failure during getting/acquiring/renewing lease, skipping %s", repr(err)) #Unified error handling TBI
 
             # Grab more leases if available and needed for load balancing
             leases_owned_by_others_count = len(leases_owned_by_others)
@@ -158,15 +162,15 @@ class PartitionManager:
                                                              our_lease_count)
                 if steal_this_lease:
                     try:
-                        print("Lease to steal", steal_this_lease.serializable())
+                        logging.info("Lease to steal %s", str(steal_this_lease.serializable()))
                         if await lease_manager.acquire_lease_async(steal_this_lease):
-                            print("Stole lease sucessfully", self.host.guid,
-                                  steal_this_lease.partition_id)
+                            logging.info("Stole lease sucessfully %s %s", self.host.guid,
+                                         steal_this_lease.partition_id)
                         else:
-                            print("Failed to steal lease for partition ",
-                                  self.host.guid, steal_this_lease.partition_id)
+                            logging.info("Failed to steal lease for partition %s %s",
+                                         self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:
-                        print("Failed to steal lease", repr(err)) #Unified error handling TBI
+                        logging.error("Failed to steal lease %s", repr(err)) #Unified error handling TBI
 
             for partition_id in all_leases:
                 try:
@@ -176,7 +180,7 @@ class PartitionManager:
                     else:
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:
-                    print("failed to update lease", err) #Unified error handling TBI
+                    logging.error("failed to update lease %s", err) #Unified error handling TBI
 
                 # time.sleep(lease_manager.lease_renew_interval)
 
@@ -207,7 +211,7 @@ class PartitionManager:
         # Do the put after start, if the start fails then put doesn't happen
         asyncio.get_event_loop().run_in_executor(self.pump_executor, partition_pump.run)
         self.partition_pumps[partition_id] = partition_pump
-        print("Created new partition pump ", self.host.guid, partition_id)
+        logging.info("Created new partition pump %s %s", self.host.guid, partition_id)
 
     async def remove_pump_async(self, partition_id, reason):
         """
@@ -222,7 +226,8 @@ class PartitionManager:
             # PartitionManager main loop tries to remove pump for every partition that the
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
-            print(self.host.guid, partition_id, "No pump found to remove for this partition")
+            logging.info("No pump found to remove for this partition %s %s", 
+                         self.host.guid, partition_id)
 
     async def remove_all_pumps_async(self, reason):
         """
