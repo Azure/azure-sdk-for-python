@@ -6,7 +6,7 @@ Release History
 2.0.0 (2017-10-26)
 ++++++++++++++++++
 
-**Breaking changes*
+**Breaking changes**
 
 - remove "location" as a constructor parameter
 - sku_name in "check_sku_availability" result is now a str (from an enum)
