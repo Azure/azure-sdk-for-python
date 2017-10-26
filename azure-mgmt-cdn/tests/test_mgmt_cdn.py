@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.cdn
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtCdnTest(AzureMgmtTestCase):
 
@@ -19,10 +17,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
         self.cdn_client = self.create_mgmt_client(
             azure.mgmt.cdn.CdnManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
     def test_cdn(self):
         account_name = self.get_resource_name('pyarmcdn')
 

@@ -13,18 +13,17 @@ from msrest.serialization import Model
 
 
 class GeoFilter(Model):
-    """Rules defining user geo access within a CDN endpoint.
+    """Rules defining user's geo access within a CDN endpoint.
 
     :param relative_path: Relative path applicable to geo filter. (e.g.
      '/mypictures', '/mypicture/kitty.jpg', and etc.)
     :type relative_path: str
     :param action: Action of the geo filter, i.e. allow or block access.
      Possible values include: 'Block', 'Allow'
-    :type action: str or :class:`GeoFilterActions
-     <azure.mgmt.cdn.models.GeoFilterActions>`
+    :type action: str or ~azure.mgmt.cdn.models.GeoFilterActions
     :param country_codes: Two letter country codes defining user country
      access in a geo filter, e.g. AU, MX, US.
-    :type country_codes: list of str
+    :type country_codes: list[str]
     """
 
     _validation = {

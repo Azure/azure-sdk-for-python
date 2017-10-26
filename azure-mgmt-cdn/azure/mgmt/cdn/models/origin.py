@@ -30,7 +30,7 @@ class Origin(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param host_name: The address of the origin. Domain names, IPv4 addresses,
      and IPv6 addresses are supported.
     :type host_name: str
@@ -41,8 +41,7 @@ class Origin(Resource):
     :type https_port: int
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
-    :vartype resource_state: str or :class:`OriginResourceState
-     <azure.mgmt.cdn.models.OriginResourceState>`
+    :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
     :ivar provisioning_state: Provisioning status of the origin.
     :vartype provisioning_state: str
     """
