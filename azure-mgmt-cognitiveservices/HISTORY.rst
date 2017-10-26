@@ -3,6 +3,17 @@
 Release History
 ===============
 
+2.0.0 (2017-10-26)
+++++++++++++++++++
+
+**Breaking changes*
+
+- remove "location" as a constructor parameter
+- sku_name in "check_sku_availability" result is now a str (from an enum)
+- merge "cognitive_services_accounts" into "accounts" operation group
+- "key_name" is now required to regenerate keys
+- "location/skus/kind/type" are now required for "list" available skus
+
 1.0.0 (2017-05-01)
 ++++++++++++++++++
 
