@@ -69,57 +69,6 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest.modeler",
-        "version": "2.0.21",
-        "dependencies": {
-          "dotnet-2.0.0": "^1.3.2"
-        },
-        "optionalDependencies": {},
-        "devDependencies": {
-          "coffee-script": "^1.11.1",
-          "dotnet-sdk-2.0.0": "^1.1.1",
-          "gulp": "^3.9.1",
-          "gulp-filter": "^5.0.0",
-          "gulp-line-ending-corrector": "^1.0.1",
-          "iced-coffee-script": "^108.0.11",
-          "marked": "^0.3.6",
-          "marked-terminal": "^2.0.0",
-          "moment": "^2.17.1",
-          "run-sequence": "*",
-          "shx": "^0.2.2",
-          "through2-parallel": "^0.1.3",
-          "yargs": "^8.0.2",
-          "yarn": "^1.0.2"
-        },
-        "bundleDependencies": false,
-        "peerDependencies": {},
-        "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-        "_shasum": "3ce7d3939124b31830be15e5de99b9b7768afb90",
-        "_shrinkwrap": null,
-        "bin": null,
-        "_id": "@microsoft.azure/autorest.modeler@2.0.21",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-        "_requested": {
-          "type": "directory",
-          "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler"
-        },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler",
-        "_where": "/root/.autorest/@microsoft.azure_autorest.modeler@2.0.21/node_modules/@microsoft.azure/autorest.modeler"
-      },
-      "extensionManager": {
-        "installationPath": "/root/.autorest",
-        "dotnetPath": "/root/.dotnet"
-      },
-      "installationPath": "/root/.autorest"
-    },
-    {
-      "resolvedInfo": null,
-      "packageMetadata": {
-        "name": "@microsoft.azure/autorest.modeler",
         "version": "2.1.22",
         "dependencies": {
           "dotnet-2.0.0": "^1.4.4"
@@ -221,6 +170,14 @@
       "installationPath": "/root/.autorest"
     }
   ],
-  "autorest_bootstrap": {},
-  "date": "2017-10-10T20:09:42Z"
+  "autorest_bootstrap": {
+    "dependencies": {
+      "autorest": {
+        "version": "2.0.4147",
+        "from": "autorest@latest",
+        "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4147.tgz"
+      }
+    }
+  },
+  "date": "2017-10-12T17:56:33Z"
 }

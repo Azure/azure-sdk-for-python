@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.dns
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtDnsTest(AzureMgmtTestCase):
 
@@ -19,17 +17,15 @@ class MgmtDnsTest(AzureMgmtTestCase):
         self.dns_client = self.create_mgmt_client(
             azure.mgmt.dns.DnsManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_dns(self):
+    @ResourceGroupPreparer()
+    def test_dns(self, resource_group, location):
         account_name = self.get_resource_name('pydns.com')
 
         # The only valid value is 'global', otherwise you will get a:
         # The subscription is not registered for the resource type 'dnszones' in the location 'westus'.
         zone = self.dns_client.zones.create_or_update(
-            self.group_name,
+            resource_group.name,
             account_name,
             {
                 'location': 'global'
@@ -38,13 +34,13 @@ class MgmtDnsTest(AzureMgmtTestCase):
         self.assertEqual(zone.name, account_name)
 
         zone = self.dns_client.zones.get(
-            self.group_name,
+            resource_group.name,
             zone.name
         )
         self.assertEqual(zone.name, account_name)
 
         zones = list(self.dns_client.zones.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(zones), 1)
 
@@ -54,7 +50,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
         # Record set
         record_set_name = self.get_resource_name('record_set')
         record_set = self.dns_client.record_sets.create_or_update(
-            self.group_name,
+            resource_group.name,
             zone.name,
             record_set_name,
             'A',
@@ -72,7 +68,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
         )
 
         record_set = self.dns_client.record_sets.update(
-            self.group_name,
+            resource_group.name,
             zone.name,
             record_set_name,
             'A',
@@ -90,34 +86,34 @@ class MgmtDnsTest(AzureMgmtTestCase):
         )
 
         record_set = self.dns_client.record_sets.get(
-            self.group_name,
+            resource_group.name,
             zone.name,
             record_set_name,
             'A'
         )
 
         record_sets = list(self.dns_client.record_sets.list_by_type(
-            self.group_name,
+            resource_group.name,
             zone.name,
             'A'
         ))
         self.assertEqual(len(record_sets), 1)
 
         record_sets = list(self.dns_client.record_sets.list_by_dns_zone(
-            self.group_name,
+            resource_group.name,
             zone.name
         ))
         self.assertEqual(len(record_sets), 3)
 
         self.dns_client.record_sets.delete(
-            self.group_name,
+            resource_group.name,
             zone.name,
             record_set_name,
             'A'
         )
 
         async_delete = self.dns_client.zones.delete(
-            self.group_name,
+            resource_group.name,
             zone.name
         )
         async_delete.wait()

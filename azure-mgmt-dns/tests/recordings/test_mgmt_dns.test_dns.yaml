@@ -1,0 +1,342 @@
+interactions:
+- request:
+    body: '{"location": "global"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b","name":"pydns.com68ae090b","type":"Microsoft.Network\/dnszones","etag":"00000002-0000-0000-77ae-35567f4ed301","location":"global","tags":{},"properties":{"maxNumberOfRecordSets":5000,"nameServers":["ns1-09.azure-dns.com.","ns2-09.azure-dns.net.","ns3-09.azure-dns.org.","ns4-09.azure-dns.info."],"numberOfRecordSets":2,"zoneType":"Public"}}'}
+    headers:
+      cache-control: [private]
+      content-length: ['509']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:24:53 GMT']
+      etag: [00000002-0000-0000-77ae-35567f4ed301]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b","name":"pydns.com68ae090b","type":"Microsoft.Network\/dnszones","etag":"00000002-0000-0000-77ae-35567f4ed301","location":"global","tags":{},"properties":{"maxNumberOfRecordSets":5000,"nameServers":["ns1-09.azure-dns.com.","ns2-09.azure-dns.net.","ns3-09.azure-dns.org.","ns4-09.azure-dns.info."],"numberOfRecordSets":2}}'}
+    headers:
+      cache-control: [private]
+      content-length: ['489']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:24:55 GMT']
+      etag: [00000002-0000-0000-77ae-35567f4ed301]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b","name":"pydns.com68ae090b","type":"Microsoft.Network\/dnszones","etag":"00000002-0000-0000-77ae-35567f4ed301","location":"global","tags":{},"properties":{"maxNumberOfRecordSets":5000,"nameServers":["ns1-09.azure-dns.com.","ns2-09.azure-dns.net.","ns3-09.azure-dns.org.","ns4-09.azure-dns.info."],"numberOfRecordSets":2}}]}'}
+    headers:
+      cache-control: [private]
+      content-length: ['501']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:24:55 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/dnszones?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b","name":"pydns.com68ae090b","type":"Microsoft.Network\/dnszones","etag":"00000002-0000-0000-77ae-35567f4ed301","location":"global","tags":{},"properties":{"maxNumberOfRecordSets":5000,"nameServers":["ns1-09.azure-dns.com.","ns2-09.azure-dns.net.","ns3-09.azure-dns.org.","ns4-09.azure-dns.info."],"numberOfRecordSets":2}}]}'}
+    headers:
+      cache-control: [private]
+      content-length: ['501']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:24:57 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"TTL": 300, "ARecords": [{"ipv4Address": "1.2.3.4"}, {"ipv4Address":
+      "1.2.3.5"}]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['98']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/A/record_set68ae090b?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/A\/record_set68ae090b","name":"record_set68ae090b","type":"Microsoft.Network\/dnszones\/A","etag":"238721ad-97ff-4261-8f58-4cc456a07575","properties":{"fqdn":"record_set68ae090b.pydns.com68ae090b.","TTL":300,"ARecords":[{"ipv4Address":"1.2.3.4"},{"ipv4Address":"1.2.3.5"}]}}'}
+    headers:
+      cache-control: [private]
+      content-length: ['443']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:24:58 GMT']
+      etag: [238721ad-97ff-4261-8f58-4cc456a07575]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"properties": {"TTL": 300, "ARecords": [{"ipv4Address": "1.2.3.4"}, {"ipv4Address":
+      "1.2.3.5"}]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['98']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/A/record_set68ae090b?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/A\/record_set68ae090b","name":"record_set68ae090b","type":"Microsoft.Network\/dnszones\/A","etag":"e8058679-a7b2-458d-880c-0781ccde2c75","properties":{"fqdn":"record_set68ae090b.pydns.com68ae090b.","TTL":300,"ARecords":[{"ipv4Address":"1.2.3.4"},{"ipv4Address":"1.2.3.5"}]}}'}
+    headers:
+      cache-control: [private]
+      content-length: ['443']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:25:00 GMT']
+      etag: [e8058679-a7b2-458d-880c-0781ccde2c75]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/A/record_set68ae090b?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/A\/record_set68ae090b","name":"record_set68ae090b","type":"Microsoft.Network\/dnszones\/A","etag":"e8058679-a7b2-458d-880c-0781ccde2c75","properties":{"fqdn":"record_set68ae090b.pydns.com68ae090b.","TTL":300,"ARecords":[{"ipv4Address":"1.2.3.4"},{"ipv4Address":"1.2.3.5"}]}}'}
+    headers:
+      cache-control: [private]
+      content-length: ['443']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:25:01 GMT']
+      etag: [e8058679-a7b2-458d-880c-0781ccde2c75]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/A?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/A\/record_set68ae090b","name":"record_set68ae090b","type":"Microsoft.Network\/dnszones\/A","etag":"e8058679-a7b2-458d-880c-0781ccde2c75","properties":{"fqdn":"record_set68ae090b.pydns.com68ae090b.","TTL":300,"ARecords":[{"ipv4Address":"1.2.3.4"},{"ipv4Address":"1.2.3.5"}]}}]}'}
+    headers:
+      cache-control: [private]
+      content-length: ['455']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:25:02 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/recordsets?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/NS\/@","name":"@","type":"Microsoft.Network\/dnszones\/NS","etag":"1593573b-5c70-4345-92c5-969ccc174c56","properties":{"fqdn":"pydns.com68ae090b.","TTL":172800,"NSRecords":[{"nsdname":"ns1-09.azure-dns.com."},{"nsdname":"ns2-09.azure-dns.net."},{"nsdname":"ns3-09.azure-dns.org."},{"nsdname":"ns4-09.azure-dns.info."}]}},{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/SOA\/@","name":"@","type":"Microsoft.Network\/dnszones\/SOA","etag":"20af210b-52ac-47f0-840c-36f43f3a13a9","properties":{"fqdn":"pydns.com68ae090b.","TTL":3600,"SOARecord":{"email":"azuredns-hostmaster.microsoft.com","expireTime":2419200,"host":"ns1-09.azure-dns.com.","minimumTTL":300,"refreshTime":3600,"retryTime":300,"serialNumber":1}}},{"id":"\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/test_mgmt_dns_test_dns68ae090b\/providers\/Microsoft.Network\/dnszones\/pydns.com68ae090b\/A\/record_set68ae090b","name":"record_set68ae090b","type":"Microsoft.Network\/dnszones\/A","etag":"e8058679-a7b2-458d-880c-0781ccde2c75","properties":{"fqdn":"record_set68ae090b.pydns.com68ae090b.","TTL":300,"ARecords":[{"ipv4Address":"1.2.3.4"},{"ipv4Address":"1.2.3.5"}]}}]}'}
+    headers:
+      cache-control: [private]
+      content-length: ['1455']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:25:08 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b/A/record_set68ae090b?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [private]
+      content-length: ['0']
+      date: ['Thu, 26 Oct 2017 17:25:10 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsZones/pydns.com68ae090b?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsOperationStatuses/delzone6364463551368316682d57ab07?api-version=2017-09-01']
+      cache-control: [private]
+      content-length: ['0']
+      date: ['Thu, 26 Oct 2017 17:25:15 GMT']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsOperationResults/delzone6364463551368316682d57ab07?api-version=2017-09-01']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          msrest_azure/0.4.15 dnsmanagementclient/1.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_dns_test_dns68ae090b/providers/Microsoft.Network/dnsOperationStatuses/delzone6364463551368316682d57ab07?api-version=2017-09-01
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      cache-control: [private]
+      content-length: ['22']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 26 Oct 2017 17:25:19 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['11999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
