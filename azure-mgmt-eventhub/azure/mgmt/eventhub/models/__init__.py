@@ -16,6 +16,8 @@ from .eh_namespace import EHNamespace
 from .authorization_rule import AuthorizationRule
 from .access_keys import AccessKeys
 from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
+from .destination import Destination
+from .capture_description import CaptureDescription
 from .eventhub import Eventhub
 from .consumer_group import ConsumerGroup
 from .check_name_availability_parameter import CheckNameAvailabilityParameter
@@ -23,9 +25,11 @@ from .check_name_availability_result import CheckNameAvailabilityResult
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .error_response import ErrorResponse, ErrorResponseException
+from .arm_disaster_recovery import ArmDisasterRecovery
 from .operation_paged import OperationPaged
 from .eh_namespace_paged import EHNamespacePaged
 from .authorization_rule_paged import AuthorizationRulePaged
+from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
 from .eventhub_paged import EventhubPaged
 from .consumer_group_paged import ConsumerGroupPaged
 from .event_hub_management_client_enums import (
@@ -34,7 +38,10 @@ from .event_hub_management_client_enums import (
     AccessRights,
     KeyType,
     EntityStatus,
+    EncodingCaptureDescription,
     UnavailableReason,
+    ProvisioningStateDR,
+    RoleDisasterRecovery,
 )
 
 __all__ = [
@@ -45,6 +52,8 @@ __all__ = [
     'AuthorizationRule',
     'AccessKeys',
     'RegenerateAccessKeyParameters',
+    'Destination',
+    'CaptureDescription',
     'Eventhub',
     'ConsumerGroup',
     'CheckNameAvailabilityParameter',
@@ -52,9 +61,11 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'ErrorResponse', 'ErrorResponseException',
+    'ArmDisasterRecovery',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
+    'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
     'SkuName',
@@ -62,5 +73,8 @@ __all__ = [
     'AccessRights',
     'KeyType',
     'EntityStatus',
+    'EncodingCaptureDescription',
     'UnavailableReason',
+    'ProvisioningStateDR',
+    'RoleDisasterRecovery',
 ]

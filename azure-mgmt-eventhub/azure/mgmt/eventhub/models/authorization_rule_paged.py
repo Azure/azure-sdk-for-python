@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AuthorizationRulePaged(Paged):
     """
-    A paging container for iterating over a list of AuthorizationRule object
+    A paging container for iterating over a list of :class:`AuthorizationRule <azure.mgmt.eventhub.models.AuthorizationRule>` object
     """
 
     _attribute_map = {
