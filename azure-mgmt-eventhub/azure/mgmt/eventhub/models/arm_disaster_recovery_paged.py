@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class OperationPaged(Paged):
+class ArmDisasterRecoveryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.eventhub.models.Operation>` object
+    A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.eventhub.models.ArmDisasterRecovery>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
+        'current_page': {'key': 'value', 'type': '[ArmDisasterRecovery]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(OperationPaged, self).__init__(*args, **kwargs)
+        super(ArmDisasterRecoveryPaged, self).__init__(*args, **kwargs)
