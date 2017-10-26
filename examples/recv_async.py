@@ -12,24 +12,19 @@ An example to show running the EventHubClient in background.
 
 import sys
 import logging
-from eventhubs import EventHubClient, Receiver, Offset
+import asyncio
+from eventhubs import EventHubClient, Offset
+from eventhubs.async import AsyncReceiver
 
-try:
-    import Queue
-except:
-    import queue as Queue
+# pylint: disable=C0103
+# pylint: disable=C0111
 
-class MyReceiver(Receiver):
-    def __init__(self, partition):
-        super(MyReceiver, self).__init__()
-        self.partition = partition
-        self.messages = Queue.Queue()
-
-    def receive(self):
-        return self.messages.get()
-
-    def on_event_data(self, event_data):
-        self.messages.put(event_data)
+async def pump(recv):
+    for k in range(10):
+        _batch = await recv.receive(5)
+        logging.info("Received %d events", len(_batch))
+        for _ev in _batch:
+            logging.info("  sn=%d offset=%s", _ev.sequence_number, _ev.offset)
 
 try:
     logging.basicConfig(filename="test.log", level=logging.INFO)
@@ -44,17 +39,17 @@ try:
                "/"
                "myeventhub")
     CONSUMER_GROUP = "$default"
-    OFFSET = Offset("@latest")
+    OFFSET = Offset("-1")
 
-    recv = MyReceiver("0")
-    client = EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
-        .subscribe(recv, CONSUMER_GROUP, "0", OFFSET) \
-        .run_async()
-    # read some events
-    for k in range(10):
-        _e = recv.receive()
-        logging.info("Received sn=%d offset=%s", _e.sequence_number, _e.offset)
-    client.stop()
+    _recv = AsyncReceiver()
+    _client = EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
+        .subscribe(_recv, CONSUMER_GROUP, "0", OFFSET) \
+        .run_daemon()
+
+    _loop = asyncio.get_event_loop()
+    _loop.run_until_complete(pump(_recv))
+
+    _client.stop()
 
 except KeyboardInterrupt:
     pass

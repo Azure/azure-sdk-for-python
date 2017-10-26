@@ -47,7 +47,7 @@ class EventHubClient(Container):
             self.session_policy = None
             self.clients = []
 
-    def run_async(self):
+    def run_daemon(self):
         """
         Run the L{EventHubClient} in non-blocking mode.
         """
@@ -57,6 +57,9 @@ class EventHubClient(Container):
         return self
 
     def stop(self):
+        """
+        Stop the client that was run in daemon mode.
+        """
         logging.info("%s: stopping", self.container_id)
         super(EventHubClient, self).stop()
         if self.daemon is not None:
@@ -110,6 +113,7 @@ class EventHubClient(Container):
         raise NotImplementedError("TODO")
 
     def on_reactor_init(self, event):
+        """Handles reactor init event."""
         if not self.shared_connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
             _properties = {}
@@ -124,18 +128,23 @@ class EventHubClient(Container):
             client.start(self)
 
     def on_connection_local_open(self, event):
+        """Handles on_connection_local_open event."""
         logging.info("%s: connection local open", event.connection.container)
 
     def on_connection_remote_open(self, event):
+        """Handles on_connection_remote_open event."""
         logging.info("%s: connection remote open %s", self.container_id, event.connection.remote_container)
 
     def on_session_local_open(self, event):
+        """Handles on_session_local_open event."""
         logging.info("%s: session local open", self.container_id)
 
     def on_session_remote_open(self, event):
+        """Handles on_session_remote_open event."""
         logging.info("%s: session remote open", self.container_id)
 
     def on_connection_remote_close(self, event):
+        """Handles on_connection_remote_close event."""
         if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
         _condition = self.shared_connection.remote_condition
@@ -155,6 +164,7 @@ class EventHubClient(Container):
         self.on_reactor_init(None)
 
     def on_session_remote_close(self, event):
+        """Handles on_session_remote_close event."""
         if EndpointStateHandler.is_local_closed(event.session):
             return DELEGATED
         _condition = event.session.remote_condition
@@ -173,6 +183,7 @@ class EventHubClient(Container):
         self.schedule(2.0, self)
 
     def on_transport_closed(self, event):
+        """Handles on_transport_closed event."""
         if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
         logging.error("%s: transport close", self.container_id)
@@ -182,6 +193,7 @@ class EventHubClient(Container):
         self.on_reactor_init(None)
 
     def on_timer_task(self, event):
+        """Handles on_timer_task event."""
         if self.session_policy is None:
             self.on_reactor_init(None)
 

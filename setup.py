@@ -8,8 +8,15 @@ Setup the eventhubs module.
 
 """
 
+import sys
 import eventhubs
 from setuptools import setup
+
+def find_packages():
+    """Return packages based on sys version."""
+    if sys.version_info[0] >= 3:
+        return ['eventhubs', 'eventhubs.async']
+    return ['eventhubs']
 
 setup(name='eventhubs',
       version=eventhubs.__version__,
@@ -17,5 +24,5 @@ setup(name='eventhubs',
       url='http://github.com/azure/azure-event-hubs-python',
       author='microsoft',
       license='MIT',
-      packages=['eventhubs'],
+      packages=find_packages(),
       zip_safe=False)
