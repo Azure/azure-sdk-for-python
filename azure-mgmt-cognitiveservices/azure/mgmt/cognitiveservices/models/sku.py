@@ -21,12 +21,10 @@ class Sku(Model):
     :param name: Gets or sets the sku name. Required for account creation,
      optional for update. Possible values include: 'F0', 'P0', 'P1', 'P2',
      'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.cognitiveservices.models.SkuName>`
+    :type name: str or ~azure.mgmt.cognitiveservices.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Free', 'Standard', 'Premium'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.cognitiveservices.models.SkuTier>`
+    :vartype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
     """
 
     _validation = {
