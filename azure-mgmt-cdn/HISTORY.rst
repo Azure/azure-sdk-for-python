@@ -3,6 +3,21 @@
 Release History
 ===============
 
+2.0.0 (2017-10-26)
+++++++++++++++++++
+
+**Features**
+
+- Add probe operations and in some models
+- Add list_supported_optimization_types
+
+**Breaking changes**
+
+- move resource_usage into its own operation group
+- move operations list into its own operation group
+
+Api version changed from 2016-10-02 to 2017-04-02
+
 1.0.0 (2017-06-30)
 ++++++++++++++++++
 
