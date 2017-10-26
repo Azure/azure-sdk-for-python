@@ -90,7 +90,6 @@ class PartitionReceiveHandler(Receiver):
                                                       eh_partition_pump.partition_context.offset)
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eh_options.max_batch_size
-        self._msg_count = 0
         self.total = 0
         self.last_sn = eh_partition_pump.partition_context.sequence_number
         self.last_offset = eh_partition_pump.partition_context.offset
@@ -108,11 +107,12 @@ class PartitionReceiveHandler(Receiver):
         call.The pump gains nothing by running faster than OnEvents.
         """
         try:
-            self.last_offset = EventData.offset(message)
-            self.last_sn = EventData.sequence_number(message)
-            self.eh_partition_pump.msg_queue.put(message)
-            self._msg_count += 1
-            # print("Message #{} pushed to queue".format(self._msg_count))
+            if not self.eh_partition_pump.pump_status == "Errored" or self.eh_partition_pump.pump_status == "IsClosing":
+                self.last_offset = EventData.offset(message)
+                self.last_sn = EventData.sequence_number(message)
+                self.eh_partition_pump.msg_queue.put(message)
+            else:
+                self.client.stop()
         except Exception as err:
             # TBI Push Error to QUEUE
             print("Eventhub Client Error", self.eh_partition_pump.partition_context.partition_id,
@@ -126,16 +126,15 @@ class PartitionReceiver:
     def __init__(self, eh_partition_pump):
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eh_options.max_batch_size
-        self.msg_count = 0
 
     async def run(self):
         """
         Runs the async partion reciever event loop to retrive messages from the event queue
         """
-        while self.msg_count < self.max_batch_size:
+        # Implement pull max batch from queue instead of one message at a time
+        while not self.eh_partition_pump.pump_status == "Errored" or self.eh_partition_pump.pump_status == "IsClosing":
             msg = self.eh_partition_pump.msg_queue.get()
             await self.process_events_async([msg])
-            self.msg_count += 1
 
     async def process_events_async(self, events):
         """

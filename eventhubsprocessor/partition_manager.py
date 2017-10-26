@@ -1,12 +1,12 @@
 """
 Author: Aaron (Ari) Bornstien
 """
-from collections import OrderedDict, Counter
-import requests, time
+import requests, time, asyncio
+import concurrent.futures
+from collections import Counter
 from bs4 import BeautifulSoup
 from eventhubsprocessor.eh_partition_pump import EventHubPartitionPump
 from eventhubsprocessor.cancellation_token import CancellationToken
-
 
 class PartitionManager:
     """
@@ -17,6 +17,7 @@ class PartitionManager:
         self.partition_pumps = {}
         self.partition_ids = None
         self.run_task = None
+        self.pump_executor = None
         self.cancellation_token = CancellationToken()
 
     async def get_partition_ids_async(self):
@@ -38,7 +39,6 @@ class PartitionManager:
             except Exception as err:
                 raise Exception("failed to get partition ids", err)
 
-        print(self.host.guid, "PartitionCount: {}".format(len(self.partition_ids)))
         return self.partition_ids
 
     async def start_async(self):
@@ -48,7 +48,10 @@ class PartitionManager:
         if self.run_task:
             raise Exception("A PartitionManager cannot be started multiple times.")
 
-        await self.initialize_stores_async()
+        partition_count = await self.initialize_stores_async()
+        print(self.host.guid, "PartitionCount: {}".format(partition_count))
+        self.pump_executor = concurrent.futures.ThreadPoolExecutor(max_workers=partition_count)
+
         self.run_task = await self.run_async()
 
     async def stop_async(self):
@@ -79,7 +82,7 @@ class PartitionManager:
         """
         Intializes the partition checkpoint and lease store ensures that a checkpoint
         exists for all partitions. Note in this case checkpoint and lease stores are
-        the same storage manager construct. TBD (Add retries)
+        the same storage manager construct. Returns the number of partitions
         """
         await self.host.storage_manager.create_checkpoint_store_if_not_exists_async()
         partition_ids = await self.get_partition_ids_async()
@@ -87,6 +90,7 @@ class PartitionManager:
             await self.retry_async(self.host.storage_manager.create_checkpoint_if_not_exists_async,
                                    p_id, "Failure creating checkpoint for partition, retrying",
                                    "Out of retries creating checkpoint blob for partition", 5)
+        return len(partition_ids)
 
     async def retry_async(self, func, partition_id, retry_message,
                           final_failure_message, max_retries):
@@ -150,14 +154,17 @@ class PartitionManager:
             # Grab more leases if available and needed for load balancing
             leases_owned_by_others_count = len(leases_owned_by_others)
             if leases_owned_by_others_count > 0:
-                steal_this_lease = self.which_lease_to_steal(leases_owned_by_others, our_lease_count)
+                steal_this_lease = self.which_lease_to_steal(leases_owned_by_others,
+                                                             our_lease_count)
                 if steal_this_lease:
                     try:
                         print("Lease to steal", steal_this_lease.serializable())
                         if await lease_manager.acquire_lease_async(steal_this_lease):
-                            print("Stole lease sucessfully", self.host.guid, steal_this_lease.partition_id)
+                            print("Stole lease sucessfully", self.host.guid,
+                                  steal_this_lease.partition_id)
                         else:
-                            print("Failed to steal lease for partition ", self.host.guid, steal_this_lease.partition_id)
+                            print("Failed to steal lease for partition ",
+                                  self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:
                         print("Failed to steal lease", repr(err)) #Unified error handling TBI
 
@@ -198,7 +205,7 @@ class PartitionManager:
         """
         partition_pump = EventHubPartitionPump(self.host, lease)
         # Do the put after start, if the start fails then put doesn't happen
-        await partition_pump.open_async()
+        asyncio.get_event_loop().run_in_executor(self.pump_executor, partition_pump.run)
         self.partition_pumps[partition_id] = partition_pump
         print("Created new partition pump ", self.host.guid, partition_id)
 

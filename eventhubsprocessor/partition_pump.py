@@ -2,6 +2,7 @@
 Author: Aaron (Ari) Bornstien
 """
 from abc import  abstractmethod
+import asyncio
 from eventhubsprocessor.partition_context import PartitionContext
 
 class PartitionPump():
@@ -16,6 +17,13 @@ class PartitionPump():
         self.partition_context = None
         self.processor = None
         # self.ProcessingAsyncLock = Lock()
+
+    def run(self):
+        """
+        Makes pump sync so that it can be run in a thread
+        """
+        event_loop = asyncio.new_event_loop()
+        event_loop.run_until_complete(self.open_async())
 
     def set_pump_status(self, status):
         """

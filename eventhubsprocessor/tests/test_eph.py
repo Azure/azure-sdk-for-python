@@ -20,8 +20,8 @@ class EventProcessorHostTestCase(unittest.TestCase):
         self._credentials = MockCredentials()
         self._consumer_group = "$Default"
         self._storage_clm = AzureStorageCheckpointLeaseManager(self._credentials.storage_account,
-                                        self._credentials.storage_key,
-                                        self._credentials.lease_container)
+                                                               self._credentials.storage_key,
+                                                               self._credentials.lease_container)
 
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
                                         self._consumer_group, storage_manager=self._storage_clm,
