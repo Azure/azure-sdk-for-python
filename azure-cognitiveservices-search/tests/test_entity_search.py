@@ -10,34 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.cognitiveservices.search.entitysearch import EntitySearchAPI
-#from msrest.authentication import CognitiveServicesAuthentication
-# Workaround to get CI to work
-from msrest.authentication import Authentication
-class CognitiveServicesAuthentication(Authentication):
-    """Cognitive Services authentication.
-    :param str subscription_key: The CS subscription key
-    """
-
-    _subscription_key_header = 'Ocp-Apim-Subscription-Key'
-
-    def __init__(self, subscription_key):
-        if not subscription_key:
-            raise ValueError("Subscription key cannot be None")
-        self.subscription_key = subscription_key
-
-    def signed_session(self):
-        """Create requests session with any required auth headers
-        applied.
-        :rtype: requests.Session.
-        """
-
-        session = super(CognitiveServicesAuthentication, self).signed_session()
-        session.headers.update({
-            self._subscription_key_header: self.subscription_key,
-            'X-BingApis-SDK-Client': 'Python-SDK'
-        })
-        return session
-# end of workaround
+from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
@@ -72,7 +45,7 @@ class EntitySearchTest(ReplayableTest):
         query = 'seahawks'
         market = 'en-us'
 
-        credentials = CognitiveServicesAuthentication(
+        credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
         entity_search_api = EntitySearchAPI(credentials)
