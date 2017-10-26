@@ -221,6 +221,5 @@
       "installationPath": "/root/.autorest"
     }
   ],
-  "autorest_bootstrap": {},
-  "date": "2017-10-23T17:58:25Z"
+  "autorest_bootstrap": {}
 }
