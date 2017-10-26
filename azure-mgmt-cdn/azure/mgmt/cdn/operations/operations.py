@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EdgeNodesOperations(object):
-    """EdgeNodesOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,17 +36,16 @@ class EdgeNodesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Edgenodes are the global Point of Presence (POP) locations used to
-        deliver CDN content to end users.
+        """Lists all of the available CDN REST API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of EdgeNode
+        :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.cdn.models.EdgeNodePaged[~azure.mgmt.cdn.models.EdgeNode]
+         ~azure.mgmt.cdn.models.OperationPaged[~azure.mgmt.cdn.models.Operation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -54,7 +53,7 @@ class EdgeNodesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Cdn/edgenodes'
+                url = '/providers/Microsoft.Cdn/operations'
 
                 # Construct parameters
                 query_parameters = {}
@@ -85,11 +84,11 @@ class EdgeNodesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EdgeNodePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.EdgeNodePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

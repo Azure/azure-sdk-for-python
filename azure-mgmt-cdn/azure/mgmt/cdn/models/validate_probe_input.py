@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class OperationPaged(Paged):
+class ValidateProbeInput(Model):
+    """Input of the validate probe API.
+
+    :param probe_url: The probe URL to validate.
+    :type probe_url: str
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.cdn.models.Operation>` object
-    """
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
+    _validation = {
+        'probe_url': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'probe_url': {'key': 'probeURL', 'type': 'str'},
+    }
 
-        super(OperationPaged, self).__init__(*args, **kwargs)
+    def __init__(self, probe_url):
+        self.probe_url = probe_url

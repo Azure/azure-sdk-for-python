@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class DeepCreatedOrigin(Model):
-    """Origin to be added when creating a CDN endpoint.
+    """The main origin of CDN content which is added when creating a CDN endpoint.
 
     :param name: Origin name
     :type name: str
-    :param host_name: The address of the origin. It can be a domain names,
-     IPv4 address, or IPv6 address.
+    :param host_name: The address of the origin. It can be a domain name, IPv4
+     address, or IPv6 address.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535
     :type http_port: int
