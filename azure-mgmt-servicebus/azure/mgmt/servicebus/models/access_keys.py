@@ -24,6 +24,12 @@ class AccessKeys(Model):
     :ivar secondary_connection_string: Secondary connection string of the
      created namespace authorization rule.
     :vartype secondary_connection_string: str
+    :ivar alias_primary_connection_string: Primary connection string of the
+     alias if GEO DR is enabled
+    :vartype alias_primary_connection_string: str
+    :ivar alias_secondary_connection_string: Secondary  connection string of
+     the alias if GEO DR is enabled
+    :vartype alias_secondary_connection_string: str
     :ivar primary_key: A base64-encoded 256-bit primary key for signing and
      validating the SAS token.
     :vartype primary_key: str
@@ -37,6 +43,8 @@ class AccessKeys(Model):
     _validation = {
         'primary_connection_string': {'readonly': True},
         'secondary_connection_string': {'readonly': True},
+        'alias_primary_connection_string': {'readonly': True},
+        'alias_secondary_connection_string': {'readonly': True},
         'primary_key': {'readonly': True},
         'secondary_key': {'readonly': True},
         'key_name': {'readonly': True},
@@ -45,6 +53,8 @@ class AccessKeys(Model):
     _attribute_map = {
         'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
         'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+        'alias_primary_connection_string': {'key': 'aliasPrimaryConnectionString', 'type': 'str'},
+        'alias_secondary_connection_string': {'key': 'aliasSecondaryConnectionString', 'type': 'str'},
         'primary_key': {'key': 'primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
         'key_name': {'key': 'keyName', 'type': 'str'},
@@ -53,6 +63,8 @@ class AccessKeys(Model):
     def __init__(self):
         self.primary_connection_string = None
         self.secondary_connection_string = None
+        self.alias_primary_connection_string = None
+        self.alias_secondary_connection_string = None
         self.primary_key = None
         self.secondary_key = None
         self.key_name = None

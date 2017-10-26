@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SBSubscriptionPaged(Paged):
+class ArmDisasterRecoveryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SBSubscription <azure.mgmt.servicebus.models.SBSubscription>` object
+    A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.servicebus.models.ArmDisasterRecovery>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SBSubscription]'}
+        'current_page': {'key': 'value', 'type': '[ArmDisasterRecovery]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SBSubscriptionPaged, self).__init__(*args, **kwargs)
+        super(ArmDisasterRecoveryPaged, self).__init__(*args, **kwargs)
