@@ -71,7 +71,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'CreatePersonGroupRequest')
@@ -122,7 +121,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
@@ -169,7 +167,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -230,7 +227,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'CreatePersonGroupRequest')
@@ -280,7 +276,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -340,7 +335,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -393,7 +387,6 @@ class PersonGroupOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)

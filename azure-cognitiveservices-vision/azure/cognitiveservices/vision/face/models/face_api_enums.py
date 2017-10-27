@@ -15,8 +15,14 @@ from enum import Enum
 class AzureRegions(Enum):
 
     westus = "westus"
-    westus2 = "westus2"
     westeurope = "westeurope"
     southeastasia = "southeastasia"
     eastus2 = "eastus2"
     westcentralus = "westcentralus"
+    westus2 = "westus2"
+    eastus = "eastus"
+    southcentralus = "southcentralus"
+    northeurope = "northeurope"
+    eastasia = "eastasia"
+    australiaeast = "australiaeast"
+    brazilsouth = "brazilsouth"

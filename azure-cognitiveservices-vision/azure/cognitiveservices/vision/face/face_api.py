@@ -24,11 +24,11 @@ class FaceAPIConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param subscription_key: Subscription key in header
-    :type subscription_key: str
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus'
+     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+     'brazilsouth'
     :type azure_region: str or
      ~azure.cognitiveservices.vision.face.models.AzureRegions
     :param credentials: Subscription credentials which uniquely identify
@@ -37,10 +37,8 @@ class FaceAPIConfiguration(Configuration):
     """
 
     def __init__(
-            self, subscription_key, azure_region, credentials):
+            self, azure_region, credentials):
 
-        if subscription_key is None:
-            raise ValueError("Parameter 'subscription_key' must not be None.")
         if azure_region is None:
             raise ValueError("Parameter 'azure_region' must not be None.")
         if credentials is None:
@@ -51,7 +49,6 @@ class FaceAPIConfiguration(Configuration):
 
         self.add_user_agent('faceapi/{}'.format(VERSION))
 
-        self.subscription_key = subscription_key
         self.azure_region = azure_region
         self.credentials = credentials
 
@@ -71,11 +68,11 @@ class FaceAPI(object):
     :ivar face_list: FaceList operations
     :vartype face_list: azure.cognitiveservices.vision.face.operations.FaceListOperations
 
-    :param subscription_key: Subscription key in header
-    :type subscription_key: str
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus'
+     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+     'brazilsouth'
     :type azure_region: str or
      ~azure.cognitiveservices.vision.face.models.AzureRegions
     :param credentials: Subscription credentials which uniquely identify
@@ -84,9 +81,9 @@ class FaceAPI(object):
     """
 
     def __init__(
-            self, subscription_key, azure_region, credentials):
+            self, azure_region, credentials):
 
-        self.config = FaceAPIConfiguration(subscription_key, azure_region, credentials)
+        self.config = FaceAPIConfiguration(azure_region, credentials)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
