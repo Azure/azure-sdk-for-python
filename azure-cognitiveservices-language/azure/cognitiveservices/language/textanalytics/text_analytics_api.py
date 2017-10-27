@@ -21,8 +21,6 @@ class TextAnalyticsAPIConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param subscription_key: Subscription key in header
-    :type subscription_key: str
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
      'southeastasia', 'eastus2', 'westcentralus'
@@ -34,10 +32,8 @@ class TextAnalyticsAPIConfiguration(Configuration):
     """
 
     def __init__(
-            self, subscription_key, azure_region, credentials):
+            self, azure_region, credentials):
 
-        if subscription_key is None:
-            raise ValueError("Parameter 'subscription_key' must not be None.")
         if azure_region is None:
             raise ValueError("Parameter 'azure_region' must not be None.")
         if credentials is None:
@@ -48,7 +44,6 @@ class TextAnalyticsAPIConfiguration(Configuration):
 
         self.add_user_agent('textanalyticsapi/{}'.format(VERSION))
 
-        self.subscription_key = subscription_key
         self.azure_region = azure_region
         self.credentials = credentials
 
@@ -59,8 +54,6 @@ class TextAnalyticsAPI(object):
     :ivar config: Configuration for client.
     :vartype config: TextAnalyticsAPIConfiguration
 
-    :param subscription_key: Subscription key in header
-    :type subscription_key: str
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
      'southeastasia', 'eastus2', 'westcentralus'
@@ -72,9 +65,9 @@ class TextAnalyticsAPI(object):
     """
 
     def __init__(
-            self, subscription_key, azure_region, credentials):
+            self, azure_region, credentials):
 
-        self.config = TextAnalyticsAPIConfiguration(subscription_key, azure_region, credentials)
+        self.config = TextAnalyticsAPIConfiguration(azure_region, credentials)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -126,7 +119,6 @@ class TextAnalyticsAPI(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
@@ -196,7 +188,6 @@ class TextAnalyticsAPI(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(input, 'BatchInput')
@@ -265,7 +256,6 @@ class TextAnalyticsAPI(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
