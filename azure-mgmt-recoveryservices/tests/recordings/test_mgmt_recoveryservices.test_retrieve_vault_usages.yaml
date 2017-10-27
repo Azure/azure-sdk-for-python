@@ -1,0 +1,137 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {}, "sku": {"name": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
+  response:
+    body: {string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2017-10-27T22%3A44%3A52.4029888Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['428']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
+  response:
+    body: {string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2017-10-27T22%3A44%3A52.4029888Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['428']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/Subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource/usages?api-version=2016-06-01
+  response:
+    body: {string: '{"value":[{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"MABContainersCount","localizedValue":"Backup
+        management servers"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"ProtectedItemCount","localizedValue":"Backup
+        items/Azure virtual machine backup"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"ProtectedItemCriticalCount","localizedValue":"Critical"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"ProtectedItemWarningCount","localizedValue":"Warning"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"IaaSVMProtectedItemCount","localizedValue":"Azure
+        Virtual Machines"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"IaaSVMProtectedItemCriticalCount","localizedValue":"Critical"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"IaaSVMProtectedItemWarningCount","localizedValue":"Warning"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"MABProtectedItemCount","localizedValue":"File-Folders"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"DPMProtectedItemCount","localizedValue":"DPM
+        Protected Items Count"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"AzureBackupServerProtectedItemCount","localizedValue":"Azure
+        Backup Server Protected Items Count"}},{"unit":"Count","quotaPeriod":"P1D","currentValue":0,"limit":-1,"name":{"value":"InProgressJobsCount","localizedValue":"In
+        progress"}},{"unit":"Count","quotaPeriod":"P1D","currentValue":0,"limit":-1,"name":{"value":"FailedJobsCount","localizedValue":"Failed"}},{"unit":"Bytes","currentValue":0,"limit":-1,"name":{"value":"GRSStorageUsage","localizedValue":"Cloud
+        - GRS"}},{"unit":"Bytes","currentValue":0,"limit":-1,"name":{"value":"LRSStorageUsage","localizedValue":"Cloud
+        - LRS"}},{"unit":"Count","currentValue":0,"limit":-1,"name":{"value":"ManagedInstances","localizedValue":"Protected
+        Instances"}},{"unit":"Bytes","currentValue":0,"limit":-1,"name":{"value":"GRSDedupStorageUsage","localizedValue":"Dedup
+        - GRS"}},{"unit":"Bytes","currentValue":0,"limit":-1,"name":{"value":"LRSDedupStorageUsage","localizedValue":"Dedup
+        - LRS"}},{"unit":"Bytes","currentValue":0,"limit":-1,"name":{"value":"UsedDiskSize","localizedValue":"Backup
+        Engines'' Disk Used"}},{"name":{"value":"ProtectedItem","localizedValue":"Replicated
+        Items"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"RecoveryPlan","localizedValue":"Recovery
+        Plans"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"UnHealthyProvider","localizedValue":"Server
+        health critical"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"DeprecatedProvider","localizedValue":"Deprecated
+        servers"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"UnSupportedProvider","localizedValue":"Unsupported
+        servers"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"SupportedProvider","localizedValue":"Supported
+        servers"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"Event","localizedValue":"Events"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"FailedJob","localizedValue":"Failed"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"InProgressJob","localizedValue":"In
+        progress"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"SuspendedJob","localizedValue":"User
+        input required"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"RegisteredServersCount","localizedValue":"Registered
+        servers count"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"RecoveryServicesProviderAuthType","localizedValue":"Recovery
+        Services Providers auth type"},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"ReplicatingProtectedItemsCount","localizedValue":"Replicating
+        protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"FailedOverProtectedItemsCount","localizedValue":"Failed
+        over protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"TestFailoverApplicableProtectedItemsCount","localizedValue":"Test
+        failover applicable protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"HyperVToAzureProtectedItemsCount","localizedValue":"HyperV
+        to Azure protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"VMMToAzureProtectedItemsCount","localizedValue":"Vmm
+        to Azure protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"VMWareToAzureProtectedItemsCount","localizedValue":"Vmware
+        to Azure protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"name":{"value":"AzureToAzureProtectedItemsCount","localizedValue":"Azure
+        to Azure protected items count."},"unit":"Count","currentValue":0,"limit":-1},{"unit":0,"currentValue":0,"limit":-1,"name":{"value":"Critical","localizedValue":"Critical"}},{"unit":0,"currentValue":0,"limit":-1,"name":{"value":"Warning","localizedValue":"Warning"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['4953']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/Subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_retrieve_vault_usages5812162c/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource/replicationUsages?api-version=2016-06-01
+  response:
+    body: {string: '{"monitoringSummary":{"unHealthyVmCount":0,"unHealthyProviderCount":0,"eventsCount":0,"deprecatedProviderCount":0,"supportedProviderCount":0,"unsupportedProviderCount":0},"jobsSummary":{"failedJobs":0,"suspendedJobs":0,"inProgressJobs":0},"protectedItemsSummary":{"failedOverProtectedItemsCount":0,"testFailoverApplicableProtectedItemsCount":0,"replicatingProtectedItemsCount":0,"hyperVToAzureProtectedItemsCount":0,"vmmToAzureProtectedItemsCount":0,"vmwareToAzureProtectedItemsCount":0,"azureToAzureProtectedItemsCount":0},"protectedItemCount":0,"registeredServersCount":0,"recoveryPlanCount":0,"recoveryServicesProviderAuthType":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['636']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0, Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
