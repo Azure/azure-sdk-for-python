@@ -15,13 +15,18 @@ from .contractual_rules_contractual_rule import ContractualRulesContractualRule
 class ContractualRulesAttribution(ContractualRulesContractualRule):
     """ContractualRulesAttribution.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ContractualRulesLicenseAttribution,
+    ContractualRulesLinkAttribution, ContractualRulesMediaAttribution,
+    ContractualRulesTextAttribution
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field

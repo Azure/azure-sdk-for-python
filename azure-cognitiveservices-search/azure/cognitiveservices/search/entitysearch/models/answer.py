@@ -15,18 +15,20 @@ from .response import Response
 class Answer(Response):
     """Answer.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SearchResultsAnswer
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar id:
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.
-    :vartype contractual_rules: list of
-     :class:`ContractualRulesContractualRule
-     <entitysearch2.models.ContractualRulesContractualRule>`
+    :vartype contractual_rules:
+     list[~azure.cognitiveservices.search.entitysearch.models.ContractualRulesContractualRule]
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
     """

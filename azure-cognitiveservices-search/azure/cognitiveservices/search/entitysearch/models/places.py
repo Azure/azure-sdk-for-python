@@ -18,22 +18,22 @@ class Places(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar id:
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.
-    :vartype contractual_rules: list of
-     :class:`ContractualRulesContractualRule
-     <entitysearch2.models.ContractualRulesContractualRule>`
+    :vartype contractual_rules:
+     list[~azure.cognitiveservices.search.entitysearch.models.ContractualRulesContractualRule]
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
     :ivar query_context:
-    :vartype query_context: :class:`QueryContext
-     <entitysearch2.models.QueryContext>`
+    :vartype query_context:
+     ~azure.cognitiveservices.search.entitysearch.models.QueryContext
     :param value: A list of local entities, such as restaurants or hotels.
-    :type value: list of :class:`Thing <entitysearch2.models.Thing>`
+    :type value:
+     list[~azure.cognitiveservices.search.entitysearch.models.Thing]
     """
 
     _validation = {
