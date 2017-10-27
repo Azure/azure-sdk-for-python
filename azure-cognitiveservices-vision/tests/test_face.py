@@ -11,7 +11,7 @@
 from os.path import dirname, join, realpath
 
 from azure.cognitiveservices.vision.face import FaceAPI
-#from msrest.authentication import CognitiveServicesAuthentication
+from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
@@ -44,10 +44,10 @@ class FaceTest(ReplayableTest):
             return fake_settings, None
 
     def test_face_detect(self):
-        # credentials = CognitiveServicesAuthentication(
-        #     self.settings.CS_SUBSCRIPTION_KEY
-        # )
-        face_api = FaceAPI(self.settings.CS_SUBSCRIPTION_KEY, "westus2", credentials=False)
+        credentials = CognitiveServicesCredentials(
+            self.settings.CS_SUBSCRIPTION_KEY
+        )
+        face_api = FaceAPI("westus2", credentials=credentials)
         with open(join(CWD, "facefindsimilar.queryface.jpg"), "rb") as face_fd:
             result = face_api.face.detect_in_stream(
                 face_fd,
