@@ -21,7 +21,7 @@ class ContractualRulesLicenseAttribution(ContractualRulesAttribution):
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field
@@ -30,7 +30,8 @@ class ContractualRulesLicenseAttribution(ContractualRulesAttribution):
      placed at the caller's discretion.
     :vartype must_be_close_to_content: bool
     :ivar license: The license under which the content may be used.
-    :vartype license: :class:`License <entitysearch2.models.License>`
+    :vartype license:
+     ~azure.cognitiveservices.search.entitysearch.models.License
     :ivar license_notice: The license to display next to the targeted field.
     :vartype license_notice: str
     """

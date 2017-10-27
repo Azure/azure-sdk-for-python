@@ -21,7 +21,7 @@ class ContractualRulesLinkAttribution(ContractualRulesAttribution):
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field

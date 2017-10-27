@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class ContractualRulesContractualRule(Model):
     """ContractualRulesContractualRule.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ContractualRulesAttribution
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     """
 

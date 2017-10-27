@@ -15,10 +15,13 @@ from .response_base import ResponseBase
 class Identifiable(ResponseBase):
     """Identifiable.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Response
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar id:
     :vartype id: str

@@ -22,14 +22,15 @@ class Error(Model):
      Possible values include: 'None', 'ServerError', 'InvalidRequest',
      'RateLimitExceeded', 'InvalidAuthorization', 'InsufficientAuthorization'.
      Default value: "None" .
-    :type code: str or :class:`ErrorCode <entitysearch2.models.ErrorCode>`
+    :type code: str or
+     ~azure.cognitiveservices.search.entitysearch.models.ErrorCode
     :ivar sub_code: The error code that further helps to identify the error.
      Possible values include: 'UnexpectedError', 'ResourceError',
      'NotImplemented', 'ParameterMissing', 'ParameterInvalidValue',
      'HttpNotAllowed', 'Blocked', 'AuthorizationMissing',
      'AuthorizationRedundancy', 'AuthorizationDisabled', 'AuthorizationExpired'
-    :vartype sub_code: str or :class:`ErrorSubCode
-     <entitysearch2.models.ErrorSubCode>`
+    :vartype sub_code: str or
+     ~azure.cognitiveservices.search.entitysearch.models.ErrorSubCode
     :param message: A description of the error.
     :type message: str
     :ivar more_details: A description that provides additional information

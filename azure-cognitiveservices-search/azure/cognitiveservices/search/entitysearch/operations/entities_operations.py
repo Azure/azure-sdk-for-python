@@ -21,6 +21,7 @@ class EntitiesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar x_bing_apis_sdk: Activate Swagger compliance. Constant value: "true".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -179,14 +180,14 @@ class EntitiesOperations(object):
         :param response_filter: A comma-delimited list of answers to include
          in the response. If you do not specify this parameter, the response
          includes all search answers for which there's relevant data.
-        :type response_filter: list of str or :class:`AnswerType
-         <entitysearch2.models.AnswerType>`
+        :type response_filter: list[str or
+         ~azure.cognitiveservices.search.entitysearch.models.AnswerType]
         :param response_format: The media type to use for the response. The
          following are the possible case-insensitive values: JSON, JSONLD. The
          default is JSON. If you specify JSONLD, the response body includes
          JSON-LD objects that contain the search results.
-        :type response_format: list of str or :class:`ResponseFormat
-         <entitysearch2.models.ResponseFormat>`
+        :type response_format: list[str or
+         ~azure.cognitiveservices.search.entitysearch.models.ResponseFormat]
         :param safe_search: A filter used to filter adult content. Off: Return
          webpages with adult text, images, or videos. Moderate: Return webpages
          with adult text, but not adult images or videos. Strict: Do not return
@@ -199,8 +200,8 @@ class EntitiesOperations(object):
          aware of the content on the site and your scenario supports the
          possibility of adult content. Possible values include: 'Off',
          'Moderate', 'Strict'
-        :type safe_search: str or :class:`SafeSearch
-         <entitysearch2.models.SafeSearch>`
+        :type safe_search: str or
+         ~azure.cognitiveservices.search.entitysearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -219,13 +220,12 @@ class EntitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SearchResponse <entitysearch2.models.SearchResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SearchResponse <entitysearch2.models.SearchResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SearchResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.search.entitysearch.models.SearchResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<entitysearch2.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.entitysearch.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/entities'

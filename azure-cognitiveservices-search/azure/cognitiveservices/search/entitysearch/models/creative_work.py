@@ -15,18 +15,20 @@ from .thing import Thing
 class CreativeWork(Thing):
     """CreativeWork.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MediaObject, License
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Polymorphic Discriminator
+    :param _type: Constant filled by server.
     :type _type: str
     :ivar id:
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.
-    :vartype contractual_rules: list of
-     :class:`ContractualRulesContractualRule
-     <entitysearch2.models.ContractualRulesContractualRule>`
+    :vartype contractual_rules:
+     list[~azure.cognitiveservices.search.entitysearch.models.ContractualRulesContractualRule]
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
     :ivar name: The name of the thing represented by this object.
@@ -35,21 +37,23 @@ class CreativeWork(Thing):
      this object.
     :vartype url: str
     :ivar image:
-    :vartype image: :class:`ImageObject <entitysearch2.models.ImageObject>`
+    :vartype image:
+     ~azure.cognitiveservices.search.entitysearch.models.ImageObject
     :ivar description: A short description of the item.
     :vartype description: str
     :ivar entity_presentation_info: Additional information about the entity
      such as hints that you can use to determine the entity's type. To
      determine the entity's type, use the entityScenario and entityTypeHint
      fields.
-    :vartype entity_presentation_info: :class:`EntitiesEntityPresentationInfo
-     <entitysearch2.models.EntitiesEntityPresentationInfo>`
+    :vartype entity_presentation_info:
+     ~azure.cognitiveservices.search.entitysearch.models.EntitiesEntityPresentationInfo
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
     :ivar thumbnail_url: The URL to a thumbnail of the item.
     :vartype thumbnail_url: str
     :ivar provider: The source of the creative work.
-    :vartype provider: list of :class:`Thing <entitysearch2.models.Thing>`
+    :vartype provider:
+     list[~azure.cognitiveservices.search.entitysearch.models.Thing]
     :ivar text:
     :vartype text: str
     """

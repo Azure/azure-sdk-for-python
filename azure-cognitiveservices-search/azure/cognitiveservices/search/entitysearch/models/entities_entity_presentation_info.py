@@ -21,14 +21,14 @@ class EntitiesEntityPresentationInfo(Model):
     :param entity_scenario: The supported scenario. Possible values include:
      'DominantEntity', 'DisambiguationItem', 'ListItem'. Default value:
      "DominantEntity" .
-    :type entity_scenario: str or :class:`EntityScenario
-     <entitysearch2.models.EntityScenario>`
+    :type entity_scenario: str or
+     ~azure.cognitiveservices.search.entitysearch.models.EntityScenario
     :ivar entity_type_hints: A list of hints that indicate the entity's type.
      The list could contain a single hint such as Movie or a list of hints such
      as Place, LocalBusiness, Restaurant. Each successive hint in the array
      narrows the entity's type.
-    :vartype entity_type_hints: list of str or :class:`EntityType
-     <entitysearch2.models.EntityType>`
+    :vartype entity_type_hints: list[str or
+     ~azure.cognitiveservices.search.entitysearch.models.EntityType]
     :ivar entity_type_display_hint: A display version of the entity hint. For
      example, if entityTypeHints is Artist, this field may be set to American
      Singer.

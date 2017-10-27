@@ -37,7 +37,7 @@ class EntitySearchAPIConfiguration(Configuration):
 
         super(EntitySearchAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-entitysearch/{}'.format(VERSION))
+        self.add_user_agent('entitysearchapi/{}'.format(VERSION))
 
         self.credentials = credentials
 
@@ -49,7 +49,7 @@ class EntitySearchAPI(object):
     :vartype config: EntitySearchAPIConfiguration
 
     :ivar entities: Entities operations
-    :vartype entities: entitysearch2.operations.EntitiesOperations
+    :vartype entities: azure.cognitiveservices.search.entitysearch.operations.EntitiesOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
