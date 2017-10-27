@@ -1,708 +1,217 @@
 {
   "meta": {
-    "version": "0.2.0",
     "autorest": "latest",
     "autorest_options": {
-      "use": "@microsoft.azure/autorest.python@preview",
+      "azure-arm": true,
       "license-header": "MICROSOFT_MIT_NO_VERSION",
       "payload-flattening-threshold": 2,
       "python": "",
-      "azure-arm": true
+      "use": "@microsoft.azure/autorest.python@preview"
     },
-    "wrapper_filesOrDirs": [],
     "delete_filesOrDirs": [
       "credentials.py",
       "exceptions.py"
     ],
-    "generated_relative_base_directory": "azure/mgmt/*"
+    "generated_relative_base_directory": "azure/mgmt/*",
+    "version": "0.2.0",
+    "wrapper_filesOrDirs": []
   },
   "projects": {
     "authorization": {
-      "markdown": "specification/authorization/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.authorization",
         "package-version": "0.30.0"
       },
-      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization",
-      "build_dir": "azure-mgmt-authorization"
-    },
-    "batch.management": {
-      "markdown": "specification/batch/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.batch",
-        "package-version": "4.0.0"
-      },
-      "output_dir": "azure-mgmt-batch/azure/mgmt/batch",
-      "build_dir": "azure-mgmt-batch"
-    },
-    "batchai.management": {
-      "markdown": "specification/batchai/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.batchai",
-        "package-version": "0.2.0"
-      },
-      "output_dir": "azure-mgmt-batchai/azure/mgmt/batchai",
-      "build_dir": "azure-mgmt-batchai"
-    },
-    "billing": {
-      "markdown": "specification/billing/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.billing",
-        "package-version": "0.1.0"
-      },
-      "output_dir": "azure-mgmt-billing/azure/mgmt/billing",
-      "build_dir": "azure-mgmt-billing"
-    },
-    "cdn": {
-      "markdown": "specification/cdn/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.cdn",
-        "package-version": "2.0.0"
-      },
-      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn",
-      "build_dir": "azure-mgmt-cdn"
-    },
-    "consumption": {
-      "markdown": "specification/consumption/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.consumption",
-        "package-version": "0.1.0"
-      },
-      "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption",
-      "build_dir": "azure-mgmt-consumption"
-    },
-    "cognitiveservices": {
-      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.cognitiveservices",
-        "package-version": "2.0.0"
-      },
-      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices",
-      "build_dir": "azure-mgmt-cognitiveservices"
-    },
-    "commerce": {
-      "markdown": "specification/commerce/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.commerce",
-        "package-version": "1.0.0"
-      },
-      "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce",
-      "build_dir": "azure-mgmt-commerce"
-    },
-    "compute.compute.2015-06-15": {
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-compute-2015-06",
-        "namespace": "azure.mgmt.compute.v2015_06_15"
-      },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/v2015_06_15",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15"
-    },
-    "compute.compute.2016-03-30": {
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-compute-2016-03",
-        "namespace": "azure.mgmt.compute.v2016_03_30"
-      },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_03_30"
-    },
-    "compute.compute.2016-04-30-preview": {
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-compute-2016-04-preview",
-        "namespace": "azure.mgmt.compute.v2016_04_30_preview"
-      },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_04_30_preview",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview"
-    },
-    "compute.compute.2017-03-30": {
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-compute-2017-03",
-        "namespace": "azure.mgmt.compute.v2017_03_30"
-      },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30",
-      "generated_relative_base_directory": "python/azure/mgmt/compute/v2017_03_30",
-      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30"
-    },
-    "containerservice": {
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-container-service-2017-09",
-        "title": "ContainerServiceClient",
-        "description": "The Container Service Client.",
-        "namespace": "azure.mgmt.containerservice",
-        "package-version": "2.0.0"
-      },
-      "output_dir": "azure-mgmt-containerservice/azure/mgmt/containerservice",
-      "build_dir": "azure-mgmt-containerservice",
-      "generated_relative_base_directory": "python/azure/mgmt/containerservice"
-    },
-    "containerinstance": {
-      "markdown": "specification/containerinstance/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.containerinstance",
-        "package-version": "0.2.0"
-      },
-      "output_dir": "azure-mgmt-containerinstance/azure/mgmt/containerinstance",
-      "build_dir": "azure-mgmt-containerinstance",
-      "generated_relative_base_directory": "python/azure/mgmt/containerinstance"
-    },
-    "containerregistry.2017-03-01": {
-      "markdown": "specification/containerregistry/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-03",
-        "namespace": "azure.mgmt.containerregistry.v2017_03_01"
-      },
-      "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_03_01",
-      "build_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_03_01",
-      "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_03_01"
-    },
-    "containerregistry.2017-10-01": {
-      "markdown": "specification/containerregistry/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-10",
-        "namespace": "azure.mgmt.containerregistry.v2017_10_01"
-      },
-      "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_10_01",
-      "build_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_10_01",
-      "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_10_01"
-    },
-    "datafactory": {
-      "markdown": "specification/datafactory/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.datafactory",
-        "package-version": "0.2.1"
-      },
-      "output_dir": "azure-mgmt-datafactory/azure/mgmt/datafactory",
-      "build_dir": "azure-mgmt-datafactory"
-    },
-    "devtestlabs": {
-      "markdown": "specification/devtestlabs/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.devtestlabs",
-        "package-version": "2.0.0"
-      },
-      "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs",
-      "build_dir": "azure-mgmt-devtestlabs"
-    },
-    "dns": {
-      "markdown": "specification/dns/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.dns",
-        "package-version": "1.1.0"
-      },
-      "output_dir": "azure-mgmt-dns/azure/mgmt/dns",
-      "build_dir": "azure-mgmt-dns"
-    },
-    "cosmosdb": {
-      "markdown": "specification/cosmos-db/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.cosmosdb",
-        "package-version": "0.2.1"
-      },
-      "output_dir": "azure-mgmt-cosmosdb/azure/mgmt/cosmosdb",
-      "build_dir": "azure-mgmt-cosmosdb"
-    },
-    "eventgrid": {
-      "markdown": "specification/eventgrid/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.eventgrid",
-        "package-version": "0.2.0"
-      },
-      "output_dir": "azure-mgmt-eventgrid/azure/mgmt/eventgrid",
-      "build_dir": "azure-mgmt-eventgrid"
-    },
-    "eventhub": {
-      "markdown": "specification/eventhub/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.eventhub",
-        "package-version": "1.0.0"
-      },
-      "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub",
-      "build_dir": "azure-mgmt-eventhub"
-    },
-    "graphrbac": {
-      "markdown": "specification/graphrbac/data-plane/readme.md",
-      "autorest_options": {
-        "package-version": "0.32.0"
-      },
-      "output_dir": "azure-graphrbac/azure/graphrbac",
-      "generated_relative_base_directory": "python/azure/graphrbac",
-      "build_dir": "azure-graphrbac"
-    },
-    "iothub": {
-      "markdown": "specification/iothub/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.iothub",
-        "package-version": "0.4.0"
-      },
-      "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub",
-      "build_dir": "azure-mgmt-iothub"
-    },
-    "keyvault.mgmt": {
-      "markdown": "specification/keyvault/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.keyvault",
-        "package-version": "0.40.0"
-      },
-      "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault",
-      "build_dir": "azure-mgmt-keyvault"
-    },
-    "keyvault.data": {
-      "markdown": "specification/keyvault/data-plane/readme.md",
-      "autorest_options": {
-        "namespace": "azure.keyvault",
-        "package-version": "0.3.7"
-      },
-      "wrapper_filesOrDirs": [
-        "custom",
-        "generated",
-        "__init__.py"
-      ],
-      "output_dir": "azure-keyvault/azure/keyvault",
-      "generated_relative_base_directory": "azure/keyvault",
-      "build_dir": "azure-keyvault"
-    },
-    "logic": {
-      "markdown": "specification/logic/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.logic",
-        "package-version": "2.1.0"
-      },
-      "output_dir": "azure-mgmt-logic/azure/mgmt/logic",
-      "build_dir": "azure-mgmt-logic"
-    },
-    "machinelearning": {
-      "markdown": "specification/machinelearning/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-webservices-2016-05-preview",
-        "namespace": "azure.mgmt.machinelearning",
-        "package-version": "0.1.0"
-      },
-      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning",
-      "build_dir": "unreleased/azure-mgmt-machinelearning"
-    },
-    "machinelearningcompute": {
-      "markdown": "specification/machinelearningcompute/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.machinelearningcompute",
-        "package-version": "0.1.0"
-      },
-      "output_dir": "azure-mgmt-machinelearningcompute/azure/mgmt/machinelearningcompute",
-      "build_dir": "azure-mgmt-machinelearningcompute"
-    },
-    "media": {
-      "markdown": "specification/mediaservices/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.media",
-        "package-version": "0.2.0"
-      },
-      "output_dir": "azure-mgmt-media/azure/mgmt/media",
-      "build_dir": "azure-mgmt-media"
-    },
-    "monitor": {
-      "markdown": "specification/monitor/resource-manager/readme.md",
-      "autorest_options": {
-        "package-version": "0.4.0"
-      },
-      "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor",
-      "build_dir": "azure-mgmt-monitor",
-      "generated_relative_base_directory": "python/azure/mgmt/monitor"
-    },
-    "network.2015-06-15": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2015-06split"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2015_06_15"
-    },
-    "network.2016-09-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2016-09"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2016_09_01"
-    },
-    "network.2016-12-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2016-12"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2016_12_01"
-    },
-    "network.2017-03-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-03"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_03_01"
-    },
-    "network.2017-06-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-06"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_06_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_06_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_06_01"
-    },
-    "network.2017-08-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-08"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_08_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_08_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_08_01"
-    },
-    "network.2017-09-01": {
-      "markdown": "specification/network/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-09",
-        "namespace": "azure.mgmt.network.v2017_09_01"
-      },
-      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
-      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
-      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_09_01"
-    },
-    "notificationhubs": {
-      "markdown": "specification/notificationhubs/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.notificationhubs",
-        "package-version": "1.0.0"
-      },
-      "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs",
-      "build_dir": "azure-mgmt-notificationhubs"
-    },
-    "powerbiembedded": {
-      "markdown": "specification/powerbiembedded/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.powerbiembedded",
-        "package-version": "1.0.0"
-      },
-      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded",
-      "build_dir": "azure-mgmt-powerbiembedded"
-    },
-    "rdbms.mysql": {
-      "markdown": "specification/mysql/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.rdbms.mysql",
-        "package-version": "0.1.0"
-      },
-      "generated_relative_base_directory": "azure/mgmt/rdbms/mysql",
-      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
-      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
-    },
-    "rdbms.postgres": {
-      "markdown": "specification/postgresql/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.rdbms.postgresql",
-        "package-version": "0.1.0"
-      },
-      "generated_relative_base_directory": "azure/mgmt/rdbms/postgresql",
-      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql",
-      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
-    },
-    "recoveryservices": {
-      "markdown": "specification/recoveryservices/resource-manager/readme.md",
-      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservices",
-      "output_dir":  "azure-mgmt-recoveryservices/azure/mgmt/recoveryservices",
-      "build_dir": "azure-mgmt-recoveryservices"
-    },
-    "recoveryservicesbackup": {
-      "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md",
-      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
-      "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup",
-      "build_dir": "azure-mgmt-recoveryservicesbackup"
-    },
-    "redis": {
-      "markdown": "specification/redis/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2016-04",
-        "namespace": "azure.mgmt.redis",
-        "package-version": "4.1.0"
-      },
-      "output_dir": "azure-mgmt-redis/azure/mgmt/redis",
-      "build_dir": "azure-mgmt-redis"
-    },
-    "resources.managedapplications.2017-09-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Solutions/2017-09-01/managedapplications.json",
-        "namespace": "azure.mgmt.resource.managedapplications"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
-      "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications"
-    },
-    "resources.features.2015-12-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Features/2015-12-01/features.json",
-        "namespace": "azure.mgmt.resource.features.v2015_12_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01"
-    },
-    "resources.subscriptions.2016-06-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-06-01/subscriptions.json",
-        "namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/subscriptions/v2016_06_01"
-    },
-    "resources.locks.2015-01-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2015-01-01/locks.json",
-        "namespace": "azure.mgmt.resource.locks.v2015_01_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01"
-    },
-    "resources.locks.2016-09-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2016-09-01/locks.json",
-        "namespace": "azure.mgmt.resource.locks.v2016_09_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/locks/v2016_09_01"
-    },
-    "resources.resources.2016-02-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-02-01/resources.json",
-        "namespace": "azure.mgmt.resource.resources.v2016_02_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_02_01"
-    },
-    "resources.resources.2016-09-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-09-01/resources.json",
-        "namespace": "azure.mgmt.resource.resources.v2016_09_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
-    },
-    "resources.resources.2017-05-10": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2017-05-10/resources.json",
-        "namespace": "azure.mgmt.resource.resources.v2017_05_10"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
-      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10"
-    },
-    "resources.policy.2015-10-01-preview": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2015-10-01-preview/policy.json",
-        "namespace": "azure.mgmt.resource.policy.v2015_10_01_preview"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
-      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2015_10_01_preview"
-    },
-    "resources.policy.2016-04-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2016-04-01/policy.json",
-        "namespace": "azure.mgmt.resource.policy.v2016_04_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01"
-    },
-    "resources.policy.2016-12-01": {
-      "markdown": "specification/resources/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-policy-2016-12",
-        "namespace": "azure.mgmt.resource.policy.v2016_12_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01"
-    },
-    "resources.policy.2017-06-01-preview": {
-      "markdown": "specification/resources/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-policy-2017-06",
-        "namespace": "azure.mgmt.resource.policy.v2017_06_01_preview"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview",
-      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2017_06_01_preview",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview"
-    },
-    "resources.links.2016-09-01": {
-      "autorest_options": {
-        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-09-01/links.json",
-        "namespace": "azure.mgmt.resource.links.v2016_09_01"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
-      "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01"
-    },
-    "search": {
-      "markdown": "specification/search/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.search",
-        "package-version": "1.0.0"
-      },
-      "output_dir": "azure-mgmt-search/azure/mgmt/search",
-      "build_dir": "azure-mgmt-search"
-    },
-    "servermanager": {
-      "markdown": "specification/servermanagement/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.servermanager",
-        "package-version": "1.2.0"
-      },
-      "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
-      "build_dir": "azure-mgmt-servermanager"
-    },
-    "servicebus": {
-      "markdown": "specification/servicebus/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.servicebus",
-        "package-version": "0.2.0"
-      },
-      "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus",
-      "build_dir": "azure-mgmt-servicebus"
-    },
-    "servicefabric.data": {
-      "autorest_options": {
-        "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/6.0/servicefabric.json",
-        "namespace": "azure.servicefabric",
-        "package-version": "6.0.2",
-        "add-credentials": true,
-        "azure-arm": false
-      },
-      "output_dir": "azure-servicefabric/azure/servicefabric",
-      "generated_relative_base_directory": "azure/servicefabric",
-      "build_dir": "azure-servicefabric"
-    },
-    "servicefabric.mgmt": {
-      "markdown": "specification/servicefabric/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.servicefabric",
-        "package-version": "0.1.0"
-      },
-      "output_dir": "azure-mgmt-servicefabric/azure/mgmt/servicefabric",
-      "build_dir": "azure-mgmt-servicefabric"
-    },
-    "scheduler": {
-      "markdown": "specification/scheduler/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.scheduler",
-        "package-version": "1.1.3"
-      },
-      "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler",
-      "build_dir": "azure-mgmt-scheduler"
-    },
-    "sql": {
-      "markdown": "specification/sql/resource-manager/readme.md",
-      "autorest_options": {
-        "package-version": "0.8.3"
-      },
-      "output_dir": "azure-mgmt-sql/azure/mgmt/sql",
-      "build_dir": "azure-mgmt-sql",
-      "generated_relative_base_directory": "python/azure/mgmt/sql"
-    },
-    "storage.2015-06-15": {
-      "markdown": "specification/storage/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2015-06",
-        "namespace": "azure.mgmt.storage.v2015_06_15"
-      },
-      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
-      "build_dir":  "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
-      "generated_relative_base_directory": "azure/mgmt/storage/v2015_06_15"
-    },
-    "storage.2016-01-01": {
-      "markdown": "specification/storage/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2016-01",
-        "namespace": "azure.mgmt.storage.v2016_01_01"
-      },
-      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01",
-      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01",
-      "generated_relative_base_directory": "azure/mgmt/storage/v2016_01_01"
-    },
-    "storage.2016-12-01": {
-      "markdown": "specification/storage/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2016-12",
-        "namespace": "azure.mgmt.storage.v2016_12_01"
-      },
-      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
-      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
-      "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01"
-    },
-    "storage.2017-06-01": {
-      "markdown": "specification/storage/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-2017-06",
-        "namespace": "azure.mgmt.storage.v2017_06_01"
-      },
-      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2017_06_01",
-      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2017_06_01",
-      "generated_relative_base_directory": "azure/mgmt/storage/v2017_06_01"
-    },
-    "trafficmanager": {
-      "markdown": "specification/trafficmanager/resource-manager/readme.md",
-      "autorest_options": {
-        "namespace": "azure.mgmt.trafficmanager",
-        "package-version": "0.40.0"
-      },
-      "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager",
-      "build_dir": "azure-mgmt-trafficmanager"
-    },
-    "web": {
-      "markdown": "specification/web/resource-manager/readme.md",
-      "autorest_options": {
-        "package-version": "0.33.0"
-      },
-      "output_dir": "azure-mgmt-web/azure/mgmt/web/",
-      "build_dir": "azure-mgmt-web",
-      "generated_relative_base_directory": "python/azure/mgmt/web"
+      "build_dir": "azure-mgmt-authorization",
+      "markdown": "specification/authorization/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
     "batch": {
-      "markdown": "specification/batch/data-plane/readme.md",
       "autorest_options": {
         "namespace": "azure.batch",
         "package-version": "4.0.0"
       },
-      "output_dir": "azure-batch/azure/batch/",
       "build_dir": "azure-batch",
       "generated_relative_base_directory": "azure/batch",
+      "markdown": "specification/batch/data-plane/readme.md",
+      "output_dir": "azure-batch/azure/batch/",
       "wrapper_filesOrDirs": [
         "batch_auth.py"
       ]
     },
+    "batch.management": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.batch",
+        "package-version": "4.0.0"
+      },
+      "build_dir": "azure-mgmt-batch",
+      "markdown": "specification/batch/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
+    },
+    "batchai.management": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.batchai",
+        "package-version": "0.2.0"
+      },
+      "build_dir": "azure-mgmt-batchai",
+      "markdown": "specification/batchai/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-batchai/azure/mgmt/batchai"
+    },
+    "billing": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.billing",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-billing",
+      "markdown": "specification/billing/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-billing/azure/mgmt/billing"
+    },
+    "cdn": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.cdn",
+        "package-version": "2.0.0"
+      },
+      "build_dir": "azure-mgmt-cdn",
+      "markdown": "specification/cdn/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
+    },
+    "cognitiveservices": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.cognitiveservices",
+        "package-version": "2.0.0"
+      },
+      "build_dir": "azure-mgmt-cognitiveservices",
+      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+    },
+    "commerce": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.commerce",
+        "package-version": "1.0.0"
+      },
+      "build_dir": "azure-mgmt-commerce",
+      "markdown": "specification/commerce/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
+    },
+    "compute.compute.2015-06-15": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.compute.v2015_06_15",
+        "tag": "package-compute-2015-06"
+      },
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2015_06_15",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2015_06_15"
+    },
+    "compute.compute.2016-03-30": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.compute.v2016_03_30",
+        "tag": "package-compute-2016-03"
+      },
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_03_30",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_03_30"
+    },
+    "compute.compute.2016-04-30-preview": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.compute.v2016_04_30_preview",
+        "tag": "package-compute-2016-04-preview"
+      },
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2016_04_30_preview",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2016_04_30_preview"
+    },
+    "compute.compute.2017-03-30": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.compute.v2017_03_30",
+        "tag": "package-compute-2017-03"
+      },
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2017_03_30",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30"
+    },
+    "consumption": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.consumption",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-consumption",
+      "markdown": "specification/consumption/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
+    },
+    "containerinstance": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.containerinstance",
+        "package-version": "0.2.0"
+      },
+      "build_dir": "azure-mgmt-containerinstance",
+      "generated_relative_base_directory": "python/azure/mgmt/containerinstance",
+      "markdown": "specification/containerinstance/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-containerinstance/azure/mgmt/containerinstance"
+    },
+    "containerregistry.2017-03-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.containerregistry.v2017_03_01",
+        "tag": "package-2017-03"
+      },
+      "build_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_03_01",
+      "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_03_01",
+      "markdown": "specification/containerregistry/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_03_01"
+    },
+    "containerregistry.2017-10-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.containerregistry.v2017_10_01",
+        "tag": "package-2017-10"
+      },
+      "build_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_10_01",
+      "generated_relative_base_directory": "azure/mgmt/containerregistry/v2017_10_01",
+      "markdown": "specification/containerregistry/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_10_01"
+    },
+    "containerservice": {
+      "autorest_options": {
+        "description": "The Container Service Client.",
+        "namespace": "azure.mgmt.containerservice",
+        "package-version": "2.0.0",
+        "tag": "package-container-service-2017-09",
+        "title": "ContainerServiceClient"
+      },
+      "build_dir": "azure-mgmt-containerservice",
+      "generated_relative_base_directory": "python/azure/mgmt/containerservice",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-containerservice/azure/mgmt/containerservice"
+    },
+    "cosmosdb": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.cosmosdb",
+        "package-version": "0.2.1"
+      },
+      "build_dir": "azure-mgmt-cosmosdb",
+      "markdown": "specification/cosmos-db/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-cosmosdb/azure/mgmt/cosmosdb"
+    },
+    "datafactory": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.datafactory",
+        "package-version": "0.2.1"
+      },
+      "build_dir": "azure-mgmt-datafactory",
+      "markdown": "specification/datafactory/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-datafactory/azure/mgmt/datafactory"
+    },
     "datalake.analytics.account": {
-      "markdown": "specification/datalake-analytics/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.datalake.analytics.account",
         "package-version": "0.1.6"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/",
+      "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/account",
-      "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
+      "markdown": "specification/datalake-analytics/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
     },
     "datalake.analytics.catalog": {
       "autorest_options": {
@@ -710,9 +219,9 @@
         "namespace": "azure.mgmt.datalake.analytics.catalog",
         "package-version": "0.1.6"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
       "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
-      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/catalog"
+      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/catalog",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
     },
     "datalake.analytics.job": {
       "autorest_options": {
@@ -720,19 +229,520 @@
         "namespace": "azure.mgmt.datalake.analytics.job",
         "package-version": "0.1.6"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/",
       "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/",
-      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/job"
+      "generated_relative_base_directory": "azure/mgmt/datalake/analytics/job",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
     },
     "datalake.store.account": {
-      "markdown": "specification/datalake-store/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.datalake.store",
         "package-version": "0.1.6"
       },
-      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/",
       "build_dir": "azure-mgmt-datalake-store",
-      "generated_relative_base_directory": "azure/mgmt/datalake/store"
+      "generated_relative_base_directory": "azure/mgmt/datalake/store",
+      "markdown": "specification/datalake-store/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/"
+    },
+    "devtestlabs": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.devtestlabs",
+        "package-version": "2.0.0"
+      },
+      "build_dir": "azure-mgmt-devtestlabs",
+      "markdown": "specification/devtestlabs/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
+    },
+    "dns": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.dns",
+        "package-version": "1.1.0"
+      },
+      "build_dir": "azure-mgmt-dns",
+      "markdown": "specification/dns/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
+    },
+    "eventgrid": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.eventgrid",
+        "package-version": "0.2.0"
+      },
+      "build_dir": "azure-mgmt-eventgrid",
+      "markdown": "specification/eventgrid/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-eventgrid/azure/mgmt/eventgrid"
+    },
+    "eventhub": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.eventhub",
+        "package-version": "1.0.0"
+      },
+      "build_dir": "azure-mgmt-eventhub",
+      "markdown": "specification/eventhub/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub"
+    },
+    "graphrbac": {
+      "autorest_options": {
+        "package-version": "0.32.0"
+      },
+      "build_dir": "azure-graphrbac",
+      "generated_relative_base_directory": "python/azure/graphrbac",
+      "markdown": "specification/graphrbac/data-plane/readme.md",
+      "output_dir": "azure-graphrbac/azure/graphrbac"
+    },
+    "hdinsight.mgmt": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.hdinsight",
+        "package-name": "azure-mgmt-hdinsight",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-hdinsight",
+      "markdown": "specification/hdinsight/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-hdinsight/azure/mgmt/hdinsight"
+    },
+    "iothub": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.iothub",
+        "package-version": "0.4.0"
+      },
+      "build_dir": "azure-mgmt-iothub",
+      "markdown": "specification/iothub/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
+    },
+    "keyvault.data": {
+      "autorest_options": {
+        "namespace": "azure.keyvault",
+        "package-version": "0.3.7"
+      },
+      "build_dir": "azure-keyvault",
+      "generated_relative_base_directory": "azure/keyvault",
+      "markdown": "specification/keyvault/data-plane/readme.md",
+      "output_dir": "azure-keyvault/azure/keyvault",
+      "wrapper_filesOrDirs": [
+        "custom",
+        "generated",
+        "__init__.py"
+      ]
+    },
+    "keyvault.mgmt": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.keyvault",
+        "package-version": "0.40.0"
+      },
+      "build_dir": "azure-mgmt-keyvault",
+      "markdown": "specification/keyvault/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
+    },
+    "logic": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.logic",
+        "package-version": "2.1.0"
+      },
+      "build_dir": "azure-mgmt-logic",
+      "markdown": "specification/logic/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
+    },
+    "machinelearning": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.machinelearning",
+        "package-version": "0.1.0",
+        "tag": "package-webservices-2016-05-preview"
+      },
+      "build_dir": "unreleased/azure-mgmt-machinelearning",
+      "markdown": "specification/machinelearning/resource-manager/readme.md",
+      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
+    },
+    "machinelearningcompute": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.machinelearningcompute",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-machinelearningcompute",
+      "markdown": "specification/machinelearningcompute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-machinelearningcompute/azure/mgmt/machinelearningcompute"
+    },
+    "media": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.media",
+        "package-version": "0.2.0"
+      },
+      "build_dir": "azure-mgmt-media",
+      "markdown": "specification/mediaservices/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-media/azure/mgmt/media"
+    },
+    "monitor": {
+      "autorest_options": {
+        "package-version": "0.4.0"
+      },
+      "build_dir": "azure-mgmt-monitor",
+      "generated_relative_base_directory": "python/azure/mgmt/monitor",
+      "markdown": "specification/monitor/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
+    },
+    "network.2015-06-15": {
+      "autorest_options": {
+        "tag": "package-2015-06split"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2015_06_15",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15"
+    },
+    "network.2016-09-01": {
+      "autorest_options": {
+        "tag": "package-2016-09"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2016_09_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01"
+    },
+    "network.2016-12-01": {
+      "autorest_options": {
+        "tag": "package-2016-12"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2016_12_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01"
+    },
+    "network.2017-03-01": {
+      "autorest_options": {
+        "tag": "package-2017-03"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_03_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01"
+    },
+    "network.2017-06-01": {
+      "autorest_options": {
+        "tag": "package-2017-06"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_06_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_06_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_06_01"
+    },
+    "network.2017-08-01": {
+      "autorest_options": {
+        "tag": "package-2017-08"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_08_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_08_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_08_01"
+    },
+    "network.2017-09-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.network.v2017_09_01",
+        "tag": "package-2017-09"
+      },
+      "build_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01",
+      "generated_relative_base_directory": "python/azure/mgmt/network/v2017_09_01",
+      "markdown": "specification/network/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_09_01"
+    },
+    "notificationhubs": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.notificationhubs",
+        "package-version": "1.0.0"
+      },
+      "build_dir": "azure-mgmt-notificationhubs",
+      "markdown": "specification/notificationhubs/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
+    },
+    "powerbiembedded": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.powerbiembedded",
+        "package-version": "1.0.0"
+      },
+      "build_dir": "azure-mgmt-powerbiembedded",
+      "markdown": "specification/powerbiembedded/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
+    },
+    "rdbms.mysql": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.rdbms.mysql",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
+      "generated_relative_base_directory": "azure/mgmt/rdbms/mysql",
+      "markdown": "specification/mysql/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
+    },
+    "rdbms.postgres": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.rdbms.postgresql",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql",
+      "generated_relative_base_directory": "azure/mgmt/rdbms/postgresql",
+      "markdown": "specification/postgresql/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
+    },
+    "recoveryservices": {
+      "build_dir": "azure-mgmt-recoveryservices",
+      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservices",
+      "markdown": "specification/recoveryservices/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-recoveryservices/azure/mgmt/recoveryservices"
+    },
+    "recoveryservicesbackup": {
+      "build_dir": "azure-mgmt-recoveryservicesbackup",
+      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
+      "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
+    },
+    "redis": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.redis",
+        "package-version": "4.1.0",
+        "tag": "package-2016-04"
+      },
+      "build_dir": "azure-mgmt-redis",
+      "markdown": "specification/redis/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
+    },
+    "resources.features.2015-12-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Features/2015-12-01/features.json",
+        "namespace": "azure.mgmt.resource.features.v2015_12_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01"
+    },
+    "resources.links.2016-09-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-09-01/links.json",
+        "namespace": "azure.mgmt.resource.links.v2016_09_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01"
+    },
+    "resources.locks.2015-01-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2015-01-01/locks.json",
+        "namespace": "azure.mgmt.resource.locks.v2015_01_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01"
+    },
+    "resources.locks.2016-09-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2016-09-01/locks.json",
+        "namespace": "azure.mgmt.resource.locks.v2016_09_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/locks/v2016_09_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01"
+    },
+    "resources.managedapplications.2017-09-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Solutions/2017-09-01/managedapplications.json",
+        "namespace": "azure.mgmt.resource.managedapplications"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
+      "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications"
+    },
+    "resources.policy.2015-10-01-preview": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2015-10-01-preview/policy.json",
+        "namespace": "azure.mgmt.resource.policy.v2015_10_01_preview"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2015_10_01_preview",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview"
+    },
+    "resources.policy.2016-04-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Authorization/2016-04-01/policy.json",
+        "namespace": "azure.mgmt.resource.policy.v2016_04_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01"
+    },
+    "resources.policy.2016-12-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.resource.policy.v2016_12_01",
+        "tag": "package-policy-2016-12"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01",
+      "markdown": "specification/resources/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01"
+    },
+    "resources.policy.2017-06-01-preview": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.resource.policy.v2017_06_01_preview",
+        "tag": "package-policy-2017-06"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2017_06_01_preview",
+      "markdown": "specification/resources/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2017_06_01_preview"
+    },
+    "resources.resources.2016-02-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-02-01/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2016_02_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_02_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01"
+    },
+    "resources.resources.2016-09-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-09-01/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2016_09_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01"
+    },
+    "resources.resources.2017-05-10": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2017-05-10/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2017_05_10"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
+      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10"
+    },
+    "resources.subscriptions.2016-06-01": {
+      "autorest_options": {
+        "input-file": "specification/resources/resource-manager/Microsoft.Resources/2016-06-01/subscriptions.json",
+        "namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
+      },
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
+      "generated_relative_base_directory": "azure/mgmt/resource/subscriptions/v2016_06_01",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01"
+    },
+    "scheduler": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.scheduler",
+        "package-version": "1.1.3"
+      },
+      "build_dir": "azure-mgmt-scheduler",
+      "markdown": "specification/scheduler/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
+    },
+    "search": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.search",
+        "package-version": "1.0.0"
+      },
+      "build_dir": "azure-mgmt-search",
+      "markdown": "specification/search/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-search/azure/mgmt/search"
+    },
+    "servermanager": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.servermanager",
+        "package-version": "1.2.0"
+      },
+      "build_dir": "azure-mgmt-servermanager",
+      "markdown": "specification/servermanagement/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager"
+    },
+    "servicebus": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.servicebus",
+        "package-version": "0.2.0"
+      },
+      "build_dir": "azure-mgmt-servicebus",
+      "markdown": "specification/servicebus/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus"
+    },
+    "servicefabric.data": {
+      "autorest_options": {
+        "add-credentials": true,
+        "azure-arm": false,
+        "input-file": "specification/servicefabric/data-plane/Microsoft.ServiceFabric/6.0/servicefabric.json",
+        "namespace": "azure.servicefabric",
+        "package-version": "6.0.2"
+      },
+      "build_dir": "azure-servicefabric",
+      "generated_relative_base_directory": "azure/servicefabric",
+      "output_dir": "azure-servicefabric/azure/servicefabric"
+    },
+    "servicefabric.mgmt": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.servicefabric",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-servicefabric",
+      "markdown": "specification/servicefabric/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-servicefabric/azure/mgmt/servicefabric"
+    },
+    "sql": {
+      "autorest_options": {
+        "package-version": "0.8.3"
+      },
+      "build_dir": "azure-mgmt-sql",
+      "generated_relative_base_directory": "python/azure/mgmt/sql",
+      "markdown": "specification/sql/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
+    },
+    "storage.2015-06-15": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.storage.v2015_06_15",
+        "tag": "package-2015-06"
+      },
+      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
+      "generated_relative_base_directory": "azure/mgmt/storage/v2015_06_15",
+      "markdown": "specification/storage/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15"
+    },
+    "storage.2016-01-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.storage.v2016_01_01",
+        "tag": "package-2016-01"
+      },
+      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01",
+      "generated_relative_base_directory": "azure/mgmt/storage/v2016_01_01",
+      "markdown": "specification/storage/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_01_01"
+    },
+    "storage.2016-12-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.storage.v2016_12_01",
+        "tag": "package-2016-12"
+      },
+      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
+      "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01",
+      "markdown": "specification/storage/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01"
+    },
+    "storage.2017-06-01": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.storage.v2017_06_01",
+        "tag": "package-2017-06"
+      },
+      "build_dir": "azure-mgmt-storage/azure/mgmt/storage/v2017_06_01",
+      "generated_relative_base_directory": "azure/mgmt/storage/v2017_06_01",
+      "markdown": "specification/storage/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2017_06_01"
+    },
+    "trafficmanager": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.trafficmanager",
+        "package-version": "0.40.0"
+      },
+      "build_dir": "azure-mgmt-trafficmanager",
+      "markdown": "specification/trafficmanager/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager"
+    },
+    "web": {
+      "autorest_options": {
+        "package-version": "0.33.0"
+      },
+      "build_dir": "azure-mgmt-web",
+      "generated_relative_base_directory": "python/azure/mgmt/web",
+      "markdown": "specification/web/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     }
   }
 }

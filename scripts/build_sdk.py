@@ -4,6 +4,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import json
 import logging
 import os.path
 from pathlib import Path
@@ -62,6 +63,32 @@ def guess_service_info(spec_path):
     result.update(guess_service_info_from_path(spec_path))
     return result
 
+def create_swagger_to_sdk_conf(spec_path, service_info, autorest_options):
+    type_str = ".mgmt" if service_info["is_arm"] else ".data"
+    return {
+        "{}{}".format(service_info["rp_name"], type_str): {
+            "markdown": spec_path[spec_path.index("specification"):],
+            "autorest_options": {
+                "namespace": autorest_options["namespace"],
+                "package-version": autorest_options["package-version"],
+                "package-name": autorest_options["package-name"]
+            },
+            "output_dir": "{}/{}".format(autorest_options["package-name"], autorest_options["package-name"].replace("-","/")),
+            "build_dir": autorest_options["package-name"]
+        }
+    }
+
+def create_package_service_mapping(spec_path, service_info, autorest_options):
+    type_str = "Management" if service_info["is_arm"] else "Client"
+    return {
+        autorest_options["package-name"]: {
+            "service_name": service_info["pretty_name"],
+            "category": type_str,
+            "namespaces": [
+                autorest_options["namespace"]
+            ]
+        }
+    }
 
 def main(spec_path):
     service_info = guess_service_info(spec_path)
@@ -111,6 +138,27 @@ def main(spec_path):
                  },
                  overwrite_if_exists=True
     )
+
+    swagger_to_sdk = Path("swagger_to_sdk_config.json")
+    if swagger_to_sdk.exists():
+        _LOGGER.info("Updating swagger_to_sdk_config.json")
+        entry = create_swagger_to_sdk_conf(spec_path, service_info, autorest_options)
+        with swagger_to_sdk.open() as fd:
+            data_conf = json.load(fd)
+            data_conf["projects"].update(entry)
+        with swagger_to_sdk.open("w") as fd:
+            json.dump(data_conf, fd, indent=2, sort_keys=True)
+
+    package_service_mapping = Path("package_service_mapping.json")
+    if package_service_mapping:
+        _LOGGER.info("Updating package_service_mapping.json")
+        entry = create_package_service_mapping(spec_path, service_info, autorest_options)
+        with package_service_mapping.open() as fd:
+            data_conf = json.load(fd)
+            data_conf.update(entry)
+        with package_service_mapping.open("w") as fd:
+            json.dump(data_conf, fd, indent=2, sort_keys=True)
+
     _LOGGER.info("Done! Enjoy your Python SDK!!")
 
 if __name__ == "__main__":
