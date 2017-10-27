@@ -146,27 +146,27 @@ def run_sample():
     with IDisposable(document_client.DocumentClient(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
 			# setup database for this sample
-            #try:
-            #    client.CreateDatabase({"id": DATABASE_ID})
+            try:
+                client.CreateDatabase({"id": DATABASE_ID})
 
-            #except errors.DocumentDBError as e:
-            #    if e.status_code == 409:
-            #        pass
-            #    else:
-            #        raise errors.HTTPFailure(e.status_code)
+            except errors.DocumentDBError as e:
+                if e.status_code == 409:
+                    pass
+                else:
+                    raise errors.HTTPFailure(e.status_code)
 
-            ## setup collection for this sample
-            #try:
-            #    client.CreateCollection(database_link, {"id": COLLECTION_ID})
-            #    print('Collection with id \'{0}\' created'.format(COLLECTION_ID))
+            # setup collection for this sample
+            try:
+                client.CreateCollection(database_link, {"id": COLLECTION_ID})
+                print('Collection with id \'{0}\' created'.format(COLLECTION_ID))
 
-            #except errors.DocumentDBError as e:
-            #    if e.status_code == 409:
-            #        print('Collection with id \'{0}\' was found'.format(COLLECTION_ID))
-            #    else:
-            #        raise errors.HTTPFailure(e.status_code)
+            except errors.DocumentDBError as e:
+                if e.status_code == 409:
+                    print('Collection with id \'{0}\' was found'.format(COLLECTION_ID))
+                else:
+                    raise errors.HTTPFailure(e.status_code)
 
-            #DocumentManagement.CreateDocuments(client)
+            DocumentManagement.CreateDocuments(client)
             DocumentManagement.ReadDocument(client,'SalesOrder1')
             DocumentManagement.ReadDocuments(client)
 
