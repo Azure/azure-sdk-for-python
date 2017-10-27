@@ -85,7 +85,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'FindSimilarRequest')
@@ -144,7 +143,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'GroupRequest')
@@ -212,7 +210,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'IdentifyRequest')
@@ -278,7 +275,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(body, 'VerifyRequest')
@@ -356,7 +352,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(image_url, 'ImageUrl')
@@ -437,7 +432,6 @@ class FaceOperations(object):
         header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.subscription_key", self.config.subscription_key, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image, callback)
