@@ -8,15 +8,14 @@
 
 import unittest
 import azure.mgmt.recoveryservices
-from testutils.common_recordingtestcase import record
 import azure.mgmt.resource.resources.models
-from tests.mgmt_testcase import AzureMgmtTestCase,HttpStatusCode
 import azure.common.exceptions
 from azure.mgmt.recoveryservices.models import (StorageModelType, Vault, Sku, SkuName, VaultProperties,
                                                 VaultExtendedInfoResource, VaultUsage, EnhancedSecurityState,
                                                 StorageModelType
                                                       )
-from tests.recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from .recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
 
 class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
@@ -25,17 +24,14 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.recoveryservices.RecoveryServicesClient
         )
-        self.location = "westus"
         self.resource_name = "PythonSDKTestResource"
+
+    @ResourceGroupPreparer()
+    def test_can_create_get_list_delete_vault(self, resource_group, location):
         self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
-                                                                        self.group_name)
+                                                                  resource_group.name, location)
         self.test_helper = MgmtRecoveryServicesTestHelper(self)
 
-        if not self.is_playback():
-            self.create_resource_group()
-
-    @record
-    def test_can_create_get_list_delete_vault(self):
         vault_name = self.test_definition.get_vault_name
         vault_name2 = "PythonSDKVault2"
 
@@ -50,8 +46,12 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         self.test_helper.delete_vaults(vault_name2)
 
-    @record
-    def test_can_create_get_list_delete_vault_extended_info(self):
+    @ResourceGroupPreparer()
+    def test_can_create_get_list_delete_vault_extended_info(self, resource_group, location):
+        self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
+                                                                  resource_group.name, location)
+        self.test_helper = MgmtRecoveryServicesTestHelper(self)
+
         vault_name = self.test_definition.get_vault_name
         self.test_helper.create_vault(vault_name)
         vault = self.test_helper.get_vault(vault_name)
@@ -61,8 +61,12 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         self.assertIsNotNone(extended_info.integrity_key)
 
-    @record
-    def test_retrieve_vault_usages(self):
+    @ResourceGroupPreparer()
+    def test_retrieve_vault_usages(self, resource_group, location):
+        self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
+                                                                  resource_group.name, location)
+        self.test_helper = MgmtRecoveryServicesTestHelper(self)
+
         vault_name = self.test_definition.get_vault_name
         self.test_helper.create_vault(vault_name)
         vault = self.test_helper.get_vault(vault_name)
