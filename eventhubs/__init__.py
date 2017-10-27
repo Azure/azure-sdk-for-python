@@ -90,12 +90,12 @@ class EventHubClient(Container):
         @param offset: the initial L{Offset} to receive events.
 
         """
-        _source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
-        _selector = None
+        source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
+        selector = None
         if offset is not None:
-            _selector = OffsetUtil.selector(offset.value, offset.inclusive)
-        _handler = ReceiverHandler(receiver, _source, _selector)
-        self.clients.append(_handler)
+            selector = OffsetUtil.selector(offset.value, offset.inclusive)
+        handler = ReceiverHandler(receiver, source, selector)
+        self.clients.append(handler)
         return self
 
     def publish(self, sender, partition=None):
@@ -113,12 +113,12 @@ class EventHubClient(Container):
         """Handles reactor init event."""
         if not self.shared_connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
-            _properties = {}
-            _properties["product"] = "eventhubs.python"
-            _properties["version"] = __version__
-            _properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
-            _properties["platform"] = sys.platform
-            self.shared_connection = self.connect(self.address, reconnect=False, handler=self, properties=_properties)
+            properties = {}
+            properties["product"] = "eventhubs.python"
+            properties["version"] = __version__
+            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+            properties["platform"] = sys.platform
+            self.shared_connection = self.connect(self.address, reconnect=False, handler=self, properties=properties)
             self.session_policy = SessionPolicy()
             self.shared_connection.__setattr__("_session_policy", self.session_policy)
         for client in self.clients:
@@ -144,12 +144,12 @@ class EventHubClient(Container):
         """Handles on_connection_remote_close event."""
         if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
             return DELEGATED
-        _condition = self.shared_connection.remote_condition
-        if _condition:
+        condition = self.shared_connection.remote_condition
+        if condition:
             logging.error("%s: connection closed by peer %s:%s %s",
                           self.container_id,
-                          _condition.name,
-                          _condition.description,
+                          condition.name,
+                          condition.description,
                           self.shared_connection.remote_container)
         else:
             logging.error("%s: connection closed by peer %s",
@@ -164,12 +164,12 @@ class EventHubClient(Container):
         """Handles on_session_remote_close event."""
         if EndpointStateHandler.is_local_closed(event.session):
             return DELEGATED
-        _condition = event.session.remote_condition
-        if _condition:
+        condition = event.session.remote_condition
+        if condition:
             logging.error("%s: session close %s:%s %s",
                           self.container_id,
-                          _condition.name,
-                          _condition.description,
+                          condition.name,
+                          condition.description,
                           self.shared_connection.remote_container)
         else:
             logging.error("%s, session close %s",
@@ -198,9 +198,9 @@ class EventHubClient(Container):
         if self.shared_connection:
             self.shared_connection.close()
             if close_transport:
-                _transport = self.shared_connection.transport
-                _transport.unbind()
-                _transport.close_tail()
+                transport = self.shared_connection.transport
+                transport.unbind()
+                transport.close_tail()
             self.shared_connection.free()
             self.shared_connection = None
 
@@ -238,10 +238,9 @@ class Receiver(object):
 
     def on_message(self, event):
         """Proess message received event"""
-        _message = event.message
-        _event = EventData.create(_message)
-        self.on_event_data(_event)
-        self.offset = _event.offset
+        event_data = EventData.create(event.message)
+        self.on_event_data(event_data)
+        self.offset = event_data.offset
 
     def on_event_data(self, event_data):
         """Proess event data received event"""
@@ -305,9 +304,9 @@ class EventData(object):
     @classmethod
     def create(cls, message):
         """Creates an event data object from an AMQP message."""
-        _event = EventData()
-        _event.message = message
-        return _event
+        event_data = EventData()
+        event_data.message = message
+        return event_data
 
 class Offset(object):
     """

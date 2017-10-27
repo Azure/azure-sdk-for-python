@@ -58,28 +58,28 @@ class ClientHandler(Handler):
         pass
 
     def on_link_remote_close(self, event):
-        _link = event.link
-        if EndpointStateHandler.is_local_closed(_link):
+        link = event.link
+        if EndpointStateHandler.is_local_closed(link):
             return DELEGATED
-        _link.close()
-        _condition = _link.remote_condition
-        _connection = event.connection
-        if _condition:
+        link.close()
+        condition = link.remote_condition
+        connection = event.connection
+        if condition:
             logging.error("%s: link detached name:%s ref:%s %s:%s",
-                          _connection.container,
-                          _link.name,
-                          _condition.name,
-                          _connection.remote_container,
-                          _condition.description)
+                          connection.container,
+                          link.name,
+                          condition.name,
+                          connection.remote_container,
+                          condition.description)
         else:
             logging.error("%s: link detached name=%s ref:%s",
-                          _connection.container,
-                          _link.name,
-                          _connection.remote_container)
-        _link.free()
-        if _condition and _condition.name in self.fatal_conditions:
-            _connection.close()
-        elif _link.__eq__(self.link):
+                          connection.container,
+                          link.name,
+                          connection.remote_container)
+        link.free()
+        if condition and condition.name in self.fatal_conditions:
+            connection.close()
+        elif link.__eq__(self.link):
             self.link = None
             event.reactor.schedule(2.0, self)
 
@@ -202,11 +202,11 @@ class OffsetUtil(object):
     @classmethod
     def selector(cls, value, inclusive=False):
         if isinstance(value, datetime.datetime):
-            _epoch = datetime.datetime.utcfromtimestamp(0)
-            _ms = timestamp((value - _epoch).total_seconds() * 1000.0)
-            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(_ms) + "'")
+            epoch = datetime.datetime.utcfromtimestamp(0)
+            milli_seconds = timestamp((value - epoch).total_seconds() * 1000.0)
+            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(milli_seconds) + "'")
         elif isinstance(value, timestamp):
             return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(value) + "'")
         else:
-            _op = ">=" if inclusive else ">"
-            return Selector(u"amqp.annotation.x-opt-offset " + _op + " '" + utf82unicode(value) + "'")
+            operator = ">=" if inclusive else ">"
+            return Selector(u"amqp.annotation.x-opt-offset " + operator + " '" + utf82unicode(value) + "'")

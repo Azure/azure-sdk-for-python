@@ -33,21 +33,20 @@ class AsyncReceiver(Receiver):
 
     def on_message(self, event):
         """ Handle message received event """
-        _message = event.message
-        _event = EventData.create(_message)
-        self.offset = _event.offset
-        _waiter = None
+        event_data = EventData.create(event.message)
+        self.offset = event_data.offset
+        waiter = None
         with self.lock:
             self.credit -= 1
             if self.waiter is None:
-                self.messages.put(_event)
+                self.messages.put(event_data)
                 if self.credit == 0:
                     event.reactor.schedule(0.1, self)
                 return
-            _waiter = self.waiter
+            waiter = self.waiter
             self.waiter = None
             self._on_delivered(1)
-        self.loop.call_soon_threadsafe(_waiter.set_result, None)
+        self.loop.call_soon_threadsafe(waiter.set_result, None)
 
     def on_event_data(self, event_data):
         pass
@@ -65,19 +64,19 @@ class AsyncReceiver(Receiver):
         @param count: max number of events to receive. The result may be less.
 
         """
-        _waiter = None
-        _list = []
+        waiter = None
+        batch = []
         while True:
             with self.lock:
                 while not self.messages.empty() and count > 0:
-                    _list.append(self.messages.get())
+                    batch.append(self.messages.get())
                     count -= 1
                     self.delivered += 1
-                if _list:
-                    return _list
+                if batch:
+                    return batch
                 self.waiter = self.loop.create_future()
-                _waiter = self.waiter
-            await _waiter
+                waiter = self.waiter
+            await waiter
 
     def _on_delivered(self, count):
         self.delivered = self.delivered + count

@@ -50,8 +50,7 @@ try:
 
     EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
         .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \
-        .subscribe(MyReceiver("1"), CONSUMER_GROUP, "1", OFFSET) \
         .run()
-    
+
 except KeyboardInterrupt:
     pass
