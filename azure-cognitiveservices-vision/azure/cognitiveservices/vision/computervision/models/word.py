@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .computer_vision_api import ComputerVisionAPI
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputerVisionAPI']
 
-__version__ = VERSION
+class Word(Model):
+    """Word.
 
+    :param bounding_box:
+    :type bounding_box: list[int]
+    :param text:
+    :type text: str
+    """
+
+    _attribute_map = {
+        'bounding_box': {'key': 'boundingBox', 'type': '[int]'},
+        'text': {'key': 'text', 'type': 'str'},
+    }
+
+    def __init__(self, bounding_box=None, text=None):
+        self.bounding_box = bounding_box
+        self.text = text
