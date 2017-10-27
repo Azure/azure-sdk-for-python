@@ -61,7 +61,7 @@ class ServiceFabricClientAPIs(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '6.0'
+        self.api_version = '6.0.0.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -2416,7 +2416,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
     def get_application_type_info_list(
-            self, application_type_definition_kind_filter=65535, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster.
 
         Returns the information about the application types that are
@@ -2435,8 +2435,8 @@ class ServiceFabricClientAPIs(object):
 
         :param application_type_definition_kind_filter: Used to filter on
          ApplicationTypeDefinitionKind for application type query operations.
-         - Default - Default value. Filter that matches input with any
-         ApplicationTypeDefinitionKind value. The value is 0.
+         - Default - Default value, which performs the same function as
+         selecting "All". The value is 0.
          - All - Filter that matches input with any
          ApplicationTypeDefinitionKind value. The value is 65535.
          - ServiceFabricApplicationPackage - Filter that matches input with
@@ -2528,7 +2528,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_type_info_list_by_name(
-            self, application_type_name, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_name, application_type_version=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster
         matching exactly the specified name.
 
@@ -2551,6 +2551,8 @@ class ServiceFabricClientAPIs(object):
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
+        :param application_type_version: The version of the application type.
+        :type application_type_version: str
         :param exclude_application_parameters: The flag that specifies whether
          application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
@@ -2602,6 +2604,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_type_version is not None:
+            query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
         if exclude_application_parameters is not None:
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
@@ -3318,7 +3322,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_info_list(
-            self, application_definition_kind_filter=65535, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications created in the Service Fabric cluster
         that match filters specified as the parameter.
 
@@ -3328,11 +3332,13 @@ class ServiceFabricClientAPIs(object):
         type, status, parameters and other details about the application. If
         the applications do not fit in a page, one page of results is returned
         as well as a continuation token which can be used to get the next page.
+        Filters ApplicationTypeName and ApplicationDefinitionKindFilter cannot
+        be specified at the same time.
 
         :param application_definition_kind_filter: Used to filter on
          ApplicationDefinitionKind for application query operations.
-         - Default - Default value. Filter that matches input with any
-         ApplicationDefinitionKind value. The value is 0.
+         - Default - Default value, which performs the same function as
+         selecting "All". The value is 0.
          - All - Filter that matches input with any ApplicationDefinitionKind
          value. The value is 65535.
          - ServiceFabricApplicationDescription - Filter that matches input with
@@ -11104,3 +11110,637 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def create_name(
+            self, name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a Service Fabric name.
+
+        Creates the specified Service Fabric name.
+
+        :param name:
+        :type name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        name_description = models.NameDescription(name=name)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/$/Create'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(name_description, 'NameDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_name_exists_info(
+            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Returns whether the Service Fabric name exists.
+
+        Returns whether the specified Service Fabric name exists.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_name(
+            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Service Fabric name.
+
+        Deletes the specified Service Fabric name. A name must be created
+        before it can be deleted. Deleting a name with child properties will
+        fail.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_sub_name_info_list(
+            self, name_id, recursive=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enumerates all the Service Fabric names under a given name.
+
+        Enumerates all the Service Fabric names under a given name. If the
+        subnames do not fit in a page, one page of results is returned as well
+        as a continuation token which can be used to get the next page.
+        Querying a name that doesn't exist will fail.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param recursive: Allows specifying that the search performed should
+         be recursive.
+        :type recursive: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedSubNameInfoList
+         <azure.servicefabric.models.PagedSubNameInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PagedSubNameInfoList
+         <azure.servicefabric.models.PagedSubNameInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetSubNames'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if recursive is not None:
+            query_parameters['Recursive'] = self._serialize.query("recursive", recursive, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedSubNameInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_property_info_list(
+            self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets information on all Service Fabric properties under a given name.
+
+        Gets information on all Service Fabric properties under a given name.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param include_values: Allows specifying whether to include the values
+         of the properties returned. True if values should be returned with the
+         metadata; False to return only property metadata.
+        :type include_values: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`PagedPropertyInfoList
+         <azure.servicefabric.models.PagedPropertyInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PagedPropertyInfoList
+         <azure.servicefabric.models.PagedPropertyInfoList>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetProperties'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if include_values is not None:
+            query_parameters['IncludeValues'] = self._serialize.query("include_values", include_values, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedPropertyInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def put_property(
+            self, name_id, property_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Service Fabric property.
+
+        Creates or updates the specified Service Fabric property under a given
+        name.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_description: Describes the Service Fabric property to
+         be created.
+        :type property_description: :class:`PropertyDescription
+         <azure.servicefabric.models.PropertyDescription>`
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetProperty'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(property_description, 'PropertyDescription')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_property_info(
+            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified Service Fabric property.
+
+        Gets the specified Service Fabric property under a given name. This
+        will always return both value and metadata.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_name: Specifies the name of the property to get.
+        :type property_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`PropertyInfo
+         <azure.servicefabric.models.PropertyInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PropertyInfo
+         <azure.servicefabric.models.PropertyInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetProperty'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PropertyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_property(
+            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified Service Fabric property.
+
+        Deletes the specified Service Fabric property under a given name. A
+        property must be created before it can be deleted.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_name: Specifies the name of the property to get.
+        :type property_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetProperty'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def submit_property_batch(
+            self, name_id, timeout=60, operations=None, custom_headers=None, raw=False, **operation_config):
+        """Submits a property batch.
+
+        Submits a batch of property operations. Either all or none of the
+        operations will be committed.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param operations: A list of the property batch operations to be
+         executed.
+        :type operations: list of :class:`PropertyBatchOperation
+         <azure.servicefabric.models.PropertyBatchOperation>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: :class:`PropertyBatchInfo
+         <azure.servicefabric.models.PropertyBatchInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
+        :rtype: :class:`PropertyBatchInfo
+         <azure.servicefabric.models.PropertyBatchInfo>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        property_batch_description_list = models.PropertyBatchDescriptionList(operations=operations)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/Names/{nameId}/$/GetProperties/$/SubmitBatch'
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(property_batch_description_list, 'PropertyBatchDescriptionList')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 409]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SuccessfulPropertyBatchInfo', response)
+        if response.status_code == 409:
+            deserialized = self._deserialize('FailedPropertyBatchInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized

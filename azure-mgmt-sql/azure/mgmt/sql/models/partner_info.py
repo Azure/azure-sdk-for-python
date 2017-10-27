@@ -24,8 +24,8 @@ class PartnerInfo(Model):
     :vartype location: str
     :ivar replication_role: Replication role of the partner server. Possible
      values include: 'Primary', 'Secondary'
-    :vartype replication_role: str or :class:`FailoverGroupReplicationRole
-     <azure.mgmt.sql.models.FailoverGroupReplicationRole>`
+    :vartype replication_role: str or
+     ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     """
 
     _validation = {

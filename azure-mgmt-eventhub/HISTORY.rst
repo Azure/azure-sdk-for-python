@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.1.0 (2017-10-26)
+++++++++++++++++++
+
+**Features**
+
+- Add disaster_recovery_configs operation group
+- Add Geo DR
+
 1.0.0 (2017-06-27)
 ++++++++++++++++++
 

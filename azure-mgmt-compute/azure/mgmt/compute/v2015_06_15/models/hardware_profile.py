@@ -29,8 +29,8 @@ class HardwareProfile(Model):
      'Standard_G2', 'Standard_G3', 'Standard_G4', 'Standard_G5',
      'Standard_GS1', 'Standard_GS2', 'Standard_GS3', 'Standard_GS4',
      'Standard_GS5'
-    :type vm_size: str or :class:`VirtualMachineSizeTypes
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizeTypes>`
+    :type vm_size: str or
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizeTypes
     """
 
     _attribute_map = {

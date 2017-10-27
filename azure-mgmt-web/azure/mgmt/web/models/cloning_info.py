@@ -41,7 +41,7 @@ class CloningInfo(Model):
      app. If specified, these settings override the settings cloned
      from source app. Otherwise, application settings from source app are
      retained.
-    :type app_settings_overrides: dict
+    :type app_settings_overrides: dict[str, str]
     :param configure_load_balancing: <code>true</code> to configure load
      balancing for source and destination app.
     :type configure_load_balancing: bool

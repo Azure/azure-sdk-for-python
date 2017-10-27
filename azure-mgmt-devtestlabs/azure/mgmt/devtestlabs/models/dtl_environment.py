@@ -27,11 +27,11 @@ class DtlEnvironment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param deployment_properties: The deployment properties of the
      environment.
-    :type deployment_properties: :class:`EnvironmentDeploymentProperties
-     <azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties>`
+    :type deployment_properties:
+     ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties
     :param arm_template_display_name: The display name of the Azure Resource
      Manager template that produced the environment.
     :type arm_template_display_name: str

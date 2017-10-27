@@ -12,9 +12,17 @@
 from enum import Enum
 
 
-class ContainerRestartPolicy(Enum):
+class ContainerNetworkProtocol(Enum):
 
-    always = "always"
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class ContainerGroupRestartPolicy(Enum):
+
+    always = "Always"
+    on_failure = "OnFailure"
+    never = "Never"
 
 
 class ContainerGroupNetworkProtocol(Enum):
@@ -27,3 +35,9 @@ class OperatingSystemTypes(Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+
+class ContainerInstanceOperationsOrigin(Enum):
+
+    user = "User"
+    system = "System"

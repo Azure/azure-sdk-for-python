@@ -27,13 +27,11 @@ class UserFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The identity of the user.
-    :type identity: :class:`UserIdentityFragment
-     <azure.mgmt.devtestlabs.models.UserIdentityFragment>`
+    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentityFragment
     :param secret_store: The secret store of the user.
-    :type secret_store: :class:`UserSecretStoreFragment
-     <azure.mgmt.devtestlabs.models.UserSecretStoreFragment>`
+    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStoreFragment
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

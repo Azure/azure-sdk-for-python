@@ -20,8 +20,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
     :type id: str
     :param subnet: Reference of the subnet resource. A subnet from where
      application gateway gets its private address.
-    :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type subnet: ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param provisioning_state: Provisioning state of the application gateway
      subnet resource. Possible values are: 'Updating', 'Deleting', and
      'Failed'.

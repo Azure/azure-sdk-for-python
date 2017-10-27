@@ -28,15 +28,13 @@ class ApplicableScheduleFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set
      at the lab or lab resource level.
-    :type lab_vms_shutdown: :class:`ScheduleFragment
-     <azure.mgmt.devtestlabs.models.ScheduleFragment>`
+    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.ScheduleFragment
     :param lab_vms_startup: The auto-startup schedule, if one has been set at
      the lab or lab resource level.
-    :type lab_vms_startup: :class:`ScheduleFragment
-     <azure.mgmt.devtestlabs.models.ScheduleFragment>`
+    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.ScheduleFragment
     """
 
     _validation = {

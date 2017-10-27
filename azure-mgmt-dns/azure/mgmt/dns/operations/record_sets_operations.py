@@ -23,7 +23,7 @@ class RecordSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2016-04-01".
+    :ivar api_version: Specifies the API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class RecordSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -48,8 +48,8 @@ class RecordSetsOperations(object):
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set.
-         Possible values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR',
-         'SOA', 'SRV', 'TXT'
+         Possible values include: 'A', 'AAAA', 'CAA', 'CNAME', 'MX', 'NS',
+         'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or ~azure.mgmt.dns.models.RecordType
         :param parameters: Parameters supplied to the Update operation.
         :type parameters: ~azure.mgmt.dns.models.RecordSet
@@ -132,7 +132,7 @@ class RecordSetsOperations(object):
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set. Record
          sets of type SOA can be updated but not created (they are created when
-         the DNS zone is created). Possible values include: 'A', 'AAAA',
+         the DNS zone is created). Possible values include: 'A', 'AAAA', 'CAA',
          'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or ~azure.mgmt.dns.models.RecordType
         :param parameters: Parameters supplied to the CreateOrUpdate
@@ -225,8 +225,8 @@ class RecordSetsOperations(object):
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set. Record
          sets of type SOA cannot be deleted (they are deleted when the DNS zone
-         is deleted). Possible values include: 'A', 'AAAA', 'CNAME', 'MX',
-         'NS', 'PTR', 'SOA', 'SRV', 'TXT'
+         is deleted). Possible values include: 'A', 'AAAA', 'CAA', 'CNAME',
+         'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or ~azure.mgmt.dns.models.RecordType
         :param if_match: The etag of the record set. Omit this value to always
          delete the current record set. Specify the last-seen etag value to
@@ -294,8 +294,8 @@ class RecordSetsOperations(object):
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set.
-         Possible values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR',
-         'SOA', 'SRV', 'TXT'
+         Possible values include: 'A', 'AAAA', 'CAA', 'CNAME', 'MX', 'NS',
+         'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or ~azure.mgmt.dns.models.RecordType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -362,8 +362,8 @@ class RecordSetsOperations(object):
          dot).
         :type zone_name: str
         :param record_type: The type of record sets to enumerate. Possible
-         values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV',
-         'TXT'
+         values include: 'A', 'AAAA', 'CAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA',
+         'SRV', 'TXT'
         :type record_type: str or ~azure.mgmt.dns.models.RecordType
         :param top: The maximum number of record sets to return. If not
          specified, returns up to 100 record sets.

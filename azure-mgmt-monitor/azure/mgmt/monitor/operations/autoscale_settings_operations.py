@@ -45,10 +45,9 @@ class AutoscaleSettingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>`
-        :rtype: :class:`AutoscaleSettingResourcePaged
-         <azure.mgmt.monitor.models.AutoscaleSettingResourcePaged>`
+        :return: An iterator like instance of AutoscaleSettingResource
+        :rtype:
+         ~azure.mgmt.monitor.models.AutoscaleSettingResourcePaged[~azure.mgmt.monitor.models.AutoscaleSettingResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -110,20 +109,15 @@ class AutoscaleSettingsOperations(object):
         :param autoscale_setting_name: The autoscale setting name.
         :type autoscale_setting_name: str
         :param parameters: Parameters supplied to the operation.
-        :type parameters: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>`
+        :type parameters: ~azure.mgmt.monitor.models.AutoscaleSettingResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -187,11 +181,8 @@ class AutoscaleSettingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -242,13 +233,9 @@ class AutoscaleSettingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -305,20 +292,15 @@ class AutoscaleSettingsOperations(object):
         :param autoscale_setting_resource: Parameters supplied to the
          operation.
         :type autoscale_setting_resource:
-         :class:`AutoscaleSettingResourcePatch
-         <azure.mgmt.monitor.models.AutoscaleSettingResourcePatch>`
+         ~azure.mgmt.monitor.models.AutoscaleSettingResourcePatch
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AutoscaleSettingResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """

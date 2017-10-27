@@ -26,8 +26,7 @@ class SyncMember(ProxyResource):
     :vartype type: str
     :param database_type: Database type of the sync member. Possible values
      include: 'AzureSqlDatabase', 'SqlServerDatabase'
-    :type database_type: str or :class:`SyncMemberDbType
-     <azure.mgmt.sql.models.SyncMemberDbType>`
+    :type database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
     :param sync_agent_id: ARM resource id of the sync agent in the sync
      member.
     :type sync_agent_id: str
@@ -44,8 +43,7 @@ class SyncMember(ProxyResource):
     :type password: str
     :param sync_direction: Sync direction of the sync member. Possible values
      include: 'Bidirectional', 'OneWayMemberToHub', 'OneWayHubToMember'
-    :type sync_direction: str or :class:`SyncDirection
-     <azure.mgmt.sql.models.SyncDirection>`
+    :type sync_direction: str or ~azure.mgmt.sql.models.SyncDirection
     :ivar sync_state: Sync state of the sync member. Possible values include:
      'SyncInProgress', 'SyncSucceeded', 'SyncFailed',
      'DisabledTombstoneCleanup', 'DisabledBackupRestore',
@@ -53,8 +51,7 @@ class SyncMember(ProxyResource):
      'UnProvisioned', 'Provisioning', 'Provisioned', 'ProvisionFailed',
      'DeProvisioning', 'DeProvisioned', 'DeProvisionFailed', 'Reprovisioning',
      'ReprovisionFailed', 'UnReprovisioned'
-    :vartype sync_state: str or :class:`SyncMemberState
-     <azure.mgmt.sql.models.SyncMemberState>`
+    :vartype sync_state: str or ~azure.mgmt.sql.models.SyncMemberState
     """
 
     _validation = {

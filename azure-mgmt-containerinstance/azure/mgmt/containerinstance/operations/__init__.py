@@ -10,9 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .container_groups_operations import ContainerGroupsOperations
+from .operations import Operations
 from .container_logs_operations import ContainerLogsOperations
 
 __all__ = [
     'ContainerGroupsOperations',
+    'Operations',
     'ContainerLogsOperations',
 ]

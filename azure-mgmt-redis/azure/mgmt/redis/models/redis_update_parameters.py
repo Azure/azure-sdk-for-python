@@ -18,12 +18,12 @@ class RedisUpdateParameters(Model):
     :param redis_configuration: All Redis Settings. Few possible keys:
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
-    :type redis_configuration: dict
+    :type redis_configuration: dict[str, str]
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param tenant_settings: tenantSettings
-    :type tenant_settings: dict
+    :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
@@ -35,9 +35,9 @@ class RedisUpdateParameters(Model):
      inside an existing Azure Virtual Network.
     :type static_ip: str
     :param sku: The SKU of the Redis cache to deploy.
-    :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
+    :type sku: ~azure.mgmt.redis.models.Sku
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -53,7 +53,7 @@ class RedisUpdateParameters(Model):
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'tags': {'key': 'properties.tags', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None, sku=None, tags=None):

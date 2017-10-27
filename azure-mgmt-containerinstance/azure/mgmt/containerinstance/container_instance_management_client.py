@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.container_groups_operations import ContainerGroupsOperations
+from .operations.operations import Operations
 from .operations.container_logs_operations import ContainerLogsOperations
 from . import models
 
@@ -47,7 +48,7 @@ class ContainerInstanceManagementClientConfiguration(AzureConfiguration):
 
         super(ContainerInstanceManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('containerinstancemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-containerinstance/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -62,6 +63,8 @@ class ContainerInstanceManagementClient(object):
 
     :ivar container_groups: ContainerGroups operations
     :vartype container_groups: azure.mgmt.containerinstance.operations.ContainerGroupsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.containerinstance.operations.Operations
     :ivar container_logs: ContainerLogs operations
     :vartype container_logs: azure.mgmt.containerinstance.operations.ContainerLogsOperations
 
@@ -82,11 +85,13 @@ class ContainerInstanceManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-08-01-preview'
+        self.api_version = '2017-10-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.container_groups = ContainerGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.container_logs = ContainerLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)

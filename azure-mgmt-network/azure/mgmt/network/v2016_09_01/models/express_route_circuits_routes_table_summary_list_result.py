@@ -17,8 +17,8 @@ class ExpressRouteCircuitsRoutesTableSummaryListResult(Model):
     API.
 
     :param value: A list of the routes table.
-    :type value: list of :class:`ExpressRouteCircuitRoutesTableSummary
-     <azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitRoutesTableSummary>`
+    :type value:
+     list[~azure.mgmt.network.v2016_09_01.models.ExpressRouteCircuitRoutesTableSummary]
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """

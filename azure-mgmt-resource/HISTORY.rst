@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.2.2 (2017-10-17)
+++++++++++++++++++
+
+**Bug fixes**
+
+- Unicode strings are valid "subscription_id" in Python 2.7
+- Added some deprecation warnings
+
 1.2.1 (2017-10-06)
 ++++++++++++++++++
 

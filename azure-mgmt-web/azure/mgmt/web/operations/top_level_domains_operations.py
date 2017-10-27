@@ -46,10 +46,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TopLevelDomain
-         <azure.mgmt.web.models.TopLevelDomain>`
-        :rtype: :class:`TopLevelDomainPaged
-         <azure.mgmt.web.models.TopLevelDomainPaged>`
+        :return: An iterator like instance of TopLevelDomain
+        :rtype:
+         ~azure.mgmt.web.models.TopLevelDomainPaged[~azure.mgmt.web.models.TopLevelDomain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -115,12 +114,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TopLevelDomain
-         <azure.mgmt.web.models.TopLevelDomain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TopLevelDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TopLevelDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -188,10 +184,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TldLegalAgreement
-         <azure.mgmt.web.models.TldLegalAgreement>`
-        :rtype: :class:`TldLegalAgreementPaged
-         <azure.mgmt.web.models.TldLegalAgreementPaged>`
+        :return: An iterator like instance of TldLegalAgreement
+        :rtype:
+         ~azure.mgmt.web.models.TldLegalAgreementPaged[~azure.mgmt.web.models.TldLegalAgreement]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)

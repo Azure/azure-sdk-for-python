@@ -21,8 +21,8 @@ class DiagnosticsProfile(Model):
      <br><br> For Linux Virtual Machines, you can easily view the output of
      your console log. <br><br> For both Windows and Linux virtual machines,
      Azure also enables you to see a screenshot of the VM from the hypervisor.
-    :type boot_diagnostics: :class:`BootDiagnostics
-     <azure.mgmt.compute.v2017_03_30.models.BootDiagnostics>`
+    :type boot_diagnostics:
+     ~azure.mgmt.compute.v2017_03_30.models.BootDiagnostics
     """
 
     _attribute_map = {

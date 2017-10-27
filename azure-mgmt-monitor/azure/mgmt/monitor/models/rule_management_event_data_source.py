@@ -17,9 +17,9 @@ class RuleManagementEventDataSource(RuleDataSource):
     RuleManagementEventDataSource in this case.
 
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     :param event_name: the event name.
     :type event_name: str
@@ -40,8 +40,8 @@ class RuleManagementEventDataSource(RuleDataSource):
     :param sub_status: the substatus.
     :type sub_status: str
     :param claims: the claims.
-    :type claims: :class:`RuleManagementEventClaimsDataSource
-     <azure.mgmt.monitor.models.RuleManagementEventClaimsDataSource>`
+    :type claims:
+     ~azure.mgmt.monitor.models.RuleManagementEventClaimsDataSource
     """
 
     _validation = {

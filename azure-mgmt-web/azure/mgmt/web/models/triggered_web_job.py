@@ -27,8 +27,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param latest_run: Latest job run information.
-    :type latest_run: :class:`TriggeredJobRun
-     <azure.mgmt.web.models.TriggeredJobRun>`
+    :type latest_run: ~azure.mgmt.web.models.TriggeredJobRun
     :param history_url: History URL.
     :type history_url: str
     :param scheduler_logs_url: Scheduler Logs URL.
@@ -44,14 +43,13 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type job_type: str or :class:`WebJobType
-     <azure.mgmt.web.models.WebJobType>`
+    :type job_type: str or ~azure.mgmt.web.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
     :type using_sdk: bool
     :param settings: Job settings.
-    :type settings: object
+    :type settings: dict[str, object]
     """
 
     _validation = {
@@ -76,7 +74,7 @@ class TriggeredWebJob(ProxyOnlyResource):
         'job_type': {'key': 'properties.jobType', 'type': 'WebJobType'},
         'error': {'key': 'properties.error', 'type': 'str'},
         'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
     def __init__(self, kind=None, latest_run=None, history_url=None, scheduler_logs_url=None, run_command=None, url=None, extra_info_url=None, job_type=None, error=None, using_sdk=None, settings=None):

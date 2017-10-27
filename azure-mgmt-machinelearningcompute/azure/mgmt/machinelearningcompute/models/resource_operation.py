@@ -18,8 +18,8 @@ class ResourceOperation(Model):
     :param name: Name of this operation.
     :type name: str
     :param display: Display of the operation.
-    :type display: :class:`ResourceOperationDisplay
-     <azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay>`
+    :type display:
+     ~azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay
     :param origin: The operation origin.
     :type origin: str
     """

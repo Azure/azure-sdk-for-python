@@ -3,6 +3,13 @@
 Release History
 ===============
 
+4.1.1 (2017-10-25)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix "tags" attribute in redis update
+
 4.1.0 (2017-04-18)
 ++++++++++++++++++
 

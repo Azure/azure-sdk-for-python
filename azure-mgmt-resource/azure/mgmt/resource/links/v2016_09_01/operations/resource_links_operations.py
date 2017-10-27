@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,9 +50,8 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -100,17 +99,16 @@ class ResourceLinksOperations(object):
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink
         :type link_id: str
         :param properties: Properties for resource link.
-        :type properties: :class:`ResourceLinkProperties
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties>`
+        :type properties:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceLink or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ResourceLink(properties=properties)
@@ -175,10 +173,9 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceLink or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -235,8 +232,9 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
+        :return: An iterator like instance of ResourceLink
+        :rtype:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -309,8 +307,9 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
+        :return: An iterator like instance of ResourceLink
+        :rtype:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

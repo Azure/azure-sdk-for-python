@@ -16,14 +16,14 @@ class RuleWebhookAction(RuleAction):
     """Specifies the action to post to service when the rule condition is
     evaluated. The discriminator is always RuleWebhookAction in this case.
 
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Constant filled by server.
     :type odatatype: str
-    :param service_uri: the service uri to Post the notitication when the
+    :param service_uri: the service uri to Post the notification when the
      alert activates or resolves.
     :type service_uri: str
     :param properties: the dictionary of custom properties to include with the
      post operation. These data are appended to the webhook payload.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _validation = {

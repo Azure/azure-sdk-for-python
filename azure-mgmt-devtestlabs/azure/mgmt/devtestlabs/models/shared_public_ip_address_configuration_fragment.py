@@ -17,8 +17,8 @@ class SharedPublicIpAddressConfigurationFragment(Model):
     load balancer.
 
     :param inbound_nat_rules: The incoming NAT rules
-    :type inbound_nat_rules: list of :class:`InboundNatRuleFragment
-     <azure.mgmt.devtestlabs.models.InboundNatRuleFragment>`
+    :type inbound_nat_rules:
+     list[~azure.mgmt.devtestlabs.models.InboundNatRuleFragment]
     """
 
     _attribute_map = {

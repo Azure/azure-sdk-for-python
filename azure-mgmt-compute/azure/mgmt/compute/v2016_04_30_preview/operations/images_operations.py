@@ -45,20 +45,15 @@ class ImagesOperations(object):
         :param image_name: The name of the image.
         :type image_name: str
         :param parameters: Parameters supplied to the Create Image operation.
-        :type parameters: :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>`
+        :type parameters: ~azure.mgmt.compute.v2016_04_30_preview.models.Image
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Image or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.Image]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -144,15 +139,11 @@ class ImagesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -236,13 +227,9 @@ class ImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Image or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Image or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -301,10 +288,9 @@ class ImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>`
-        :rtype: :class:`ImagePaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.ImagePaged>`
+        :return: An iterator like instance of Image
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.ImagePaged[~azure.mgmt.compute.v2016_04_30_preview.models.Image]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -369,10 +355,9 @@ class ImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Image
-         <azure.mgmt.compute.v2016_04_30_preview.models.Image>`
-        :rtype: :class:`ImagePaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.ImagePaged>`
+        :return: An iterator like instance of Image
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.ImagePaged[~azure.mgmt.compute.v2016_04_30_preview.models.Image]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

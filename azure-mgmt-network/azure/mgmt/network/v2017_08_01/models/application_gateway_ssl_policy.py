@@ -17,28 +17,26 @@ class ApplicationGatewaySslPolicy(Model):
 
     :param disabled_ssl_protocols: Ssl protocols to be disabled on application
      gateway.
-    :type disabled_ssl_protocols: list of str or
-     :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol>`
+    :type disabled_ssl_protocols: list[str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol]
     :param policy_type: Type of Ssl Policy. Possible values include:
      'Predefined', 'Custom'
-    :type policy_type: str or :class:`ApplicationGatewaySslPolicyType
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyType>`
+    :type policy_type: str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyType
     :param policy_name: Name of Ssl predefined policy. Possible values
      include: 'AppGwSslPolicy20150501', 'AppGwSslPolicy20170401',
      'AppGwSslPolicy20170401S'
-    :type policy_name: str or :class:`ApplicationGatewaySslPolicyName
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyName>`
+    :type policy_name: str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslPolicyName
     :param cipher_suites: Ssl cipher suites to be enabled in the specified
      order to application gateway.
-    :type cipher_suites: list of str or
-     :class:`ApplicationGatewaySslCipherSuite
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslCipherSuite>`
+    :type cipher_suites: list[str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslCipherSuite]
     :param min_protocol_version: Minimum version of Ssl protocol to be
      supported on application gateway. Possible values include: 'TLSv1_0',
      'TLSv1_1', 'TLSv1_2'
-    :type min_protocol_version: str or :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol>`
+    :type min_protocol_version: str or
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewaySslProtocol
     """
 
     _attribute_map = {

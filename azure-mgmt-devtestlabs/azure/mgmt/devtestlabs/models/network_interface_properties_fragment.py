@@ -37,8 +37,7 @@ class NetworkInterfacePropertiesFragment(Model):
     :param shared_public_ip_address_configuration: The configuration for
      sharing a public IP address across multiple virtual machines.
     :type shared_public_ip_address_configuration:
-     :class:`SharedPublicIpAddressConfigurationFragment
-     <azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment>`
+     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
     """
 
     _attribute_map = {

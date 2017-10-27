@@ -1,8 +1,8 @@
-﻿#-------------------------------------------------------------------------
+﻿# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 from azure.common.credentials import (
     BasicTokenAuthentication,
@@ -24,10 +24,10 @@ CLIENT_OID = '00000000-0000-0000-0000-000000000000'
 
 def get_credentials():
     # Put your credentials here in the "real" file
-    #return UserPassCredentials(
+    # return UserPassCredentials(
     #    'user@myaddomain.onmicrosoft.com',
     #    'Password'
-    #)
+    # )
     # Needed to play recorded tests
     return BasicTokenAuthentication(
         token = {

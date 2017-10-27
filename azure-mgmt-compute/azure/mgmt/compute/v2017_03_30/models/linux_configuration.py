@@ -25,8 +25,7 @@ class LinuxConfiguration(Model):
      authentication should be disabled.
     :type disable_password_authentication: bool
     :param ssh: Specifies the ssh key configuration for a Linux OS.
-    :type ssh: :class:`SshConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.SshConfiguration>`
+    :type ssh: ~azure.mgmt.compute.v2017_03_30.models.SshConfiguration
     """
 
     _attribute_map = {

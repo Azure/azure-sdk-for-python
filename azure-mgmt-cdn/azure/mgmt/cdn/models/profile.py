@@ -13,10 +13,8 @@ from .resource import Resource
 
 
 class Profile(Resource):
-    """CDN profile represents the top level resource and the entry point into the
-    CDN API. This allows users to set up a logical grouping of endpoints in
-    addition to creating shared configuration settings and selecting pricing
-    tiers and providers.
+    """CDN profile is a logical grouping of endpoints that share the same
+    settings, such as CDN provider and pricing tier.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,14 +28,14 @@ class Profile(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The pricing tier (defines a CDN provider, feature list and
      rate) of the CDN profile.
-    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
+    :type sku: ~azure.mgmt.cdn.models.Sku
     :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :vartype resource_state: str or :class:`ProfileResourceState
-     <azure.mgmt.cdn.models.ProfileResourceState>`
+    :vartype resource_state: str or
+     ~azure.mgmt.cdn.models.ProfileResourceState
     :ivar provisioning_state: Provisioning status of the profile.
     :vartype provisioning_state: str
     """

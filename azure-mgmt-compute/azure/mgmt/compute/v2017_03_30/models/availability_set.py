@@ -37,20 +37,20 @@ class AvailabilitySet(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
-    :type virtual_machines: list of :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type virtual_machines:
+     list[~azure.mgmt.compute.v2017_03_30.models.SubResource]
     :ivar statuses: The resource status information.
-    :vartype statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
+    :vartype statuses:
+     list[~azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus]
     :param sku: Sku of the availability set
-    :type sku: :class:`Sku <azure.mgmt.compute.v2017_03_30.models.Sku>`
+    :type sku: ~azure.mgmt.compute.v2017_03_30.models.Sku
     """
 
     _validation = {

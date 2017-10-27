@@ -23,7 +23,7 @@ class ContainerLogsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-08-01-preview".
+    :ivar api_version: Client API version. Constant value: "2017-10-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,25 +31,23 @@ class ContainerLogsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01-preview"
+        self.api_version = "2017-10-01-preview"
 
         self.config = config
 
     def list(
-            self, resource_group_name, container_name, container_group_name, tail=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, container_group_name, container_name, tail=None, custom_headers=None, raw=False, **operation_config):
         """Get the logs for a specified container instance.
 
         Get the logs for a specified container instance in a specified resource
         group and container group.
 
-        :param resource_group_name: The name of the resource group that
-         contains the container instance.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
+        :param container_group_name: The name of the container group.
+        :type container_group_name: str
         :param container_name: The name of the container instance.
         :type container_name: str
-        :param container_group_name: The name of the container group the
-         container instance belongs to.
-        :type container_group_name: str
         :param tail: The number of lines to show from the tail of the
          container instance log. If not provided, all available logs are shown
          up to 4mb.
@@ -71,8 +69,8 @@ class ContainerLogsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str')
+            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

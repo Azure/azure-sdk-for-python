@@ -22,28 +22,32 @@ class ElasticPoolEditionCapability(Model):
     :vartype name: str
     :ivar status: The status of the elastic pool edition. Possible values
      include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_elastic_pool_dtus: The list of supported elastic pool DTU
      levels for the edition.
-    :vartype supported_elastic_pool_dtus: list of
-     :class:`ElasticPoolDtuCapability
-     <azure.mgmt.sql.models.ElasticPoolDtuCapability>`
+    :vartype supported_elastic_pool_dtus:
+     list[~azure.mgmt.sql.models.ElasticPoolDtuCapability]
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     edition.
+    :vartype zone_redundant: bool
     """
 
     _validation = {
         'name': {'readonly': True},
         'status': {'readonly': True},
         'supported_elastic_pool_dtus': {'readonly': True},
+        'zone_redundant': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'supported_elastic_pool_dtus': {'key': 'supportedElasticPoolDtus', 'type': '[ElasticPoolDtuCapability]'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
     }
 
     def __init__(self):
         self.name = None
         self.status = None
         self.supported_elastic_pool_dtus = None
+        self.zone_redundant = None

@@ -16,8 +16,8 @@ class EvaluatePoliciesRequest(Model):
     """Request body for evaluating a policy set.
 
     :param policies: Policies to evaluate.
-    :type policies: list of :class:`EvaluatePoliciesProperties
-     <azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties>`
+    :type policies:
+     list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
     """
 
     _attribute_map = {

@@ -17,7 +17,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or :class:`LogLevel <azure.mgmt.web.models.LogLevel>`
+    :type level: str or ~azure.mgmt.web.models.LogLevel
     :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions.
     :type sas_url: str

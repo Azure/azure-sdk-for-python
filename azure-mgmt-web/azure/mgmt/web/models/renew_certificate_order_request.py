@@ -29,7 +29,7 @@ class RenewCertificateOrderRequest(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param csr: Csr to be used for re-key operation.

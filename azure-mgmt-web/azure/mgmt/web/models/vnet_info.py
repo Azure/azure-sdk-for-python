@@ -33,10 +33,9 @@ class VnetInfo(ProxyOnlyResource):
     :param cert_blob: A certificate file (.cer) blob containing the public key
      of the private key used to authenticate a
      Point-To-Site VPN connection.
-    :type cert_blob: str
+    :type cert_blob: bytearray
     :ivar routes: The routes that this Virtual Network connection uses.
-    :vartype routes: list of :class:`VnetRoute
-     <azure.mgmt.web.models.VnetRoute>`
+    :vartype routes: list[~azure.mgmt.web.models.VnetRoute]
     :ivar resync_required: <code>true</code> if a resync is required;
      otherwise, <code>false</code>.
     :vartype resync_required: bool
@@ -61,7 +60,7 @@ class VnetInfo(ProxyOnlyResource):
         'type': {'key': 'type', 'type': 'str'},
         'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
         'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
-        'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
+        'cert_blob': {'key': 'properties.certBlob', 'type': 'bytearray'},
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
         'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
         'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},

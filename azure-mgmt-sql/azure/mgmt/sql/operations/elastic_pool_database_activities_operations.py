@@ -52,11 +52,9 @@ class ElasticPoolDatabaseActivitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ElasticPoolDatabaseActivity
-         <azure.mgmt.sql.models.ElasticPoolDatabaseActivity>`
-        :rtype: :class:`ElasticPoolDatabaseActivityPaged
-         <azure.mgmt.sql.models.ElasticPoolDatabaseActivityPaged>`
+        :return: An iterator like instance of ElasticPoolDatabaseActivity
+        :rtype:
+         ~azure.mgmt.sql.models.ElasticPoolDatabaseActivityPaged[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

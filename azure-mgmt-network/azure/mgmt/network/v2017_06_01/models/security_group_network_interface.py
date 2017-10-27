@@ -18,8 +18,8 @@ class SecurityGroupNetworkInterface(Model):
     :param id: ID of the network interface.
     :type id: str
     :param security_rule_associations:
-    :type security_rule_associations: :class:`SecurityRuleAssociations
-     <azure.mgmt.network.v2017_06_01.models.SecurityRuleAssociations>`
+    :type security_rule_associations:
+     ~azure.mgmt.network.v2017_06_01.models.SecurityRuleAssociations
     """
 
     _attribute_map = {

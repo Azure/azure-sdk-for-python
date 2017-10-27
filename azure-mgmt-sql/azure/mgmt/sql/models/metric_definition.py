@@ -19,22 +19,21 @@ class MetricDefinition(Model):
     sending a request.
 
     :ivar name: The name information for the metric.
-    :vartype name: :class:`MetricName <azure.mgmt.sql.models.MetricName>`
+    :vartype name: ~azure.mgmt.sql.models.MetricName
     :ivar primary_aggregation_type: The primary aggregation type defining how
      metric values are displayed. Possible values include: 'None', 'Average',
      'Count', 'Minimum', 'Maximum', 'Total'
-    :vartype primary_aggregation_type: str or :class:`PrimaryAggregationType
-     <azure.mgmt.sql.models.PrimaryAggregationType>`
+    :vartype primary_aggregation_type: str or
+     ~azure.mgmt.sql.models.PrimaryAggregationType
     :ivar resource_uri: The resource uri of the database.
     :vartype resource_uri: str
     :ivar unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond'
-    :vartype unit: str or :class:`UnitDefinitionType
-     <azure.mgmt.sql.models.UnitDefinitionType>`
+    :vartype unit: str or ~azure.mgmt.sql.models.UnitDefinitionType
     :ivar metric_availabilities: The list of database metric availabities for
      the metric.
-    :vartype metric_availabilities: list of :class:`MetricAvailability
-     <azure.mgmt.sql.models.MetricAvailability>`
+    :vartype metric_availabilities:
+     list[~azure.mgmt.sql.models.MetricAvailability]
     """
 
     _validation = {

@@ -27,27 +27,26 @@ class FailoverGroup(ProxyResource):
     :ivar location: Resource location.
     :vartype location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param read_write_endpoint: Read-write endpoint of the failover group
      instance.
-    :type read_write_endpoint: :class:`FailoverGroupReadWriteEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint>`
+    :type read_write_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
     :param read_only_endpoint: Read-only endpoint of the failover group
      instance.
-    :type read_only_endpoint: :class:`FailoverGroupReadOnlyEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint>`
+    :type read_only_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
     :ivar replication_role: Local replication role of the failover group
      instance. Possible values include: 'Primary', 'Secondary'
-    :vartype replication_role: str or :class:`FailoverGroupReplicationRole
-     <azure.mgmt.sql.models.FailoverGroupReplicationRole>`
+    :vartype replication_role: str or
+     ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     :ivar replication_state: Replication state of the failover group instance.
     :vartype replication_state: str
     :param partner_servers: List of partner server information for the
      failover group.
-    :type partner_servers: list of :class:`PartnerInfo
-     <azure.mgmt.sql.models.PartnerInfo>`
+    :type partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     :param databases: List of databases in the failover group.
-    :type databases: list of str
+    :type databases: list[str]
     """
 
     _validation = {

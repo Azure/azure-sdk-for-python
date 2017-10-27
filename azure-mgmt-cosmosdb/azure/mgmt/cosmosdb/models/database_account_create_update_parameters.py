@@ -28,20 +28,17 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      belongs.
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :param kind: Indicates the type of database account. This can only be set
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
-    :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.cosmosdb.models.DatabaseAccountKind>`
+    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
-    :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.cosmosdb.models.ConsistencyPolicy>`
+    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
     :param locations: An array that contains the georeplication locations
      enabled for the Cosmos DB account.
-    :type locations: list of :class:`Location
-     <azure.mgmt.cosmosdb.models.Location>`
+    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
     :ivar database_account_offer_type:  Default value: "Standard" .
     :vartype database_account_offer_type: str
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies

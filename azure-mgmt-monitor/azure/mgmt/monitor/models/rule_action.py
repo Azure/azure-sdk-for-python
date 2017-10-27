@@ -16,7 +16,10 @@ class RuleAction(Model):
     """The action that is performed when the alert rule becomes active, and when
     an alert condition is resolved.
 
-    :param odatatype: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RuleEmailAction, RuleWebhookAction
+
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     """
 

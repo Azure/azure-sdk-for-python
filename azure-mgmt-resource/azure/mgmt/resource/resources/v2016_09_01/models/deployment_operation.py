@@ -23,8 +23,8 @@ class DeploymentOperation(Model):
     :ivar operation_id: Deployment operation ID.
     :vartype operation_id: str
     :param properties: Deployment properties.
-    :type properties: :class:`DeploymentOperationProperties
-     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentOperationProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentOperationProperties
     """
 
     _validation = {

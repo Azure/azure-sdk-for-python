@@ -20,11 +20,9 @@ class Recurrence(Model):
      should take effect. This value must be Week, meaning each week will have
      the same set of profiles. Possible values include: 'None', 'Second',
      'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.monitor.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.monitor.models.RecurrenceFrequency
     :param schedule: the scheduling constraints for when the profile begins.
-    :type schedule: :class:`RecurrentSchedule
-     <azure.mgmt.monitor.models.RecurrentSchedule>`
+    :type schedule: ~azure.mgmt.monitor.models.RecurrentSchedule
     """
 
     _validation = {

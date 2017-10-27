@@ -24,14 +24,14 @@ class VirtualMachineScaleSetOSProfile(Model):
     :param custom_data: A base-64 encoded string of custom data.
     :type custom_data: str
     :param windows_configuration: The Windows Configuration of the OS profile.
-    :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.v2015_06_15.models.WindowsConfiguration>`
+    :type windows_configuration:
+     ~azure.mgmt.compute.v2015_06_15.models.WindowsConfiguration
     :param linux_configuration: The Linux Configuration of the OS profile.
-    :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.v2015_06_15.models.LinuxConfiguration>`
+    :type linux_configuration:
+     ~azure.mgmt.compute.v2015_06_15.models.LinuxConfiguration
     :param secrets: The List of certificates for addition to the VM.
-    :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.v2015_06_15.models.VaultSecretGroup>`
+    :type secrets:
+     list[~azure.mgmt.compute.v2015_06_15.models.VaultSecretGroup]
     """
 
     _attribute_map = {

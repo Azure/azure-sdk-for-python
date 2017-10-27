@@ -27,8 +27,7 @@ class RunCommandResult(OperationStatusResponse):
     :ivar end_time: End time of the operation
     :vartype end_time: datetime
     :ivar error: Api error
-    :vartype error: :class:`ApiError
-     <azure.mgmt.compute.v2017_03_30.models.ApiError>`
+    :vartype error: ~azure.mgmt.compute.v2017_03_30.models.ApiError
     :param output: Operation output data (raw JSON)
     :type output: object
     """

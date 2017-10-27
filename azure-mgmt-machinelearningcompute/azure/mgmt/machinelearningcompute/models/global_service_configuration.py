@@ -17,20 +17,19 @@ class GlobalServiceConfiguration(Model):
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
-    :type additional_properties: dict
+    :type additional_properties: dict[str, object]
     :param etag: The configuartion ETag for updates.
     :type etag: str
     :param ssl: The SSL configuration properties
-    :type ssl: :class:`SslConfiguration
-     <azure.mgmt.machinelearningcompute.models.SslConfiguration>`
+    :type ssl: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
     :param service_auth: Optional global authorization keys for all user
      services deployed in cluster. These are used if the service does not have
      auth keys.
-    :type service_auth: :class:`ServiceAuthConfiguration
-     <azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration>`
+    :type service_auth:
+     ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
     :param auto_scale: The auto-scale configuration
-    :type auto_scale: :class:`AutoScaleConfiguration
-     <azure.mgmt.machinelearningcompute.models.AutoScaleConfiguration>`
+    :type auto_scale:
+     ~azure.mgmt.machinelearningcompute.models.AutoScaleConfiguration
     """
 
     _attribute_map = {

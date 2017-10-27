@@ -17,7 +17,7 @@ class LoadParameters(Model):
 
     :param content_paths: The path to the content to be loaded. Path should be
      a relative file URL of the origin.
-    :type content_paths: list of str
+    :type content_paths: list[str]
     """
 
     _validation = {

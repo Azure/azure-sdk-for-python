@@ -39,10 +39,13 @@ class ContainerGroup(Resource):
     :type image_registry_credentials: list of :class:`ImageRegistryCredential
      <azure.mgmt.containerinstance.models.ImageRegistryCredential>`
     :param restart_policy: Restart policy for all containers within the
-     container group. Currently the only available option is `always`. Possible
-     values include: 'always'
-    :type restart_policy: str or :class:`ContainerRestartPolicy
-     <azure.mgmt.containerinstance.models.ContainerRestartPolicy>`
+     container group.
+     - `Always` Always restart
+     - `OnFailure` Restart on failure
+     - `Never` Never restart
+     . Possible values include: 'Always', 'OnFailure', 'Never'
+    :type restart_policy: str or :class:`ContainerGroupRestartPolicy
+     <azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy>`
     :param ip_address: The IP address type of the container group.
     :type ip_address: :class:`IpAddress
      <azure.mgmt.containerinstance.models.IpAddress>`
@@ -50,13 +53,14 @@ class ContainerGroup(Resource):
      the container group. Possible values include: 'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.containerinstance.models.OperatingSystemTypes>`
-    :ivar state: The current state of the container group. This is only valid
-     for the response.
-    :vartype state: str
     :param volumes: The list of volumes that can be mounted by containers in
      this container group.
     :type volumes: list of :class:`Volume
      <azure.mgmt.containerinstance.models.Volume>`
+    :ivar instance_view: The instance view of the container group. Only valid
+     in response.
+    :vartype instance_view: :class:`ContainerGroupPropertiesInstanceView
+     <azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView>`
     """
 
     _validation = {
@@ -65,7 +69,7 @@ class ContainerGroup(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
+        'instance_view': {'readonly': True},
     }
 
     _attribute_map = {
@@ -80,8 +84,8 @@ class ContainerGroup(Resource):
         'restart_policy': {'key': 'properties.restartPolicy', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'IpAddress'},
         'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
         'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
     }
 
     def __init__(self, location, tags=None, containers=None, image_registry_credentials=None, restart_policy=None, ip_address=None, os_type=None, volumes=None):
@@ -92,5 +96,5 @@ class ContainerGroup(Resource):
         self.restart_policy = restart_policy
         self.ip_address = ip_address
         self.os_type = os_type
-        self.state = None
         self.volumes = volumes
+        self.instance_view = None

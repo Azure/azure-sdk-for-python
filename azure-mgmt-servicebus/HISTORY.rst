@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.3.0 (2017-10-26)
+++++++++++++++++++
+
+**Features**
+
+- Add disaster_recovery_configs operation group
+- Add regions operation group
+- Add premium_messgings_regions operation group
+- Add event_hubs operation group
+- Add Geo DR
+
 0.2.0 (2017-06-26)
 ++++++++++++++++++
 

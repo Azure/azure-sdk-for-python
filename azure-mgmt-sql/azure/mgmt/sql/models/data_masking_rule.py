@@ -35,8 +35,7 @@ class DataMaskingRule(ProxyResource):
      doesn't already exist, the rule will be created with ruleState set to
      enabled, regardless of the provided value of ruleState. Possible values
      include: 'Disabled', 'Enabled'
-    :type rule_state: str or :class:`DataMaskingRuleState
-     <azure.mgmt.sql.models.DataMaskingRuleState>`
+    :type rule_state: str or ~azure.mgmt.sql.models.DataMaskingRuleState
     :param schema_name: The schema name on which the data masking rule is
      applied.
     :type schema_name: str
@@ -49,8 +48,7 @@ class DataMaskingRule(ProxyResource):
     :param masking_function: The masking function that is used for the data
      masking rule. Possible values include: 'Default', 'CCN', 'Email',
      'Number', 'SSN', 'Text'
-    :type masking_function: str or :class:`DataMaskingFunction
-     <azure.mgmt.sql.models.DataMaskingFunction>`
+    :type masking_function: str or ~azure.mgmt.sql.models.DataMaskingFunction
     :param number_from: The numberFrom property of the masking rule. Required
      if maskingFunction is set to Number, otherwise this parameter will be
      ignored.

@@ -27,7 +27,7 @@ class StringDictionary(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param properties: Settings.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _validation = {

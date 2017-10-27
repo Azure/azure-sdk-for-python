@@ -24,8 +24,7 @@ class ContainerServiceCredentials(Model):
     :ivar service_principal_configuration: Service principal configuration
      used by Kubernetes.
     :vartype service_principal_configuration:
-     :class:`ServicePrincipalProperties
-     <azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties>`
+     ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
     :ivar image_pull_secret_name: The ACR image pull secret name which was
      created in Kubernetes.
     :vartype image_pull_secret_name: str

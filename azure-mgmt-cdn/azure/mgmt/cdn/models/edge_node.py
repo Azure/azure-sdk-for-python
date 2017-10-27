@@ -13,7 +13,8 @@ from .resource import Resource
 
 
 class EdgeNode(Resource):
-    """Edge node of CDN service.
+    """Edgenode is a global Point of Presence (POP) location used to deliver CDN
+    content to end users.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,10 +28,9 @@ class EdgeNode(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param ip_address_groups: List of ip address groups.
-    :type ip_address_groups: list of :class:`IpAddressGroup
-     <azure.mgmt.cdn.models.IpAddressGroup>`
+    :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
 
     _validation = {

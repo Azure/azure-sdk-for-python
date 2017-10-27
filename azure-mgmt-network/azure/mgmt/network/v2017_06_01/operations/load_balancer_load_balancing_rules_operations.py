@@ -48,10 +48,9 @@ class LoadBalancerLoadBalancingRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`LoadBalancingRule
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancingRule>`
-        :rtype: :class:`LoadBalancingRulePaged
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancingRulePaged>`
+        :return: An iterator like instance of LoadBalancingRule
+        :rtype:
+         ~azure.mgmt.network.v2017_06_01.models.LoadBalancingRulePaged[~azure.mgmt.network.v2017_06_01.models.LoadBalancingRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -121,13 +120,9 @@ class LoadBalancerLoadBalancingRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LoadBalancingRule
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancingRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LoadBalancingRule
-         <azure.mgmt.network.v2017_06_01.models.LoadBalancingRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LoadBalancingRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_06_01.models.LoadBalancingRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

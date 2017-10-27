@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class ContainerServiceDiagnosticsProfile(Model):
-    """ContainerServiceDiagnosticsProfile.
+    """Profile for diagnostics on the container service cluster.
 
-    :param vm_diagnostics: Profile for the container service VM diagnostic
-     agent.
+    :param vm_diagnostics: Profile for diagnostics on the container service
+     VMs.
     :type vm_diagnostics: :class:`ContainerServiceVMDiagnostics
      <azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics>`
     """

@@ -16,8 +16,8 @@ class CheckSkuAvailabilityResultList(Model):
     """Check SKU availability result list.
 
     :param value: Check SKU availability result list.
-    :type value: list of :class:`CheckSkuAvailabilityResult
-     <azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult>`
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult]
     """
 
     _attribute_map = {
