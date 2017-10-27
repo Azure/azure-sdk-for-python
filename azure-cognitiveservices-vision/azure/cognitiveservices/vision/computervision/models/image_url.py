@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .computer_vision_api import ComputerVisionAPI
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputerVisionAPI']
 
-__version__ = VERSION
+class ImageUrl(Model):
+    """ImageUrl.
 
+    :param url:
+    :type url: str
+    """
+
+    _validation = {
+        'url': {'required': True},
+    }
+
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(self, url):
+        self.url = url

@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .computer_vision_api import ComputerVisionAPI
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputerVisionAPI']
 
-__version__ = VERSION
+class RecognitionResult(Model):
+    """RecognitionResult.
 
+    :param lines:
+    :type lines:
+     list[~azure.cognitiveservices.vision.computervision.models.Line]
+    """
+
+    _attribute_map = {
+        'lines': {'key': 'lines', 'type': '[Line]'},
+    }
+
+    def __init__(self, lines=None):
+        self.lines = lines

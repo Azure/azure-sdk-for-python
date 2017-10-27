@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .computer_vision_api import ComputerVisionAPI
-from .version import VERSION
-
-__all__ = ['ComputerVisionAPI']
-
-__version__ = VERSION
+VERSION = "1.0"
 
