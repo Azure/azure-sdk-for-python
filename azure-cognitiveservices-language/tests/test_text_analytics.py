@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsAPI
-#from msrest.authentication import CognitiveServicesAuthentication
+from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
 
@@ -42,10 +42,10 @@ class TextAnalyticsTest(ReplayableTest):
             return fake_settings, None
 
     def test_detect_language(self):
-        # credentials = CognitiveServicesAuthentication(
-        #     self.settings.CS_SUBSCRIPTION_KEY
-        # )
-        text_analytics = TextAnalyticsAPI(self.settings.CS_SUBSCRIPTION_KEY, "westcentralus", credentials=False)
+        credentials = CognitiveServicesCredentials(
+            self.settings.CS_SUBSCRIPTION_KEY
+        )
+        text_analytics = TextAnalyticsAPI("westcentralus", credentials=credentials)
         response = text_analytics.detect_language(
             documents=[{
                 'id': 1,
