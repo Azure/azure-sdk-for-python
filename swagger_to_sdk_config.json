@@ -114,6 +114,17 @@
       "generated_relative_base_directory": "azure/cognitiveservices/search/websearch",
       "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch"
     },
+    "cognitiveservices.vision.computervision": {
+      "markdown": "specification/cognitiveservices/data-plane/ComputerVision/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.computervision",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/computervision",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/computervision",
+      "build_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/computervision"
+    },
     "cognitiveservices.vision.face": {
       "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
       "autorest_options": {
