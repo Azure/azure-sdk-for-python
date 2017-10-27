@@ -27,58 +27,51 @@ class ApplicationGateway(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: SKU of the application gateway resource.
-    :type sku: :class:`ApplicationGatewaySku
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySku>`
+    :type sku: ~azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySku
     :ivar operational_state: Operational state of the application gateway
      resource. Possible values are: 'Stopped', 'Started', 'Running', and
      'Stopping'. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
     :vartype operational_state: str or
-     :class:`ApplicationGatewayOperationalState
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayOperationalState>`
+     ~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayOperationalState
     :param gateway_ip_configurations: Gets or sets subnets of application
      gateway resource
-    :type gateway_ip_configurations: list of
-     :class:`ApplicationGatewayIPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayIPConfiguration>`
+    :type gateway_ip_configurations:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayIPConfiguration]
     :param ssl_certificates: SSL certificates of the application gateway
      resource.
-    :type ssl_certificates: list of :class:`ApplicationGatewaySslCertificate
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySslCertificate>`
+    :type ssl_certificates:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySslCertificate]
     :param frontend_ip_configurations: Frontend IP addresses of the
      application gateway resource.
-    :type frontend_ip_configurations: list of
-     :class:`ApplicationGatewayFrontendIPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayFrontendIPConfiguration>`
+    :type frontend_ip_configurations:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayFrontendIPConfiguration]
     :param frontend_ports: Frontend ports of the application gateway resource.
-    :type frontend_ports: list of :class:`ApplicationGatewayFrontendPort
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayFrontendPort>`
+    :type frontend_ports:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayFrontendPort]
     :param probes: Probes of the application gateway resource.
-    :type probes: list of :class:`ApplicationGatewayProbe
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayProbe>`
+    :type probes:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayProbe]
     :param backend_address_pools: Backend address pool of the application
      gateway resource.
-    :type backend_address_pools: list of
-     :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendAddressPool>`
+    :type backend_address_pools:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendAddressPool]
     :param backend_http_settings_collection: Backend http settings of the
      application gateway resource.
-    :type backend_http_settings_collection: list of
-     :class:`ApplicationGatewayBackendHttpSettings
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendHttpSettings>`
+    :type backend_http_settings_collection:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayBackendHttpSettings]
     :param http_listeners: Http listeners of the application gateway resource.
-    :type http_listeners: list of :class:`ApplicationGatewayHttpListener
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayHttpListener>`
+    :type http_listeners:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayHttpListener]
     :param url_path_maps: URL path map of the application gateway resource.
-    :type url_path_maps: list of :class:`ApplicationGatewayUrlPathMap
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayUrlPathMap>`
+    :type url_path_maps:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayUrlPathMap]
     :param request_routing_rules: Request routing rules of the application
      gateway resource.
-    :type request_routing_rules: list of
-     :class:`ApplicationGatewayRequestRoutingRule
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayRequestRoutingRule>`
+    :type request_routing_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayRequestRoutingRule]
     :param resource_guid: Resource GUID property of the application gateway
      resource.
     :type resource_guid: str

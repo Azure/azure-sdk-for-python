@@ -18,9 +18,9 @@ class SkuInfo(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param sku: Name and tier of the SKU.
-    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
+    :type sku: ~azure.mgmt.web.models.SkuDescription
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: :class:`SkuCapacity <azure.mgmt.web.models.SkuCapacity>`
+    :type capacity: ~azure.mgmt.web.models.SkuCapacity
     """
 
     _attribute_map = {

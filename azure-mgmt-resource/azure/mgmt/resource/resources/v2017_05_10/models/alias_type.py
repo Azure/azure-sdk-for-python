@@ -18,8 +18,8 @@ class AliasType(Model):
     :param name: The alias name.
     :type name: str
     :param paths: The paths for an alias.
-    :type paths: list of :class:`AliasPathType
-     <azure.mgmt.resource.resources.v2017_05_10.models.AliasPathType>`
+    :type paths:
+     list[~azure.mgmt.resource.resources.v2017_05_10.models.AliasPathType]
     """
 
     _attribute_map = {

@@ -27,12 +27,10 @@ class StampCapacity(Model):
     :type unit: str
     :param compute_mode: Shared/dedicated workers. Possible values include:
      'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
-     'Default', 'Small', 'Medium', 'Large'
-    :type worker_size: str or :class:`WorkerSizeOptions
-     <azure.mgmt.web.models.WorkerSizeOptions>`
+     'Default', 'Small', 'Medium', 'Large', 'D1', 'D2', 'D3'
+    :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
      1 - Medium

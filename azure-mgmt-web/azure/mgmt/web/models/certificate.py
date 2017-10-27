@@ -29,13 +29,13 @@ class Certificate(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar friendly_name: Friendly name of the certificate.
     :vartype friendly_name: str
     :ivar subject_name: Subject name of the certificate.
     :vartype subject_name: str
     :param host_names: Host names the certificate applies to.
-    :type host_names: list of str
+    :type host_names: list[str]
     :param pfx_blob: Pfx blob.
     :type pfx_blob: bytearray
     :ivar site_name: App name.
@@ -55,13 +55,13 @@ class Certificate(Resource):
     :ivar valid: Is the certificate valid?.
     :vartype valid: bool
     :ivar cer_blob: Raw bytes of .cer file
-    :vartype cer_blob: str
+    :vartype cer_blob: bytearray
     :ivar public_key_hash: Public key hash.
     :vartype public_key_hash: str
     :ivar hosting_environment_profile: Specification for the App Service
      Environment to use for the certificate.
-    :vartype hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+    :vartype hosting_environment_profile:
+     ~azure.mgmt.web.models.HostingEnvironmentProfile
     :param key_vault_id: Key Vault Csm resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -72,12 +72,10 @@ class Certificate(Resource):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
-    :vartype key_vault_secret_status: str or :class:`KeyVaultSecretStatus
-     <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :vartype key_vault_secret_status: str or
+     ~azure.mgmt.web.models.KeyVaultSecretStatus
     :ivar geo_region: Region of the certificate.
     :vartype geo_region: str
-    :ivar certificate_name: Resource name of the certificate.
-    :vartype certificate_name: str
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -103,7 +101,6 @@ class Certificate(Resource):
         'hosting_environment_profile': {'readonly': True},
         'key_vault_secret_status': {'readonly': True},
         'geo_region': {'readonly': True},
-        'certificate_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -125,14 +122,13 @@ class Certificate(Resource):
         'password': {'key': 'properties.password', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'valid': {'key': 'properties.valid', 'type': 'bool'},
-        'cer_blob': {'key': 'properties.cerBlob', 'type': 'str'},
+        'cer_blob': {'key': 'properties.cerBlob', 'type': 'bytearray'},
         'public_key_hash': {'key': 'properties.publicKeyHash', 'type': 'str'},
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
         'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
-        'certificate_name': {'key': 'properties.name', 'type': 'str'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
@@ -157,5 +153,4 @@ class Certificate(Resource):
         self.key_vault_secret_name = key_vault_secret_name
         self.key_vault_secret_status = None
         self.geo_region = None
-        self.certificate_name = None
         self.server_farm_id = server_farm_id

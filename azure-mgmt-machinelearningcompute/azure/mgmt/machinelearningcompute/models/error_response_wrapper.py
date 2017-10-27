@@ -17,8 +17,7 @@ class ErrorResponseWrapper(Model):
     """Wrapper for error response to follow ARM guidelines.
 
     :param error: The error response.
-    :type error: :class:`ErrorResponse
-     <azure.mgmt.machinelearningcompute.models.ErrorResponse>`
+    :type error: ~azure.mgmt.machinelearningcompute.models.ErrorResponse
     """
 
     _attribute_map = {

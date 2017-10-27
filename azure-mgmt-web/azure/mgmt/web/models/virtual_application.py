@@ -23,8 +23,7 @@ class VirtualApplication(Model):
      otherwise, <code>false</code>.
     :type preload_enabled: bool
     :param virtual_directories: Virtual directories for virtual application.
-    :type virtual_directories: list of :class:`VirtualDirectory
-     <azure.mgmt.web.models.VirtualDirectory>`
+    :type virtual_directories: list[~azure.mgmt.web.models.VirtualDirectory]
     """
 
     _attribute_map = {

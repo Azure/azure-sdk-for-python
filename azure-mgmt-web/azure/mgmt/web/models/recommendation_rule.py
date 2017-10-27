@@ -34,13 +34,12 @@ class RecommendationRule(Model):
     :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or :class:`NotificationLevel
-     <azure.mgmt.web.models.NotificationLevel>`
+    :type level: str or ~azure.mgmt.web.models.NotificationLevel
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
+    :type channels: str or ~azure.mgmt.web.models.Channels
     :param tags: An array of category tags that the rule contains.
-    :type tags: list of str
+    :type tags: list[str]
     :param is_dynamic: True if this is associated with a dynamically added
      rule
     :type is_dynamic: bool

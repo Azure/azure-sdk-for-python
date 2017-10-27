@@ -27,15 +27,13 @@ class GenericResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku
-     <azure.mgmt.resource.managedapplications.models.Sku>`
+    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.resource.managedapplications.models.Identity>`
+    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     """
 
     _validation = {

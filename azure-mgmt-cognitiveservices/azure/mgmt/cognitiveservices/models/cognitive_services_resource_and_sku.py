@@ -18,7 +18,7 @@ class CognitiveServicesResourceAndSku(Model):
     :param resource_type: Resource Namespace and Type
     :type resource_type: str
     :param sku: The SKU of Cognitive Services account.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     """
 
     _attribute_map = {

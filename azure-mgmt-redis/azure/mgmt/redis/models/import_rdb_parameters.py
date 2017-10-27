@@ -18,7 +18,7 @@ class ImportRDBParameters(Model):
     :param format: File format.
     :type format: str
     :param files: files to import.
-    :type files: list of str
+    :type files: list[str]
     """
 
     _validation = {

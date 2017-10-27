@@ -37,7 +37,7 @@ class MSDeploy(ProxyOnlyResource):
     :type set_parameters_xml_file_uri: str
     :param set_parameters: MSDeploy Parameters. Must not be set if
      SetParametersXmlFileUri is used.
-    :type set_parameters: dict
+    :type set_parameters: dict[str, str]
     :param skip_app_data: Controls whether the MSDeploy operation skips the
      App_Data directory.
      If set to <code>true</code>, the existing App_Data directory on the

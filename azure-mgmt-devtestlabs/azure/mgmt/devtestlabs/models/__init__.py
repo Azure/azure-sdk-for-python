@@ -97,6 +97,8 @@ from .lab_virtual_machine_fragment import LabVirtualMachineFragment
 from .notification_channel import NotificationChannel
 from .notification_channel_fragment import NotificationChannelFragment
 from .notify_parameters import NotifyParameters
+from .operation_error import OperationError
+from .operation_result import OperationResult
 from .policy import Policy
 from .policy_fragment import PolicyFragment
 from .port import Port
@@ -156,6 +158,7 @@ from .dev_test_labs_client_enums import (
     TargetCostStatus,
     ReportingCycleType,
     CostType,
+    HttpStatusCode,
     PolicyStatus,
     PolicyFactName,
     PolicyEvaluatorType,
@@ -251,6 +254,8 @@ __all__ = [
     'NotificationChannel',
     'NotificationChannelFragment',
     'NotifyParameters',
+    'OperationError',
+    'OperationResult',
     'Policy',
     'PolicyFragment',
     'Port',
@@ -309,6 +314,7 @@ __all__ = [
     'TargetCostStatus',
     'ReportingCycleType',
     'CostType',
+    'HttpStatusCode',
     'PolicyStatus',
     'PolicyFactName',
     'PolicyEvaluatorType',

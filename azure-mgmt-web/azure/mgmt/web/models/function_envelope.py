@@ -43,7 +43,7 @@ class FunctionEnvelope(ProxyOnlyResource):
     :param config: Config information.
     :type config: object
     :param files: File list.
-    :type files: dict
+    :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
     :type test_data: str
     """

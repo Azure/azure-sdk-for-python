@@ -19,8 +19,7 @@ class VirtualMachineHealthStatus(Model):
     sending a request.
 
     :ivar status: The health status information for the VM.
-    :vartype status: :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus>`
+    :vartype status: ~azure.mgmt.compute.v2017_03_30.models.InstanceViewStatus
     """
 
     _validation = {

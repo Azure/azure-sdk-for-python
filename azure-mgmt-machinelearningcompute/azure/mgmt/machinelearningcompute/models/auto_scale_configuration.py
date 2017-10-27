@@ -18,8 +18,7 @@ class AutoScaleConfiguration(Model):
     :param status: If auto-scale is enabled for all services. Each service can
      turn it off individually. Possible values include: 'Enabled', 'Disabled'.
      Default value: "Disabled" .
-    :type status: str or :class:`Status
-     <azure.mgmt.machinelearningcompute.models.Status>`
+    :type status: str or ~azure.mgmt.machinelearningcompute.models.Status
     :param min_replicas: The minimum number of replicas for each service.
      Default value: 1 .
     :type min_replicas: int

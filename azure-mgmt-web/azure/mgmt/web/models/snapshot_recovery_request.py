@@ -31,8 +31,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     :type snapshot_time: str
     :param recovery_target: Specifies the web app that snapshot contents will
      be written to.
-    :type recovery_target: :class:`SnapshotRecoveryTarget
-     <azure.mgmt.web.models.SnapshotRecoveryTarget>`
+    :type recovery_target: ~azure.mgmt.web.models.SnapshotRecoveryTarget
     :param overwrite: If <code>true</code> the recovery operation can
      overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool

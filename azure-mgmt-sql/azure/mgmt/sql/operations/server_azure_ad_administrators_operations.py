@@ -51,20 +51,15 @@ class ServerAzureADAdministratorsOperations(object):
         :type server_name: str
         :param properties: The required parameters for creating or updating an
          Active Directory Administrator.
-        :type properties: :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
+        :type properties: ~azure.mgmt.sql.models.ServerAzureADAdministrator
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ServerAzureADAdministrator or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -155,15 +150,11 @@ class ServerAzureADAdministratorsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         ServerAzureADAdministrator or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -252,13 +243,9 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServerAzureADAdministrator or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerAzureADAdministrator or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -320,11 +307,9 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ServerAzureADAdministrator
-         <azure.mgmt.sql.models.ServerAzureADAdministrator>`
-        :rtype: :class:`ServerAzureADAdministratorPaged
-         <azure.mgmt.sql.models.ServerAzureADAdministratorPaged>`
+        :return: An iterator like instance of ServerAzureADAdministrator
+        :rtype:
+         ~azure.mgmt.sql.models.ServerAzureADAdministratorPaged[~azure.mgmt.sql.models.ServerAzureADAdministrator]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

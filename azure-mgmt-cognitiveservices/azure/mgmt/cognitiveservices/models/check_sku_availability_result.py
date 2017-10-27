@@ -20,12 +20,12 @@ class CheckSkuAvailabilityResult(Model):
      'Bing.SpellCheck', 'ComputerVision', 'ContentModerator', 'CustomSpeech',
      'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
      'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
-    :type kind: str or :class:`Kind
-     <azure.mgmt.cognitiveservices.models.Kind>`
+    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
     :param type: The Type of the resource.
     :type type: str
-    :param sku_name: The SKU of Cognitive Services account.
-    :type sku_name: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :param sku_name: The SKU of Cognitive Services account. Possible values
+     include: 'F0', 'P0', 'P1', 'P2', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
+    :type sku_name: str or ~azure.mgmt.cognitiveservices.models.SkuName
     :param sku_available: Indicates the given SKU is available or not.
     :type sku_available: bool
     :param reason: Reason why the SKU is not available.
@@ -37,7 +37,7 @@ class CheckSkuAvailabilityResult(Model):
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'sku_name': {'key': 'skuName', 'type': 'Sku'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
         'sku_available': {'key': 'skuAvailable', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},

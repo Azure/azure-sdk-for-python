@@ -7,7 +7,9 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.containerservice.models
+import azure.mgmt.containerservice
+from azure.mgmt.containerservice.models import ContainerServiceVMSizeTypes
+
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -32,19 +34,20 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
             self.group_name,
             container_name,
             {
-                'location': self.region,
+                'location': 'westus2',
                 "orchestrator_profile": {
                     "orchestrator_type": "DCOS"
                 },
                 "master_profile": {
                     "count": 1,
-                    "dns_prefix": "MasterPrefixTest"
+                    "dns_prefix": "MasterPrefixTest",
+                    "vm_size": ContainerServiceVMSizeTypes.standard_d2_v2
                 },
                 "agent_pool_profiles": [{
-                    "name": "AgentPool1",
+                    "name": "agentpool0",
                     "count": 3,
-                    "vm_size": "Standard_A1",
-                        "dns_prefix": "AgentPrefixTest"
+                    "vm_size": "Standard_A2_v2",
+                    # "dns_prefix": "AgentPrefixTest" - Optional in latest version
                 }],
                 "linux_profile": {
                     "admin_username": "acslinuxadmin",
@@ -70,7 +73,7 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
         self.assertEqual(len(containers), 1)
 
         containers = list(self.cs_client.container_services.list())
-        self.assertEqual(len(containers), 1)
+        self.assertGreaterEqual(len(containers), 1)
 
         async_delete = self.cs_client.container_services.delete(
             self.group_name,

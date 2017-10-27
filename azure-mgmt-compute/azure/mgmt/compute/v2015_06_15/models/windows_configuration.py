@@ -26,12 +26,10 @@ class WindowsConfiguration(Model):
     :type time_zone: str
     :param additional_unattend_content: Additional base-64 encoded XML
      formatted information that can be included in the Unattend.xml file.
-    :type additional_unattend_content: list of
-     :class:`AdditionalUnattendContent
-     <azure.mgmt.compute.v2015_06_15.models.AdditionalUnattendContent>`
+    :type additional_unattend_content:
+     list[~azure.mgmt.compute.v2015_06_15.models.AdditionalUnattendContent]
     :param win_rm: The Windows Remote Management configuration of the VM
-    :type win_rm: :class:`WinRMConfiguration
-     <azure.mgmt.compute.v2015_06_15.models.WinRMConfiguration>`
+    :type win_rm: ~azure.mgmt.compute.v2015_06_15.models.WinRMConfiguration
     """
 
     _attribute_map = {

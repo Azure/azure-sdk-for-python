@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,7 +22,7 @@ class EdgeNodesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2016-10-02. Constant value: "2016-10-02".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,20 +30,23 @@ class EdgeNodesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-10-02"
+        self.api_version = "2017-04-02"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the edge nodes of a CDN service.
+        """Edgenodes are the global Point of Presence (POP) locations used to
+        deliver CDN content to end users.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EdgeNodePaged <azure.mgmt.cdn.models.EdgeNodePaged>`
+        :return: An iterator like instance of EdgeNode
+        :rtype:
+         ~azure.mgmt.cdn.models.EdgeNodePaged[~azure.mgmt.cdn.models.EdgeNode]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """

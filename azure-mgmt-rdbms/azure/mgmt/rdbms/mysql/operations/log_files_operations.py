@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,8 +50,9 @@ class LogFilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LogFilePaged
-         <azure.mgmt.rdbms.mysql.models.LogFilePaged>`
+        :return: An iterator like instance of LogFile
+        :rtype:
+         ~azure.mgmt.rdbms.mysql.models.LogFilePaged[~azure.mgmt.rdbms.mysql.models.LogFile]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

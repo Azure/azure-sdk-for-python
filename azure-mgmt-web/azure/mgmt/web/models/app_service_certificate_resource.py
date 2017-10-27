@@ -30,7 +30,7 @@ class AppServiceCertificateResource(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -41,8 +41,8 @@ class AppServiceCertificateResource(Resource):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
-    :vartype provisioning_state: str or :class:`KeyVaultSecretStatus
-     <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.KeyVaultSecretStatus
     """
 
     _validation = {

@@ -60,7 +60,7 @@ class RecoveryServicesClientConfiguration(AzureConfiguration):
 
 
 class RecoveryServicesClient(object):
-    """Open API 2.0 Specs for Azure RecoveryServices service
+    """Recovery Services Client
 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesClientConfiguration

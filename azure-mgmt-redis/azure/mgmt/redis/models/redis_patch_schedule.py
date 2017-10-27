@@ -27,8 +27,7 @@ class RedisPatchSchedule(Model):
     :ivar location: Resource location.
     :vartype location: str
     :param schedule_entries: List of patch schedules for a Redis cache.
-    :type schedule_entries: list of :class:`ScheduleEntry
-     <azure.mgmt.redis.models.ScheduleEntry>`
+    :type schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
     """
 
     _validation = {

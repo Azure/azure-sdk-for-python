@@ -18,7 +18,7 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
     :param instance_ids: The virtual machine scale set instance ids. Omitting
      the virtual machine scale set instance ids will result in the operation
      being performed on all virtual machines in the virtual machine scale set.
-    :type instance_ids: list of str
+    :type instance_ids: list[str]
     """
 
     _attribute_map = {

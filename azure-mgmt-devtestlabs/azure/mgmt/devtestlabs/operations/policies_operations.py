@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -61,8 +61,9 @@ class PoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PolicyPaged
-         <azure.mgmt.devtestlabs.models.PolicyPaged>`
+        :return: An iterator like instance of Policy
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.PolicyPaged[~azure.mgmt.devtestlabs.models.Policy]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -146,9 +147,9 @@ class PoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Policy <azure.mgmt.devtestlabs.models.Policy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Policy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Policy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -211,15 +212,15 @@ class PoliciesOperations(object):
         :param name: The name of the policy.
         :type name: str
         :param policy: A Policy.
-        :type policy: :class:`Policy <azure.mgmt.devtestlabs.models.Policy>`
+        :type policy: ~azure.mgmt.devtestlabs.models.Policy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Policy <azure.mgmt.devtestlabs.models.Policy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Policy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Policy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -290,9 +291,8 @@ class PoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -346,16 +346,15 @@ class PoliciesOperations(object):
         :param name: The name of the policy.
         :type name: str
         :param policy: A Policy.
-        :type policy: :class:`PolicyFragment
-         <azure.mgmt.devtestlabs.models.PolicyFragment>`
+        :type policy: ~azure.mgmt.devtestlabs.models.PolicyFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Policy <azure.mgmt.devtestlabs.models.Policy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Policy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Policy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

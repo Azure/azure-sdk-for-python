@@ -30,14 +30,13 @@ class NetworkFeatures(ProxyOnlyResource):
     :ivar virtual_network_name: The Virtual Network name.
     :vartype virtual_network_name: str
     :ivar virtual_network_connection: The Virtual Network summary view.
-    :vartype virtual_network_connection: :class:`VnetInfo
-     <azure.mgmt.web.models.VnetInfo>`
+    :vartype virtual_network_connection: ~azure.mgmt.web.models.VnetInfo
     :ivar hybrid_connections: The Hybrid Connections summary view.
-    :vartype hybrid_connections: list of :class:`RelayServiceConnectionEntity
-     <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+    :vartype hybrid_connections:
+     list[~azure.mgmt.web.models.RelayServiceConnectionEntity]
     :ivar hybrid_connections_v2: The Hybrid Connection V2 (Service Bus) view.
-    :vartype hybrid_connections_v2: list of :class:`HybridConnection
-     <azure.mgmt.web.models.HybridConnection>`
+    :vartype hybrid_connections_v2:
+     list[~azure.mgmt.web.models.HybridConnection]
     """
 
     _validation = {

@@ -27,19 +27,18 @@ class LabCost(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param target_cost: The target cost properties
-    :type target_cost: :class:`TargetCostProperties
-     <azure.mgmt.devtestlabs.models.TargetCostProperties>`
+    :type target_cost: ~azure.mgmt.devtestlabs.models.TargetCostProperties
     :ivar lab_cost_summary: The lab cost summary component of the cost data.
-    :vartype lab_cost_summary: :class:`LabCostSummaryProperties
-     <azure.mgmt.devtestlabs.models.LabCostSummaryProperties>`
+    :vartype lab_cost_summary:
+     ~azure.mgmt.devtestlabs.models.LabCostSummaryProperties
     :ivar lab_cost_details: The lab cost details component of the cost data.
-    :vartype lab_cost_details: list of :class:`LabCostDetailsProperties
-     <azure.mgmt.devtestlabs.models.LabCostDetailsProperties>`
+    :vartype lab_cost_details:
+     list[~azure.mgmt.devtestlabs.models.LabCostDetailsProperties]
     :ivar resource_costs: The resource cost component of the cost data.
-    :vartype resource_costs: list of :class:`LabResourceCostProperties
-     <azure.mgmt.devtestlabs.models.LabResourceCostProperties>`
+    :vartype resource_costs:
+     list[~azure.mgmt.devtestlabs.models.LabResourceCostProperties]
     :param currency_code: The currency code of the cost.
     :type currency_code: str
     :param start_date_time: The start time of the cost data.

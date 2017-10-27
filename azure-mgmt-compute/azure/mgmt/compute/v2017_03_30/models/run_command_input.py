@@ -19,10 +19,10 @@ class RunCommandInput(Model):
     :type command_id: str
     :param script: Optional. The script to be executed.  When this value is
      given, the given script will override the default script of the command.
-    :type script: list of str
+    :type script: list[str]
     :param parameters: The run command parameters.
-    :type parameters: list of :class:`RunCommandInputParameter
-     <azure.mgmt.compute.v2017_03_30.models.RunCommandInputParameter>`
+    :type parameters:
+     list[~azure.mgmt.compute.v2017_03_30.models.RunCommandInputParameter]
     """
 
     _validation = {

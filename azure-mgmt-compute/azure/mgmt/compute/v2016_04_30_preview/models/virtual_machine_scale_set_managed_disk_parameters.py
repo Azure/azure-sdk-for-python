@@ -17,8 +17,8 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
 
     :param storage_account_type: The Storage Account type. Possible values
      include: 'Standard_LRS', 'Premium_LRS'
-    :type storage_account_type: str or :class:`StorageAccountTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.StorageAccountTypes>`
+    :type storage_account_type: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.StorageAccountTypes
     """
 
     _attribute_map = {

@@ -54,11 +54,9 @@ class SyncAgentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SyncAgent <azure.mgmt.sql.models.SyncAgent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SyncAgent <azure.mgmt.sql.models.SyncAgent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SyncAgent or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.SyncAgent or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -124,15 +122,11 @@ class SyncAgentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SyncAgent
-         <azure.mgmt.sql.models.SyncAgent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns SyncAgent or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.SyncAgent]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.SyncAgent(sync_database_id=sync_database_id)
@@ -226,14 +220,10 @@ class SyncAgentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -312,9 +302,9 @@ class SyncAgentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncAgent
-         <azure.mgmt.sql.models.SyncAgent>`
-        :rtype: :class:`SyncAgentPaged <azure.mgmt.sql.models.SyncAgentPaged>`
+        :return: An iterator like instance of SyncAgent
+        :rtype:
+         ~azure.mgmt.sql.models.SyncAgentPaged[~azure.mgmt.sql.models.SyncAgent]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -387,13 +377,9 @@ class SyncAgentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SyncAgentKeyProperties
-         <azure.mgmt.sql.models.SyncAgentKeyProperties>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SyncAgentKeyProperties
-         <azure.mgmt.sql.models.SyncAgentKeyProperties>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SyncAgentKeyProperties or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.SyncAgentKeyProperties or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -458,10 +444,9 @@ class SyncAgentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SyncAgentLinkedDatabase
-         <azure.mgmt.sql.models.SyncAgentLinkedDatabase>`
-        :rtype: :class:`SyncAgentLinkedDatabasePaged
-         <azure.mgmt.sql.models.SyncAgentLinkedDatabasePaged>`
+        :return: An iterator like instance of SyncAgentLinkedDatabase
+        :rtype:
+         ~azure.mgmt.sql.models.SyncAgentLinkedDatabasePaged[~azure.mgmt.sql.models.SyncAgentLinkedDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

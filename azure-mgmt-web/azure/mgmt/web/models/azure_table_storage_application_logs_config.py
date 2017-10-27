@@ -17,7 +17,7 @@ class AzureTableStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or :class:`LogLevel <azure.mgmt.web.models.LogLevel>`
+    :type level: str or ~azure.mgmt.web.models.LogLevel
     :param sas_url: SAS URL to an Azure table with add/query/delete
      permissions.
     :type sas_url: str

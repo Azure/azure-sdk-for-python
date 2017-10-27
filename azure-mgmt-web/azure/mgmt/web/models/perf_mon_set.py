@@ -24,8 +24,7 @@ class PerfMonSet(Model):
     :param time_grain: Presented time grain.
     :type time_grain: str
     :param values: Collection of workers that are active during this time.
-    :type values: list of :class:`PerfMonSample
-     <azure.mgmt.web.models.PerfMonSample>`
+    :type values: list[~azure.mgmt.web.models.PerfMonSample]
     """
 
     _attribute_map = {

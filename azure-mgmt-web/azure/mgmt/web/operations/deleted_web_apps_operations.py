@@ -46,10 +46,9 @@ class DeletedWebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`DeletedSite
-         <azure.mgmt.web.models.DeletedSite>`
-        :rtype: :class:`DeletedSitePaged
-         <azure.mgmt.web.models.DeletedSitePaged>`
+        :return: An iterator like instance of DeletedSite
+        :rtype:
+         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

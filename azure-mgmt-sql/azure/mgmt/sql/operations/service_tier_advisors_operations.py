@@ -54,13 +54,9 @@ class ServiceTierAdvisorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceTierAdvisor
-         <azure.mgmt.sql.models.ServiceTierAdvisor>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceTierAdvisor
-         <azure.mgmt.sql.models.ServiceTierAdvisor>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceTierAdvisor or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServiceTierAdvisor or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -125,10 +121,9 @@ class ServiceTierAdvisorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ServiceTierAdvisor
-         <azure.mgmt.sql.models.ServiceTierAdvisor>`
-        :rtype: :class:`ServiceTierAdvisorPaged
-         <azure.mgmt.sql.models.ServiceTierAdvisorPaged>`
+        :return: An iterator like instance of ServiceTierAdvisor
+        :rtype:
+         ~azure.mgmt.sql.models.ServiceTierAdvisorPaged[~azure.mgmt.sql.models.ServiceTierAdvisor]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

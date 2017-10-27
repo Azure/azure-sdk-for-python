@@ -16,7 +16,7 @@ class WebAppCollection(Model):
     """Collection of App Service apps.
 
     :param value: Collection of resources.
-    :type value: list of :class:`Site <azure.mgmt.web.models.Site>`
+    :type value: list[~azure.mgmt.web.models.Site]
     :param next_link: Link to next page of resources.
     :type next_link: str
     """

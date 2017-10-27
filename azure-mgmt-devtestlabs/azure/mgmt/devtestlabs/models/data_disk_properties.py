@@ -17,15 +17,15 @@ class DataDiskProperties(Model):
 
     :param attach_new_data_disk_options: Specifies options to attach a new
      disk to the virtual machine.
-    :type attach_new_data_disk_options: :class:`AttachNewDataDiskOptions
-     <azure.mgmt.devtestlabs.models.AttachNewDataDiskOptions>`
+    :type attach_new_data_disk_options:
+     ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptions
     :param existing_lab_disk_id: Specifies the existing lab disk id to attach
      to virtual machine.
     :type existing_lab_disk_id: str
     :param host_caching: Caching option for a data disk (i.e. None, ReadOnly,
      ReadWrite). Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type host_caching: str or :class:`HostCachingOptions
-     <azure.mgmt.devtestlabs.models.HostCachingOptions>`
+    :type host_caching: str or
+     ~azure.mgmt.devtestlabs.models.HostCachingOptions
     """
 
     _attribute_map = {

@@ -22,7 +22,7 @@ class VirtualMachineImageResource(SubResource):
     :param location: The supported Azure location of the resource.
     :type location: str
     :param tags: The tags attached to the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

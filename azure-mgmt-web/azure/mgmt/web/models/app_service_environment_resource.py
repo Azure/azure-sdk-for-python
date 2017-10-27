@@ -29,7 +29,7 @@ class AppServiceEnvironmentResource(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param app_service_environment_resource_name: Name of the App Service
      Environment.
     :type app_service_environment_resource_name: str
@@ -39,12 +39,11 @@ class AppServiceEnvironmentResource(Resource):
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
-    :vartype status: str or :class:`HostingEnvironmentStatus
-     <azure.mgmt.web.models.HostingEnvironmentStatus>`
+    :vartype status: str or ~azure.mgmt.web.models.HostingEnvironmentStatus
     :param vnet_name: Name of the Virtual Network for the App Service
      Environment.
     :type vnet_name: str
@@ -53,22 +52,19 @@ class AppServiceEnvironmentResource(Resource):
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
     :param virtual_network: Description of the Virtual Network.
-    :type virtual_network: :class:`VirtualNetworkProfile
-     <azure.mgmt.web.models.VirtualNetworkProfile>`
+    :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
-     :class:`InternalLoadBalancingMode
-     <azure.mgmt.web.models.InternalLoadBalancingMode>`
+     ~azure.mgmt.web.models.InternalLoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
     :param worker_pools: Description of worker pools with worker size IDs, VM
      sizes, and number of workers in each pool.
-    :type worker_pools: list of :class:`WorkerPool
-     <azure.mgmt.web.models.WorkerPool>`
+    :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
@@ -101,17 +97,15 @@ class AppServiceEnvironmentResource(Resource):
     :vartype maximum_number_of_machines: int
     :ivar vip_mappings: Description of IP SSL mapping for the App Service
      Environment.
-    :vartype vip_mappings: list of :class:`VirtualIPMapping
-     <azure.mgmt.web.models.VirtualIPMapping>`
+    :vartype vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
     :ivar environment_capacities: Current total, used, and available worker
      capacities.
-    :vartype environment_capacities: list of :class:`StampCapacity
-     <azure.mgmt.web.models.StampCapacity>`
+    :vartype environment_capacities:
+     list[~azure.mgmt.web.models.StampCapacity]
     :param network_access_control_list: Access control list for controlling
      traffic to the App Service Environment.
-    :type network_access_control_list: list of
-     :class:`NetworkAccessControlEntry
-     <azure.mgmt.web.models.NetworkAccessControlEntry>`
+    :type network_access_control_list:
+     list[~azure.mgmt.web.models.NetworkAccessControlEntry]
     :ivar environment_is_healthy: True/false indicating whether the App
      Service Environment is healthy.
     :vartype environment_is_healthy: bool
@@ -139,8 +133,10 @@ class AppServiceEnvironmentResource(Resource):
     :type dynamic_cache_enabled: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
-    :type cluster_settings: list of :class:`NameValuePair
-     <azure.mgmt.web.models.NameValuePair>`
+    :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
+     ASE db
+    :type user_whitelisted_ip_ranges: list[str]
     """
 
     _validation = {
@@ -213,9 +209,10 @@ class AppServiceEnvironmentResource(Resource):
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
         'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
+        'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, kind=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
         super(AppServiceEnvironmentResource, self).__init__(kind=kind, location=location, tags=tags)
         self.app_service_environment_resource_name = app_service_environment_resource_name
         self.app_service_environment_resource_location = app_service_environment_resource_location
@@ -252,3 +249,4 @@ class AppServiceEnvironmentResource(Resource):
         self.suspended = suspended
         self.dynamic_cache_enabled = dynamic_cache_enabled
         self.cluster_settings = cluster_settings
+        self.user_whitelisted_ip_ranges = user_whitelisted_ip_ranges

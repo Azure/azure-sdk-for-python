@@ -17,9 +17,9 @@ class RuleMetricDataSource(RuleDataSource):
     RuleMetricDataSource in this case.
 
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Constant filled by server.
     :type odatatype: str
     :param metric_name: the name of the metric that defines what the rule
      monitors.

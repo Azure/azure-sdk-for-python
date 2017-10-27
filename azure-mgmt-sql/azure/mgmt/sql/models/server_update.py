@@ -32,7 +32,7 @@ class ServerUpdate(Model):
      server.
     :vartype fully_qualified_domain_name: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

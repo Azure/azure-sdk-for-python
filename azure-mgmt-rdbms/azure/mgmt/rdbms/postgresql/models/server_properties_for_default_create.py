@@ -18,13 +18,12 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     :param storage_mb: The maximum storage allowed for a server.
     :type storage_mb: long
     :param version: Server version. Possible values include: '9.5', '9.6'
-    :type version: str or :class:`ServerVersion
-     <azure.mgmt.rdbms.postgresql.models.ServerVersion>`
+    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
-    :type ssl_enforcement: str or :class:`SslEnforcementEnum
-     <azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum>`
-    :param create_mode: Polymorphic Discriminator
+    :type ssl_enforcement: str or
+     ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :param create_mode: Constant filled by server.
     :type create_mode: str
     :param administrator_login: The administrator's login name of a server.
      Can only be specified when the server is being created (and is required

@@ -17,8 +17,8 @@ class OSDiskImage(Model):
 
     :param operating_system: The operating system of the osDiskImage. Possible
      values include: 'Windows', 'Linux'
-    :type operating_system: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type operating_system: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     """
 
     _validation = {

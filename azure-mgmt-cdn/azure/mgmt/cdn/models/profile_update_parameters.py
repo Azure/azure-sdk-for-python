@@ -16,7 +16,7 @@ class ProfileUpdateParameters(Model):
     """Properties required to update a profile.
 
     :param tags: Profile tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

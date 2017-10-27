@@ -18,7 +18,7 @@ class ServiceEndpointPropertiesFormat(Model):
     :param service: The type of the endpoint service.
     :type service: str
     :param locations: A list of locations.
-    :type locations: list of str
+    :type locations: list[str]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     """

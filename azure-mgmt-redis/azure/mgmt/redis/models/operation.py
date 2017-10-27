@@ -18,8 +18,7 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that describes the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.redis.models.OperationDisplay>`
+    :type display: ~azure.mgmt.redis.models.OperationDisplay
     """
 
     _attribute_map = {

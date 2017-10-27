@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -36,20 +36,20 @@ class CheckSkuAvailabilityOperations(object):
         self.config = config
 
     def list(
-            self, skus=None, kind=None, type=None, custom_headers=None, raw=False, **operation_config):
+            self, location, skus, kind, type, custom_headers=None, raw=False, **operation_config):
         """Check available SKUs.
 
+        :param location: Resource location.
+        :type location: str
         :param skus: The SKU of the resource.
-        :type skus: list of :class:`Sku
-         <azure.mgmt.cognitiveservices.models.Sku>`
+        :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
         :param kind: The Kind of the resource. Possible values include:
          'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
          'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
          'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
          'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
          'TextTranslation', 'WebLM'
-        :type kind: str or :class:`Kind
-         <azure.mgmt.cognitiveservices.models.Kind>`
+        :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
         :param type: The Type of the resource.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
@@ -57,10 +57,11 @@ class CheckSkuAvailabilityOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CheckSkuAvailabilityResultList
-         <azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CheckSkuAvailabilityResultList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
@@ -69,7 +70,7 @@ class CheckSkuAvailabilityOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'location': self._serialize.url("self.config.location", self.config.location, 'str')
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

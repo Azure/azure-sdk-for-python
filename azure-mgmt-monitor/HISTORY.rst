@@ -3,8 +3,27 @@
 Release History
 ===============
 
-unreleased (2017-XX-XX)
-+++++++++++++++++++++++
+0.4.0 (2017-10-25)
+++++++++++++++++++
+
+**Features**
+
+- Merge into this package the "azure-monitor" package including following operations groups
+
+  - event categories
+  - activity log
+  - tenant activity log
+  - metrics definitions
+  - metrics
+
+- Adding new multi-dimensional metrics API
+
+**Breaking changes**
+
+- Some exceptions have moved from CloudError to ErrorResponseException
+- "service_diagnostic_settings" renamed to "diagnostic_settings"
+
+- Update API version of "metrics". Migrating from "azure-monitor" to "metrics" here needs to be rewritten.
 
 **Bug fixes**
 

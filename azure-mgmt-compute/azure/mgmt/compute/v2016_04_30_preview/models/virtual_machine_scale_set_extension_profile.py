@@ -17,8 +17,8 @@ class VirtualMachineScaleSetExtensionProfile(Model):
 
     :param extensions: The virtual machine scale set child extension
      resources.
-    :type extensions: list of :class:`VirtualMachineScaleSetExtension
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetExtension>`
+    :type extensions:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetExtension]
     """
 
     _attribute_map = {

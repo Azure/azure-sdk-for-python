@@ -3,6 +3,21 @@
 Release History
 ===============
 
+0.8.3 (2017-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Added support for database zone redundant property
+- Added support for server dns aliases
+
+0.8.2 (2017-10-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for state and migration flag properties for SQL Vnet rules
+
 0.8.1 (2017-10-04)
 ++++++++++++++++++
 

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -23,7 +23,7 @@ class CustomDomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2016-10-02. Constant value: "2016-10-02".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class CustomDomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-10-02"
+        self.api_version = "2017-04-02"
 
         self.config = config
 
@@ -53,8 +53,9 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomainPaged
-         <azure.mgmt.cdn.models.CustomDomainPaged>`
+        :return: An iterator like instance of CustomDomain
+        :rtype:
+         ~azure.mgmt.cdn.models.CustomDomainPaged[~azure.mgmt.cdn.models.CustomDomain]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -64,7 +65,7 @@ class CustomDomainsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -130,16 +131,16 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -201,12 +202,11 @@ class CustomDomainsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns CustomDomain
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`CustomDomain
-         <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.CustomDomain]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -215,7 +215,7 @@ class CustomDomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -305,19 +305,18 @@ class CustomDomainsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns CustomDomain
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`CustomDomain
-         <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.CustomDomain]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -401,16 +400,16 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -436,7 +435,7 @@ class CustomDomainsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [202, 200]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -471,16 +470,16 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -506,7 +505,7 @@ class CustomDomainsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [202, 200]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None

@@ -21,18 +21,18 @@ class VirtualMachineScaleSetDataDisk(Model):
     :type lun: int
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes>`
+    :type caching: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes
     :param create_option: The create option. Possible values include:
      'fromImage', 'empty', 'attach'
-    :type create_option: str or :class:`DiskCreateOptionTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOptionTypes>`
+    :type create_option: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOptionTypes
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for existing OS and Data disks.
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: :class:`VirtualMachineScaleSetManagedDiskParameters
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetManagedDiskParameters>`
+    :type managed_disk:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _validation = {

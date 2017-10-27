@@ -22,14 +22,13 @@ class RouteFilterRule(SubResource):
     :type id: str
     :param access: The access type of the rule. Valid values are: 'Allow',
      'Deny'. Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`Access
-     <azure.mgmt.network.v2017_03_01.models.Access>`
+    :type access: str or ~azure.mgmt.network.v2017_03_01.models.Access
     :ivar route_filter_rule_type: The rule type of the rule. Valid value is:
      'Community'. Default value: "Community" .
     :vartype route_filter_rule_type: str
     :param communities: The collection for bgp community values to filter on.
      e.g. ['12076:5010','12076:5020']
-    :type communities: list of str
+    :type communities: list[str]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
@@ -42,7 +41,7 @@ class RouteFilterRule(SubResource):
      is updated.
     :vartype etag: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

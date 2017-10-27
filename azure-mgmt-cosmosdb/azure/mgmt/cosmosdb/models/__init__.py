@@ -22,7 +22,10 @@ from .database_account_list_keys_result import DatabaseAccountListKeysResult
 from .database_account_connection_string import DatabaseAccountConnectionString
 from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
+from .operation_display import OperationDisplay
+from .operation import Operation
 from .database_account_paged import DatabaseAccountPaged
+from .operation_paged import OperationPaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
@@ -44,7 +47,10 @@ __all__ = [
     'DatabaseAccountConnectionString',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
+    'OperationDisplay',
+    'Operation',
     'DatabaseAccountPaged',
+    'OperationPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',

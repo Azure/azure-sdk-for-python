@@ -22,24 +22,21 @@ class ServiceObjectiveCapability(Model):
     :vartype name: str
     :ivar status: The status of the service objective. Possible values
      include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar unit: Unit type used to measure service objective performance level.
      Possible values include: 'DTU'
-    :vartype unit: str or :class:`PerformanceLevelUnit
-     <azure.mgmt.sql.models.PerformanceLevelUnit>`
+    :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
     :ivar value: Performance level value.
     :vartype value: int
     :ivar id: The unique ID of the service objective.
     :vartype id: str
     :ivar supported_max_sizes: The list of supported maximum database sizes
      for this service objective.
-    :vartype supported_max_sizes: list of :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
+    :vartype supported_max_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeCapability]
     :ivar included_max_size: The included (free) max size for this service
      level objective.
-    :vartype included_max_size: :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
+    :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
     """
 
     _validation = {

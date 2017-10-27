@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MetricAvailability(Model):
-    """MetricAvailability.
+    """Retention policy of a resource metric.
 
     :param time_grain:
     :type time_grain: str

@@ -16,7 +16,7 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     :param instance_ids: The virtual machine scale set instance ids.
-    :type instance_ids: list of str
+    :type instance_ids: list[str]
     """
 
     _attribute_map = {

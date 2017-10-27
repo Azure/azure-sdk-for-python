@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ManagementLockObjectPaged(Paged):
     """
-    A paging container for iterating over a list of ManagementLockObject object
+    A paging container for iterating over a list of :class:`ManagementLockObject <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>` object
     """
 
     _attribute_map = {

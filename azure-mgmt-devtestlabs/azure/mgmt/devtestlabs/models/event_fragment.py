@@ -17,8 +17,8 @@ class EventFragment(Model):
 
     :param event_name: The event type for which this notification is enabled
      (i.e. AutoShutdown, Cost). Possible values include: 'AutoShutdown', 'Cost'
-    :type event_name: str or :class:`NotificationChannelEventType
-     <azure.mgmt.devtestlabs.models.NotificationChannelEventType>`
+    :type event_name: str or
+     ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
     """
 
     _attribute_map = {

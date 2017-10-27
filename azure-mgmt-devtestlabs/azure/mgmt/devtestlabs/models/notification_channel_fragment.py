@@ -27,14 +27,13 @@ class NotificationChannelFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param web_hook_url: The webhook URL to send notifications to.
     :type web_hook_url: str
     :param description: Description of notification.
     :type description: str
     :param events: The list of event for which this notification is enabled.
-    :type events: list of :class:`EventFragment
-     <azure.mgmt.devtestlabs.models.EventFragment>`
+    :type events: list[~azure.mgmt.devtestlabs.models.EventFragment]
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

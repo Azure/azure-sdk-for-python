@@ -29,17 +29,16 @@ class Site(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar state: Current state of the app.
     :vartype state: str
     :ivar host_names: Hostnames associated with the app.
-    :vartype host_names: list of str
+    :vartype host_names: list[str]
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
-    :vartype usage_state: str or :class:`UsageState
-     <azure.mgmt.web.models.UsageState>`
+    :vartype usage_state: str or ~azure.mgmt.web.models.UsageState
     :param enabled: <code>true</code> if the app is enabled; otherwise,
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
@@ -47,16 +46,15 @@ class Site(Resource):
     :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to
      be assigned (see HostNames) AND enabled. Otherwise,
      the app is not served on those hostnames.
-    :vartype enabled_host_names: list of str
+    :vartype enabled_host_names: list[str]
     :ivar availability_state: Management information availability state for
      the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
-    :vartype availability_state: str or :class:`SiteAvailabilityState
-     <azure.mgmt.web.models.SiteAvailabilityState>`
+    :vartype availability_state: str or
+     ~azure.mgmt.web.models.SiteAvailabilityState
     :param host_name_ssl_states: Hostname SSL states are used to manage the
      SSL bindings for app's hostnames.
-    :type host_name_ssl_states: list of :class:`HostNameSslState
-     <azure.mgmt.web.models.HostNameSslState>`
+    :type host_name_ssl_states: list[~azure.mgmt.web.models.HostNameSslState]
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -68,10 +66,10 @@ class Site(Resource):
      Read-only.
     :vartype last_modified_time_utc: datetime
     :param site_config: Configuration of the app.
-    :type site_config: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
+    :type site_config: ~azure.mgmt.web.models.SiteConfig
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
-    :vartype traffic_manager_host_names: list of str
+    :vartype traffic_manager_host_names: list[str]
     :param scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site
      when the app is stopped; otherwise, <code>false</code>. The default is
      <code>false</code>. Default value: False .
@@ -81,8 +79,8 @@ class Site(Resource):
     :vartype target_swap_slot: str
     :param hosting_environment_profile: App Service Environment to use for the
      app.
-    :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+    :type hosting_environment_profile:
+     ~azure.mgmt.web.models.HostingEnvironmentProfile
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -98,8 +96,13 @@ class Site(Resource):
      process.
     :type host_names_disabled: bool
     :ivar outbound_ip_addresses: List of IP addresses that the app uses for
-     outbound connections (e.g. database access). Read-only.
+     outbound connections (e.g. database access). Includes VIPs from tenants
+     that site can be hosted with current settings. Read-only.
     :vartype outbound_ip_addresses: str
+    :ivar possible_outbound_ip_addresses: List of IP addresses that the app
+     uses for outbound connections (e.g. database access). Includes VIPs from
+     all tenants. Read-only.
+    :vartype possible_outbound_ip_addresses: str
     :param container_size: Size of the function container.
     :type container_size: int
     :param daily_memory_time_quota: Maximum allowed daily memory-time quota
@@ -113,12 +116,10 @@ class Site(Resource):
     :vartype max_number_of_workers: int
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
-    :type cloning_info: :class:`CloningInfo
-     <azure.mgmt.web.models.CloningInfo>`
+    :type cloning_info: ~azure.mgmt.web.models.CloningInfo
     :param snapshot_info: If specified during app creation, the app is created
      from a previous snapshot.
-    :type snapshot_info: :class:`SnapshotRecoveryRequest
-     <azure.mgmt.web.models.SnapshotRecoveryRequest>`
+    :type snapshot_info: ~azure.mgmt.web.models.SnapshotRecoveryRequest
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -128,16 +129,13 @@ class Site(Resource):
     :ivar default_host_name: Default hostname of the app. Read-only.
     :vartype default_host_name: str
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
-    :vartype slot_swap_status: :class:`SlotSwapStatus
-     <azure.mgmt.web.models.SlotSwapStatus>`
-    :ivar premium_app_deployed: Indicates whether app is deployed as a premium
-     app.
-    :vartype premium_app_deployed: bool
-    :param micro_service: Micro services like apps, logic apps. Default value:
-     "WebSites" .
-    :type micro_service: str
-    :param gateway_site_name: Name of gateway app associated with the app.
-    :type gateway_site_name: str
+    :vartype slot_swap_status: ~azure.mgmt.web.models.SlotSwapStatus
+    :param https_only: HttpsOnly: configures a web site to accept only https
+     requests. Issues redirect for
+     http requests
+    :type https_only: bool
+    :param identity:
+    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -155,13 +153,13 @@ class Site(Resource):
         'traffic_manager_host_names': {'readonly': True},
         'target_swap_slot': {'readonly': True},
         'outbound_ip_addresses': {'readonly': True},
+        'possible_outbound_ip_addresses': {'readonly': True},
         'suspended_till': {'readonly': True},
         'max_number_of_workers': {'readonly': True},
         'resource_group': {'readonly': True},
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
         'slot_swap_status': {'readonly': True},
-        'premium_app_deployed': {'readonly': True},
     }
 
     _attribute_map = {
@@ -191,6 +189,7 @@ class Site(Resource):
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
+        'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
         'container_size': {'key': 'properties.containerSize', 'type': 'int'},
         'daily_memory_time_quota': {'key': 'properties.dailyMemoryTimeQuota', 'type': 'int'},
         'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
@@ -201,12 +200,11 @@ class Site(Resource):
         'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
-        'premium_app_deployed': {'key': 'properties.premiumAppDeployed', 'type': 'bool'},
-        'micro_service': {'key': 'properties.microService', 'type': 'str'},
-        'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str'},
+        'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, micro_service="WebSites", gateway_site_name=None):
+    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, identity=None):
         super(Site, self).__init__(kind=kind, location=location, tags=tags)
         self.state = None
         self.host_names = None
@@ -228,6 +226,7 @@ class Site(Resource):
         self.client_cert_enabled = client_cert_enabled
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = None
+        self.possible_outbound_ip_addresses = None
         self.container_size = container_size
         self.daily_memory_time_quota = daily_memory_time_quota
         self.suspended_till = None
@@ -238,6 +237,5 @@ class Site(Resource):
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
-        self.premium_app_deployed = None
-        self.micro_service = micro_service
-        self.gateway_site_name = gateway_site_name
+        self.https_only = https_only
+        self.identity = identity

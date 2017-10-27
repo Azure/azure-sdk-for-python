@@ -60,11 +60,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FirewallRule <azure.mgmt.sql.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FirewallRule <azure.mgmt.sql.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.FirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.FirewallRule(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
@@ -136,11 +134,8 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -197,11 +192,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FirewallRule <azure.mgmt.sql.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FirewallRule <azure.mgmt.sql.models.FirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.FirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -263,10 +256,9 @@ class FirewallRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`FirewallRule
-         <azure.mgmt.sql.models.FirewallRule>`
-        :rtype: :class:`FirewallRulePaged
-         <azure.mgmt.sql.models.FirewallRulePaged>`
+        :return: An iterator like instance of FirewallRule
+        :rtype:
+         ~azure.mgmt.sql.models.FirewallRulePaged[~azure.mgmt.sql.models.FirewallRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

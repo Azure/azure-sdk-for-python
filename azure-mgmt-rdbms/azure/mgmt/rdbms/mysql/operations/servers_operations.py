@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -49,17 +49,15 @@ class ServersOperations(object):
         :type server_name: str
         :param parameters: The required parameters for creating or updating a
          server.
-        :type parameters: :class:`ServerForCreate
-         <azure.mgmt.rdbms.mysql.models.ServerForCreate>`
+        :type parameters: ~azure.mgmt.rdbms.mysql.models.ServerForCreate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns Server or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Server
-         <azure.mgmt.rdbms.mysql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mysql.models.Server]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -146,17 +144,16 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for updating a server.
-        :type parameters: :class:`ServerUpdateParameters
-         <azure.mgmt.rdbms.mysql.models.ServerUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.rdbms.mysql.models.ServerUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns Server or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Server
-         <azure.mgmt.rdbms.mysql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mysql.models.Server]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -242,11 +239,10 @@ class ServersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -323,9 +319,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Server <azure.mgmt.rdbms.mysql.models.Server>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Server or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.rdbms.mysql.models.Server or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -384,8 +380,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServerPaged
-         <azure.mgmt.rdbms.mysql.models.ServerPaged>`
+        :return: An iterator like instance of Server
+        :rtype:
+         ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -448,8 +445,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServerPaged
-         <azure.mgmt.rdbms.mysql.models.ServerPaged>`
+        :return: An iterator like instance of Server
+        :rtype:
+         ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

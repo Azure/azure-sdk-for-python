@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -44,8 +44,9 @@ class TenantsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TenantIdDescriptionPaged
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantIdDescriptionPaged>`
+        :return: An iterator like instance of TenantIdDescription
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantIdDescriptionPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantIdDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -20,8 +20,8 @@ class SystemService(Model):
 
     :param system_service_type: The system service type. Possible values
      include: 'None', 'ScoringFrontEnd', 'BatchFrontEnd'
-    :type system_service_type: str or :class:`SystemServiceType
-     <azure.mgmt.machinelearningcompute.models.SystemServiceType>`
+    :type system_service_type: str or
+     ~azure.mgmt.machinelearningcompute.models.SystemServiceType
     :ivar public_ip_address: The public IP address of the system service
     :vartype public_ip_address: str
     :ivar version: The state of the system service

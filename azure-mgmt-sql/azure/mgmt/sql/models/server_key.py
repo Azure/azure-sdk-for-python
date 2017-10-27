@@ -34,8 +34,7 @@ class ServerKey(ProxyResource):
     :param server_key_type: The server key type like 'ServiceManaged',
      'AzureKeyVault'. Possible values include: 'ServiceManaged',
      'AzureKeyVault'
-    :type server_key_type: str or :class:`ServerKeyType
-     <azure.mgmt.sql.models.ServerKeyType>`
+    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :param uri: The URI of the server key.
     :type uri: str
     :param thumbprint: Thumbprint of the server key.

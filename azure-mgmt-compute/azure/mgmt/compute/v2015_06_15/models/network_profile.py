@@ -17,8 +17,8 @@ class NetworkProfile(Model):
 
     :param network_interfaces: Specifies the list of resource IDs for the
      network interfaces associated with the virtual machine.
-    :type network_interfaces: list of :class:`NetworkInterfaceReference
-     <azure.mgmt.compute.v2015_06_15.models.NetworkInterfaceReference>`
+    :type network_interfaces:
+     list[~azure.mgmt.compute.v2015_06_15.models.NetworkInterfaceReference]
     """
 
     _attribute_map = {

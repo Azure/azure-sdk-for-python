@@ -48,10 +48,9 @@ class VirtualMachineSizesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSize>`
-        :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizePaged>`
+        :return: An iterator like instance of VirtualMachineSize
+        :rtype:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

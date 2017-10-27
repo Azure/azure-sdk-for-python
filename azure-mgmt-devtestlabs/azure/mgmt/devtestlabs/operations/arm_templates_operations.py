@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -61,8 +61,9 @@ class ArmTemplatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArmTemplatePaged
-         <azure.mgmt.devtestlabs.models.ArmTemplatePaged>`
+        :return: An iterator like instance of ArmTemplate
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.ArmTemplatePaged[~azure.mgmt.devtestlabs.models.ArmTemplate]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -146,10 +147,9 @@ class ArmTemplatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArmTemplate
-         <azure.mgmt.devtestlabs.models.ArmTemplate>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ArmTemplate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ArmTemplate or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
