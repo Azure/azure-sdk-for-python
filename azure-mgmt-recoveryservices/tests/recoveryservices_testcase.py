@@ -21,12 +21,11 @@ from azure.mgmt.recoveryservices.models import (Vault, Sku, SkuName, VaultProper
 
 
 class MgmtRecoveryServicesTestDefinition(object):
-    location = "westus"
-
-    def __init__(self, subscription_id, vault_name, vault_rg_name):
+    def __init__(self, subscription_id, vault_name, vault_rg_name, location):
         self.subscription_id = subscription_id
         self.vault_rg_name = vault_rg_name
         self.resource_name = vault_name
+        self.location = location
 
     @property
     def get_vault_name(self):
