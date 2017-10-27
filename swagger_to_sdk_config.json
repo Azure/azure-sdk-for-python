@@ -288,16 +288,6 @@
       "markdown": "specification/graphrbac/data-plane/readme.md",
       "output_dir": "azure-graphrbac/azure/graphrbac"
     },
-    "hdinsight.mgmt": {
-      "autorest_options": {
-        "namespace": "azure.mgmt.hdinsight",
-        "package-name": "azure-mgmt-hdinsight",
-        "package-version": "0.1.0"
-      },
-      "build_dir": "azure-mgmt-hdinsight",
-      "markdown": "specification/hdinsight/resource-manager/readme.md",
-      "output_dir": "azure-mgmt-hdinsight/azure/mgmt/hdinsight"
-    },
     "iothub": {
       "autorest_options": {
         "namespace": "azure.mgmt.iothub",
