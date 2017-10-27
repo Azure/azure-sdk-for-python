@@ -35,7 +35,7 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
             self.create_resource_group()
 
     @record
-    def can_create_get_list_delete_vault_test(self):
+    def test_can_create_get_list_delete_vault(self):
         vault_name = self.test_definition.get_vault_name
         vault_name2 = "PythonSDKVault2"
 
@@ -51,7 +51,7 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
         self.test_helper.delete_vaults(vault_name2)
 
     @record
-    def can_create_get_list_delete_vault_extended_info_test(self):
+    def test_can_create_get_list_delete_vault_extended_info(self):
         vault_name = self.test_definition.get_vault_name
         self.test_helper.create_vault(vault_name)
         vault = self.test_helper.get_vault(vault_name)
@@ -62,7 +62,7 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
         self.assertIsNotNone(extended_info.integrity_key)
 
     @record
-    def retrieve_vault_usages_test(self):
+    def test_retrieve_vault_usages(self):
         vault_name = self.test_definition.get_vault_name
         self.test_helper.create_vault(vault_name)
         vault = self.test_helper.get_vault(vault_name)
