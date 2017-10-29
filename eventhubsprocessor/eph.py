@@ -8,7 +8,7 @@ class EventProcessorHost:
     Represents a host for processing Event Hubs event data at scale.
     """
     def __init__(self, event_processor, eh_connection_string, consumer_group_name,
-                 storage_manager=None, eh_rest_auth=None, 
+                 storage_manager=None, eh_rest_auth=None,
                  eh_options=None):
         self.event_processor = event_processor
         self.eh_connection_string = eh_connection_string

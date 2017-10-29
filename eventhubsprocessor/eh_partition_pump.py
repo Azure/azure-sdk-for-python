@@ -29,6 +29,9 @@ class EventHubPartitionPump(PartitionPump):
                 await self.open_clients_async()
                 _opened_ok = True
             except Exception as err:
+                logging.warning("%s,%s PartitionPumpWarning: Failure creating client or receiver,\
+                                retrying: %s", self.host.guid, self.partition_context.partition_id,
+                                repr(err))
                 last_exception = err
                 _retry_count += 1
 
@@ -58,14 +61,13 @@ class EventHubPartitionPump(PartitionPump):
         self.eh_client = EventHubClient(self.host.eh_connection_string,
                                         self.partition_receive_handler)
         self.partition_receive_handler.client = self.eh_client
-        self.partition_receiver = PartitionReceiver(self)   # Create a reciever to process the msg_queue
+        self.partition_receiver = PartitionReceiver(self)
 
     async def clean_up_clients_async(self):
         """
         Resets the pump swallows all exceptions
         """
         if self.partition_receiver:
-            # Taking the lock means that there is no ProcessEventsAsync call in progress. (Lock TBD)
             if self.eh_client:
                 self.eh_client.stop()
                 self.partition_receiver = None
@@ -83,7 +85,7 @@ class PartitionReceiveHandler(Receiver):
     """
     Runs the event client to pull n messages and put them in to an
     event queue for processing then terminate. Will want to replace the
-    on message mechanism with a time out associated with the leasee 
+    on message mechanism with a time out associated with the leasee
     """
     def __init__(self, eh_partition_pump):
         super(PartitionReceiveHandler, self).__init__(eh_partition_pump.partition_context.consumer_group_name, 
@@ -116,7 +118,6 @@ class PartitionReceiveHandler(Receiver):
             else:
                 self.client.stop()
         except Exception as err:
-            # TBI Push Error to QUEUE
             logging.error("Eventhub Client Error %s %s",
                           self.eh_partition_pump.partition_context.partition_id,
                           repr(err))
@@ -135,7 +136,7 @@ class PartitionReceiver:
         Runs the async partion reciever event loop to retrive messages from the event queue
         """
         # Implement pull max batch from queue instead of one message at a time
-        while not self.eh_partition_pump.pump_status == "Errored" or self.eh_partition_pump.pump_status == "IsClosing":
+        while not self.eh_partition_pump.is_closing() or self.eh_partition_pump.pump_status == "Errored":
             if self.eh_partition_pump.msg_queue:
                 msg = self.eh_partition_pump.msg_queue.get()
                 await self.process_events_async([msg])

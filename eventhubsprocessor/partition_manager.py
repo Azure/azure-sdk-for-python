@@ -34,9 +34,10 @@ class PartitionManager:
                            "Host":"k8sworkshop.servicebus.windows.net"
                           }
 
-                res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60&api-version=2014-01'.format(self.host.eh_rest_auth["sb_name"],
-                                                                                                                self.host.eh_rest_auth["eh_name"]),
-                                                                                                                headers=headers)
+                res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60&\
+                                    api-version=2014-01'.format(self.host.eh_rest_auth["sb_name"],
+                                                                self.host.eh_rest_auth["eh_name"]),
+                                   headers=headers)
                 soup = BeautifulSoup(res.text, "lxml-xml") # process xml response
                 self.partition_ids = [pid.text for pid in soup.find("PartitionIds")]
             except Exception as err:
@@ -73,13 +74,12 @@ class PartitionManager:
         try:
             await self.run_loop_async(self.cancellation_token)
         except Exception as err:
-            logging.error("Run loop failed %s", repr(err)) # TBI add unified error handling
-
+            logging.error("Run loop failed %s", repr(err))
         try:
             logging.info("Shutting down all pumps %s", self.host.guid)
             await self.remove_all_pumps_async("Shutdown")
         except Exception as err:
-            raise Exception("failed to remove all pumps", repr(err)) # TBI add unified error handling
+            raise Exception("failed to remove all pumps", repr(err))
 
     async def initialize_stores_async(self):
         """
@@ -131,7 +131,8 @@ class PartitionManager:
                     possible_lease = await get_lease_task
                     all_leases[possible_lease.partition_id] = possible_lease
                     if possible_lease.is_expired():
-                        logging.info("Trying to aquire lease %s %s", self.host.guid, possible_lease.partition_id)
+                        logging.info("Trying to aquire lease %s %s", self.host.guid,
+                                     possible_lease.partition_id)
                         if await lease_manager.acquire_lease_async(possible_lease):
                             our_lease_count += 1
                         else:
@@ -153,7 +154,8 @@ class PartitionManager:
                         leases_owned_by_others.append(possible_lease)
 
                 except Exception as err:
-                    logging.error("Failure during getting/acquiring/renewing lease, skipping %s", repr(err)) #Unified error handling TBI
+                    logging.error("Failure during getting/acquiring/renewing lease,\
+                                  skipping %s", repr(err))
 
             # Grab more leases if available and needed for load balancing
             leases_owned_by_others_count = len(leases_owned_by_others)
@@ -170,7 +172,7 @@ class PartitionManager:
                             logging.info("Failed to steal lease for partition %s %s",
                                          self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:
-                        logging.error("Failed to steal lease %s", repr(err)) #Unified error handling TBI
+                        logging.error("Failed to steal lease %s", repr(err))
 
             for partition_id in all_leases:
                 try:
@@ -180,7 +182,7 @@ class PartitionManager:
                     else:
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:
-                    logging.error("failed to update lease %s", err) #Unified error handling TBI
+                    logging.error("failed to update lease %s", err)
 
                 # time.sleep(lease_manager.lease_renew_interval)
 
@@ -194,7 +196,8 @@ class PartitionManager:
             if captured_pump.pump_status == "Errored" or captured_pump.pump_status == "IsClosing":
                 # The existing pump is bad. Remove it.
                 await self.remove_pump_async(partition_id, "Shutdown")
-            else: # Pump is working, just replace the lease. 
+            else:
+                # Pump is working, should just replace the lease.
                 # Note (this doesn't work because of the way set_lease
                 # is configured in python for now restart the pump with new lease
                 # captured_pump.set_lease(lease)
@@ -226,12 +229,12 @@ class PartitionManager:
             # PartitionManager main loop tries to remove pump for every partition that the
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
-            logging.info("No pump found to remove for this partition %s %s", 
+            logging.info("No pump found to remove for this partition %s %s",
                          self.host.guid, partition_id)
 
     async def remove_all_pumps_async(self, reason):
         """
-        Stops all partition pumps 
+        Stops all partition pumps
         (Note this might be wrong and need to await all tasks before returning done)
         """
         for p_id in self.partition_pumps:
@@ -262,7 +265,7 @@ class PartitionManager:
         cannot become larger than the host that it is stealing from.
         """
         counts_by_owner = self.count_leases_by_owner(stealable_leases)
-        biggest_owner = (sorted(counts_by_owner.items(), key=lambda kv:kv[1])).pop()
+        biggest_owner = (sorted(counts_by_owner.items(), key=lambda kv: kv[1])).pop()
         steal_this_lease = None
         if (biggest_owner[1] - have_lease_count) >= 2:
             steal_this_lease = [l for l in stealable_leases if l.owner == biggest_owner[0]][0]

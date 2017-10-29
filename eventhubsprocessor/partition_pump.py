@@ -9,7 +9,6 @@ from eventhubsprocessor.partition_context import PartitionContext
 class PartitionPump():
     """
     Manages individual connection to a given partition
-    Note to self might be missing a lock check if you run in to race condtion
     """
     def __init__(self, host, lease):
         self.host = host
@@ -17,7 +16,6 @@ class PartitionPump():
         self.pump_status = "Uninitialized"
         self.partition_context = None
         self.processor = None
-        # self.ProcessingAsyncLock = Lock()
 
     def run(self):
         """
@@ -84,22 +82,25 @@ class PartitionPump():
         try:
             await self.on_closing_async(reason)
             if self.processor:
-                # Might need a ProcessingAsyncLock here to prevent sync conflicts with
-                # ProcessEventsAsync will investigate with (yield from self.ProcessingAsyncLock):
-                # When we take the lock, any existing ProcessEventsAsync call has finished.
-                # Because the client has been closed, there will not be any more
-                # calls to onEvents in the future. Therefore we can safely call CloseAsync.
+                logging.info("PartitionPumpInvokeProcessorCloseStart %s %s %s", self.host.guid,
+                             self.partition_context.partition_id, reason)
                 await self.processor.close_async(self.partition_context, reason)
-
+                logging.info("PartitionPumpInvokeProcessorCloseStart %s %s", self.host.guid,
+                             self.partition_context.partition_id)
         except Exception as err:
-            await self.process_error_async(err) #put exception condition handleing here
+            await self.process_error_async(err)
+            logging.error("%s %s %s", self.host.guid,
+                          self.partition_context.partition_id, repr(err))
+            raise err
 
         if reason == "LeaseLost":
             try:
                 logging.info("Lease Lost releasing ownership")
                 await self.host.storage_manager.release_lease_async(self.partition_context.lease)
             except Exception as err:
-                pass
+                logging.error("%s %s %s", self.host.guid,
+                              self.partition_context.partition_id, repr(err))
+                raise err
 
         self.set_pump_status("Closed")
 
@@ -118,9 +119,7 @@ class PartitionPump():
             # Synchronize to serialize calls to the processor. The handler is not installed until
             # after OpenAsync returns, so ProcessEventsAsync cannot conflict with OpenAsync. There
             # could be a conflict between ProcessEventsAsync and CloseAsync, however. All calls to
-            # CloseAsync are protected by synchronizing too.Might need a ProcessingAsyncLock here to
-            # prevent sync conflicts with closeAsync will investigate
-            # with (yield from self.ProcessingAsyncLock):
+            # CloseAsync are protected by synchronizing too.
             try:
                 last = events[-1:]
                 if last != None:

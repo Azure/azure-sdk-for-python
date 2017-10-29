@@ -259,7 +259,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                 logging.info("LeaseLost")
             else:
                 logging.error("Failed to renew lease on partition %s with token %s %s",
-                              lease.partition_id, lease.token, repr(err)) # add centralized error logging
+                              lease.partition_id, lease.token, repr(err))
             return False
         return True
 
@@ -286,7 +286,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                    lease_id)
         except Exception as err:
             logging.error("Failed to release lease %s %s %s",
-                          err, lease.partition_id, lease_id) 
+                          repr(err), lease.partition_id, lease_id)
             return False
         return True
 
@@ -311,9 +311,9 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         if await self.renew_lease_async(lease):
             try:
                 self.storage_client.create_blob_from_text(self.lease_container_name,
-                                                         lease.partition_id,
-                                                         json.dumps(lease.serializable()),
-                                                         lease_id=lease.token)
+                                                          lease.partition_id,
+                                                          json.dumps(lease.serializable()),
+                                                          lease_id=lease.token)
 
             except Exception as err:
                 logging.error("Failed to update lease %s %s %s", self.host.guid,
