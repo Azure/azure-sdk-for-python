@@ -51,7 +51,7 @@ class PublicIPAddressesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -132,7 +132,7 @@ class PublicIPAddressesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -201,7 +201,7 @@ class PublicIPAddressesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -297,7 +297,7 @@ class PublicIPAddressesOperations(object):
         """
         parameters = models.TagsObject(tags=tags)
 
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -383,7 +383,7 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2017_10_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2017_10_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         def internal_paging(next_link=None, raw=False):
 
@@ -451,7 +451,7 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2017_10_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2017_10_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-01"
+        api_version = "2017-10-01"
 
         def internal_paging(next_link=None, raw=False):
 

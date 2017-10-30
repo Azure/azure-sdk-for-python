@@ -32,6 +32,9 @@ class RouteTable(Resource):
     :type routes: list[~azure.mgmt.network.v2017_10_01.models.Route]
     :ivar subnets: A collection of references to subnets.
     :vartype subnets: list[~azure.mgmt.network.v2017_10_01.models.Subnet]
+    :param disable_bgp_route_propagation: Gets or sets whether to disable the
+     routes learned by BGP on that route table. True means disable.
+    :type disable_bgp_route_propagation: bool
     :param provisioning_state: The provisioning state of the resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -54,13 +57,15 @@ class RouteTable(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'routes': {'key': 'properties.routes', 'type': '[Route]'},
         'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'disable_bgp_route_propagation': {'key': 'properties.disableBgpRoutePropagation', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, routes=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, routes=None, disable_bgp_route_propagation=None, provisioning_state=None, etag=None):
         super(RouteTable, self).__init__(id=id, location=location, tags=tags)
         self.routes = routes
         self.subnets = None
+        self.disable_bgp_route_propagation = disable_bgp_route_propagation
         self.provisioning_state = provisioning_state
         self.etag = etag

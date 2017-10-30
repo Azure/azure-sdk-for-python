@@ -86,6 +86,9 @@ class ApplicationGateway(Resource):
      configuration.
     :type web_application_firewall_configuration:
      ~azure.mgmt.network.v2017_10_01.models.ApplicationGatewayWebApplicationFirewallConfiguration
+    :param enable_http2: Whether HTTP2 is enabled on the application gateway
+     resource.
+    :type enable_http2: bool
     :param resource_guid: Resource GUID property of the application gateway
      resource.
     :type resource_guid: str
@@ -125,12 +128,13 @@ class ApplicationGateway(Resource):
         'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
+        'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2=None, resource_guid=None, provisioning_state=None, etag=None):
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -148,6 +152,7 @@ class ApplicationGateway(Resource):
         self.request_routing_rules = request_routing_rules
         self.redirect_configurations = redirect_configurations
         self.web_application_firewall_configuration = web_application_firewall_configuration
+        self.enable_http2 = enable_http2
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
