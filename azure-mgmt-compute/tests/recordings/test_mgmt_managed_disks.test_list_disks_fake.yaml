@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 computemanagementclient/3.0.1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakename/providers/Microsoft.Compute/disks?api-version=2017-03-30
+  response:
+    body: {string: '{"error":{"code":"ResourceGroupNotFound","message":"Resource group
+        ''fakename'' could not be found."}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['100']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 30 Oct 2017 19:43:12 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-failure-cause: [gateway]
+    status: {code: 404, message: Not Found}
+version: 1

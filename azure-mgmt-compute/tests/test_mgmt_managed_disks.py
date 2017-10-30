@@ -9,6 +9,8 @@ import unittest
 
 from collections import namedtuple
 
+from msrestazure.azure_exceptions import CloudError
+
 import azure.mgmt.compute.models
 import azure.mgmt.network.models
 from devtools_testutils import (
@@ -340,6 +342,15 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         vmss_result = result_create.result()
         self.assertEqual(vmss_result.name, names.vm)
 
+    @ResourceGroupPreparer()
+    def test_list_disks(self, resource_group, location):
+        disks = list(self.compute_client.disks.list_by_resource_group(resource_group.name))
+        self.assertEqual(len(disks), 0)
+
+    def test_list_disks_fake(self):
+        with self.assertRaises(CloudError) as cm:
+            list(self.compute_client.disks.list_by_resource_group("fakename"))
+        self.assertIn("Resource group 'fakename' could not be found", cm.exception.message)
 
     def get_resource_names(self, base):
         return ComputeResourceNames(
