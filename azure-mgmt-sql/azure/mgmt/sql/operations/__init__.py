@@ -46,6 +46,7 @@ from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_operations import DatabaseOperations
+from .managed_databases_operations import ManagedDatabasesOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 
 __all__ = [
@@ -86,5 +87,6 @@ __all__ = [
     'SyncMembersOperations',
     'VirtualNetworkRulesOperations',
     'DatabaseOperations',
+    'ManagedDatabasesOperations',
     'ServerDnsAliasesOperations',
 ]
