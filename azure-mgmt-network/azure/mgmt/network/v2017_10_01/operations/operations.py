@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,31 +36,24 @@ class UsagesOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """List network usages for a subscription.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available Network Rest API operations.
 
-        :param location: The location where resource usage is queried.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Usage
+        :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.network.v2017_10_01.models.UsagePaged[~azure.mgmt.network.v2017_10_01.models.Usage]
+         ~azure.mgmt.network.v2017_10_01.models.OperationPaged[~azure.mgmt.network.v2017_10_01.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/usages'
-                path_format_arguments = {
-                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = '/providers/Microsoft.Network/operations'
 
                 # Construct parameters
                 query_parameters = {}
@@ -93,11 +86,11 @@ class UsagesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
