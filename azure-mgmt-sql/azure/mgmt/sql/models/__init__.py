@@ -91,6 +91,9 @@ from .sync_group import SyncGroup
 from .sync_member import SyncMember
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .complete_managed_database_restore_definition import CompleteManagedDatabaseRestoreDefinition
+from .managed_database import ManagedDatabase
+from .managed_database_update import ManagedDatabaseUpdate
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
 from .restore_point_paged import RestorePointPaged
@@ -129,6 +132,7 @@ from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_operation_paged import DatabaseOperationPaged
+from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .sql_management_client_enums import (
     BackupLongTermRetentionPolicyState,
@@ -180,6 +184,9 @@ from .sql_management_client_enums import (
     SyncMemberState,
     VirtualNetworkRuleState,
     ManagementOperationState,
+    ManagedDatabaseStatus,
+    CatalogCollationType,
+    ManagedDatabaseCreateMode,
 )
 
 __all__ = [
@@ -265,6 +272,9 @@ __all__ = [
     'SyncMember',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'CompleteManagedDatabaseRestoreDefinition',
+    'ManagedDatabase',
+    'ManagedDatabaseUpdate',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'RestorePointPaged',
@@ -303,6 +313,7 @@ __all__ = [
     'SyncMemberPaged',
     'VirtualNetworkRulePaged',
     'DatabaseOperationPaged',
+    'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'BackupLongTermRetentionPolicyState',
     'RestorePointType',
@@ -353,4 +364,7 @@ __all__ = [
     'SyncMemberState',
     'VirtualNetworkRuleState',
     'ManagementOperationState',
+    'ManagedDatabaseStatus',
+    'CatalogCollationType',
+    'ManagedDatabaseCreateMode',
 ]

@@ -399,3 +399,25 @@ class ManagementOperationState(Enum):
     failed = "Failed"
     cancel_in_progress = "CancelInProgress"
     cancelled = "Cancelled"
+
+
+class ManagedDatabaseStatus(Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+
+
+class CatalogCollationType(Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
+class ManagedDatabaseCreateMode(Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
