@@ -347,6 +347,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         disks = list(self.compute_client.disks.list_by_resource_group(resource_group.name))
         self.assertEqual(len(disks), 0)
 
+    def test_list_disks_fake(self):
         with self.assertRaises(CloudError) as cm:
             list(self.compute_client.disks.list_by_resource_group("fakename"))
         self.assertIn("Resource group 'fakename' could not be found", cm.exception.message)
