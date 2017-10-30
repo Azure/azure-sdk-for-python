@@ -199,8 +199,9 @@ class EventHubClient(Container):
             self.shared_connection.close()
             if close_transport:
                 transport = self.shared_connection.transport
-                transport.unbind()
-                transport.close_tail()
+                if transport is not None:
+                    transport.unbind()
+                    transport.close_tail()
             self.shared_connection.free()
             self.shared_connection = None
 

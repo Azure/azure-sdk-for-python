@@ -23,10 +23,15 @@ from eventhubs.async import AsyncReceiver
 async def pump(recv):
     total = 0
     while True:
-        batch = await recv.receive(100)
-        size = len(batch)
-        total += size
-        logging.info("Received %d events, last sn %d, batch %d", total, batch[size-1].sequence_number, size)
+        try:
+            batch = await asyncio.wait_for(recv.receive(100), 60.0)
+            size = len(batch)
+            total += size
+            logging.info("Received %d events, sn %d, batch %d", total, batch[-1].sequence_number, size)
+            # simulate an async event processing
+            await asyncio.sleep(0.05)
+        except asyncio.TimeoutError:
+            logging.info("No events received, queue size %d, delivered %d", recv.messages.qsize(), recv.delivered)
 
 try:
     logging.basicConfig(filename="test.log", level=logging.INFO)
@@ -50,6 +55,7 @@ try:
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(pump(receiver))
+    loop.close()
 
     client.stop()
 

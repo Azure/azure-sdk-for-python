@@ -37,15 +37,16 @@ class AsyncReceiver(Receiver):
         self.offset = event_data.offset
         waiter = None
         with self.lock:
+            self.messages.put(event_data)
             self.credit -= 1
             if self.waiter is None:
-                self.messages.put(event_data)
                 if self.credit == 0:
+                    # workaround before having an EventInjector
                     event.reactor.schedule(0.1, self)
                 return
+            self._on_delivered(1)
             waiter = self.waiter
             self.waiter = None
-            self._on_delivered(1)
         self.loop.call_soon_threadsafe(waiter.set_result, None)
 
     def on_event_data(self, event_data):
@@ -54,7 +55,7 @@ class AsyncReceiver(Receiver):
     def on_timer_task(self, event):
         with self.lock:
             self._on_delivered(0)
-            if self.credit == 0 and not self.messages.empty():
+            if self.waiter is None and self.messages.qsize() > 0:
                 event.reactor.schedule(0.1, self)
 
     async def receive(self, count):
@@ -68,8 +69,10 @@ class AsyncReceiver(Receiver):
         batch = []
         while True:
             with self.lock:
-                while not self.messages.empty() and count > 0:
+                size = self.messages.qsize()
+                while size > 0 and count > 0:
                     batch.append(self.messages.get())
+                    size -= 1
                     count -= 1
                     self.delivered += 1
                 if batch:
