@@ -43,7 +43,3 @@ class AsyncOperationState(Enum):
     in_progress = "InProgress"
     succeeded = "Succeeded"
     failed = "Failed"
-
-
-class ApplicationName(Enum):
-
