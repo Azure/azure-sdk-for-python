@@ -71,7 +71,6 @@ from .hd_insight_management_client_enums import (
     Tier,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
-    ApplicationName,
 )
 
 __all__ = [
@@ -136,5 +135,4 @@ __all__ = [
     'Tier',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
-    'ApplicationName',
 ]

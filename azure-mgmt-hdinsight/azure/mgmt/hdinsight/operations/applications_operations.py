@@ -117,9 +117,7 @@ class ApplicationsOperations(object):
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
         :param application_name: The constant value for the application name.
-         Possible values include:
-        :type application_name: str or
-         ~azure.mgmt.hdinsight.models.ApplicationName
+        :type application_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
