@@ -17,13 +17,12 @@ class EventSubscriptionUpdateParameters(Model):
 
     :param destination: Information about the destination where events have to
      be delivered for the event subscription.
-    :type destination: :class:`EventSubscriptionDestination
-     <azure.mgmt.eventgrid.models.EventSubscriptionDestination>`
+    :type destination:
+     ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     :param filter: Information about the filter for the event subscription.
-    :type filter: :class:`EventSubscriptionFilter
-     <azure.mgmt.eventgrid.models.EventSubscriptionFilter>`
+    :type filter: ~azure.mgmt.eventgrid.models.EventSubscriptionFilter
     :param labels: List of user defined labels.
-    :type labels: list of str
+    :type labels: list[str]
     """
 
     _attribute_map = {

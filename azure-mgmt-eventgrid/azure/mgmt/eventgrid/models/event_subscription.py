@@ -30,17 +30,15 @@ class EventSubscription(Resource):
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
     :vartype provisioning_state: str or
-     :class:`EventSubscriptionProvisioningState
-     <azure.mgmt.eventgrid.models.EventSubscriptionProvisioningState>`
+     ~azure.mgmt.eventgrid.models.EventSubscriptionProvisioningState
     :param destination: Information about the destination where events have to
      be delivered for the event subscription.
-    :type destination: :class:`EventSubscriptionDestination
-     <azure.mgmt.eventgrid.models.EventSubscriptionDestination>`
+    :type destination:
+     ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     :param filter: Information about the filter for the event subscription.
-    :type filter: :class:`EventSubscriptionFilter
-     <azure.mgmt.eventgrid.models.EventSubscriptionFilter>`
+    :type filter: ~azure.mgmt.eventgrid.models.EventSubscriptionFilter
     :param labels: List of user defined labels.
-    :type labels: list of str
+    :type labels: list[str]
     """
 
     _validation = {

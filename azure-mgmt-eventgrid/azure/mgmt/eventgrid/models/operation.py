@@ -18,12 +18,10 @@ class Operation(Model):
     :param name: Name of the operation
     :type name: str
     :param display: Display name of the operation
-    :type display: :class:`OperationInfo
-     <azure.mgmt.eventgrid.models.OperationInfo>`
+    :type display: ~azure.mgmt.eventgrid.models.OperationInfo
     :param origin: Origin of the operation. Possible values include: 'User',
      'System', 'UserAndSystem'
-    :type origin: str or :class:`OperationOrigin
-     <azure.mgmt.eventgrid.models.OperationOrigin>`
+    :type origin: str or ~azure.mgmt.eventgrid.models.OperationOrigin
     :param properties: Properties of the operation
     :type properties: object
     """

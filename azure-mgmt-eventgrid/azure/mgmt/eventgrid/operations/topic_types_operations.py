@@ -46,10 +46,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>`
-        :rtype: :class:`TopicTypeInfoPaged
-         <azure.mgmt.eventgrid.models.TopicTypeInfoPaged>`
+        :return: An iterator like instance of TopicTypeInfo
+        :rtype:
+         ~azure.mgmt.eventgrid.models.TopicTypeInfoPaged[~azure.mgmt.eventgrid.models.TopicTypeInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -111,13 +110,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TopicTypeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -174,10 +169,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventType
-         <azure.mgmt.eventgrid.models.EventType>`
-        :rtype: :class:`EventTypePaged
-         <azure.mgmt.eventgrid.models.EventTypePaged>`
+        :return: An iterator like instance of EventType
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventTypePaged[~azure.mgmt.eventgrid.models.EventType]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

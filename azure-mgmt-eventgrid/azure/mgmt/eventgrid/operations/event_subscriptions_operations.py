@@ -60,13 +60,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: EventSubscription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -137,20 +133,16 @@ class EventSubscriptionsOperations(object):
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties
          containing the destination and filter information
-        :type event_subscription_info: :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
+        :type event_subscription_info:
+         ~azure.mgmt.eventgrid.models.EventSubscription
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         EventSubscription or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.EventSubscription]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -244,14 +236,10 @@ class EventSubscriptionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -335,20 +323,15 @@ class EventSubscriptionsOperations(object):
         :param event_subscription_update_parameters: Updated event
          subscription information
         :type event_subscription_update_parameters:
-         :class:`EventSubscriptionUpdateParameters
-         <azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters>`
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         EventSubscription or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.EventSubscription]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -444,13 +427,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`EventSubscriptionFullUrl
-         <azure.mgmt.eventgrid.models.EventSubscriptionFullUrl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`EventSubscriptionFullUrl
-         <azure.mgmt.eventgrid.models.EventSubscriptionFullUrl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: EventSubscriptionFullUrl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -508,10 +487,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -578,10 +556,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -651,10 +628,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -726,10 +702,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -798,10 +773,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -873,10 +847,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -948,10 +921,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1026,10 +998,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1106,10 +1077,9 @@ class EventSubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventSubscription
-         <azure.mgmt.eventgrid.models.EventSubscription>`
-        :rtype: :class:`EventSubscriptionPaged
-         <azure.mgmt.eventgrid.models.EventSubscriptionPaged>`
+        :return: An iterator like instance of EventSubscription
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventSubscriptionPaged[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
