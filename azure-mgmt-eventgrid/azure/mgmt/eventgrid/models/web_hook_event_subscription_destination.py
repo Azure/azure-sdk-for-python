@@ -18,7 +18,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param endpoint_type: Polymorphic Discriminator
+    :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
     :param endpoint_url: The URL that represents the endpoint of the
      destination of an event subscription.

@@ -32,16 +32,16 @@ class TopicTypeInfo(Resource):
     :type description: str
     :param resource_region_type: Region type of the resource. Possible values
      include: 'RegionalResource', 'GlobalResource'
-    :type resource_region_type: str or :class:`ResourceRegionType
-     <azure.mgmt.eventgrid.models.ResourceRegionType>`
+    :type resource_region_type: str or
+     ~azure.mgmt.eventgrid.models.ResourceRegionType
     :param provisioning_state: Provisioning state of the topic type. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Canceled', 'Failed'
-    :type provisioning_state: str or :class:`TopicTypeProvisioningState
-     <azure.mgmt.eventgrid.models.TopicTypeProvisioningState>`
+    :type provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.TopicTypeProvisioningState
     :param supported_locations: List of locations supported by this topic
      type.
-    :type supported_locations: list of str
+    :type supported_locations: list[str]
     """
 
     _validation = {
