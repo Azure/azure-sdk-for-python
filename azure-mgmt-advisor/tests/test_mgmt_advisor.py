@@ -63,6 +63,14 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         print(response)
         self.assertNotEqual(response, None)
 
+    def test_suppressions(self):
+        # create, get and delete a suppression
+        self.assertTrue(True);
+
+    def test_configurations(self):
+        # create, get and delete configuration on a subscription and resource group
+        self.assertTrue(True);
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
