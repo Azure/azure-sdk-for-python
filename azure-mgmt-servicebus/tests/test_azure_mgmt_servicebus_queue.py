@@ -29,10 +29,10 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         resource_group_name = resource_group.name
 
         # Create a Namespace
-        namespace_name = "testingpythontestcase"
+        namespace_name = "testingpythontestcasequeue"
 
-        test = SBNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, SBSku(SkuName.standard))
-        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, test)
+        namespaceparameter = SBNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, SBSku(SkuName.standard))
+        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter)
         creatednamespace = creatednamespace.result()
         self.assertEqual(creatednamespace.name, namespace_name)
 
