@@ -154,8 +154,8 @@ from .bgp_community import BGPCommunity
 from .bgp_service_community import BgpServiceCommunity
 from .usage_name import UsageName
 from .usage import Usage
-from .virtual_network_peering import VirtualNetworkPeering
 from .address_space import AddressSpace
+from .virtual_network_peering import VirtualNetworkPeering
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .ip_address_availability_result import IPAddressAvailabilityResult
@@ -432,8 +432,8 @@ __all__ = [
     'BgpServiceCommunity',
     'UsageName',
     'Usage',
-    'VirtualNetworkPeering',
     'AddressSpace',
+    'VirtualNetworkPeering',
     'DhcpOptions',
     'VirtualNetwork',
     'IPAddressAvailabilityResult',
