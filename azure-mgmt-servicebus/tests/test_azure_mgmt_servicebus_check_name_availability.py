@@ -27,16 +27,10 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         pass
 
     @ResourceGroupPreparer()
-    def test_servicebus_namespace_available(self, resource_group, location):
+    def test_sb_namespace_available(self, resource_group, location):
         # Check the namespace availability
         availabilityresult = self.servicebus_client.namespaces.check_name_availability_method("Testingthenamespacenameforpython")
         self.assertEqual(availabilityresult.name_available, True)
-
-    @ResourceGroupPreparer()
-    def test_servicebus_namespace_curd(self, resource_group, location):
-        # List all topic types
-        test=SBNamespace
-        print(dir(test))
 
 
 #------------------------------------------------------------------------------
