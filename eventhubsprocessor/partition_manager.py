@@ -34,7 +34,7 @@ class PartitionManager:
                            "Host":"k8sworkshop.servicebus.windows.net"
                           }
 
-                res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60&\
+                res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60& \
                                     api-version=2014-01'.format(self.host.eh_rest_auth["sb_name"],
                                                                 self.host.eh_rest_auth["eh_name"]),
                                    headers=headers)

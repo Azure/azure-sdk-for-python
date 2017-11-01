@@ -304,7 +304,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
 
         if not lease.token:
             return False
-        
+
         logging.info("Updating lease %s %s", self.host.guid, lease.partition_id)
 
         # First, renew the lease to make sure the update will go through.

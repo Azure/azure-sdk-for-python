@@ -121,7 +121,7 @@ class PartitionPump():
             # could be a conflict between ProcessEventsAsync and CloseAsync, however. All calls to
             # CloseAsync are protected by synchronizing too.
             try:
-                last = events[-1:]
+                last = events[-1]
                 if last != None:
                     self.partition_context.set_offset_and_sequence_number(last)
                     await self.processor.process_events_async(self.partition_context, events)

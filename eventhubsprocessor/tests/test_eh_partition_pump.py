@@ -4,6 +4,7 @@ Author: Aaron (Ari) Bornstien
 
 import unittest
 import asyncio
+import logging
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
 from eventhubsprocessor.eph import EventProcessorHost
@@ -22,15 +23,18 @@ class PartitionPumpTestCase(unittest.TestCase):
         self._credentials = MockCredentials()
         self._consumer_group = "$Default"
         self._storage_clm = AzureStorageCheckpointLeaseManager(self._credentials.storage_account,
-                                                self._credentials.storage_key,
-                                                self._credentials.lease_container)
-                                                
+                                                               self._credentials.storage_key,
+                                                               self._credentials.lease_container)
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
                                         self._consumer_group, storage_manager=self._storage_clm)
-        
+
         self._lease = AzureBlobLease()
         self._lease.with_partition_id("1")
         self._partition_pump = EventHubPartitionPump(self._host, self._lease)
+
+        logging.basicConfig(filename='eph.log', level=logging.INFO,
+                            format='%(asctime)s:%(msecs)03d, \'%(message)s\' ',
+                            datefmt='%Y-%m-%d:%H:%M:%S')
 
         self._loop = asyncio.get_event_loop()
 

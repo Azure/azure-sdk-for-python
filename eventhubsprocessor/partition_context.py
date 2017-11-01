@@ -13,7 +13,7 @@ class PartitionContext:
         self.partition_id = partition_id
         self.eh_path = eh_path
         self.consumer_group_name = consumer_group_name
-        self.offset = "-1" # Hardcoded for now get from partition reciever
+        self.offset = "-1"
         self.sequence_number = 0
         self.lease = None
 
@@ -23,16 +23,17 @@ class PartitionContext:
         """
         if not event_data:
             raise Exception(event_data)
-        self.offset = event_data[0].annotations["x-opt-offset"]
-        self.sequence_number = event_data[0].annotations["x-opt-sequence-number"]
+        self.offset = event_data.offset
+        self.sequence_number = event_data.sequence_number
 
     async def get_initial_offset_async(self): # throws InterruptedException, ExecutionException
         """
         Returns the initial offset for processing the partition.
         """
         logging.info("Calling user-provided initial offset provider %s %s",
-                self.host.guid, self.partition_id)
-        starting_checkpoint = await self.host.storage_manager.get_checkpoint_async(self.partition_id)
+                     self.host.guid, self.partition_id)
+        starting_checkpoint = await self.host.storage_manager\
+                                        .get_checkpoint_async(self.partition_id)
         if not starting_checkpoint:
             # No checkpoint was ever stored. Use the initialOffsetProvider instead
             # defaults to "-1"
@@ -65,13 +66,13 @@ class PartitionContext:
         """
         if not event_data:
             raise Exception("event_data")
-        if event_data[0].annotations["x-opt-sequence-number"] > self.sequence_number:
+        if event_data.sequence_number > self.sequence_number:
             #We have never seen this sequence number yet
             raise Exception("ArgumentOutOfRangeException event_data x-opt-sequence-number")
 
         await self.persist_checkpoint_async(Checkpoint(self.partition_id,
-                                                        event_data[0].annotations["x-opt-offset"],
-                                                        event_data[0].annotations["x-opt-sequence-number"]))
+                                                       event_data.offset,
+                                                       event_data.sequence_number))
 
     def to_string(self):
         """
@@ -88,11 +89,14 @@ class PartitionContext:
         Persists the checkpoint
         """
         try:
-            in_store_checkpoint = await self.host.storage_manager.get_checkpoint_async(checkpoint.partition_id)
-            if not in_store_checkpoint or (checkpoint.sequence_number >= in_store_checkpoint.sequence_number):
+            in_store_checkpoint = await self.host.storage_manager \
+                                                 .get_checkpoint_async(checkpoint.partition_id)
+            if not in_store_checkpoint \
+               or checkpoint.sequence_number >= in_store_checkpoint.sequence_number:
                 if not in_store_checkpoint:
                     logging.info("persisting checkpoint %s", str(checkpoint.__dict__))
-                    await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
+                    await self.host.storage_manager \
+                              .create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
                 await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint)
                 self.lease.offset = checkpoint.offset

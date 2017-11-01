@@ -5,6 +5,7 @@ Author: Aaron (Ari) Bornstien
 import unittest
 import logging
 import asyncio
+import sys
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
 from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
@@ -27,8 +28,11 @@ class EventProcessorHostTestCase(unittest.TestCase):
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
                                         self._consumer_group, storage_manager=self._storage_clm,
                                         eh_rest_auth=self._credentials.eh_auth)
-        logging.basicConfig(filename='eph.log', level=logging.INFO, 
-                            format='%(asctime)s %(message)s')
+        logging.basicConfig(filename='eph.log', level=logging.INFO,
+                            format='%(asctime)s:%(msecs)03d, \'%(message)s\' ',
+                            datefmt='%Y-%m-%d:%H:%M:%S')
+        logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+
         self._loop = asyncio.get_event_loop()
 
     def test_start(self):

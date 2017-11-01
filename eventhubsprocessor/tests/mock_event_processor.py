@@ -25,7 +25,7 @@ class MockEventProcessor(AbstractEventProcessor):
         (Params) Context:Information about the partition
         """
         logging.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
-              context.partition_id, context.offset, context.sequence_number)
+                     context.partition_id, context.offset, context.sequence_number)
 
     async def process_events_async(self, context, messages):
         """
@@ -34,12 +34,8 @@ class MockEventProcessor(AbstractEventProcessor):
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
         logging.info("Events processed %s %s", context.partition_id, messages)
-        print("Events processed", context.partition_id, messages)
-        if self._msg_counter == 10:
-            await context.checkpoint_async()
-            self._msg_counter = 0
-        else:
-            self._msg_counter += 1
+        # print("Events processed", context.partition_id, messages)
+        await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
         """

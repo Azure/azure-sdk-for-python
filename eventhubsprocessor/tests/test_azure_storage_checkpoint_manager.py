@@ -3,7 +3,9 @@ Author: Aaron (Ari) Bornstien
 """
 
 import unittest
+import logging
 import asyncio
+import time
 from mock_credentials import MockCredentials
 from mock_event_processor import MockEventProcessor
 from eventhubsprocessor.eph import EventProcessorHost
@@ -33,11 +35,13 @@ class AzureStorageCheckpointLeaseManagerTestCase(unittest.TestCase):
         """
         self._storage_clm.initialize(self._host)
 
-    def test_get_checkpoint(self):
+    def test_create_store(self):
         """
-        TBI
+        Test the store is created correctly if not exists
         """
-        pass
+        self._storage_clm.initialize(self._host)
+        self._loop = asyncio.get_event_loop()
+        self._loop.run_until_complete(self._storage_clm.create_checkpoint_store_if_not_exists_async())
 
     # def test_create_lease(self):
     #     """
@@ -76,19 +80,40 @@ class AzureStorageCheckpointLeaseManagerTestCase(unittest.TestCase):
     #     self._loop = asyncio.get_event_loop()
     #     self._loop.run_until_complete(self._storage_clm.delete_lease_async("1"))
 
-    def test_checkpointing(self):
-        """
-        Test checkpointing
-        """
-        self._storage_clm.initialize(self._host)
-        self._loop = asyncio.get_event_loop()
-        local_checkpoint = self._loop.run_until_complete(self._storage_clm.create_checkpoint_if_not_exists_async("1"))
-        print("Local CheckPoint", local_checkpoint.__dict__)
-        lease = self._loop.run_until_complete(self._storage_clm.get_lease_async("1"))
-        self._loop.run_until_complete(self._storage_clm.acquire_lease_async(lease))
-        self._loop.run_until_complete(self._storage_clm.update_checkpoint_async(lease, local_checkpoint))
-        cloud_checkpoint = self._loop.run_until_complete(self._storage_clm.get_checkpoint_async("1"))
-        print("Cloud Checkpoint", cloud_checkpoint.__dict__)
+    # def test_checkpointing(self):
+    #     """
+    #     Test checkpointing
+    #     """
+    #     self._storage_clm.initialize(self._host)
+    #     self._loop = asyncio.get_event_loop()
+    #     local_checkpoint = self._loop.run_until_complete(self._storage_clm.create_checkpoint_if_not_exists_async("1"))
+    #     print("Local CheckPoint", local_checkpoint.__dict__)
+    #     lease = self._loop.run_until_complete(self._storage_clm.get_lease_async("1"))
+    #     self._loop.run_until_complete(self._storage_clm.acquire_lease_async(lease))
+    #     self._loop.run_until_complete(self._storage_clm.update_checkpoint_async(lease, local_checkpoint))
+    #     cloud_checkpoint = self._loop.run_until_complete(self._storage_clm.get_checkpoint_async("1"))
+    #     lease.offset = cloud_checkpoint.offset
+    #     lease.sequence_number = cloud_checkpoint.sequence_number
+    #     # print("Cloud Checkpoint", cloud_checkpoint.__dict__)
+    #     # modify_checkpoint = cloud_checkpoint
+    #     # modify_checkpoint.offset = "512"
+    #     # modify_checkpoint.sequence_number = "32"
+    #     # time.sleep(35)
+    #     # self._loop.run_until_complete(self._storage_clm.update_checkpoint_async(lease, modify_checkpoint))
+    #     print("Release Lease")
+    #     self._loop.run_until_complete(self._storage_clm.release_lease_async(lease))
+
+
+    # def test_create_checkpoint(self):
+    #     logging.basicConfig(filename='testcheckpoint.log', level=logging.INFO,
+    #                         format='%(asctime)s %(message)s')
+    #     self._storage_clm.initialize(self._host)
+    #     self._loop = asyncio.get_event_loop()
+    #     local_checkpoint = self._loop.run_until_complete(self._storage_clm.create_checkpoint_if_not_exists_async("1"))
+    
+
+    #     # self._loop.run_until_complete(self._storage_clm.delete_lease_async(lease))
+
 
 if __name__ == '__main__':
     unittest.main()
