@@ -32,8 +32,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         namespace_name = "testingpythontestcasenamespace"
 
         namespaceparameter=SBNamespace(location,{'tag1':'value1','tag2':'value2'},SBSku(SkuName.standard))
-        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter)
-        creatednamespace = creatednamespace.result()
+        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter,None,True).output
         self.assertEqual(creatednamespace.name,namespace_name)
         #
         # # Get created Namespace
@@ -99,7 +98,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(createnamespaceauthorule[0].name, defaultauthorule_name)
 
         # Delete the create namespace
-        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name)
+        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name,None,True).output
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
