@@ -186,7 +186,7 @@ class ApplicationsOperations(object):
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
         path_format_arguments = {
-            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -236,7 +236,7 @@ class ApplicationsOperations(object):
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
         path_format_arguments = {
-            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -294,7 +294,7 @@ class ApplicationsOperations(object):
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
         path_format_arguments = {
-            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -351,7 +351,7 @@ class ApplicationsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/applications/{applicationObjectId}/keyCredentials'
                 path_format_arguments = {
-                    'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+                    'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -417,7 +417,7 @@ class ApplicationsOperations(object):
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}/keyCredentials'
         path_format_arguments = {
-            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -474,7 +474,7 @@ class ApplicationsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'
                 path_format_arguments = {
-                    'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+                    'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -540,7 +540,7 @@ class ApplicationsOperations(object):
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'
         path_format_arguments = {
-            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str', skip_quote=True),
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

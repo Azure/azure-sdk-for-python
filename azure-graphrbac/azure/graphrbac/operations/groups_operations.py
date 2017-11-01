@@ -122,8 +122,8 @@ class GroupsOperations(object):
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
         path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
-            'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str', skip_quote=True),
+            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
+            'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -181,7 +181,7 @@ class GroupsOperations(object):
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members'
         path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
+            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -234,7 +234,7 @@ class GroupsOperations(object):
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}'
         path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
+            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -425,7 +425,7 @@ class GroupsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/groups/{objectId}/members'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -495,7 +495,7 @@ class GroupsOperations(object):
         # Construct URL
         url = '/{tenantID}/groups/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -562,7 +562,7 @@ class GroupsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/groups/{objectId}/getMemberGroups'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

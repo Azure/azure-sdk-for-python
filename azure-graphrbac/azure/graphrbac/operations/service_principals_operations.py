@@ -187,7 +187,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -237,7 +237,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -298,7 +298,7 @@ class ServicePrincipalsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -365,7 +365,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -422,7 +422,7 @@ class ServicePrincipalsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -488,7 +488,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
