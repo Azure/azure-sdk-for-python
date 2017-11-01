@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.33.0 (2017-11-01)
++++++++++++++++++++
+
+**Features**
+
+- add "required_resource_access" when applicable
+
+**Bugfixes**
+
+- Get/Delete of Users now encode for you if you provide the UPN.
+
 0.32.0 (2017-09-22)
 +++++++++++++++++++
 
