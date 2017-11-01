@@ -8,8 +8,7 @@
 import unittest
 
 import azure.graphrbac
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase
 
 
 class GraphRbacTest(AzureMgmtTestCase):
@@ -21,7 +20,6 @@ class GraphRbacTest(AzureMgmtTestCase):
             tenant_id=self.settings.AD_DOMAIN
         )
 
-    @record
     def test_graphrbac_users(self):
 
         user = self.graphrbac_client.users.create(
