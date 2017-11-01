@@ -32,8 +32,7 @@ class UserBase(Model):
     :param user_type: A string value that can be used to classify user types
      in your directory, such as 'Member' and 'Guest'. Possible values include:
      'Member', 'Guest'
-    :type user_type: str or :class:`UserType
-     <azure.graphrbac.models.UserType>`
+    :type user_type: str or ~azure.graphrbac.models.UserType
     """
 
     _attribute_map = {

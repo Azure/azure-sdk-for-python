@@ -46,9 +46,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Domain
-         <azure.graphrbac.models.Domain>`
-        :rtype: :class:`DomainPaged <azure.graphrbac.models.DomainPaged>`
+        :return: An iterator like instance of Domain
+        :rtype:
+         ~azure.graphrbac.models.DomainPaged[~azure.graphrbac.models.Domain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -114,11 +114,9 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Domain <azure.graphrbac.models.Domain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Domain <azure.graphrbac.models.Domain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Domain or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Domain or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

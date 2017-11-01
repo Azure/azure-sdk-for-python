@@ -20,11 +20,10 @@ class ServicePrincipalCreateParameters(Model):
     :param account_enabled: Whether the account is enabled
     :type account_enabled: bool
     :param key_credentials: A collection of KeyCredential objects.
-    :type key_credentials: list of :class:`KeyCredential
-     <azure.graphrbac.models.KeyCredential>`
+    :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
     :param password_credentials: A collection of PasswordCredential objects
-    :type password_credentials: list of :class:`PasswordCredential
-     <azure.graphrbac.models.PasswordCredential>`
+    :type password_credentials:
+     list[~azure.graphrbac.models.PasswordCredential]
     """
 
     _validation = {
