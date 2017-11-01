@@ -281,7 +281,7 @@
     },
     "graphrbac": {
       "autorest_options": {
-        "package-version": "0.32.0"
+        "package-version": "0.33.0"
       },
       "build_dir": "azure-graphrbac",
       "generated_relative_base_directory": "python/azure/graphrbac",
