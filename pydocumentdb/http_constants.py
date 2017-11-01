@@ -112,6 +112,7 @@ class HttpHeaders:
     SubStatus = 'x-ms-substatus'
     AlternateContentPath = 'x-ms-alt-content-path'
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
+    PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
 
     # Quota Info
     MaxEntityCount = 'x-ms-root-entity-max-count'

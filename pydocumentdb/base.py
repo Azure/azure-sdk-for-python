@@ -151,6 +151,9 @@ def GetHeaders(document_client,
     if options.get('enableCrossPartitionQuery'):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options['enableCrossPartitionQuery']
 
+    if options.get('populateQueryMetrics'):
+        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options['populateQueryMetrics']
+
     if document_client.master_key:
         headers[http_constants.HttpHeaders.XDate] = (
             datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))
