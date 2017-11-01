@@ -5,7 +5,6 @@
 
 """
 Async APIs.
-
 """
 
 import queue
@@ -39,12 +38,12 @@ class AsyncReceiver(Receiver):
         with self.lock:
             self.messages.put(event_data)
             self.credit -= 1
+            self._check_flow()
+            if self.credit == 0:
+                # workaround before having an EventInjector
+                event.reactor.schedule(0.1, self)
             if self.waiter is None:
-                if self.credit == 0:
-                    # workaround before having an EventInjector
-                    event.reactor.schedule(0.1, self)
                 return
-            self._on_delivered(1)
             waiter = self.waiter
             self.waiter = None
         self.loop.call_soon_threadsafe(waiter.set_result, None)
@@ -53,17 +52,16 @@ class AsyncReceiver(Receiver):
         pass
 
     def on_timer_task(self, event):
+        """ Handle timer event """
         with self.lock:
-            self._on_delivered(0)
+            self._check_flow()
             if self.waiter is None and self.messages.qsize() > 0:
                 event.reactor.schedule(0.1, self)
 
     async def receive(self, count):
         """
         Receive events asynchronously.
-
         @param count: max number of events to receive. The result may be less.
-
         """
         waiter = None
         batch = []
@@ -81,8 +79,7 @@ class AsyncReceiver(Receiver):
                 waiter = self.waiter
             await waiter
 
-    def _on_delivered(self, count):
-        self.delivered = self.delivered + count
+    def _check_flow(self):
         if self.delivered >= 100:
             self.link.flow(self.delivered)
             self.credit += self.delivered

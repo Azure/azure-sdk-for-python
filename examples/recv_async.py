@@ -24,7 +24,7 @@ async def pump(recv):
     total = 0
     while True:
         try:
-            batch = await asyncio.wait_for(recv.receive(300), 60.0)
+            batch = await asyncio.wait_for(recv.receive(100), 60.0)
             size = len(batch)
             total += size
             logging.info("Received %d events, sn %d, batch %d", total, batch[-1].sequence_number, size)
@@ -50,6 +50,7 @@ try:
 
     receiver = AsyncReceiver()
     client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
+
         .subscribe(receiver, CONSUMER_GROUP, "0", OFFSET) \
         .run_daemon()
 
