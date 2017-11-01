@@ -15,12 +15,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-11-01T01:22:24.763Z","updatedAt":"2017-11-01T01:22:24.763Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['673']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:06:44 GMT']
+      date: ['Wed, 01 Nov 2017 01:22:24 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -28,7 +28,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -44,40 +44,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-11-01T01:22:24.763Z","updatedAt":"2017-11-01T01:22:24.763Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['673']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:07:15 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 servicebusmanagementclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['673']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:07:45 GMT']
+      date: ['Wed, 01 Nov 2017 01:22:25 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -100,12 +72,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-11-01T01:22:24.763Z","updatedAt":"2017-11-01T01:22:24.763Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['673']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:08:15 GMT']
+      date: ['Wed, 01 Nov 2017 01:22:41 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -128,68 +100,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['673']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:08:46 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 servicebusmanagementclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:06:44.133Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['673']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:16 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 servicebusmanagementclient/0.3.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic","name":"testingpythontestcasetopic","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-10-31T23:06:44.133Z","updatedAt":"2017-10-31T23:09:18.667Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasetopic","createdAt":"2017-11-01T01:22:24.763Z","updatedAt":"2017-11-01T01:22:50.703Z","serviceBusEndpoint":"https://testingpythontestcasetopic.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['675']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:47 GMT']
+      date: ['Wed, 01 Nov 2017 01:22:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -213,12 +129,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
-        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-10-31T23:09:50.013Z","updatedAt":"2017-10-31T23:09:50.107Z","accessedAt":"0001-01-01T00:00:00","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-11-01T01:23:00.973Z","updatedAt":"2017-11-01T01:23:01.16Z","accessedAt":"0001-01-01T00:00:00","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['984']
+      content-length: ['983']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:49 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:00 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -226,7 +142,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -242,12 +158,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
-        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-10-31T23:09:50.013Z","updatedAt":"2017-10-31T23:09:50.107Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-11-01T01:23:00.973Z","updatedAt":"2017-11-01T01:23:01.16Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['985']
+      content-length: ['984']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:50 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:03 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -270,12 +186,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics?api-version=2017-04-01
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
-        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-10-31T23:09:50.013Z","updatedAt":"2017-10-31T23:09:50.107Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}]}'}
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2017-11-01T01:23:00.973Z","updatedAt":"2017-11-01T01:23:01.16Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['997']
+      content-length: ['996']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:51 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:04 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -305,7 +221,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['973']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:52 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:05 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -313,7 +229,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"rights": ["Send", "Listen"]}}'
@@ -335,7 +251,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['427']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:53 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:06 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -343,7 +259,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -364,7 +280,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['427']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:54 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:07 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -393,7 +309,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['436']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:54 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:10 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -401,7 +317,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -422,7 +338,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['448']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:56 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:10 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -445,12 +361,12 @@ interactions:
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic/authorizationRules/testingauthrulepy/ListKeys?api-version=2017-04-01
   response:
-    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=xL05r8tssHpNY8XeKsI3EWogwBXvtMEAIGD0OeSZuAI=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=idqUbfBihXawzpLdfmwiBf8FfhLUfa5WxbSxBRRTlGE=;EntityPath=testingpythonsdktopic","primaryKey":"xL05r8tssHpNY8XeKsI3EWogwBXvtMEAIGD0OeSZuAI=","secondaryKey":"idqUbfBihXawzpLdfmwiBf8FfhLUfa5WxbSxBRRTlGE=","keyName":"testingauthrulepy"}'}
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=yQkdFdmCjp2r8lWOjkIreOaLnQbLyik7oE/Z00om5/Y=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=271ZcsWbPdEgZnQZBa4WpJOVt1EIPunt01Au4BZx9+o=;EntityPath=testingpythonsdktopic","primaryKey":"yQkdFdmCjp2r8lWOjkIreOaLnQbLyik7oE/Z00om5/Y=","secondaryKey":"271ZcsWbPdEgZnQZBa4WpJOVt1EIPunt01Au4BZx9+o=","keyName":"testingauthrulepy"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['605']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:56 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:11 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -458,7 +374,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
     body: '{"keyType": "PrimaryKey"}'
@@ -474,12 +390,12 @@ interactions:
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
-    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=RMrmLqisl6nmNUVqimtqNgrs/ncliDEDbJ8Xs84Gs8k=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=idqUbfBihXawzpLdfmwiBf8FfhLUfa5WxbSxBRRTlGE=;EntityPath=testingpythonsdktopic","primaryKey":"RMrmLqisl6nmNUVqimtqNgrs/ncliDEDbJ8Xs84Gs8k=","secondaryKey":"idqUbfBihXawzpLdfmwiBf8FfhLUfa5WxbSxBRRTlGE=","keyName":"testingauthrulepy"}'}
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=lGDlXO1GjNhnKYkixPck2HODLPQT+ehNS976u3P+CVQ=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=271ZcsWbPdEgZnQZBa4WpJOVt1EIPunt01Au4BZx9+o=;EntityPath=testingpythonsdktopic","primaryKey":"lGDlXO1GjNhnKYkixPck2HODLPQT+ehNS976u3P+CVQ=","secondaryKey":"271ZcsWbPdEgZnQZBa4WpJOVt1EIPunt01Au4BZx9+o=","keyName":"testingauthrulepy"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['605']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:57 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:12 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -487,7 +403,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
     body: '{"keyType": "SecondaryKey"}'
@@ -503,12 +419,12 @@ interactions:
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/topics/testingpythonsdktopic/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
-    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=RMrmLqisl6nmNUVqimtqNgrs/ncliDEDbJ8Xs84Gs8k=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=E3j080wf1AvyiUDQXBCbFg62UBNXBIl+8LOHaBfj1Sw=;EntityPath=testingpythonsdktopic","primaryKey":"RMrmLqisl6nmNUVqimtqNgrs/ncliDEDbJ8Xs84Gs8k=","secondaryKey":"E3j080wf1AvyiUDQXBCbFg62UBNXBIl+8LOHaBfj1Sw=","keyName":"testingauthrulepy"}'}
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=lGDlXO1GjNhnKYkixPck2HODLPQT+ehNS976u3P+CVQ=;EntityPath=testingpythonsdktopic","secondaryConnectionString":"Endpoint=sb://testingpythontestcasetopic.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=5FSAghCCCeXKrgjiIWy4rox6NH8D8JzC4aP1WKhBLbI=;EntityPath=testingpythonsdktopic","primaryKey":"lGDlXO1GjNhnKYkixPck2HODLPQT+ehNS976u3P+CVQ=","secondaryKey":"5FSAghCCCeXKrgjiIWy4rox6NH8D8JzC4aP1WKhBLbI=","keyName":"testingauthrulepy"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['605']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:09:58 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:13 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -516,7 +432,7 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -536,13 +452,13 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 31 Oct 2017 23:09:59 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:15 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
       server-sb: [Service-Bus-Resource-Provider/SN1]
       strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -562,7 +478,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['12']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 31 Oct 2017 23:10:00 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:16 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -589,7 +505,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 31 Oct 2017 23:10:02 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:17 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -615,7 +531,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 31 Oct 2017 23:10:02 GMT']
+      date: ['Wed, 01 Nov 2017 01:23:19 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_topic_test_sb_topic_curd29a11520/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasetopic/operationresults/testingpythontestcasetopic?api-version=2017-04-01']
       pragma: [no-cache]

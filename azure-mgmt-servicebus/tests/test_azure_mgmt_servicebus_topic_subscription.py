@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
+import time
 
 import azure.mgmt.servicebus.models
 from azure.mgmt.servicebus.models import SBNamespace,SBSku,SkuName,SBTopic,SBSubscription
@@ -32,10 +33,12 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         namespace_name = "testingpythontestcasesubscription"
 
         namespaceparameter = SBNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, SBSku(SkuName.standard))
-        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter)
-        creatednamespace = creatednamespace.result()
+        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter,None,True).output
         self.assertEqual(creatednamespace.name, namespace_name)
 
+        while (self.servicebus_client.namespaces.get(resource_group_name, namespace_name).provisioning_state != 'Succeeded'):
+            time.sleep(15)
+            continue
 
         # Create a Topic
         topic_name = "testingpythonsdktopic"
@@ -71,7 +74,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.servicebus_client.topics.delete(resource_group_name, namespace_name, topic_name)
 
         # Delete the create namespace
-        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name)
+        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name,None,True).output
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
