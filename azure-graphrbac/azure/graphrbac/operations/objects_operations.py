@@ -44,11 +44,9 @@ class ObjectsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AADObject <azure.graphrbac.models.AADObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AADObject <azure.graphrbac.models.AADObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AADObject or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.AADObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -96,17 +94,15 @@ class ObjectsOperations(object):
         """Gets AD group membership for the specified AD object IDs.
 
         :param parameters: Objects filtering parameters.
-        :type parameters: :class:`GetObjectsParameters
-         <azure.graphrbac.models.GetObjectsParameters>`
+        :type parameters: ~azure.graphrbac.models.GetObjectsParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AADObject
-         <azure.graphrbac.models.AADObject>`
-        :rtype: :class:`AADObjectPaged
-         <azure.graphrbac.models.AADObjectPaged>`
+        :return: An iterator like instance of AADObject
+        :rtype:
+         ~azure.graphrbac.models.AADObjectPaged[~azure.graphrbac.models.AADObject]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

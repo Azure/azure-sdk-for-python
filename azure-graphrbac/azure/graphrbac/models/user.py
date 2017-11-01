@@ -32,8 +32,7 @@ class User(UserBase):
     :param user_type: A string value that can be used to classify user types
      in your directory, such as 'Member' and 'Guest'. Possible values include:
      'Member', 'Guest'
-    :type user_type: str or :class:`UserType
-     <azure.graphrbac.models.UserType>`
+    :type user_type: str or ~azure.graphrbac.models.UserType
     :param account_enabled: Whether the account is enabled.
     :type account_enabled: bool
     :param display_name: The display name of the user.
@@ -49,8 +48,7 @@ class User(UserBase):
     :param object_type: The object type.
     :type object_type: str
     :param sign_in_names: The sign-in names of the user.
-    :type sign_in_names: list of :class:`SignInName
-     <azure.graphrbac.models.SignInName>`
+    :type sign_in_names: list[~azure.graphrbac.models.SignInName]
     """
 
     _attribute_map = {

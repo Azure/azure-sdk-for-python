@@ -32,15 +32,13 @@ class UserUpdateParameters(UserBase):
     :param user_type: A string value that can be used to classify user types
      in your directory, such as 'Member' and 'Guest'. Possible values include:
      'Member', 'Guest'
-    :type user_type: str or :class:`UserType
-     <azure.graphrbac.models.UserType>`
+    :type user_type: str or ~azure.graphrbac.models.UserType
     :param account_enabled: Whether the account is enabled.
     :type account_enabled: bool
     :param display_name: The display name of the user.
     :type display_name: str
     :param password_profile: The password profile of the user.
-    :type password_profile: :class:`PasswordProfile
-     <azure.graphrbac.models.PasswordProfile>`
+    :type password_profile: ~azure.graphrbac.models.PasswordProfile
     :param user_principal_name: The user principal name
      (someuser@contoso.com). It must contain one of the verified domains for
      the tenant.

@@ -42,8 +42,6 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if tenant_id is None:
             raise ValueError("Parameter 'tenant_id' must not be None.")
-        if not isinstance(tenant_id, str):
-            raise TypeError("Parameter 'tenant_id' must be str.")
         if not base_url:
             base_url = 'https://graph.windows.net'
 
