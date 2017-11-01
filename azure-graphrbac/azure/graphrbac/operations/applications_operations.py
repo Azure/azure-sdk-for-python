@@ -39,18 +39,15 @@ class ApplicationsOperations(object):
         """Create a new application.
 
         :param parameters: The parameters for creating an application.
-        :type parameters: :class:`ApplicationCreateParameters
-         <azure.graphrbac.models.ApplicationCreateParameters>`
+        :type parameters: ~azure.graphrbac.models.ApplicationCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Application <azure.graphrbac.models.Application>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Application <azure.graphrbac.models.Application>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Application or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Application or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -108,10 +105,9 @@ class ApplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Application
-         <azure.graphrbac.models.Application>`
-        :rtype: :class:`ApplicationPaged
-         <azure.graphrbac.models.ApplicationPaged>`
+        :return: An iterator like instance of Application
+        :rtype:
+         ~azure.graphrbac.models.ApplicationPaged[~azure.graphrbac.models.Application]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -182,11 +178,8 @@ class ApplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -234,11 +227,9 @@ class ApplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Application <azure.graphrbac.models.Application>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Application <azure.graphrbac.models.Application>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Application or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.Application or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -289,18 +280,14 @@ class ApplicationsOperations(object):
         :param application_object_id: Application object ID.
         :type application_object_id: str
         :param parameters: Parameters to update an existing application.
-        :type parameters: :class:`ApplicationUpdateParameters
-         <azure.graphrbac.models.ApplicationUpdateParameters>`
+        :type parameters: ~azure.graphrbac.models.ApplicationUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -352,10 +339,9 @@ class ApplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`KeyCredential
-         <azure.graphrbac.models.KeyCredential>`
-        :rtype: :class:`KeyCredentialPaged
-         <azure.graphrbac.models.KeyCredentialPaged>`
+        :return: An iterator like instance of KeyCredential
+        :rtype:
+         ~azure.graphrbac.models.KeyCredentialPaged[~azure.graphrbac.models.KeyCredential]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -415,18 +401,14 @@ class ApplicationsOperations(object):
         :param application_object_id: Application object ID.
         :type application_object_id: str
         :param value: A collection of KeyCredentials.
-        :type value: list of :class:`KeyCredential
-         <azure.graphrbac.models.KeyCredential>`
+        :type value: list[~azure.graphrbac.models.KeyCredential]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -480,10 +462,9 @@ class ApplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PasswordCredential
-         <azure.graphrbac.models.PasswordCredential>`
-        :rtype: :class:`PasswordCredentialPaged
-         <azure.graphrbac.models.PasswordCredentialPaged>`
+        :return: An iterator like instance of PasswordCredential
+        :rtype:
+         ~azure.graphrbac.models.PasswordCredentialPaged[~azure.graphrbac.models.PasswordCredential]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -543,18 +524,14 @@ class ApplicationsOperations(object):
         :param application_object_id: Application object ID.
         :type application_object_id: str
         :param value: A collection of PasswordCredentials.
-        :type value: list of :class:`PasswordCredential
-         <azure.graphrbac.models.PasswordCredential>`
+        :type value: list[~azure.graphrbac.models.PasswordCredential]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
