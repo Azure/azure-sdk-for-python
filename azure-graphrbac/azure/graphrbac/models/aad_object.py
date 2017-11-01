@@ -38,7 +38,7 @@ class AADObject(Model):
     :type sign_in_name: str
     :param service_principal_names: A collection of service principal names
      associated with the object.
-    :type service_principal_names: list of str
+    :type service_principal_names: list[str]
     :param user_type: The user type of the object.
     :type user_type: str
     :ivar usage_location: A two letter country code (ISO standard 3166).
@@ -49,14 +49,14 @@ class AADObject(Model):
     :ivar app_id: The application ID.
     :vartype app_id: str
     :ivar app_permissions: The application permissions.
-    :vartype app_permissions: list of str
+    :vartype app_permissions: list[str]
     :ivar available_to_other_tenants: Whether the application is be available
      to other tenants.
     :vartype available_to_other_tenants: bool
     :ivar identifier_uris: A collection of URIs for the application.
-    :vartype identifier_uris: list of str
+    :vartype identifier_uris: list[str]
     :ivar reply_urls: A collection of reply URLs for the application.
-    :vartype reply_urls: list of str
+    :vartype reply_urls: list[str]
     :ivar homepage: The home page of the application.
     :vartype homepage: str
     """

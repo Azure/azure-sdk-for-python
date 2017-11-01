@@ -22,16 +22,16 @@ class Application(Model):
     :param app_id: The application ID.
     :type app_id: str
     :param app_permissions: The application permissions.
-    :type app_permissions: list of str
+    :type app_permissions: list[str]
     :param available_to_other_tenants: Whether the application is be available
      to other tenants.
     :type available_to_other_tenants: bool
     :param display_name: The display name of the application.
     :type display_name: str
     :param identifier_uris: A collection of URIs for the application.
-    :type identifier_uris: list of str
+    :type identifier_uris: list[str]
     :param reply_urls: A collection of reply URLs for the application.
-    :type reply_urls: list of str
+    :type reply_urls: list[str]
     :param homepage: The home page of the application.
     :type homepage: str
     :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
