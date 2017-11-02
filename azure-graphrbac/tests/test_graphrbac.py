@@ -75,11 +75,39 @@ class GraphRbacTest(AzureMgmtTestCase):
             'identifier_uris': ['http://pytest_app.org']
         })
 
+        user = self.graphrbac_client.users.create(
+            azure.graphrbac.models.UserCreateParameters(
+                user_principal_name="testowner@{}".format(self.settings.AD_DOMAIN),
+                account_enabled=False,
+                display_name='testowner',
+                mail_nickname='testowner',
+                password_profile=azure.graphrbac.models.PasswordProfile(
+                    password='MyStr0ngP4ssword',
+                    force_change_password_next_login=True
+                )
+            )
+        )
+
+        self.graphrbac_client.applications.add_owner(
+            app.object_id, 
+            "https://graph.windows.net/{}/directoryObjects/{}".format(
+                self.settings.AD_DOMAIN,
+                user.object_id
+            )
+        )
+
+        app_owners = list(self.graphrbac_client.applications.list_owners(app.object_id))
+        self.assertEqual(app_owners[0].object_id, user.object_id)
+
         sp = self.graphrbac_client.service_principals.create({
             'app_id': app.app_id, # Do NOT use app.object_id
             'account_enabled': False
 
         })
+
+        sp_owners = list(self.graphrbac_client.service_principals.list_owners(sp.object_id))
+
+        self.graphrbac_client.users.delete(user.object_id)
 
         self.graphrbac_client.service_principals.delete(sp.object_id)
 
