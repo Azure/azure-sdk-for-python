@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -48,10 +48,11 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TrafficManagerNameAvailability
-         <azure.mgmt.trafficmanager.models.TrafficManagerNameAvailability>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: TrafficManagerNameAvailability or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.trafficmanager.models.TrafficManagerNameAvailability or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters(name=name, type=type)
@@ -109,8 +110,9 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProfilePaged
-         <azure.mgmt.trafficmanager.models.ProfilePaged>`
+        :return: An iterator like instance of Profile
+        :rtype:
+         ~azure.mgmt.trafficmanager.models.ProfilePaged[~azure.mgmt.trafficmanager.models.Profile]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -173,8 +175,9 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProfilePaged
-         <azure.mgmt.trafficmanager.models.ProfilePaged>`
+        :return: An iterator like instance of Profile
+        :rtype:
+         ~azure.mgmt.trafficmanager.models.ProfilePaged[~azure.mgmt.trafficmanager.models.Profile]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -241,9 +244,9 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Profile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Profile or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -300,16 +303,15 @@ class ProfilesOperations(object):
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to
          the CreateOrUpdate operation.
-        :type parameters: :class:`Profile
-         <azure.mgmt.trafficmanager.models.Profile>`
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Profile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Profile or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -376,10 +378,9 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeleteOperationResult
-         <azure.mgmt.trafficmanager.models.DeleteOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeleteOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.DeleteOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -436,16 +437,15 @@ class ProfilesOperations(object):
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to
          the Update operation.
-        :type parameters: :class:`Profile
-         <azure.mgmt.trafficmanager.models.Profile>`
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Profile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Profile or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

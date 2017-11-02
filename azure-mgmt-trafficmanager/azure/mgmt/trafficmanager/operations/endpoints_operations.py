@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -52,16 +52,15 @@ class EndpointsOperations(object):
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to
          the Update operation.
-        :type parameters: :class:`Endpoint
-         <azure.mgmt.trafficmanager.models.Endpoint>`
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Endpoint or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Endpoint or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -131,9 +130,9 @@ class EndpointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Endpoint or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Endpoint or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -198,16 +197,15 @@ class EndpointsOperations(object):
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to
          the CreateOrUpdate operation.
-        :type parameters: :class:`Endpoint
-         <azure.mgmt.trafficmanager.models.Endpoint>`
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Endpoint or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.Endpoint or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -281,10 +279,9 @@ class EndpointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeleteOperationResult
-         <azure.mgmt.trafficmanager.models.DeleteOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeleteOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.trafficmanager.models.DeleteOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

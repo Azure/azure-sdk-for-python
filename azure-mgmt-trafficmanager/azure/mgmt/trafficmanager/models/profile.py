@@ -27,28 +27,25 @@ class Profile(TrackedResource):
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
     :type location: str
     :param profile_status: The status of the Traffic Manager profile. Possible
      values include: 'Enabled', 'Disabled'
-    :type profile_status: str or :class:`ProfileStatus
-     <azure.mgmt.trafficmanager.models.ProfileStatus>`
+    :type profile_status: str or
+     ~azure.mgmt.trafficmanager.models.ProfileStatus
     :param traffic_routing_method: The traffic routing method of the Traffic
      Manager profile. Possible values include: 'Performance', 'Priority',
      'Weighted', 'Geographic'
-    :type traffic_routing_method: str or :class:`TrafficRoutingMethod
-     <azure.mgmt.trafficmanager.models.TrafficRoutingMethod>`
+    :type traffic_routing_method: str or
+     ~azure.mgmt.trafficmanager.models.TrafficRoutingMethod
     :param dns_config: The DNS settings of the Traffic Manager profile.
-    :type dns_config: :class:`DnsConfig
-     <azure.mgmt.trafficmanager.models.DnsConfig>`
+    :type dns_config: ~azure.mgmt.trafficmanager.models.DnsConfig
     :param monitor_config: The endpoint monitoring settings of the Traffic
      Manager profile.
-    :type monitor_config: :class:`MonitorConfig
-     <azure.mgmt.trafficmanager.models.MonitorConfig>`
+    :type monitor_config: ~azure.mgmt.trafficmanager.models.MonitorConfig
     :param endpoints: The list of endpoints in the Traffic Manager profile.
-    :type endpoints: list of :class:`Endpoint
-     <azure.mgmt.trafficmanager.models.Endpoint>`
+    :type endpoints: list[~azure.mgmt.trafficmanager.models.Endpoint]
     """
 
     _validation = {
