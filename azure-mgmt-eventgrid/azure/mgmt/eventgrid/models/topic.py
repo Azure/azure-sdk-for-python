@@ -27,12 +27,12 @@ class Topic(TrackedResource):
     :param location: Location of the resource
     :type location: str
     :param tags: Tags of the resource
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the topic. Possible values
      include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Canceled',
      'Failed'
-    :vartype provisioning_state: str or :class:`TopicProvisioningState
-     <azure.mgmt.eventgrid.models.TopicProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.TopicProvisioningState
     :ivar endpoint: Endpoint for the topic.
     :vartype endpoint: str
     """
