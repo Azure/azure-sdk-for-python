@@ -21,6 +21,7 @@ from .operation_info import OperationInfo
 from .operation import Operation
 from .tracked_resource import TrackedResource
 from .topic import Topic
+from .topic_update_parameters import TopicUpdateParameters
 from .topic_shared_access_keys import TopicSharedAccessKeys
 from .topic_regenerate_key_request import TopicRegenerateKeyRequest
 from .event_type import EventType
@@ -51,6 +52,7 @@ __all__ = [
     'Operation',
     'TrackedResource',
     'Topic',
+    'TopicUpdateParameters',
     'TopicSharedAccessKeys',
     'TopicRegenerateKeyRequest',
     'EventType',
