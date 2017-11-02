@@ -12,21 +12,24 @@
 from msrest.serialization import Model
 
 
-class BatchAccountRegenerateKeyParameters(Model):
-    """Parameters supplied to the RegenerateKey operation.
+class EnvironmentSetting(Model):
+    """An environment variable to be set on a task process.
 
-    :param key_name: The type of account key to regenerate. Possible values
-     include: 'Primary', 'Secondary'
-    :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
+    :param name: The name of the environment variable.
+    :type name: str
+    :param value: The value of the environment variable.
+    :type value: str
     """
 
     _validation = {
-        'key_name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'AccountKeyType'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, key_name):
-        self.key_name = key_name
+    def __init__(self, name, value=None):
+        self.name = name
+        self.value = value

@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class BatchAccountRegenerateKeyParameters(Model):
-    """Parameters supplied to the RegenerateKey operation.
+class WindowsConfiguration(Model):
+    """Windows operating system settings to apply to the virtual machine.
 
-    :param key_name: The type of account key to regenerate. Possible values
-     include: 'Primary', 'Secondary'
-    :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
+    :param enable_automatic_updates: Whether automatic updates are enabled on
+     the virtual machine. If omitted, the default value is true.
+    :type enable_automatic_updates: bool
     """
 
-    _validation = {
-        'key_name': {'required': True},
-    }
-
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'AccountKeyType'},
+        'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
     }
 
-    def __init__(self, key_name):
-        self.key_name = key_name
+    def __init__(self, enable_automatic_updates=None):
+        self.enable_automatic_updates = enable_automatic_updates

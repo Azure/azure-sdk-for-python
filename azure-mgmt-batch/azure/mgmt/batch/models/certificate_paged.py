@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "4.0.0"
+from msrest.paging import Paged
 
+
+class CertificatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Certificate <azure.mgmt.batch.models.Certificate>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Certificate]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CertificatePaged, self).__init__(*args, **kwargs)

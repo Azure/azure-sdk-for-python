@@ -17,8 +17,8 @@ from msrestazure.azure_operation import AzureOperationPoller
 from .. import models
 
 
-class BatchAccountOperations(object):
-    """BatchAccountOperations operations.
+class PoolOperations(object):
+    """PoolOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,40 +36,143 @@ class BatchAccountOperations(object):
 
         self.config = config
 
-    def create(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new Batch account with the specified parameters. Existing
-        accounts cannot be updated with this API and should instead be updated
-        with the Update Batch Account API.
+    def list_by_batch_account(
+            self, resource_group_name, account_name, maxresults=None, select=None, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the pools in the specified account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
-        :param account_name: A name for the Batch account which must be unique
-         within the region. Batch account names must be between 3 and 24
-         characters in length and must use only numbers and lowercase letters.
-         This name is used as part of the DNS name that is used to access the
-         Batch service in the region in which the account is created. For
-         example: http://accountname.region.batch.azure.com/.
+        :param account_name: The name of the Batch account.
         :type account_name: str
-        :param parameters: Additional parameters for account creation.
-        :type parameters:
-         ~azure.mgmt.batch.models.BatchAccountCreateParameters
+        :param maxresults: The maximum number of items to return in the
+         response.
+        :type maxresults: int
+        :param select: Comma separated list of properties that should be
+         returned. e.g. "properties/provisioningState". Only top level
+         properties under properties/ are valid for selection.
+        :type select: str
+        :param filter: OData filter expression. Valid properties for filtering
+         are:
+         name
+         properties/allocationState
+         properties/allocationStateTransitionTime
+         properties/creationTime
+         properties/provisioningState
+         properties/provisioningStateTransitionTime
+         properties/lastModified
+         properties/vmSize
+         properties/interNodeCommunication
+         properties/scaleSettings/autoScale
+         properties/scaleSettings/fixedScale
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns BatchAccount
-         or ClientRawResponse if raw=true
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Pool
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.BatchAccount]
+         ~azure.mgmt.batch.models.PoolPaged[~azure.mgmt.batch.models.Pool]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.PoolPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.PoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def create(
+            self, resource_group_name, account_name, pool_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new pool inside the specified account.
+
+        :param resource_group_name: The name of the resource group that
+         contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param pool_name: The pool name. This must be unique within the
+         account.
+        :type pool_name: str
+        :param parameters: Additional parameters for pool creation.
+        :type parameters: ~azure.mgmt.batch.models.Pool
+        :param if_match: The entity state (ETag) version of the pool to
+         update. A value of "*" can be used to apply the operation only if the
+         pool already exists. If omitted, this operation will always be
+         applied.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new pool to be created,
+         but to prevent updating an existing pool. Other values will be
+         ignored.
+        :type if_none_match: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Pool or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.Pool]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -85,11 +188,15 @@ class BatchAccountOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BatchAccountCreateParameters')
+        body_content = self._serialize.body(parameters, 'Pool')
 
         # Construct and send request
         def long_running_send():
@@ -108,7 +215,7 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202]:
+            if response.status_code not in [200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -117,10 +224,9 @@ class BatchAccountOperations(object):
             header_dict = {}
 
             if response.status_code == 200:
-                deserialized = self._deserialize('BatchAccount', response)
+                deserialized = self._deserialize('Pool', response)
                 header_dict = {
-                    'Location': 'str',
-                    'Retry-After': 'int',
+                    'ETag': 'str',
                 }
 
             if raw:
@@ -142,36 +248,41 @@ class BatchAccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the properties of an existing Batch account.
+            self, resource_group_name, account_name, pool_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the properties of an existing pool.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param tags: The user-specified tags associated with the account.
-        :type tags: dict[str, str]
-        :param auto_storage: The properties related to the auto-storage
+        :param pool_name: The pool name. This must be unique within the
          account.
-        :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+        :type pool_name: str
+        :param parameters: Pool properties that should be updated. Properties
+         that are supplied will be updated, any property not supplied will be
+         unchanged.
+        :type parameters: ~azure.mgmt.batch.models.Pool
+        :param if_match: The entity state (ETag) version of the pool to
+         update. This value can be omitted or set to "*" to apply the operation
+         unconditionally.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BatchAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.batch.models.BatchAccount or
+        :return: Pool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.Pool or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
-
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -187,11 +298,13 @@ class BatchAccountOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BatchAccountUpdateParameters')
+        body_content = self._serialize.body(parameters, 'Pool')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -204,25 +317,33 @@ class BatchAccountOperations(object):
             raise exp
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccount', response)
+            deserialized = self._deserialize('Pool', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
 
     def delete(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified Batch account.
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified pool.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
+        :param pool_name: The pool name. This must be unique within the
+         account.
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -233,10 +354,11 @@ class BatchAccountOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -271,7 +393,7 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 204]:
+            if response.status_code not in [200, 204, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -296,29 +418,33 @@ class BatchAccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the specified Batch account.
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about the specified pool.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
+        :param pool_name: The pool name. This must be unique within the
+         account.
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BatchAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.batch.models.BatchAccount or
+        :return: Pool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.Pool or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -347,306 +473,49 @@ class BatchAccountOperations(object):
             raise exp
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccount', response)
+            deserialized = self._deserialize('Pool', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch accounts associated with the
-        subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BatchAccount
-        :rtype:
-         ~azure.mgmt.batch.models.BatchAccountPaged[~azure.mgmt.batch.models.BatchAccount]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/batchAccounts'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch accounts associated with the specified
-        resource group.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BatchAccount
-        :rtype:
-         ~azure.mgmt.batch.models.BatchAccountPaged[~azure.mgmt.batch.models.BatchAccount]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def synchronize_auto_storage_keys(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Synchronizes access keys for the auto-storage account configured for
-        the specified Batch account.
+    def disable_auto_scale(
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
+        """Disables automatic scaling for a pool.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
+        :param pool_name: The pool name. This must be unique within the
+         account.
+        :type pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/syncAutoStorageKeys'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def regenerate_key(
-            self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the specified account key for the Batch account.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param key_name: The type of account key to regenerate. Possible
-         values include: 'Primary', 'Secondary'
-        :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BatchAccountKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.batch.models.BatchAccountKeys or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.BatchAccountRegenerateKeyParameters(key_name=key_name)
-
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/regenerateKeys'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'BatchAccountRegenerateKeyParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccountKeys', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_keys(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the account keys for the specified Batch account.
-
-        This operation applies only to Batch accounts created with a
-        poolAllocationMode of 'BatchService'. If the Batch account was created
-        with a poolAllocationMode of 'UserSubscription', clients cannot use
-        access to keys to authenticate, and must use Azure Active Directory
-        instead. In this case, getting the keys will fail.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BatchAccountKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.batch.models.BatchAccountKeys or
+        :return: Pool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.Pool or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/listKeys'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}/disableAutoScale'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -675,12 +544,97 @@ class BatchAccountOperations(object):
             raise exp
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccountKeys', response)
+            deserialized = self._deserialize('Pool', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def stop_resize(
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
+        """Stops an ongoing resize operation on the pool.
+
+        This does not restore the pool to its previous state before the resize
+        operation: it only stops any further changes being made, and the pool
+        maintains its current state. After stopping, the pool stabilizes at the
+        number of nodes it was at when the stop operation was done. During the
+        stop operation, the pool allocation state changes first to stopping and
+        then to steady. A resize operation need not be an explicit resize pool
+        request; this API can also be used to halt the initial sizing of the
+        pool when it is created.
+
+        :param resource_group_name: The name of the resource group that
+         contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param pool_name: The pool name. This must be unique within the
+         account.
+        :type pool_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Pool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.Pool or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}/stopResize'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Pool', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

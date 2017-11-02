@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class ProxyResource(Model):
     """A definition of an Azure resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,31 +24,26 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource.
-    :vartype location: str
-    :ivar tags: The tags of the resource.
-    :vartype tags: dict[str, str]
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self):
         self.id = None
         self.name = None
         self.type = None
-        self.location = None
-        self.tags = None
+        self.etag = None
