@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class BatchAccountRegenerateKeyParameters(Model):
-    """Parameters supplied to the RegenerateKey operation.
+class TaskSchedulingPolicy(Model):
+    """Specifies how tasks should be distributed across compute nodes.
 
-    :param key_name: The type of account key to regenerate. Possible values
-     include: 'Primary', 'Secondary'
-    :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
+    :param node_fill_type: How tasks should be distributed across compute
+     nodes. Possible values include: 'Spread', 'Pack'
+    :type node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
     _validation = {
-        'key_name': {'required': True},
+        'node_fill_type': {'required': True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'AccountKeyType'},
+        'node_fill_type': {'key': 'nodeFillType', 'type': 'ComputeNodeFillType'},
     }
 
-    def __init__(self, key_name):
-        self.key_name = key_name
+    def __init__(self, node_fill_type):
+        self.node_fill_type = node_fill_type
