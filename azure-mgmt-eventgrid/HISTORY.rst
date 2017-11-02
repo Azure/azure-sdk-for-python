@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.3.0 (2017-11-02)
+++++++++++++++++++
+
+**Features**
+
+- Support for updating Topic properties
+
 0.2.0 (2017-09-13)
 ++++++++++++++++++
 
