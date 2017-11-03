@@ -322,13 +322,13 @@
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
     "loganalytics": {
-      "markdown": "specification/operationalinsights/resource-manager/readme.md",
       "autorest_options": {
-        "title": "LogAnalyticsManagementClient",
         "description": "The Log Analytics Client.",
         "namespace": "azure.mgmt.loganalytics",
-        "package-version": "0.1.0"
+        "package-version": "0.1.0",
+        "title": "LogAnalyticsManagementClient"
       },
+      "markdown": "specification/operationalinsights/resource-manager/readme.md",
       "output_dir": "azure-mgmt-loganalytics/azure/mgmt/loganalytics"
     },
     "logic": {
@@ -500,6 +500,16 @@
       "build_dir": "azure-mgmt-redis",
       "markdown": "specification/redis/resource-manager/readme.md",
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
+    },
+    "relay.mgmt": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.relay",
+        "package-name": "azure-mgmt-relay",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-relay",
+      "markdown": "specification/relay/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-relay/azure/mgmt/relay"
     },
     "resources.features.2015-12-01": {
       "autorest_options": {
