@@ -10,6 +10,11 @@ import datetime
 import re
 import unittest
 
+from azure.mgmt.advisor.models import (
+    ConfigData,
+    ConfigDataProperties
+)
+
 from devtools_testutils import (
     AzureMgmtTestCase, ResourceGroupPreparer,
 )
@@ -108,11 +113,46 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         for sup in response:
             self.assertNotEqual(sup.Name, suppressionName)
 
-    def test_configurations(self):
-        # config = 
-        # self.client.configurations.create_in_subscription()
-        # create, get and delete configuration on a subscription and resource group
-        self.assertTrue(True);
+    def test_configurations_subscription(self):
+        # create a new configuration to update low CPU threshold to 20
+        input = ConfigData()
+        input.properties = ConfigDataProperties(low_cpu_threshold=20)
+        # update the configuration
+        response = self.client.configurations.create_in_subscription(input)
+        # retrieve the configurations
+        output = list(self.client.configurations.list_by_subscription().value)[0]
+        # verify we get back the value we just set
+        self.assertEqual(output.properties.low_cpu_threshold, "20")
+        # restore the default configuration
+        input.properties = ConfigDataProperties(low_cpu_threshold=5)
+        response = self.client.configurations.create_in_subscription(input)
+        # retrieve the configurations
+        output = list(self.client.configurations.list_by_subscription().value)[0]
+        # verify we get back the value we just set
+        self.assertEqual(output.properties.low_cpu_threshold, "5")
+
+    def test_configurations_resourcegroup(self):
+        resourceGroupName = "AzExpertStg"
+        # create a new configuration to update exclude to True
+        input = ConfigData()
+        input.properties = ConfigDataProperties(exclude=True)
+        # update the configuration
+        self.client.configurations.create_in_resource_group(
+            config_contract = input,
+            resource_group = resourceGroupName)
+        # retrieve the configurations
+        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
+        # verify we get back the value we just set
+        self.assertEqual(output.properties.exclude, True)
+        # restore the default configuration
+        input.properties = ConfigDataProperties(exclude=False)
+        self.client.configurations.create_in_resource_group(
+            config_contract = input,
+            resource_group = resourceGroupName)
+        # retrieve the configurations
+        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
+        # verify we get back the value we just set
+        self.assertEqual(output.properties.exclude, False)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
