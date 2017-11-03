@@ -15,13 +15,16 @@ from .directory_object import DirectoryObject
 class ServicePrincipal(DirectoryObject):
     """Active Directory service principal information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
-    :type object_type: str
-    :param deletion_timestamp: The time at which the directory object was
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar object_type: The object type.
+    :vartype object_type: str
+    :ivar deletion_timestamp: The time at which the directory object was
      deleted.
-    :type deletion_timestamp: datetime
+    :vartype deletion_timestamp: datetime
     :param display_name: The display name of the service principal.
     :type display_name: str
     :param app_id: The application ID.
@@ -31,7 +34,9 @@ class ServicePrincipal(DirectoryObject):
     """
 
     _validation = {
-        'object_id': {'required': True},
+        'object_id': {'readonly': True},
+        'object_type': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,8 +48,8 @@ class ServicePrincipal(DirectoryObject):
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, object_id, object_type=None, deletion_timestamp=None, display_name=None, app_id=None, service_principal_names=None):
-        super(ServicePrincipal, self).__init__(object_id=object_id, object_type=object_type, deletion_timestamp=deletion_timestamp)
+    def __init__(self, display_name=None, app_id=None, service_principal_names=None):
+        super(ServicePrincipal, self).__init__()
         self.display_name = display_name
         self.app_id = app_id
         self.service_principal_names = service_principal_names

@@ -15,13 +15,16 @@ from .directory_object import DirectoryObject
 class Application(DirectoryObject):
     """Active Directory application information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
-    :type object_type: str
-    :param deletion_timestamp: The time at which the directory object was
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar object_type: The object type.
+    :vartype object_type: str
+    :ivar deletion_timestamp: The time at which the directory object was
      deleted.
-    :type deletion_timestamp: datetime
+    :vartype deletion_timestamp: datetime
     :param app_id: The application ID.
     :type app_id: str
     :param app_permissions: The application permissions.
@@ -43,7 +46,9 @@ class Application(DirectoryObject):
     """
 
     _validation = {
-        'object_id': {'required': True},
+        'object_id': {'readonly': True},
+        'object_type': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -60,8 +65,8 @@ class Application(DirectoryObject):
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, object_id, object_type=None, deletion_timestamp=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
-        super(Application, self).__init__(object_id=object_id, object_type=object_type, deletion_timestamp=deletion_timestamp)
+    def __init__(self, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
+        super(Application, self).__init__()
         self.app_id = app_id
         self.app_permissions = app_permissions
         self.available_to_other_tenants = available_to_other_tenants

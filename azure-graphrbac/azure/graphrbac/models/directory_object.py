@@ -15,17 +15,22 @@ from msrest.serialization import Model
 class DirectoryObject(Model):
     """Represents an Azure Active Directory object.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
-    :type object_type: str
-    :param deletion_timestamp: The time at which the directory object was
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar object_type: The object type.
+    :vartype object_type: str
+    :ivar deletion_timestamp: The time at which the directory object was
      deleted.
-    :type deletion_timestamp: datetime
+    :vartype deletion_timestamp: datetime
     """
 
     _validation = {
-        'object_id': {'required': True},
+        'object_id': {'readonly': True},
+        'object_type': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -34,7 +39,7 @@ class DirectoryObject(Model):
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, object_id, object_type=None, deletion_timestamp=None):
-        self.object_id = object_id
-        self.object_type = object_type
-        self.deletion_timestamp = deletion_timestamp
+    def __init__(self):
+        self.object_id = None
+        self.object_type = None
+        self.deletion_timestamp = None
