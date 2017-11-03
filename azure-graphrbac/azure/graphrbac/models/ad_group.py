@@ -20,11 +20,11 @@ class ADGroup(DirectoryObject):
 
     :ivar object_id: The object ID.
     :vartype object_id: str
-    :ivar object_type: The object type.
-    :vartype object_type: str
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
+    :type object_type: str
     :param display_name: The display name of the group.
     :type display_name: str
     :param security_enabled: Whether the group is security-enable.
@@ -35,14 +35,14 @@ class ADGroup(DirectoryObject):
 
     _validation = {
         'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
         'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
     }
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
         'mail': {'key': 'mail', 'type': 'str'},
@@ -53,3 +53,4 @@ class ADGroup(DirectoryObject):
         self.display_name = display_name
         self.security_enabled = security_enabled
         self.mail = mail
+        self.object_type = 'Group'

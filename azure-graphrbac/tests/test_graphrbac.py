@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.graphrbac
+import azure.graphrbac.models
 from devtools_testutils import AzureMgmtTestCase
 
 
@@ -98,6 +98,7 @@ class GraphRbacTest(AzureMgmtTestCase):
 
         app_owners = list(self.graphrbac_client.applications.list_owners(app.object_id))
         self.assertEqual(app_owners[0].object_id, user.object_id)
+        self.assertIsInstance(app_owners[0], azure.graphrbac.models.User)
 
         sp = self.graphrbac_client.service_principals.create({
             'app_id': app.app_id, # Do NOT use app.object_id

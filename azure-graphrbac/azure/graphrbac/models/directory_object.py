@@ -15,31 +15,38 @@ from msrest.serialization import Model
 class DirectoryObject(Model):
     """Represents an Azure Active Directory object.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Application, ADGroup, ServicePrincipal, User
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar object_id: The object ID.
     :vartype object_id: str
-    :ivar object_type: The object type.
-    :vartype object_type: str
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
+    :type object_type: str
     """
 
     _validation = {
         'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
         'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
     }
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
     }
 
     def __init__(self):
         self.object_id = None
-        self.object_type = None
         self.deletion_timestamp = None
+        self.object_type = None

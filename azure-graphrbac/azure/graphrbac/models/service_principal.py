@@ -20,11 +20,11 @@ class ServicePrincipal(DirectoryObject):
 
     :ivar object_id: The object ID.
     :vartype object_id: str
-    :ivar object_type: The object type.
-    :vartype object_type: str
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
+    :type object_type: str
     :param display_name: The display name of the service principal.
     :type display_name: str
     :param app_id: The application ID.
@@ -35,14 +35,14 @@ class ServicePrincipal(DirectoryObject):
 
     _validation = {
         'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
         'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
     }
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
@@ -53,3 +53,4 @@ class ServicePrincipal(DirectoryObject):
         self.display_name = display_name
         self.app_id = app_id
         self.service_principal_names = service_principal_names
+        self.object_type = 'ServicePrincipal'

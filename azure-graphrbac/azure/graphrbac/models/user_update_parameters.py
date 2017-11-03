@@ -15,16 +15,6 @@ from .user_base import UserBase
 class UserUpdateParameters(UserBase):
     """Request parameters for updating an existing work or school account user.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar object_type: The object type.
-    :vartype object_type: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
      user account. It is used to associate an on-premises Active Directory user
@@ -57,16 +47,7 @@ class UserUpdateParameters(UserBase):
     :type mail_nickname: str
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-    }
-
     _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'immutable_id': {'key': 'immutableId', 'type': 'str'},
         'usage_location': {'key': 'usageLocation', 'type': 'str'},
         'given_name': {'key': 'givenName', 'type': 'str'},

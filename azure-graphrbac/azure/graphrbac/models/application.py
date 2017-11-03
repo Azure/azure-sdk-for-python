@@ -20,11 +20,11 @@ class Application(DirectoryObject):
 
     :ivar object_id: The object ID.
     :vartype object_id: str
-    :ivar object_type: The object type.
-    :vartype object_type: str
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
+    :type object_type: str
     :param app_id: The application ID.
     :type app_id: str
     :param app_permissions: The application permissions.
@@ -47,14 +47,14 @@ class Application(DirectoryObject):
 
     _validation = {
         'object_id': {'readonly': True},
-        'object_type': {'readonly': True},
         'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
     }
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
@@ -75,3 +75,4 @@ class Application(DirectoryObject):
         self.reply_urls = reply_urls
         self.homepage = homepage
         self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+        self.object_type = 'Application'
