@@ -280,6 +280,13 @@
     ],
     "service_name": "Redis Cache"
   },
+  "azure-mgmt-relay": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.relay"
+    ],
+    "service_name": "Relay"
+  },
   "azure-mgmt-resource": {
     "category ": "Management",
     "namespaces": [
