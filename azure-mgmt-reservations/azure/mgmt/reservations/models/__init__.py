@@ -20,9 +20,6 @@ from .patch import Patch
 from .split_request import SplitRequest
 from .extended_error_info import ExtendedErrorInfo
 from .error import Error, ErrorException
-from .provider_resource_type import ProviderResourceType
-from .authorization_properties import AuthorizationProperties
-from .provider import Provider
 from .applied_reservation_list import AppliedReservationList
 from .applied_reservations import AppliedReservations
 from .operation_display import OperationDisplay
@@ -50,9 +47,6 @@ __all__ = [
     'SplitRequest',
     'ExtendedErrorInfo',
     'Error', 'ErrorException',
-    'ProviderResourceType',
-    'AuthorizationProperties',
-    'Provider',
     'AppliedReservationList',
     'AppliedReservations',
     'OperationDisplay',

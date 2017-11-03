@@ -105,8 +105,6 @@ class ReservationOperations(object):
 
             if response.status_code == 200:
                 deserialized = self._deserialize('[ReservationResponse]', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('[ReservationResponse]', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -198,8 +196,6 @@ class ReservationOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('[ReservationResponse]', response)
-            if response.status_code == 202:
                 deserialized = self._deserialize('[ReservationResponse]', response)
 
             if raw:
@@ -424,8 +420,6 @@ class ReservationOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('ReservationResponse', response)
-            if response.status_code == 202:
                 deserialized = self._deserialize('ReservationResponse', response)
 
             if raw:
