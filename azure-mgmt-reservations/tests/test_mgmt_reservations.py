@@ -23,8 +23,7 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         super(MgmtReservationsTest, self).setUp()
         self.reservation_client = self.create_basic_client(AzureReservationAPI)
         self.reservation_order_id = "55793bc2-e5c2-4a98-9d5c-0a0bce6cf998"
-        self.reservation_id = "99bc7dd3-ac91-4d45-a54b-dce1ef6668fa"
-        self.subscription_id = "98df3792-7962-4f18-8be2-d5576f122de3"
+        self.reservation_id = "b2c5c792-3695-46e8-b65e-0f2f74ed9d24"
 
     def test_reservation_order_get(self):
         reservation_order = self.reservation_client.reservation_order.get(self.reservation_order_id)
@@ -53,7 +52,7 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             self._validate_reservation(reservation)
 
     def test_update_reservation_to_single(self):
-        patch = Patch("Single", ["/subscriptions/{}".format(self.subscription_id)])
+        patch = Patch("Single", ["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)])
         reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
         self._validate_reservation(reservation)
 
@@ -62,18 +61,8 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         reservation = self.reservation_client.reservation.update(self.reservation_order_id, self.reservation_id, patch).result()
         self._validate_reservation(reservation)
 
-    def test_register_capacity(self):
-        provider = self.reservation_client.register_subscription(self.subscription_id)
-        expected_id = "/subscriptions/{}/providers/Microsoft.Capacity".format(self.subscription_id)
-        self.assertEqual(expected_id, provider.id)
-        expected_namespace = "Microsoft.Capacity"
-        self.assertEqual(expected_namespace, provider.namespace)
-        self.assertIsNotNone(provider.authorization)
-        self.assertTrue(len(provider.resource_types) > 0)
-        self.assertEqual("Registered", provider.registration_state)
-
     def test_get_catalog(self):
-        catalog_items = self.reservation_client.get_catalog(self.subscription_id)
+        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID)
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
@@ -83,8 +72,8 @@ class MgmtReservationsTest(AzureMgmtTestCase):
             self.assertTrue(len(item.locations) > 0)
 
     def test_applied_reservation(self):
-        applied_reservation = self.reservation_client.get_applied_reservation_list(self.subscription_id)
-        expected_id = "/subscriptions/{}/providers/microsoft.capacity/AppliedReservations/default".format(self.subscription_id)
+        applied_reservation = self.reservation_client.get_applied_reservation_list(self.settings.SUBSCRIPTION_ID)
+        expected_id = "/subscriptions/{}/providers/microsoft.capacity/AppliedReservations/default".format(self.settings.SUBSCRIPTION_ID)
         self.assertEqual(expected_id, applied_reservation.id)
         self.assertEqual("default", applied_reservation.name)
         self.assertEqual("Microsoft.Capacity/AppliedReservations", applied_reservation.type)

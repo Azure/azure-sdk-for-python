@@ -28,10 +28,6 @@ class ReservationProperties(Model):
      'ConfirmedBilling', 'Created', 'Succeeded', 'Cancelled', 'Expired',
      'BillingFailed', 'Failed', 'Split', 'Merged'
     :type provisioning_state: str or :class:`enum <reservations.models.enum>`
-    :param provisioning_sub_state: Possible values include: 'AppliedBenefits',
-     'Active', 'Pending'
-    :type provisioning_sub_state: str or :class:`enum
-     <reservations.models.enum>`
     :param effective_date_time: DateTime of the Reservation starting when this
      version is effective from.
     :type effective_date_time: datetime
@@ -61,7 +57,6 @@ class ReservationProperties(Model):
         'applied_scope_type': {'key': 'appliedScopeType', 'type': 'str'},
         'quantity': {'key': 'quantity', 'type': 'int'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'provisioning_sub_state': {'key': 'provisioningSubState', 'type': 'str'},
         'effective_date_time': {'key': 'effectiveDateTime', 'type': 'iso-8601'},
         'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
         'expiry_date': {'key': 'expiryDate', 'type': 'date'},
@@ -70,13 +65,12 @@ class ReservationProperties(Model):
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
     }
 
-    def __init__(self, display_name=None, applied_scopes=None, applied_scope_type=None, quantity=None, provisioning_state=None, provisioning_sub_state=None, effective_date_time=None, expiry_date=None, extended_status_info=None, split_properties=None, merge_properties=None):
+    def __init__(self, display_name=None, applied_scopes=None, applied_scope_type=None, quantity=None, provisioning_state=None, effective_date_time=None, expiry_date=None, extended_status_info=None, split_properties=None, merge_properties=None):
         self.display_name = display_name
         self.applied_scopes = applied_scopes
         self.applied_scope_type = applied_scope_type
         self.quantity = quantity
         self.provisioning_state = provisioning_state
-        self.provisioning_sub_state = provisioning_sub_state
         self.effective_date_time = effective_date_time
         self.last_updated_date_time = None
         self.expiry_date = expiry_date

@@ -10,14 +10,14 @@ interactions:
           msrest_azure/0.4.13 azurereservationapi/2017-11-01 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/e13bba72-db3a-4d32-8208-979e8dd37e0f?api-version=2017-11-01
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/b2c5c792-3695-46e8-b65e-0f2f74ed9d24?api-version=2017-11-01
   response:
-    body: {string: '{"sku":{"name":"Standard_DS1_v2"},"id":"/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/e13bba72-db3a-4d32-8208-979e8dd37e0f","type":"Microsoft.Capacity/reservationOrders/reservations","name":"55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/e13bba72-db3a-4d32-8208-979e8dd37e0f","etag":6,"location":"eastus","properties":{"appliedScopes":["/subscriptions/00000000-0000-0000-0000-000000000000"],"appliedScopeType":"Single","quantity":5,"meters":["c90f4d88-01c1-48e9-ba9d-cb9c6ccaedd3"],"provisioningState":"Succeeded","expiryDate":"2018-09-26","displayName":"cabri_test","region":"eastus","effectiveDateTime":"2017-10-05T00:12:14.2679413Z","lastUpdatedDateTime":"2017-10-05T00:12:16.8514795Z","mergeProperties":{"mergeSources":["/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/85c72953-db91-4d92-8535-e02f6bddb2cb","/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/d2f9dac4-5bfb-4013-a93a-fdc1a7a353f7"]}}}'}
+    body: {string: '{"sku":{"name":"Standard_DS1_v2"},"id":"/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/b2c5c792-3695-46e8-b65e-0f2f74ed9d24","type":"Microsoft.Capacity/reservationOrders/reservations","name":"55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/b2c5c792-3695-46e8-b65e-0f2f74ed9d24","etag":6,"kind":"Microsoft.Compute","location":"eastus","properties":{"appliedScopes":["/subscriptions/00000000-0000-0000-0000-000000000000"],"appliedScopeType":"Single","quantity":5,"provisioningState":"Succeeded","expiryDate":"2018-09-26","displayName":"cabri_test","effectiveDateTime":"2017-10-13T23:02:18.1394933Z","lastUpdatedDateTime":"2017-10-13T23:02:20.2879339Z","mergeProperties":{"mergeSources":["/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/310ceec7-c47c-4590-8249-4ab57fa131c7","/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/60f2350c-3c11-4074-80b4-e53b77f33898"]}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1043']
+      content-length: ['1002']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 06 Oct 2017 23:23:42 GMT']
+      date: ['Fri, 03 Nov 2017 21:22:32 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
