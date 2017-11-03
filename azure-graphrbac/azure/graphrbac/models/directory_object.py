@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from msrest.serialization import Model
 
 
-class ADGroup(DirectoryObject):
-    """Active Directory group information.
+class DirectoryObject(Model):
+    """Represents an Azure Active Directory object.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Application, ADGroup, ServicePrincipal, User
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,12 +28,6 @@ class ADGroup(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param display_name: The display name of the group.
-    :type display_name: str
-    :param security_enabled: Whether the group is security-enable.
-    :type security_enabled: bool
-    :param mail: The primary email address of the group.
-    :type mail: str
     """
 
     _validation = {
@@ -43,14 +40,13 @@ class ADGroup(DirectoryObject):
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
-        'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, security_enabled=None, mail=None):
-        super(ADGroup, self).__init__()
-        self.display_name = display_name
-        self.security_enabled = security_enabled
-        self.mail = mail
-        self.object_type = 'Group'
+    _subtype_map = {
+        'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
+    }
+
+    def __init__(self):
+        self.object_id = None
+        self.deletion_timestamp = None
+        self.object_type = None
