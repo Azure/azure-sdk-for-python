@@ -13,18 +13,19 @@ interactions:
     method: PATCH
     uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/b2c5c792-3695-46e8-b65e-0f2f74ed9d24?api-version=2017-11-01
   response:
-    body: {string: '{"error":{"code":"AppliedScopesTypeFloatingToFloating","message":"AppliedScopeType
-        is already set to Shared."}}'}
+    body: {string: '{"sku":{"name":"Standard_DS1_v2"},"id":"/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/b2c5c792-3695-46e8-b65e-0f2f74ed9d24","type":"Microsoft.Capacity/reservationOrders/reservations","name":"55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/b2c5c792-3695-46e8-b65e-0f2f74ed9d24","etag":12,"kind":"Microsoft.Compute","location":"eastus","properties":{"appliedScopeType":"Shared","quantity":5,"provisioningState":"Succeeded","expiryDate":"2018-09-26","displayName":"cabri_test","effectiveDateTime":"2017-11-03T22:08:51.9531107Z","lastUpdatedDateTime":"2017-11-03T22:08:57.0282095Z","mergeProperties":{"mergeSources":["/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/310ceec7-c47c-4590-8249-4ab57fa131c7","/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/60f2350c-3c11-4074-80b4-e53b77f33898"]}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['111']
+      content-length: ['931']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 03 Nov 2017 21:24:17 GMT']
+      date: ['Fri, 03 Nov 2017 22:08:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
       strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-tenant-writes: ['1199']
-    status: {code: 400, message: Bad Request}
+      x-ms-ratelimit-remaining-tenant-writes: ['1198']
+    status: {code: 200, message: OK}
 version: 1
