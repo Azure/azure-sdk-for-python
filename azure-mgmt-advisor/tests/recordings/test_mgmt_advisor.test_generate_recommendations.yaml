@@ -11,20 +11,20 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations?api-version=2017-04-19
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Fri, 03 Nov 2017 21:43:43 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:59 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/94a94b17-6d36-4f4c-b457-087ee871cd40?api-version=2017-04-19-alpha']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/5bcbefe1-2947-40b8-9167-daf4db7a46c5?api-version=2017-04-19']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -37,12 +37,12 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/00000000-0000-0000-0000-000000000000?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/00000000-0000-0000-0000-000000000000?api-version=2017-04-19
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Fri, 03 Nov 2017 21:43:43 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:59 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
