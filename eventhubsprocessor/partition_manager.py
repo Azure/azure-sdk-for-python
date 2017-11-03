@@ -29,10 +29,10 @@ class PartitionManager:
         """
         if not self.partition_ids:
             try:
-                headers = {"Content-Type":"application/json;type=entry;charset=utf-8",
+                headers = {"Content-Type": "application/json;type=entry;charset=utf-8",
                            "Authorization": self.host.eh_rest_auth["token"],
-                           "Host":"k8sworkshop.servicebus.windows.net"
-                          }
+                           "Host": "{}.servicebus.windows.net".format(self.host.eh_rest_auth["sb_name"])
+                           }
 
                 res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60& \
                                     api-version=2014-01'.format(self.host.eh_rest_auth["sb_name"],
