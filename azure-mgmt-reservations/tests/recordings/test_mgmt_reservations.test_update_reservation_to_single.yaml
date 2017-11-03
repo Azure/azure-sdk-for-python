@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: 'b''b\''b\\\''{"properties": {"appliedScopeType": "Single", "appliedScopes":
+      ["/subscriptions/00000000-0000-0000-0000-000000000000"]}}\\\''\'''''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['120']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.4 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.13 azurereservationapi/2017-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PATCH
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/e13bba72-db3a-4d32-8208-979e8dd37e0f?api-version=2017-11-01
+  response:
+    body: {string: '{"sku":{"name":"Standard_DS1_v2"},"id":"/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/e13bba72-db3a-4d32-8208-979e8dd37e0f","type":"Microsoft.Capacity/reservationOrders/reservations","name":"55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/e13bba72-db3a-4d32-8208-979e8dd37e0f","etag":14,"location":"eastus","properties":{"appliedScopes":["/subscriptions/00000000-0000-0000-0000-000000000000"],"appliedScopeType":"Single","quantity":5,"meters":["c90f4d88-01c1-48e9-ba9d-cb9c6ccaedd3"],"provisioningState":"Succeeded","expiryDate":"2018-09-26","displayName":"cabri_test","region":"eastus","effectiveDateTime":"2017-10-06T23:47:42.6351264Z","lastUpdatedDateTime":"2017-10-06T23:47:45.8795765Z","mergeProperties":{"mergeSources":["/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/85c72953-db91-4d92-8535-e02f6bddb2cb","/providers/microsoft.capacity/reservationOrders/55793bc2-e5c2-4a98-9d5c-0a0bce6cf998/reservations/d2f9dac4-5bfb-4013-a93a-fdc1a7a353f7"]}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1044']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 06 Oct 2017 23:47:48 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+    status: {code: 200, message: OK}
+version: 1
