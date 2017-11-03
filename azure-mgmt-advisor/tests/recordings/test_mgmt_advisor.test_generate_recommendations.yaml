@@ -17,9 +17,9 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 31 Oct 2017 20:55:30 GMT']
+      date: ['Fri, 03 Nov 2017 17:43:58 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/04f2e0e8-9a0d-4512-a211-1f8d6080418c?api-version=2017-04-19-alpha']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/72bd8253-7f66-4933-98e2-399e357d23e6?api-version=2017-04-19-alpha']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -42,7 +42,7 @@ interactions:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Tue, 31 Oct 2017 20:55:36 GMT']
+      date: ['Fri, 03 Nov 2017 17:43:58 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
