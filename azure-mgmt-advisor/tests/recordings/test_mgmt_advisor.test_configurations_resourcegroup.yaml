@@ -11,12 +11,12 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Fri, 03 Nov 2017 21:43:32 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:49 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -35,14 +35,14 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":true}}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['321']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 03 Nov 2017 21:43:34 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:50 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -63,18 +63,18 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Fri, 03 Nov 2017 21:43:36 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:51 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 204, message: No Content}
 - request:
     body: null
@@ -87,14 +87,14 @@ interactions:
           msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19-alpha
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['322']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 03 Nov 2017 21:43:36 GMT']
+      date: ['Fri, 03 Nov 2017 23:11:51 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]

@@ -16,7 +16,7 @@ from azure.mgmt.advisor.models import (
 )
 
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer,
+    AzureMgmtTestCase
 )
 
 # the goal of these tests is to validate AutoRest generation of the Python wrapper
