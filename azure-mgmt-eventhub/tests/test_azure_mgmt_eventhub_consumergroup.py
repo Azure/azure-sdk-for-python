@@ -26,15 +26,17 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_eh_consumergroup_curd(self, resource_group, location):
-        # List all topic types
-        resource_group_name = resource_group.name #"ardsouza-resourcemovetest-group2"
+
+        resource_group_name = resource_group.name
 
         # Create a Namespace
         namespace_name = "pythontestcaseeventhubnamespaceConsumerGroup"
 
         namespaceparameter=EHNamespace(location,{'tag1':'value1','tag2':'value2'},Sku(SkuName.standard))
-        creatednamespace = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name,
-                                                                            namespaceparameter, None, True).output
+        poller = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name,
+                                                                            namespaceparameter, None, True)
+        creatednamespace = poller.output
+
         self.assertEqual(creatednamespace.name, namespace_name)
 
         while (self.eventhub_client.namespaces.get(resource_group_name,namespace_name).provisioning_state != 'Succeeded'):
@@ -58,7 +60,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
                 size_limit_in_bytes=10485763,
                 destination=Destination(
                     name="EventHubArchive.AzureBlockBlob",
-                    storage_account_resource_id="/subscriptions/e2f361f0-3b27-4503-a9cc-21cfba380093/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
+                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
                     blob_container="container",
                     archive_name_format="{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}")
             )
@@ -88,7 +90,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
                 size_limit_in_bytes=10485900,
                 destination=Destination(
                     name="EventHubArchive.AzureBlockBlob",
-                    storage_account_resource_id="/subscriptions/e2f361f0-3b27-4503-a9cc-21cfba380093/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
+                    storage_account_resource_id="/subscriptions/"+self.settings.SUBSCRIPTION_ID+"/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage",
                     blob_container="container",
                     archive_name_format="{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}")
             )
@@ -133,7 +135,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         geteventhubresponse = self.eventhub_client.event_hubs.delete(resource_group_name, namespace_name, eventhub_name)
 
         # Delete the create namespace
-        deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name, None, True).output
+        deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name, None, True)
         time.sleep(150)
 
         # to verify the deletion of namespace

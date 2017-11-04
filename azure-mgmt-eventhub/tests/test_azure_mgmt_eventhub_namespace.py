@@ -27,14 +27,15 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_eh_namespace_curd(self, resource_group, location):
-        # List all topic types
-        resource_group_name = resource_group.name #"ardsouza-resourcemovetest-group2"
+
+        resource_group_name = resource_group.name
 
         # Create a Namespace
         namespace_name = "testingpythontestcasenamespace"
 
-        namespaceparameter=EHNamespace(location,{'tag1':'value1','tag2':'value2'},Sku(SkuName.standard))
-        creatednamespace = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter, None, True).output
+        namespaceparameter=EHNamespace(location,{'tag1':'value1', 'tag2':'value2'}, Sku(SkuName.standard))
+        poller = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter, None, True)
+        creatednamespace = poller.output
         self.assertEqual(creatednamespace.name, namespace_name)
         #
         # # Get created Namespace
@@ -46,7 +47,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
         listbyresourcegroupresponse = list(self.eventhub_client.namespaces.list_by_resource_group(resource_group_name, False, False))
         self.assertGreater(len(listbyresourcegroupresponse), 0, "No Namespace returned, List is empty")
-        self.assertEqual(listbyresourcegroupresponse[0].name,namespace_name,"Created namespace not found - ListByResourgroup")
+        self.assertEqual(listbyresourcegroupresponse[0].name, namespace_name, "Created namespace not found - ListByResourgroup")
 
         # Get the List of namespace under the subscription  - list
         listbysubscriptionresponse = list(self.eventhub_client.namespaces.list())
@@ -105,7 +106,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
             continue
 
         # Delete the create namespace
-        deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name, None, True).output
+        deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name, None, True)
 
         # to verify the deletion of namespace
         try:

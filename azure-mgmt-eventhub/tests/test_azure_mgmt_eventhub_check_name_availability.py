@@ -26,8 +26,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
     def process(self, result):
         pass
 
-    @ResourceGroupPreparer()
-    def test_eh_namespace_available(self, resource_group, location):
+    def test_eh_namespace_available(self):
         # Check the namespace availability
         availabilityresult = self.eventhub_client.namespaces.check_name_availability("Testingehnamespaceavailabilityforpython")
         self.assertEqual(availabilityresult.name_available, True)
