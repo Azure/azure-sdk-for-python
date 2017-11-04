@@ -16,13 +16,13 @@ interactions:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Sat, 04 Nov 2017 00:08:28 GMT']
+      date: ['Sat, 04 Nov 2017 00:17:45 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 204, message: No Content}
 - request:
     body: null
@@ -37,12 +37,12 @@ interactions:
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"20","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"20","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1235']
+      content-length: ['1690']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:08:28 GMT']
+      date: ['Sat, 04 Nov 2017 00:17:46 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -68,7 +68,7 @@ interactions:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Sat, 04 Nov 2017 00:08:30 GMT']
+      date: ['Sat, 04 Nov 2017 00:17:46 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -89,12 +89,12 @@ interactions:
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"5","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"5","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1234']
+      content-length: ['1689']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:08:33 GMT']
+      date: ['Sat, 04 Nov 2017 00:17:47 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]

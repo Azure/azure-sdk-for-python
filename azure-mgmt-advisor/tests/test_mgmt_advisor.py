@@ -16,7 +16,7 @@ from azure.mgmt.advisor.models import (
 )
 
 from devtools_testutils import (
-    AzureMgmtTestCase
+    AzureMgmtTestCase, ResourceGroupPreparer
 )
 
 # the goal of these tests is to validate AutoRest generation of the Python wrapper
@@ -156,8 +156,9 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         # it should be identical to what we just set
         self.assertEqual(output.properties.low_cpu_threshold, "5")
 
-    def test_configurations_resourcegroup(self):
-        resourceGroupName = "AzExpertStg"
+    @ResourceGroupPreparer()
+    def test_configurations_resourcegroup(self, resource_group):
+        resourceGroupName = resource_group.name
 
         # create a new configuration to update exclude to True
         input = ConfigData()
