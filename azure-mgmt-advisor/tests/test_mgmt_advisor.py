@@ -33,6 +33,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         )
 
     def test_generate_recommendations(self):
+
         # trigger generate recommendations
         response = self.client.recommendations.generate(raw=True)
 
@@ -53,15 +54,19 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             operation_id = operation_id[0]
         )
         status_code = response.response.status_code
+
         # and the status should be 202 or 204
         self.assertTrue(status_code == 202 or status_code == 204)
 
     def test_suppressions(self):
+
         # first, get all recommendations
         response = list(self.client.recommendations.list())
+
         # we should have at least one recommendation
         self.assertNotEqual(len(response), 0)
         recommendation = None
+
         # the recommendation should have all relevant properties populated
         for rec in response:
             self.assertNotEqual(rec.id, None)
@@ -75,11 +80,22 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             self.assertNotEqual(rec.short_description.solution, None)
             if (rec.impacted_value != None):
                 recommendation = rec
-        # construct the resourceUri for the first recommendation
+
+        # construct the properties needed for further operations
         resourceUri = recommendation.id[:recommendation.id.find("/providers/Microsoft.Advisor/recommendations")]
         recommendationName = recommendation.name
         suppressionName = "Python_SDK_Test"
         timeToLive = "00:01:00:00"
+
+        # get the individual recommendation
+        output = self.client.recommendations.get(
+            resource_uri = resourceUri,
+            recommendation_id = recommendationName
+        )
+
+        # it should be identical to what we got from list
+        self.assertEqual(output.id, rec.id)
+        self.assertEqual(output.name, rec.name)
 
         # create a new suppression
         suppression = self.client.suppressions.create(
@@ -88,8 +104,8 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             name = suppressionName,
             ttl = timeToLive
         )
-        # we expect it to get created successfully
-        # self.assertEqual(suppression.name, suppressionName)
+
+        # it should get created successfully
         self.assertEqual(suppression.ttl, "00:01:00:00")
 
         # get the suppression
@@ -98,8 +114,9 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             recommendation_id = recommendationName,
             name = suppressionName
         )
+
+        # it should be identical to what we just added
         self.assertEqual(sup.name, suppressionName)
-        # self.assertEqual(sup.ttl., timeToLive)
         self.assertEqual(sup.id, resourceUri + "/providers/Microsoft.Advisor/recommendations/" + recommendationName + "/suppressions/" + suppressionName)
 
         # delete the suppression
@@ -108,50 +125,65 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             recommendation_id = recommendationName,
             name = suppressionName
         )
+
         # the suppression should be gone
         response = list(self.client.suppressions.list())
         for sup in response:
             self.assertNotEqual(sup.Name, suppressionName)
 
     def test_configurations_subscription(self):
+
         # create a new configuration to update low CPU threshold to 20
         input = ConfigData()
         input.properties = ConfigDataProperties(low_cpu_threshold=20)
+
         # update the configuration
         response = self.client.configurations.create_in_subscription(input)
+
         # retrieve the configurations
         output = list(self.client.configurations.list_by_subscription().value)[0]
-        # verify we get back the value we just set
+
+        # it should be identical to what we just set
         self.assertEqual(output.properties.low_cpu_threshold, "20")
+
         # restore the default configuration
         input.properties = ConfigDataProperties(low_cpu_threshold=5)
         response = self.client.configurations.create_in_subscription(input)
+
         # retrieve the configurations
         output = list(self.client.configurations.list_by_subscription().value)[0]
-        # verify we get back the value we just set
+
+        # it should be identical to what we just set
         self.assertEqual(output.properties.low_cpu_threshold, "5")
 
     def test_configurations_resourcegroup(self):
         resourceGroupName = "AzExpertStg"
+
         # create a new configuration to update exclude to True
         input = ConfigData()
         input.properties = ConfigDataProperties(exclude=True)
+
         # update the configuration
         self.client.configurations.create_in_resource_group(
             config_contract = input,
             resource_group = resourceGroupName)
+
         # retrieve the configurations
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
-        # verify we get back the value we just set
+
+        # it should be identical to what we just set
         self.assertEqual(output.properties.exclude, True)
+
         # restore the default configuration
         input.properties = ConfigDataProperties(exclude=False)
         self.client.configurations.create_in_resource_group(
             config_contract = input,
             resource_group = resourceGroupName)
+
         # retrieve the configurations
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
-        # verify we get back the value we just set
+
+        # it should be identical to what we just set
         self.assertEqual(output.properties.exclude, False)
 
 #------------------------------------------------------------------------------
