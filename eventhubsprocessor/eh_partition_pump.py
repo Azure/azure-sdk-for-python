@@ -83,7 +83,7 @@ class EventHubPartitionPump(PartitionPump):
 
 class PartitionReceiver:
     """
-    Sends events from a async until lease is lost
+    Recieves events from a async until lease is lost
     """
     def __init__(self, eh_partition_pump):
         self.eh_partition_pump = eh_partition_pump
@@ -95,7 +95,7 @@ class PartitionReceiver:
         Runs the async partion reciever event loop to retrive messages from the event queue
         """
         # Implement pull max batch from queue instead of one message at a time
-        while not self.eh_partition_pump.is_closing() \
+        while (not self.eh_partition_pump.is_closing()) \
               or self.eh_partition_pump.pump_status == "Errored":
             try:
                 msgs = await asyncio.wait_for(self.eh_partition_pump.\

@@ -65,10 +65,10 @@ class PartitionContext:
         last checkpointed value
         """
         if not event_data:
-            raise Exception("event_data")
+            raise ValueError("event_data")
         if event_data.sequence_number > self.sequence_number:
             #We have never seen this sequence number yet
-            raise Exception("ArgumentOutOfRangeException event_data x-opt-sequence-number")
+            raise ValueError("Argument Out Of Range event_data x-opt-sequence-number")
 
         await self.persist_checkpoint_async(Checkpoint(self.partition_id,
                                                        event_data.offset,
@@ -110,7 +110,7 @@ class PartitionContext:
 
         except Exception as err:
             logging.error(self.host.guid, checkpoint.partition_id, repr(err))
-            raise err
+            raise
         finally:
             logging.info("PartitionPumpCheckpointStop %s %s",
                          self.host.guid, checkpoint.partition_id)

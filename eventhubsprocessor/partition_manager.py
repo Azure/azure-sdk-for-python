@@ -183,8 +183,7 @@ class PartitionManager:
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:
                     logging.error("failed to update lease %s", err)
-
-                # time.sleep(lease_manager.lease_renew_interval)
+                await asyncio.sleep(lease_manager.lease_renew_interval)
 
     async def check_and_add_pump_async(self, partition_id, lease):
         """

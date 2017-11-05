@@ -21,7 +21,7 @@ class AbstractCheckpointManager(ABC):
         pass
 
     @abstractmethod
-    def get_checkpoint_async(self, partition_id):
+    async def get_checkpoint_async(self, partition_id):
         """
         Get the checkpoint data associated with the given partition.
         Could return null if no checkpoint has been created for that partition.
