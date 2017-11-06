@@ -1,0 +1,194 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/8c93b64d-bdcf-0edf-d373-9a4988706e1b","name":"8c93b64d-bdcf-0edf-d373-9a4988706e1b","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/44025f03-7487-d0e5-2144-51ccb40718e5","name":"44025f03-7487-d0e5-2144-51ccb40718e5","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/ad10e536-f84a-4c61-9b97-5e73ac8fb6c4","name":"ad10e536-f84a-4c61-9b97-5e73ac8fb6c4","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/308832bc-279c-9523-1501-061e55297871","name":"308832bc-279c-9523-1501-061e55297871","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/64dcbaba-cee7-8d05-62bc-3646b96d7504","name":"64dcbaba-cee7-8d05-62bc-3646b96d7504","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/4063ec37-acc6-b626-c0ae-c6be33b0ca9e","name":"4063ec37-acc6-b626-c0ae-c6be33b0ca9e","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/350a2a51-edf7-1da0-eaee-2542e12ff11f","name":"350a2a51-edf7-1da0-eaee-2542e12ff11f","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGEUS/providers/Microsoft.Compute/virtualMachines/EUS-Test/providers/Microsoft.Advisor/recommendations/d6be9aac-f74a-f756-3487-4fcd892d3aae","name":"d6be9aac-f74a-f756-3487-4fcd892d3aae","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"EUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/fd3c5cb3-5795-9458-f86d-fe15023f8e85","name":"fd3c5cb3-5795-9458-f86d-fe15023f8e85","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/ec09a5f6-dcbf-8d7a-6580-de3f6ebb0fa9","name":"ec09a5f6-dcbf-8d7a-6580-de3f6ebb0fa9","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/ec93a091-8822-1fce-6c63-fbf037fbc1d9","name":"ec93a091-8822-1fce-6c63-fbf037fbc1d9","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/08088e38-47c8-1e4e-a9ac-d1f5386459bf","name":"08088e38-47c8-1e4e-a9ac-d1f5386459bf","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGEUS/providers/Microsoft.Compute/virtualMachines/EUS-Test/providers/Microsoft.Advisor/recommendations/489d64a3-f6a1-c68b-314b-da93c630bf6d","name":"489d64a3-f6a1-c68b-314b-da93c630bf6d","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"EUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/331a8015-ee80-fd70-9f85-545b859f32a5","name":"331a8015-ee80-fd70-9f85-545b859f32a5","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.5158218Z","risk":"None","shortDescription":{"problem":"Your
+        virtual machine is not configured for backup","solution":"Enable virtual machine
+        backup to protect your data from corruption and accidental deletion"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/54c68408-eaa3-488d-7732-79c356c96a47","name":"54c68408-eaa3-488d-7732-79c356c96a47","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5158218Z","risk":"None","shortDescription":{"problem":"Your
+        virtual machine is not configured for backup","solution":"Enable virtual machine
+        backup to protect your data from corruption and accidental deletion"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/49d1cd7f-a804-06eb-8631-34573df13e2c","name":"49d1cd7f-a804-06eb-8631-34573df13e2c","properties":{"category":"Cost","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-03T22:39:15.8303005Z","risk":"None","shortDescription":{"problem":"Your
+        virtual machine has low usage","solution":"Right-size or shutdown underutilized
+        virtual machines"}},"type":"Microsoft.Advisor/recommendations","hardwareDetails":{"resourceId":"y8fx4nayf4ptcckwy6pri8bbx5z4mwufo9ax4nayrti71j3x5pdwtc7y4imyqeyy6a","size":"Standard_D1_v2"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/availabilitySets/avset1/providers/Microsoft.Advisor/recommendations/d92a7f6b-4193-116a-82e2-ba9c8e176d99","name":"d92a7f6b-4193-116a-82e2-ba9c8e176d99","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/availabilitySets","impactedValue":"avset1","lastUpdated":"2017-11-03T22:36:28.3999278Z","risk":"Warning","shortDescription":{"problem":"This
+        availability set is not configured for fault tolerance","solution":"Add more
+        virtual machines for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4","name":"2ba630b2-9211-5563-a8e1-1319b209c7c4","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-03T22:36:16.806205Z","risk":"None","shortDescription":{"problem":"This
+        virtual machine is not configured for fault tolerance","solution":"Use availability
+        sets for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['11433']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 04 Nov 2017 00:17:50 GMT']
+      expires: ['-1']
+      iscutoff: ['False']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4?api-version=2017-04-19
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4","name":"2ba630b2-9211-5563-a8e1-1319b209c7c4","properties":{"description":"Group
+        two or more virtual machines in an availability set to ensure at least one
+        virtual machine is available during an outage.","label":"Use availability
+        sets","learnMoreLink":"http://aka.ms/aa_sivmrec_learnmore","potentialBenefits":"Ensure
+        business continuity through virtual machine resilience","category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-03T22:36:16.806205Z","risk":"None","shortDescription":{"problem":"This
+        virtual machine is not configured for fault tolerance","solution":"Use availability
+        sets for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['980']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 04 Nov 2017 00:17:51 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"ttl": "00:01:00:00"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['38']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: '{"properties":{"suppressionId":"6b805033-201d-c2da-1532-df4e9840ba92","ttl":"00:01:00:00"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['91']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 04 Nov 2017 00:17:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test","name":"Python_SDK_Test","type":"Microsoft.Advisor/suppressions","properties":{"suppressionId":"6b805033-201d-c2da-1532-df4e9840ba92","ttl":"01:00:00"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['402']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 04 Nov 2017 00:17:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      date: ['Sat, 04 Nov 2017 00:17:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/suppressions?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['12']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 04 Nov 2017 00:17:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
