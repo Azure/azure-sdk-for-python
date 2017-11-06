@@ -32,11 +32,11 @@ class USqlAssembly(CatalogItem):
      defined or not.
     :type is_user_defined: bool
     :param files: the list of files associated with the assembly
-    :type files: list of :class:`USqlAssemblyFileInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyFileInfo>`
+    :type files:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyFileInfo]
     :param dependencies: the list of dependencies associated with the assembly
-    :type dependencies: list of :class:`USqlAssemblyDependencyInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo>`
+    :type dependencies:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo]
     """
 
     _attribute_map = {

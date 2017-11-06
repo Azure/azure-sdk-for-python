@@ -27,19 +27,19 @@ class USqlTable(CatalogItem):
     :param name: the name of the table.
     :type name: str
     :param column_list: the list of columns in this table
-    :type column_list: list of :class:`USqlTableColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn>`
+    :type column_list:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn]
     :param index_list: the list of indices in this table
-    :type index_list: list of :class:`USqlIndex
-     <azure.mgmt.datalake.analytics.catalog.models.USqlIndex>`
+    :type index_list:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlIndex]
     :param partition_key_list: the list of partition keys in the table
-    :type partition_key_list: list of str
+    :type partition_key_list: list[str]
     :param external_table: the external table associated with the table.
-    :type external_table: :class:`ExternalTable
-     <azure.mgmt.datalake.analytics.catalog.models.ExternalTable>`
+    :type external_table:
+     ~azure.mgmt.datalake.analytics.catalog.models.ExternalTable
     :param distribution_info: the distributions info of the table
-    :type distribution_info: :class:`USqlDistributionInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
+    :type distribution_info:
+     ~azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo
     """
 
     _attribute_map = {

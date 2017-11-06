@@ -18,20 +18,20 @@ class USqlIndex(Model):
     :param name: the name of the index in the table.
     :type name: str
     :param index_keys: the list of directed columns in the index
-    :type index_keys: list of :class:`USqlDirectedColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
+    :type index_keys:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn]
     :param columns: the list of columns in the index
-    :type columns: list of str
+    :type columns: list[str]
     :param distribution_info: the distributions info of the index
-    :type distribution_info: :class:`USqlDistributionInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
+    :type distribution_info:
+     ~azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo
     :param partition_function: partition function ID for the index.
     :type partition_function: str
     :param partition_key_list: the list of partion keys in the index
-    :type partition_key_list: list of str
+    :type partition_key_list: list[str]
     :param stream_names: the list of full paths to the streams that contain
      this index in the DataLake account.
-    :type stream_names: list of str
+    :type stream_names: list[str]
     :param is_columnstore: the switch indicating if this index is a
      columnstore index.
     :type is_columnstore: bool
