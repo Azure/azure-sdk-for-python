@@ -15,6 +15,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CollectionManagement", "Col
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DocumentManagement", "DocumentManagement\DocumentManagement.pyproj", "{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "IndexManagement", "IndexManagement\IndexManagement.pyproj", "{B1869509-4DC8-4AA8-8F2A-220FDBC14154}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,8 @@ Global
 		{D65BAD79-205D-4B95-BC98-294974EAB39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
