@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D86C5C17-FA0D-41E0-9425-5B2110E53BD9}"
 	ProjectSection(SolutionItems) = preProject
 		Shared\config.py = Shared\config.py
+		PossibleOptions.txt = PossibleOptions.txt
 	EndProjectSection
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CollectionManagement", "CollectionManagement\CollectionManagement.pyproj", "{D65BAD79-205D-4B95-BC98-294974EAB39C}"
