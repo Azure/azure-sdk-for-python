@@ -42,8 +42,8 @@ class EntitiesEntityPresentationInfo(Model):
     }
 
     _attribute_map = {
-        'entity_scenario': {'key': 'entityScenario', 'type': 'EntityScenario'},
-        'entity_type_hints': {'key': 'entityTypeHints', 'type': '[EntityType]'},
+        'entity_scenario': {'key': 'entityScenario', 'type': 'str'},
+        'entity_type_hints': {'key': 'entityTypeHints', 'type': '[str]'},
         'entity_type_display_hint': {'key': 'entityTypeDisplayHint', 'type': 'str'},
     }
 

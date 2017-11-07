@@ -29,14 +29,24 @@ from .organization import Organization
 from .response_base import ResponseBase
 from .creative_work import CreativeWork
 from .intangible import Intangible
+from .movie_theater import MovieTheater
 from .contractual_rules_attribution import ContractualRulesAttribution
 from .media_object import MediaObject
+from .civic_structure import CivicStructure
+from .local_business import LocalBusiness
+from .tourist_attraction import TouristAttraction
+from .airport import Airport
 from .license import License
 from .structured_value import StructuredValue
+from .entertainment_business import EntertainmentBusiness
 from .contractual_rules_license_attribution import ContractualRulesLicenseAttribution
 from .contractual_rules_link_attribution import ContractualRulesLinkAttribution
 from .contractual_rules_media_attribution import ContractualRulesMediaAttribution
 from .contractual_rules_text_attribution import ContractualRulesTextAttribution
+from .food_establishment import FoodEstablishment
+from .lodging_business import LodgingBusiness
+from .restaurant import Restaurant
+from .hotel import Hotel
 from .entity_search_api_enums import (
     EntityQueryScenario,
     EntityScenario,
@@ -69,14 +79,24 @@ __all__ = [
     'ResponseBase',
     'CreativeWork',
     'Intangible',
+    'MovieTheater',
     'ContractualRulesAttribution',
     'MediaObject',
+    'CivicStructure',
+    'LocalBusiness',
+    'TouristAttraction',
+    'Airport',
     'License',
     'StructuredValue',
+    'EntertainmentBusiness',
     'ContractualRulesLicenseAttribution',
     'ContractualRulesLinkAttribution',
     'ContractualRulesMediaAttribution',
     'ContractualRulesTextAttribution',
+    'FoodEstablishment',
+    'LodgingBusiness',
+    'Restaurant',
+    'Hotel',
     'EntityQueryScenario',
     'EntityScenario',
     'EntityType',

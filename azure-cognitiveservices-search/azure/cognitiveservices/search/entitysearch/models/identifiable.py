@@ -13,7 +13,7 @@ from .response_base import ResponseBase
 
 
 class Identifiable(ResponseBase):
-    """Identifiable.
+    """Defines the identity of a resource.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: Response
@@ -23,7 +23,7 @@ class Identifiable(ResponseBase):
 
     :param _type: Constant filled by server.
     :type _type: str
-    :ivar id:
+    :ivar id: A String identifier.
     :vartype id: str
     """
 

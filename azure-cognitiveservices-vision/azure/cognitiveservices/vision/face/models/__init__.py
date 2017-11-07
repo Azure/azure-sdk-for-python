@@ -11,7 +11,6 @@
 
 from .error import Error
 from .api_error import APIError, APIErrorException
-from .image_url import ImageUrl
 from .face_rectangle import FaceRectangle
 from .position import Position
 from .face_landmarks import FaceLandmarks
@@ -39,6 +38,7 @@ from .person_result import PersonResult
 from .person_face_result import PersonFaceResult
 from .update_person_face_data_request import UpdatePersonFaceDataRequest
 from .training_status import TrainingStatus
+from .image_url import ImageUrl
 from .face_api_enums import (
     AzureRegions,
 )
@@ -46,7 +46,6 @@ from .face_api_enums import (
 __all__ = [
     'Error',
     'APIError', 'APIErrorException',
-    'ImageUrl',
     'FaceRectangle',
     'Position',
     'FaceLandmarks',
@@ -74,5 +73,6 @@ __all__ = [
     'PersonFaceResult',
     'UpdatePersonFaceDataRequest',
     'TrainingStatus',
+    'ImageUrl',
     'AzureRegions',
 ]

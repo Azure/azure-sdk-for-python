@@ -21,7 +21,7 @@ class EntitiesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar x_bing_apis_sdk: Activate Swagger compliance. Constant value: "true".
+    :ivar x_bing_apis_sdk: Activate swagger compliance. Constant value: "true".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -34,7 +34,7 @@ class EntitiesOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def search(
-            self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, response_filter=None, response_format=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
+            self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market="en-us", response_filter=None, response_format=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
         """The Entity Search API lets you send a search query to Bing and get back
         search results that include entities and places. Place results include
         restaurants, hotel, or other local businesses. For places, the query
@@ -238,11 +238,11 @@ class EntitiesOperations(object):
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
         query_parameters['q'] = self._serialize.query("query", query, 'str')
         if response_filter is not None:
-            query_parameters['ResponseFilter'] = self._serialize.query("response_filter", response_filter, '[AnswerType]', div=',')
+            query_parameters['ResponseFilter'] = self._serialize.query("response_filter", response_filter, '[str]', div=',')
         if response_format is not None:
-            query_parameters['ResponseFormat'] = self._serialize.query("response_format", response_format, '[ResponseFormat]', div=',')
+            query_parameters['ResponseFormat'] = self._serialize.query("response_format", response_format, '[str]', div=',')
         if safe_search is not None:
-            query_parameters['SafeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['SafeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['SetLang'] = self._serialize.query("set_lang", set_lang, 'str')
 

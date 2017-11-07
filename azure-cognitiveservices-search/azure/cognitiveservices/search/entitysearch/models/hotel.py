@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .creative_work import CreativeWork
+from .lodging_business import LodgingBusiness
 
 
-class MediaObject(CreativeWork):
-    """MediaObject.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageObject
+class Hotel(LodgingBusiness):
+    """Hotel.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -49,22 +46,24 @@ class MediaObject(CreativeWork):
      ~azure.cognitiveservices.search.entitysearch.models.EntitiesEntityPresentationInfo
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
-    :ivar thumbnail_url: The URL to a thumbnail of the item.
-    :vartype thumbnail_url: str
-    :ivar provider: The source of the creative work.
-    :vartype provider:
-     list[~azure.cognitiveservices.search.entitysearch.models.Thing]
-    :ivar text:
-    :vartype text: str
-    :ivar content_url: Original URL to retrieve the source (file) for the
-     media object (e.g the source URL for the image).
-    :vartype content_url: str
-    :ivar host_page_url: URL of the page that hosts the media object.
-    :vartype host_page_url: str
-    :ivar width: The width of the source media object, in pixels.
-    :vartype width: int
-    :ivar height: The height of the source media object, in pixels.
-    :vartype height: int
+    :ivar address: The postal address of where the entity is located
+    :vartype address:
+     ~azure.cognitiveservices.search.entitysearch.models.PostalAddress
+    :ivar telephone: The entity's telephone number
+    :vartype telephone: str
+    :ivar price_range: $$.
+    :vartype price_range: str
+    :ivar panoramas:
+    :vartype panoramas:
+     list[~azure.cognitiveservices.search.entitysearch.models.ImageObject]
+    :ivar is_permanently_closed:
+    :vartype is_permanently_closed: bool
+    :ivar tag_line:
+    :vartype tag_line: str
+    :ivar hotel_class:
+    :vartype hotel_class: str
+    :ivar amenities:
+    :vartype amenities: list[str]
     """
 
     _validation = {
@@ -78,13 +77,14 @@ class MediaObject(CreativeWork):
         'description': {'readonly': True},
         'entity_presentation_info': {'readonly': True},
         'bing_id': {'readonly': True},
-        'thumbnail_url': {'readonly': True},
-        'provider': {'readonly': True},
-        'text': {'readonly': True},
-        'content_url': {'readonly': True},
-        'host_page_url': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
+        'address': {'readonly': True},
+        'telephone': {'readonly': True},
+        'price_range': {'readonly': True},
+        'panoramas': {'readonly': True},
+        'is_permanently_closed': {'readonly': True},
+        'tag_line': {'readonly': True},
+        'hotel_class': {'readonly': True},
+        'amenities': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,23 +98,18 @@ class MediaObject(CreativeWork):
         'description': {'key': 'description', 'type': 'str'},
         'entity_presentation_info': {'key': 'entityPresentationInfo', 'type': 'EntitiesEntityPresentationInfo'},
         'bing_id': {'key': 'bingId', 'type': 'str'},
-        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': '[Thing]'},
-        'text': {'key': 'text', 'type': 'str'},
-        'content_url': {'key': 'contentUrl', 'type': 'str'},
-        'host_page_url': {'key': 'hostPageUrl', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'int'},
-        'height': {'key': 'height', 'type': 'int'},
-    }
-
-    _subtype_map = {
-        '_type': {'ImageObject': 'ImageObject'}
+        'address': {'key': 'address', 'type': 'PostalAddress'},
+        'telephone': {'key': 'telephone', 'type': 'str'},
+        'price_range': {'key': 'priceRange', 'type': 'str'},
+        'panoramas': {'key': 'panoramas', 'type': '[ImageObject]'},
+        'is_permanently_closed': {'key': 'isPermanentlyClosed', 'type': 'bool'},
+        'tag_line': {'key': 'tagLine', 'type': 'str'},
+        'hotel_class': {'key': 'hotelClass', 'type': 'str'},
+        'amenities': {'key': 'amenities', 'type': '[str]'},
     }
 
     def __init__(self):
-        super(MediaObject, self).__init__()
-        self.content_url = None
-        self.host_page_url = None
-        self.width = None
-        self.height = None
-        self._type = 'MediaObject'
+        super(Hotel, self).__init__()
+        self.hotel_class = None
+        self.amenities = None
+        self._type = 'Hotel'
