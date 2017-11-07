@@ -26,7 +26,6 @@ from .image_metadata import ImageMetadata
 from .image_description_details import ImageDescriptionDetails
 from .face_description import FaceDescription
 from .image_analysis import ImageAnalysis
-from .image_url import ImageUrl
 from .ocr_word import OcrWord
 from .ocr_line import OcrLine
 from .ocr_region import OcrRegion
@@ -37,6 +36,7 @@ from .domain_model_results import DomainModelResults
 from .image_description import ImageDescription
 from .tag_result import TagResult
 from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
+from .image_url import ImageUrl
 from .computer_vision_api_enums import (
     TextOperationStatusCodes,
     ComputerVisionErrorCodes,
@@ -66,7 +66,6 @@ __all__ = [
     'ImageDescriptionDetails',
     'FaceDescription',
     'ImageAnalysis',
-    'ImageUrl',
     'OcrWord',
     'OcrLine',
     'OcrRegion',
@@ -77,6 +76,7 @@ __all__ = [
     'ImageDescription',
     'TagResult',
     'ComputerVisionError', 'ComputerVisionErrorException',
+    'ImageUrl',
     'TextOperationStatusCodes',
     'ComputerVisionErrorCodes',
     'VisualFeatureTypes',

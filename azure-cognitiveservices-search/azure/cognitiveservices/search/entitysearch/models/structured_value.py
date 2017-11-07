@@ -23,7 +23,7 @@ class StructuredValue(Intangible):
 
     :param _type: Constant filled by server.
     :type _type: str
-    :ivar id:
+    :ivar id: A String identifier.
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.

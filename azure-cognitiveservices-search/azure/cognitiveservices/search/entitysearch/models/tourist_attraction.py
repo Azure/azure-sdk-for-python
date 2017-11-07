@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .place import Place
 
 
-class Thing(Response):
-    """Thing.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Place, Organization, CreativeWork, Intangible
+class TouristAttraction(Place):
+    """TouristAttraction.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -49,6 +46,11 @@ class Thing(Response):
      ~azure.cognitiveservices.search.entitysearch.models.EntitiesEntityPresentationInfo
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
+    :ivar address: The postal address of where the entity is located
+    :vartype address:
+     ~azure.cognitiveservices.search.entitysearch.models.PostalAddress
+    :ivar telephone: The entity's telephone number
+    :vartype telephone: str
     """
 
     _validation = {
@@ -62,31 +64,10 @@ class Thing(Response):
         'description': {'readonly': True},
         'entity_presentation_info': {'readonly': True},
         'bing_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        '_type': {'key': '_type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'contractual_rules': {'key': 'contractualRules', 'type': '[ContractualRulesContractualRule]'},
-        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'ImageObject'},
-        'description': {'key': 'description', 'type': 'str'},
-        'entity_presentation_info': {'key': 'entityPresentationInfo', 'type': 'EntitiesEntityPresentationInfo'},
-        'bing_id': {'key': 'bingId', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        '_type': {'Place': 'Place', 'Organization': 'Organization', 'CreativeWork': 'CreativeWork', 'Intangible': 'Intangible'}
+        'address': {'readonly': True},
+        'telephone': {'readonly': True},
     }
 
     def __init__(self):
-        super(Thing, self).__init__()
-        self.name = None
-        self.url = None
-        self.image = None
-        self.description = None
-        self.entity_presentation_info = None
-        self.bing_id = None
-        self._type = 'Thing'
+        super(TouristAttraction, self).__init__()
+        self._type = 'TouristAttraction'

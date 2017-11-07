@@ -13,7 +13,8 @@ from .identifiable import Identifiable
 
 
 class Response(Identifiable):
-    """Response.
+    """Defines a response. All schemas that could be returned at the root of a
+    response should inherit from this.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: Thing, SearchResponse, Answer, ErrorResponse
@@ -23,7 +24,7 @@ class Response(Identifiable):
 
     :param _type: Constant filled by server.
     :type _type: str
-    :ivar id:
+    :ivar id: A String identifier.
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.

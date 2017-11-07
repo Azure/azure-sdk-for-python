@@ -20,7 +20,7 @@ class Entities(SearchResultsAnswer):
 
     :param _type: Constant filled by server.
     :type _type: str
-    :ivar id:
+    :ivar id: A String identifier.
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.
@@ -65,7 +65,7 @@ class Entities(SearchResultsAnswer):
         'contractual_rules': {'key': 'contractualRules', 'type': '[ContractualRulesContractualRule]'},
         'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
         'query_context': {'key': 'queryContext', 'type': 'QueryContext'},
-        'query_scenario': {'key': 'queryScenario', 'type': 'EntityQueryScenario'},
+        'query_scenario': {'key': 'queryScenario', 'type': 'str'},
         'value': {'key': 'value', 'type': '[Thing]'},
     }
 

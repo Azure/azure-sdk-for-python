@@ -15,12 +15,15 @@ from .thing import Thing
 class Place(Thing):
     """Defines information about a local entity, such as a restaurant or hotel.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CivicStructure, LocalBusiness, TouristAttraction
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param _type: Constant filled by server.
     :type _type: str
-    :ivar id:
+    :ivar id: A String identifier.
     :vartype id: str
     :ivar contractual_rules: A list of rules that you must adhere to if you
      display the item.
@@ -81,6 +84,10 @@ class Place(Thing):
         'bing_id': {'key': 'bingId', 'type': 'str'},
         'address': {'key': 'address', 'type': 'PostalAddress'},
         'telephone': {'key': 'telephone', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        '_type': {'CivicStructure': 'CivicStructure', 'LocalBusiness': 'LocalBusiness', 'TouristAttraction': 'TouristAttraction'}
     }
 
     def __init__(self):
