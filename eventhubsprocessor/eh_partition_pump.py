@@ -55,8 +55,7 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
- 
-        self.partition_receive_handler = AsyncReceiver()
+        self.partition_receive_handler = AsyncReceiver(event_loop=self.local_event_loop)
         self.eh_client = EventHubClient(self.host.eh_connection_string) \
                         .subscribe(self.partition_receive_handler,
                                    self.partition_context.consumer_group_name,
@@ -101,7 +100,8 @@ class PartitionReceiver:
                 msgs = await asyncio.wait_for(self.eh_partition_pump.\
                                                    partition_receive_handler. \
                                                    receive(self.max_batch_size),
-                                              self.recieve_timeout)
+                                              self.recieve_timeout,
+                                              loop=self.eh_partition_pump.local_event_loop)
                 await self.process_events_async(msgs)
             except asyncio.TimeoutError:
                 if self.eh_partition_pump.partition_receive_handler.messages:
