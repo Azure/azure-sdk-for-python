@@ -8,6 +8,7 @@
 import unittest
 import time
 
+from msrestazure.azure_exceptions import CloudError
 import azure.mgmt.eventhub.models
 from azure.mgmt.eventhub.models import EHNamespace
 from azure.mgmt.eventhub.models import EHNamespace, Sku, SkuName, AuthorizationRule, AccessRights, AccessKeys, Eventhub, CaptureDescription, Destination, EncodingCaptureDescription,  ErrorResponseException, ErrorResponse
@@ -30,17 +31,14 @@ class MgmtEventHubTest(AzureMgmtTestCase):
 
         resource_group_name = resource_group.name
 
-        # Create a Namespace
+        #Create a Namespace
         namespace_name = "testingpythontestcaseeventhubnamespaceEventhub"
 
-        namespaceparameter=EHNamespace(location,{'tag1':'value1','tag2':'value2'},Sku(SkuName.standard))
-        poller = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter, None, True)
-        creatednamespace = poller.output
+        namespaceparameter = EHNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, Sku(SkuName.standard))
+        poller = self.eventhub_client.namespaces.create_or_update(resource_group_name, namespace_name,
+                                                                  namespaceparameter)
+        creatednamespace = poller.result()
         self.assertEqual(creatednamespace.name, namespace_name)
-
-        while (self.eventhub_client.namespaces.get(resource_group_name,namespace_name).provisioning_state != 'Succeeded'):
-            time.sleep(15)
-            continue
 
         #
         # # Get created Namespace
@@ -150,16 +148,13 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         # Delete the created eventhub
         geteventhubresponse = self.eventhub_client.event_hubs.delete(resource_group_name, namespace_name, eventhub_name)
 
-        # Delete the create namespace
-        deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name, None, True)
+        time.sleep(60)
 
-        # to verify the deletion of namespace
+        # Delete the create namespace
         try:
-            while(self.eventhub_client.namespaces.get(resource_group_name, namespace_name, None, True).response.status_code != 404):
-                time.sleep(30)
-                continue
-        except ErrorResponseException as ErrorResponse:
-            self.assertEqual(ErrorResponse.message, "Operation returned an invalid status code 'Not Found'")
+            deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name).result()
+        except CloudError as ErrorResponse:
+            self.assertTrue("not found" in ErrorResponse.message)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
