@@ -89,6 +89,7 @@ from .sync_group_schema_table import SyncGroupSchemaTable
 from .sync_group_schema import SyncGroupSchema
 from .sync_group import SyncGroup
 from .sync_member import SyncMember
+from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
 from .server_dns_alias import ServerDnsAlias
@@ -127,6 +128,7 @@ from .sync_full_schema_properties_paged import SyncFullSchemaPropertiesPaged
 from .sync_group_log_properties_paged import SyncGroupLogPropertiesPaged
 from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
+from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_operation_paged import DatabaseOperationPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
@@ -263,6 +265,7 @@ __all__ = [
     'SyncGroupSchema',
     'SyncGroup',
     'SyncMember',
+    'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
     'ServerDnsAlias',
@@ -301,6 +304,7 @@ __all__ = [
     'SyncGroupLogPropertiesPaged',
     'SyncGroupPaged',
     'SyncMemberPaged',
+    'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
     'DatabaseOperationPaged',
     'ServerDnsAliasPaged',
