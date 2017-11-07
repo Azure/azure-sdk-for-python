@@ -15,9 +15,9 @@ class AsyncReceiver(Receiver):
     """
     Implements the async API of a L{Receiver}.
     """
-    def __init__(self, event_loop=None, prefetch=300):
+    def __init__(self, prefetch=300, loop=None):
         super(AsyncReceiver, self).__init__(False)
-        self.loop = event_loop or asyncio.get_event_loop()
+        self.loop = loop or asyncio.get_event_loop()
         self.messages = queue.Queue()
         self.lock = Lock()
         self.link = None

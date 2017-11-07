@@ -16,14 +16,14 @@ class PartitionPump():
         self.pump_status = "Uninitialized"
         self.partition_context = None
         self.processor = None
-        self.local_event_loop = None
+        self.loop = None
 
     def run(self):
         """
         Makes pump sync so that it can be run in a thread
         """
-        self.local_event_loop = asyncio.new_event_loop()
-        self.local_event_loop.run_until_complete(self.open_async())
+        self.loop = asyncio.new_event_loop()
+        self.loop.run_until_complete(self.open_async())
 
     def set_pump_status(self, status):
         """
