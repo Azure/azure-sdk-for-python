@@ -1,0 +1,131 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Read diagnostic setting","description":"Gets
+        the diagnostic setting for the resource"},"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/write","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Write diagnostic setting","description":"Creates
+        or updates the diagnostic setting for the resource"},"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/logDefinitions/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Account Log Definitions","operation":"Read Batch
+        service log definitions","description":"Gets the available logs for the Batch
+        service"},"origin":"system","properties":{"serviceSpecification":{"logSpecifications":[{"name":"ServiceLog","displayName":"Service
+        Logs","blobDuration":"PT1H"}]}}},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/metricDefinitions/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Account Metric Definitions","operation":"Read Batch
+        service metric definitions","description":"Gets the available metrics for
+        the Batch service"},"origin":"system","properties":{"serviceSpecification":{"metricSpecifications":[{"name":"CoreCount","displayName":"Dedicated
+        Core Count","displayDescription":"Total number of dedicated cores in the batch
+        account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TotalNodeCount","displayName":"Dedicated
+        Node Count","displayDescription":"Total number of dedicated nodes in the batch
+        account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"LowPriorityCoreCount","displayName":"LowPriority
+        Core Count","displayDescription":"Total number of low-priority cores in the
+        batch account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TotalLowPriorityNodeCount","displayName":"Low-Priority
+        Node Count","displayDescription":"Total number of low-priority nodes in the
+        batch account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"CreatingNodeCount","displayName":"Creating
+        Node Count","displayDescription":"Number of nodes being created","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"StartingNodeCount","displayName":"Starting
+        Node Count","displayDescription":"Number of nodes starting","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"WaitingForStartTaskNodeCount","displayName":"Waiting
+        For Start Task Node Count","displayDescription":"Number of nodes waiting for
+        the Start Task to complete","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"StartTaskFailedNodeCount","displayName":"Start
+        Task Failed Node Count","displayDescription":"Number of nodes where the Start
+        Task has failed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"IdleNodeCount","displayName":"Idle
+        Node Count","displayDescription":"Number of idle nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"OfflineNodeCount","displayName":"Offline
+        Node Count","displayDescription":"Number of offline nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"RebootingNodeCount","displayName":"Rebooting
+        Node Count","displayDescription":"Number of rebooting nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"ReimagingNodeCount","displayName":"Reimaging
+        Node Count","displayDescription":"Number of reimaging nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"RunningNodeCount","displayName":"Running
+        Node Count","displayDescription":"Number of running nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"LeavingPoolNodeCount","displayName":"Leaving
+        Pool Node Count","displayDescription":"Number of nodes leaving the Pool","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"UnusableNodeCount","displayName":"Unusable
+        Node Count","displayDescription":"Number of unusable nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PreemptedNodeCount","displayName":"Preempted
+        Node Count","displayDescription":"Number of preempted nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskStartEvent","displayName":"Task
+        Start Events","displayDescription":"Total number of tasks that have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskCompleteEvent","displayName":"Task
+        Complete Events","displayDescription":"Total number of tasks that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskFailEvent","displayName":"Task
+        Fail Events","displayDescription":"Total number of tasks that have completed
+        in a failed state","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolCreateEvent","displayName":"Pool
+        Create Events","displayDescription":"Total number of pools that have been
+        created","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeStartEvent","displayName":"Pool
+        Resize Start Events","displayDescription":"Total number of pool resizes that
+        have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeCompleteEvent","displayName":"Pool
+        Resize Complete Events","displayDescription":"Total number of pool resizes
+        that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteStartEvent","displayName":"Pool
+        Delete Start Events","displayDescription":"Total number of pool deletes that
+        have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteCompleteEvent","displayName":"Pool
+        Delete Complete Events","displayDescription":"Total number of pool deletes
+        that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false}]}}},{"name":"Microsoft.Batch/batchAccounts/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"List or Get Batch Accounts","description":"Lists
+        Batch accounts or gets the properties of a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/write","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Create or Update Batch Account","description":"Creates
+        a new Batch account or updates an existing Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/delete","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Delete Batch Account","description":"Deletes
+        a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/listkeys/action","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"List Batch Account Keys","description":"Lists
+        access keys for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/regeneratekeys/action","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Regenerate Batch Account Keys","description":"Regenerates
+        access keys for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/locations/quotas/read","display":{"provider":"Microsoft
+        Batch","resource":"Batch Quotas","operation":"Get Batch Quotas","description":"Gets
+        Batch quotas of the specified subscription at the specified Azure region"},"origin":"user,system"},{"name":"Microsoft.Batch/locations/checkNameAvailability/action","display":{"provider":"Microsoft
+        Batch","resource":"Name Availability","operation":"Check Name Availability","description":"Checks
+        that the account name is valid and not in use."},"origin":"user,system"},{"name":"Microsoft.Batch/register/action","display":{"provider":"Microsoft
+        Batch","resource":"Batch Resource Provider","operation":"Register the Batch
+        Resource Provider","description":"Registers the subscription for the Batch
+        Resource Provider and enables the creation of Batch accounts"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/syncAutoStorageKeys/action","display":{"provider":"Microsoft
+        Batch","resource":"Batch Accounts","operation":"Synchronize Auto Storage Account
+        Keys","description":"Synchronizes access keys for the auto storage account
+        configured for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/read","display":{"provider":"Microsoft
+        Batch","resource":"Applications","operation":"List or Get Applications","description":"Lists
+        applications or gets the properties of an application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/write","display":{"provider":"Microsoft
+        Batch","resource":"Applications","operation":"Create or Update Application","description":"Creates
+        a new application or updates an existing application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/delete","display":{"provider":"Microsoft
+        Batch","resource":"Applications","operation":"Delete Application","description":"Deletes
+        an application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/read","display":{"provider":"Microsoft
+        Batch","resource":"Application Packages","operation":"Get Application Package","description":"Gets
+        the properties of an application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/write","display":{"provider":"Microsoft
+        Batch","resource":"Application Packages","operation":"Create or Update Application
+        Package","description":"Creates a new application package or updates an existing
+        application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/delete","display":{"provider":"Microsoft
+        Batch","resource":"Application Packages","operation":"Delete Application Package","description":"Deletes
+        an application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/activate/action","display":{"provider":"Microsoft
+        Batch","resource":"Application Packages","operation":"Activate Application
+        Package","description":"Activates an application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/certificates/read","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"List or Get Certificates","description":"Lists
+        certificates on a Batch account or gets the properties of a certificate"}},{"name":"Microsoft.Batch/batchAccounts/certificates/write","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Create or Update Certificate","description":"Creates
+        a new certificate on a Batch account or updates an existing certificate"}},{"name":"Microsoft.Batch/batchAccounts/certificates/delete","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Delete Certificate","description":"Deletes
+        a certificate from a Batch account"}},{"name":"Microsoft.Batch/batchAccounts/certificates/cancelDelete/action","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Cancel Delete Certificate","description":"Cancels
+        the failed deletion of a certificate on a Batch account"}},{"name":"Microsoft.Batch/batchAccounts/pools/read","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"List or Get Pools","description":"Lists
+        pools on a Batch account or gets the properties of a pool"}},{"name":"Microsoft.Batch/batchAccounts/pools/write","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Create or Update Pool","description":"Creates
+        a new pool on a Batch account or updates an existing pool"}},{"name":"Microsoft.Batch/batchAccounts/pools/delete","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Delete Pool","description":"Deletes
+        a pool from a Batch account"}},{"name":"Microsoft.Batch/batchAccounts/pools/stopResize/action","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Stop Pool Resize","description":"Stops
+        an ongoing resize operation on a Batch account pool"}},{"name":"Microsoft.Batch/batchAccounts/pools/disableAutoscale/action","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Disable Pool AutoScale","description":"Disables
+        automatic scaling for a Batch account pool"}},{"name":"Microsoft.Batch/batchAccounts/pools/upgradeOs/action","display":{"provider":"Microsoft
+        Batch","resource":"Certificates","operation":"Upgrade Pool Operating System","description":"Upgrades
+        the operating system of a Batch account pool"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['15461']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 15:41:42 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
