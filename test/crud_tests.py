@@ -3609,16 +3609,15 @@ class CRUDTests(unittest.TestCase):
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
         # Replace the offer.
         offer_to_replace = dict(expected_offer)
-        # Now, by default the offerVersion is V2, so if we are replacing an offer if one of the legacy values, we need to update the offerVersion as well
-        offer_to_replace['offerVersion'] = 'V1'
-        offer_to_replace['offerType'] = 'S2'
+        offer_to_replace['content']['offerThroughput'] += 100;
         replaced_offer = client.ReplaceOffer(offer_to_replace['_self'], offer_to_replace)
-        self.__ValidateOfferResponseBody(replaced_offer, collection.get('_self'), 'S2')
+        self.__ValidateOfferResponseBody(replaced_offer, collection.get('_self'), None)
         # Check if the replaced offer is what we expect.
         self.assertEqual(offer_to_replace.get('id'), replaced_offer.get('id'))
         self.assertEqual(offer_to_replace.get('_rid'), replaced_offer.get('_rid'))
         self.assertEqual(offer_to_replace.get('_self'), replaced_offer.get('_self'))
         self.assertEqual(offer_to_replace.get('resource'), replaced_offer.get('resource'))
+        self.assertEqual(offer_to_replace.get('content').get('offerThroughput'), replaced_offer.get('content').get('offerThroughput'))
         # Expects an exception when replacing an offer with bad id.
         offer_to_replace_bad_id = dict(offer_to_replace)
         offer_to_replace_bad_id['_rid'] = 'NotAllowed'
