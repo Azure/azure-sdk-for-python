@@ -243,7 +243,7 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2017-01-19'
+    CurrentVersion = '2017-11-15'
     SDKName = 'documentdb-python-sdk'
     SDKVersion = '2.2.1'
 
