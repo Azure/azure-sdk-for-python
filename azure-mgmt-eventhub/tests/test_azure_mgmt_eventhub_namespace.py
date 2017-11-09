@@ -101,8 +101,6 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         self.assertEqual(len(createnamespaceauthorule), 1)
         self.assertEqual(createnamespaceauthorule[0].name, defaultauthorule_name)
 
-        time.sleep(60)
-
         # Delete the create namespace
         try:
             deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name).result()

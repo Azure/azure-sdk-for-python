@@ -15,12 +15,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:30:55.64Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['822']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:53:48 GMT']
+      date: ['Wed, 08 Nov 2017 03:30:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -44,12 +44,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:30:55.64Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['822']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:54:19 GMT']
+      date: ['Wed, 08 Nov 2017 03:31:27 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -72,12 +72,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:30:55.64Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['822']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:54:50 GMT']
+      date: ['Wed, 08 Nov 2017 03:31:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -100,12 +100,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:30:55.64Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['822']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:55:21 GMT']
+      date: ['Wed, 08 Nov 2017 03:32:28 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -128,96 +128,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['822']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:55:51 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 eventhubmanagementclient/1.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['822']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:56:21 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 eventhubmanagementclient/1.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:53:47.79Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['822']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:56:53 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 eventhubmanagementclient/1.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
-  response:
-    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:56:57.583Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:32:52.027Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['825']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:23 GMT']
+      date: ['Wed, 08 Nov 2017 03:32:59 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -240,12 +156,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup","name":"pythontestcaseeventhubnamespaceConsumerGroup","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-07T17:53:47.79Z","updatedAt":"2017-11-07T17:56:57.583Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcaseeventhubnamespaceconsumergroup","createdAt":"2017-11-08T03:30:55.64Z","updatedAt":"2017-11-08T03:32:52.027Z","serviceBusEndpoint":"https://pythontestcaseeventhubnamespaceConsumerGroup.servicebus.windows.net:443/"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['825']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:23 GMT']
+      date: ['Wed, 08 Nov 2017 03:32:59 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -273,12 +189,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup","name":"testingpythontestcaseeventhubConsumerGroup","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"West
-        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-07T17:57:28.853Z","updatedAt":"2017-11-07T17:57:35.06Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'}
+        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-08T03:33:05.647Z","updatedAt":"2017-11-08T03:33:11.337Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1105']
+      content-length: ['1106']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:34 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:09 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -302,12 +218,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup","name":"testingpythontestcaseeventhubConsumerGroup","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"West
-        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-07T17:57:28.853","updatedAt":"2017-11-07T17:57:35.06","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'}
+        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-08T03:33:05.647","updatedAt":"2017-11-08T03:33:11.337","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1103']
+      content-length: ['1104']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:34 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:11 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -330,12 +246,12 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs?api-version=2017-04-01
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubconsumergroup","name":"testingpythontestcaseeventhubconsumergroup","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"West
-        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-07T17:57:28.853","updatedAt":"2017-11-07T17:57:35.06","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'}
+        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2017-11-08T03:33:05.647","updatedAt":"2017-11-08T03:33:11.337","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Storage-SouthCentralUS/providers/Microsoft.ClassicStorage/storageAccounts/arjunteststorage","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1115']
+      content-length: ['1116']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:35 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:11 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -368,7 +284,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1081']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:37 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:15 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -393,13 +309,13 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup","name":"testingpythontestcaseconsumergroup","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"West
-        US","properties":{"createdAt":"2017-11-07T17:57:40.2099618Z","updatedAt":"2017-11-07T17:57:40.2099618Z","userMetadata":"Testing
+        US","properties":{"createdAt":"2017-11-08T03:33:20.9964781Z","updatedAt":"2017-11-08T03:33:20.9964781Z","userMetadata":"Testing
         the User Metadata"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['610']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:39 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:21 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -423,13 +339,13 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup","name":"testingpythontestcaseconsumergroup","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"West
-        US","properties":{"createdAt":"2017-11-07T17:57:39.7620653Z","updatedAt":"2017-11-07T17:57:39.7620653Z","userMetadata":"Testing
+        US","properties":{"createdAt":"2017-11-08T03:33:21.4956375Z","updatedAt":"2017-11-08T03:33:21.4956375Z","userMetadata":"Testing
         the User Metadata"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['610']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:44 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -453,13 +369,13 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup?api-version=2017-04-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/eventhubs/testingpythontestcaseeventhubConsumerGroup/consumergroups/testingpythontestcaseconsumergroup","name":"testingpythontestcaseconsumergroup","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"West
-        US","properties":{"createdAt":"2017-11-07T17:57:48.5974058Z","updatedAt":"2017-11-07T17:57:48.5974058Z","userMetadata":"update
+        US","properties":{"createdAt":"2017-11-08T03:33:23.2152284Z","updatedAt":"2017-11-08T03:33:23.2152284Z","userMetadata":"update
         user matadata for testing"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['617']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 17:57:51 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -487,7 +403,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 17:57:52 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:27 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -513,7 +429,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 17:57:53 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:30 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
@@ -539,7 +455,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 17:58:54 GMT']
+      date: ['Wed, 08 Nov 2017 03:33:29 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
       pragma: [no-cache]
@@ -565,7 +481,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 17:59:25 GMT']
+      date: ['Wed, 08 Nov 2017 03:34:01 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
       pragma: [no-cache]
@@ -590,7 +506,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 17:59:56 GMT']
+      date: ['Wed, 08 Nov 2017 03:34:32 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
       pragma: [no-cache]
@@ -615,7 +531,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 18:00:27 GMT']
+      date: ['Wed, 08 Nov 2017 03:35:03 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
       pragma: [no-cache]
@@ -640,57 +556,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 07 Nov 2017 18:00:57 GMT']
-      expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 eventhubmanagementclient/1.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
-  response:
-    body: {string: ''}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Tue, 07 Nov 2017 18:01:27 GMT']
-      expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
-      pragma: [no-cache]
-      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
-      server-sb: [Service-Bus-Resource-Provider/SN1]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          msrest_azure/0.4.15 eventhubmanagementclient/1.1.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01
-  response:
-    body: {string: ''}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Tue, 07 Nov 2017 18:01:58 GMT']
+      date: ['Wed, 08 Nov 2017 03:35:33 GMT']
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_consumergroup_test_eh_consumergroup_curd82b51b32/providers/Microsoft.EventHub/namespaces/pythontestcaseeventhubnamespaceConsumerGroup/operationresults/pythontestcaseeventhubnamespaceConsumerGroup?api-version=2017-04-01']
       pragma: [no-cache]
@@ -718,7 +584,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['251']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 18:02:28 GMT']
+      date: ['Wed, 08 Nov 2017 03:36:03 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]

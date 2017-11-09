@@ -131,8 +131,6 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         # Delete the created eventhub
         geteventhubresponse = self.eventhub_client.event_hubs.delete(resource_group_name, namespace_name, eventhub_name)
 
-        time.sleep(60)
-
         # Delete the create namespace
         try:
             deletenamespace = self.eventhub_client.namespaces.delete(resource_group_name, namespace_name).result()
