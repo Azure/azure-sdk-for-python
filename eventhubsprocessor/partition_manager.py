@@ -211,7 +211,7 @@ class PartitionManager:
         """
         partition_pump = EventHubPartitionPump(self.host, lease)
         # Do the put after start, if the start fails then put doesn't happen
-        asyncio.get_event_loop().run_in_executor(self.pump_executor, partition_pump.run)
+        self.host.loop.run_in_executor(self.pump_executor, partition_pump.run)
         self.partition_pumps[partition_id] = partition_pump
         logging.info("Created new partition pump %s %s", self.host.guid, partition_id)
 

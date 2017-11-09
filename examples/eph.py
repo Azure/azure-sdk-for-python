@@ -107,10 +107,11 @@ try:
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
 
-    HOST = EventProcessorHost(EventProcessor, ADDRESS, CONSUMER_GROUP,
-                              STORAGE_MANAGER, EH_REST_CREDENTIALS)
-
     LOOP = asyncio.get_event_loop()
+
+    HOST = EventProcessorHost(EventProcessor, ADDRESS, CONSUMER_GROUP,
+                              STORAGE_MANAGER, EH_REST_CREDENTIALS, loop=LOOP)
+
     LOOP.run_until_complete(HOST.open_async())
     LOOP.run_until_complete(HOST.close_async())
 

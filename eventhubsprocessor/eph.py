@@ -9,13 +9,14 @@ class EventProcessorHost:
     """
     def __init__(self, event_processor, eh_connection_string, consumer_group_name,
                  storage_manager=None, eh_rest_auth=None,
-                 eh_options=None):
+                 eh_options=None, loop=None):
         self.event_processor = event_processor
         self.eh_connection_string = eh_connection_string
         self.eh_rest_auth = eh_rest_auth # Dictionary that contains eh rest api credentials {sb_name,eh_name,token}
         self.consumer_group_name = consumer_group_name
         self.guid = str(uuid.uuid4())
         self.host_name = "host" + str(self.guid)
+        self.loop = loop
         self.eh_options = eh_options or EPHOptions()
         self.partition_manager = PartitionManager(self)
         self.storage_manager = storage_manager

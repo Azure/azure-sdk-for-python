@@ -97,14 +97,15 @@ class PartitionReceiver:
         while (not self.eh_partition_pump.is_closing()) \
               or self.eh_partition_pump.pump_status == "Errored":
             try:
-                msgs = await asyncio.wait_for(self.eh_partition_pump.\
-                                                   partition_receive_handler. \
-                                                   receive(self.max_batch_size),
-                                              self.recieve_timeout,
-                                              loop=self.eh_partition_pump.loop)
-                await self.process_events_async(msgs)
+                if self.eh_partition_pump.partition_receive_handler:
+                    msgs = await asyncio.wait_for(self.eh_partition_pump.\
+                                                    partition_receive_handler. \
+                                                    receive(self.max_batch_size),
+                                                self.recieve_timeout,
+                                                loop=self.eh_partition_pump.loop)
+                    await self.process_events_async(msgs)
             except asyncio.TimeoutError:
-                if self.eh_partition_pump.partition_receive_handler.messages:
+                if self.eh_partition_pump.partition_receive_handler:
                     logging.info("No events received, queue size %d, delivered %d",
                                 self.eh_partition_pump.partition_receive_handler.messages.qsize(),
                                 self.eh_partition_pump.partition_receive_handler.delivered)
