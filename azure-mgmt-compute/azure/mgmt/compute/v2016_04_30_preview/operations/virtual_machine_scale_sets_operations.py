@@ -601,8 +601,8 @@ class VirtualMachineScaleSetsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all VM Scale Sets in the subscription, regardless of the
         associated resource group. Use nextLink property in the response to get
-        the next page of VM Scale Sets. Do this till nextLink is not null to
-        fetch all the VM Scale Sets.
+        the next page of VM Scale Sets. Do this till nextLink is null to fetch
+        all the VM Scale Sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
