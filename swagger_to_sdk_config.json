@@ -75,14 +75,69 @@
       "markdown": "specification/cdn/resource-manager/readme.md",
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
-    "cognitiveservices": {
+    "cognitiveservices.mgmt": {
+      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
       "autorest_options": {
         "namespace": "azure.mgmt.cognitiveservices",
         "package-version": "2.0.0"
       },
-      "build_dir": "azure-mgmt-cognitiveservices",
-      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
-      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices",
+      "build_dir": "azure-mgmt-cognitiveservices"
+    },
+    "cognitiveservices.language.textanalytics": {
+      "markdown": "specification/cognitiveservices/data-plane/TextAnalytics/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.language.textanalytics",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-language/azure/cognitiveservices/language/textanalytics",
+      "generated_relative_base_directory": "azure/cognitiveservices/language/textanalytics",
+      "build_dir": "azure-cognitiveservices-language/azure/cognitiveservices/language/textanalytics"
+    },
+    "cognitiveservices.search.entitysearch": {
+      "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.search.entitysearch",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
+      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch"
+    },    
+    "cognitiveservices.search.websearch": {
+      "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.search.websearch",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/websearch",
+      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch"
+    },
+    "cognitiveservices.vision.computervision": {
+      "markdown": "specification/cognitiveservices/data-plane/ComputerVision/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.computervision",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/computervision",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/computervision",
+      "build_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/computervision"
+    },
+    "cognitiveservices.vision.face": {
+      "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.face",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/face",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/face",
+      "build_dir": "azure-cognitiveservices-vision/azure/cognitiveservices/vision/face"
     },
     "commerce": {
       "autorest_options": {
