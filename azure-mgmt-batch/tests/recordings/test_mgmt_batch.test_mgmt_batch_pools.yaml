@@ -1,0 +1,531 @@
+interactions:
+- request:
+    body: '{"properties": {"displayName": "test_pool", "vmSize": "small", "deploymentConfiguration":
+      {"cloudServiceConfiguration": {"osFamily": "5"}}, "scaleSettings": {"fixedScale":
+      {"targetDedicatedNodes": 0, "targetLowPriorityNodes": 0}}, "userAccounts": [{"name":
+      "UserName", "password": "p@55wOrd"}], "startTask": {"commandLine": "cmd.exe
+      /c \"echo hello world\"", "resourceFiles": [{"blobSource": "https://blobsource.com",
+      "filePath": "filename.txt"}], "environmentSettings": [{"name": "ENV_VAR", "value":
+      "env_value"}], "userIdentity": {"autoUser": {"elevationLevel": "Admin"}}}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['576']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D5260380D29D7D\"","properties":{"lastModified":"2017-11-07T17:18:03.0837117Z","creationTime":"2017-11-07T17:18:03.0837117Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:03.0837117Z","allocationState":"Resizing","allocationStateTransitionTime":"2017-11-07T17:18:03.0837117Z","vmSize":"Small","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","targetOSVersion":"*","currentOSVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
+        /c \"echo hello world\"","resourceFiles":[{"blobSource":"https://blobsource.com","filePath":"filename.txt"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":false},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin"}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":0,"resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:03.0837117Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1516']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:03 GMT']
+      etag: [W/"0x8D5260380D29D7D"]
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 17:18:03 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"displayName": "test_pool", "vmSize": "Standard_A1", "deploymentConfiguration":
+      {"virtualMachineConfiguration": {"imageReference": {"publisher": "MicrosoftWindowsServer",
+      "offer": "WindowsServer", "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSkuId":
+      "batch.node.windows amd64", "windowsConfiguration": {"enableAutomaticUpdates":
+      true}}}, "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 0, "targetLowPriorityNodes":
+      0}}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['447']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D526038169BAA8\"","properties":{"lastModified":"2017-11-07T17:18:04.074052Z","creationTime":"2017-11-07T17:18:04.074052Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:04.074052Z","allocationState":"Resizing","allocationStateTransitionTime":"2017-11-07T17:18:04.074052Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":0,"resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:04.074052Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1317']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:04 GMT']
+      etag: [W/"0x8D526038169BAA8"]
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 17:18:04 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools?api-version=2017-09-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D526038169BAA8\"","properties":{"lastModified":"2017-11-07T17:18:04.074052Z","creationTime":"2017-11-07T17:18:04.074052Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:04.074052Z","allocationState":"Steady","allocationStateTransitionTime":"2017-11-07T17:18:04.1950574Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":0,"resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:04.074052Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_paas_pool","name":"test_paas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D5260380D29D7D\"","properties":{"lastModified":"2017-11-07T17:18:03.0837117Z","creationTime":"2017-11-07T17:18:03.0837117Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:03.0837117Z","allocationState":"Steady","allocationStateTransitionTime":"2017-11-07T17:18:03.1997032Z","vmSize":"Small","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"cloudServiceConfiguration":{"osFamily":"5","targetOSVersion":"*","currentOSVersion":"*"}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":0,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"startTask":{"commandLine":"cmd.exe
+        /c \"echo hello world\"","resourceFiles":[{"blobSource":"https://blobsource.com","filePath":"filename.txt"}],"environmentSettings":[{"name":"ENV_VAR","value":"env_value"}],"userIdentity":{"autoUser":{"elevationLevel":"Admin"}},"maxTaskRetryCount":0,"waitForSuccess":false},"userAccounts":[{"name":"UserName","elevationLevel":"NonAdmin"}],"resizeOperationStatus":{"targetDedicatedNodes":0,"nodeDeallocationOption":0,"resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:03.0837117Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['2843']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:04 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"scaleSettings": {"autoScale": {"formula": "$TargetDedicatedNodes=1"}}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['88']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D52603824BEB29\"","properties":{"lastModified":"2017-11-07T17:18:05.5564073Z","creationTime":"2017-11-07T17:18:04.074052Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:04.074052Z","allocationState":"Resizing","allocationStateTransitionTime":"2017-11-07T17:18:05.5564073Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=1","evaluationInterval":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":1,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:05.5564073Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2017-11-07T17:18:05.5564073Z","results":"$TargetDedicatedNodes=1;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1475']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:05 GMT']
+      etag: [W/"0x8D52603824BEB29"]
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 17:18:05 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D52603824BEB29\"","properties":{"lastModified":"2017-11-07T17:18:05.5564073Z","creationTime":"2017-11-07T17:18:04.074052Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:04.074052Z","allocationState":"Resizing","allocationStateTransitionTime":"2017-11-07T17:18:05.5564073Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"autoScale":{"formula":"$TargetDedicatedNodes=1","evaluationInterval":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":1,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:05.5564073Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0,"autoScaleRun":{"evaluationTime":"2017-11-07T17:18:05.5564073Z","results":"$TargetDedicatedNodes=1;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1475']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:05 GMT']
+      etag: [W/"0x8D52603824BEB29"]
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 17:18:05 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool/stopResize?api-version=2017-09-01
+  response:
+    body: {string: '{"error":{"code":"OperationInvalidForCurrentState","message":"The
+        specified operation is not valid for the current state of the resource.\nRequestId:bc14d8fb-e42f-4526-be93-164acb37466b\nTime:2017-11-07T17:18:06.0195487Z","target":"BatchAccount","details":[{"code":"Reason","message":"The
+        specified pool has AutoScale enabled. AutoScale resize cannot be stopped"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['366']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:06 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 409, message: The specified operation is not valid for the current
+        state of the resource.}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool/disableAutoScale?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool","name":"test_iaas_pool","type":"Microsoft.Batch/batchAccounts/pools","etag":"W/\"0x8D52603831B59AF\"","properties":{"lastModified":"2017-11-07T17:18:06.9158319Z","creationTime":"2017-11-07T17:18:04.074052Z","provisioningState":"Succeeded","provisioningStateTransitionTime":"2017-11-07T17:18:04.074052Z","allocationState":"Stopping","allocationStateTransitionTime":"2017-11-07T17:18:06.9158319Z","vmSize":"STANDARD_A1","interNodeCommunication":"Disabled","maxTasksPerNode":1,"taskSchedulingPolicy":{"nodeFillType":"Spread"},"deploymentConfiguration":{"virtualMachineConfiguration":{"imageReference":{"publisher":"MicrosoftWindowsServer","offer":"WindowsServer","sku":"2016-Datacenter-smalldisk","version":"latest"},"nodeAgentSkuId":"batch.node.windows
+        amd64","windowsConfiguration":{"enableAutomaticUpdates":true}}},"scaleSettings":{"fixedScale":{"targetDedicatedNodes":1,"targetLowPriorityNodes":0,"resizeTimeout":"PT15M"}},"resizeOperationStatus":{"targetDedicatedNodes":1,"nodeDeallocationOption":"Requeue","resizeTimeout":"PT15M","startTime":"2017-11-07T17:18:05.5564073Z"},"currentDedicatedNodes":0,"currentLowPriorityNodes":0}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1328']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 17:18:06 GMT']
+      etag: [W/"0x8D52603831B59AF"]
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 17:18:06 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/pools/test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:18:07 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:18:21 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:18:37 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:18:52 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:19:09 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:19:24 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:19:40 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:19:56 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:20:12 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:20:26 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:20:42 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_pools1f5c0f25/providers/Microsoft.Batch/batchAccounts/batch1f5c0f25/poolOperationResults/delete-test_iaas_pool?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 17:20:58 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

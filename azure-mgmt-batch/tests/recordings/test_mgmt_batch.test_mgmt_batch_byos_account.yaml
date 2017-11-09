@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: '{"location": "eastus2", "properties": {"poolAllocationMode": "UserSubscription"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['81']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2017-09-01
+  response:
+    body: {string: '{"error":{"code":"InvalidRequestBody","message":"The specified
+        Request Body is not syntactically valid.\nRequestId:bd191591-4e65-4257-b9fb-7604e7f70679\nTime:2017-11-07T15:43:53.5679057Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
+        must be set if poolAllocationMode is specified as ''UserSubscription'' on
+        a PUT request"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['359']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 15:43:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 400, message: The specified Request Body is not syntactically valid.}
+- request:
+    body: 'b''{"location": "eastus2", "properties": {"poolAllocationMode": "UserSubscription",
+      "keyVaultReference": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batch94171201",
+      "url": "https://batch94171201.vault.azure.net/"}}}'''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['332']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2017-09-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 07 Nov 2017 15:43:58 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201/operationResults/6c3fd9d1-8ddb-4a25-9f41-cf856cb500d6?api-version=2017-09-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201/operationResults/6c3fd9d1-8ddb-4a25-9f41-cf856cb500d6?api-version=2017-09-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201","name":"batch94171201","type":"Microsoft.Batch/batchAccounts","location":"eastus2","properties":{"accountEndpoint":"batch94171201.eastus2.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":2147483647,"lowPriorityCoreQuota":0,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"poolAllocationMode":"UserSubscription","keyVaultReference":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batch94171201","url":"https://batch94171201.vault.azure.net/"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['762']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 07 Nov 2017 15:44:14 GMT']
+      etag: ['"0x8D525F66603F7E1"']
+      expires: ['-1']
+      last-modified: ['Tue, 07 Nov 2017 15:44:14 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
