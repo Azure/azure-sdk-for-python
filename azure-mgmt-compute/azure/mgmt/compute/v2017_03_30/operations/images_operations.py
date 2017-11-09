@@ -348,7 +348,7 @@ class ImagesOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets the list of Images in the subscription. Use nextLink property in
         the response to get the next page of Images. Do this till nextLink is
-        not null to fetch all the Images.
+        null to fetch all the Images.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
