@@ -47,6 +47,8 @@ class QueryContext(Model):
      field is set to false. This field is also set to false for queries that
      are not location aware, such as "best sellers".
     :vartype ask_user_for_location: bool
+    :ivar is_transactional:
+    :vartype is_transactional: bool
     """
 
     _validation = {
@@ -55,6 +57,7 @@ class QueryContext(Model):
         'alteration_override_query': {'readonly': True},
         'adult_intent': {'readonly': True},
         'ask_user_for_location': {'readonly': True},
+        'is_transactional': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,6 +66,7 @@ class QueryContext(Model):
         'alteration_override_query': {'key': 'alterationOverrideQuery', 'type': 'str'},
         'adult_intent': {'key': 'adultIntent', 'type': 'bool'},
         'ask_user_for_location': {'key': 'askUserForLocation', 'type': 'bool'},
+        'is_transactional': {'key': 'isTransactional', 'type': 'bool'},
     }
 
     def __init__(self, original_query):
@@ -71,3 +75,4 @@ class QueryContext(Model):
         self.alteration_override_query = None
         self.adult_intent = None
         self.ask_user_for_location = None
+        self.is_transactional = None

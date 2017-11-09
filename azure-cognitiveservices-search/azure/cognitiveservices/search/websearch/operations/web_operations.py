@@ -34,7 +34,7 @@ class WebOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def search(
-            self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, answer_count=None, country_code=None, count=None, freshness=None, market=None, offset=None, promote=None, response_filter=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
+            self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, answer_count=None, country_code=None, count=None, freshness=None, market="en-us", offset=None, promote=None, response_filter=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
         """The Web Search API lets you send a search query to Bing and get back
         search results that include links to webpages, images, and more.
 
@@ -317,7 +317,7 @@ class WebOperations(object):
         if count is not None:
             query_parameters['count'] = self._serialize.query("count", count, 'int')
         if freshness is not None:
-            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'Freshness')
+            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'str')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
         if offset is not None:
@@ -328,13 +328,13 @@ class WebOperations(object):
         if response_filter is not None:
             query_parameters['responseFilter'] = self._serialize.query("response_filter", response_filter, '[str]', div=',')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
         if text_decorations is not None:
             query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
         if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
+            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'str')
 
         # Construct headers
         header_parameters = {}

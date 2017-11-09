@@ -52,8 +52,8 @@ class Error(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'ErrorCode'},
-        'sub_code': {'key': 'subCode', 'type': 'ErrorSubCode'},
+        'code': {'key': 'code', 'type': 'str'},
+        'sub_code': {'key': 'subCode', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'more_details': {'key': 'moreDetails', 'type': 'str'},
         'parameter': {'key': 'parameter', 'type': 'str'},

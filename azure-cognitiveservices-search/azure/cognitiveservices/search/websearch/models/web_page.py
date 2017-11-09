@@ -24,8 +24,7 @@ class WebPage(CreativeWork):
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :ivar name: The name of the thing represented by this object.The name of
-     the thing represented by this object.
+    :ivar name: The name of the thing represented by this object.
     :vartype name: str
     :ivar url: The URL to get more information about the thing represented by
      this object.
