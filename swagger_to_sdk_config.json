@@ -174,15 +174,10 @@
     },
     "containerservice": {
       "autorest_options": {
-        "description": "The Container Service Client.",
-        "namespace": "azure.mgmt.containerservice",
-        "package-version": "2.0.0",
-        "tag": "package-container-service-2017-09",
-        "title": "ContainerServiceClient"
+        "package-version": "2.0.0"
       },
       "build_dir": "azure-mgmt-containerservice",
-      "generated_relative_base_directory": "python/azure/mgmt/containerservice",
-      "markdown": "specification/compute/resource-manager/readme.md",
+      "markdown": "specification/containerservices/resource-manager/readme.md",
       "output_dir": "azure-mgmt-containerservice/azure/mgmt/containerservice"
     },
     "cosmosdb": {
