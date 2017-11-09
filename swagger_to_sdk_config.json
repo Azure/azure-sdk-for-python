@@ -454,6 +454,16 @@
       "markdown": "specification/powerbiembedded/resource-manager/readme.md",
       "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
     },
+    "provisioningservices.mgmt": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.provisioningservices",
+        "package-name": "azure-mgmt-provisioningservices",
+        "package-version": "0.1.0"
+      },
+      "build_dir": "azure-mgmt-provisioningservices",
+      "markdown": "specification/provisioningservices/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-provisioningservices/azure/mgmt/provisioningservices"
+    },
     "rdbms.mysql": {
       "autorest_options": {
         "namespace": "azure.mgmt.rdbms.mysql",
