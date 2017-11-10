@@ -48,10 +48,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Eventhub
-         <azure.mgmt.servicebus.models.Eventhub>`
-        :rtype: :class:`EventhubPaged
-         <azure.mgmt.servicebus.models.EventhubPaged>`
+        :return: An iterator like instance of Eventhub
+        :rtype:
+         ~azure.mgmt.servicebus.models.EventhubPaged[~azure.mgmt.servicebus.models.Eventhub]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

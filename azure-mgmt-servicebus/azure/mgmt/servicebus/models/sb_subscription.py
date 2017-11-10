@@ -34,8 +34,7 @@ class SBSubscription(Resource):
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: datetime
     :ivar count_details: Message count details
-    :vartype count_details: :class:`MessageCountDetails
-     <azure.mgmt.servicebus.models.MessageCountDetails>`
+    :vartype count_details: ~azure.mgmt.servicebus.models.MessageCountDetails
     :param lock_duration: ISO 8061 lock duration timespan for the
      subscription. The default value is 1 minute.
     :type lock_duration: timedelta
@@ -60,8 +59,7 @@ class SBSubscription(Resource):
      messaging entity. Possible values include: 'Active', 'Disabled',
      'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting',
      'Renaming', 'Unknown'
-    :type status: str or :class:`EntityStatus
-     <azure.mgmt.servicebus.models.EntityStatus>`
+    :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
     :param enable_batched_operations: Value that indicates whether server-side
      batched operations are enabled.
     :type enable_batched_operations: bool

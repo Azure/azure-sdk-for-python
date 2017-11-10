@@ -25,8 +25,7 @@ class SBQueue(Resource):
     :ivar type: Resource type
     :vartype type: str
     :ivar count_details: Message Count Details.
-    :vartype count_details: :class:`MessageCountDetails
-     <azure.mgmt.servicebus.models.MessageCountDetails>`
+    :vartype count_details: ~azure.mgmt.servicebus.models.MessageCountDetails
     :ivar created_at: The exact time the message was created.
     :vartype created_at: datetime
     :ivar updated_at: The exact time the message was updated.
@@ -72,8 +71,7 @@ class SBQueue(Resource):
      messaging entity. Possible values include: 'Active', 'Disabled',
      'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting',
      'Renaming', 'Unknown'
-    :type status: str or :class:`EntityStatus
-     <azure.mgmt.servicebus.models.EntityStatus>`
+    :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which
      the queue is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: timedelta
@@ -84,6 +82,11 @@ class SBQueue(Resource):
      enabled. An express queue holds a message in memory temporarily before
      writing it to persistent storage.
     :type enable_express: bool
+    :param forward_to: Queue name to forward the messages
+    :type forward_to: str
+    :param forward_dead_lettered_messages_to: Queue name to forward the Dead
+     Letter message
+    :type forward_dead_lettered_messages_to: str
     """
 
     _validation = {
@@ -120,9 +123,11 @@ class SBQueue(Resource):
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
         'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
+        'forward_to': {'key': 'properties.forwardTo', 'type': 'str'},
+        'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
     }
 
-    def __init__(self, lock_duration=None, max_size_in_megabytes=None, requires_duplicate_detection=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, auto_delete_on_idle=None, enable_partitioning=None, enable_express=None):
+    def __init__(self, lock_duration=None, max_size_in_megabytes=None, requires_duplicate_detection=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, auto_delete_on_idle=None, enable_partitioning=None, enable_express=None, forward_to=None, forward_dead_lettered_messages_to=None):
         super(SBQueue, self).__init__()
         self.count_details = None
         self.created_at = None
@@ -142,3 +147,5 @@ class SBQueue(Resource):
         self.auto_delete_on_idle = auto_delete_on_idle
         self.enable_partitioning = enable_partitioning
         self.enable_express = enable_express
+        self.forward_to = forward_to
+        self.forward_dead_lettered_messages_to = forward_dead_lettered_messages_to
