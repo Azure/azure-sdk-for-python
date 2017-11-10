@@ -58,7 +58,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             self.storage_key = storage_keys['key1']
         else:
             self.resource = FakeResource(name=name, id=name)
-            self.storage_key = "fake_storage_key"
+            self.storage_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
             self.parameter_name: self.resource,
             '{}_key'.format(self.parameter_name): self.storage_key,
