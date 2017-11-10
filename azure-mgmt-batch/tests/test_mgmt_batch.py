@@ -14,7 +14,7 @@ import requests
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 from azure.common.exceptions import CloudError
-from preparers import KeyVaultPreparer, SimpleBatchPreparer
+from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
 
 from devtools_testutils import (
     AzureMgmtTestCase,
