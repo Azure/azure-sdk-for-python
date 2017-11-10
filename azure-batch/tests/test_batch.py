@@ -15,7 +15,7 @@ import requests
 
 import azure.batch
 from azure.batch import models
-from preparers import (
+from batch_preparers import (
     AccountPreparer,
     PoolPreparer,
     JobPreparer
