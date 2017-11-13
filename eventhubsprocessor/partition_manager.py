@@ -183,7 +183,7 @@ class PartitionManager:
                         await self.remove_pump_async(partition_id, "LeaseLost")
                 except Exception as err:
                     logging.error("failed to update lease %s", err)
-                await asyncio.sleep(lease_manager.lease_renew_interval)
+            await asyncio.sleep(lease_manager.lease_renew_interval)
 
     async def check_and_add_pump_async(self, partition_id, lease):
         """
@@ -197,11 +197,10 @@ class PartitionManager:
                 await self.remove_pump_async(partition_id, "Shutdown")
             else:
                 # Pump is working, should just replace the lease.
-                # Note (this doesn't work because of the way set_lease
-                # is configured in python for now restart the pump with new lease
-                # captured_pump.set_lease(lease)
-                await self.remove_pump_async(partition_id, "Restart")
-                await self.create_new_pump_async(partition_id, lease)
+                # This is causing a race condition since if the checkpoint is being updated 
+                # when the lease changes then the pump will error and shut down
+                captured_pump.set_lease(lease) 
+                
         else:
             await self.create_new_pump_async(partition_id, lease)
 

@@ -88,6 +88,8 @@ class PartitionContext:
         """
         Persists the checkpoint
         """
+        logging.info("PartitionPumpCheckpointStart %s %s %s %s",
+                         self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number)
         try:
             in_store_checkpoint = await self.host.storage_manager \
                                                  .get_checkpoint_async(checkpoint.partition_id)
@@ -109,7 +111,7 @@ class PartitionContext:
                 raise Exception("offset/sequenceNumber invalid")
 
         except Exception as err:
-            logging.error(self.host.guid, checkpoint.partition_id, repr(err))
+            logging.error("PartitionPumpCheckpointError", self.host.guid, checkpoint.partition_id, repr(err))
             raise
         finally:
             logging.info("PartitionPumpCheckpointStop %s %s",

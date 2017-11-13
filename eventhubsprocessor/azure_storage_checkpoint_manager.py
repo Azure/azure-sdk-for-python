@@ -222,24 +222,27 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     # than it should, rebalancing will take care of that quickly enough.
                     retval = False
                 else:
-                    logging.info("Need to ChangeLease %s %s", self.host.guid, lease.partition_id)
+                    logging.info("ChangingLease %s %s", self.host.guid, lease.partition_id)
                     self.storage_client.change_blob_lease(self.lease_container_name,
                                                           partition_id, lease.token,
                                                           new_lease_id)
                     lease.token = new_lease_id
             else:
-                logging.info("Need to AcquireLease %s %s", self.host.guid, lease.partition_id)
+                logging.info("AcquiringLease %s %s", self.host.guid, lease.partition_id)
                 lease.token = self.storage_client.acquire_blob_lease(self.lease_container_name,
                                                                      partition_id,
                                                                      self.lease_duration,
                                                                      new_lease_id)
+            lease.owner = self.host.host_name
+            lease.increment_epoch()
+            #check if this solves the issue
+            await self.update_lease_async(lease)
         except Exception as err:
             logging.error("Failed to acquire lease %s %s %s", repr(err),
                           partition_id, lease.token)
             return False
+        
 
-        lease.owner = self.host.host_name
-        lease.increment_epoch()
         return retval
 
     async def renew_lease_async(self, lease):

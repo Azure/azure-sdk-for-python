@@ -2,6 +2,7 @@
 Author: Aaron (Ari) Bornstien
 """
 import uuid
+import asyncio
 from eventhubsprocessor.partition_manager import PartitionManager
 class EventProcessorHost:
     """
@@ -16,7 +17,7 @@ class EventProcessorHost:
         self.consumer_group_name = consumer_group_name
         self.guid = str(uuid.uuid4())
         self.host_name = "host" + str(self.guid)
-        self.loop = loop
+        self.loop = loop or asyncio.get_event_loop()
         self.eh_options = eh_options or EPHOptions()
         self.partition_manager = PartitionManager(self)
         self.storage_manager = storage_manager
@@ -27,6 +28,8 @@ class EventProcessorHost:
         """
         Starts the host
         """
+        if not self.loop: # If the \
+            self.loop = asyncio.get_event_loop()
         await self.partition_manager.start_async()
 
     async def close_async(self):
