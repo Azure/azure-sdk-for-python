@@ -16,11 +16,11 @@ class SalesforceLinkedService(LinkedService):
     """Linked service for Salesforce.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param environment_url: The URL of Salesforce instance. Default is
      'https://login.salesforce.com'. To copy data from sandbox, specify
@@ -33,12 +33,10 @@ class SalesforceLinkedService(LinkedService):
     :type username: object
     :param password: The password for Basic authentication of the Salesforce
      source.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param security_token: The security token is required to remotely access
      Salesforce source.
-    :type security_token: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type security_token: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -55,8 +53,8 @@ class SalesforceLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'environment_url': {'key': 'typeProperties.environmentUrl', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
-        'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

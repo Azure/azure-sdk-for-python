@@ -28,10 +28,10 @@ class SelfHostedIntegrationRuntimeNode(Model):
     :ivar status: Status of the integration runtime node. Possible values
      include: 'NeedRegistration', 'Online', 'Limited', 'Offline', 'Upgrading',
      'Initializing', 'InitializeFailed'
-    :vartype status: str or :class:`SelfHostedIntegrationRuntimeNodeStatus
-     <azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNodeStatus>`
+    :vartype status: str or
+     ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNodeStatus
     :ivar capabilities: The integration runtime capabilities dictionary
-    :vartype capabilities: dict
+    :vartype capabilities: dict[str, str]
     :ivar version_status: Status of the integration runtime node version.
     :vartype version_status: str
     :ivar version: Version of the integration runtime node.
@@ -51,8 +51,8 @@ class SelfHostedIntegrationRuntimeNode(Model):
     :vartype last_stop_time: datetime
     :ivar last_update_result: The result of the last integration runtime node
      update. Possible values include: 'Succeed', 'Fail'
-    :vartype last_update_result: str or :class:`IntegrationRuntimeUpdateResult
-     <azure.mgmt.datafactory.models.IntegrationRuntimeUpdateResult>`
+    :vartype last_update_result: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeUpdateResult
     :ivar last_start_update_time: The last time for the integration runtime
      node update start.
     :vartype last_start_update_time: datetime

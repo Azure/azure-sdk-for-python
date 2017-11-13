@@ -27,7 +27,7 @@ class DatasetResource(SubResource):
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
     :param properties: Dataset properties.
-    :type properties: :class:`Dataset <azure.mgmt.datafactory.models.Dataset>`
+    :type properties: ~azure.mgmt.datafactory.models.Dataset
     """
 
     _validation = {

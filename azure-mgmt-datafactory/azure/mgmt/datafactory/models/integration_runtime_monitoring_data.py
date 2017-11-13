@@ -18,8 +18,8 @@ class IntegrationRuntimeMonitoringData(Model):
     :param name: Integration runtime name.
     :type name: str
     :param nodes: Integration runtime node monitoring data.
-    :type nodes: list of :class:`IntegrationRuntimeNodeMonitoringData
-     <azure.mgmt.datafactory.models.IntegrationRuntimeNodeMonitoringData>`
+    :type nodes:
+     list[~azure.mgmt.datafactory.models.IntegrationRuntimeNodeMonitoringData]
     """
 
     _attribute_map = {

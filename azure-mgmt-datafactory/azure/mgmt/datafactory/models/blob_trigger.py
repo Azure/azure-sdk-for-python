@@ -21,14 +21,14 @@ class BlobTrigger(Trigger):
     :param description: Trigger description.
     :type description: str
     :param pipelines: Pipelines that need to be started.
-    :type pipelines: list of :class:`TriggerPipelineReference
-     <azure.mgmt.datafactory.models.TriggerPipelineReference>`
+    :type pipelines:
+     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :ivar runtime_state: Indicates if trigger is running or not. Updated when
      Start/Stop APIs are called on the Trigger. Possible values include:
      'Started', 'Stopped', 'Disabled'
-    :vartype runtime_state: str or :class:`TriggerRuntimeState
-     <azure.mgmt.datafactory.models.TriggerRuntimeState>`
-    :param type: Polymorphic Discriminator
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param type: Constant filled by server.
     :type type: str
     :param folder_path: The path of the container/folder that will trigger the
      pipeline.
@@ -37,8 +37,8 @@ class BlobTrigger(Trigger):
      is triggered.
     :type max_concurrency: int
     :param linked_service: The Azure Storage linked service reference.
-    :type linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
 
     _validation = {

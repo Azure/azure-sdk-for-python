@@ -29,10 +29,10 @@ class PipelineResource(SubResource):
     :param description: The description of the pipeline.
     :type description: str
     :param activities: List of activities in pipeline.
-    :type activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
     :param parameters: List of parameters for pipeline.
-    :type parameters: dict
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
     """

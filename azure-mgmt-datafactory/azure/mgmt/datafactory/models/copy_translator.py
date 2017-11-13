@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class CopyTranslator(Model):
     """A copy activity translator.
 
-    :param type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TabularTranslator
+
+    :param type: Constant filled by server.
     :type type: str
     """
 

@@ -16,25 +16,24 @@ class SapHanaLinkedService(LinkedService):
     """SAP HANA Linked Service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param server: Host name of the SAP HANA server. Type: string (or
      Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the SAP HANA server. Possible values include: 'Basic', 'Windows'
-    :type authentication_type: str or :class:`SapHanaAuthenticationType
-     <azure.mgmt.datafactory.models.SapHanaAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.SapHanaAuthenticationType
     :param user_name: Username to access the SAP HANA server. Type: string (or
      Expression with resultType string).
     :type user_name: object
     :param password: Password to access the SAP HANA server.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).

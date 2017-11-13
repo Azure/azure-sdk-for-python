@@ -17,8 +17,7 @@ class RecurrenceScheduleOccurrence(Model):
 
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    :type day: str or :class:`DayOfWeek
-     <azure.mgmt.datafactory.models.DayOfWeek>`
+    :type day: str or ~azure.mgmt.datafactory.models.DayOfWeek
     :param occurrence: The occurrence.
     :type occurrence: int
     """

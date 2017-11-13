@@ -18,8 +18,8 @@ class ActivityDependency(Model):
     :param activity: Activity name.
     :type activity: str
     :param dependency_conditions: Match-Condition for the dependency.
-    :type dependency_conditions: list of str or :class:`DependencyCondition
-     <azure.mgmt.datafactory.models.DependencyCondition>`
+    :type dependency_conditions: list[str or
+     ~azure.mgmt.datafactory.models.DependencyCondition]
     """
 
     _validation = {

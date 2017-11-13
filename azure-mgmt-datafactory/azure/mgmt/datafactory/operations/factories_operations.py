@@ -43,10 +43,9 @@ class FactoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Factory
-         <azure.mgmt.datafactory.models.Factory>`
-        :rtype: :class:`FactoryPaged
-         <azure.mgmt.datafactory.models.FactoryPaged>`
+        :return: An iterator like instance of Factory
+        :rtype:
+         ~azure.mgmt.datafactory.models.FactoryPaged[~azure.mgmt.datafactory.models.Factory]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -109,10 +108,9 @@ class FactoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Factory
-         <azure.mgmt.datafactory.models.Factory>`
-        :rtype: :class:`FactoryPaged
-         <azure.mgmt.datafactory.models.FactoryPaged>`
+        :return: An iterator like instance of Factory
+        :rtype:
+         ~azure.mgmt.datafactory.models.FactoryPaged[~azure.mgmt.datafactory.models.Factory]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -174,18 +172,15 @@ class FactoriesOperations(object):
         :param factory_name: The factory name.
         :type factory_name: str
         :param factory: Factory resource definition.
-        :type factory: :class:`Factory
-         <azure.mgmt.datafactory.models.Factory>`
+        :type factory: ~azure.mgmt.datafactory.models.Factory
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Factory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.Factory or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -243,20 +238,17 @@ class FactoriesOperations(object):
         :param factory_name: The factory name.
         :type factory_name: str
         :param tags: The resource tags.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param identity: Managed service identity of the factory.
-        :type identity: :class:`FactoryIdentity
-         <azure.mgmt.datafactory.models.FactoryIdentity>`
+        :type identity: ~azure.mgmt.datafactory.models.FactoryIdentity
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Factory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.Factory or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -320,11 +312,9 @@ class FactoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Factory <azure.mgmt.datafactory.models.Factory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Factory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.Factory or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -382,11 +372,8 @@ class FactoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -439,11 +426,8 @@ class FactoriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

@@ -20,22 +20,20 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param script_path: Case-sensitive path to folder that contains the U-SQL
      script. Type: string (or Expression with resultType string).
     :type script_path: object
     :param script_linked_service: Script linked service reference.
-    :type script_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type script_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param degree_of_parallelism: The maximum number of nodes simultaneously
      used to run the job. Default value is 1. Type: integer (or Expression with
      resultType integer), minimum: 1.
@@ -46,7 +44,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
      integer), minimum: 1.
     :type priority: object
     :param parameters: Parameters for U-SQL job request.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     :param runtime_version: Runtime version of the U-SQL engine to use. Type:
      string (or Expression with resultType string).
     :type runtime_version: object

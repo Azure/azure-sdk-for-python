@@ -24,10 +24,9 @@ class PipelineRun(Model):
     :vartype pipeline_name: str
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
-    :vartype parameters: dict
+    :vartype parameters: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
-    :vartype invoked_by: :class:`PipelineRunInvokedBy
-     <azure.mgmt.datafactory.models.PipelineRunInvokedBy>`
+    :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
      in ISO8601 format.
     :vartype last_updated: datetime

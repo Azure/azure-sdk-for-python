@@ -21,8 +21,8 @@ class RedshiftUnloadSettings(Model):
     :param s3_linked_service_name: The name of the Amazon S3 linked service
      which will be used for the unload operation when copying from the Amazon
      Redshift source.
-    :type s3_linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type s3_linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param bucket_name: The bucket of the interim Amazon S3 which will be used
      to store the unloaded data from Amazon Redshift source. The bucket must be
      in the same region as the Amazon Redshift source. Type: string (or

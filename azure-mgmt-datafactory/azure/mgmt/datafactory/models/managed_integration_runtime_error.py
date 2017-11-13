@@ -23,7 +23,7 @@ class ManagedIntegrationRuntimeError(Model):
     :ivar code: Error code.
     :vartype code: str
     :ivar parameters: Managed integration runtime error parameters.
-    :vartype parameters: list of str
+    :vartype parameters: list[str]
     :ivar message: Error message.
     :vartype message: str
     """

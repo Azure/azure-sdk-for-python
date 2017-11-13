@@ -17,7 +17,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     :param description: Integration runtime description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

@@ -22,7 +22,7 @@ class CassandraSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
@@ -37,8 +37,7 @@ class CassandraSource(CopySource):
      'LOCAL_QUORUM', 'ONE', 'TWO', 'THREE', 'LOCAL_ONE', 'SERIAL',
      'LOCAL_SERIAL'
     :type consistency_level: str or
-     :class:`CassandraSourceReadConsistencyLevels
-     <azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels>`
+     ~azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels
     """
 
     _validation = {

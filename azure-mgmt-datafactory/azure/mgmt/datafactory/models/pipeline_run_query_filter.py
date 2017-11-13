@@ -17,14 +17,14 @@ class PipelineRunQueryFilter(Model):
 
     :param operand: Parameter name to be used for filter. Possible values
      include: 'PipelineName', 'Status', 'RunStart', 'RunEnd'
-    :type operand: str or :class:`PipelineRunQueryFilterOperand
-     <azure.mgmt.datafactory.models.PipelineRunQueryFilterOperand>`
+    :type operand: str or
+     ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperand
     :param operator: Operator to be used for filter. Possible values include:
      'Equals', 'NotEquals', 'In', 'NotIn'
-    :type operator: str or :class:`PipelineRunQueryFilterOperator
-     <azure.mgmt.datafactory.models.PipelineRunQueryFilterOperator>`
+    :type operator: str or
+     ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperator
     :param values: List of filter values.
-    :type values: list of str
+    :type values: list[str]
     """
 
     _validation = {

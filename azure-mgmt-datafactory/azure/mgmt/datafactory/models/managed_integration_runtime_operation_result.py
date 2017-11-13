@@ -27,7 +27,7 @@ class ManagedIntegrationRuntimeOperationResult(Model):
     :ivar error_code: The error code.
     :vartype error_code: str
     :ivar parameters: Managed integration runtime error parameters.
-    :vartype parameters: list of str
+    :vartype parameters: list[str]
     """
 
     _validation = {

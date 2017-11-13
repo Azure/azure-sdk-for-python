@@ -22,11 +22,11 @@ class ManagedIntegrationRuntimeNode(Model):
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values
      include: 'Starting', 'Available', 'Recycling', 'Unavailable'
-    :vartype status: str or :class:`ManagedIntegrationRuntimeNodeStatus
-     <azure.mgmt.datafactory.models.ManagedIntegrationRuntimeNodeStatus>`
+    :vartype status: str or
+     ~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeNodeStatus
     :param errors: The errors that occurred on this integration runtime node.
-    :type errors: list of :class:`ManagedIntegrationRuntimeError
-     <azure.mgmt.datafactory.models.ManagedIntegrationRuntimeError>`
+    :type errors:
+     list[~azure.mgmt.datafactory.models.ManagedIntegrationRuntimeError]
     """
 
     _validation = {

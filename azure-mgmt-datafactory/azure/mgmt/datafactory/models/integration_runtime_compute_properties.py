@@ -29,8 +29,8 @@ class IntegrationRuntimeComputeProperties(Model):
      per node for managed integration runtime.
     :type max_parallel_executions_per_node: int
     :param v_net_properties: VNet properties for managed integration runtime.
-    :type v_net_properties: :class:`IntegrationRuntimeVNetProperties
-     <azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties>`
+    :type v_net_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
     """
 
     _validation = {

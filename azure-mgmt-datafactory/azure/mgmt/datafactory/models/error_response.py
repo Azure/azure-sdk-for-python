@@ -23,8 +23,7 @@ class ErrorResponse(Model):
     :param target: Property name/path in request associated with error.
     :type target: str
     :param details: Array with additional error details.
-    :type details: list of :class:`ErrorResponse
-     <azure.mgmt.datafactory.models.ErrorResponse>`
+    :type details: list[~azure.mgmt.datafactory.models.ErrorResponse]
     """
 
     _validation = {

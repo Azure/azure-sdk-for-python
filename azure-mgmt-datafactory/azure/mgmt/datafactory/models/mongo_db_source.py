@@ -22,7 +22,7 @@ class MongoDbSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: Database query. Should be a SQL-92 query expression. Type:
      string (or Expression with resultType string).

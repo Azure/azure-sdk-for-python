@@ -20,7 +20,7 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Polymorphic Discriminator
+    :param authentication_type: Constant filled by server.
     :type authentication_type: str
     """
 

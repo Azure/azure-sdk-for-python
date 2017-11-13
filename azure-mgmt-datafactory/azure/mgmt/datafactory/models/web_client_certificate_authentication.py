@@ -22,14 +22,12 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Polymorphic Discriminator
+    :param authentication_type: Constant filled by server.
     :type authentication_type: str
     :param pfx: Base64-encoded contents of a PFX file.
-    :type pfx: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type pfx: ~azure.mgmt.datafactory.models.SecureString
     :param password: Password for the PFX file.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     """
 
     _validation = {

@@ -21,11 +21,12 @@ class FileShareDataset(Dataset):
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param folder_path: The path of the on-premises file system. Type: string
      (or Expression with resultType string).
@@ -34,15 +35,13 @@ class FileShareDataset(Dataset):
      (or Expression with resultType string).
     :type file_name: object
     :param format: The format of the files.
-    :type format: :class:`DatasetStorageFormat
-     <azure.mgmt.datafactory.models.DatasetStorageFormat>`
+    :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of
      files in the folderPath rather than all files. Type: string (or Expression
      with resultType string).
     :type file_filter: object
     :param compression: The data compression method used for the file system.
-    :type compression: :class:`DatasetCompression
-     <azure.mgmt.datafactory.models.DatasetCompression>`
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
     """
 
     _validation = {

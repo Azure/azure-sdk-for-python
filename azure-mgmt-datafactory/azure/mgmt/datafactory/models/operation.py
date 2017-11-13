@@ -20,11 +20,10 @@ class Operation(Model):
     :param origin: The intended executor of the operation.
     :type origin: str
     :param display: Metadata associated with the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.datafactory.models.OperationDisplay>`
+    :type display: ~azure.mgmt.datafactory.models.OperationDisplay
     :param service_specification: Details about a service operation.
-    :type service_specification: :class:`OperationServiceSpecification
-     <azure.mgmt.datafactory.models.OperationServiceSpecification>`
+    :type service_specification:
+     ~azure.mgmt.datafactory.models.OperationServiceSpecification
     """
 
     _attribute_map = {

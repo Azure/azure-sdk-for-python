@@ -47,10 +47,9 @@ class PipelinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>`
-        :rtype: :class:`PipelineResourcePaged
-         <azure.mgmt.datafactory.models.PipelineResourcePaged>`
+        :return: An iterator like instance of PipelineResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.PipelineResourcePaged[~azure.mgmt.datafactory.models.PipelineResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -115,8 +114,7 @@ class PipelinesOperations(object):
         :param pipeline_name: The pipeline name.
         :type pipeline_name: str
         :param pipeline: Pipeline resource definition.
-        :type pipeline: :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>`
+        :type pipeline: ~azure.mgmt.datafactory.models.PipelineResource
         :param if_match: ETag of the pipeline entity.  Should only be
          specified for update, for which it should match existing entity or can
          be * for unconditional update.
@@ -126,13 +124,9 @@ class PipelinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PipelineResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.PipelineResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -199,13 +193,9 @@ class PipelinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PipelineResource
-         <azure.mgmt.datafactory.models.PipelineResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PipelineResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.PipelineResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -266,11 +256,8 @@ class PipelinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -320,19 +307,15 @@ class PipelinesOperations(object):
         :param pipeline_name: The pipeline name.
         :type pipeline_name: str
         :param parameters: Parameters of the pipeline run.
-        :type parameters: dict
+        :type parameters: dict[str, object]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CreateRunResponse
-         <azure.mgmt.datafactory.models.CreateRunResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CreateRunResponse
-         <azure.mgmt.datafactory.models.CreateRunResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CreateRunResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.CreateRunResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

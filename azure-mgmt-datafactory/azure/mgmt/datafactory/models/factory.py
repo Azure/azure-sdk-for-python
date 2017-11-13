@@ -27,10 +27,9 @@ class Factory(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: Managed service identity of the factory.
-    :type identity: :class:`FactoryIdentity
-     <azure.mgmt.datafactory.models.FactoryIdentity>`
+    :type identity: ~azure.mgmt.datafactory.models.FactoryIdentity
     :ivar provisioning_state: Factory provisioning state, example Succeeded.
     :vartype provisioning_state: str
     :ivar create_time: Time the factory was created in ISO8601 format.

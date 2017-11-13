@@ -13,6 +13,9 @@ from .resource import Resource
 from .sub_resource import SubResource
 from .expression import Expression
 from .secure_string import SecureString
+from .linked_service_reference import LinkedServiceReference
+from .azure_key_vault_secret_reference import AzureKeyVaultSecretReference
+from .secret_base import SecretBase
 from .factory_identity import FactoryIdentity
 from .factory import Factory
 from .integration_runtime import IntegrationRuntime
@@ -23,7 +26,6 @@ from .integration_runtime_status_response import IntegrationRuntimeStatusRespons
 from .integration_runtime_status_list_response import IntegrationRuntimeStatusListResponse
 from .linked_service import LinkedService
 from .linked_service_resource import LinkedServiceResource
-from .linked_service_reference import LinkedServiceReference
 from .parameter_specification import ParameterSpecification
 from .dataset import Dataset
 from .dataset_resource import DatasetResource
@@ -85,8 +87,6 @@ from .my_sql_linked_service import MySqlLinkedService
 from .oracle_linked_service import OracleLinkedService
 from .file_server_linked_service import FileServerLinkedService
 from .hd_insight_linked_service import HDInsightLinkedService
-from .azure_key_vault_secret_reference import AzureKeyVaultSecretReference
-from .azure_key_vault_reference import AzureKeyVaultReference
 from .dynamics_linked_service import DynamicsLinkedService
 from .cosmos_db_linked_service import CosmosDbLinkedService
 from .azure_key_vault_linked_service import AzureKeyVaultLinkedService
@@ -173,6 +173,7 @@ from .redirect_incompatible_row_settings import RedirectIncompatibleRowSettings
 from .staging_settings import StagingSettings
 from .tabular_translator import TabularTranslator
 from .copy_translator import CopyTranslator
+from .dynamics_sink import DynamicsSink
 from .odbc_sink import OdbcSink
 from .azure_search_index_sink import AzureSearchIndexSink
 from .azure_data_lake_store_sink import AzureDataLakeStoreSink
@@ -265,6 +266,9 @@ __all__ = [
     'SubResource',
     'Expression',
     'SecureString',
+    'LinkedServiceReference',
+    'AzureKeyVaultSecretReference',
+    'SecretBase',
     'FactoryIdentity',
     'Factory',
     'IntegrationRuntime',
@@ -275,7 +279,6 @@ __all__ = [
     'IntegrationRuntimeStatusListResponse',
     'LinkedService',
     'LinkedServiceResource',
-    'LinkedServiceReference',
     'ParameterSpecification',
     'Dataset',
     'DatasetResource',
@@ -337,8 +340,6 @@ __all__ = [
     'OracleLinkedService',
     'FileServerLinkedService',
     'HDInsightLinkedService',
-    'AzureKeyVaultSecretReference',
-    'AzureKeyVaultReference',
     'DynamicsLinkedService',
     'CosmosDbLinkedService',
     'AzureKeyVaultLinkedService',
@@ -425,6 +426,7 @@ __all__ = [
     'StagingSettings',
     'TabularTranslator',
     'CopyTranslator',
+    'DynamicsSink',
     'OdbcSink',
     'AzureSearchIndexSink',
     'AzureDataLakeStoreSink',

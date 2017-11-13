@@ -22,7 +22,7 @@ class SqlSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
@@ -33,7 +33,8 @@ class SqlSource(CopySource):
     :type sql_reader_stored_procedure_name: object
     :param stored_procedure_parameters: Value and type setting for stored
      procedure parameters. Example: "{Parameter1: {value: "1", type: "int"}}".
-    :type stored_procedure_parameters: dict
+    :type stored_procedure_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
     """
 
     _validation = {
