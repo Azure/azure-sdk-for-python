@@ -16,15 +16,15 @@ class WebLinkedService(LinkedService):
     """Web linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param type_properties: Web linked service properties.
-    :type type_properties: :class:`WebLinkedServiceTypeProperties
-     <azure.mgmt.datafactory.models.WebLinkedServiceTypeProperties>`
+    :type type_properties:
+     ~azure.mgmt.datafactory.models.WebLinkedServiceTypeProperties
     """
 
     _validation = {

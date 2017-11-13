@@ -12,30 +12,27 @@
 from msrest.serialization import Model
 
 
-class AzureKeyVaultReference(Model):
-    """A reference to an object in Azure Key Vault.
+class SecretBase(Model):
+    """The base definition of a secret type.
 
-    :param store: The Azure Key Vault LinkedService.
-    :type store: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
-    :param type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SecureString, AzureKeyVaultSecretReference
+
+    :param type: Constant filled by server.
     :type type: str
     """
 
     _validation = {
-        'store': {'required': True},
         'type': {'required': True},
     }
 
     _attribute_map = {
-        'store': {'key': 'store', 'type': 'LinkedServiceReference'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'type': {'AzureKeyVaultSecret': 'AzureKeyVaultSecretReference'}
+        'type': {'SecureString': 'SecureString', 'AzureKeyVaultSecret': 'AzureKeyVaultSecretReference'}
     }
 
-    def __init__(self, store):
-        self.store = store
+    def __init__(self):
         self.type = None

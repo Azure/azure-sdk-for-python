@@ -22,7 +22,7 @@ class HttpSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param http_request_timeout: Specifies the timeout for a HTTP client to
      get HTTP response from HTTP server. The default value is equivalent to

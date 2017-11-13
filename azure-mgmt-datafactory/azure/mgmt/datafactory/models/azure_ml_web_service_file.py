@@ -21,8 +21,8 @@ class AzureMLWebServiceFile(Model):
     :type file_path: object
     :param linked_service_name: Reference to an Azure Storage LinkedService,
      where Azure ML WebService Input/Output file located.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
 
     _validation = {

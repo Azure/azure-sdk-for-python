@@ -20,16 +20,14 @@ class HDInsightSparkActivity(ExecutionActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param root_path: The root path in 'sparkJobLinkedService' for all the
      job’s files. Type: string (or Expression with resultType string).
     :type root_path: object
@@ -38,22 +36,22 @@ class HDInsightSparkActivity(ExecutionActivity):
      string).
     :type entry_file_path: object
     :param arguments: The user-specified arguments to HDInsightSparkActivity.
-    :type arguments: list of object
+    :type arguments: list[object]
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
-    :type get_debug_info: str or :class:`HDInsightActivityDebugInfoOption
-     <azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption>`
+    :type get_debug_info: str or
+     ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :param spark_job_linked_service: The storage linked service for uploading
      the entry file and dependencies, and for receiving logs.
-    :type spark_job_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type spark_job_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param class_name: The application's Java/Spark main class.
     :type class_name: str
     :param proxy_user: The user to impersonate that will execute the job.
      Type: string (or Expression with resultType string).
     :type proxy_user: object
     :param spark_config: Spark configuration property.
-    :type spark_config: dict
+    :type spark_config: dict[str, object]
     """
 
     _validation = {

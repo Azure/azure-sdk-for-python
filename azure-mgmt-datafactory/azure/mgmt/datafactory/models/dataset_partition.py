@@ -19,8 +19,7 @@ class DatasetPartition(Model):
      resultType string).
     :type name: object
     :param value: Value of the partition.
-    :type value: :class:`DatasetPartitionValue
-     <azure.mgmt.datafactory.models.DatasetPartitionValue>`
+    :type value: ~azure.mgmt.datafactory.models.DatasetPartitionValue
     """
 
     _attribute_map = {

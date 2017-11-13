@@ -27,8 +27,7 @@ class IntegrationRuntimeResource(SubResource):
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
     :param properties: Integration runtime properties.
-    :type properties: :class:`IntegrationRuntime
-     <azure.mgmt.datafactory.models.IntegrationRuntime>`
+    :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
     """
 
     _validation = {

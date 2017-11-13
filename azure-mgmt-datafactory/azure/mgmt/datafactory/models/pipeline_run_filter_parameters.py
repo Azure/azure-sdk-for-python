@@ -25,11 +25,10 @@ class PipelineRunFilterParameters(Model):
      event was updated in 'ISO 8601' format.
     :type last_updated_before: datetime
     :param filters: List of filters.
-    :type filters: list of :class:`PipelineRunQueryFilter
-     <azure.mgmt.datafactory.models.PipelineRunQueryFilter>`
+    :type filters: list[~azure.mgmt.datafactory.models.PipelineRunQueryFilter]
     :param order_by: List of OrderBy option.
-    :type order_by: list of :class:`PipelineRunQueryOrderBy
-     <azure.mgmt.datafactory.models.PipelineRunQueryOrderBy>`
+    :type order_by:
+     list[~azure.mgmt.datafactory.models.PipelineRunQueryOrderBy]
     """
 
     _validation = {

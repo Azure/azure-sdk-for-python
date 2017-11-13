@@ -22,15 +22,14 @@ class HdfsSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
     :type recursive: object
     :param distcp_settings: Specifies Distcp-related settings.
-    :type distcp_settings: :class:`DistcpSettings
-     <azure.mgmt.datafactory.models.DistcpSettings>`
+    :type distcp_settings: ~azure.mgmt.datafactory.models.DistcpSettings
     """
 
     _validation = {

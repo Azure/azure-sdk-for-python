@@ -28,16 +28,15 @@ class TriggerRun(Model):
     :vartype trigger_run_timestamp: datetime
     :ivar status: Trigger run status. Possible values include: 'Succeeded',
      'Failed', 'Inprogress'
-    :vartype status: str or :class:`TriggerRunStatus
-     <azure.mgmt.datafactory.models.TriggerRunStatus>`
+    :vartype status: str or ~azure.mgmt.datafactory.models.TriggerRunStatus
     :ivar message: Trigger error message.
     :vartype message: str
     :ivar properties: List of property name and value related to trigger run.
      Name, value pair depends on type of trigger.
-    :vartype properties: dict
+    :vartype properties: dict[str, str]
     :ivar triggered_pipelines: List of pipeline name and run Id triggered by
      the trigger run.
-    :vartype triggered_pipelines: dict
+    :vartype triggered_pipelines: dict[str, str]
     """
 
     _validation = {

@@ -16,11 +16,10 @@ class CustomActivityReferenceObject(Model):
     """Reference objects for custom activity.
 
     :param linked_services: Linked service references.
-    :type linked_services: list of :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :param datasets: Dataset references.
-    :type datasets: list of :class:`DatasetReference
-     <azure.mgmt.datafactory.models.DatasetReference>`
+    :type datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     """
 
     _attribute_map = {

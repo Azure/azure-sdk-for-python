@@ -29,7 +29,7 @@ class SqlDWSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
      with resultType string).
@@ -40,8 +40,7 @@ class SqlDWSink(CopySink):
     :type allow_poly_base: object
     :param poly_base_settings: Specifies PolyBase-related settings when
      allowPolyBase is true.
-    :type poly_base_settings: :class:`PolybaseSettings
-     <azure.mgmt.datafactory.models.PolybaseSettings>`
+    :type poly_base_settings: ~azure.mgmt.datafactory.models.PolybaseSettings
     """
 
     _validation = {

@@ -48,11 +48,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>`
-        :rtype: :class:`IntegrationRuntimeResourcePaged
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResourcePaged>`
+        :return: An iterator like instance of IntegrationRuntimeResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeResourcePaged[~azure.mgmt.datafactory.models.IntegrationRuntimeResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -117,8 +115,7 @@ class IntegrationRuntimesOperations(object):
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
         :param properties: Integration runtime properties.
-        :type properties: :class:`IntegrationRuntime
-         <azure.mgmt.datafactory.models.IntegrationRuntime>`
+        :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
         :param if_match: ETag of the integration runtime entity. Should only
          be specified for update, for which it should match existing entity or
          can be * for unconditional update.
@@ -128,13 +125,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -203,13 +196,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -270,11 +259,8 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -328,13 +314,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeStatusResponse or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -396,13 +380,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeConnectionInfo
-         <azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeConnectionInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeConnectionInfo
-         <azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -460,20 +442,16 @@ class IntegrationRuntimesOperations(object):
         :type integration_runtime_name: str
         :param key_name: The name of the authentication key to regenerate.
          Possible values include: 'authKey1', 'authKey2'
-        :type key_name: str or :class:`IntegrationRuntimeAuthKeyName
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName>`
+        :type key_name: str or
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeAuthKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -540,13 +518,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeAuthKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -605,15 +579,11 @@ class IntegrationRuntimesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         IntegrationRuntimeStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -695,14 +665,10 @@ class IntegrationRuntimesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -781,11 +747,8 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -846,11 +809,8 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -905,13 +865,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeMonitoringData
-         <azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeMonitoringData or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeMonitoringData
-         <azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

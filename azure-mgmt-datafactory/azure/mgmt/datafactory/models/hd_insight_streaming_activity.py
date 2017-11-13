@@ -20,25 +20,23 @@ class HDInsightStreamingActivity(ExecutionActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param storage_linked_services: Storage linked service references.
-    :type storage_linked_services: list of :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type storage_linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list of object
+    :type arguments: list[object]
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
-    :type get_debug_info: str or :class:`HDInsightActivityDebugInfoOption
-     <azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption>`
+    :type get_debug_info: str or
+     ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :param mapper: Mapper executable name. Type: string (or Expression with
      resultType string).
     :type mapper: object
@@ -52,18 +50,18 @@ class HDInsightStreamingActivity(ExecutionActivity):
      resultType string).
     :type output: object
     :param file_paths: Paths to streaming job files. Can be directories.
-    :type file_paths: list of object
+    :type file_paths: list[object]
     :param file_linked_service: Linked service reference where the files are
      located.
-    :type file_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type file_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param combiner: Combiner executable name. Type: string (or Expression
      with resultType string).
     :type combiner: object
     :param command_environment: Command line environment values.
-    :type command_environment: list of object
+    :type command_environment: list[object]
     :param defines: Allows user to specify defines for streaming job request.
-    :type defines: dict
+    :type defines: dict[str, object]
     """
 
     _validation = {

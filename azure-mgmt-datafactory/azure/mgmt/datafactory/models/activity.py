@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class Activity(Model):
     """A pipeline activity.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExecutionActivity, ControlActivity
+
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     """
 

@@ -15,6 +15,13 @@ from msrest.serialization import Model
 class CopySource(Model):
     """A copy activity source.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonRedshiftSource, HttpSource,
+    AzureDataLakeStoreSource, MongoDbSource, CassandraSource, WebSource,
+    OracleSource, HdfsSource, FileSystemSource, SqlDWSource, SqlSource,
+    RelationalSource, DynamicsSource, DocumentDbCollectionSource, BlobSource,
+    AzureTableSource
+
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,7 +29,7 @@ class CopySource(Model):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

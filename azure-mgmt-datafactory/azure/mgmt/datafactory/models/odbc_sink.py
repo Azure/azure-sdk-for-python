@@ -29,7 +29,7 @@ class OdbcSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
      string (or Expression with resultType string).

@@ -20,22 +20,21 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param stored_procedure_name: Stored procedure name. Type: string (or
      Expression with resultType string).
     :type stored_procedure_name: object
     :param stored_procedure_parameters: Value and type setting for stored
      procedure parameters. Example: "{Parameter1: {value: "1", type: "int"}}".
-    :type stored_procedure_parameters: dict
+    :type stored_procedure_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
     """
 
     _validation = {

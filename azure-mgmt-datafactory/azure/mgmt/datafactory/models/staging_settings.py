@@ -16,8 +16,8 @@ class StagingSettings(Model):
     """Staging settings.
 
     :param linked_service_name: Staging linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param path: The path to storage for storing the interim data. Type:
      string (or Expression with resultType string).
     :type path: object

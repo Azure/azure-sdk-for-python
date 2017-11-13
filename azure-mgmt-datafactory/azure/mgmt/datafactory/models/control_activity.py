@@ -15,14 +15,17 @@ from .activity import Activity
 class ControlActivity(Activity):
     """Base class for all control activities like IfCondition, ForEach , Until.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: UntilActivity, WaitActivity, ForEachActivity,
+    IfConditionActivity, ExecutePipelineActivity
+
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     """
 

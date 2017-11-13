@@ -29,7 +29,7 @@ class AzureTableSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param azure_table_default_partition_key_value: Azure Table default
      partition key value. Type: string (or Expression with resultType string).

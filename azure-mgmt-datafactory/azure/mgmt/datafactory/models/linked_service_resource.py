@@ -27,8 +27,7 @@ class LinkedServiceResource(SubResource):
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
     :param properties: Properties of linked service.
-    :type properties: :class:`LinkedService
-     <azure.mgmt.datafactory.models.LinkedService>`
+    :type properties: ~azure.mgmt.datafactory.models.LinkedService
     """
 
     _validation = {

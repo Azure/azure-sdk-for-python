@@ -13,7 +13,7 @@ from .copy_source import CopySource
 
 
 class DynamicsSource(CopySource):
-    """A copy activity Dynamics entity source.
+    """A copy activity Dynamics source.
 
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
@@ -22,7 +22,7 @@ class DynamicsSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: FetchXML is a proprietary query language that is used in
      Microsoft Dynamics (online & on-premises). Type: string (or Expression

@@ -48,10 +48,9 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggerResource
-         <azure.mgmt.datafactory.models.TriggerResource>`
-        :rtype: :class:`TriggerResourcePaged
-         <azure.mgmt.datafactory.models.TriggerResourcePaged>`
+        :return: An iterator like instance of TriggerResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.TriggerResourcePaged[~azure.mgmt.datafactory.models.TriggerResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -116,8 +115,7 @@ class TriggersOperations(object):
         :param trigger_name: The trigger name.
         :type trigger_name: str
         :param properties: Properties of the trigger.
-        :type properties: :class:`Trigger
-         <azure.mgmt.datafactory.models.Trigger>`
+        :type properties: ~azure.mgmt.datafactory.models.Trigger
         :param if_match: ETag of the trigger entity.  Should only be specified
          for update, for which it should match existing entity or can be * for
          unconditional update.
@@ -127,13 +125,9 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggerResource
-         <azure.mgmt.datafactory.models.TriggerResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggerResource
-         <azure.mgmt.datafactory.models.TriggerResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggerResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.TriggerResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -202,13 +196,9 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggerResource
-         <azure.mgmt.datafactory.models.TriggerResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggerResource
-         <azure.mgmt.datafactory.models.TriggerResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggerResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.TriggerResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -269,11 +259,8 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -325,14 +312,10 @@ class TriggersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -407,14 +390,10 @@ class TriggersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -495,10 +474,9 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggerRun
-         <azure.mgmt.datafactory.models.TriggerRun>`
-        :rtype: :class:`TriggerRunPaged
-         <azure.mgmt.datafactory.models.TriggerRunPaged>`
+        :return: An iterator like instance of TriggerRun
+        :rtype:
+         ~azure.mgmt.datafactory.models.TriggerRunPaged[~azure.mgmt.datafactory.models.TriggerRun]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

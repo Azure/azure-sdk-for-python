@@ -21,11 +21,12 @@ class HttpDataset(Dataset):
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param relative_url: The relative URL based on the URL in the
      HttpLinkedService refers to an HTTP file Type: string (or Expression with
@@ -44,14 +45,11 @@ class HttpDataset(Dataset):
      with resultType string).
     :type additional_headers: object
     :param partitioned_by: The HTTP method for the HTTP request.
-    :type partitioned_by: :class:`DatasetPartition
-     <azure.mgmt.datafactory.models.DatasetPartition>`
+    :type partitioned_by: ~azure.mgmt.datafactory.models.DatasetPartition
     :param format: The format of files.
-    :type format: :class:`DatasetStorageFormat
-     <azure.mgmt.datafactory.models.DatasetStorageFormat>`
+    :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used on files.
-    :type compression: :class:`DatasetCompression
-     <azure.mgmt.datafactory.models.DatasetCompression>`
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
     """
 
     _validation = {

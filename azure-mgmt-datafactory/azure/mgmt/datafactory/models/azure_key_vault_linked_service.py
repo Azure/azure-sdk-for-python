@@ -16,11 +16,11 @@ class AzureKeyVaultLinkedService(LinkedService):
     """Azure Key Vault linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param base_url: The base URL of the Azure Key Vault. e.g.
      https://myakv.vault.azure.net Type: string (or Expression with resultType

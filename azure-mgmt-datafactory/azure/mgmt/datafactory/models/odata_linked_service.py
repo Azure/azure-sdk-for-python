@@ -16,25 +16,24 @@ class ODataLinkedService(LinkedService):
     """Open Data Protocol (OData) linked service.
 
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param url: The URL of the OData service endpoint. Type: string (or
      Expression with resultType string).
     :type url: object
     :param authentication_type: Type of authentication used to connect to the
      OData service. Possible values include: 'Basic', 'Anonymous'
-    :type authentication_type: str or :class:`ODataAuthenticationType
-     <azure.mgmt.datafactory.models.ODataAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.ODataAuthenticationType
     :param user_name: User name of the OData service. Type: string (or
      Expression with resultType string).
     :type user_name: object
     :param password: Password of the OData service.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
