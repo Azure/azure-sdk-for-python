@@ -25,7 +25,7 @@ CS_SUBSCRIPTION_KEY = '0000000000000000000000000000'
 # Read for details of this file:
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 
-def get_credentials():
+def get_credentials(**kwargs):
     # Put your credentials here in the "real" file
     #return UserPassCredentials(
     #    'user@myaddomain.onmicrosoft.com',

@@ -19,8 +19,7 @@ class Operation(Model):
      {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that describes the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.batch.models.OperationDisplay>`
+    :type display: ~azure.mgmt.batch.models.OperationDisplay
     :param origin: The intended executor of the operation.
     :type origin: str
     :param properties: Properties of the operation.

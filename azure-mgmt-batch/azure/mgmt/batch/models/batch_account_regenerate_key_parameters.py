@@ -17,8 +17,7 @@ class BatchAccountRegenerateKeyParameters(Model):
 
     :param key_name: The type of account key to regenerate. Possible values
      include: 'Primary', 'Secondary'
-    :type key_name: str or :class:`AccountKeyType
-     <azure.mgmt.batch.models.AccountKeyType>`
+    :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
     """
 
     _validation = {
