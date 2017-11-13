@@ -191,7 +191,7 @@
     "consumption": {
       "autorest_options": {
         "namespace": "azure.mgmt.consumption",
-        "package-version": "0.1.0"
+        "package-version": "1.0.0"
       },
       "build_dir": "azure-mgmt-consumption",
       "markdown": "specification/consumption/resource-manager/readme.md",
