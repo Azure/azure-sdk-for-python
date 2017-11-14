@@ -1,6 +1,8 @@
-"""
-Author: Aaron (Ari) Bornstien
-"""
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# -----------------------------------------------------------------------------------
+
 import uuid
 import asyncio
 from eventhubsprocessor.partition_manager import PartitionManager

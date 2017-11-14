@@ -1,6 +1,7 @@
-"""
-Author: Aaron (Ari) Bornstien
-"""
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# -----------------------------------------------------------------------------------
 
 import unittest
 import logging
@@ -25,15 +26,16 @@ class EventProcessorHostTestCase(unittest.TestCase):
                                                                self._credentials.storage_key,
                                                                self._credentials.lease_container)
 
+        self._loop = asyncio.get_event_loop()
+
         self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
                                         self._consumer_group, storage_manager=self._storage_clm,
-                                        eh_rest_auth=self._credentials.eh_auth)
+                                        eh_rest_auth=self._credentials.eh_auth, loop = self._loop)
         logging.basicConfig(filename='eph.log', level=logging.INFO,
                             format='%(asctime)s:%(msecs)03d, \'%(message)s\' ',
                             datefmt='%Y-%m-%d:%H:%M:%S')
         logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-        self._loop = asyncio.get_event_loop()
 
     def test_start(self):
         """

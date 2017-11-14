@@ -7,7 +7,6 @@
 
 """
 An example to show running the EventHubClient in background.
-
 """
 
 import sys

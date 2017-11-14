@@ -1,6 +1,8 @@
-"""
-Author: Aaron (Ari) Bornstien
-"""
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# -----------------------------------------------------------------------------------
+
 import logging
 import asyncio
 import sys
@@ -64,7 +66,7 @@ def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
                                   .format(sb_name, eh_name))
     sas = sas_token.encode('utf-8')
     expiry = str(int(time.time() + 10000))
-    string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+    string_to_sign = ('{}\n{}'.format(uri,expiry)).encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
     signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
     return  {"sb_name": sb_name,
