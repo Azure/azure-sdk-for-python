@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.8.4 (2017-11-14)
+++++++++++++++++++
+
+**Features**
+
+- Added support for subscription usages
+
 0.8.3 (2017-10-24)
 ++++++++++++++++++
 
