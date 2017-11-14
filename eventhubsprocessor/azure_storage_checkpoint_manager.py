@@ -256,7 +256,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             self.storage_client.renew_blob_lease(self.lease_container_name,
                                                  lease.partition_id,
                                                  lease_id=lease.token,
-                                                 timeout=self.lease_renew_interval)
+                                                 timeout=self.lease_duration)
         except Exception as err:
             if "LeaseIdMismatchWithLeaseOperation" in str(err):
                 logging.info("LeaseLost")

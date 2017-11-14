@@ -28,7 +28,7 @@ class EventProcessorHost:
         """
         Starts the host
         """
-        if not self.loop: # If the \
+        if not self.loop:
             self.loop = asyncio.get_event_loop()
         await self.partition_manager.start_async()
 
