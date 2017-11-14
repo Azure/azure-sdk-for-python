@@ -48,6 +48,7 @@ from .operations.server_keys_operations import ServerKeysOperations
 from .operations.sync_agents_operations import SyncAgentsOperations
 from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
+from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
@@ -163,6 +164,8 @@ class SqlManagementClient(object):
     :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
     :ivar sync_members: SyncMembers operations
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
+    :ivar subscription_usages: SubscriptionUsages operations
+    :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
@@ -258,6 +261,8 @@ class SqlManagementClient(object):
         self.sync_groups = SyncGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_members = SyncMembersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_usages = SubscriptionUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
