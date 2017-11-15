@@ -8,7 +8,8 @@
 import unittest
 
 import azure.mgmt.consumption
-from devtools_testutils import AzureMgmtTestCase
+from testutils.common_recordingtestcase import record
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtConsumptionTest(AzureMgmtTestCase):
 
@@ -21,7 +22,6 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         self.assertTrue(usage.usage_start <= usage.usage_end)
         self.assertIsNotNone(usage.instance_name)
         self.assertIsNotNone(usage.currency)
-        self.assertTrue(usage.billable_quantity <= usage.usage_quantity)
         self.assertIsNotNone(usage.pretax_cost)
         self.assertIsNotNone(usage.is_estimated)
         self.assertIsNotNone(usage.meter_id)
@@ -39,38 +39,28 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
 
     def test_consumption_subscription_usage(self):
         scope = 'subscriptions/{}'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, top=10))
+        pages = self.consumption_client.usage_details.list(scope, top=10)
+        firstPage = pages.advance_page()
+        output = list(firstPage)
         self.assertEqual(10, len(output))
         self._validate_usage(output[0])
 
     def test_consumption_subscription_usage_filter(self):
         scope = 'subscriptions/{}'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, expand='meterDetails', filter='usageEnd le 2017-04-01', top=10))
+        pages = self.consumption_client.usage_details.list(scope, expand='meterDetails', filter='usageEnd le 2017-11-01', top=10)
+        firstPage = pages.advance_page()
+        output = list(firstPage)
         self.assertEqual(10, len(output))
         self._validate_usage(output[0], includeMeterDetails=True)
-
-    def test_consumption_invoice_usage(self):
-        scope = 'subscriptions/{}/providers/Microsoft.Billing/invoices/201704-117949190364043'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, expand='meterDetails,additionalProperties', top=10))
-        self.assertEqual(10, len(output))
-        self._validate_usage(output[0], includeMeterDetails=True, includeAdditionalProperties=True)
-
-    def test_consumption_invoice_usage_filter(self):
-        scope = 'subscriptions/{}/providers/Microsoft.Billing/invoices/201704-117949190364043'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, filter='usageEnd le 2017-03-26 and usageEnd ge 2017-03-25', top=1))
-        self.assertEqual(1, len(output))
-        self._validate_usage(output[0])
   
     def test_consumption_billing_period_usage(self):
-        scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201704-1'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, expand='additionalProperties', top=10))
-        self.assertEqual(10, len(output))
+        scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201710'.format(self.settings.SUBSCRIPTION_ID)
+        output = list(self.consumption_client.usage_details.list(scope, expand='properties/additionalProperties'))
         self._validate_usage(output[0], includeAdditionalProperties=True)
 
     def test_consumption_billing_period_usage_filter(self):
-        scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201704-1'.format(self.settings.SUBSCRIPTION_ID)
-        output = list(self.consumption_client.usage_details.list(scope, expand='meterDetails,additionalProperties', filter='usageEnd eq 2017-03-26T23:59:59Z', top=1))
-        self.assertEqual(1, len(output))
+        scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201710'.format(self.settings.SUBSCRIPTION_ID)
+        output = list(self.consumption_client.usage_details.list(scope, expand='properties/meterDetails,properties/additionalProperties', filter='usageEnd eq 2017-03-26T23:59:59Z'))
         self._validate_usage(output[0], includeMeterDetails=True, includeAdditionalProperties=True)
 
 #------------------------------------------------------------------------------
