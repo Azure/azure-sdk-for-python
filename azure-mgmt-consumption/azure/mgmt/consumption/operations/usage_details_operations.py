@@ -44,14 +44,16 @@ class UsageDetailsOperations(object):
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
          for a billing perdiod.
         :type scope: str
-        :param expand: May be used to expand the additionalProperties or
-         meterDetails property within a list of usage details. By default,
-         these fields are not included when listing usage details.
+        :param expand: May be used to expand the
+         properties/additionalProperties or properties/meterDetails within a
+         list of usage details. By default, these fields are not included when
+         listing usage details.
         :type expand: str
-        :param filter: May be used to filter usageDetails by usageEnd (Utc
-         time), usageStart (Utc time), resourceGroup, instanceName or
-         instanceId. The filter supports 'eq', 'lt', 'gt', 'le', 'ge', and
-         'and'. It does not currently support 'ne', 'or', or 'not'.
+        :param filter: May be used to filter usageDetails by
+         properties/usageEnd (Utc time), properties/usageStart (Utc time),
+         properties/resourceGroup, properties/instanceName or
+         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
+         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
@@ -66,10 +68,9 @@ class UsageDetailsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`UsageDetail
-         <azure.mgmt.consumption.models.UsageDetail>`
-        :rtype: :class:`UsageDetailPaged
-         <azure.mgmt.consumption.models.UsageDetailPaged>`
+        :return: An iterator like instance of UsageDetail
+        :rtype:
+         ~azure.mgmt.consumption.models.UsageDetailPaged[~azure.mgmt.consumption.models.UsageDetail]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
