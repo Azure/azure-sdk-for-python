@@ -55,7 +55,6 @@ class EventProcessor(AbstractEventProcessor):
         (Params) Context: Information about the partition, Error: The error that occured.
         """
         logging.error("Event Processor Error %s ", repr(error))
-        await context.host.close_async()
 
 def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
     """

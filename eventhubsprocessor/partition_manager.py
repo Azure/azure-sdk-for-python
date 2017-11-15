@@ -6,6 +6,8 @@
 import time
 import logging
 import asyncio
+import threading
+from queue import Queue
 import concurrent.futures
 from collections import Counter
 from bs4 import BeautifulSoup
@@ -43,7 +45,7 @@ class PartitionManager:
                 soup = BeautifulSoup(res.text, "lxml-xml") # process xml response
                 self.partition_ids = [pid.text for pid in soup.find("PartitionIds")]
             except Exception as err:
-                raise Exception("failed to get partition ids", rerp(err))
+                raise Exception("failed to get partition ids", repr(err))
 
         return self.partition_ids
 
@@ -92,14 +94,30 @@ class PartitionManager:
         """
         await self.host.storage_manager.create_checkpoint_store_if_not_exists_async()
         partition_ids = await self.get_partition_ids_async()
+        retry_threads = []
         for p_id in partition_ids:
-            await self.retry_async(self.host.storage_manager.create_checkpoint_if_not_exists_async,
-                                   p_id, "Failure creating checkpoint for partition, retrying",
-                                   "Out of retries creating checkpoint blob for partition", 5)
+            t = threading.Thread(target=self.retry, \
+                                 args=(self.host.storage_manager.create_checkpoint_if_not_exists_async,),\
+                                 kwargs={'partition_id': p_id, 
+                                         'retry_message': "Failure creating checkpoint for partition, retrying",
+                                         'final_failure_message':"Out of retries creating checkpoint blob for partition",
+                                         'max_retries':5, 'host_id': self.host.guid})
+            retry_threads.append(t)
+            t.start()
+        # Wait to create all checkpoints
+        [t.join() for t in retry_threads]
         return len(partition_ids)
 
+    def retry(self, func, partition_id, retry_message, final_failure_message, max_retries, host_id):
+        """
+        Make attempt_renew_lease async call sync
+        """
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(self.retry_async(func, partition_id, retry_message,
+                                                 final_failure_message, max_retries, host_id))
+
     async def retry_async(self, func, partition_id, retry_message,
-                          final_failure_message, max_retries):
+                          final_failure_message, max_retries, host_id):
         """
         Throws if it runs out of retries. If it returns, action succeeded
         """
@@ -110,10 +128,10 @@ class PartitionManager:
                 await func(partition_id)
                 created_okay = True
             except Exception as err:
-                logging.error("%s %s %s %s", retry_message, self.host.guid, partition_id, err)
+                logging.error("%s %s %s %s", retry_message, host_id, partition_id, err)
                 retry_count += 1
         if not created_okay:
-            raise Exception(self.host.guid, final_failure_message)
+            raise Exception(host_id, final_failure_message)
 
     async def run_loop_async(self):
         """
@@ -121,44 +139,35 @@ class PartitionManager:
         """
         while not self.cancellation_token.is_cancelled:
             lease_manager = self.host.storage_manager
-            all_leases = {}
             # Inspect all leases.
             # Acquire any expired leases.
             # Renew any leases that currently belong to us.
             getting_all_leases = await lease_manager.get_all_leases()
-            leases_owned_by_others = []
-            our_lease_count = 0
+
+            leases_owned_by_others_q = Queue()
+            possible_lease_threads = []
 
             for get_lease_task in getting_all_leases:
-                try:
-                    possible_lease = await get_lease_task
-                    all_leases[possible_lease.partition_id] = possible_lease
-                    if possible_lease.is_expired():
-                        logging.info("Trying to aquire lease %s %s", self.host.guid,
-                                    possible_lease.partition_id)
-                        if await lease_manager.acquire_lease_async(possible_lease):
-                            our_lease_count += 1
-                        else:
-                            leases_owned_by_others.append(possible_lease)
+                t = threading.Thread(target=self.attempt_renew_lease, args=(get_lease_task,),\
+                                     kwargs={'owned_by_others_q': leases_owned_by_others_q, 
+                                             'lease_manager': lease_manager})
+                possible_lease_threads.append(t)
+                t.start()
+            # Wait to calculate possible leases
+            [t.join() for t in possible_lease_threads]
 
-                    elif possible_lease.owner == self.host.host_name:
-                        try:
-                            logging.info("Trying to renew lease %s %s", self.host.guid,
-                                        possible_lease.partition_id)
-                            if await lease_manager.renew_lease_async(possible_lease):
-                                our_lease_count += 1
-                            else:
-                                leases_owned_by_others.append(possible_lease)
-                        except Exception as err: #Update to LeaseLostException:
-                            logging.error("Lease lost exception %s %s %s", repr(err),
-                                        self.host.guid, possible_lease.partition_id)
-                            leases_owned_by_others.append(possible_lease)
-                    else:
-                        leases_owned_by_others.append(possible_lease)
-
-                except Exception as err:
-                    logging.error("Failure during getting/acquiring/renewing lease,\
-                                skipping %s", repr(err))
+            # Extract all leasees leases_owned_by_others and our_lease_count from the
+            all_leases = {}
+            leases_owned_by_others = []
+            our_lease_count = 0
+            while not leases_owned_by_others_q.empty():
+                lease_owned_by_other = leases_owned_by_others_q.get()
+                # Check if lease is owned by other and append
+                if lease_owned_by_other[0]:
+                    leases_owned_by_others.append(lease_owned_by_other[1])
+                else:
+                    our_lease_count += 1
+                all_leases[lease_owned_by_other[1].partition_id] = lease_owned_by_other[1]
 
             # Grab more leases if available and needed for load balancing
             leases_owned_by_others_count = len(leases_owned_by_others)
@@ -284,3 +293,44 @@ class PartitionManager:
         """
         owners = [l.owner for l in leases]
         return dict(Counter(owners))
+
+    def attempt_renew_lease(self, lease_task, owned_by_others_q, lease_manager):
+        """
+        Make attempt_renew_lease async call sync
+        """
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(self.attempt_renew_lease_async(lease_task, owned_by_others_q, lease_manager))
+
+    async def attempt_renew_lease_async(self, lease_task, owned_by_others_q, lease_manager):
+        """
+        Attempts to renew a potential lease if possible and
+        marks in the queue as none adds to adds to the queue
+        """
+        try:
+            possible_lease = await lease_task
+            if possible_lease.is_expired():
+                logging.info("Trying to aquire lease %s %s", self.host.guid,
+                            possible_lease.partition_id)
+                if await lease_manager.acquire_lease_async(possible_lease):
+                    owned_by_others_q.put((False, possible_lease))
+                else:
+                    owned_by_others_q.put((True, possible_lease))
+
+            elif possible_lease.owner == self.host.host_name:
+                try:
+                    logging.info("Trying to renew lease %s %s", self.host.guid,
+                                possible_lease.partition_id)
+                    if await lease_manager.renew_lease_async(possible_lease):
+                        owned_by_others_q.put((False, possible_lease))
+                    else:
+                        owned_by_others_q.put((True, possible_lease))
+                except Exception as err: #Update to LeaseLostException:
+                    logging.error("Lease lost exception %s %s %s", repr(err),
+                                self.host.guid, possible_lease.partition_id)
+                    owned_by_others_q.put((True, possible_lease))
+            else:
+                owned_by_others_q.put((True, possible_lease))
+
+        except Exception as err:
+            logging.error("Failure during getting/acquiring/renewing lease,\
+                        skipping %s", repr(err))
