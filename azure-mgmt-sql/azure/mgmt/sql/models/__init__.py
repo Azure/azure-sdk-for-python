@@ -92,6 +92,7 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .resource_move_definition import ResourceMoveDefinition
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
 from .restore_point_paged import RestorePointPaged
@@ -268,6 +269,7 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'ResourceMoveDefinition',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'RestorePointPaged',
