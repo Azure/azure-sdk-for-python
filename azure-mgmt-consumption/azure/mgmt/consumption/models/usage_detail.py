@@ -25,7 +25,7 @@ class UsageDetail(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar tags: Resource tags.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the
      usage belongs to.
     :vartype billing_period_id: str
@@ -62,8 +62,7 @@ class UsageDetail(Resource):
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
-    :vartype meter_details: :class:`MeterDetails
-     <azure.mgmt.consumption.models.MeterDetails>`
+    :vartype meter_details: ~azure.mgmt.consumption.models.MeterDetails
     :ivar subscription_guid: Subscription guid.
     :vartype subscription_guid: str
     :ivar subscription_name: Subscription name.
