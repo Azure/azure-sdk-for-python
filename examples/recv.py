@@ -48,7 +48,7 @@ try:
     CONSUMER_GROUP = "$default"
     OFFSET = Offset("-1")
 
-    EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
+    EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
         .subscribe(MyReceiver("0"), CONSUMER_GROUP, "0", OFFSET) \
         .run()
 

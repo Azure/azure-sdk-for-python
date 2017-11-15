@@ -5,21 +5,19 @@
 
 """
 Async APIs.
-
 """
 
 import queue
 import asyncio
 from threading import Lock
 from eventhubs import Receiver, EventData
-
 class AsyncReceiver(Receiver):
     """
     Implements the async API of a L{Receiver}.
     """
-    def __init__(self, prefetch=300):
+    def __init__(self, prefetch=300, loop=None):
         super(AsyncReceiver, self).__init__(False)
-        self.loop = asyncio.get_event_loop()
+        self.loop = loop or asyncio.get_event_loop()
         self.messages = queue.Queue()
         self.lock = Lock()
         self.link = None
@@ -62,9 +60,7 @@ class AsyncReceiver(Receiver):
     async def receive(self, count):
         """
         Receive events asynchronously.
-
         @param count: max number of events to receive. The result may be less.
-
         """
         waiter = None
         batch = []

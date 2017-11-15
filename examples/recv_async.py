@@ -7,7 +7,6 @@
 
 """
 An example to show running the EventHubClient in background.
-
 """
 
 import sys
@@ -49,7 +48,7 @@ try:
     OFFSET = Offset("-1")
 
     receiver = AsyncReceiver()
-    client = EventHubClient(ADDRESS if sys.argv.count == 1 else sys.argv[1]) \
+    client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
         .subscribe(receiver, CONSUMER_GROUP, "0", OFFSET) \
         .run_daemon()
 
