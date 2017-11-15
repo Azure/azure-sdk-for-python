@@ -21,13 +21,11 @@ from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
 from .site_seal import SiteSeal
 from .site_seal_request import SiteSealRequest
-from .managed_service_identity import ManagedServiceIdentity
-from .slot_swap_status import SlotSwapStatus
-from .snapshot_recovery_target import SnapshotRecoveryTarget
 from .vnet_route import VnetRoute
 from .vnet_info import VnetInfo
 from .vnet_gateway import VnetGateway
 from .user import User
+from .snapshot_recovery_target import SnapshotRecoveryTarget
 from .snapshot_recovery_request import SnapshotRecoveryRequest
 from .resource_metric_availability import ResourceMetricAvailability
 from .resource_metric_name import ResourceMetricName
@@ -36,6 +34,8 @@ from .push_settings import PushSettings
 from .hybrid_connection_key import HybridConnectionKey
 from .hybrid_connection import HybridConnection
 from .proxy_only_resource import ProxyOnlyResource
+from .managed_service_identity import ManagedServiceIdentity
+from .slot_swap_status import SlotSwapStatus
 from .cloning_info import CloningInfo
 from .hosting_environment_profile import HostingEnvironmentProfile
 from .ip_security_restriction import IpSecurityRestriction
@@ -309,13 +309,11 @@ __all__ = [
     'RenewCertificateOrderRequest',
     'SiteSeal',
     'SiteSealRequest',
-    'ManagedServiceIdentity',
-    'SlotSwapStatus',
-    'SnapshotRecoveryTarget',
     'VnetRoute',
     'VnetInfo',
     'VnetGateway',
     'User',
+    'SnapshotRecoveryTarget',
     'SnapshotRecoveryRequest',
     'ResourceMetricAvailability',
     'ResourceMetricName',
@@ -324,6 +322,8 @@ __all__ = [
     'HybridConnectionKey',
     'HybridConnection',
     'ProxyOnlyResource',
+    'ManagedServiceIdentity',
+    'SlotSwapStatus',
     'CloningInfo',
     'HostingEnvironmentProfile',
     'IpSecurityRestriction',

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """Operation.
+    """An operation on a resource.
 
     :param id: Operation ID.
     :type id: str
