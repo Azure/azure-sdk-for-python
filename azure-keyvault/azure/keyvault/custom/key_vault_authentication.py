@@ -31,6 +31,7 @@ class KeyVaultAuthBase(AuthBase):
         self._thread_local = threading.local()
         self._thread_local.pos = None
         self._thread_local.auth_attempted = False
+        self._thread_local.orig_body = None
 
     def __call__(self, request):
         """
@@ -46,16 +47,22 @@ class KeyVaultAuthBase(AuthBase):
                 # if challenge cached, use the authorization_callback to retrieve token and update the request
                 self.set_authorization_header(request, challenge)
             else:
-                # if the challenge is not cached we will let the request proceed without the auth header so we
-                # get back the proper challenge in response. We register a callback to handle the response 401 response.
-                try:
-                    self._thread_local.pos = request.body.tell()
-                except AttributeError:
-                    self._thread_local.pos = None
-
-                self._thread_local.auth_attempted = False
+                # if the challenge is not cached we will strip the body and proceed without the auth header so we
+                # get back the auth challenge for the request
+                self._thread_local.orig_body = request.body
+                request.body = ''
+                request.headers['Content-Length'] = 0
                 request.register_hook('response', self.handle_401)
                 request.register_hook('response', self.handle_redirect)
+                self._thread_local.auth_attempted = False
+                # if the challenge is not cached we will let the request proceed without the auth header so we
+                # get back the proper challenge in response. We register a callback to handle the response 401 response.
+                ## try:
+                ##     self._thread_local.pos = request.body.tell()
+                ## except AttributeError:
+                ##     self._thread_local.pos = None
+
+
 
         return request
 
@@ -85,23 +92,15 @@ class KeyVaultAuthBase(AuthBase):
         # Otherwise authenticate and retry the request
         self._thread_local.auth_attempted = True
 
-        # check if the header
-
         # parse the challenge
-        challenge = HttpChallenge(auth_header)
+        challenge = HttpChallenge(response.request.url, auth_header)
 
-        # if the response auth header is not a bearer challenge do not auth and return response
-        if challenge.is_bearer_challenge():
+        # if the response auth header is not a bearer challenge or pop challange do not auth and return response
+        if not (challenge.is_bearer_challenge() or challenge.is_pop_challenge()):
             self._thread_local.auth_attempted = False
             return response
 
-        if self._thread_local.pos is not None:
-            # Rewind the file position indicator of the body to where
-            # it was to resend the request.
-            response.request.body.seek(self._thread_local.pos)
-
         # add the challenge to the cache
-        challenge = HttpBearerChallenge(response.request.url, auth_header)
         ChallengeCache.set_challenge_for_url(response.request.url, challenge)
 
         # Consume content and release the original connection
@@ -111,6 +110,11 @@ class KeyVaultAuthBase(AuthBase):
 
         # copy the request to resend
         prep = response.request.copy()
+
+        if self._thread_local.orig_body is not None:
+            # replace the body with the saved body
+            prep.prepare_body(data=self._thread_local.orig_body, files=None)
+
         extract_cookies_to_jar(prep._cookies, response.request, response.raw)
         prep.prepare_cookies(prep._cookies)
 
