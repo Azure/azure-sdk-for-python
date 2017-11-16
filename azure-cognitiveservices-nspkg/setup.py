@@ -24,7 +24,7 @@ except ImportError:
     pass
 
 setup(
-    name='azure-mgmt-nspkg',
+    name='azure-cognitiveservices-nspkg',
     version='2.0.0',
     description='Microsoft Azure Cognitive Services Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
