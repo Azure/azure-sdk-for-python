@@ -190,7 +190,8 @@ class PartitionManager:
                 try:
                     updated_lease = all_leases[partition_id]
                     if updated_lease.owner == self.host.host_name:
-                        logging.info("Attempting to renew lease %s %s", self.host.guid, partition_id)
+                        logging.debug("Attempting to renew lease %s %s",
+                                      self.host.guid, partition_id)
                         await self.check_and_add_pump_async(partition_id, updated_lease)
                     else:
                         await self.remove_pump_async(partition_id, "LeaseLost")
@@ -238,14 +239,14 @@ class PartitionManager:
                 await captured_pump.close_async(reason)
             #else, pump is already closing/closed, don't need to try to shut it down again
             del self.partition_pumps[partition_id] # remove pump
-            logging.info("Removed pump %s %s ",self.host.guid, partition_id)
-            logging.info("%d pumps still running", len(self.partition_pumps))
+            logging.debug("Removed pump %s %s ", self.host.guid, partition_id)
+            logging.debug("%d pumps still running", len(self.partition_pumps))
         else:
             # PartitionManager main loop tries to remove pump for every partition that the
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
-            logging.info("No pump found to remove for this partition %s %s",
-                         self.host.guid, partition_id)
+            logging.debug("No pump found to remove for this partition %s %s",
+                          self.host.guid, partition_id)
 
     async def remove_all_pumps_async(self, reason):
         """ 
@@ -318,8 +319,8 @@ class PartitionManager:
 
             elif possible_lease.owner == self.host.host_name:
                 try:
-                    logging.info("Trying to renew lease %s %s", self.host.guid,
-                                possible_lease.partition_id)
+                    logging.debug("Trying to renew lease %s %s", self.host.guid,
+                                  possible_lease.partition_id)
                     if await lease_manager.renew_lease_async(possible_lease):
                         owned_by_others_q.put((False, possible_lease))
                     else:
