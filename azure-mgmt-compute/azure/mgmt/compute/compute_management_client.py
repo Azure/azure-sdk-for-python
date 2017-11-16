@@ -86,6 +86,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :mod:`v2016_03_30.models<azure.mgmt.compute.v2016_03_30.models>`
            * 2016-04-30-preview: :mod:`v2016_04_30_preview.models<azure.mgmt.compute.v2016_04_30_preview.models>`
            * 2017-03-30: :mod:`v2017_03_30.models<azure.mgmt.compute.v2017_03_30.models>`
+           * 2017-12-01: :mod:`v2017_12_01_preview.models<azure.mgmt.compute.v2017_12_01_preview.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -99,6 +100,9 @@ class ComputeManagementClient(object):
         elif api_version == '2017-03-30':
             from .v2017_03_30 import models
             return models
+        elif api_version == '2017-12-01':
+            from .v2017_12_01_preview import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
@@ -109,6 +113,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2016_03_30.operations.AvailabilitySetsOperations>`
            * 2016-04-30-preview: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.AvailabilitySetsOperations>`
            * 2017-03-30: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2017_03_30.operations.AvailabilitySetsOperations>`
+           * 2017-12-01: :class:`AvailabilitySetsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.AvailabilitySetsOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import AvailabilitySetsOperations as OperationClass
@@ -118,6 +123,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import AvailabilitySetsOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import AvailabilitySetsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import AvailabilitySetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -128,11 +135,14 @@ class ComputeManagementClient(object):
 
            * 2016-04-30-preview: :class:`DisksOperations<azure.mgmt.compute.v2016_04_30_preview.operations.DisksOperations>`
            * 2017-03-30: :class:`DisksOperations<azure.mgmt.compute.v2017_03_30.operations.DisksOperations>`
+           * 2017-12-01: :class:`DisksOperations<azure.mgmt.compute.v2017_12_01_preview.operations.DisksOperations>`
         """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import DisksOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import DisksOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import DisksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -143,11 +153,14 @@ class ComputeManagementClient(object):
 
            * 2016-04-30-preview: :class:`ImagesOperations<azure.mgmt.compute.v2016_04_30_preview.operations.ImagesOperations>`
            * 2017-03-30: :class:`ImagesOperations<azure.mgmt.compute.v2017_03_30.operations.ImagesOperations>`
+           * 2017-12-01: :class:`ImagesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.ImagesOperations>`
         """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import ImagesOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import ImagesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import ImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -157,9 +170,12 @@ class ComputeManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-30: :class:`ResourceSkusOperations<azure.mgmt.compute.v2017_03_30.operations.ResourceSkusOperations>`
+           * 2017-12-01: :class:`ResourceSkusOperations<azure.mgmt.compute.v2017_12_01_preview.operations.ResourceSkusOperations>`
         """
         if self.api_version == '2017-03-30':
             from .v2017_03_30.operations import ResourceSkusOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import ResourceSkusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -170,11 +186,14 @@ class ComputeManagementClient(object):
 
            * 2016-04-30-preview: :class:`SnapshotsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.SnapshotsOperations>`
            * 2017-03-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2017_03_30.operations.SnapshotsOperations>`
+           * 2017-12-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.SnapshotsOperations>`
         """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import SnapshotsOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import SnapshotsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import SnapshotsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -187,6 +206,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`UsageOperations<azure.mgmt.compute.v2016_03_30.operations.UsageOperations>`
            * 2016-04-30-preview: :class:`UsageOperations<azure.mgmt.compute.v2016_04_30_preview.operations.UsageOperations>`
            * 2017-03-30: :class:`UsageOperations<azure.mgmt.compute.v2017_03_30.operations.UsageOperations>`
+           * 2017-12-01: :class:`UsageOperations<azure.mgmt.compute.v2017_12_01_preview.operations.UsageOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
@@ -196,6 +216,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import UsageOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import UsageOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -208,6 +230,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineExtensionImagesOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineExtensionImagesOperations>`
            * 2017-03-30: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionImagesOperations>`
+           * 2017-12-01: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineExtensionImagesOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineExtensionImagesOperations as OperationClass
@@ -217,6 +240,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineExtensionImagesOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineExtensionImagesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -229,6 +254,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineExtensionsOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineExtensionsOperations>`
            * 2017-03-30: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineExtensionsOperations>`
+           * 2017-12-01: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineExtensionsOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineExtensionsOperations as OperationClass
@@ -238,6 +264,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineExtensionsOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineExtensionsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineExtensionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -250,6 +278,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineImagesOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineImagesOperations>`
            * 2017-03-30: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineImagesOperations>`
+           * 2017-12-01: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineImagesOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineImagesOperations as OperationClass
@@ -259,6 +288,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineImagesOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineImagesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -268,9 +299,12 @@ class ComputeManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-30: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations>`
+           * 2017-12-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineRunCommandsOperations>`
         """
         if self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineRunCommandsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -280,9 +314,12 @@ class ComputeManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-30: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetExtensionsOperations>`
+           * 2017-12-01: :class:`VirtualMachineScaleSetExtensionsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineScaleSetExtensionsOperations>`
         """
         if self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -292,9 +329,12 @@ class ComputeManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-30: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
+           * 2017-12-01: :class:`VirtualMachineScaleSetRollingUpgradesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineScaleSetRollingUpgradesOperations>`
         """
         if self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -307,6 +347,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineScaleSetVMsOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetVMsOperations>`
            * 2017-03-30: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetVMsOperations>`
+           * 2017-12-01: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineScaleSetVMsOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineScaleSetVMsOperations as OperationClass
@@ -316,6 +357,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineScaleSetVMsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -328,6 +371,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineScaleSetsOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetsOperations>`
            * 2017-03-30: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineScaleSetsOperations>`
+           * 2017-12-01: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineScaleSetsOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineScaleSetsOperations as OperationClass
@@ -337,6 +381,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineScaleSetsOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineScaleSetsOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -349,6 +395,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachineSizesOperations>`
            * 2016-04-30-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachineSizesOperations>`
            * 2017-03-30: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineSizesOperations>`
+           * 2017-12-01: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachineSizesOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineSizesOperations as OperationClass
@@ -358,6 +405,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachineSizesOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineSizesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -370,6 +419,7 @@ class ComputeManagementClient(object):
            * 2016-03-30: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2016_03_30.operations.VirtualMachinesOperations>`
            * 2016-04-30-preview: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2016_04_30_preview.operations.VirtualMachinesOperations>`
            * 2017-03-30: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachinesOperations>`
+           * 2017-12-01: :class:`VirtualMachinesOperations<azure.mgmt.compute.v2017_12_01_preview.operations.VirtualMachinesOperations>`
         """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachinesOperations as OperationClass
@@ -379,6 +429,8 @@ class ComputeManagementClient(object):
             from .v2016_04_30_preview.operations import VirtualMachinesOperations as OperationClass
         elif self.api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachinesOperations as OperationClass
+        elif self.api_version == '2017-12-01':
+            from .v2017_12_01_preview.operations import VirtualMachinesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
