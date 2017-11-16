@@ -91,9 +91,9 @@
         "add-credentials": true,
         "azure-arm": false
       },
-      "output_dir": "azure-cognitiveservices-language/azure/cognitiveservices/language/textanalytics",
+      "output_dir": "azure-cognitiveservices-language-textanalytics/azure/cognitiveservices/language/textanalytics",
       "generated_relative_base_directory": "azure/cognitiveservices/language/textanalytics",
-      "build_dir": "azure-cognitiveservices-language/azure/cognitiveservices/language/textanalytics"
+      "build_dir": "azure-cognitiveservices-language-textanalytics/azure/cognitiveservices/language/textanalytics"
     },
     "cognitiveservices.search.entitysearch": {
       "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md",
