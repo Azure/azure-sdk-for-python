@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class UpdateResource(Model):
+    """The Update Resource model definition.
 
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, tags=None):
+        self.tags = tags

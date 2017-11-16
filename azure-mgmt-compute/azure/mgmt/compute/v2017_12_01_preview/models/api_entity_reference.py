@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class ApiEntityReference(Model):
+    """The API entity reference.
 
+    :param id: The ARM resource id in the form of
+     /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

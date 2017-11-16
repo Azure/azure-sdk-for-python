@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class SnapshotPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.compute.v2017_12_01_preview.models.Snapshot>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Snapshot]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SnapshotPaged, self).__init__(*args, **kwargs)

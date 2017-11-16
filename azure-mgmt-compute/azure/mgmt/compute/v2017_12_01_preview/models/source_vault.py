@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class SourceVault(Model):
+    """The vault id is an Azure Resource Manager Resoure id in the form
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
+    :param id: Resource Id
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

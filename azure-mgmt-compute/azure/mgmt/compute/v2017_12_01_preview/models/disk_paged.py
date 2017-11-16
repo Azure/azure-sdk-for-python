@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class DiskPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Disk <azure.mgmt.compute.v2017_12_01_preview.models.Disk>` object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Disk]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DiskPaged, self).__init__(*args, **kwargs)

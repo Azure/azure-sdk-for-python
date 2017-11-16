@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
+    """Describes a virtual machines scale sets network configuration's DNS
+    settings.
 
+    :param dns_servers: List of DNS servers IP addresses
+    :type dns_servers: list[str]
+    """
+
+    _attribute_map = {
+        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+    }
+
+    def __init__(self, dns_servers=None):
+        self.dns_servers = dns_servers
