@@ -18,8 +18,8 @@ except ImportError:
     cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-language"
-PACKAGE_PPRINT_NAME = "Cognitive Services Language"
+PACKAGE_NAME = "azure-cognitiveservices-language-textanalytics"
+PACKAGE_PPRINT_NAME = "Cognitive Services Text Analytics"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
