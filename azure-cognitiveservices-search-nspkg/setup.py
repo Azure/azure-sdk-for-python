@@ -24,9 +24,9 @@ except ImportError:
     pass
 
 setup(
-    name='azure-cognitiveservices-nspkg',
+    name='azure-cognitiveservices-search-nspkg',
     version='2.0.0',
-    description='Microsoft Azure Cognitive Services Namespace Package [Internal]',
+    description='Microsoft Azure Cognitive Services Search Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
@@ -48,8 +48,9 @@ setup(
     packages=[
         'azure',
         'azure.cognitiveservices',
+        'azure.cognitiveservices.search',
     ],
     install_requires=[
-        'azure-nspkg>=2.0.0',
+        'azure-cognitiveservices-nspkg>=2.0.0',
     ]
 )
