@@ -19,7 +19,7 @@ class HttpChallenge(object):
 
         # get the scheme of the challenge and remove from the challenge string
         trimmed_challenge = self._validate_challenge(challenge)
-        split_challenge = trimmed_challenge(' ', 1)
+        split_challenge = trimmed_challenge.split(' ', 1)
         self.scheme = split_challenge[0]
         trimmed_challenge = split_challenge[1]
 
@@ -57,6 +57,26 @@ class HttpChallenge(object):
             return False
 
         return self.scheme.lower() == 'pop'
+
+    def get_value(self, key):
+        return self._parameters.get(key)
+
+    def get_authorization_server(self):
+        """ Returns the URI for the authorization server if present, otherwise empty string. """
+        value = ''
+        for key in ['authorization_uri', 'authorization']:
+            value = self.get_value(key) or ''
+            if value:
+                break
+        return value
+
+    def get_resource(self):
+        """ Returns the resource if present, otherwise empty string. """
+        return self.get_value('resource') or ''
+
+    def get_scope(self):
+        """ Returns the scope if present, otherwise empty string. """
+        return self.get_value('scope') or ''
 
     def _validate_challenge(self, challenge):
         """ Verifies that the challenge is a valid auth challenge and returns the key=value pairs. """
