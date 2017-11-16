@@ -7,6 +7,7 @@ import re
 import json
 import uuid
 import logging
+import requests
 from azure.storage.blob import BlockBlobService
 from eventhubsprocessor.azure_blob_lease import AzureBlobLease
 from eventhubsprocessor.checkpoint import Checkpoint
@@ -31,6 +32,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         self.consumer_group_directory = None
         self.host = None
         self.storage_max_execution_time = 120
+        self.request_session = requests.Session()
+        self.request_session.mount('https://', requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100))
 
         # Validate storage inputs
         if not self.storage_account_name or not self.storage_account_key:
@@ -53,7 +56,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         self.host = host
         self.storage_client = BlockBlobService(account_name=self.storage_account_name,
-                                               account_key=self.storage_account_key)
+                                               account_key=self.storage_account_key,
+                                               request_session=self.request_session)
         self.consumer_group_directory = self.storage_blob_prefix + self.host.consumer_group_name
 
     # Checkpoint Managment Methods
