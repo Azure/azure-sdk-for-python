@@ -18,8 +18,8 @@ except ImportError:
     cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-search"
-PACKAGE_PPRINT_NAME = "Cognitive Services Search"
+PACKAGE_NAME = "azure-cognitiveservices-search-websearch"
+PACKAGE_PPRINT_NAME = "Cognitive Services WebSearch"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')

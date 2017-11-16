@@ -102,9 +102,9 @@
         "add-credentials": true,
         "azure-arm": false
       },
-      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch",
+      "output_dir": "azure-cognitiveservices-search-entitysearch/azure/cognitiveservices/search/entitysearch",
       "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
-      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/entitysearch"
+      "build_dir": "azure-cognitiveservices-search-entitysearch/azure/cognitiveservices/search/entitysearch"
     },    
     "cognitiveservices.search.websearch": {
       "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
@@ -113,9 +113,9 @@
         "add-credentials": true,
         "azure-arm": false
       },
-      "output_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch",
+      "output_dir": "azure-cognitiveservices-search-websearch/azure/cognitiveservices/search/websearch",
       "generated_relative_base_directory": "azure/cognitiveservices/search/websearch",
-      "build_dir": "azure-cognitiveservices-search/azure/cognitiveservices/search/websearch"
+      "build_dir": "azure-cognitiveservices-search-websearch/azure/cognitiveservices/search/websearch"
     },
     "cognitiveservices.vision.computervision": {
       "markdown": "specification/cognitiveservices/data-plane/ComputerVision/readme.md",
