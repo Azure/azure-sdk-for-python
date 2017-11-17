@@ -102,7 +102,7 @@ class StorageManagementClient(object):
             from .v2017_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def operations(self):
         """Instance depends on the API version:

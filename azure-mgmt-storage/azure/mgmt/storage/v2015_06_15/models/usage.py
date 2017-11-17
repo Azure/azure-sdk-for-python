@@ -17,8 +17,7 @@ class Usage(Model):
 
     :param unit: The unit of measurement. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountsPerSecond', 'BytesPerSecond'
-    :type unit: str or :class:`UsageUnit
-     <azure.mgmt.storage.v2015_06_15.models.UsageUnit>`
+    :type unit: str or ~azure.mgmt.storage.v2015_06_15.models.UsageUnit
     :param current_value: The current count of the allocated resources in the
      subscription.
     :type current_value: int
@@ -26,8 +25,7 @@ class Usage(Model):
      the subscription.
     :type limit: int
     :param name: The name of the type of usage.
-    :type name: :class:`UsageName
-     <azure.mgmt.storage.v2015_06_15.models.UsageName>`
+    :type name: ~azure.mgmt.storage.v2015_06_15.models.UsageName
     """
 
     _validation = {

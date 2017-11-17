@@ -22,12 +22,10 @@ class Sku(Model):
      optional for update. Note that in older versions, sku name was called
      accountType. Possible values include: 'Standard_LRS', 'Standard_GRS',
      'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.storage.v2016_01_01.models.SkuName>`
+    :type name: str or ~azure.mgmt.storage.v2016_01_01.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Standard', 'Premium'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.storage.v2016_01_01.models.SkuTier>`
+    :vartype tier: str or ~azure.mgmt.storage.v2016_01_01.models.SkuTier
     """
 
     _validation = {

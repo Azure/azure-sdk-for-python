@@ -23,14 +23,14 @@ class Restriction(Model):
     :vartype type: str
     :ivar values: The value of restrictions. If the restriction type is set to
      location. This would be different locations where the SKU is restricted.
-    :vartype values: list of str
+    :vartype values: list[str]
     :param reason_code: The reason for the restriction. As of now this can be
      “QuotaId” or “NotAvailableForSubscription”. Quota Id is set when the SKU
      has requiredQuotas parameter as the subscription does not belong to that
      quota. The “NotAvailableForSubscription” is related to capacity at DC.
      Possible values include: 'QuotaId', 'NotAvailableForSubscription'
-    :type reason_code: str or :class:`ReasonCode
-     <azure.mgmt.storage.v2017_06_01.models.ReasonCode>`
+    :type reason_code: str or
+     ~azure.mgmt.storage.v2017_06_01.models.ReasonCode
     """
 
     _validation = {
