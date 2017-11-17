@@ -28,7 +28,7 @@ class Resource(Model):
     :type location: str
     :param tags: Tags assigned to a resource; can be used for viewing and
      grouping a resource (across resource groups).
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

@@ -20,21 +20,19 @@ class ServiceSasParameters(Model):
     :param resource: The signed services accessible with the service SAS.
      Possible values include: Blob (b), Container (c), File (f), Share (s).
      Possible values include: 'b', 'c', 'f', 's'
-    :type resource: str or :class:`enum
-     <azure.mgmt.storage.v2016_12_01.models.enum>`
+    :type resource: str or ~azure.mgmt.storage.v2016_12_01.models.enum
     :param permissions: The signed permissions for the service SAS. Possible
      values include: Read (r), Write (w), Delete (d), List (l), Add (a), Create
      (c), Update (u) and Process (p). Possible values include: 'r', 'd', 'w',
      'l', 'a', 'c', 'u', 'p'
-    :type permissions: str or :class:`enum
-     <azure.mgmt.storage.v2016_12_01.models.enum>`
+    :type permissions: str or ~azure.mgmt.storage.v2016_12_01.models.enum
     :param ip_address_or_range: An IP address or a range of IP addresses from
      which to accept requests.
     :type ip_address_or_range: str
     :param protocols: The protocol permitted for a request made with the
      account SAS. Possible values include: 'https,http', 'https'
-    :type protocols: str or :class:`HttpProtocol
-     <azure.mgmt.storage.v2016_12_01.models.HttpProtocol>`
+    :type protocols: str or
+     ~azure.mgmt.storage.v2016_12_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: datetime
     :param shared_access_expiry_time: The time at which the shared access
