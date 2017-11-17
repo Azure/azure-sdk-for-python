@@ -19,10 +19,17 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+import os
+try:
+    import urllib3
+    urllib3.disable_warnings()
+except:
+    print("no urllib3")
+
 class _test_config(object):
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = os.getenv('ACCOUNT_HOST', 'https://localhost:443')
+    masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
 
     global_host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
     write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
