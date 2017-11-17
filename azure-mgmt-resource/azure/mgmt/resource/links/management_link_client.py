@@ -71,6 +71,8 @@ class ManagementLinkClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+############ Generated from here ############
+
     @classmethod
     def models(cls, api_version='2016-09-01'):
         """Module depends on the API version:
