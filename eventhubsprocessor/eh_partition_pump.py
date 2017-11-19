@@ -111,9 +111,9 @@ class PartitionReceiver:
                     logging.info("No events received, queue size %d, delivered %d",
                                 self.eh_partition_pump.partition_receive_handler.messages.qsize(),
                                 self.eh_partition_pump.partition_receive_handler.delivered)
-                await self.process_error_async(err)
-        # Handle close
-
+                if self.eh_partition_pump.host.eh_options.release_pump_on_timeout:
+                    await self.process_error_async(err)
+    
     async def process_events_async(self, events):
         """
         # This method is called on the thread that the EH client uses to run the pump.
