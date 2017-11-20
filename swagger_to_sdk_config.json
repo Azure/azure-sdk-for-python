@@ -95,6 +95,18 @@
       "generated_relative_base_directory": "azure/cognitiveservices/language/textanalytics",
       "build_dir": "azure-cognitiveservices-language-textanalytics/azure/cognitiveservices/language/textanalytics"
     },
+    "cognitiveservices.language.spellcheck": {
+      "markdown": "specification/cognitiveservices/data-plane/SpellCheck/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.language.spellcheck",
+        "add-credentials": true,
+        "azure-arm": false,
+        "title": "SpellCheckClient"
+      },
+      "output_dir": "azure-cognitiveservices-language-spellcheck/azure/cognitiveservices/language/spellcheck",
+      "generated_relative_base_directory": "azure/cognitiveservices/language/spellcheck",
+      "build_dir": "azure-cognitiveservices-language-spellcheck/azure/cognitiveservices/language/spellcheck"
+    },
     "cognitiveservices.search.entitysearch": {
       "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md",
       "autorest_options": {
