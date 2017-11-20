@@ -22,31 +22,28 @@ class Sku(Model):
      optional for update. Note that in older versions, sku name was called
      accountType. Possible values include: 'Standard_LRS', 'Standard_GRS',
      'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.storage.v2017_06_01.models.SkuName>`
+    :type name: str or ~azure.mgmt.storage.v2017_06_01.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Standard', 'Premium'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.storage.v2017_06_01.models.SkuTier>`
+    :vartype tier: str or ~azure.mgmt.storage.v2017_06_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is
      'storageAccounts'.
     :vartype resource_type: str
     :ivar kind: Indicates the type of storage account. Possible values
      include: 'Storage', 'BlobStorage'
-    :vartype kind: str or :class:`Kind
-     <azure.mgmt.storage.v2017_06_01.models.Kind>`
+    :vartype kind: str or ~azure.mgmt.storage.v2017_06_01.models.Kind
     :ivar locations: The set of locations that the SKU is available. This will
      be supported and registered Azure Geo Regions (e.g. West US, East US,
      Southeast Asia, etc.).
-    :vartype locations: list of str
+    :vartype locations: list[str]
     :ivar capabilities: The capability information in the specified sku,
      including file encryption, network acls, change notification, etc.
-    :vartype capabilities: list of :class:`SKUCapability
-     <azure.mgmt.storage.v2017_06_01.models.SKUCapability>`
+    :vartype capabilities:
+     list[~azure.mgmt.storage.v2017_06_01.models.SKUCapability]
     :param restrictions: The restrictions because of which SKU cannot be used.
      This is empty if there are no restrictions.
-    :type restrictions: list of :class:`Restriction
-     <azure.mgmt.storage.v2017_06_01.models.Restriction>`
+    :type restrictions:
+     list[~azure.mgmt.storage.v2017_06_01.models.Restriction]
     """
 
     _validation = {

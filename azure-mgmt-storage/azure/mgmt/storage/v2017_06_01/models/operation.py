@@ -18,14 +18,13 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.storage.v2017_06_01.models.OperationDisplay>`
+    :type display: ~azure.mgmt.storage.v2017_06_01.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     :param service_specification: One property of operation, include metric
      specifications.
-    :type service_specification: :class:`ServiceSpecification
-     <azure.mgmt.storage.v2017_06_01.models.ServiceSpecification>`
+    :type service_specification:
+     ~azure.mgmt.storage.v2017_06_01.models.ServiceSpecification
     """
 
     _attribute_map = {

@@ -19,17 +19,13 @@ class EncryptionServices(Model):
     sending a request.
 
     :param blob: The encryption function of the blob storage service.
-    :type blob: :class:`EncryptionService
-     <azure.mgmt.storage.v2017_06_01.models.EncryptionService>`
+    :type blob: ~azure.mgmt.storage.v2017_06_01.models.EncryptionService
     :param file: The encryption function of the file storage service.
-    :type file: :class:`EncryptionService
-     <azure.mgmt.storage.v2017_06_01.models.EncryptionService>`
+    :type file: ~azure.mgmt.storage.v2017_06_01.models.EncryptionService
     :ivar table: The encryption function of the table storage service.
-    :vartype table: :class:`EncryptionService
-     <azure.mgmt.storage.v2017_06_01.models.EncryptionService>`
+    :vartype table: ~azure.mgmt.storage.v2017_06_01.models.EncryptionService
     :ivar queue: The encryption function of the queue storage service.
-    :vartype queue: :class:`EncryptionService
-     <azure.mgmt.storage.v2017_06_01.models.EncryptionService>`
+    :vartype queue: ~azure.mgmt.storage.v2017_06_01.models.EncryptionService
     """
 
     _validation = {
