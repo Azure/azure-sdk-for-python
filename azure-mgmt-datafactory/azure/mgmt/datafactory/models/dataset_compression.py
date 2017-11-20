@@ -16,8 +16,8 @@ class DatasetCompression(Model):
     """The compression method used on a dataset.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetDeflateCompression, DatasetGZipCompression,
-    DatasetBZip2Compression
+    sub-classes are: DatasetZipDeflateCompression, DatasetDeflateCompression,
+    DatasetGZipCompression, DatasetBZip2Compression
 
     :param type: Constant filled by server.
     :type type: str
@@ -32,7 +32,7 @@ class DatasetCompression(Model):
     }
 
     _subtype_map = {
-        'type': {'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
+        'type': {'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
     }
 
     def __init__(self):

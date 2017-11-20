@@ -85,6 +85,88 @@ class TriggerRunStatus(Enum):
     inprogress = "Inprogress"
 
 
+class SparkServerType(Enum):
+
+    shark_server = "SharkServer"
+    shark_server2 = "SharkServer2"
+    spark_thrift_server = "SparkThriftServer"
+
+
+class SparkThriftTransportProtocol(Enum):
+
+    binary = "Binary"
+    sasl = "SASL"
+    http = "HTTP "
+
+
+class SparkAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    username = "Username"
+    username_and_password = "UsernameAndPassword"
+    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+
+
+class ServiceNowAuthenticationType(Enum):
+
+    basic = "Basic"
+    oauth2 = "OAuth2"
+
+
+class PrestoAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    ldap = "LDAP"
+
+
+class PhoenixAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    username_and_password = "UsernameAndPassword"
+    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+
+
+class ImpalaAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    sasl_username = "SASLUsername"
+    username_and_password = "UsernameAndPassword"
+
+
+class HiveServerType(Enum):
+
+    hive_server1 = "HiveServer1"
+    hive_server2 = "HiveServer2"
+    hive_thrift_server = "HiveThriftServer"
+
+
+class HiveThriftTransportProtocol(Enum):
+
+    binary = "Binary"
+    sasl = "SASL"
+    http = "HTTP "
+
+
+class HiveAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    username = "Username"
+    username_and_password = "UsernameAndPassword"
+    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+
+
+class HBaseAuthenticationType(Enum):
+
+    anonymous = "Anonymous"
+    basic = "Basic"
+
+
+class GoogleBigQueryAuthenticationType(Enum):
+
+    service_authentication = "ServiceAuthentication"
+    user_authentication = "UserAuthentication"
+
+
 class SapHanaAuthenticationType(Enum):
 
     basic = "Basic"
@@ -151,6 +233,12 @@ class JsonFormatFilePattern(Enum):
 
     set_of_objects = "setOfObjects"
     array_of_objects = "arrayOfObjects"
+
+
+class TumblingWindowFrequency(Enum):
+
+    minute = "Minute"
+    hour = "Hour"
 
 
 class DayOfWeek(Enum):
@@ -224,6 +312,12 @@ class HDInsightActivityDebugInfoOption(Enum):
     failure = "Failure"
 
 
+class SalesforceSinkWriteBehavior(Enum):
+
+    insert = "Insert"
+    upsert = "Upsert"
+
+
 class AzureSearchIndexWriteBehaviorType(Enum):
 
     merge = "Merge"
@@ -241,6 +335,12 @@ class PolybaseSettingsRejectType(Enum):
 
     value = "value"
     percentage = "percentage"
+
+
+class SapCloudForCustomerSinkWriteBehavior(Enum):
+
+    insert = "Insert"
+    update = "Update"
 
 
 class SelfHostedIntegrationRuntimeNodeStatus(Enum):

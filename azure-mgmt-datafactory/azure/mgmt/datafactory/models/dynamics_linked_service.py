@@ -47,8 +47,11 @@ class DynamicsLinkedService(LinkedService):
      (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics instance.
-    :type password:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
     """
 
     _validation = {
@@ -56,7 +59,6 @@ class DynamicsLinkedService(LinkedService):
         'deployment_type': {'required': True},
         'authentication_type': {'required': True},
         'username': {'required': True},
-        'password': {'required': True},
     }
 
     _attribute_map = {
@@ -69,10 +71,11 @@ class DynamicsLinkedService(LinkedService):
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, deployment_type, authentication_type, username, password, connect_via=None, description=None, host_name=None, port=None, organization_name=None):
+    def __init__(self, deployment_type, authentication_type, username, connect_via=None, description=None, host_name=None, port=None, organization_name=None, password=None, encrypted_credential=None):
         super(DynamicsLinkedService, self).__init__(connect_via=connect_via, description=description)
         self.deployment_type = deployment_type
         self.host_name = host_name
@@ -81,4 +84,5 @@ class DynamicsLinkedService(LinkedService):
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
+        self.encrypted_credential = encrypted_credential
         self.type = 'Dynamics'

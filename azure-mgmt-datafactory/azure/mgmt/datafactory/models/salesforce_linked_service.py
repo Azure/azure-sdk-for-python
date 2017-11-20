@@ -29,13 +29,13 @@ class SalesforceLinkedService(LinkedService):
      Expression with resultType string).
     :type environment_url: object
     :param username: The username for Basic authentication of the Salesforce
-     source. Type: string (or Expression with resultType string).
+     instance. Type: string (or Expression with resultType string).
     :type username: object
     :param password: The password for Basic authentication of the Salesforce
-     source.
+     instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param security_token: The security token is required to remotely access
-     Salesforce source.
+     Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime

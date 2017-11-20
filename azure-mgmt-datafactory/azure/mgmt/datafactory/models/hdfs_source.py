@@ -13,7 +13,7 @@ from .copy_source import CopySource
 
 
 class HdfsSource(CopySource):
-    """A copy activity source for HDFS source.
+    """A copy activity HDFS source.
 
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
