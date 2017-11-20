@@ -15,13 +15,8 @@ from msrest.serialization import Model
 class TaskAddResult(Model):
     """Result for a single task added as part of an add task collection operation.
 
-    :param status: The status of the add task request. Values are:
-     success - Task was added successfully.
-     clienterror - Task failed to add due to a client error and should not be
-     retried without modifying the request as appropriate.
-     servererror - Task failed to add due to a server error and can be retried
-     without modification. Possible values include: 'success', 'clientError',
-     'serverError'
+    :param status: The status of the add task request. Possible values
+     include: 'success', 'clientError', 'serverError'
     :type status: str or ~azure.batch.models.TaskAddStatus
     :param task_id: The ID of the task for which this is the result.
     :type task_id: str

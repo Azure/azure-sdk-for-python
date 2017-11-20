@@ -24,12 +24,7 @@ class JobPreparationTaskExecutionInformation(Model):
      This property is set only if the task is in the Completed state.
     :type end_time: datetime
     :param state: The current state of the Job Preparation task on the compute
-     node. Values are:
-     running - the task is currently running (including retrying).
-     completed - the task has exited with exit code 0, or the task has
-     exhausted its retry limit, or the Batch service was unable to start the
-     task due to task preparation errors (such as resource file download
-     failures). Possible values include: 'running', 'completed'
+     node. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.JobPreparationTaskState
     :param task_root_directory: The root directory of the Job Preparation task
      on the compute node. You can use this path to retrieve files created by

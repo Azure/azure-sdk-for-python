@@ -41,10 +41,10 @@ class JobExecutionInformation(Model):
      set to true. MaxWallClockTimeExpiry - the job reached its maxWallClockTime
      constraint. TerminateJobSchedule - the job ran as part of a schedule, and
      the schedule terminated. AllTasksComplete - the job's onAllTasksComplete
-     attribute is set to terminateJob, and all tasks in the job are complete.
+     attribute is set to terminatejob, and all tasks in the job are complete.
      TaskFailed - the job's onTaskFailure attribute is set to
      performExitOptionsJobAction, and a task in the job failed with an exit
-     condition that specified a jobAction of terminateJob. Any other string is
+     condition that specified a jobAction of terminatejob. Any other string is
      a user-defined reason specified in a call to the 'Terminate a job'
      operation.
     :type terminate_reason: str
