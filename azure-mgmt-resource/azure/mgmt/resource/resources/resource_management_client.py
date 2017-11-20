@@ -74,6 +74,8 @@ class ResourceManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+############ Generated from here ############
+
     @classmethod
     def models(cls, api_version=LATEST_API_VERSION):
         """Module depends on the API version:
