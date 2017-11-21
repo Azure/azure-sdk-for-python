@@ -49,5 +49,5 @@ class EPHOptions:
         self.max_batch_size = 10
         self.prefetch_count = 300
         self.receive_timeout = 60
-        self.release_pump_on_timeout = True
+        self.release_pump_on_timeout = False
         self.initial_offset_provider = "-1"
