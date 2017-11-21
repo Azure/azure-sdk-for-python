@@ -106,6 +106,17 @@
       "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
       "build_dir": "azure-cognitiveservices-search-entitysearch/azure/cognitiveservices/search/entitysearch"
     },    
+    "cognitiveservices.search.videosearch": {
+      "markdown": "specification/cognitiveservices/data-plane/VideoSearch/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.search.videosearch",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-search-videosearch/azure/cognitiveservices/search/videosearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/videosearch",
+      "build_dir": "azure-cognitiveservices-search-videosearch/azure/cognitiveservices/search/videosearch"
+    },
     "cognitiveservices.search.websearch": {
       "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
       "autorest_options": {
