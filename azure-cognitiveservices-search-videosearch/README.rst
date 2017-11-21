@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Cognitive Services Entity Search Client Library.
+This is the Microsoft Azure Cognitive Services Video Search Client Library.
 
 This package has been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 

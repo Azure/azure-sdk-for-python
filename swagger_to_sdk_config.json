@@ -118,6 +118,17 @@
       "generated_relative_base_directory": "azure/cognitiveservices/search/entitysearch",
       "build_dir": "azure-cognitiveservices-search-entitysearch/azure/cognitiveservices/search/entitysearch"
     },    
+    "cognitiveservices.search.videosearch": {
+      "markdown": "specification/cognitiveservices/data-plane/VideoSearch/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.search.videosearch",
+        "add-credentials": true,
+        "azure-arm": false
+      },
+      "output_dir": "azure-cognitiveservices-search-videosearch/azure/cognitiveservices/search/videosearch",
+      "generated_relative_base_directory": "azure/cognitiveservices/search/videosearch",
+      "build_dir": "azure-cognitiveservices-search-videosearch/azure/cognitiveservices/search/videosearch"
+    },
     "cognitiveservices.search.websearch": {
       "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
       "autorest_options": {
@@ -139,6 +150,18 @@
       "output_dir": "azure-cognitiveservices-vision-computervision/azure/cognitiveservices/vision/computervision",
       "generated_relative_base_directory": "azure/cognitiveservices/vision/computervision",
       "build_dir": "azure-cognitiveservices-vision-computervision/azure/cognitiveservices/vision/computervision"
+    },
+    "cognitiveservices.vision.contentmoderator": {
+      "markdown": "specification/cognitiveservices/data-plane/ContentModerator/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.contentmoderator",
+        "add-credentials": true,
+        "azure-arm": false,
+        "title": "Content Moderator API"
+      },
+      "output_dir": "azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/contentmoderator",
+      "build_dir": "azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator"
     },
     "cognitiveservices.vision.face": {
       "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
