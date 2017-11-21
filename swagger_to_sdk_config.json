@@ -139,6 +139,18 @@
       "generated_relative_base_directory": "azure/cognitiveservices/vision/computervision",
       "build_dir": "azure-cognitiveservices-vision-computervision/azure/cognitiveservices/vision/computervision"
     },
+    "cognitiveservices.vision.contentmoderator": {
+      "markdown": "specification/cognitiveservices/data-plane/ContentModerator/readme.md",
+      "autorest_options": {
+        "namespace": "azure.cognitiveservices.vision.contentmoderator",
+        "add-credentials": true,
+        "azure-arm": false,
+        "title": "Content Moderator API"
+      },
+      "output_dir": "azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator",
+      "generated_relative_base_directory": "azure/cognitiveservices/vision/contentmoderator",
+      "build_dir": "azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator"
+    },
     "cognitiveservices.vision.face": {
       "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
       "autorest_options": {
