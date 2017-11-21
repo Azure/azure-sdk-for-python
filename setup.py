@@ -15,7 +15,7 @@ from setuptools import setup
 def find_packages():
     """Return packages based on sys version."""
     if sys.version_info[0] >= 3:
-        return ['eventhubs', 'eventhubs.async']
+        return ['eventhubs', 'eventhubs.async', 'eventhubsprocessor']
     return ['eventhubs']
 
 setup(name='eventhubs',
