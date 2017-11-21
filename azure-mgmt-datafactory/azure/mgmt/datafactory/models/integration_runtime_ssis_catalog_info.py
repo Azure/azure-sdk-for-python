@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class IntegrationRuntimeSsisCatalogInfo(Model):
     """Catalog information for managed dedicated integration runtime.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param catalog_server_endpoint: The catalog database server URL.
     :type catalog_server_endpoint: str
     :param catalog_admin_user_name: The administrator user name of catalog
@@ -32,13 +35,15 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'catalog_server_endpoint': {'key': 'catalogServerEndpoint', 'type': 'str'},
         'catalog_admin_user_name': {'key': 'catalogAdminUserName', 'type': 'str'},
         'catalog_admin_password': {'key': 'catalogAdminPassword', 'type': 'SecureString'},
         'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
     }
 
-    def __init__(self, catalog_server_endpoint=None, catalog_admin_user_name=None, catalog_admin_password=None, catalog_pricing_tier=None):
+    def __init__(self, additional_properties=None, catalog_server_endpoint=None, catalog_admin_user_name=None, catalog_admin_password=None, catalog_pricing_tier=None):
+        self.additional_properties = additional_properties
         self.catalog_server_endpoint = catalog_server_endpoint
         self.catalog_admin_user_name = catalog_admin_user_name
         self.catalog_admin_password = catalog_admin_password

@@ -15,6 +15,9 @@ from .dataset import Dataset
 class WebTableDataset(Dataset):
     """The dataset points to a HTML table in the web page.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -43,6 +46,7 @@ class WebTableDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -52,8 +56,8 @@ class WebTableDataset(Dataset):
         'path': {'key': 'typeProperties.path', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, index, description=None, structure=None, parameters=None, path=None):
-        super(WebTableDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, index, additional_properties=None, description=None, structure=None, parameters=None, path=None):
+        super(WebTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.index = index
         self.path = path
         self.type = 'WebTable'

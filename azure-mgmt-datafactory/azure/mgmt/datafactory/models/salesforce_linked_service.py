@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class SalesforceLinkedService(LinkedService):
     """Linked service for Salesforce.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -29,13 +32,13 @@ class SalesforceLinkedService(LinkedService):
      Expression with resultType string).
     :type environment_url: object
     :param username: The username for Basic authentication of the Salesforce
-     source. Type: string (or Expression with resultType string).
+     instance. Type: string (or Expression with resultType string).
     :type username: object
     :param password: The password for Basic authentication of the Salesforce
-     source.
+     instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param security_token: The security token is required to remotely access
-     Salesforce source.
+     Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
@@ -48,6 +51,7 @@ class SalesforceLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -58,8 +62,8 @@ class SalesforceLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connect_via=None, description=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None):
-        super(SalesforceLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None):
+        super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.environment_url = environment_url
         self.username = username
         self.password = password

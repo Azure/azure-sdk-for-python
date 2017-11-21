@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class HDInsightOnDemandLinkedService(LinkedService):
     """HDInsight ondemand linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -126,6 +129,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -158,8 +162,8 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, cluster_size, time_to_live, version, linked_service_name, host_subscription_id, tenant, cluster_resource_group, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, cluster_name_prefix=None, cluster_user_name=None, cluster_password=None, cluster_ssh_user_name=None, cluster_ssh_password=None, additional_linked_service_names=None, hcatalog_linked_service_name=None, cluster_type=None, spark_version=None, core_configuration=None, h_base_configuration=None, hdfs_configuration=None, hive_configuration=None, map_reduce_configuration=None, oozie_configuration=None, storm_configuration=None, yarn_configuration=None, encrypted_credential=None):
-        super(HDInsightOnDemandLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, cluster_size, time_to_live, version, linked_service_name, host_subscription_id, tenant, cluster_resource_group, additional_properties=None, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, cluster_name_prefix=None, cluster_user_name=None, cluster_password=None, cluster_ssh_user_name=None, cluster_ssh_password=None, additional_linked_service_names=None, hcatalog_linked_service_name=None, cluster_type=None, spark_version=None, core_configuration=None, h_base_configuration=None, hdfs_configuration=None, hive_configuration=None, map_reduce_configuration=None, oozie_configuration=None, storm_configuration=None, yarn_configuration=None, encrypted_credential=None):
+        super(HDInsightOnDemandLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.cluster_size = cluster_size
         self.time_to_live = time_to_live
         self.version = version

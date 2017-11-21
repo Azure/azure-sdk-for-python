@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class PolybaseSettings(Model):
     """PolyBase settings.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param reject_type: Reject type. Possible values include: 'value',
      'percentage'
     :type reject_type: str or
@@ -34,13 +37,15 @@ class PolybaseSettings(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'reject_type': {'key': 'rejectType', 'type': 'str'},
         'reject_value': {'key': 'rejectValue', 'type': 'object'},
         'reject_sample_value': {'key': 'rejectSampleValue', 'type': 'object'},
         'use_type_default': {'key': 'useTypeDefault', 'type': 'object'},
     }
 
-    def __init__(self, reject_type=None, reject_value=None, reject_sample_value=None, use_type_default=None):
+    def __init__(self, additional_properties=None, reject_type=None, reject_value=None, reject_sample_value=None, use_type_default=None):
+        self.additional_properties = additional_properties
         self.reject_type = reject_type
         self.reject_value = reject_value
         self.reject_sample_value = reject_sample_value

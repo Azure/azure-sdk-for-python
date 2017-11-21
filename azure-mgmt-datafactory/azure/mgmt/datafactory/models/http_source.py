@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class HttpSource(CopySource):
     """A copy activity source for an HTTP file.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -37,13 +40,14 @@ class HttpSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, http_request_timeout=None):
-        super(HttpSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, http_request_timeout=None):
+        super(HttpSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.http_request_timeout = http_request_timeout
         self.type = 'HttpSource'
