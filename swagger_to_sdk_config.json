@@ -223,6 +223,16 @@
       "markdown": "specification/compute/resource-manager/readme.md",
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_03_30"
     },
+    "compute.compute.2017-12-01-preview": {
+      "autorest_options": {
+        "namespace": "azure.mgmt.compute.v2017_12_01_preview",
+        "tag": "package-compute-2017-12"
+      },
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_12_01_preview",
+      "generated_relative_base_directory": "python/azure/mgmt/compute/v2017_12_01_preview",
+      "markdown": "specification/compute/resource-manager/readme.md",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/v2017_12_01_preview"
+    },
     "consumption": {
       "autorest_options": {
         "namespace": "azure.mgmt.consumption",
