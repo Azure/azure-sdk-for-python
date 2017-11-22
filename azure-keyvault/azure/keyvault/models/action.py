@@ -17,8 +17,7 @@ class Action(Model):
 
     :param action_type: The type of the action. Possible values include:
      'EmailContacts', 'AutoRenew'
-    :type action_type: str or :class:`ActionType
-     <azure.keyvault.models.ActionType>`
+    :type action_type: str or ~azure.keyvault.models.ActionType
     """
 
     _attribute_map = {

@@ -17,13 +17,12 @@ class CertificateMergeParameters(Model):
 
     :param x509_certificates: The certificate or the certificate chain to
      merge.
-    :type x509_certificates: list of bytearray
+    :type x509_certificates: list[bytearray]
     :param certificate_attributes: The attributes of the certificate
      (optional).
-    :type certificate_attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type certificate_attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
