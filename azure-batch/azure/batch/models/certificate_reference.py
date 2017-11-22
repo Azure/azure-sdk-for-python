@@ -22,7 +22,7 @@ class CertificateReference(Model):
     :type thumbprint_algorithm: str
     :param store_location: The location of the certificate store on the
      compute node into which to install the certificate. The default value is
-     currentUser. This property is applicable only for pools configured with
+     currentuser. This property is applicable only for pools configured with
      Windows nodes (that is, created with cloudServiceConfiguration, or with
      virtualMachineConfiguration using a Windows image reference). For Linux
      compute nodes, the certificates are stored in a directory inside the task
@@ -41,12 +41,8 @@ class CertificateReference(Model):
      any custom store name can also be used. The default value is My.
     :type store_name: str
     :param visibility: Which user accounts on the compute node should have
-     access to the private data of the certificate. Values are:
-     starttask - The user account under which the start task is run.
-     task - The accounts under which job tasks are run.
-     remoteuser - The accounts under which users remotely access the node.
-     You can specify more than one visibility in this collection. The default
-     is all accounts.
+     access to the private data of the certificate. You can specify more than
+     one visibility in this collection. The default is all accounts.
     :type visibility: list[str or ~azure.batch.models.CertificateVisibility]
     """
 

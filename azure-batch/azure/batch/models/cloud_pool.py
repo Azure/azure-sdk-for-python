@@ -40,30 +40,14 @@ class CloudPool(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: The current state of the pool. Values are:
-     active - The pool is available to run tasks subject to the availability of
-     compute nodes.
-     deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed.
-     upgrading - The user has requested that the operating system of the pool's
-     nodes be upgraded, but the upgrade operation has not yet completed (that
-     is, some nodes in the pool have not yet been upgraded). While upgrading,
-     the pool may be able to run tasks (with reduced capacity) but this is not
-     guaranteed. Possible values include: 'active', 'deleting', 'upgrading'
+    :param state: The current state of the pool. Possible values include:
+     'active', 'deleting', 'upgrading'
     :type state: str or ~azure.batch.models.PoolState
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
-    :param allocation_state: Whether the pool is resizing. Values are:
-     steady - The pool is not resizing. There are no changes to the number of
-     nodes in the pool in progress. A pool enters this state when it is created
-     and when no operations are being performed on the pool to change the
-     number of dedicated nodes.
-     resizing - The pool is resizing; that is, compute nodes are being added to
-     or removed from the pool.
-     stopping - The pool was resizing, but the user has requested that the
-     resize be stopped, but the stop request has not yet been completed.
-     Possible values include: 'steady', 'resizing', 'stopping'
+    :param allocation_state: Whether the pool is resizing. Possible values
+     include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str or ~azure.batch.models.AllocationState
     :param allocation_state_transition_time: The time at which the pool
      entered its current allocation state.

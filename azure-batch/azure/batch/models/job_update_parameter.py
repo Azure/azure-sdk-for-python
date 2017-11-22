@@ -35,9 +35,9 @@ class JobUpdateParameter(Model):
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. If omitted, the
-     completion behavior is set to noAction. If the current value is
-     terminateJob, this is an error because a job's completion behavior may not
-     be changed from terminateJob to noAction. You may not change the value
+     completion behavior is set to noaction. If the current value is
+     terminatejob, this is an error because a job's completion behavior may not
+     be changed from terminatejob to noaction. You may not change the value
      from terminatejob to noaction - that is, once you have engaged automatic
      job termination, you cannot turn it off again. If you try to do this, the
      request fails and Batch returns status code 400 (Bad Request) and an
