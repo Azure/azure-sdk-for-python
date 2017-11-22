@@ -34,9 +34,9 @@ class JobSpecification(Model):
      state. Note that if a job contains no tasks, then all tasks are considered
      complete. This option is therefore most commonly used with a Job Manager
      task; if you want to use automatic job termination without a Job Manager,
-     you should initially set onAllTasksComplete to noAction and update the job
-     properties to set onAllTasksComplete to terminateJob once you have
-     finished adding tasks. The default is noAction. Possible values include:
+     you should initially set onAllTasksComplete to noaction and update the job
+     properties to set onAllTasksComplete to terminatejob once you have
+     finished adding tasks. The default is noaction. Possible values include:
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
@@ -44,7 +44,7 @@ class JobSpecification(Model):
      have failed if it have failed if has a failureInfo. A failureInfo is set
      if the task completes with a non-zero exit code after exhausting its retry
      count, or if there was an error starting the task, for example due to a
-     resource file download error. The default is noAction. Possible values
+     resource file download error. The default is noaction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param constraints: The execution constraints for jobs created under this

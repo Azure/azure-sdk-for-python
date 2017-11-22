@@ -18,9 +18,8 @@ class ContainerConfiguration(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: The container technology to be used. Values are:
-     docker - Docker will be used to launch the containers. Default value:
-     "docker" .
+    :ivar type: The container technology to be used.  Default value: "docker"
+     .
     :vartype type: str
     :param container_image_names: The collection of container image names.
      This is the full image reference, as would be specified to "docker pull".

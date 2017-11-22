@@ -81,22 +81,16 @@ class CloudJob(Model):
     :param pool_info: The pool settings associated with the job.
     :type pool_info: ~azure.batch.models.PoolInformation
     :param on_all_tasks_complete: The action the Batch service should take
-     when all tasks in the job are in the completed state. noAction - do
-     nothing. The job remains active unless terminated or disabled by some
-     other means. terminateJob - terminate the job. The job's terminateReason
-     is set to 'AllTasksComplete'. The default is noAction. Possible values
-     include: 'noAction', 'terminateJob'
+     when all tasks in the job are in the completed state. The default is
+     noaction. Possible values include: 'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if has a
      failureInfo. A failureInfo is set if the task completes with a non-zero
      exit code after exhausting its retry count, or if there was an error
-     starting the task, for example due to a resource file download error.
-     noAction - do nothing. performExitOptionsJobAction - take the action
-     associated with the task exit condition in the task's exitConditions
-     collection. (This may still result in no action being taken, if that is
-     what the task specifies.) The default is noAction. Possible values
-     include: 'noAction', 'performExitOptionsJobAction'
+     starting the task, for example due to a resource file download error. The
+     default is noaction. Possible values include: 'noAction',
+     'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is

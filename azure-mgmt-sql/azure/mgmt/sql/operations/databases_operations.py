@@ -24,7 +24,6 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     :ivar extension_name: The name of the operation to perform. Constant value: "import".
     """
 
@@ -33,7 +32,6 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
         self.extension_name = "import"
 
         self.config = config
@@ -61,6 +59,8 @@ class DatabasesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/import'
         path_format_arguments = {
@@ -72,7 +72,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -157,6 +157,8 @@ class DatabasesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extensions/{extensionName}'
         path_format_arguments = {
@@ -170,7 +172,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -253,6 +255,8 @@ class DatabasesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'
         path_format_arguments = {
@@ -265,7 +269,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -349,6 +353,8 @@ class DatabasesOperations(object):
          ~azure.mgmt.sql.models.MetricPaged[~azure.mgmt.sql.models.Metric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -364,7 +370,7 @@ class DatabasesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
                 query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
@@ -425,6 +431,8 @@ class DatabasesOperations(object):
          ~azure.mgmt.sql.models.MetricDefinitionPaged[~azure.mgmt.sql.models.MetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -440,7 +448,7 @@ class DatabasesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -499,6 +507,8 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause'
         path_format_arguments = {
@@ -511,7 +521,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -580,6 +590,8 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume'
         path_format_arguments = {
@@ -592,7 +604,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -666,6 +678,8 @@ class DatabasesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'
         path_format_arguments = {
@@ -678,7 +692,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -763,6 +777,8 @@ class DatabasesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'
         path_format_arguments = {
@@ -775,7 +791,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -855,6 +871,8 @@ class DatabasesOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'
         path_format_arguments = {
@@ -867,7 +885,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -918,6 +936,8 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'
         path_format_arguments = {
@@ -930,7 +950,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -991,6 +1011,8 @@ class DatabasesOperations(object):
          ~azure.mgmt.sql.models.DatabasePaged[~azure.mgmt.sql.models.Database]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -1005,7 +1027,7 @@ class DatabasesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if filter is not None:
@@ -1072,6 +1094,8 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/databases/{databaseName}'
         path_format_arguments = {
@@ -1085,7 +1109,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1140,6 +1164,8 @@ class DatabasesOperations(object):
          ~azure.mgmt.sql.models.DatabasePaged[~azure.mgmt.sql.models.Database]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -1155,7 +1181,7 @@ class DatabasesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -1218,6 +1244,8 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recommendedElasticPools/{recommendedElasticPoolName}/databases/{databaseName}'
         path_format_arguments = {
@@ -1231,7 +1259,7 @@ class DatabasesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1286,6 +1314,8 @@ class DatabasesOperations(object):
          ~azure.mgmt.sql.models.DatabasePaged[~azure.mgmt.sql.models.Database]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2014-04-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -1301,7 +1331,7 @@ class DatabasesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -1338,3 +1368,71 @@ class DatabasesOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def rename(
+            self, resource_group_name, server_name, database_name, id, custom_headers=None, raw=False, **operation_config):
+        """Renames a database.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database to rename.
+        :type database_name: str
+        :param id: The target ID for the resource
+        :type id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.ResourceMoveDefinition(id=id)
+
+        api_version = "2017-03-01-preview"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ResourceMoveDefinition')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
