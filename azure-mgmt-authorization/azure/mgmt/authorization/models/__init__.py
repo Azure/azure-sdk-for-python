@@ -9,44 +9,36 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .role_assignment_filter import RoleAssignmentFilter
 from .role_definition_filter import RoleDefinitionFilter
-from .classic_administrator_properties import ClassicAdministratorProperties
 from .classic_administrator import ClassicAdministrator
 from .permission import Permission
 from .provider_operation import ProviderOperation
 from .resource_type import ResourceType
 from .provider_operations_metadata import ProviderOperationsMetadata
-from .role_assignment_properties_with_scope import RoleAssignmentPropertiesWithScope
-from .role_assignment import RoleAssignment
-from .role_assignment_properties import RoleAssignmentProperties
-from .role_assignment_create_parameters import RoleAssignmentCreateParameters
-from .role_definition_properties import RoleDefinitionProperties
 from .role_definition import RoleDefinition
+from .role_assignment_filter import RoleAssignmentFilter
+from .role_assignment import RoleAssignment
+from .role_assignment_create_parameters import RoleAssignmentCreateParameters
 from .classic_administrator_paged import ClassicAdministratorPaged
 from .permission_paged import PermissionPaged
 from .provider_operations_metadata_paged import ProviderOperationsMetadataPaged
-from .role_assignment_paged import RoleAssignmentPaged
 from .role_definition_paged import RoleDefinitionPaged
+from .role_assignment_paged import RoleAssignmentPaged
 
 __all__ = [
-    'RoleAssignmentFilter',
     'RoleDefinitionFilter',
-    'ClassicAdministratorProperties',
     'ClassicAdministrator',
     'Permission',
     'ProviderOperation',
     'ResourceType',
     'ProviderOperationsMetadata',
-    'RoleAssignmentPropertiesWithScope',
-    'RoleAssignment',
-    'RoleAssignmentProperties',
-    'RoleAssignmentCreateParameters',
-    'RoleDefinitionProperties',
     'RoleDefinition',
+    'RoleAssignmentFilter',
+    'RoleAssignment',
+    'RoleAssignmentCreateParameters',
     'ClassicAdministratorPaged',
     'PermissionPaged',
     'ProviderOperationsMetadataPaged',
-    'RoleAssignmentPaged',
     'RoleDefinitionPaged',
+    'RoleAssignmentPaged',
 ]
