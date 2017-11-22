@@ -96,36 +96,31 @@ class EventInjector(object):
     def __init__(self):
         self.queue = Queue.Queue()
         self.pipe = Pipe.open()
-        self._state = 0
+        self._closed = False
 
     def trigger(self, event):
         self.queue.put(event)
         self.pipe.sink.send(b'!')
 
     def close(self):
-        if self._state == 0:
-            self.pipe.close()
-        else:
-            self.pipe.sink.send(b'!')
-        self._state = 2
+        self._closed = True
+        self.pipe.sink.send(b'!')
 
     def on_selectable_init(self, event):
         sel = event.context
         sel.fileno(self.pipe.source.fileno())
         sel.reading = True
         event.reactor.update(sel)
-        self._state = 1
 
     def on_selectable_readable(self, event):
         self.pipe.source.recv(256)
         while not self.queue.empty():
             requested = self.queue.get()
             event.reactor.push_event(requested.context, requested.type)
-        if self._state == 2:
+        if self._closed:
             sel = event.context
             sel.terminate()
             event.reactor.update(sel)
-            self.pipe.close()
         else:
             # hack to start iocp reading for external
             # sockets
