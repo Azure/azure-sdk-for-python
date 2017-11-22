@@ -15,26 +15,46 @@ from msrest.serialization import Model
 class RoleAssignment(Model):
     """Role Assignments.
 
-    :param id: The role assignment ID.
-    :type id: str
-    :param name: The role assignment name.
-    :type name: str
-    :param type: The role assignment type.
-    :type type: str
-    :param properties: Role assignment properties.
-    :type properties:
-     ~azure.mgmt.authorization.models.RoleAssignmentPropertiesWithScope
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The role assignment ID.
+    :vartype id: str
+    :ivar name: The role assignment name.
+    :vartype name: str
+    :ivar type: The role assignment type.
+    :vartype type: str
+    :param scope: The role assignment scope.
+    :type scope: str
+    :param role_definition_id: The role definition ID.
+    :type role_definition_id: str
+    :param principal_id: The principal ID.
+    :type principal_id: str
+    :param can_delegate: The Delegation flag for the roleassignment
+    :type can_delegate: bool
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RoleAssignmentPropertiesWithScope'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.properties = properties
+    def __init__(self, scope=None, role_definition_id=None, principal_id=None, can_delegate=None):
+        self.id = None
+        self.name = None
+        self.type = None
+        self.scope = scope
+        self.role_definition_id = role_definition_id
+        self.principal_id = principal_id
+        self.can_delegate = can_delegate

@@ -16,8 +16,8 @@ from .version import VERSION
 from .operations.classic_administrators_operations import ClassicAdministratorsOperations
 from .operations.permissions_operations import PermissionsOperations
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .operations.role_assignments_operations import RoleAssignmentsOperations
 from .operations.role_definitions_operations import RoleDefinitionsOperations
+from .operations.role_assignments_operations import RoleAssignmentsOperations
 from . import models
 
 
@@ -65,10 +65,10 @@ class AuthorizationManagementClient(object):
     :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar provider_operations_metadata: ProviderOperationsMetadata operations
     :vartype provider_operations_metadata: azure.mgmt.authorization.operations.ProviderOperationsMetadataOperations
-    :ivar role_assignments: RoleAssignments operations
-    :vartype role_assignments: azure.mgmt.authorization.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
     :vartype role_definitions: azure.mgmt.authorization.operations.RoleDefinitionsOperations
+    :ivar role_assignments: RoleAssignments operations
+    :vartype role_assignments: azure.mgmt.authorization.operations.RoleAssignmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,7 +85,6 @@ class AuthorizationManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -95,7 +94,7 @@ class AuthorizationManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.provider_operations_metadata = ProviderOperationsMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.role_assignments = RoleAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.role_definitions = RoleDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.role_assignments = RoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
