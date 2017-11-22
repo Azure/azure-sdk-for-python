@@ -26,6 +26,8 @@ class AvailabilitySetsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

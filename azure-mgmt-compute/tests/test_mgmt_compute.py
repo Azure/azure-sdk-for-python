@@ -9,10 +9,10 @@ import unittest
 
 from collections import namedtuple
 
-import azure.mgmt.compute.models
+import azure.mgmt.compute
 import azure.mgmt.network.models
 import azure.mgmt.storage.models
-from azure.mgmt.compute.models import InstanceViewTypes
+from azure.mgmt.compute.v2017_12_01.models import InstanceViewTypes
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,

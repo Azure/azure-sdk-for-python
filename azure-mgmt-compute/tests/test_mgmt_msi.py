@@ -10,11 +10,11 @@ import uuid
 
 from collections import namedtuple
 
-import azure.mgmt.compute.models
+import azure.mgmt.compute
 import azure.mgmt.network.models
 import azure.mgmt.authorization.models
 
-from azure.mgmt.compute.models import (
+from azure.mgmt.compute.v2017_12_01.models import (
     InstanceViewTypes,
     VirtualMachineIdentity,
     ResourceIdentityType,
