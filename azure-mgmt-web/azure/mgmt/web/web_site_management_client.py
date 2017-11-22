@@ -447,7 +447,9 @@ class WebSiteManagementClient(object):
         :param name: Resource name to verify.
         :type name: str
         :param type: Resource type used for verification. Possible values
-         include: 'Site', 'Slot', 'HostingEnvironment'
+         include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
+         'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
+         'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
         :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name.
         :type is_fqdn: bool

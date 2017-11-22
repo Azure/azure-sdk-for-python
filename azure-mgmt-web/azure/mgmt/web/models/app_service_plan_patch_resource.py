@@ -63,7 +63,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type spot_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: Reserved. Default value: False .
+    :param reserved: If Linux app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
     :type reserved: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int

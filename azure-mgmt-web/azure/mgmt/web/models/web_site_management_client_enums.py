@@ -316,6 +316,11 @@ class CheckNameResourceTypes(Enum):
     site = "Site"
     slot = "Slot"
     hosting_environment = "HostingEnvironment"
+    publishing_user = "PublishingUser"
+    microsoft_websites = "Microsoft.Web/sites"
+    microsoft_websitesslots = "Microsoft.Web/sites/slots"
+    microsoft_webhosting_environments = "Microsoft.Web/hostingEnvironments"
+    microsoft_webpublishing_users = "Microsoft.Web/publishingUsers"
 
 
 class ValidateResourceTypes(Enum):

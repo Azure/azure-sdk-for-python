@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class RequestsBasedTrigger(Model):
     """Trigger based on total requests.
 
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str
