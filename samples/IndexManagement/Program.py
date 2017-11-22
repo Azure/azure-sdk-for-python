@@ -20,7 +20,7 @@ COLLECTION_ID = "index-samples"
 #   includedPaths
 #   excludedPaths
 #   
-# We can toggle 'automatic' to eiher be True or False depending upon iwhether we want to have indexing over all columns by default or not.
+# We can toggle 'automatic' to eiher be True or False depending upon whether we want to have indexing over all columns by default or not.
 # indexingMode can be either of consistent, lazy or none
 #   
 # We can provide options while creating documents. indexingDirective is one such, 
@@ -59,19 +59,14 @@ def test_ssl_connection():
         print(traceback.format_exc())
     return False
 
-class IDisposable:
-    """ A context manager to automatically close an object with a close method
-    in a with statement. """
+def GetDatabaseLink(database_id):
+    return "dbs" + "/" + database_id
 
-    def __init__(self, obj):
-        self.obj = obj
+def GetCollectionLink(database_id, collection_id):
+    return GetDatabaseLink(database_id) +  "/" + "colls" + "/" +  collection_id
 
-    def __enter__(self):
-        return self.obj # bound to target
-
-    def __exit__(self, exception_type, exception_val, trace):
-        # extra cleanup in here
-        self = None
+def GetDocumentLink(database_id, collection_id, document_id):
+    return GetCollectionLink(database_id, collection_id) + "/" + "docs" + "/" + document_id
 
 # Query for Entity / Entities 
 def Query_Entities(client, entity_type, id = None, parent_link = None):
@@ -126,12 +121,9 @@ def CreateDatabaseIfNotExists(client, database_id):
         else: 
             raise errors.HTTPFailure(e.status_code)
 
-def DeleteCollectionIfExists(client, database_link, collection_id):
+def DeleteCollectionIfExists(client, database_id, collection_id):
     try:
-        collection_link = "dbs/{0}".format(DATABASE_ID) + "/" + 'colls/{0}'.format(collection_id)
-        #collection_link =  database_link +  'colls/{0}'.format(collection_id) 
-        # having some trouble with this format of querying, raised an issue
-        # https://github.com/Azure/azure-documentdb-python/issues/106
+        collection_link = GetCollectionLink(database_id, collection_id)
         
         client.DeleteCollection(collection_link)
         print('Collection with id \'{0}\' was deleted'.format(collection_id))
@@ -176,7 +168,7 @@ def QueryDocumentsWithCustomQuery(client, collection_link, query_with_optional_p
     finally:
         print()
 
-def ExplicitlyExcludeFromIndex(client, database_link):
+def ExplicitlyExcludeFromIndex(client, database_id):
     """ The default index policy on a DocumentCollection will AUTOMATICALLY index ALL documents added.
         There may be scenarios where you want to exclude a specific doc from the index even though all other 
         documents are being indexed automatically. 
@@ -184,7 +176,8 @@ def ExplicitlyExcludeFromIndex(client, database_link):
 
     """
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
@@ -197,7 +190,8 @@ def ExplicitlyExcludeFromIndex(client, database_link):
 
         # Create a document and query on it immediately.
         # Will work as automatic indexing is still True
-        doc = client.CreateDocument(created_collection["_self"], { "id" : "doc1", "orderId" : "order1" })
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc = client.CreateDocument(collection_link, { "id" : "doc1", "orderId" : "order1" })
         print("\n" + "-" * 25 + "Document doc1 created with order1" +  "-" * 25)
         print(doc)
 
@@ -205,13 +199,13 @@ def ExplicitlyExcludeFromIndex(client, database_link):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         # Now, create a document but this time explictly exclude it from the collection using IndexingDirective
         # Then query for that document
         # Shoud NOT find it, because we excluded it from the index
         # BUT, the document is there and doing a ReadDocument by Id will prove it
-        doc2 = client.CreateDocument(created_collection["_self"], { "id" : "doc2", "orderId" : "order2" }, {'indexingDirective' : documents.IndexingDirective.Exclude})
+        doc2 = client.CreateDocument(collection_link, { "id" : "doc2", "orderId" : "order2" }, {'indexingDirective' : documents.IndexingDirective.Exclude})
         print("\n" + "-" * 25 + "Document doc2 created with order2" +  "-" * 25)
         print(doc2)
 
@@ -219,13 +213,13 @@ def ExplicitlyExcludeFromIndex(client, database_link):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
                 }
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
-        docRead = client.ReadDocument(doc2["_self"])
+        docRead = client.ReadDocument(GetDocumentLink(database_id, COLLECTION_ID, "doc2"))
         print("Document read by ID: \n", docRead["id"])
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
     
     except errors.DocumentDBError as e:
@@ -236,14 +230,15 @@ def ExplicitlyExcludeFromIndex(client, database_link):
         else:
             raise
 
-def UseManualIndexing(client, database_link):
+def UseManualIndexing(client, database_id):
     """The default index policy on a DocumentCollection will AUTOMATICALLY index ALL documents added.
        There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index. 
        This method demonstrates how to control this by setting the value of automatic within indexingPolicy to False
 
     """
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
         
@@ -258,7 +253,8 @@ def UseManualIndexing(client, database_link):
         # Then query for that document
         # We should find nothing, because automatic indexing on the collection level is False
         # BUT, the document is there and doing a ReadDocument by Id will prove it
-        doc = client.CreateDocument(created_collection["_self"], { "id" : "doc1", "orderId" : "order1" })
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc = client.CreateDocument(collection_link, { "id" : "doc1", "orderId" : "order1" })
         print("\n" + "-" * 25 + "Document doc1 created with order1" +  "-" * 25)
         print(doc)
 
@@ -266,14 +262,14 @@ def UseManualIndexing(client, database_link):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
-        docRead = client.ReadDocument(doc["_self"])
+        docRead = client.ReadDocument(GetDocumentLink(database_id, COLLECTION_ID, "doc1"))
         print("Document read by ID: \n", docRead["id"])
 
         # Now create a document, passing in an IndexingDirective saying we want to specifically index this document
         # Query for the document again and this time we should find it because we manually included the document in the index
-        doc2 = client.CreateDocument(created_collection["_self"], { "id" : "doc2", "orderId" : "order2" }, {'indexingDirective' : documents.IndexingDirective.Include})
+        doc2 = client.CreateDocument(collection_link, { "id" : "doc2", "orderId" : "order2" }, {'indexingDirective' : documents.IndexingDirective.Include})
         print("\n" + "-" * 25 + "Document doc2 created with order2" +  "-" * 25)
         print(doc2)
 
@@ -281,10 +277,10 @@ def UseManualIndexing(client, database_link):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
             }
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
 
     except errors.DocumentDBError as e:
@@ -295,46 +291,7 @@ def UseManualIndexing(client, database_link):
         else:
             raise
 
-def UseLazyIndexing(client, database_link):
-    """DocumentDB offers synchronous (consistent) and asynchronous (lazy) index updates. 
-        By default, the index is updated synchronously on each insert, replace or delete of a document to the collection. 
-        There are times when you might want to configure certain collections to update their index asynchronously. 
-        Lazy indexing boosts write performance and is ideal for bulk ingestion scenarios for primarily read-heavy collections
-        It is important to note that you might get inconsistent reads whilst the writes are in progress,
-        However once the write volume tapers off and the index catches up, then reads continue as normal
-        
-        This method demonstrates how to switch IndexMode to Lazy
-
-    """
-    try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
-        # collections = Query_Entities(client, 'collection', parent_link = database_link)
-        # print(collections)
-        
-        # Create a collection with lazy (instead of consistent) indexing
-        created_collection = client.CreateCollection(database_link, {"id" : COLLECTION_ID, "indexingPolicy" : {"indexingMode" : documents.IndexingMode.Lazy} })
-        print(created_collection)
-
-        print("\n" + "-" * 25 + "\n3. Collection created with index policy")
-        print_dictionary_items(created_collection["indexingPolicy"])
-
-        # it is very difficult to demonstrate lazy indexing as you only notice the difference under sustained heavy write load
-        # because we're using an S1 collection in this demo we'd likely get throttled long before we were able to replicate sustained high throughput
-        # which would give the index time to catch-up.
-
-        # Cleanup
-        client.DeleteCollection(created_collection["_self"])
-        print("\n")
-
-    except errors.DocumentDBError as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
-
-def ExcludePathsFromIndex(client, database_link):
+def ExcludePathsFromIndex(client, database_id):
     """The default behavior is for DocumentDB to index every attribute in every document automatically.
        There are times when a document contains large amounts of information, in deeply nested structures
        that you know you will never search on. In extreme cases like this, you can exclude paths from the 
@@ -343,7 +300,8 @@ def ExcludePathsFromIndex(client, database_link):
        This method demonstrates how to set excludedPaths within indexingPolicy
     """
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
@@ -374,29 +332,30 @@ def ExcludePathsFromIndex(client, database_link):
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
-        doc = client.CreateDocument(created_collection["_self"], doc_with_nested_structures)
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc = client.CreateDocument(collection_link, doc_with_nested_structures)
         print("\n" + "-" * 25 + "Document doc1 created with nested structures" +  "-" * 25)
         print(doc)
 
         # Querying for a document on either metaData or /subDoc/subSubDoc/someProperty > fail because these paths were excluded and they raise a BadRequest(400) Exception
         query = {"query": "SELECT * FROM r WHERE r.metaData=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "meta" }]}
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.nonSearchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         query = {"query": "SELECT * FROM r WHERE r.excludedNode.subExcludedNode.someProperty=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         # Querying for a document using foo, or even subDoc/searchable > succeed because they were not excluded
         query = {"query": "SELECT * FROM r WHERE r.foo=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "bar" }]}
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.searchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "searchable" }]}
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
 
     except errors.DocumentDBError as e:
@@ -407,7 +366,7 @@ def ExcludePathsFromIndex(client, database_link):
         else:
             raise
 
-def RangeScanOnHashIndex(client, database_link):
+def RangeScanOnHashIndex(client, database_id):
     """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
        be performed as scans using Allow scan request headers passed through options
 
@@ -419,7 +378,8 @@ def RangeScanOnHashIndex(client, database_link):
        on RequstUnits charged for an operation and will likely result in queries being throttled sooner.
     """
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
@@ -436,25 +396,26 @@ def RangeScanOnHashIndex(client, database_link):
         print("\n" + "-" * 25 + "\n5. Collection created with index policy")
         print_dictionary_items(created_collection["indexingPolicy"])
 
-        doc1 = client.CreateDocument(created_collection["_self"], { "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
-        doc2 = client.CreateDocument(created_collection["_self"], { "id" : "dyn2", "length" : 7, "width" : 15 })
-        doc3 = client.CreateDocument(created_collection["_self"], { "id" : "dyn3", "length" : 2 })
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc1 = client.CreateDocument(collection_link, { "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
+        doc2 = client.CreateDocument(collection_link, { "id" : "dyn2", "length" : 7, "width" : 15 })
+        doc3 = client.CreateDocument(collection_link, { "id" : "dyn3", "length" : 2 })
         print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"])
 
         # Query for length > 5 - fail, this is a range based query on a Hash index only document
         query = { "query": "SELECT * FROM r WHERE r.length > 5" }
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
 
         # Now add IndexingDirective and repeat query
         # expect 200 OK because now we are explicitly allowing scans in a query
         # using the enableScanInQuery directive
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query)
-        results = list(client.QueryDocuments(created_collection["_self"], query, {"enableScanInQuery" : True}))
+        QueryDocumentsWithCustomQuery(client, collection_link, query)
+        results = list(client.QueryDocuments(collection_link, query, {"enableScanInQuery" : True}))
         print("Printing documents queried by range by providing enableScanInQuery = True")
         for doc in results: print(doc["id"])
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
     except errors.DocumentDBError as e:
         if e.status_code == 409:
@@ -464,12 +425,13 @@ def RangeScanOnHashIndex(client, database_link):
         else:
             raise
 
-def UseRangeIndexesOnStrings(client, database_link):
+def UseRangeIndexesOnStrings(client, database_id):
     """Showing how range queries can be performed even on strings.
 
     """
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
@@ -521,24 +483,25 @@ def UseRangeIndexesOnStrings(client, database_link):
         print("\n" + "-" * 25 + "\n6. Collection created with index policy")
         print_dictionary_items(created_collection["indexingPolicy"])
 
-        doc1 = client.CreateDocument(created_collection["_self"], { "id" : "doc1", "region" : "USA" })
-        doc2 = client.CreateDocument(created_collection["_self"], { "id" : "doc2", "region" : "UK" })
-        doc3 = client.CreateDocument(created_collection["_self"], { "id" : "doc3", "region" : "Armenia" })
-        doc4 = client.CreateDocument(created_collection["_self"], { "id" : "doc4", "region" : "Egypt" })
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc1 = client.CreateDocument(collection_link, { "id" : "doc1", "region" : "USA" })
+        doc2 = client.CreateDocument(collection_link, { "id" : "doc2", "region" : "UK" })
+        doc3 = client.CreateDocument(collection_link, { "id" : "doc3", "region" : "Armenia" })
+        doc4 = client.CreateDocument(collection_link, { "id" : "doc4", "region" : "Egypt" })
 
         # Now ordering against region is allowed. You can run the following query
         query = { "query" : "SELECT * FROM r ORDER BY r.region" }
         message = "Documents ordered by region"
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query, message)
+        QueryDocumentsWithCustomQuery(client, collection_link, query, message)
 
         # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query, 
         # the equivalent of LIKE 'U%' (is >= 'U' AND < 'U')
         query = { "query" : "SELECT * FROM r WHERE r.region >= 'U'" }
         message = "Documents with region begining with U"
-        QueryDocumentsWithCustomQuery(client, created_collection["_self"], query, message)
+        QueryDocumentsWithCustomQuery(client, collection_link, query, message)
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
     except errors.DocumentDBError as e:
         if e.status_code == 409:
@@ -548,15 +511,10 @@ def UseRangeIndexesOnStrings(client, database_link):
         else:
             raise
 
-def PerformIndexTransformations(client, database_link):
-    """This is how we can perform transformations of index of a collection
-        which is already created. These can be helpful for querying.
-        In order to save storage space, one can create necessary indexes
-        just before querying and discard them.
-
-    """
+def PerformIndexTransformations(client, database_id):
     try:
-        DeleteCollectionIfExists(client, database_link, COLLECTION_ID)
+        DeleteCollectionIfExists(client, database_id, COLLECTION_ID)
+        database_link = GetDatabaseLink(database_id)
         # collections = Query_Entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
@@ -568,16 +526,17 @@ def PerformIndexTransformations(client, database_link):
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # Insert some documents
-        doc1 = client.CreateDocument(created_collection["_self"], { "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
-        doc2 = client.CreateDocument(created_collection["_self"], { "id" : "dyn2", "length" : 7, "width" : 15 })
-        doc3 = client.CreateDocument(created_collection["_self"], { "id" : "dyn3", "length" : 2 })
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        doc1 = client.CreateDocument(collection_link, { "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
+        doc2 = client.CreateDocument(collection_link, { "id" : "dyn2", "length" : 7, "width" : 15 })
+        doc3 = client.CreateDocument(collection_link, { "id" : "dyn3", "length" : 2 })
         print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"])
 
         # Switch to lazy indexing and wait till complete.
         print("Chaning the indexing mode of the collection from default to lazy")
         created_collection['indexingPolicy']['indexingMode'] = documents.IndexingMode.Lazy
 
-        created_collection = client.ReplaceCollection(created_collection["_self"], created_collection)
+        created_collection = client.ReplaceCollection(collection_link, created_collection)
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
@@ -595,18 +554,19 @@ def PerformIndexTransformations(client, database_link):
             'precision': -1
         }]
 
-        created_collection = client.ReplaceCollection(created_collection["_self"], created_collection)
+        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
+        created_collection = client.ReplaceCollection(collection_link, created_collection)
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # Now exclude a path from indexing to save on storage space.
         print("Now excluding the path /length/ to save on storage space")
         created_collection['indexingPolicy']['excludedPaths'] = [{"path" : "/length/*"}]
 
-        created_collection = client.ReplaceCollection(created_collection["_self"], created_collection)
+        created_collection = client.ReplaceCollection(collection_link, created_collection)
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # Cleanup
-        client.DeleteCollection(created_collection["_self"])
+        client.DeleteCollection(collection_link)
         print("\n")
     except errors.DocumentDBError as e:
         if e.status_code == 409:
@@ -617,38 +577,34 @@ def PerformIndexTransformations(client, database_link):
             raise
 
 def RunIndexDemo():
-    with IDisposable(ObtainClient()) as client:
-        try:
-            FetchAllDatabases(client)
+    try:
+        client = ObtainClient()
+        FetchAllDatabases(client)
 
-            # Create database if doesn't exist already.
-            created_db = CreateDatabaseIfNotExists(client, DATABASE_ID)
-            print(created_db)
+        # Create database if doesn't exist already.
+        created_db = CreateDatabaseIfNotExists(client, DATABASE_ID)
+        print(created_db)
 
-            # 1. Exclude a document from the index
-            ExplicitlyExcludeFromIndex(client, created_db["_self"])
+        # 1. Exclude a document from the index
+        ExplicitlyExcludeFromIndex(client, DATABASE_ID)
 
-            # 2. Use manual (instead of automatic) indexing
-            UseManualIndexing(client, created_db["_self"])
+        # 2. Use manual (instead of automatic) indexing
+        UseManualIndexing(client, DATABASE_ID)
 
-            # 3. Use lazy (instead of consistent) indexing
-            UseLazyIndexing(client, created_db["_self"])
+        # 4. Exclude specified document paths from the index
+        ExcludePathsFromIndex(client, DATABASE_ID)
 
-            # 4. Exclude specified document paths from the index
-            ExcludePathsFromIndex(client, created_db["_self"])
+        # 5. Force a range scan operation on a hash indexed path
+        RangeScanOnHashIndex(client, DATABASE_ID)
 
-            # 5. Force a range scan operation on a hash indexed path
-            RangeScanOnHashIndex(client, created_db["_self"])
+        # 6. Use range indexes on strings
+        UseRangeIndexesOnStrings(client, DATABASE_ID)
 
-            # 6. Use range indexes on strings
-            UseRangeIndexesOnStrings(client, created_db["_self"])
+        # 7. Perform an index transform
+        PerformIndexTransformations(client, DATABASE_ID)
 
-            # 7. Perform an index transform
-            PerformIndexTransformations(client, created_db["_self"])
-
-        except errors.DocumentDBError as e:
-            raise
-
+    except errors.DocumentDBError as e:
+        raise
 
 if __name__ == '__main__':
     print("Hello!")
