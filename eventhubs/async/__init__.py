@@ -11,6 +11,7 @@ import queue
 import asyncio
 from threading import Lock
 from eventhubs import Receiver, EventData
+
 class AsyncReceiver(Receiver):
     """
     Implements the async API of a L{Receiver}.
@@ -26,8 +27,18 @@ class AsyncReceiver(Receiver):
         self.delivered = 0
 
     def on_start(self, link):
+        """
+        Called when the receiver is started.
+        """
         self.link = link
-        self.link.flow(300)
+        self.link.flow(self.credit)
+
+    def on_stop(self):
+        """
+        Called when the receiver is stopped.
+        """
+        while not self.messages.empty():
+            self.messages.get()
 
     def on_message(self, event):
         """ Handle message received event """

@@ -18,63 +18,62 @@ import logging
 import datetime
 import sys
 import threading
-from proton import DELEGATED, Url, timestamp, generate_uuid, Message
+from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
+from proton import Delivery, Message
 from proton.reactor import dispatch, Container, Selector, ApplicationEvent
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from eventhubs._impl import SenderHandler, ReceiverHandler, OffsetUtil, SessionPolicy
+from ._impl import SenderHandler, ReceiverHandler, SessionPolicy
 
-class EventHubClient(Container):
+if sys.platform.startswith("win"):
+    from ._win import EventInjector
+else:
+    from proton.reactor import EventInjector
+
+class EventHubClient(object):
     """
     The L{EventHubClient} class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
     """
-    def __init__(self, address=None, **kwargs):
+    def __init__(self, address, **kwargs):
         """
         Constructs a new L{EventHubClient} with the given address Url.
         """
-        if not address:
-            super(EventHubClient, self).__init__(**kwargs)
-        else:
-            super(EventHubClient, self).__init__(self, **kwargs)
-            self.allow_insecure_mechs = False
-            self.allowed_mechs = 'PLAIN MSCBS'
-            self.container_id = "ehpy-" + str(generate_uuid())[:8]
-            self.address = Url(address)
-            self.daemon = None
-            self.shared_connection = None
-            self.session_policy = None
-            self.clients = []
+        self.container_id = "eventhubs.pycli-" + str(generate_uuid())[:8]
+        self.address = Url(address)
+        self.injector = EventInjector()
+        self.container = self._create_container(self.address, **kwargs)
+        self.daemon = None
+        self.connection = None
+        self.session_policy = None
+        self.clients = []
+
+    def run(self):
+        """
+        Run the L{EventHubClient} in blocking mode.
+        """
+        self.container.run()
 
     def run_daemon(self):
         """
         Run the L{EventHubClient} in non-blocking mode.
         """
-        self.daemon = threading.Thread(target=self._run_daemon)
+        logging.info("%s: starting the daemon", self.container_id)
+        self.daemon = threading.Thread(target=self.run)
         self.daemon.daemon = True
         self.daemon.start()
         return self
 
     def stop(self):
         """
-        Stop the client that was run in daemon mode.
+        Stop the client.
         """
-        logging.info("%s: stopping", self.container_id)
-        super(EventHubClient, self).stop()
         if self.daemon is not None:
+            logging.info("%s: stopping daemon", self.container_id)
+            self.injector.trigger(ApplicationEvent("stop_daemon"))
+            self.injector.close()
             self.daemon.join()
-
-    def _run_daemon(self):
-        logging.info("%s: running the daemon", self.container_id)
-        self.timeout = 3.14159265359
-        self.start()
-        while self.process():
-            pass
-        self._free_clients()
-        self._free_session()
-        self._free_connection(True)
-        super(EventHubClient, self).stop()
 
     def subscribe(self, receiver, consumer_group, partition, offset=None):
         """
@@ -93,8 +92,8 @@ class EventHubClient(Container):
         source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
         selector = None
         if offset is not None:
-            selector = OffsetUtil.selector(offset.value, offset.inclusive)
-        handler = ReceiverHandler(receiver, source, selector)
+            selector = offset.selector()
+        handler = ReceiverHandler(self, receiver, source, selector)
         self.clients.append(handler)
         return self
 
@@ -104,25 +103,39 @@ class EventHubClient(Container):
 
         @param sender: sender to publish event data.
 
-        @param partition: the id of the event hub partition (optional).
+        @param partition: the id of the destination event hub partition. If not specified, events will
+        be distributed across partitions based on the default distribution logic.
 
         """
-        raise NotImplementedError("TODO")
+        target = self.address.path
+        if partition:
+            target += "/Partitions/" + partition
+        handler = sender.handler(self, target)
+        self.clients.append(handler)
+        return self
 
     def on_reactor_init(self, event):
-        """Handles reactor init event."""
-        if not self.shared_connection:
+        """ Handles reactor init event. """
+        logging.info("%s: on_reactor_init", self.container_id)
+        if event:
+            self.container.selectable(self.injector)
+        if not self.connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
             properties = {}
             properties["product"] = "eventhubs.python"
             properties["version"] = __version__
             properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
             properties["platform"] = sys.platform
-            self.shared_connection = self.connect(self.address, reconnect=False, handler=self, properties=properties)
+            self.connection = self.container.connect(self.address, reconnect=False, properties=properties)
             self.session_policy = SessionPolicy()
-            self.shared_connection.__setattr__("_session_policy", self.session_policy)
+            self.connection.__setattr__("_session_policy", self.session_policy)
         for client in self.clients:
-            client.start(self)
+            client.start()
+
+    def on_reactor_final(self, event):
+        """ Handles reactor final event. """
+        logging.info("%s: reactor final", self.container_id)
+        self.injector.pipe.close()
 
     def on_connection_local_open(self, event):
         """Handles on_connection_local_open event."""
@@ -142,22 +155,22 @@ class EventHubClient(Container):
 
     def on_connection_remote_close(self, event):
         """Handles on_connection_remote_close event."""
-        if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
+        if EndpointStateHandler.is_local_closed(event.connection):
             return DELEGATED
-        condition = self.shared_connection.remote_condition
+        condition = event.connection.remote_condition
         if condition:
             logging.error("%s: connection closed by peer %s:%s %s",
                           self.container_id,
                           condition.name,
                           condition.description,
-                          self.shared_connection.remote_container)
+                          event.connection.remote_container)
         else:
             logging.error("%s: connection closed by peer %s",
                           self.container_id,
-                          self.shared_connection.remote_container)
-        self._free_clients()
-        self._free_session()
-        self._free_connection(True)
+                          event.connection.remote_container)
+        self._close_clients()
+        self._close_session()
+        self._close_connection()
         self.on_reactor_init(None)
 
     def on_session_remote_close(self, event):
@@ -170,56 +183,97 @@ class EventHubClient(Container):
                           self.container_id,
                           condition.name,
                           condition.description,
-                          self.shared_connection.remote_container)
+                          self.connection.remote_container)
         else:
             logging.error("%s, session close %s",
                           self.container_id,
-                          self.shared_connection.remote_container)
-        self._free_clients()
-        self._free_session()
-        self.schedule(2.0, self)
+                          self.connection.remote_container)
+        self._close_clients()
+        self._close_session()
+        self.container.schedule(2.0, self)
 
     def on_transport_closed(self, event):
-        """Handles on_transport_closed event."""
-        if self.shared_connection is None or EndpointStateHandler.is_local_closed(self.shared_connection):
+        """ Handles on_transport_closed event. """
+        if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
             return DELEGATED
         logging.error("%s: transport close", self.container_id)
-        self._free_clients()
-        self._free_session()
-        self._free_connection(False)
+        self._close_clients()
+        self._close_session()
+        self._close_connection()
         self.on_reactor_init(None)
 
     def on_timer_task(self, event):
-        """Handles on_timer_task event."""
+        """ Handles on_timer_task event. """
         if self.session_policy is None:
             self.on_reactor_init(None)
 
-    def _free_connection(self, close_transport):
-        if self.shared_connection:
-            self.shared_connection.close()
-            if close_transport:
-                transport = self.shared_connection.transport
-                if transport is not None:
-                    transport.unbind()
-                    transport.close_tail()
-            self.shared_connection.free()
-            self.shared_connection = None
+    def on_stop_daemon(self, event):
+        """ Handles on_stop_daemon event. """
+        logging.error("%s: on_stop_daemon", self.container_id)
+        self._close_clients()
+        self._close_session()
+        self._close_connection()
 
-    def _free_session(self):
+    def _create_container(self, address, **kwargs):
+        container = Container(self, **kwargs)
+        container.allow_insecure_mechs = True
+        container.allowed_mechs = 'PLAIN MSCBS'
+        return container
+
+    def _close_connection(self):
+        if self.connection:
+            self.connection.close()
+
+    def _close_session(self):
         if self.session_policy:
-            self.session_policy.free()
+            self.session_policy.close()
             self.session_policy = None
 
-    def _free_clients(self):
+    def _close_clients(self):
         for client in self.clients:
             client.stop()
 
-class Sender(SenderHandler):
+class Sender(object):
     """
     Implements an L{EventData} sender.
     """
-    def send(self, event_data):
+    def __init__(self):
+        self._handler = None
+        self._event = threading.Event()
+        self._outcome = None
+
+    def send(self, event_data, timeout=60):
+        """
+        Sends an event data.
+        """
+        if self._handler is None:
+            raise EventHubError("Call publish to register the sender before using it.")
+        self._event.clear()
+        self._handler.send(event_data.message, self)
+        if not self._event.wait(timeout):
+            raise EventHubError("timeout", timeout)
+        if self._outcome != Delivery.ACCEPTED:
+            raise EventHubError("error", self._outcome)
+
+    def handler(self, container, target):
+        """
+        Creates a protocol handler for this sender.
+        """
+        self._handler = SenderHandler(container, self, target)
+        return self._handler
+
+    def on_start(self, link):
+        """
+        Called when the sender is started.
+        """
         pass
+
+    def on_outcome(self, outcome):
+        """
+        Called when the outcome is received for a delivery.
+        """
+        self._outcome = outcome
+        self._event.set()
 
 class Receiver(object):
     """
@@ -234,23 +288,31 @@ class Receiver(object):
         self.prefetch = prefetch
 
     def on_start(self, link):
-        """ Handle link start """
+        """
+        Called when the receiver is started.
+        """
+        pass
+
+    def on_stop(self):
+        """
+        Called when the receiver is stopped.
+        """
         pass
 
     def on_message(self, event):
-        """Proess message received event"""
+        """ Proess message received event. """
         event_data = EventData.create(event.message)
         self.on_event_data(event_data)
         self.offset = event_data.offset
 
     def on_event_data(self, event_data):
-        """Proess event data received event"""
+        """ Proess event data received event. """
         assert False, "Subclass must override this!"
 
     def selector(self, default):
-        """Create a selector for the current offset if it is set"""
+        """ Create a selector for the current offset if it is set. """
         if self.offset is not None:
-            return OffsetUtil.selector(self.offset)
+            return Offset(self.offset).selector()
         return default
 
 class EventData(object):
@@ -329,3 +391,21 @@ class Offset(object):
     def __init__(self, value, inclusive=False):
         self.value = value
         self.inclusive = inclusive
+
+    def selector(self):
+        """ Creates a selector expression of the offset """
+        if isinstance(self.value, datetime.datetime):
+            epoch = datetime.datetime.utcfromtimestamp(0)
+            milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)
+            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(milli_seconds) + "'")
+        elif isinstance(self.value, timestamp):
+            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(self.value) + "'")
+        else:
+            operator = ">=" if self.inclusive else ">"
+            return Selector(u"amqp.annotation.x-opt-offset " + operator + " '" + utf82unicode(self.value) + "'")
+
+class EventHubError(Exception):
+    """
+    Represents an error happened in the client.
+    """
+    pass
