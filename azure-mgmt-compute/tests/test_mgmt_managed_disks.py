@@ -167,7 +167,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         vm_result.storage_profile.data_disks.append({
             'lun': 12, # You choose the value, depending of what is available for you
             'name': disk_resource.name,
-            'create_option': disks_models.DiskCreateOptionTypes.attach,
+            'create_option': virtual_machine_models.DiskCreateOptionTypes.attach,
             'managed_disk': {
                 'id': disk_resource.id
             }
