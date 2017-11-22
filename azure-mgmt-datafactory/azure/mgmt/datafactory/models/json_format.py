@@ -37,10 +37,20 @@ class JsonFormat(DatasetStorageFormat):
      provided, the default value is 'utf-8', unless the byte order mark (BOM)
      denotes another Unicode encoding. The full list of supported values can be
      found in the 'Name' column of the table of encodings in the following
-     reference:
-     https://msdn.microsoft.com/library/system.text.encoding.aspx#Anchor_5.
-     Type: string (or Expression with resultType string).
+     reference: https://go.microsoft.com/fwlink/?linkid=861078. Type: string
+     (or Expression with resultType string).
     :type encoding_name: object
+    :param json_node_reference: The JSONPath of the JSON array element to be
+     flattened. Example: "$.ArrayPath". Type: string (or Expression with
+     resultType string).
+    :type json_node_reference: object
+    :param json_path_definition: The JSONPath definition for each column
+     mapping with a customized column name to extract data from JSON file. For
+     fields under root object, start with "$"; for fields inside the array
+     chosen by jsonNodeReference property, start from the array element.
+     Example: {"Column1": "$.Column1Path", "Column2": "Column2PathInArray"}.
+     Type: object (or Expression with resultType object).
+    :type json_path_definition: object
     """
 
     _validation = {
@@ -54,11 +64,15 @@ class JsonFormat(DatasetStorageFormat):
         'file_pattern': {'key': 'filePattern', 'type': 'str'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
         'encoding_name': {'key': 'encodingName', 'type': 'object'},
+        'json_node_reference': {'key': 'jsonNodeReference', 'type': 'object'},
+        'json_path_definition': {'key': 'jsonPathDefinition', 'type': 'object'},
     }
 
-    def __init__(self, serializer=None, deserializer=None, file_pattern=None, nesting_separator=None, encoding_name=None):
+    def __init__(self, serializer=None, deserializer=None, file_pattern=None, nesting_separator=None, encoding_name=None, json_node_reference=None, json_path_definition=None):
         super(JsonFormat, self).__init__(serializer=serializer, deserializer=deserializer)
         self.file_pattern = file_pattern
         self.nesting_separator = nesting_separator
         self.encoding_name = encoding_name
+        self.json_node_reference = json_node_reference
+        self.json_path_definition = json_path_definition
         self.type = 'JsonFormat'

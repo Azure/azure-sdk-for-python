@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .dataset_compression import DatasetCompression
 
 
-class DatasetPartitionValue(Model):
-    """The value of a partition.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetDateTimePartitionValue
+class DatasetZipDeflateCompression(DatasetCompression):
+    """The ZipDeflate compression method used on a dataset.
 
     :param type: Constant filled by server.
     :type type: str
+    :param level: The ZipDeflate compression level. Possible values include:
+     'Optimal', 'Fastest'
+    :type level: str or ~azure.mgmt.datafactory.models.DatasetCompressionLevel
     """
 
     _validation = {
@@ -28,11 +28,10 @@ class DatasetPartitionValue(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'DateTime': 'DatasetDateTimePartitionValue'}
-    }
-
-    def __init__(self):
-        self.type = None
+    def __init__(self, level=None):
+        super(DatasetZipDeflateCompression, self).__init__()
+        self.level = level
+        self.type = 'ZipDeflate'

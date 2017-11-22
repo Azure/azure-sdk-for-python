@@ -39,10 +39,6 @@ class AzureDataLakeStoreDataset(Dataset):
     :param compression: The data compression method used for the item(s) in
      the Azure Data Lake Store.
     :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
-    :param partitioned_by: Specify a dynamic path and filename for time series
-     data.
-    :type partitioned_by:
-     list[~azure.mgmt.datafactory.models.DatasetPartition]
     """
 
     _validation = {
@@ -61,14 +57,12 @@ class AzureDataLakeStoreDataset(Dataset):
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
-        'partitioned_by': {'key': 'typeProperties.partitionedBy', 'type': '[DatasetPartition]'},
     }
 
-    def __init__(self, linked_service_name, folder_path, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None, partitioned_by=None):
+    def __init__(self, linked_service_name, folder_path, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None):
         super(AzureDataLakeStoreDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
         self.compression = compression
-        self.partitioned_by = partitioned_by
         self.type = 'AzureDataLakeStoreFile'

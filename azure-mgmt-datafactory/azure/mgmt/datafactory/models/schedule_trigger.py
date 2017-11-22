@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .trigger import Trigger
+from .multiple_pipeline_trigger import MultiplePipelineTrigger
 
 
-class ScheduleTrigger(Trigger):
+class ScheduleTrigger(MultiplePipelineTrigger):
     """Trigger that creates pipeline runs periodically, on schedule.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,9 +20,6 @@ class ScheduleTrigger(Trigger):
 
     :param description: Trigger description.
     :type description: str
-    :param pipelines: Pipelines that need to be started.
-    :type pipelines:
-     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :ivar runtime_state: Indicates if trigger is running or not. Updated when
      Start/Stop APIs are called on the Trigger. Possible values include:
      'Started', 'Stopped', 'Disabled'
@@ -30,6 +27,9 @@ class ScheduleTrigger(Trigger):
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :param type: Constant filled by server.
     :type type: str
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines:
+     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :param recurrence: Recurrence schedule configuration.
     :type recurrence: ~azure.mgmt.datafactory.models.ScheduleTriggerRecurrence
     """
@@ -41,9 +41,9 @@ class ScheduleTrigger(Trigger):
 
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
-        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'recurrence': {'key': 'typeProperties.recurrence', 'type': 'ScheduleTriggerRecurrence'},
     }
 

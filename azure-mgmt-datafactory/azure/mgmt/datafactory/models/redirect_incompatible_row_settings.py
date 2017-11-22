@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class RedirectIncompatibleRowSettings(Model):
     """Redirect incompatible row settings.
 
-    :param linked_service_name: Name of the Azure Storage or Storage SAS
-     linked service used for redirecting incompatible row. Must be specified if
-     redirectIncompatibleRowSettings is specified. Type: string (or Expression
-     with resultType string).
+    :param linked_service_name: Name of the Azure Storage, Storage SAS, or
+     Azure Data Lake Store linked service used for redirecting incompatible
+     row. Must be specified if redirectIncompatibleRowSettings is specified.
+     Type: string (or Expression with resultType string).
     :type linked_service_name: object
-    :param path: The path to storage for storing the redirect incompatible row
-     data Type: string (or Expression with resultType string).
+    :param path: The path for storing the redirect incompatible row data.
+     Type: string (or Expression with resultType string).
     :type path: object
     """
 
