@@ -4,7 +4,8 @@
 # -----------------------------------------------------------------------------------
 
 import json
-from eventhubsprocessor.lease import Lease
+from eventprocessorhost.lease import Lease
+
 class AzureBlobLease(Lease):
     """
     Azure Blob Lease

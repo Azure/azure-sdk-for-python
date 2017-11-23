@@ -7,7 +7,7 @@ import logging
 import asyncio
 from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
-from eventhubsprocessor.partition_pump import PartitionPump
+from eventprocessorhost.partition_pump import PartitionPump
 
 class EventHubPartitionPump(PartitionPump):
     """

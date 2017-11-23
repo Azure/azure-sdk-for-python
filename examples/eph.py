@@ -11,9 +11,9 @@ import urllib
 import hmac
 import hashlib
 import base64
-from eventhubsprocessor.abstract_event_processor import AbstractEventProcessor
-from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-from eventhubsprocessor.eph import EventProcessorHost
+from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
+from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventprocessorhost.eph import EventProcessorHost
 
 class EventProcessor(AbstractEventProcessor):
     """

@@ -10,8 +10,8 @@ import concurrent.futures
 from collections import Counter
 from bs4 import BeautifulSoup
 import requests
-from eventhubsprocessor.eh_partition_pump import EventHubPartitionPump
-from eventhubsprocessor.cancellation_token import CancellationToken
+from eventprocessorhost.eh_partition_pump import EventHubPartitionPump
+from eventprocessorhost.cancellation_token import CancellationToken
 
 class PartitionManager:
     """
