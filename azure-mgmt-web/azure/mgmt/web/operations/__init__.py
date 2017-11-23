@@ -14,6 +14,7 @@ from .domains_operations import DomainsOperations
 from .top_level_domains_operations import TopLevelDomainsOperations
 from .certificates_operations import CertificatesOperations
 from .deleted_web_apps_operations import DeletedWebAppsOperations
+from .diagnostics_operations import DiagnosticsOperations
 from .provider_operations import ProviderOperations
 from .recommendations_operations import RecommendationsOperations
 from .web_apps_operations import WebAppsOperations
@@ -26,6 +27,7 @@ __all__ = [
     'TopLevelDomainsOperations',
     'CertificatesOperations',
     'DeletedWebAppsOperations',
+    'DiagnosticsOperations',
     'ProviderOperations',
     'RecommendationsOperations',
     'WebAppsOperations',

@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RequestsBasedTrigger(Model):
-    """Trigger based on total requests.
-
-    :param count: Request Count.
-    :type count: int
-    :param time_interval: Time interval.
-    :type time_interval: str
+class DetectorDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DetectorDefinition <azure.mgmt.web.models.DetectorDefinition>` object
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DetectorDefinition]'}
     }
 
-    def __init__(self, count=None, time_interval=None):
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, *args, **kwargs):
+
+        super(DetectorDefinitionPaged, self).__init__(*args, **kwargs)
