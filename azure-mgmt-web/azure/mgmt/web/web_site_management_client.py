@@ -22,6 +22,7 @@ from .operations.domains_operations import DomainsOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
 from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
+from .operations.diagnostics_operations import DiagnosticsOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.web_apps_operations import WebAppsOperations
@@ -79,6 +80,8 @@ class WebSiteManagementClient(object):
     :vartype certificates: azure.mgmt.web.operations.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebApps operations
     :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
+    :ivar diagnostics: Diagnostics operations
+    :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
     :ivar provider: Provider operations
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
@@ -118,6 +121,8 @@ class WebSiteManagementClient(object):
         self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostics = DiagnosticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -447,7 +452,9 @@ class WebSiteManagementClient(object):
         :param name: Resource name to verify.
         :type name: str
         :param type: Resource type used for verification. Possible values
-         include: 'Site', 'Slot', 'HostingEnvironment'
+         include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
+         'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
+         'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
         :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name.
         :type is_fqdn: bool

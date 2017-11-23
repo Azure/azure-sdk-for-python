@@ -27,6 +27,8 @@ class AppServiceCertificateOrdersOperations(object):
     :ivar api_version: API Version. Constant value: "2015-08-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

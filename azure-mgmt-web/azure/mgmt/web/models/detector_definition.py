@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class CertificateOrderAction(ProxyOnlyResource):
-    """Certificate order action.
+class DetectorDefinition(ProxyOnlyResource):
+    """Class representing detector definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,22 +26,24 @@ class CertificateOrderAction(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param certificate_order_action_type: Action type. Possible values
-     include: 'CertificateIssued', 'CertificateOrderCanceled',
-     'CertificateOrderCreated', 'CertificateRevoked',
-     'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
-     'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
-     'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
-    :type certificate_order_action_type: str or
-     ~azure.mgmt.web.models.CertificateOrderActionType
-    :param created_at: Time at which the certificate action was performed.
-    :type created_at: datetime
+    :ivar display_name: Display name of the detector
+    :vartype display_name: str
+    :ivar description: Description of the detector
+    :vartype description: str
+    :ivar rank: Detector Rank
+    :vartype rank: float
+    :ivar is_enabled: Flag representing whether detector is enabled or not.
+    :vartype is_enabled: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'rank': {'readonly': True},
+        'is_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -49,11 +51,15 @@ class CertificateOrderAction(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'certificate_order_action_type': {'key': 'properties.type', 'type': 'CertificateOrderActionType'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'rank': {'key': 'properties.rank', 'type': 'float'},
+        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, certificate_order_action_type=None, created_at=None):
-        super(CertificateOrderAction, self).__init__(kind=kind)
-        self.certificate_order_action_type = certificate_order_action_type
-        self.created_at = created_at
+    def __init__(self, kind=None):
+        super(DetectorDefinition, self).__init__(kind=kind)
+        self.display_name = None
+        self.description = None
+        self.rank = None
+        self.is_enabled = None
