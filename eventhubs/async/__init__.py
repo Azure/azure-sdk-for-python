@@ -37,6 +37,7 @@ class AsyncReceiver(Receiver):
         """
         Called when the receiver is stopped.
         """
+        self.link = None
         while not self.messages.empty():
             self.messages.get()
 
@@ -90,7 +91,7 @@ class AsyncReceiver(Receiver):
             await waiter
 
     def _check_flow(self):
-        if self.delivered >= 100:
+        if self.delivered >= 100 and self.link:
             self.link.flow(self.delivered)
             self.credit += self.delivered
             self.delivered = 0

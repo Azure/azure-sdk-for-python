@@ -19,9 +19,9 @@ from eventhubs.async import AsyncReceiver
 # pylint: disable=C0103
 # pylint: disable=C0111
 
-async def pump(recv):
+async def pump(recv, count):
     total = 0
-    while True:
+    while count < 0 or total < count:
         try:
             batch = await asyncio.wait_for(recv.receive(100), 60.0)
             size = len(batch)
@@ -47,16 +47,16 @@ try:
     CONSUMER_GROUP = "$default"
     OFFSET = Offset("-1")
 
+    logging.info("starting loop")
+    loop = asyncio.get_event_loop()
     receiver = AsyncReceiver()
     client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
         .subscribe(receiver, CONSUMER_GROUP, "0", OFFSET) \
         .run_daemon()
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(pump(receiver))
-    loop.close()
-
+    loop.run_until_complete(pump(receiver, 1000))
     client.stop()
+    loop.close()
 
 except KeyboardInterrupt:
     pass

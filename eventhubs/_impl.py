@@ -19,6 +19,7 @@ from proton import DELEGATED, generate_uuid
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
+from proton.reactor import ApplicationEvent
 
 try:
     import Queue
@@ -43,7 +44,6 @@ class ClientHandler(Handler):
         if self.link:
             self.link.close()
             self.link = None
-        self.client = None
 
     def _get_link_name(self):
         return "%s:%d" % (self.name, self.iteration)
@@ -75,7 +75,7 @@ class ClientHandler(Handler):
                           connection.remote_container)
         if condition and condition.name in self.fatal_conditions:
             connection.close()
-        elif link.__eq__(self.link):
+        elif link == self.link:
             self.link = None
             event.reactor.schedule(2.0, self)
 
@@ -123,27 +123,28 @@ class ReceiverHandler(ClientHandler):
                      self.source)
 
 class SenderHandler(ClientHandler):
-    class MessageTransfer(object):
-        def __init__(self, message, handler):
+    class DeliveryEvent(ApplicationEvent):
+        def __init__(self, handler, message, callback, state):
+            super(SenderHandler.DeliveryEvent, self).__init__("send", subject=handler)
             self.message = message
-            self.handler = handler
-            self.outcome = None
+            self.callback = callback
+            self.state = state
 
         def complete(self, outcome):
-            if self.handler:
-                self.handler.on_outcome(outcome)
+            self.callback(self.state, outcome)
 
     def __init__(self, client, sender, target):
         super(SenderHandler, self).__init__("send", client)
         self.sender = sender
         self.target = target
         self.handlers = [OutgoingMessageHandler(True, self)]
-        self.transfers = Queue.Queue()
+        self.queue = Queue.Queue()
         self.deliveries = {}
 
-    def send(self, message, handler=None):
-        transfer = SenderHandler.MessageTransfer(message, handler)
-        self.client.injector.trigger(self.on_transfer, transfer)
+    def send(self, message, callback, state):
+        event = SenderHandler.DeliveryEvent(self, message, callback, state)
+        self.queue.put(event)
+        self.client.injector.trigger(event)
 
     def on_start(self):
         self.link = self.client.container.create_sender(
@@ -152,6 +153,9 @@ class SenderHandler(ClientHandler):
             name=self._get_link_name(),
             handler=self)
         self.sender.on_start(self.link)
+
+    def on_stop(self):
+        pass
 
     def on_link_local_open(self, event):
         logging.info("%s: link local open. name=%s target=%s",
@@ -164,23 +168,19 @@ class SenderHandler(ClientHandler):
                      event.connection.container,
                      event.link.name)
 
-    def on_transfer(self, transfer):
-        self.transfers.put(transfer)
-        self.on_sendable(None)
-
     def on_sendable(self, event):
-        while self.link.credit and not self.transfers.empty():
-            transfer = self.transfers.get(False)
-            delivery = transfer.message.send(self.link)
-            self.deliveries[delivery] = transfer
+        while self.link.credit and not self.queue.empty():
+            dlv_event = self.queue.get(False)
+            delivery = dlv_event.message.send(self.link)
+            self.deliveries[delivery] = dlv_event
 
     def on_delivery(self, event):
-        logging.info("on_delivery")
         dlv = event.delivery
+        logging.debug("%s: on_delivery %s", event.connection.container, dlv.tag)
         if dlv.updated:
-            transfer = self.deliveries.pop(dlv, None)
-            if transfer:
-                transfer.complete(dlv.remote_state)
+            dlv_event = self.deliveries.pop(dlv, None)
+            if dlv_event:
+                dlv_event.complete(dlv.remote_state)
             dlv.settle()
 
 class SessionPolicy(object):

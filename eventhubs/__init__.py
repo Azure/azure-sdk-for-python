@@ -71,9 +71,11 @@ class EventHubClient(object):
         """
         if self.daemon is not None:
             logging.info("%s: stopping daemon", self.container_id)
-            self.injector.trigger(ApplicationEvent("stop_daemon"))
+            self.injector.trigger(ApplicationEvent("stop_container"))
             self.injector.close()
             self.daemon.join()
+        else:
+            self.on_stop_container(None)
 
     def subscribe(self, receiver, consumer_group, partition, offset=None):
         """
@@ -82,7 +84,7 @@ class EventHubClient(object):
         @param receiver: receiver to process the received event data. It must
         override the 'on_event_data' method to handle incoming events.
 
-        @param consumer_group: the consumer group the receiver belongs to.
+        @param consumer_group: the consumer group to which the receiver belongs.
 
         @param partition: the id of the event hub partition.
 
@@ -117,8 +119,6 @@ class EventHubClient(object):
     def on_reactor_init(self, event):
         """ Handles reactor init event. """
         logging.info("%s: on_reactor_init", self.container_id)
-        if event:
-            self.container.selectable(self.injector)
         if not self.connection:
             logging.info("%s: client starts address=%s", self.container_id, self.address)
             properties = {}
@@ -207,17 +207,22 @@ class EventHubClient(object):
         if self.session_policy is None:
             self.on_reactor_init(None)
 
-    def on_stop_daemon(self, event):
-        """ Handles on_stop_daemon event. """
-        logging.error("%s: on_stop_daemon", self.container_id)
+    def on_stop_container(self, event):
+        """ Handles on_stop_container event. """
+        logging.info("%s: on_stop_container", self.container_id)
         self._close_clients()
         self._close_session()
         self._close_connection()
+
+    def on_send(self, event):
+        """ Called when messages are available to send for a sender. """
+        event.subject.on_sendable(None)
 
     def _create_container(self, address, **kwargs):
         container = Container(self, **kwargs)
         container.allow_insecure_mechs = True
         container.allowed_mechs = 'PLAIN MSCBS'
+        container.selectable(self.injector)
         return container
 
     def _close_connection(self):
@@ -249,17 +254,17 @@ class Sender(object):
         if self._handler is None:
             raise EventHubError("Call publish to register the sender before using it.")
         self._event.clear()
-        self._handler.send(event_data.message, self)
+        self._handler.send(event_data.message, self.on_outcome, self)
         if not self._event.wait(timeout):
-            raise EventHubError("timeout", timeout)
+            raise EventHubError("Send operation timed out", timeout)
         if self._outcome != Delivery.ACCEPTED:
-            raise EventHubError("error", self._outcome)
+            raise EventHubError("Send operation failed", self._outcome)
 
-    def handler(self, container, target):
+    def handler(self, client, target):
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = SenderHandler(container, self, target)
+        self._handler = SenderHandler(client, self, target)
         return self._handler
 
     def on_start(self, link):
@@ -268,7 +273,7 @@ class Sender(object):
         """
         pass
 
-    def on_outcome(self, outcome):
+    def on_outcome(self, state, outcome):
         """
         Called when the outcome is received for a delivery.
         """
