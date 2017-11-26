@@ -34,13 +34,13 @@ class PartitionManager:
         if not self.partition_ids:
             try:
                 headers = {"Content-Type": "application/json;type=entry;charset=utf-8",
-                           "Authorization": self.host.eh_rest_auth["token"],
-                           "Host": "{}.servicebus.windows.net".format(self.host.eh_rest_auth["sb_name"])
+                           "Authorization": self.host.eh_config.rest_token,
+                           "Host": "{}.servicebus.windows.net".format(self.host.eh_config.sb_name)
                            }
 
                 res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60& \
-                                    api-version=2014-01'.format(self.host.eh_rest_auth["sb_name"],
-                                                                self.host.eh_rest_auth["eh_name"]),
+                                    api-version=2014-01'.format(self.host.eh_config.sb_name,
+                                                                self.host.eh_config.eh_name),
                                    headers=headers)
                 soup = BeautifulSoup(res.text, "lxml-xml") # process xml response
                 self.partition_ids = [pid.text for pid in soup.find("PartitionIds")]

@@ -58,7 +58,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         self.storage_client = BlockBlobService(account_name=self.storage_account_name,
                                                account_key=self.storage_account_key,
                                                request_session=self.request_session)
-        self.consumer_group_directory = self.storage_blob_prefix + self.host.consumer_group_name
+        self.consumer_group_directory = self.storage_blob_prefix + self.host.eh_config.consumer_group
 
     # Checkpoint Managment Methods
 

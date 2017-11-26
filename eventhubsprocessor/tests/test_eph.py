@@ -9,6 +9,7 @@ import asyncio
 import sys
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
+from eventhubsprocessor.eh_config import EventHubConfig
 from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
 from eventhubsprocessor.eph import EventProcessorHost
 
@@ -20,17 +21,14 @@ class EventProcessorHostTestCase(unittest.TestCase):
         Simulate partition pump
         """
         super(EventProcessorHostTestCase, self).__init__(*args, **kwargs)
-        self._credentials = MockCredentials()
-        self._consumer_group = "$Default"
-        self._storage_clm = AzureStorageCheckpointLeaseManager(self._credentials.storage_account,
-                                                               self._credentials.storage_key,
-                                                               self._credentials.lease_container)
-
+        _credentials = MockCredentials()
+        self._storage_clm = AzureStorageCheckpointLeaseManager(_credentials.storage_account,
+                                                               _credentials.storage_key,
+                                                               _credentials.lease_container)
         self._loop = asyncio.get_event_loop()
-
-        self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
-                                        self._consumer_group, storage_manager=self._storage_clm,
-                                        eh_rest_auth=self._credentials.eh_auth, loop = self._loop)
+        eh_config = EventHubConfig(_credentials.sb_name, _credentials.eh_name, _credentials.eh_policy, 
+                                   _credentials.eh_key, consumer_group='$default')
+        self._host = EventProcessorHost(MockEventProcessor, eh_config, self._storage_clm, loop=self._loop)
         logging.basicConfig(filename='eph.log', level=logging.INFO,
                             format='%(asctime)s:%(msecs)03d, \'%(message)s\' ',
                             datefmt='%Y-%m-%d:%H:%M:%S')

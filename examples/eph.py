@@ -6,13 +6,9 @@
 import logging
 import asyncio
 import sys
-import time
-import urllib
-import hmac
-import hashlib
-import base64
 from eventhubsprocessor.abstract_event_processor import AbstractEventProcessor
 from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventhubsprocessor.eh_config import EventHubConfig
 from eventhubsprocessor.eph import EventProcessorHost
 
 class EventProcessor(AbstractEventProcessor):
@@ -56,24 +52,6 @@ class EventProcessor(AbstractEventProcessor):
         """
         logging.error("Event Processor Error %s ", repr(error))
 
-def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
-    """
-    Returns an auth token dictionary for making calls to eventhub
-    REST API.
-    """
-    uri = urllib.parse.quote_plus("https://{}.servicebus.windows.net/{}" \
-                                  .format(sb_name, eh_name))
-    sas = sas_token.encode('utf-8')
-    expiry = str(int(time.time() + 10000))
-    string_to_sign = ('{}\n{}'.format(uri,expiry)).encode('utf-8')
-    signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
-    signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
-    return  {"sb_name": sb_name,
-             "eh_name": eh_name,
-             "token":'SharedAccessSignature sr={}&sig={}&se={}&skn={}' \
-                     .format(uri, signature, expiry, key_name)
-            }
-
 
 try:
     # Configure Logging
@@ -88,30 +66,16 @@ try:
     LEASE_CONTAINER_NAME = "leases"
 
     # Eventhub client address and consumer group
-    ADDRESS = ("amqps://"
-               "<URL-encoded-SAS-policy>"
-               ":"
-               "<URL-encoded-SAS-key>"
-               "@"
-               "<mynamespace>.servicebus.windows.net"
-               "/"
-               "myeventhub")
 
-    CONSUMER_GROUP = "$default"
-
-    # Generate Auth credentials for EH Rest API (Used to list of partitions)
-    EH_REST_CREDENTIALS = generate_eh_rest_credentials('<mynamespace>',
-                                                       '<myeventhub>',
-                                                       '<URL-encoded-SAS-policy>',
-                                                       '<URL-encoded-SAS-key>')
+    EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<URL-encoded-SAS-policy>', 
+                               '<URL-encoded-SAS-key>', consumer_group="$default")
 
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
 
     LOOP = asyncio.get_event_loop()
 
-    HOST = EventProcessorHost(EventProcessor, ADDRESS, CONSUMER_GROUP,
-                              STORAGE_MANAGER, EH_REST_CREDENTIALS, loop=LOOP)
+    HOST = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER, loop=LOOP)
 
     LOOP.run_until_complete(HOST.open_async())
     LOOP.run_until_complete(HOST.close_async())

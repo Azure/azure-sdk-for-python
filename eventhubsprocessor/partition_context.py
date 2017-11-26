@@ -39,7 +39,7 @@ class PartitionContext:
         if not starting_checkpoint:
             # No checkpoint was ever stored. Use the initialOffsetProvider instead
             # defaults to "-1"
-            self.offset = self.host.eh_options.initial_offset_provider
+            self.offset = self.host.eph_options.initial_offset_provider
             self.sequence_number = -1
         else:
             self.offset = starting_checkpoint.offset
