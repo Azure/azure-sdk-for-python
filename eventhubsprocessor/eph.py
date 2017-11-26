@@ -10,10 +10,11 @@ class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.
     Takes in event hub a event processor class definition a eh_config object
-    As well as an optional storage manager
+    As well as a storage manager and an optional event_processor params (ep_params)
     """
-    def __init__(self, event_processor, eh_config, storage_manager=None, eph_options=None, loop=None):
+    def __init__(self, event_processor, eh_config, storage_manager, ep_params=None, eph_options=None, loop=None):
         self.event_processor = event_processor
+        self.event_processor_params = ep_params
         self.eh_config = eh_config
         self.guid = str(uuid.uuid4())
         self.host_name = "host" + str(self.guid)

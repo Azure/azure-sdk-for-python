@@ -15,7 +15,7 @@ class EventProcessor(AbstractEventProcessor):
     """
     Example Implmentation of AbstractEventProcessor
     """
-    def __init__(self):
+    def __init__(self, params=None):
         """
         Init Event processor
         """
@@ -65,17 +65,15 @@ try:
     STORAGE_KEY = "sas encoded storage key"
     LEASE_CONTAINER_NAME = "leases"
 
-    # Eventhub client address and consumer group
-
+    # Eventhub config and storage manager 
     EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<URL-encoded-SAS-policy>', 
                                '<URL-encoded-SAS-key>', consumer_group="$default")
-
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
-
+    #Event loop and host
     LOOP = asyncio.get_event_loop()
-
-    HOST = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER, loop=LOOP)
+    HOST = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
+                              ep_params=["param1","param2"], loop=LOOP)
 
     LOOP.run_until_complete(HOST.open_async())
     LOOP.run_until_complete(HOST.close_async())

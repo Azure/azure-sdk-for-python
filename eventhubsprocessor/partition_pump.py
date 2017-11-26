@@ -50,7 +50,7 @@ class PartitionPump():
                                                   self.host.eh_config.client_address,
                                                   self.host.eh_config.consumer_group)
         self.partition_context.lease = self.lease
-        self.processor = self.host.event_processor()
+        self.processor = self.host.event_processor(self.host.event_processor_params)
         try:
             await self.processor.open_async(self.partition_context)
         except Exception as err:
