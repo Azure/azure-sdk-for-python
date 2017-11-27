@@ -204,6 +204,13 @@
     ],
     "service_name": "Machine Learning Compute"
   },
+  "azure-mgmt-marketplaceordering": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.marketplaceordering"
+    ],
+    "service_name": "Marketplace Agreements API"
+  },
   "azure-mgmt-media": {
     "category ": "Management",
     "namespaces": [
