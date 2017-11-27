@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DeletedWebAppsOperations(object):
-    """DeletedWebAppsOperations operations.
+class CertificateRegistrationProviderOperations(object):
+    """CertificateRegistrationProviderOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: API Version. Constant value: "2016-03-01".
+    :ivar api_version: API Version. Constant value: "2015-08-01".
     """
 
     models = models
@@ -33,35 +33,33 @@ class DeletedWebAppsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2015-08-01"
 
         self.config = config
 
-    def list(
+    def list_operations(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get all deleted apps for a subscription.
+        """Implements Csm operations Api to exposes the list of available Csm Apis
+        under the resource provider.
 
-        Get all deleted apps for a subscription.
+        Implements Csm operations Api to exposes the list of available Csm Apis
+        under the resource provider.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DeletedSite
+        :return: An iterator like instance of CsmOperationDescription
         :rtype:
-         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
+         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deletedSites'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = '/providers/Microsoft.CertificateRegistration/operations'
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,11 +92,11 @@ class DeletedWebAppsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DeletedSitePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.CsmOperationDescriptionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DeletedSitePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.CsmOperationDescriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

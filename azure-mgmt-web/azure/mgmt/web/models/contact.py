@@ -32,7 +32,7 @@ class Contact(Model):
     :type name_last: str
     :param name_middle: Middle name.
     :type name_middle: str
-    :param organization: Organization.
+    :param organization: Organization contact belongs to.
     :type organization: str
     :param phone: Phone number.
     :type phone: str

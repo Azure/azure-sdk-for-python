@@ -12,8 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class CertificateOrderAction(ProxyOnlyResource):
-    """Certificate order action.
+class AnalysisDefinition(ProxyOnlyResource):
+    """Definition of Analysis.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,22 +26,15 @@ class CertificateOrderAction(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param certificate_order_action_type: Action type. Possible values
-     include: 'CertificateIssued', 'CertificateOrderCanceled',
-     'CertificateOrderCreated', 'CertificateRevoked',
-     'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
-     'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
-     'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
-    :type certificate_order_action_type: str or
-     ~azure.mgmt.web.models.CertificateOrderActionType
-    :param created_at: Time at which the certificate action was performed.
-    :type created_at: datetime
+    :ivar description: Description of the Analysis
+    :vartype description: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
@@ -49,11 +42,9 @@ class CertificateOrderAction(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'certificate_order_action_type': {'key': 'properties.type', 'type': 'CertificateOrderActionType'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, certificate_order_action_type=None, created_at=None):
-        super(CertificateOrderAction, self).__init__(kind=kind)
-        self.certificate_order_action_type = certificate_order_action_type
-        self.created_at = created_at
+    def __init__(self, kind=None):
+        super(AnalysisDefinition, self).__init__(kind=kind)
+        self.description = None
