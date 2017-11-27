@@ -18,6 +18,9 @@ class DynamicsSink(CopySink):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
     :type write_batch_size: object
@@ -49,6 +52,7 @@ class DynamicsSink(CopySink):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
@@ -60,7 +64,7 @@ class DynamicsSink(CopySink):
 
     write_behavior = "Upsert"
 
-    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, ignore_null_values=None):
-        super(DynamicsSink, self).__init__(write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, ignore_null_values=None):
+        super(DynamicsSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
         self.ignore_null_values = ignore_null_values
         self.type = 'DynamicsSink'

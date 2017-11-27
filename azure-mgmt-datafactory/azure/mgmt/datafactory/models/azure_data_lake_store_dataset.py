@@ -15,6 +15,9 @@ from .dataset import Dataset
 class AzureDataLakeStoreDataset(Dataset):
     """Azure Data Lake Store dataset.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -39,10 +42,6 @@ class AzureDataLakeStoreDataset(Dataset):
     :param compression: The data compression method used for the item(s) in
      the Azure Data Lake Store.
     :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
-    :param partitioned_by: Specify a dynamic path and filename for time series
-     data.
-    :type partitioned_by:
-     list[~azure.mgmt.datafactory.models.DatasetPartition]
     """
 
     _validation = {
@@ -52,6 +51,7 @@ class AzureDataLakeStoreDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -61,14 +61,12 @@ class AzureDataLakeStoreDataset(Dataset):
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
-        'partitioned_by': {'key': 'typeProperties.partitionedBy', 'type': '[DatasetPartition]'},
     }
 
-    def __init__(self, linked_service_name, folder_path, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None, partitioned_by=None):
-        super(AzureDataLakeStoreDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, folder_path, additional_properties=None, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None):
+        super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
         self.compression = compression
-        self.partitioned_by = partitioned_by
         self.type = 'AzureDataLakeStoreFile'

@@ -22,6 +22,9 @@ class IntegrationRuntimeStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
@@ -37,6 +40,7 @@ class IntegrationRuntimeStatus(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -45,6 +49,7 @@ class IntegrationRuntimeStatus(Model):
         'type': {'SelfHosted': 'SelfHostedIntegrationRuntimeStatus', 'Managed': 'ManagedIntegrationRuntimeStatus'}
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.state = None
         self.type = None

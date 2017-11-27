@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class AmazonRedshiftLinkedService(LinkedService):
     """Linked service for Amazon Redshift.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -50,6 +53,7 @@ class AmazonRedshiftLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -61,8 +65,8 @@ class AmazonRedshiftLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, connect_via=None, description=None, username=None, password=None, port=None, encrypted_credential=None):
-        super(AmazonRedshiftLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, username=None, password=None, port=None, encrypted_credential=None):
+        super(AmazonRedshiftLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.server = server
         self.username = username
         self.password = password

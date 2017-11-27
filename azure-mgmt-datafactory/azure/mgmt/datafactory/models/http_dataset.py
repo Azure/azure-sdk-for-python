@@ -15,6 +15,9 @@ from .dataset import Dataset
 class HttpDataset(Dataset):
     """A file in an HTTP web server.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -44,8 +47,6 @@ class HttpDataset(Dataset):
      request-header-name-n:request-header-value-n Type: string (or Expression
      with resultType string).
     :type additional_headers: object
-    :param partitioned_by: The HTTP method for the HTTP request.
-    :type partitioned_by: ~azure.mgmt.datafactory.models.DatasetPartition
     :param format: The format of files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used on files.
@@ -58,6 +59,7 @@ class HttpDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -67,18 +69,16 @@ class HttpDataset(Dataset):
         'request_method': {'key': 'typeProperties.requestMethod', 'type': 'object'},
         'request_body': {'key': 'typeProperties.requestBody', 'type': 'object'},
         'additional_headers': {'key': 'typeProperties.additionalHeaders', 'type': 'object'},
-        'partitioned_by': {'key': 'typeProperties.partitionedBy', 'type': 'DatasetPartition'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, description=None, structure=None, parameters=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, partitioned_by=None, format=None, compression=None):
-        super(HttpDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None):
+        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body
         self.additional_headers = additional_headers
-        self.partitioned_by = partitioned_by
         self.format = format
         self.compression = compression
         self.type = 'HttpFile'

@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class AzureStorageLinkedService(LinkedService):
     """The storage account linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -39,6 +42,7 @@ class AzureStorageLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -47,8 +51,8 @@ class AzureStorageLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connect_via=None, description=None, connection_string=None, sas_uri=None, encrypted_credential=None):
-        super(AzureStorageLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, connection_string=None, sas_uri=None, encrypted_credential=None):
+        super(AzureStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.connection_string = connection_string
         self.sas_uri = sas_uri
         self.encrypted_credential = encrypted_credential

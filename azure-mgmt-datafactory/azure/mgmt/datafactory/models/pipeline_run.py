@@ -18,6 +18,9 @@ class PipelineRun(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar run_id: Identifier of a run.
     :vartype run_id: str
     :ivar pipeline_name: The pipeline name.
@@ -56,6 +59,7 @@ class PipelineRun(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'run_id': {'key': 'runId', 'type': 'str'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
@@ -68,7 +72,8 @@ class PipelineRun(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.run_id = None
         self.pipeline_name = None
         self.parameters = None

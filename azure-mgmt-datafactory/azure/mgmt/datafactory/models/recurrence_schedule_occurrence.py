@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class RecurrenceScheduleOccurrence(Model):
     """The recurrence schedule occurence.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
     :type day: str or ~azure.mgmt.datafactory.models.DayOfWeek
@@ -23,10 +26,12 @@ class RecurrenceScheduleOccurrence(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'day': {'key': 'day', 'type': 'DayOfWeek'},
         'occurrence': {'key': 'occurrence', 'type': 'int'},
     }
 
-    def __init__(self, day=None, occurrence=None):
+    def __init__(self, additional_properties=None, day=None, occurrence=None):
+        self.additional_properties = additional_properties
         self.day = day
         self.occurrence = occurrence

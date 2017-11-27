@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class AzureBatchLinkedService(LinkedService):
     """Azure Batch linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -51,6 +54,7 @@ class AzureBatchLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -62,8 +66,8 @@ class AzureBatchLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, account_name, batch_uri, pool_name, linked_service_name, connect_via=None, description=None, access_key=None, encrypted_credential=None):
-        super(AzureBatchLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, account_name, batch_uri, pool_name, linked_service_name, additional_properties=None, connect_via=None, description=None, access_key=None, encrypted_credential=None):
+        super(AzureBatchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.account_name = account_name
         self.access_key = access_key
         self.batch_uri = batch_uri

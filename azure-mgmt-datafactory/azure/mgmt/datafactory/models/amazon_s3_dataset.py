@@ -15,6 +15,9 @@ from .dataset import Dataset
 class AmazonS3Dataset(Dataset):
     """A single Amazon Simple Storage Service (S3) object or a set of S3 objects.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -54,6 +57,7 @@ class AmazonS3Dataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -67,8 +71,8 @@ class AmazonS3Dataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, bucket_name, description=None, structure=None, parameters=None, key=None, prefix=None, version=None, format=None, compression=None):
-        super(AmazonS3Dataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, bucket_name, additional_properties=None, description=None, structure=None, parameters=None, key=None, prefix=None, version=None, format=None, compression=None):
+        super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.bucket_name = bucket_name
         self.key = key
         self.prefix = prefix
