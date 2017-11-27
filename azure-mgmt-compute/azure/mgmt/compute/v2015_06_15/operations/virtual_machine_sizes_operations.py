@@ -26,6 +26,8 @@ class VirtualMachineSizesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2015-06-15".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

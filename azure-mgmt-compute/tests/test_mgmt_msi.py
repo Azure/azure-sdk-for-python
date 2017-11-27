@@ -10,15 +10,10 @@ import uuid
 
 from collections import namedtuple
 
-import azure.mgmt.compute.models
+import azure.mgmt.compute
 import azure.mgmt.network.models
 import azure.mgmt.authorization.models
 
-from azure.mgmt.compute.models import (
-    InstanceViewTypes,
-    VirtualMachineIdentity,
-    ResourceIdentityType,
-)
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,
@@ -40,7 +35,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
             )
             self.authorization_client = self.create_mgmt_client(
                 azure.mgmt.authorization.AuthorizationManagementClient
-            )            
+            )
 
     def get_resource_names(self, base):
         return ComputeResourceNames(
@@ -53,6 +48,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_create_msi_enabled_vm(self, resource_group, location):
+        virtual_machines_models = self.compute_client.virtual_machines.models
 
         names = self.get_resource_names('pyvmir')
         if not self.is_playback():
@@ -63,8 +59,8 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
                       "/resourceGroups/test_mgmt_compute_test_virtual_machines_operations122014cf"
                       "/providers/Microsoft.Network/networkInterfaces/pyvmirnic122014cf")
 
-        storage_profile = azure.mgmt.compute.models.StorageProfile(
-            image_reference = azure.mgmt.compute.models.ImageReference(
+        storage_profile = virtual_machines_models.StorageProfile(
+            image_reference = virtual_machines_models.ImageReference(
                 publisher='Canonical',
                 offer='UbuntuServer',
                 sku='16.04.0-LTS',
@@ -72,15 +68,15 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
             )
         )
 
-        params_create = azure.mgmt.compute.models.VirtualMachine(
+        params_create = virtual_machines_models.VirtualMachine(
             location=location,
             os_profile=self.get_os_profile(resource_group.name),
             hardware_profile=self.get_hardware_profile(),
             network_profile=self.get_network_profile(nic_id),
             storage_profile=storage_profile,
             # Activate MSI on that VM
-            identity=VirtualMachineIdentity(
-                type=ResourceIdentityType.system_assigned
+            identity=virtual_machines_models.VirtualMachineIdentity(
+                type=virtual_machines_models.ResourceIdentityType.system_assigned
             )
         )
 
@@ -121,7 +117,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         # Adds the MSI extension
         ext_type_name = 'ManagedIdentityExtensionForLinux'
         ext_name = vm_result.name + ext_type_name
-        params_create = azure.mgmt.compute.models.VirtualMachineExtension(
+        params_create = virtual_machines_models.VirtualMachineExtension(
             location=location,
             publisher='Microsoft.ManagedIdentity',
             virtual_machine_extension_type=ext_type_name,
@@ -197,21 +193,24 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         return result_create.id
 
     def get_os_profile(self, resource_group_name):
-       return azure.mgmt.compute.models.OSProfile(
-           admin_username='Foo12',
-           admin_password='BaR@123' + resource_group_name,
-           computer_name='test',
-       )
+        virtual_machines_models = self.compute_client.virtual_machines.models
+        return virtual_machines_models.OSProfile(
+            admin_username='Foo12',
+            admin_password='BaR@123' + resource_group_name,
+            computer_name='test',
+        )
 
     def get_hardware_profile(self):
-        return azure.mgmt.compute.models.HardwareProfile(
-            vm_size=azure.mgmt.compute.models.VirtualMachineSizeTypes.standard_a0
+        virtual_machines_models = self.compute_client.virtual_machines.models
+        return virtual_machines_models.HardwareProfile(
+            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_a0
         )
 
     def get_network_profile(self, network_interface_id):
-        return azure.mgmt.compute.models.NetworkProfile(
+        virtual_machines_models = self.compute_client.virtual_machines.models
+        return virtual_machines_models.NetworkProfile(
             network_interfaces=[
-                azure.mgmt.compute.models.NetworkInterfaceReference(
+                virtual_machines_models.NetworkInterfaceReference(
                     id=network_interface_id,
                 ),
             ],

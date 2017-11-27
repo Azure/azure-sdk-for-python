@@ -26,6 +26,8 @@ class UsageOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
