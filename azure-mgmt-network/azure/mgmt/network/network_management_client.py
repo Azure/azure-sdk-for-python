@@ -50,7 +50,15 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
 
 class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+    """Network Client
+
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation 
+    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
@@ -58,25 +66,28 @@ class NetworkManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms part
-     of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A dict using operation group name to API version.
+    :type profile: dict[str, str]
     """
 
     DEFAULT_API_VERSION='2017-10-01'
+    DEFAULT_PROFILE = {}
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
+    def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
         self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
         self.api_version = api_version
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self.profile = profile
 
     def check_dns_name_availability(
             self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
@@ -131,6 +142,10 @@ class NetworkManagementClient(object):
 ############ Generated from here ############
 
     @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+
+    @classmethod
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
@@ -168,7 +183,7 @@ class NetworkManagementClient(object):
             from .v2017_10_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def application_gateways(self):
         """Instance depends on the API version:
@@ -182,25 +197,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_09_01.operations.ApplicationGatewaysOperations>`
            * 2017-10-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2017_10_01.operations.ApplicationGatewaysOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('application_gateways', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def application_security_groups(self):
@@ -209,13 +225,14 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2017_09_01.operations.ApplicationSecurityGroupsOperations>`
            * 2017-10-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2017_10_01.operations.ApplicationSecurityGroupsOperations>`
         """
-        if self.api_version == '2017-09-01':
+        api_version = self.profile.get('application_security_groups', self.api_version)
+        if api_version == '2017-09-01':
             from .v2017_09_01.operations import ApplicationSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ApplicationSecurityGroupsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def available_endpoint_services(self):
@@ -226,17 +243,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_09_01.operations.AvailableEndpointServicesOperations>`
            * 2017-10-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2017_10_01.operations.AvailableEndpointServicesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('available_endpoint_services', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import AvailableEndpointServicesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import AvailableEndpointServicesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import AvailableEndpointServicesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import AvailableEndpointServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def bgp_service_communities(self):
@@ -249,21 +267,22 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_09_01.operations.BgpServiceCommunitiesOperations>`
            * 2017-10-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2017_10_01.operations.BgpServiceCommunitiesOperations>`
         """
-        if self.api_version == '2016-12-01':
+        api_version = self.profile.get('bgp_service_communities', self.api_version)
+        if api_version == '2016-12-01':
             from .v2016_12_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import BgpServiceCommunitiesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def default_security_rules(self):
@@ -274,17 +293,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_09_01.operations.DefaultSecurityRulesOperations>`
            * 2017-10-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2017_10_01.operations.DefaultSecurityRulesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('default_security_rules', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import DefaultSecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import DefaultSecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import DefaultSecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import DefaultSecurityRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def express_route_circuit_authorizations(self):
@@ -299,25 +319,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_09_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2017_10_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('express_route_circuit_authorizations', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def express_route_circuit_peerings(self):
@@ -332,25 +353,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_09_01.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2017_10_01.operations.ExpressRouteCircuitPeeringsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('express_route_circuit_peerings', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def express_route_circuits(self):
@@ -365,25 +387,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_09_01.operations.ExpressRouteCircuitsOperations>`
            * 2017-10-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2017_10_01.operations.ExpressRouteCircuitsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('express_route_circuits', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ExpressRouteCircuitsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def express_route_service_providers(self):
@@ -398,25 +421,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_09_01.operations.ExpressRouteServiceProvidersOperations>`
            * 2017-10-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2017_10_01.operations.ExpressRouteServiceProvidersOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('express_route_service_providers', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def inbound_nat_rules(self):
@@ -427,17 +451,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_09_01.operations.InboundNatRulesOperations>`
            * 2017-10-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2017_10_01.operations.InboundNatRulesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('inbound_nat_rules', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import InboundNatRulesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import InboundNatRulesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import InboundNatRulesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import InboundNatRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancer_backend_address_pools(self):
@@ -448,17 +473,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2017-10-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancerBackendAddressPoolsOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('load_balancer_backend_address_pools', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancer_frontend_ip_configurations(self):
@@ -469,17 +495,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2017-10-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('load_balancer_frontend_ip_configurations', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancer_load_balancing_rules(self):
@@ -490,17 +517,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2017-10-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancerLoadBalancingRulesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('load_balancer_load_balancing_rules', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancer_network_interfaces(self):
@@ -511,17 +539,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2017-10-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancerNetworkInterfacesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('load_balancer_network_interfaces', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancer_probes(self):
@@ -532,17 +561,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancerProbesOperations>`
            * 2017-10-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancerProbesOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('load_balancer_probes', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancerProbesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancerProbesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancerProbesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancerProbesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def load_balancers(self):
@@ -557,25 +587,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_09_01.operations.LoadBalancersOperations>`
            * 2017-10-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2017_10_01.operations.LoadBalancersOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('load_balancers', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LoadBalancersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def local_network_gateways(self):
@@ -590,25 +621,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_09_01.operations.LocalNetworkGatewaysOperations>`
            * 2017-10-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2017_10_01.operations.LocalNetworkGatewaysOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('local_network_gateways', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def network_interface_ip_configurations(self):
@@ -619,17 +651,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_09_01.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2017-10-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2017_10_01.operations.NetworkInterfaceIPConfigurationsOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('network_interface_ip_configurations', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def network_interface_load_balancers(self):
@@ -640,17 +673,18 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_09_01.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2017-10-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2017_10_01.operations.NetworkInterfaceLoadBalancersOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('network_interface_load_balancers', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def network_interfaces(self):
@@ -665,25 +699,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_09_01.operations.NetworkInterfacesOperations>`
            * 2017-10-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2017_10_01.operations.NetworkInterfacesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('network_interfaces', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import NetworkInterfacesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def network_security_groups(self):
@@ -698,25 +733,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_09_01.operations.NetworkSecurityGroupsOperations>`
            * 2017-10-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2017_10_01.operations.NetworkSecurityGroupsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('network_security_groups', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import NetworkSecurityGroupsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def network_watchers(self):
@@ -730,35 +766,40 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_09_01.operations.NetworkWatchersOperations>`
            * 2017-10-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2017_10_01.operations.NetworkWatchersOperations>`
         """
-        if self.api_version == '2016-09-01':
+        api_version = self.profile.get('network_watchers', self.api_version)
+        if api_version == '2016-09-01':
             from .v2016_09_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import NetworkWatchersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def operations(self):
         """Instance depends on the API version:
 
+           * 2017-09-01: :class:`Operations<azure.mgmt.network.v2017_09_01.operations.Operations>`
            * 2017-10-01: :class:`Operations<azure.mgmt.network.v2017_10_01.operations.Operations>`
         """
-        if self.api_version == '2017-10-01':
+        api_version = self.profile.get('operations', self.api_version)
+        if api_version == '2017-09-01':
+            from .v2017_09_01.operations import Operations as OperationClass
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def packet_captures(self):
@@ -772,23 +813,24 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_09_01.operations.PacketCapturesOperations>`
            * 2017-10-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2017_10_01.operations.PacketCapturesOperations>`
         """
-        if self.api_version == '2016-09-01':
+        api_version = self.profile.get('packet_captures', self.api_version)
+        if api_version == '2016-09-01':
             from .v2016_09_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import PacketCapturesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def public_ip_addresses(self):
@@ -803,25 +845,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_09_01.operations.PublicIPAddressesOperations>`
            * 2017-10-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2017_10_01.operations.PublicIPAddressesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('public_ip_addresses', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import PublicIPAddressesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def route_filter_rules(self):
@@ -834,21 +877,22 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_09_01.operations.RouteFilterRulesOperations>`
            * 2017-10-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2017_10_01.operations.RouteFilterRulesOperations>`
         """
-        if self.api_version == '2016-12-01':
+        api_version = self.profile.get('route_filter_rules', self.api_version)
+        if api_version == '2016-12-01':
             from .v2016_12_01.operations import RouteFilterRulesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import RouteFilterRulesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import RouteFilterRulesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import RouteFilterRulesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import RouteFilterRulesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import RouteFilterRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def route_filters(self):
@@ -861,21 +905,22 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_09_01.operations.RouteFiltersOperations>`
            * 2017-10-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2017_10_01.operations.RouteFiltersOperations>`
         """
-        if self.api_version == '2016-12-01':
+        api_version = self.profile.get('route_filters', self.api_version)
+        if api_version == '2016-12-01':
             from .v2016_12_01.operations import RouteFiltersOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import RouteFiltersOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import RouteFiltersOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import RouteFiltersOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import RouteFiltersOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import RouteFiltersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def route_tables(self):
@@ -890,25 +935,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_09_01.operations.RouteTablesOperations>`
            * 2017-10-01: :class:`RouteTablesOperations<azure.mgmt.network.v2017_10_01.operations.RouteTablesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('route_tables', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import RouteTablesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def routes(self):
@@ -923,25 +969,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`RoutesOperations<azure.mgmt.network.v2017_09_01.operations.RoutesOperations>`
            * 2017-10-01: :class:`RoutesOperations<azure.mgmt.network.v2017_10_01.operations.RoutesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('routes', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import RoutesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import RoutesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def security_rules(self):
@@ -956,25 +1003,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_09_01.operations.SecurityRulesOperations>`
            * 2017-10-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2017_10_01.operations.SecurityRulesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('security_rules', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import SecurityRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def subnets(self):
@@ -989,25 +1037,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_09_01.operations.SubnetsOperations>`
            * 2017-10-01: :class:`SubnetsOperations<azure.mgmt.network.v2017_10_01.operations.SubnetsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('subnets', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import SubnetsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def usages(self):
@@ -1022,25 +1071,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`UsagesOperations<azure.mgmt.network.v2017_09_01.operations.UsagesOperations>`
            * 2017-10-01: :class:`UsagesOperations<azure.mgmt.network.v2017_10_01.operations.UsagesOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('usages', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import UsagesOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import UsagesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def virtual_network_gateway_connections(self):
@@ -1055,25 +1105,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_09_01.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2017-10-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2017_10_01.operations.VirtualNetworkGatewayConnectionsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('virtual_network_gateway_connections', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def virtual_network_gateways(self):
@@ -1088,25 +1139,26 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_09_01.operations.VirtualNetworkGatewaysOperations>`
            * 2017-10-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2017_10_01.operations.VirtualNetworkGatewaysOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('virtual_network_gateways', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def virtual_network_peerings(self):
@@ -1120,23 +1172,24 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_09_01.operations.VirtualNetworkPeeringsOperations>`
            * 2017-10-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2017_10_01.operations.VirtualNetworkPeeringsOperations>`
         """
-        if self.api_version == '2016-09-01':
+        api_version = self.profile.get('virtual_network_peerings', self.api_version)
+        if api_version == '2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def virtual_networks(self):
@@ -1151,22 +1204,23 @@ class NetworkManagementClient(object):
            * 2017-09-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_09_01.operations.VirtualNetworksOperations>`
            * 2017-10-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2017_10_01.operations.VirtualNetworksOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('virtual_networks', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2016-09-01':
+        elif api_version == '2016-09-01':
             from .v2016_09_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2017-03-01':
+        elif api_version == '2017-03-01':
             from .v2017_03_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2017-08-01':
+        elif api_version == '2017-08-01':
             from .v2017_08_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2017-09-01':
+        elif api_version == '2017-09-01':
             from .v2017_09_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version == '2017-10-01':
+        elif api_version == '2017-10-01':
             from .v2017_10_01.operations import VirtualNetworksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
