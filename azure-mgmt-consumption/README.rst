@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `Consumption Management
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-consumption.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/consumption>`__
+on docs.microsoft.com.
 
 
 Provide Feedback
