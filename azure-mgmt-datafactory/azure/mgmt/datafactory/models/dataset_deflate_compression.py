@@ -15,6 +15,9 @@ from .dataset_compression import DatasetCompression
 class DatasetDeflateCompression(DatasetCompression):
     """The Deflate compression method used on a dataset.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param type: Constant filled by server.
     :type type: str
     :param level: The Deflate compression level. Possible values include:
@@ -27,11 +30,12 @@ class DatasetDeflateCompression(DatasetCompression):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'level': {'key': 'level', 'type': 'str'},
     }
 
-    def __init__(self, level=None):
-        super(DatasetDeflateCompression, self).__init__()
+    def __init__(self, additional_properties=None, level=None):
+        super(DatasetDeflateCompression, self).__init__(additional_properties=additional_properties)
         self.level = level
         self.type = 'Deflate'

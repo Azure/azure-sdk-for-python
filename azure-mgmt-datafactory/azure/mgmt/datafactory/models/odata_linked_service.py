@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class ODataLinkedService(LinkedService):
     """Open Data Protocol (OData) linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -46,6 +49,7 @@ class ODataLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -56,8 +60,8 @@ class ODataLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, url, connect_via=None, description=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None):
-        super(ODataLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None):
+        super(ODataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name

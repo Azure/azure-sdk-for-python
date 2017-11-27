@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.factories_operations import FactoriesOperations
 from .operations.integration_runtimes_operations import IntegrationRuntimesOperations
+from .operations.integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .operations.linked_services_operations import LinkedServicesOperations
 from .operations.datasets_operations import DatasetsOperations
 from .operations.pipelines_operations import PipelinesOperations
@@ -69,6 +70,8 @@ class DataFactoryManagementClient(object):
     :vartype factories: azure.mgmt.datafactory.operations.FactoriesOperations
     :ivar integration_runtimes: IntegrationRuntimes operations
     :vartype integration_runtimes: azure.mgmt.datafactory.operations.IntegrationRuntimesOperations
+    :ivar integration_runtime_nodes: IntegrationRuntimeNodes operations
+    :vartype integration_runtime_nodes: azure.mgmt.datafactory.operations.IntegrationRuntimeNodesOperations
     :ivar linked_services: LinkedServices operations
     :vartype linked_services: azure.mgmt.datafactory.operations.LinkedServicesOperations
     :ivar datasets: Datasets operations
@@ -106,6 +109,8 @@ class DataFactoryManagementClient(object):
         self.factories = FactoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.linked_services = LinkedServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)

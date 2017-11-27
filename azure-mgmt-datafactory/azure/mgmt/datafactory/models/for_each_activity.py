@@ -16,6 +16,9 @@ class ForEachActivity(ControlActivity):
     """This activity is used for iterating over a collection and execute given
     activities.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -41,6 +44,7 @@ class ForEachActivity(ControlActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -50,8 +54,8 @@ class ForEachActivity(ControlActivity):
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, name, items, activities, description=None, depends_on=None, is_sequential=None):
-        super(ForEachActivity, self).__init__(name=name, description=description, depends_on=depends_on)
+    def __init__(self, name, items, activities, additional_properties=None, description=None, depends_on=None, is_sequential=None):
+        super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.is_sequential = is_sequential
         self.items = items
         self.activities = activities

@@ -12,21 +12,23 @@
 from msrest.serialization import Model
 
 
-class DatasetPartition(Model):
-    """The partition definition.
+class IntegrationRuntimeNodeIpAddress(Model):
+    """The IP address of self-hosted integration runtime node.
 
-    :param name: Name of the partition. Type: string (or Expression with
-     resultType string).
-    :type name: object
-    :param value: Value of the partition.
-    :type value: ~azure.mgmt.datafactory.models.DatasetPartitionValue
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar ip_address: The IP address of self-hosted integration runtime node.
+    :vartype ip_address: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'object'},
-        'value': {'key': 'value', 'type': 'DatasetPartitionValue'},
+    _validation = {
+        'ip_address': {'readonly': True},
     }
 
-    def __init__(self, name=None, value=None):
-        self.name = name
-        self.value = value
+    _attribute_map = {
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+    }
+
+    def __init__(self):
+        self.ip_address = None

@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class AzureDataLakeStoreLinkedService(LinkedService):
     """Azure Data Lake Store linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -58,6 +61,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -71,8 +75,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, data_lake_store_uri, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, tenant=None, account_name=None, subscription_id=None, resource_group_name=None, encrypted_credential=None):
-        super(AzureDataLakeStoreLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, data_lake_store_uri, additional_properties=None, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, tenant=None, account_name=None, subscription_id=None, resource_group_name=None, encrypted_credential=None):
+        super(AzureDataLakeStoreLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.data_lake_store_uri = data_lake_store_uri
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
