@@ -34,10 +34,6 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
     """
 
-    _validation = {
-        'catalog_admin_user_name': {'max_length': 128, 'min_length': 1},
-    }
-
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'catalog_server_endpoint': {'key': 'catalogServerEndpoint', 'type': 'str'},

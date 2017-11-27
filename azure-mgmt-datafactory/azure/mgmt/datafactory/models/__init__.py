@@ -24,8 +24,6 @@ from .integration_runtime_reference import IntegrationRuntimeReference
 from .integration_runtime_status import IntegrationRuntimeStatus
 from .integration_runtime_status_response import IntegrationRuntimeStatusResponse
 from .integration_runtime_status_list_response import IntegrationRuntimeStatusListResponse
-from .update_integration_runtime_request import UpdateIntegrationRuntimeRequest
-from .update_integration_runtime_node_request import UpdateIntegrationRuntimeNodeRequest
 from .linked_service import LinkedService
 from .linked_service_resource import LinkedServiceResource
 from .parameter_specification import ParameterSpecification
@@ -298,7 +296,6 @@ from .integration_runtime_ssis_properties import IntegrationRuntimeSsisPropertie
 from .integration_runtime_vnet_properties import IntegrationRuntimeVNetProperties
 from .integration_runtime_compute_properties import IntegrationRuntimeComputeProperties
 from .managed_integration_runtime import ManagedIntegrationRuntime
-from .integration_runtime_node_ip_address import IntegrationRuntimeNodeIpAddress
 from .integration_runtime_node_monitoring_data import IntegrationRuntimeNodeMonitoringData
 from .integration_runtime_monitoring_data import IntegrationRuntimeMonitoringData
 from .integration_runtime_remove_node_request import IntegrationRuntimeRemoveNodeRequest
@@ -315,7 +312,6 @@ from .trigger_resource_paged import TriggerResourcePaged
 from .trigger_run_paged import TriggerRunPaged
 from .data_factory_management_client_enums import (
     IntegrationRuntimeState,
-    IntegrationRuntimeAutoUpdate,
     ParameterType,
     DependencyCondition,
     TriggerRuntimeState,
@@ -363,6 +359,7 @@ from .data_factory_management_client_enums import (
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
     IntegrationRuntimeInternalChannelEncryptionMode,
+    IntegrationRuntimeAutoUpdate,
     ManagedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeAuthKeyName,
@@ -384,8 +381,6 @@ __all__ = [
     'IntegrationRuntimeStatus',
     'IntegrationRuntimeStatusResponse',
     'IntegrationRuntimeStatusListResponse',
-    'UpdateIntegrationRuntimeRequest',
-    'UpdateIntegrationRuntimeNodeRequest',
     'LinkedService',
     'LinkedServiceResource',
     'ParameterSpecification',
@@ -658,7 +653,6 @@ __all__ = [
     'IntegrationRuntimeVNetProperties',
     'IntegrationRuntimeComputeProperties',
     'ManagedIntegrationRuntime',
-    'IntegrationRuntimeNodeIpAddress',
     'IntegrationRuntimeNodeMonitoringData',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeRemoveNodeRequest',
@@ -674,7 +668,6 @@ __all__ = [
     'TriggerResourcePaged',
     'TriggerRunPaged',
     'IntegrationRuntimeState',
-    'IntegrationRuntimeAutoUpdate',
     'ParameterType',
     'DependencyCondition',
     'TriggerRuntimeState',
@@ -722,6 +715,7 @@ __all__ = [
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',
     'IntegrationRuntimeInternalChannelEncryptionMode',
+    'IntegrationRuntimeAutoUpdate',
     'ManagedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeAuthKeyName',

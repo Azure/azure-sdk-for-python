@@ -25,12 +25,6 @@ class IntegrationRuntimeState(Enum):
     offline = "Offline"
 
 
-class IntegrationRuntimeAutoUpdate(Enum):
-
-    on = "On"
-    off = "Off"
-
-
 class ParameterType(Enum):
 
     object_enum = "Object"
@@ -371,6 +365,12 @@ class IntegrationRuntimeInternalChannelEncryptionMode(Enum):
     not_set = "NotSet"
     ssl_encrypted = "SslEncrypted"
     not_encrypted = "NotEncrypted"
+
+
+class IntegrationRuntimeAutoUpdate(Enum):
+
+    on = "On"
+    off = "Off"
 
 
 class ManagedIntegrationRuntimeNodeStatus(Enum):
