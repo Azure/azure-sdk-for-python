@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class GetMetadataActivity(ExecutionActivity):
     """Activity to get metadata of dataset.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -41,6 +44,7 @@ class GetMetadataActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -51,8 +55,8 @@ class GetMetadataActivity(ExecutionActivity):
         'field_list': {'key': 'typeProperties.fieldList', 'type': '[object]'},
     }
 
-    def __init__(self, name, dataset, description=None, depends_on=None, linked_service_name=None, policy=None, field_list=None):
-        super(GetMetadataActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, dataset, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, field_list=None):
+        super(GetMetadataActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.dataset = dataset
         self.field_list = field_list
         self.type = 'GetMetadata'

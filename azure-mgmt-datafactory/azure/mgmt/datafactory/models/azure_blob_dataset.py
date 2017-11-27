@@ -15,6 +15,9 @@ from .dataset import Dataset
 class AzureBlobDataset(Dataset):
     """The Azure Blob storage.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -49,6 +52,7 @@ class AzureBlobDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -61,8 +65,8 @@ class AzureBlobDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, description=None, structure=None, parameters=None, folder_path=None, table_root_location=None, file_name=None, format=None, compression=None):
-        super(AzureBlobDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, folder_path=None, table_root_location=None, file_name=None, format=None, compression=None):
+        super(AzureBlobDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.folder_path = folder_path
         self.table_root_location = table_root_location
         self.file_name = file_name

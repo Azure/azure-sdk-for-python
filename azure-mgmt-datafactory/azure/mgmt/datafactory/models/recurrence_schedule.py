@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class RecurrenceSchedule(Model):
     """The recurrence schedule.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param minutes: The minutes.
     :type minutes: list[int]
     :param hours: The hours.
@@ -29,6 +32,7 @@ class RecurrenceSchedule(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'minutes': {'key': 'minutes', 'type': '[int]'},
         'hours': {'key': 'hours', 'type': '[int]'},
         'week_days': {'key': 'weekDays', 'type': '[DaysOfWeek]'},
@@ -36,7 +40,8 @@ class RecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
     }
 
-    def __init__(self, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+    def __init__(self, additional_properties=None, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+        self.additional_properties = additional_properties
         self.minutes = minutes
         self.hours = hours
         self.week_days = week_days

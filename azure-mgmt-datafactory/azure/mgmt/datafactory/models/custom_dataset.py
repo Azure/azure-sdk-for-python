@@ -15,6 +15,9 @@ from .dataset import Dataset
 class CustomDataset(Dataset):
     """The custom dataset.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
@@ -39,6 +42,7 @@ class CustomDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -47,7 +51,7 @@ class CustomDataset(Dataset):
         'type_properties': {'key': 'typeProperties', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, type_properties, description=None, structure=None, parameters=None):
-        super(CustomDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, type_properties, additional_properties=None, description=None, structure=None, parameters=None):
+        super(CustomDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.type_properties = type_properties
         self.type = 'CustomDataset'

@@ -19,6 +19,9 @@ class IntegrationRuntimeConnectionInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar service_token: The token generated in service. Callers use this
      token to authenticate to integration runtime.
     :vartype service_token: str
@@ -47,6 +50,7 @@ class IntegrationRuntimeConnectionInfo(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'service_token': {'key': 'serviceToken', 'type': 'str'},
         'identity_cert_thumbprint': {'key': 'identityCertThumbprint', 'type': 'str'},
         'host_service_uri': {'key': 'hostServiceUri', 'type': 'str'},
@@ -55,7 +59,8 @@ class IntegrationRuntimeConnectionInfo(Model):
         'is_identity_cert_exprired': {'key': 'isIdentityCertExprired', 'type': 'bool'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.service_token = None
         self.identity_cert_thumbprint = None
         self.host_service_uri = None

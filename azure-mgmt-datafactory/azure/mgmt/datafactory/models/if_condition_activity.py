@@ -17,6 +17,9 @@ class IfConditionActivity(ControlActivity):
     activities under the ifTrueActivities property or the ifFalseActivities
     property depending on the result of the expression.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -46,6 +49,7 @@ class IfConditionActivity(ControlActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -55,8 +59,8 @@ class IfConditionActivity(ControlActivity):
         'if_false_activities': {'key': 'typeProperties.ifFalseActivities', 'type': '[Activity]'},
     }
 
-    def __init__(self, name, expression, description=None, depends_on=None, if_true_activities=None, if_false_activities=None):
-        super(IfConditionActivity, self).__init__(name=name, description=description, depends_on=depends_on)
+    def __init__(self, name, expression, additional_properties=None, description=None, depends_on=None, if_true_activities=None, if_false_activities=None):
+        super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.expression = expression
         self.if_true_activities = if_true_activities
         self.if_false_activities = if_false_activities

@@ -26,6 +26,8 @@ class IntegrationRuntimesOperations(object):
     :ivar api_version: The API version. Constant value: "2017-09-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -731,7 +733,7 @@ class IntegrationRuntimesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def remove_node(
-            self, resource_group_name, factory_name, integration_runtime_name, node_name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, additional_properties=None, node_name=None, custom_headers=None, raw=False, **operation_config):
         """Remove a node from integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -740,6 +742,9 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
+        :param additional_properties: Unmatched properties from the message
+         are deserialized this collection
+        :type additional_properties: dict[str, object]
         :param node_name: The name of the node to be removed.
         :type node_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -752,7 +757,7 @@ class IntegrationRuntimesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
-        remove_node_parameters = models.IntegrationRuntimeRemoveNodeRequest(node_name=node_name)
+        remove_node_parameters = models.IntegrationRuntimeRemoveNodeRequest(additional_properties=additional_properties, node_name=node_name)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/removeNode'
