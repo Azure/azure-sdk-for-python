@@ -97,12 +97,13 @@ def build_operation_group(module_name, operation_name, versions):
     template_def = "    @property\n    def {attr}(self):\n"
     template_intro_doc= '        """Instance depends on the API version:\n\n'
     template_inside_doc="           * {api_version}: :class:`{clsname}<{module_name}.{api_version_module}.operations.{clsname}>`\n"
-    template_end_doc='        """'
-    template_if = """        {first}if self.api_version == '{api_version}':
+    template_end_doc='        """\n'
+    template_code_prefix="        api_version = self.profile.get('{attr}', self.api_version)"
+    template_if = """        {first}if api_version == '{api_version}':
             from .{api_version_module}.operations import {clsname} as OperationClass"""
     template_end_def = """        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 """
     result = template_def.format(attr=operation_name)
     result += template_intro_doc
@@ -113,6 +114,7 @@ def build_operation_group(module_name, operation_name, versions):
             module_name=module_name,
             clsname=version[1])
     result += template_end_doc
+    result += template_code_prefix.format(attr=operation_name)
     first = True
     for version in versions:
         result += "\n"
@@ -129,6 +131,13 @@ def build_operation_group(module_name, operation_name, versions):
 def find_client_file(package_name, module_name):
     module_path = Path(package_name) / Path(module_name.replace(".", os.sep))
     return next(module_path.glob('*_client.py'))
+
+_CODE_PREFIX = """
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+
+"""
 
 if __name__ == "__main__":
     package_name, module_name = parse_input(sys.argv[1])
@@ -152,7 +161,7 @@ if __name__ == "__main__":
         else:
             sys.exit("Didn't find generate lines!!!!")
 
-        write_client.write("\n")
+        write_client.write(_CODE_PREFIX)
         write_client.write(model_string)
         for operation in operations_string:
             write_client.write("\n")
