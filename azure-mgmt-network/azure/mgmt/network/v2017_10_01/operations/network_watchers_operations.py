@@ -27,6 +27,8 @@ class NetworkWatchersOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-10-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -445,16 +447,17 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_topology(
-            self, resource_group_name, network_watcher_name, target_resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Gets the current network topology by resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
-        :param target_resource_group_name: The name of the target resource
-         group to perform topology on.
-        :type target_resource_group_name: str
+        :param parameters: Parameters that define the representation of
+         topology.
+        :type parameters:
+         ~azure.mgmt.network.v2017_10_01.models.TopologyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -465,8 +468,6 @@ class NetworkWatchersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TopologyParameters(target_resource_group_name=target_resource_group_name)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/topology'
         path_format_arguments = {

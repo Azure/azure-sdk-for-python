@@ -26,6 +26,8 @@ class AvailableEndpointServicesOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
