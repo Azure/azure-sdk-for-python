@@ -91,7 +91,7 @@ class ComputeManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         self.api_version = api_version
-        self.profile = profile
+        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
