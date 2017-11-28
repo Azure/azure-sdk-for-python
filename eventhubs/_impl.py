@@ -43,6 +43,7 @@ class ClientHandler(Handler):
         self.on_stop()
         if self.link:
             self.link.close()
+            self.link.free()
             self.link = None
 
     def _get_link_name(self):
@@ -59,6 +60,7 @@ class ClientHandler(Handler):
         if EndpointStateHandler.is_local_closed(link):
             return DELEGATED
         link.close()
+        link.free()
         condition = link.remote_condition
         connection = event.connection
         if condition:
@@ -77,7 +79,7 @@ class ClientHandler(Handler):
             connection.close()
         elif link == self.link:
             self.link = None
-            event.reactor.schedule(2.0, self)
+            event.reactor.schedule(1.0, self)
 
     def on_timer_task(self, event):
         if self.link is None:
@@ -193,7 +195,8 @@ class SessionPolicy(object):
             self._session.open()
         return self._session
 
-    def close(self):
+    def reset(self):
         if self._session:
             self._session.close()
+            self._session.free()
             self._session = None

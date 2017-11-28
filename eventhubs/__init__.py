@@ -190,10 +190,12 @@ class EventHubClient(object):
                           self.connection.remote_container)
         self._close_clients()
         self._close_session()
-        self.container.schedule(2.0, self)
+        self.container.schedule(1.0, self)
 
     def on_transport_closed(self, event):
         """ Handles on_transport_closed event. """
+        if event.connection != self.connection:
+            return DELEGATED
         if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
             return DELEGATED
         logging.error("%s: transport close", self.container_id)
@@ -204,8 +206,7 @@ class EventHubClient(object):
 
     def on_timer_task(self, event):
         """ Handles on_timer_task event. """
-        if self.session_policy is None:
-            self.on_reactor_init(None)
+        self.on_reactor_init(None)
 
     def on_stop_container(self, event):
         """ Handles on_stop_container event. """
@@ -228,11 +229,12 @@ class EventHubClient(object):
     def _close_connection(self):
         if self.connection:
             self.connection.close()
+            self.connection.free()
+            self.connection = None
 
     def _close_session(self):
         if self.session_policy:
-            self.session_policy.close()
-            self.session_policy = None
+            self.session_policy.reset()
 
     def _close_clients(self):
         for client in self.clients:

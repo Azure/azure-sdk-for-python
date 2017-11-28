@@ -23,7 +23,8 @@ class AsyncReceiver(Receiver):
         self.lock = Lock()
         self.link = None
         self.waiter = None
-        self.credit = prefetch
+        self.prefetch = prefetch
+        self.credit = 0
         self.delivered = 0
 
     def on_start(self, link):
@@ -31,6 +32,8 @@ class AsyncReceiver(Receiver):
         Called when the receiver is started.
         """
         self.link = link
+        self.credit = self.prefetch
+        self.delivered = 0
         self.link.flow(self.credit)
 
     def on_stop(self):
