@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class CustomActivity(ExecutionActivity):
     """Custom activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -54,6 +57,7 @@ class CustomActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -67,8 +71,8 @@ class CustomActivity(ExecutionActivity):
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': '{object}'},
     }
 
-    def __init__(self, name, command, description=None, depends_on=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None):
-        super(CustomActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, command, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None):
+        super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.command = command
         self.resource_linked_service = resource_linked_service
         self.folder_path = folder_path

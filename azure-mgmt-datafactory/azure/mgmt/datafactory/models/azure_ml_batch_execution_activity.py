@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class AzureMLBatchExecutionActivity(ExecutionActivity):
     """Azure ML Batch Execution activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -54,6 +57,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -65,8 +69,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         'web_service_inputs': {'key': 'typeProperties.webServiceInputs', 'type': '{AzureMLWebServiceFile}'},
     }
 
-    def __init__(self, name, description=None, depends_on=None, linked_service_name=None, policy=None, global_parameters=None, web_service_outputs=None, web_service_inputs=None):
-        super(AzureMLBatchExecutionActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, global_parameters=None, web_service_outputs=None, web_service_inputs=None):
+        super(AzureMLBatchExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.global_parameters = global_parameters
         self.web_service_outputs = web_service_outputs
         self.web_service_inputs = web_service_inputs

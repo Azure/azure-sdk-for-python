@@ -19,6 +19,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Constant filled by server.
@@ -44,6 +47,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
@@ -51,8 +55,8 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
     }
 
-    def __init__(self, description=None, compute_properties=None, ssis_properties=None):
-        super(ManagedIntegrationRuntime, self).__init__(description=description)
+    def __init__(self, additional_properties=None, description=None, compute_properties=None, ssis_properties=None):
+        super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description)
         self.state = None
         self.compute_properties = compute_properties
         self.ssis_properties = ssis_properties

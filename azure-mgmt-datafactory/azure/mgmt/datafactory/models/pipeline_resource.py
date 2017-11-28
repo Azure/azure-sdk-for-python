@@ -26,6 +26,9 @@ class PipelineResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: The description of the pipeline.
     :type description: str
     :param activities: List of activities in pipeline.
@@ -50,14 +53,16 @@ class PipelineResource(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'activities': {'key': 'properties.activities', 'type': '[Activity]'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
     }
 
-    def __init__(self, description=None, activities=None, parameters=None, concurrency=None):
+    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, concurrency=None):
         super(PipelineResource, self).__init__()
+        self.additional_properties = additional_properties
         self.description = description
         self.activities = activities
         self.parameters = parameters

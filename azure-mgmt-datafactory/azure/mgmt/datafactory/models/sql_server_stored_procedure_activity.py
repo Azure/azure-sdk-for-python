@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class SqlServerStoredProcedureActivity(ExecutionActivity):
     """SQL stored procedure activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -44,6 +47,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -54,8 +58,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
     }
 
-    def __init__(self, name, stored_procedure_name, description=None, depends_on=None, linked_service_name=None, policy=None, stored_procedure_parameters=None):
-        super(SqlServerStoredProcedureActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, stored_procedure_name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, stored_procedure_parameters=None):
+        super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.stored_procedure_name = stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
         self.type = 'SqlServerStoredProcedure'

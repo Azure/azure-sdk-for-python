@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class SftpServerLinkedService(LinkedService):
     """A linked service for an SSH File Transfer Protocol (SFTP) server. .
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -73,6 +76,7 @@ class SftpServerLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -89,8 +93,8 @@ class SftpServerLinkedService(LinkedService):
         'host_key_fingerprint': {'key': 'typeProperties.hostKeyFingerprint', 'type': 'object'},
     }
 
-    def __init__(self, host, connect_via=None, description=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, private_key_path=None, private_key_content=None, pass_phrase=None, skip_host_key_validation=None, host_key_fingerprint=None):
-        super(SftpServerLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, private_key_path=None, private_key_content=None, pass_phrase=None, skip_host_key_validation=None, host_key_fingerprint=None):
+        super(SftpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.host = host
         self.port = port
         self.authentication_type = authentication_type

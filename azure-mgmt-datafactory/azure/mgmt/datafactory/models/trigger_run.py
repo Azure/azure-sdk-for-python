@@ -18,6 +18,9 @@ class TriggerRun(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar trigger_run_id: Trigger run id.
     :vartype trigger_run_id: str
     :ivar trigger_name: Trigger name.
@@ -51,6 +54,7 @@ class TriggerRun(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'trigger_run_id': {'key': 'triggerRunId', 'type': 'str'},
         'trigger_name': {'key': 'triggerName', 'type': 'str'},
         'trigger_type': {'key': 'triggerType', 'type': 'str'},
@@ -61,7 +65,8 @@ class TriggerRun(Model):
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.trigger_run_id = None
         self.trigger_name = None
         self.trigger_type = None
