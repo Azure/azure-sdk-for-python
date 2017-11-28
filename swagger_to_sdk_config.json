@@ -6,7 +6,7 @@
       "license-header": "MICROSOFT_MIT_NO_VERSION",
       "payload-flattening-threshold": 2,
       "python": "",
-      "use": "C:\\Users\\lmazuel\\Git\\autorest.python"
+      "use": "@microsoft.azure/autorest.python@preview"
     },
     "delete_filesOrDirs": [
       "credentials.py",
