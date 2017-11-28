@@ -1,7 +1,7 @@
 {
   "meta": {
-    "autorest": "latest",
     "autorest_options": {
+      "version": "preview",
       "azure-arm": true,
       "license-header": "MICROSOFT_MIT_NO_VERSION",
       "payload-flattening-threshold": 2,
