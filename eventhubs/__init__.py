@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 """
-The module provides a client to connect to Azure Event Hubs.
+The module provides a client to connect to Azure Event Hubs. All service specifics
+should be implemented in this module.
 
 """
 
@@ -48,6 +49,7 @@ class EventHubClient(object):
         self.connection = None
         self.session_policy = None
         self.clients = []
+        logging.info("%s: created the event hub client", self.container_id)
 
     def run(self):
         """
@@ -198,7 +200,7 @@ class EventHubClient(object):
             return DELEGATED
         if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
             return DELEGATED
-        logging.error("%s: transport close", self.container_id)
+        logging.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
         self._close_clients()
         self._close_session()
         self._close_connection()
@@ -258,7 +260,7 @@ class Sender(object):
         self._event.clear()
         self._handler.send(event_data.message, self.on_outcome, self)
         if not self._event.wait(timeout):
-            raise EventHubError("Send operation timed out", timeout)
+            raise EventHubError("Send operation timed out", timeout, self._handler.client.container_id)
         if self._outcome != Delivery.ACCEPTED:
             raise EventHubError("Send operation failed", self._outcome)
 
