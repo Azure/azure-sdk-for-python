@@ -3,10 +3,8 @@
 Release History
 ===============
 
-1.6.0 (2017-XX-XX)
+1.6.0 (2017-11-28)
 ++++++++++++++++++
-
-UNRELEASED
 
 **Bug fixes**
 
@@ -22,6 +20,7 @@ UNRELEASED
 
 **Features**
 
+- Client now accept a "profile" parameter to define API version per operation group.
 - Add update_tags to most of the resources
 - Add operations group to list all available rest API operations
 - NetworkInterfaces_ListVirtualMachineScaleSetIpConfigurations
