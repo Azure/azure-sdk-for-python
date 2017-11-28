@@ -43,10 +43,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Operation
-         <azure.mgmt.servicebus.models.Operation>`
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.servicebus.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.servicebus.models.OperationPaged[~azure.mgmt.servicebus.models.Operation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

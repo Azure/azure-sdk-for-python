@@ -28,16 +28,15 @@ class ArmDisasterRecovery(Resource):
     :ivar provisioning_state: Provisioning state of the Alias(Disaster
      Recovery configuration) - possible values 'Accepted' or 'Succeeded' or
      'Failed'. Possible values include: 'Accepted', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or :class:`ProvisioningStateDR
-     <azure.mgmt.servicebus.models.ProvisioningStateDR>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.servicebus.models.ProvisioningStateDR
     :param partner_namespace: Primary/Secondary eventhub namespace name, which
      is part of GEO DR pairning
     :type partner_namespace: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or
      'PrimaryNotReplicating' or 'Secondary'. Possible values include:
      'Primary', 'PrimaryNotReplicating', 'Secondary'
-    :vartype role: str or :class:`RoleDisasterRecovery
-     <azure.mgmt.servicebus.models.RoleDisasterRecovery>`
+    :vartype role: str or ~azure.mgmt.servicebus.models.RoleDisasterRecovery
     """
 
     _validation = {

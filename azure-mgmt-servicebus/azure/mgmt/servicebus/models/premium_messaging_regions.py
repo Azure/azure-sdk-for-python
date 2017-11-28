@@ -27,10 +27,10 @@ class PremiumMessagingRegions(ResourceNamespacePatch):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties:
-    :type properties: :class:`PremiumMessagingRegionsProperties
-     <azure.mgmt.servicebus.models.PremiumMessagingRegionsProperties>`
+    :type properties:
+     ~azure.mgmt.servicebus.models.PremiumMessagingRegionsProperties
     """
 
     _validation = {

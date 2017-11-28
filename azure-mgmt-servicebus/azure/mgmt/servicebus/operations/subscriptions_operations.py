@@ -50,10 +50,9 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
-        :rtype: :class:`SBSubscriptionPaged
-         <azure.mgmt.servicebus.models.SBSubscriptionPaged>`
+        :return: An iterator like instance of SBSubscription
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBSubscriptionPaged[~azure.mgmt.servicebus.models.SBSubscription]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -123,20 +122,15 @@ class SubscriptionsOperations(object):
         :type subscription_name: str
         :param parameters: Parameters supplied to create a subscription
          resource.
-        :type parameters: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>`
+        :type parameters: ~azure.mgmt.servicebus.models.SBSubscription
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBSubscription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBSubscription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -205,11 +199,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -267,13 +258,9 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBSubscription
-         <azure.mgmt.servicebus.models.SBSubscription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBSubscription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBSubscription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

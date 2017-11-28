@@ -48,10 +48,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBQueue
-         <azure.mgmt.servicebus.models.SBQueue>`
-        :rtype: :class:`SBQueuePaged
-         <azure.mgmt.servicebus.models.SBQueuePaged>`
+        :return: An iterator like instance of SBQueue
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBQueuePaged[~azure.mgmt.servicebus.models.SBQueue]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -118,18 +117,15 @@ class QueuesOperations(object):
         :type queue_name: str
         :param parameters: Parameters supplied to create or update a queue
          resource.
-        :type parameters: :class:`SBQueue
-         <azure.mgmt.servicebus.models.SBQueue>`
+        :type parameters: ~azure.mgmt.servicebus.models.SBQueue
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBQueue or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBQueue or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -195,11 +191,8 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -254,11 +247,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBQueue or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBQueue or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -320,10 +311,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`SBAuthorizationRulePaged
-         <azure.mgmt.servicebus.models.SBAuthorizationRulePaged>`
+        :return: An iterator like instance of SBAuthorizationRule
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBAuthorizationRulePaged[~azure.mgmt.servicebus.models.SBAuthorizationRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -392,20 +382,15 @@ class QueuesOperations(object):
         :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.servicebus.models.AccessRights>`
+        :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -476,11 +461,8 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -538,13 +520,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -609,11 +587,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -675,8 +651,7 @@ class QueuesOperations(object):
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.servicebus.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.servicebus.models.KeyType
         :param key: Optional, if the key value provided, is reset for KeyType
          value or autogenerate Key value set for keyType
         :type key: str
@@ -685,11 +660,9 @@ class QueuesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

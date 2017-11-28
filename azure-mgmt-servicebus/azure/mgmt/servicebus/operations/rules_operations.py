@@ -52,9 +52,9 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Rule
-         <azure.mgmt.servicebus.models.Rule>`
-        :rtype: :class:`RulePaged <azure.mgmt.servicebus.models.RulePaged>`
+        :return: An iterator like instance of Rule
+        :rtype:
+         ~azure.mgmt.servicebus.models.RulePaged[~azure.mgmt.servicebus.models.Rule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -126,17 +126,15 @@ class RulesOperations(object):
         :param rule_name: The rule name.
         :type rule_name: str
         :param parameters: Parameters supplied to create a rule.
-        :type parameters: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
+        :type parameters: ~azure.mgmt.servicebus.models.Rule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Rule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.Rule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -208,11 +206,8 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -273,11 +268,9 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Rule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.Rule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
