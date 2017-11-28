@@ -49,6 +49,7 @@ class EventHubClient(object):
         self.connection = None
         self.session_policy = None
         self.clients = []
+        self.stopped = False
         logging.info("%s: created the event hub client", self.container_id)
 
     def run(self):
@@ -73,11 +74,11 @@ class EventHubClient(object):
         """
         if self.daemon is not None:
             logging.info("%s: stopping daemon", self.container_id)
-            self.injector.trigger(ApplicationEvent("stop_container"))
+            self.injector.trigger(ApplicationEvent("stop_client"))
             self.injector.close()
             self.daemon.join()
         else:
-            self.on_stop_container(None)
+            self.on_stop_client(None)
 
     def subscribe(self, receiver, consumer_group, partition, offset=None):
         """
@@ -157,6 +158,8 @@ class EventHubClient(object):
 
     def on_connection_remote_close(self, event):
         """Handles on_connection_remote_close event."""
+        if self.stopped or event.connection != self.connection:
+            return DELEGATED
         if EndpointStateHandler.is_local_closed(event.connection):
             return DELEGATED
         condition = event.connection.remote_condition
@@ -173,7 +176,7 @@ class EventHubClient(object):
         self._close_clients()
         self._close_session()
         self._close_connection()
-        self.on_reactor_init(None)
+        self.container.schedule(1.0, self)
 
     def on_session_remote_close(self, event):
         """Handles on_session_remote_close event."""
@@ -208,11 +211,13 @@ class EventHubClient(object):
 
     def on_timer_task(self, event):
         """ Handles on_timer_task event. """
-        self.on_reactor_init(None)
+        if not self.stopped:
+            self.on_reactor_init(None)
 
-    def on_stop_container(self, event):
-        """ Handles on_stop_container event. """
-        logging.info("%s: on_stop_container", self.container_id)
+    def on_stop_client(self, event):
+        """ Handles on_stop_client event. """
+        logging.info("%s: on_stop_client", self.container_id)
+        self.stopped = True
         self._close_clients()
         self._close_session()
         self._close_connection()
@@ -223,6 +228,7 @@ class EventHubClient(object):
 
     def _create_container(self, address, **kwargs):
         container = Container(self, **kwargs)
+        container.container_id = self.container_id
         container.allow_insecure_mechs = True
         container.allowed_mechs = 'PLAIN MSCBS'
         container.selectable(self.injector)
@@ -242,7 +248,23 @@ class EventHubClient(object):
         for client in self.clients:
             client.stop()
 
-class Sender(object):
+class Entity(object):
+    """
+    The base class of a L{Sender} or L{Receiver}.
+    """
+    def on_start(self, link, iteration):
+        """
+        Called when the entity is started or restarted.
+        """
+        pass
+
+    def on_stop(self, closed):
+        """
+        Called when the entity is stopped.
+        """
+        pass
+
+class Sender(Entity):
     """
     Implements an L{EventData} sender.
     """
@@ -271,12 +293,6 @@ class Sender(object):
         self._handler = SenderHandler(client, self, target)
         return self._handler
 
-    def on_start(self, link):
-        """
-        Called when the sender is started.
-        """
-        pass
-
     def on_outcome(self, state, outcome):
         """
         Called when the outcome is received for a delivery.
@@ -284,7 +300,7 @@ class Sender(object):
         self._outcome = outcome
         self._event.set()
 
-class Receiver(object):
+class Receiver(Entity):
     """
     Implements an L{EventData} receiver.
 
@@ -295,18 +311,6 @@ class Receiver(object):
     def __init__(self, prefetch=300):
         self.offset = None
         self.prefetch = prefetch
-
-    def on_start(self, link):
-        """
-        Called when the receiver is started.
-        """
-        pass
-
-    def on_stop(self):
-        """
-        Called when the receiver is stopped.
-        """
-        pass
 
     def on_message(self, event):
         """ Proess message received event. """

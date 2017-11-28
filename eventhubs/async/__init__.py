@@ -9,6 +9,7 @@ Async APIs.
 
 import queue
 import asyncio
+import logging
 from threading import Lock
 from eventhubs import Receiver, EventData
 
@@ -26,20 +27,22 @@ class AsyncReceiver(Receiver):
         self.prefetch = prefetch
         self.credit = 0
         self.delivered = 0
+        self.closed = False
 
-    def on_start(self, link):
+    def on_start(self, link, iteration):
         """
-        Called when the receiver is started.
+        Called when the receiver is started or restarted.
         """
         self.link = link
         self.credit = self.prefetch
         self.delivered = 0
         self.link.flow(self.credit)
 
-    def on_stop(self):
+    def on_stop(self, closed):
         """
         Called when the receiver is stopped.
         """
+        self.closed = closed
         self.link = None
         while not self.messages.empty():
             self.messages.get()
@@ -76,10 +79,13 @@ class AsyncReceiver(Receiver):
         """
         Receive events asynchronously.
         @param count: max number of events to receive. The result may be less.
+
+        Returns a list of L{EventData} objects. An empty list means no data is
+        available. None means the receiver is closed (eof).
         """
         waiter = None
         batch = []
-        while True:
+        while not self.closed:
             with self.lock:
                 size = self.messages.qsize()
                 while size > 0 and count > 0:
@@ -92,9 +98,11 @@ class AsyncReceiver(Receiver):
                 self.waiter = self.loop.create_future()
                 waiter = self.waiter
             await waiter
+        return None
 
     def _check_flow(self):
         if self.delivered >= 100 and self.link:
             self.link.flow(self.delivered)
+            logging.debug("%s: issue link credit %d", self.link.connection.container, self.delivered)
             self.credit += self.delivered
             self.delivered = 0

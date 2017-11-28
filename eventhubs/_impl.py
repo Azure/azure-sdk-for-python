@@ -15,7 +15,7 @@ for general purposes. Keep any service/broker specifics out of this file.
 # pylint: disable=W0702
 
 import logging
-from proton import DELEGATED, generate_uuid
+from proton import DELEGATED, generate_uuid, Delivery
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
@@ -55,6 +55,9 @@ class ClientHandler(Handler):
     def on_stop(self):
         pass
 
+    def on_link_error(self, condition):
+        pass
+
     def on_link_remote_close(self, event):
         link = event.link
         if EndpointStateHandler.is_local_closed(link):
@@ -75,6 +78,7 @@ class ClientHandler(Handler):
                           connection.container,
                           link.name,
                           connection.remote_container)
+        self.on_link_error(condition)
         if condition and condition.name in self.fatal_conditions:
             connection.close()
         elif link == self.link:
@@ -82,7 +86,7 @@ class ClientHandler(Handler):
             event.reactor.schedule(1.0, self)
 
     def on_timer_task(self, event):
-        if self.link is None:
+        if self.link is None and not self.client.stopped:
             self.start()
 
 class ReceiverHandler(ClientHandler):
@@ -103,10 +107,10 @@ class ReceiverHandler(ClientHandler):
             name=self._get_link_name(),
             handler=self,
             options=self.receiver.selector(self.selector))
-        self.receiver.on_start(self.link)
+        self.receiver.on_start(self.link, self.iteration)
 
     def on_stop(self):
-        self.receiver.on_stop()
+        self.receiver.on_stop(self.client.stopped)
 
     def on_message(self, event):
         self.receiver.on_message(event)
@@ -154,10 +158,12 @@ class SenderHandler(ClientHandler):
             self.target,
             name=self._get_link_name(),
             handler=self)
-        self.sender.on_start(self.link)
+        self.sender.on_start(self.link, self.iteration)
 
-    def on_stop(self):
-        pass
+    def on_link_error(self, condition):
+        for dlv in self.deliveries:
+            self.deliveries[dlv].complete(condition or Delivery.RELEASED)
+        self.deliveries.clear()
 
     def on_link_local_open(self, event):
         logging.info("%s: link local open. name=%s target=%s",
@@ -171,14 +177,15 @@ class SenderHandler(ClientHandler):
                      event.link.name)
 
     def on_sendable(self, event):
-        while self.link.credit and not self.queue.empty():
+        while self.link and self.link.credit and not self.queue.empty():
             dlv_event = self.queue.get(False)
             delivery = dlv_event.message.send(self.link)
             self.deliveries[delivery] = dlv_event
+            logging.debug("%s: send message %s", self.client.container_id, delivery.tag)
 
     def on_delivery(self, event):
         dlv = event.delivery
-        logging.debug("%s: on_delivery %s", event.connection.container, dlv.tag)
+        logging.debug("%s: on_delivery %s", self.client.container_id, dlv.tag)
         if dlv.updated:
             dlv_event = self.deliveries.pop(dlv, None)
             if dlv_event:
