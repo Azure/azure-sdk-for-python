@@ -78,7 +78,7 @@ class NetworkManagementClient(object):
     """
 
     DEFAULT_API_VERSION='2017-10-01'
-    DEFAULT_PROFILE = {}
+    DEFAULT_PROFILE = None
 
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
@@ -87,7 +87,7 @@ class NetworkManagementClient(object):
 
         client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
         self.api_version = api_version
-        self.profile = profile
+        self.profile = dict(profile) if profile is not None else {}
 
     def check_dns_name_availability(
             self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
