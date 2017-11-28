@@ -37,7 +37,8 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.assertEqual(creatednamespace.name, namespace_name)
 
         while (self.servicebus_client.namespaces.get(resource_group_name, namespace_name).provisioning_state != 'Succeeded'):
-            time.sleep(15)
+            if self.is_live:
+                time.sleep(15)
             continue
 
         # Create a Topic
