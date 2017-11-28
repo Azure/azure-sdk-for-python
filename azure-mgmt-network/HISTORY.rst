@@ -18,6 +18,7 @@ UNRELEASED
   are mutually exclusive and one only is needed, meaning none of them is required 
   by itself. Thus, destinationAddressPrefix is not required anymore.
 - Client now accept unicode string as a valid subscription_id parameter
+- Restore missing azure.mgmt.network.__version__
 
 **Features**
 

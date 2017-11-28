@@ -14,7 +14,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyexpressroute9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"e45e8601-d726-44e8-9f37-f8d05f38500b\\\"\",\r\n \
@@ -30,7 +30,7 @@ interactions:
         ,\r\n    \"tier\": \"Standard\",\r\n    \"family\": \"MeteredData\"\r\n  }\r\
         \n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['1012']
       content-type: [application/json; charset=utf-8]
@@ -52,7 +52,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -78,7 +78,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -104,7 +104,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -130,7 +130,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8654ca36-0995-46b9-a618-d34e5cafa714?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -156,7 +156,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyexpressroute9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"1176d85a-23a9-4ec0-8157-e66d45408679\\\"\",\r\n \
@@ -194,7 +194,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyexpressroute9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"1176d85a-23a9-4ec0-8157-e66d45408679\\\"\",\r\n \
@@ -232,7 +232,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyexpressroute9edf1275\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275\"\
@@ -272,7 +272,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteCircuits?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteCircuits?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyexpressroute9edf1275\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275\"\
@@ -312,7 +312,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/stats?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/stats?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"primaryBytesIn\": 0,\r\n  \"primaryBytesOut\": 0,\r\n\
         \  \"secondaryBytesIn\": 0,\r\n  \"secondaryBytesOut\": 0\r\n}"}
@@ -342,7 +342,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"AzurePublicPeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering\"\
         ,\r\n  \"etag\": \"W/\\\"bcba0098-3521-41f7-83f3-b7967647936e\\\"\",\r\n \
@@ -352,7 +352,7 @@ interactions:
         secondaryPeerAddressPrefix\": \"192.168.2.0/30\",\r\n    \"state\": \"Disabled\"\
         ,\r\n    \"vlanId\": 200,\r\n    \"lastModifiedBy\": \"\"\r\n  }\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['647']
       content-type: [application/json; charset=utf-8]
@@ -374,7 +374,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -400,7 +400,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -426,7 +426,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -452,7 +452,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ae94f24d-c8ef-49b3-8904-d514e533a0a5?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -478,7 +478,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"AzurePublicPeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering\"\
         ,\r\n  \"etag\": \"W/\\\"a1d88954-a07c-4229-b9bb-06a57aed803d\\\"\",\r\n \
@@ -512,7 +512,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"AzurePublicPeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering\"\
         ,\r\n  \"etag\": \"W/\\\"a1d88954-a07c-4229-b9bb-06a57aed803d\\\"\",\r\n \
@@ -546,7 +546,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"AzurePublicPeering\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering\"\
@@ -583,7 +583,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering/stats?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering/stats?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"primaryBytesIn\": 0,\r\n  \"primaryBytesOut\": 0,\r\n\
         \  \"secondaryBytesIn\": 0,\r\n  \"secondaryBytesOut\": 0\r\n}"}
@@ -611,7 +611,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyauth9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"4d1b174e-fdf9-4278-ba2c-348d65396d5d\\\"\",\r\n \
@@ -619,7 +619,7 @@ interactions:
         authorizationKey\": \"0b6299d1-471b-4a53-ae3a-4eeb523afe1d\",\r\n    \"authorizationUseStatus\"\
         : \"Available\"\r\n  }\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a6995436-4e09-46aa-ae7b-cddc6cc19116?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a6995436-4e09-46aa-ae7b-cddc6cc19116?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['494']
       content-type: [application/json; charset=utf-8]
@@ -641,7 +641,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a6995436-4e09-46aa-ae7b-cddc6cc19116?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a6995436-4e09-46aa-ae7b-cddc6cc19116?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -667,7 +667,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyauth9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"e0eb9954-486c-4b4d-a8d5-e778ad032634\\\"\",\r\n \
@@ -697,7 +697,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyauth9edf1275\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275\"\
         ,\r\n  \"etag\": \"W/\\\"e0eb9954-486c-4b4d-a8d5-e778ad032634\\\"\",\r\n \
@@ -727,7 +727,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyauth9edf1275\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275\"\
@@ -760,16 +760,16 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/authorizations/pyauth9edf1275?api-version=2017-10-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['0']
       date: ['Fri, 15 Sep 2017 23:22:30 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-09-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-10-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -786,7 +786,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -812,7 +812,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d6c026c3-a5d4-4048-b8b4-bc33320a024f?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -839,16 +839,16 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275/peerings/AzurePublicPeering?api-version=2017-10-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['0']
       date: ['Fri, 15 Sep 2017 23:22:52 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -865,7 +865,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -891,7 +891,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -917,7 +917,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -943,7 +943,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/734817e0-55ca-4c38-81eb-3a1cb76b07c3?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -970,16 +970,16 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_express_route_circuit9edf1275/providers/Microsoft.Network/expressRouteCircuits/pyexpressroute9edf1275?api-version=2017-10-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01']
       cache-control: [no-cache]
       content-length: ['0']
       date: ['Fri, 15 Sep 2017 23:23:34 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -996,7 +996,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1022,7 +1022,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1048,7 +1048,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1074,7 +1074,7 @@ interactions:
           msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c1a50917-5e2c-4512-b9ee-b90c331142ec?api-version=2017-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
