@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class AzureSearchLinkedService(LinkedService):
     """Linked service for Windows Azure Search Service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -39,6 +42,7 @@ class AzureSearchLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -47,8 +51,8 @@ class AzureSearchLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, url, connect_via=None, description=None, key=None, encrypted_credential=None):
-        super(AzureSearchLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, key=None, encrypted_credential=None):
+        super(AzureSearchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.url = url
         self.key = key
         self.encrypted_credential = encrypted_credential

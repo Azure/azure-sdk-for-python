@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class WebSource(CopySource):
     """A copy activity source for web page table.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -30,6 +33,6 @@ class WebSource(CopySource):
         'type': {'required': True},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None):
-        super(WebSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None):
+        super(WebSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.type = 'WebSource'
