@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class CopyActivity(ExecutionActivity):
     """Copy activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -72,6 +75,7 @@ class CopyActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -91,8 +95,8 @@ class CopyActivity(ExecutionActivity):
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, name, source, sink, description=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None):
-        super(CopyActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, source, sink, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None):
+        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.source = source
         self.sink = sink
         self.translator = translator

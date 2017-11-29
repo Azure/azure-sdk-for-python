@@ -16,9 +16,12 @@ class DatasetCompression(Model):
     """The compression method used on a dataset.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetDeflateCompression, DatasetGZipCompression,
-    DatasetBZip2Compression
+    sub-classes are: DatasetZipDeflateCompression, DatasetDeflateCompression,
+    DatasetGZipCompression, DatasetBZip2Compression
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param type: Constant filled by server.
     :type type: str
     """
@@ -28,12 +31,14 @@ class DatasetCompression(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'type': {'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
+        'type': {'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.type = None

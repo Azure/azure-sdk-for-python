@@ -15,6 +15,9 @@ from .linked_service import LinkedService
 class CassandraLinkedService(LinkedService):
     """Linked service for Cassandra data source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -48,6 +51,7 @@ class CassandraLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -59,8 +63,8 @@ class CassandraLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, connect_via=None, description=None, authentication_type=None, port=None, username=None, password=None, encrypted_credential=None):
-        super(CassandraLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, authentication_type=None, port=None, username=None, password=None, encrypted_credential=None):
+        super(CassandraLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.host = host
         self.authentication_type = authentication_type
         self.port = port

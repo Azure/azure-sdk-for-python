@@ -16,11 +16,14 @@ class CopySink(Model):
     """A copy activity sink.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DynamicsSink, OdbcSink, AzureSearchIndexSink,
-    AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, AzureTableSink,
-    AzureQueueSink
+    sub-classes are: SalesforceSink, DynamicsSink, OdbcSink,
+    AzureSearchIndexSink, AzureDataLakeStoreSink, OracleSink, SqlDWSink,
+    SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
+    AzureTableSink, AzureQueueSink, SapCloudForCustomerSink
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
     :type write_batch_size: object
@@ -44,6 +47,7 @@ class CopySink(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
@@ -52,10 +56,11 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink'}
+        'type': {'SalesforceSink': 'SalesforceSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink'}
     }
 
-    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
+        self.additional_properties = additional_properties
         self.write_batch_size = write_batch_size
         self.write_batch_timeout = write_batch_timeout
         self.sink_retry_count = sink_retry_count

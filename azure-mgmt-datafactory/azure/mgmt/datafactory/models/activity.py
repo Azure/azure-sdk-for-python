@@ -18,6 +18,9 @@ class Activity(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ExecutionActivity, ControlActivity
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -34,6 +37,7 @@ class Activity(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -44,7 +48,8 @@ class Activity(Model):
         'type': {'Execution': 'ExecutionActivity', 'Container': 'ControlActivity'}
     }
 
-    def __init__(self, name, description=None, depends_on=None):
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None):
+        self.additional_properties = additional_properties
         self.name = name
         self.description = description
         self.depends_on = depends_on

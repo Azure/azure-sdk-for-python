@@ -18,6 +18,9 @@ class CopyTranslator(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: TabularTranslator
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param type: Constant filled by server.
     :type type: str
     """
@@ -27,6 +30,7 @@ class CopyTranslator(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -34,5 +38,6 @@ class CopyTranslator(Model):
         'type': {'TabularTranslator': 'TabularTranslator'}
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.type = None

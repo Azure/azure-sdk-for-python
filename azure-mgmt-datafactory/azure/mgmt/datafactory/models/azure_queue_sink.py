@@ -15,6 +15,9 @@ from .copy_sink import CopySink
 class AzureQueueSink(CopySink):
     """A copy activity Azure Queue sink.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
     :type write_batch_size: object
@@ -37,6 +40,6 @@ class AzureQueueSink(CopySink):
         'type': {'required': True},
     }
 
-    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
-        super(AzureQueueSink, self).__init__(write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
+        super(AzureQueueSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
         self.type = 'AzureQueueSink'
