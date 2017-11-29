@@ -26,6 +26,8 @@ class CheckSkuAvailabilityOperations(object):
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-18. Constant value: "2017-04-18".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,11 +46,12 @@ class CheckSkuAvailabilityOperations(object):
         :param skus: The SKU of the resource.
         :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
         :param kind: The Kind of the resource. Possible values include:
-         'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
-         'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
-         'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
-         'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
-         'TextTranslation', 'WebLM'
+         'Academic', 'Bing.Autosuggest', 'Bing.Autosuggest.v7',
+         'Bing.CustomSearch', 'Bing.Search', 'Bing.Search.v7', 'Bing.Speech',
+         'Bing.SpellCheck', 'Bing.SpellCheck.v7', 'ComputerVision',
+         'ContentModerator', 'CustomSpeech', 'Emotion', 'Face', 'LUIS',
+         'Recommendations', 'SpeakerRecognition', 'Speech',
+         'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
         :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
         :param type: The Type of the resource.
         :type type: str

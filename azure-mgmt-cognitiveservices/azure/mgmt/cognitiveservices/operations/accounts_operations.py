@@ -25,6 +25,8 @@ class AccountsOperations(object):
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-18. Constant value: "2017-04-18".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

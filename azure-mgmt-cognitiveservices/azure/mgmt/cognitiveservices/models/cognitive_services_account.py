@@ -31,7 +31,7 @@ class CognitiveServicesAccount(Model):
     :vartype name: str
     :ivar provisioning_state: Gets the status of the cognitive services
      account at the time the operation was called. Possible values include:
-     'Creating', 'ResolvingDNS', 'Succeeded', 'Failed'
+     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :param endpoint: Endpoint of the created account.
@@ -63,7 +63,7 @@ class CognitiveServicesAccount(Model):
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'internal_id': {'key': 'properties.internalId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},

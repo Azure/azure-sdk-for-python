@@ -38,9 +38,13 @@ class Kind(Enum):
 
     academic = "Academic"
     bing_autosuggest = "Bing.Autosuggest"
+    bing_autosuggestv7 = "Bing.Autosuggest.v7"
+    bing_custom_search = "Bing.CustomSearch"
     bing_search = "Bing.Search"
+    bing_searchv7 = "Bing.Search.v7"
     bing_speech = "Bing.Speech"
     bing_spell_check = "Bing.SpellCheck"
+    bing_spell_checkv7 = "Bing.SpellCheck.v7"
     computer_vision = "ComputerVision"
     content_moderator = "ContentModerator"
     custom_speech = "CustomSpeech"
@@ -60,6 +64,8 @@ class ProvisioningState(Enum):
 
     creating = "Creating"
     resolving_dns = "ResolvingDNS"
+    moving = "Moving"
+    deleting = "Deleting"
     succeeded = "Succeeded"
     failed = "Failed"
 

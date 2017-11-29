@@ -18,11 +18,12 @@ class CognitiveServicesAccountCreateParameters(Model):
     :param sku: Required. Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
-     'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
-     'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
-     'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
-     'TextTranslation', 'WebLM'
+     values include: 'Academic', 'Bing.Autosuggest', 'Bing.Autosuggest.v7',
+     'Bing.CustomSearch', 'Bing.Search', 'Bing.Search.v7', 'Bing.Speech',
+     'Bing.SpellCheck', 'Bing.SpellCheck.v7', 'ComputerVision',
+     'ContentModerator', 'CustomSpeech', 'Emotion', 'Face', 'LUIS',
+     'Recommendations', 'SpeakerRecognition', 'Speech', 'SpeechTranslation',
+     'TextAnalytics', 'TextTranslation', 'WebLM'
     :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
     :param location: Required. Gets or sets the location of the resource. This
      will be one of the supported and registered Azure Geo Regions (e.g. West
