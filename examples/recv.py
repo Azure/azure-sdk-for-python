@@ -14,7 +14,9 @@ the event in on_event_data callback.
 import sys
 import logging
 from eventhubs import EventHubClient, Receiver, Offset
-from examples import init_logger
+
+import examples
+logger = examples.get_logger(logging.INFO)
 
 class MyReceiver(Receiver):
     def __init__(self, partition):
@@ -28,15 +30,13 @@ class MyReceiver(Receiver):
         self.last_offset = event_data.offset
         self.last_sn = event_data.sequence_number
         self.total += 1
-        logging.info("Partition %s, Received %s, sn=%d offset=%s",
+        logger.info("Partition %s, Received %s, sn=%d offset=%s",
                      self.partition,
                      self.total,
                      self.last_sn,
                      self.last_offset)
 
 try:
-    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
-
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"
                ":"

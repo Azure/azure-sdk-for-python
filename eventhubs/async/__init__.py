@@ -7,11 +7,13 @@
 Async APIs.
 """
 
+import logging
 import queue
 import asyncio
-import logging
 from threading import Lock
 from eventhubs import Receiver, EventData
+
+log = logging.getLogger("eventhubs")
 
 class AsyncReceiver(Receiver):
     """
@@ -103,6 +105,6 @@ class AsyncReceiver(Receiver):
     def _check_flow(self):
         if self.delivered >= 100 and self.link:
             self.link.flow(self.delivered)
-            logging.debug("%s: issue link credit %d", self.link.connection.container, self.delivered)
+            log.debug("%s: issue link credit %d", self.link.connection.container, self.delivered)
             self.credit += self.delivered
             self.delivered = 0

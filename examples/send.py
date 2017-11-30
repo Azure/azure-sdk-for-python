@@ -9,11 +9,11 @@ An example to show receiving events from an Event Hub partition.
 import sys
 import logging
 from eventhubs import EventHubClient, Sender, EventData
-from examples import init_logger
+
+import examples
+logger = examples.get_logger(logging.INFO)
 
 try:
-    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
-
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"
                ":"
@@ -30,7 +30,7 @@ try:
 
     for i in range(100):
         sender.send(EventData(str(i)))
-        logging.info("Send message %d", i)
+        logger.info("Send message %d", i)
 
     client.stop()
 

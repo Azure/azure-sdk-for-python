@@ -26,6 +26,8 @@ try:
 except:
     import queue as Queue
 
+log = logging.getLogger("eventhubs")
+
 class ClientHandler(Handler):
     def __init__(self, prefix, client):
         super(ClientHandler, self).__init__()
@@ -67,14 +69,14 @@ class ClientHandler(Handler):
         condition = link.remote_condition
         connection = event.connection
         if condition:
-            logging.error("%s: link detached name:%s ref:%s %s:%s",
+            log.error("%s: link detached name:%s ref:%s %s:%s",
                           connection.container,
                           link.name,
                           condition.name,
                           connection.remote_container,
                           condition.description)
         else:
-            logging.error("%s: link detached name=%s ref:%s",
+            log.error("%s: link detached name=%s ref:%s",
                           connection.container,
                           link.name,
                           connection.remote_container)
@@ -116,14 +118,14 @@ class ReceiverHandler(ClientHandler):
         self.receiver.on_message(event)
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. name=%s source=%s offset=%s",
+        log.info("%s: link local open. name=%s source=%s offset=%s",
                      event.connection.container,
                      event.link.name,
                      self.source,
                      self.selector.filter_set["selector"].value)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. name=%s source=%s",
+        log.info("%s: link remote open. name=%s source=%s",
                      event.connection.container,
                      event.link.name,
                      self.source)
@@ -166,13 +168,13 @@ class SenderHandler(ClientHandler):
         self.deliveries.clear()
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. name=%s target=%s",
+        log.info("%s: link local open. name=%s target=%s",
                      event.connection.container,
                      event.link.name,
                      self.target)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. name=%s",
+        log.info("%s: link remote open. name=%s",
                      event.connection.container,
                      event.link.name)
 
@@ -181,11 +183,11 @@ class SenderHandler(ClientHandler):
             dlv_event = self.queue.get(False)
             delivery = dlv_event.message.send(self.link)
             self.deliveries[delivery] = dlv_event
-            logging.debug("%s: send message %s", self.client.container_id, delivery.tag)
+            log.debug("%s: send message %s", self.client.container_id, delivery.tag)
 
     def on_delivery(self, event):
         dlv = event.delivery
-        logging.debug("%s: on_delivery %s", self.client.container_id, dlv.tag)
+        log.debug("%s: on_delivery %s", self.client.container_id, dlv.tag)
         if dlv.updated:
             dlv_event = self.deliveries.pop(dlv, None)
             if dlv_event:

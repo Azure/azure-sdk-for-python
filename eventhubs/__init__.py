@@ -14,6 +14,7 @@ __version__ = "0.1.0"
 # pylint: disable=line-too-long
 # pylint: disable=W0613
 # pylint: disable=W0702
+# pylint: disable=C0103
 
 import logging
 import datetime
@@ -31,6 +32,8 @@ if sys.platform.startswith("win"):
     from ._win import EventInjector
 else:
     from proton.reactor import EventInjector
+
+log = logging.getLogger("eventhubs")
 
 class EventHubClient(object):
     """
@@ -50,7 +53,7 @@ class EventHubClient(object):
         self.session_policy = None
         self.clients = []
         self.stopped = False
-        logging.info("%s: created the event hub client", self.container_id)
+        log.info("%s: created the event hub client", self.container_id)
 
     def run(self):
         """
@@ -62,7 +65,7 @@ class EventHubClient(object):
         """
         Run the L{EventHubClient} in non-blocking mode.
         """
-        logging.info("%s: starting the daemon", self.container_id)
+        log.info("%s: starting the daemon", self.container_id)
         self.daemon = threading.Thread(target=self.run)
         self.daemon.daemon = True
         self.daemon.start()
@@ -73,7 +76,7 @@ class EventHubClient(object):
         Stop the client.
         """
         if self.daemon is not None:
-            logging.info("%s: stopping daemon", self.container_id)
+            log.info("%s: stopping daemon", self.container_id)
             self.injector.trigger(ApplicationEvent("stop_client"))
             self.injector.close()
             self.daemon.join()
@@ -121,9 +124,9 @@ class EventHubClient(object):
 
     def on_reactor_init(self, event):
         """ Handles reactor init event. """
-        logging.info("%s: on_reactor_init", self.container_id)
+        log.info("%s: on_reactor_init", self.container_id)
         if not self.connection:
-            logging.info("%s: client starts address=%s", self.container_id, self.address)
+            log.info("%s: client starts address=%s", self.container_id, self.address)
             properties = {}
             properties["product"] = "eventhubs.python"
             properties["version"] = __version__
@@ -137,24 +140,24 @@ class EventHubClient(object):
 
     def on_reactor_final(self, event):
         """ Handles reactor final event. """
-        logging.info("%s: reactor final", self.container_id)
+        log.info("%s: reactor final", self.container_id)
         self.injector.pipe.close()
 
     def on_connection_local_open(self, event):
         """Handles on_connection_local_open event."""
-        logging.info("%s: connection local open", event.connection.container)
+        log.info("%s: connection local open", event.connection.container)
 
     def on_connection_remote_open(self, event):
         """Handles on_connection_remote_open event."""
-        logging.info("%s: connection remote open %s", self.container_id, event.connection.remote_container)
+        log.info("%s: connection remote open %s", self.container_id, event.connection.remote_container)
 
     def on_session_local_open(self, event):
         """Handles on_session_local_open event."""
-        logging.info("%s: session local open", self.container_id)
+        log.info("%s: session local open", self.container_id)
 
     def on_session_remote_open(self, event):
         """Handles on_session_remote_open event."""
-        logging.info("%s: session remote open", self.container_id)
+        log.info("%s: session remote open", self.container_id)
 
     def on_connection_remote_close(self, event):
         """Handles on_connection_remote_close event."""
@@ -164,13 +167,13 @@ class EventHubClient(object):
             return DELEGATED
         condition = event.connection.remote_condition
         if condition:
-            logging.error("%s: connection closed by peer %s:%s %s",
+            log.error("%s: connection closed by peer %s:%s %s",
                           self.container_id,
                           condition.name,
                           condition.description,
                           event.connection.remote_container)
         else:
-            logging.error("%s: connection closed by peer %s",
+            log.error("%s: connection closed by peer %s",
                           self.container_id,
                           event.connection.remote_container)
         self._close_clients()
@@ -184,13 +187,13 @@ class EventHubClient(object):
             return DELEGATED
         condition = event.session.remote_condition
         if condition:
-            logging.error("%s: session close %s:%s %s",
+            log.error("%s: session close %s:%s %s",
                           self.container_id,
                           condition.name,
                           condition.description,
                           self.connection.remote_container)
         else:
-            logging.error("%s, session close %s",
+            log.error("%s, session close %s",
                           self.container_id,
                           self.connection.remote_container)
         self._close_clients()
@@ -203,7 +206,7 @@ class EventHubClient(object):
             return DELEGATED
         if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
             return DELEGATED
-        logging.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
+        log.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
         self._close_clients()
         self._close_session()
         self._close_connection()
@@ -216,7 +219,7 @@ class EventHubClient(object):
 
     def on_stop_client(self, event):
         """ Handles on_stop_client event. """
-        logging.info("%s: on_stop_client", self.container_id)
+        log.info("%s: on_stop_client", self.container_id)
         self.stopped = True
         self._close_clients()
         self._close_session()

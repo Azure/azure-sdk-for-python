@@ -4,15 +4,14 @@
 send test
 """
 
-import sys
 import logging
 import argparse
 import time
+import utils
 from eventhubs import EventHubClient, Sender, EventData
-from utils import init_logger
 
-logger = init_logger("send_test.log", logging.INFO)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+logger = utils.get_logger("send_test.log", logging.INFO)
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
 parser.add_argument("--payload", help="payload size", type=int, default=512)

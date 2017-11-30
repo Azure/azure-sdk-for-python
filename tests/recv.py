@@ -9,14 +9,15 @@
 receive test.
 """
 
-import sys
 import logging
 import asyncio
 import argparse
 import time
+import utils
 from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
-from utils import init_logger
+
+logger = utils.get_logger("recv_test.log", logging.INFO)
 
 async def pump(_pid, _recv, _dl):
     total = 0
@@ -29,19 +30,17 @@ async def pump(_pid, _recv, _dl):
             iteration += size
             if iteration >= 80:
                 iteration = 0
-                logging.info("%s: total received %d, last sn=%d, last offset=%s",
-                             _pid,
-                             total,
-                             batch[-1].sequence_number,
-                             batch[-1].offset)
+                logger.info("%s: total received %d, last sn=%d, last offset=%s",
+                            _pid,
+                            total,
+                            batch[-1].sequence_number,
+                            batch[-1].offset)
         except asyncio.TimeoutError:
-            logging.info("%s: No events received, queue size %d, delivered %d",
-                         _pid,
-                         _recv.messages.qsize(),
-                         _recv.delivered)
+            logger.info("%s: No events received, queue size %d, delivered %d",
+                        _pid,
+                        _recv.messages.qsize(),
+                        _recv.delivered)
 
-logger = init_logger("recv_test.log", logging.INFO)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
 parser.add_argument("--consumer", help="Consumer group name", default="$default")

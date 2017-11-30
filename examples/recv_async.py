@@ -14,11 +14,13 @@ import logging
 import asyncio
 from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
-from examples import init_logger
 
 # pylint: disable=C0301
 # pylint: disable=C0103
 # pylint: disable=C0111
+
+import examples
+logger = examples.get_logger(logging.INFO)
 
 async def pump(recv, count):
     total = 0
@@ -27,15 +29,13 @@ async def pump(recv, count):
             batch = await asyncio.wait_for(recv.receive(100), 60.0)
             size = len(batch)
             total += size
-            logging.info("Received %d events, sn %d, batch %d", total, batch[-1].sequence_number, size)
+            logger.info("Received %d events, sn %d, batch %d", total, batch[-1].sequence_number, size)
             # simulate an async event processing
             await asyncio.sleep(0.05)
         except asyncio.TimeoutError:
-            logging.info("No events received, queue size %d, delivered %d", recv.messages.qsize(), recv.delivered)
+            logger.info("No events received, queue size %d, delivered %d", recv.messages.qsize(), recv.delivered)
 
 try:
-    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
-
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"
                ":"
@@ -47,7 +47,7 @@ try:
     CONSUMER_GROUP = "$default"
     OFFSET = Offset("-1")
 
-    logging.info("starting loop")
+    logger.info("starting loop")
     loop = asyncio.get_event_loop()
     receiver = AsyncReceiver()
     client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \

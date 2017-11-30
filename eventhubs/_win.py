@@ -22,6 +22,8 @@ try:
 except:
     import queue as Queue
 
+log = logging.getLogger("eventhubs")
+
 class Pipe(object):
     def __init__(self):
         self.source = None
@@ -38,7 +40,7 @@ class Pipe(object):
                 break
             except socket.error as err:
                 if err.errno != errno.EADDRINUSE:
-                    logging.error("%s: pipe socket bind failed %s", owner, err)
+                    log.error("%s: pipe socket bind failed %s", owner, err)
                     raise
         listener.listen(1)
         client = None
@@ -48,7 +50,7 @@ class Pipe(object):
             client.setblocking(False)
             client.connect_ex(("127.0.0.1", port))
             server, address = listener.accept()
-            logging.info("%s: pipe accepted socket from %s", owner, address)
+            log.info("%s: pipe accepted socket from %s", owner, address)
             client.setblocking(True)
             code = generate_uuid().bytes
             client.sendall(code)

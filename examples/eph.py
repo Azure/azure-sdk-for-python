@@ -5,7 +5,6 @@
 
 import logging
 import asyncio
-import sys
 import time
 import urllib
 import hmac
@@ -14,6 +13,9 @@ import base64
 from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
 from eventprocessorhost.eph import EventProcessorHost
+
+import examples
+logger = examples.get_logger(logging.INFO)
 
 class EventProcessor(AbstractEventProcessor):
     """
@@ -28,14 +30,14 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by processor host to initialize the event processor.
         """
-        logging.info("Connection established %s", context.partition_id)
+        logger.info("Connection established %s", context.partition_id)
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        logging.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
+        logger.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
                      context.partition_id, context.offset, context.sequence_number)
 
     async def process_events_async(self, context, messages):
@@ -44,7 +46,7 @@ class EventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        logging.info("Events processed %s %s", context.partition_id, messages)
+        logger.info("Events processed %s %s", context.partition_id, messages)
         await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
@@ -54,7 +56,7 @@ class EventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        logging.error("Event Processor Error %s ", repr(error))
+        logger.error("Event Processor Error %s ", repr(error))
         await context.host.close_async()
 
 def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
@@ -77,12 +79,6 @@ def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
 
 
 try:
-    # Configure Logging
-    logging.basicConfig(filename='eph.log', level=logging.INFO,
-                        format='%(asctime)s:%(msecs)03d, \'%(message)s\' ',
-                        datefmt='%Y-%m-%d:%H:%M:%S')
-    logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
-
     # Storage Account Credentials
     STORAGE_ACCOUNT_NAME = "mystorageaccount"
     STORAGE_KEY = "sas encoded storage key"
