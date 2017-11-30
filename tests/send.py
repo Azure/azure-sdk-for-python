@@ -9,7 +9,7 @@ import logging
 import argparse
 import time
 from eventhubs import EventHubClient, Sender, EventData
-from tests import init_logger
+from utils import init_logger
 
 logger = init_logger("send_test.log", logging.INFO)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))

@@ -16,7 +16,7 @@ import argparse
 import time
 from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
-from tests import init_logger
+from utils import init_logger
 
 async def pump(_pid, _recv, _dl):
     total = 0
