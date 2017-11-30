@@ -18,43 +18,50 @@ from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
 from tests import init_logger
 
-async def pump(recv, deadline):
+async def pump(_pid, _recv, _dl):
     total = 0
     iteration = 0
-    while time.time() < deadline:
+    while time.time() < _dl:
         try:
-            batch = await asyncio.wait_for(recv.receive(100), 60.0)
+            batch = await asyncio.wait_for(_recv.receive(100), 60.0)
             size = len(batch)
             total += size
             iteration += size
-            if iteration >= 500:
+            if iteration >= 80:
                 iteration = 0
-                logging.info("total received %d, last sn=%d, last offset=%d",
+                logging.info("%s: total received %d, last sn=%d, last offset=%s",
+                             _pid,
                              total,
                              batch[-1].sequence_number,
                              batch[-1].offset)
         except asyncio.TimeoutError:
-            logging.info("No events received, queue size %d, delivered %d",
-                         recv.messages.qsize(),
-                         recv.delivered)
+            logging.info("%s: No events received, queue size %d, delivered %d",
+                         _pid,
+                         _recv.messages.qsize(),
+                         _recv.delivered)
 
 logger = init_logger("recv_test.log", logging.INFO)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
 parser.add_argument("--consumer", help="Consumer group name", default="$default")
-parser.add_argument("--partition", help="Partition id", default="0")
+parser.add_argument("--partitions", help="Comma seperated partition IDs", default="0")
 parser.add_argument("--offset", help="Starting offset", default="-1")
 parser.add_argument("address", help="Address Uri to the event hub entity", nargs="?")
 
 try:
     args = parser.parse_args()
     loop = asyncio.get_event_loop()
-    receiver = AsyncReceiver()
-    client = EventHubClient(args.address) \
-        .subscribe(receiver, args.consumer, args.partition, Offset(args.offset)) \
-        .run_daemon()
-    loop.run_until_complete(pump(receiver, time.time() + args.duration))
+    client = EventHubClient(args.address)
+    deadline = time.time() + args.duration
+    asyncio.gather()
+    pumps = []
+    for pid in args.partitions.split(","):
+        receiver = AsyncReceiver()
+        client.subscribe(receiver, args.consumer, pid, Offset(args.offset))
+        pumps.append(pump(pid, receiver, deadline))
+    client.run_daemon()
+    loop.run_until_complete(asyncio.gather(*pumps))
     client.stop()
     loop.close()
 except KeyboardInterrupt:
