@@ -8,4 +8,6 @@ from logging.handlers import RotatingFileHandler
 
 def init_logger(file, level):
     logging.basicConfig(filename=file, level=level)
-    return logging.getLogger()
+    logger = logging.getLogger()
+    logger.addHandler(RotatingFileHandler(file, maxBytes=5*1024*1024, backupCount=2))
+    return logger

@@ -14,6 +14,7 @@ the event in on_event_data callback.
 import sys
 import logging
 from eventhubs import EventHubClient, Receiver, Offset
+from examples import init_logger
 
 class MyReceiver(Receiver):
     def __init__(self, partition):
@@ -34,8 +35,7 @@ class MyReceiver(Receiver):
                      self.last_offset)
 
 try:
-    logging.basicConfig(filename="test.log", level=logging.INFO)
-    logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
 
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"

@@ -14,6 +14,7 @@ import logging
 import asyncio
 from eventhubs import EventHubClient, Offset
 from eventhubs.async import AsyncReceiver
+from examples import init_logger
 
 # pylint: disable=C0301
 # pylint: disable=C0103
@@ -33,8 +34,7 @@ async def pump(recv, count):
             logging.info("No events received, queue size %d, delivered %d", recv.messages.qsize(), recv.delivered)
 
 try:
-    logging.basicConfig(filename="test.log", level=logging.INFO)
-    logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
 
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"

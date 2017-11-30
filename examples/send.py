@@ -9,10 +9,10 @@ An example to show receiving events from an Event Hub partition.
 import sys
 import logging
 from eventhubs import EventHubClient, Sender, EventData
+from examples import init_logger
 
 try:
-    logging.basicConfig(filename="test.log", level=logging.INFO)
-    logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+    init_logger("test.log", logging.INFO).addHandler(logging.StreamHandler(stream=sys.stdout))
 
     ADDRESS = ("amqps://"
                "<URL-encoded-SAS-policy>"
