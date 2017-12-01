@@ -43,6 +43,8 @@ class EventHubClient(object):
     def __init__(self, address, **kwargs):
         """
         Constructs a new L{EventHubClient} with the given address Url.
+
+        @param address: the full Uri string of the event hub.
         """
         self.container_id = "eventhubs.pycli-" + str(generate_uuid())[:8]
         self.address = Url(address)
@@ -95,7 +97,6 @@ class EventHubClient(object):
         @param partition: the id of the event hub partition.
 
         @param offset: the initial L{Offset} to receive events.
-
         """
         source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
         selector = None
@@ -113,7 +114,6 @@ class EventHubClient(object):
 
         @param partition: the id of the destination event hub partition. If not specified, events will
         be distributed across partitions based on the default distribution logic.
-
         """
         target = self.address.path
         if partition:
@@ -168,14 +168,14 @@ class EventHubClient(object):
         condition = event.connection.remote_condition
         if condition:
             log.error("%s: connection closed by peer %s:%s %s",
-                          self.container_id,
-                          condition.name,
-                          condition.description,
-                          event.connection.remote_container)
+                      self.container_id,
+                      condition.name,
+                      condition.description,
+                      event.connection.remote_container)
         else:
             log.error("%s: connection closed by peer %s",
-                          self.container_id,
-                          event.connection.remote_container)
+                      self.container_id,
+                      event.connection.remote_container)
         self._close_clients()
         self._close_session()
         self._close_connection()
@@ -188,14 +188,14 @@ class EventHubClient(object):
         condition = event.session.remote_condition
         if condition:
             log.error("%s: session close %s:%s %s",
-                          self.container_id,
-                          condition.name,
-                          condition.description,
-                          self.connection.remote_container)
+                      self.container_id,
+                      condition.name,
+                      condition.description,
+                      self.connection.remote_container)
         else:
             log.error("%s, session close %s",
-                          self.container_id,
-                          self.connection.remote_container)
+                      self.container_id,
+                      self.connection.remote_container)
         self._close_clients()
         self._close_session()
         self.container.schedule(1.0, self)
@@ -279,15 +279,33 @@ class Sender(Entity):
     def send(self, event_data, timeout=60):
         """
         Sends an event data.
+
+        @param event_data: the L{EventData} to be sent.
+
+        @param timeout: time in seconds to wait for the acknowledgement.
         """
-        if self._handler is None:
-            raise EventHubError("Call publish to register the sender before using it.")
+        self._check()
         self._event.clear()
-        self._handler.send(event_data.message, self.on_outcome, self)
+        self._handler.send(event_data.message, self.on_outcome, None)
         if not self._event.wait(timeout):
             raise EventHubError("Send operation timed out", timeout, self._handler.client.container_id)
         if self._outcome != Delivery.ACCEPTED:
-            raise EventHubError("Send operation failed", self._outcome)
+            raise self._error(self._outcome)
+
+    def transfer(self, event_data, callback):
+        """
+        Transfers an event data and notifies the callback when the operation is done.
+
+        @param event_data: the L{EventData} to be transferred.
+
+        @param callback: a function invoked when the operation is completed. The argument
+        to the callback function is a tuple where the first item is the event data and the
+        second item is the result (None on success, or a L{EventHubError} on failure).
+        """
+        self._check()
+        self._handler.send(event_data.message,
+                           lambda d, o: callback(d, Sender._error(o)),
+                           event_data)
 
     def handler(self, client, target):
         """
@@ -302,6 +320,14 @@ class Sender(Entity):
         """
         self._outcome = outcome
         self._event.set()
+
+    def _check(self):
+        if self._handler is None:
+            raise EventHubError("Call publish to register the sender before using it.")
+
+    @staticmethod
+    def _error(outcome):
+        return None if outcome == Delivery.ACCEPTED else EventHubError("Send failed", outcome)
 
 class Receiver(Entity):
     """
