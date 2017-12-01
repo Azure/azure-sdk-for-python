@@ -11,7 +11,7 @@ except ImportError:
 
 class HttpChallenge(object):
 
-    def __init__(self, request_uri, challenge):
+    def __init__(self, request_uri, challenge, response_headers):
         """ Parses an HTTP WWW-Authentication Bearer challenge from a server. """
         self.source_authority = self._validate_request_uri(request_uri)
         self.source_uri = request_uri
@@ -41,6 +41,10 @@ class HttpChallenge(object):
         # must specify authorization or authorization_uri
         if 'authorization' not in self._parameters and 'authorization_uri' not in self._parameters:
             raise ValueError('Invalid challenge parameters')
+
+        # get the message signing key and message key encryption key from the headers
+        self.server_signature_key = response_headers.get('x-ms-message-key-encryption-key', None)
+        self.server_encryption_key = response_headers.get('x-ms-message-key-encryption-key', None)
 
     def is_bearer_challenge(self):
         """ Tests whether the HttpChallenge a Bearer challenge.
@@ -77,6 +81,14 @@ class HttpChallenge(object):
     def get_scope(self):
         """ Returns the scope if present, otherwise empty string. """
         return self.get_value('scope') or ''
+
+    def supports_pop(self):
+        """ Returns True if challenge supports pop token auth else False """
+        return self._parameters.get('supportspop', None) == 'true'
+
+    def supports_message_protection(self):
+        """ Returns True if challenge vault supports message protection """
+        return True if self.supports_pop() and self.server_encryption_key and self.server_signature_key else False
 
     def _validate_challenge(self, challenge):
         """ Verifies that the challenge is a valid auth challenge and returns the key=value pairs. """
