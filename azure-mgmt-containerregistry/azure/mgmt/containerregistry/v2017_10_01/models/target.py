@@ -20,7 +20,7 @@ class Target(Model):
     :param size: The number of bytes of the content. Same as Length field.
     :type size: long
     :param digest: The digest of the content, as defined by the Registry V2
-     HTTP API Specificiation.
+     HTTP API Specification.
     :type digest: str
     :param length: The number of bytes of the content. Same as Size field.
     :type length: long
