@@ -5,11 +5,31 @@
 
 import threading
 import requests
+import inspect
+from collections import namedtuple
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
 from azure.keyvault import HttpChallenge
 from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
 from msrest.authentication import OAuthTokenAuthentication
+from .http_message_security import HttpMessageSecurity
+from ..models import JsonWebKey
+from .rsa_key import RsaKey
+
+
+AccessToken = namedtuple('AccessToken', ['scheme', 'token', 'key'])
+AccessToken.__new__.__defaults__ = ('Bearer', None, None)
+
+_message_protection_supported_methods = ['sign', 'verify', 'encrypt', 'decrypt', 'wrapkey', 'unwrapkey']
+
+
+def _message_protection_supported(challenge, request):
+    # right now only specific key operations are supported so return true only
+    # if the vault supports message protection, the request is to the keys collection
+    # and the requested operation supports it
+    return challenge.supports_message_protection() \
+            and '/keys/' in request.url \
+            and request.url.split('?')[0].strip('/').split('/')[-1].lower() in _message_protection_supported_methods
 
 
 class KeyVaultAuthBase(AuthBase):
@@ -22,16 +42,25 @@ class KeyVaultAuthBase(AuthBase):
         Creates a new KeyVaultAuthBase instance used for handling authentication challenges, by hooking into the request AuthBase
         extension model.
         :param authorization_callback: A callback used to provide authentication credentials to the key vault data service.  
-        This callback should take three str arguments: authorization uri, resource, and scope, and return 
-        a tuple of (token type, access token).
+        This callback should take four str arguments: authorization uri, resource, scope, and scheme, and return
+        an AccessToken
+                    return AccessToken(scheme=token['token_type'], token=token['access_token'])
+        Note: for backward compatibility a tuple of the scheme and token can also be returned.
                     return token['token_type'], token['access_token']
         """
-        self._callback = authorization_callback
+        self._user_callback = authorization_callback
+        self._callback = self._auth_callback_compat
         self._token = None
         self._thread_local = threading.local()
         self._thread_local.pos = None
         self._thread_local.auth_attempted = False
         self._thread_local.orig_body = None
+
+    # for backwards compatibility we need to support callbacks which don't accept the scheme
+    def _auth_callback_compat(self, server, resource, scope, scheme):
+        return self._user_callback(server, resource, scope) \
+            if len(inspect.getargspec(self._user_callback).args) == 3 \
+            else self._user_callback(server, resource, scope, scheme)
 
     def __call__(self, request):
         """
@@ -44,34 +73,30 @@ class KeyVaultAuthBase(AuthBase):
         if self._callback:
             challenge = ChallengeCache.get_challenge_for_url(request.url)
             if challenge:
-                # if challenge cached, use the authorization_callback to retrieve token and update the request
-                self.set_authorization_header(request, challenge)
+                # if challenge cached get the message security
+                security = self._get_message_security(request, challenge)
+                # protect the request
+                security.protect_request(request)
+                # register a response hook to unprotect the response
+                request.register_hook('response', security.unprotect_response)
             else:
                 # if the challenge is not cached we will strip the body and proceed without the auth header so we
                 # get back the auth challenge for the request
                 self._thread_local.orig_body = request.body
                 request.body = ''
                 request.headers['Content-Length'] = 0
-                request.register_hook('response', self.handle_401)
-                request.register_hook('response', self.handle_redirect)
+                request.register_hook('response', self._handle_401)
+                request.register_hook('response', self._handle_redirect)
                 self._thread_local.auth_attempted = False
-                # if the challenge is not cached we will let the request proceed without the auth header so we
-                # get back the proper challenge in response. We register a callback to handle the response 401 response.
-                ## try:
-                ##     self._thread_local.pos = request.body.tell()
-                ## except AttributeError:
-                ##     self._thread_local.pos = None
-
-
 
         return request
 
-    def handle_redirect(self, r, **kwargs):
+    def _handle_redirect(self, r, **kwargs):
         """Reset auth_attempted on redirects."""
         if r.is_redirect:
             self._thread_local.auth_attempted = False
 
-    def handle_401(self, response, **kwargs):
+    def _handle_401(self, response, **kwargs):
         """
         Takes the response authenticates and resends if neccissary
         :return: The final response to the authenticated request
@@ -93,8 +118,9 @@ class KeyVaultAuthBase(AuthBase):
         self._thread_local.auth_attempted = True
 
         # parse the challenge
-        challenge = HttpChallenge(response.request.url, auth_header)
+        challenge = HttpChallenge(response.request.url, auth_header, response.headers)
 
+        # bearer and PoP are the only authentication schemes supported at this time
         # if the response auth header is not a bearer challenge or pop challange do not auth and return response
         if not (challenge.is_bearer_challenge() or challenge.is_pop_challenge()):
             self._thread_local.auth_attempted = False
@@ -118,25 +144,43 @@ class KeyVaultAuthBase(AuthBase):
         extract_cookies_to_jar(prep._cookies, response.request, response.raw)
         prep.prepare_cookies(prep._cookies)
 
-        # setup the auth header on the copied request
-        self.set_authorization_header(prep, challenge)
+        security = self._get_message_security(prep, challenge)
 
-        # resend the request with proper authentication
+        # auth and protect the prepped request message
+        security.protect_request(prep)
+
+        # resend the request with proper authentication and message protection
         _response = response.connection.send(prep, **kwargs)
         _response.history.append(response)
         _response.request = prep
+
+        # unprotected the response
+        security.unprotect_response(_response)
+
         return _response
 
-    def set_authorization_header(self, request, challenge):
-        auth = self._callback(
-            challenge.get_authorization_server(),
-            challenge.get_resource(),
-            challenge.get_scope())
+    def _get_message_security(self, request, challenge):
+        scheme = challenge.scheme
 
-        # Due to limitations in the service we hard code the auth scheme to 'Bearer' as the service will fail with any other
-        # scheme or a different casing such as 'bearer', once this is fixed the following line should be replace with:
-        # request.headers['Authorization'] = '{} {}'.format(auth[0], auth[1])
-        request.headers['Authorization'] = '{} {}'.format('Bearer', auth[1])
+        # if the given request can be protected ensure the scheme is PoP so the proper access token is requested
+        if _message_protection_supported(challenge, request):
+            scheme = 'PoP'
+
+        # use the authentication_callback to get the token and create the message security
+        token = AccessToken(*self._callback(challenge.get_authorization_server(),
+                                            challenge.get_resource(),
+                                            challenge.get_scope(),
+                                            scheme))
+        security = HttpMessageSecurity(client_security_token=token.token)
+
+        # if the given request can be protected add the appropriate keys to the message security
+        if scheme == 'PoP':
+            security.client_signature_key = token.key
+            security.client_encryption_key = token.key
+            security.server_encryption_key = RsaKey.from_jwk_str(challenge.server_encryption_key)
+            security.server_signature_key = RsaKey.from_jwk_str(challenge.server_signature_key)
+
+        return security
 
 
 class KeyVaultAuthentication(OAuthTokenAuthentication):
@@ -172,12 +216,12 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         self._credentials = credentials
 
         if not authorization_callback:
-            def auth_callback(server, resource, scope):
+            def auth_callback(server, resource, scope, scheme):
                 if self._credentials.resource != resource:
                     self._credentials.resource = resource
                     self._credentials.set_token()
                 token = self._credentials.token
-                return token['token_type'], token['access_token']
+                return AccessToken(scheme=token['token_type'], token=token['access_token'], key=None)
 
             authorization_callback = auth_callback
 
