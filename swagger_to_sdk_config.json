@@ -17,13 +17,6 @@
       "output_dir": "."
     },
     "batch": {
-      "autorest_options": {
-        "azure-arm": true,
-        "license-header": "MICROSOFT_MIT_NO_VERSION",
-        "payload-flattening-threshold": 2,        
-        "namespace": "azure.batch",
-        "package-version": "4.0.0"
-      },
       "build_dir": "azure-batch",
       "generated_relative_base_directory": "azure/batch",
       "markdown": "specification/batch/data-plane/readme.md",
@@ -183,13 +176,6 @@
       "output_dir": "."
     },
     "keyvault.data": {
-      "autorest_options": {
-        "azure-arm": true,
-        "license-header": "MICROSOFT_MIT_NO_VERSION",
-        "payload-flattening-threshold": 2,        
-        "namespace": "azure.keyvault",
-        "package-version": "0.3.7"
-      },
       "build_dir": "azure-keyvault",
       "generated_relative_base_directory": "azure/keyvault",
       "markdown": "specification/keyvault/data-plane/readme.md",
