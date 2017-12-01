@@ -12,27 +12,22 @@
 from msrest.serialization import Model
 
 
-class DatasetPartitionValue(Model):
-    """The value of a partition.
+class UpdateIntegrationRuntimeNodeRequest(Model):
+    """Update integration runtime node request.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetDateTimePartitionValue
-
-    :param type: Constant filled by server.
-    :type type: str
+    :param concurrent_jobs_limit: The number of concurrent jobs permitted to
+     run on the integration runtime node. Values between 1 and
+     maxConcurrentJobs(inclusive) are allowed.
+    :type concurrent_jobs_limit: int
     """
 
     _validation = {
-        'type': {'required': True},
+        'concurrent_jobs_limit': {'minimum': 1},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
     }
 
-    _subtype_map = {
-        'type': {'DateTime': 'DatasetDateTimePartitionValue'}
-    }
-
-    def __init__(self):
-        self.type = None
+    def __init__(self, concurrent_jobs_limit=None):
+        self.concurrent_jobs_limit = concurrent_jobs_limit

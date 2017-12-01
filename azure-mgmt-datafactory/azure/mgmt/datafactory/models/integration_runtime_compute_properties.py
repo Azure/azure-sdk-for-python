@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class IntegrationRuntimeComputeProperties(Model):
     """The compute resource properties for managed integration runtime.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param location: The location for managed integration runtime. The
      supported regions could be found on
      https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities
@@ -39,6 +42,7 @@ class IntegrationRuntimeComputeProperties(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'location': {'key': 'location', 'type': 'str'},
         'node_size': {'key': 'nodeSize', 'type': 'str'},
         'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
@@ -46,7 +50,8 @@ class IntegrationRuntimeComputeProperties(Model):
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
     }
 
-    def __init__(self, location=None, node_size=None, number_of_nodes=None, max_parallel_executions_per_node=None, v_net_properties=None):
+    def __init__(self, additional_properties=None, location=None, node_size=None, number_of_nodes=None, max_parallel_executions_per_node=None, v_net_properties=None):
+        self.additional_properties = additional_properties
         self.location = location
         self.node_size = node_size
         self.number_of_nodes = number_of_nodes

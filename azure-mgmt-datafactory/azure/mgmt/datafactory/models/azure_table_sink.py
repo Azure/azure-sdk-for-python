@@ -15,6 +15,9 @@ from .copy_sink import CopySink
 class AzureTableSink(CopySink):
     """A copy activity Azure Table sink.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param write_batch_size: Write batch size. Type: integer (or Expression
      with resultType integer), minimum: 0.
     :type write_batch_size: object
@@ -50,6 +53,7 @@ class AzureTableSink(CopySink):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
@@ -61,8 +65,8 @@ class AzureTableSink(CopySink):
         'azure_table_insert_type': {'key': 'azureTableInsertType', 'type': 'object'},
     }
 
-    def __init__(self, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, azure_table_default_partition_key_value=None, azure_table_partition_key_name=None, azure_table_row_key_name=None, azure_table_insert_type=None):
-        super(AzureTableSink, self).__init__(write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, azure_table_default_partition_key_value=None, azure_table_partition_key_name=None, azure_table_row_key_name=None, azure_table_insert_type=None):
+        super(AzureTableSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
         self.azure_table_default_partition_key_value = azure_table_default_partition_key_value
         self.azure_table_partition_key_name = azure_table_partition_key_name
         self.azure_table_row_key_name = azure_table_row_key_name
