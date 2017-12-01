@@ -16,7 +16,7 @@ class ReplicationUpdateParameters(Model):
     """The parameters for updating a replication.
 
     :param tags: The tags for the replication.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
