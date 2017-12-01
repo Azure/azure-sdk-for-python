@@ -27,6 +27,8 @@ class ReplicationsOperations(object):
     :ivar api_version: The client API version. Constant value: "2017-10-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -52,13 +54,9 @@ class ReplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Replication
-         <azure.mgmt.containerregistry.v2017_10_01.models.Replication>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Replication
-         <azure.mgmt.containerregistry.v2017_10_01.models.Replication>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Replication or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.Replication
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -121,19 +119,15 @@ class ReplicationsOperations(object):
          after the resource is created.
         :type location: str
         :param tags: The tags of the resource.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Replication
-         <azure.mgmt.containerregistry.v2017_10_01.models.Replication>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Replication
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2017_10_01.models.Replication]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         replication = models.Replication(location=location, tags=tags)
@@ -225,14 +219,10 @@ class ReplicationsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -308,19 +298,15 @@ class ReplicationsOperations(object):
         :param replication_name: The name of the replication.
         :type replication_name: str
         :param tags: The tags for the replication.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Replication
-         <azure.mgmt.containerregistry.v2017_10_01.models.Replication>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Replication
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2017_10_01.models.Replication]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         replication_update_parameters = models.ReplicationUpdateParameters(tags=tags)
@@ -412,10 +398,9 @@ class ReplicationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Replication
-         <azure.mgmt.containerregistry.v2017_10_01.models.Replication>`
-        :rtype: :class:`ReplicationPaged
-         <azure.mgmt.containerregistry.v2017_10_01.models.ReplicationPaged>`
+        :return: An iterator like instance of Replication
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_10_01.models.ReplicationPaged[~azure.mgmt.containerregistry.v2017_10_01.models.Replication]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

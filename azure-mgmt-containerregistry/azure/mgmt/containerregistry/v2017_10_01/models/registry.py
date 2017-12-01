@@ -28,10 +28,9 @@ class Registry(Resource):
      after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: :class:`Sku
-     <azure.mgmt.containerregistry.v2017_10_01.models.Sku>`
+    :type sku: ~azure.mgmt.containerregistry.v2017_10_01.models.Sku
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
@@ -41,19 +40,18 @@ class Registry(Resource):
     :ivar provisioning_state: The provisioning state of the container registry
      at the time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState
     :ivar status: The status of the container registry at the time the
      operation was called.
-    :vartype status: :class:`Status
-     <azure.mgmt.containerregistry.v2017_10_01.models.Status>`
+    :vartype status: ~azure.mgmt.containerregistry.v2017_10_01.models.Status
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry. Only applicable to Classic SKU.
-    :type storage_account: :class:`StorageAccountProperties
-     <azure.mgmt.containerregistry.v2017_10_01.models.StorageAccountProperties>`
+    :type storage_account:
+     ~azure.mgmt.containerregistry.v2017_10_01.models.StorageAccountProperties
     """
 
     _validation = {

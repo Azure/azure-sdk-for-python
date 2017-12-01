@@ -28,11 +28,11 @@ class Webhook(Resource):
      after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
-    :type status: str or :class:`WebhookStatus
-     <azure.mgmt.containerregistry.v2017_10_01.models.WebhookStatus>`
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -40,13 +40,13 @@ class Webhook(Resource):
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post
      notifications.
-    :type actions: list of str or :class:`WebhookAction
-     <azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction>`
+    :type actions: list[str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState
     """
 
     _validation = {

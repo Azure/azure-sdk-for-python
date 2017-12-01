@@ -16,21 +16,20 @@ class RegistryCreateParameters(Model):
     """The parameters for creating a container registry.
 
     :param tags: The tags for the container registry.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: The location of the container registry. This cannot be
      changed after the resource is created.
     :type location: str
     :param sku: The SKU of the container registry.
-    :type sku: :class:`Sku
-     <azure.mgmt.containerregistry.v2017_03_01.models.Sku>`
+    :type sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
      container registry. If specified, the storage account must be in the same
      physical location as the container registry.
-    :type storage_account: :class:`StorageAccountParameters
-     <azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters>`
+    :type storage_account:
+     ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
     """
 
     _validation = {
