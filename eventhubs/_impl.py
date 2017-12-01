@@ -15,11 +15,11 @@ for general purposes. Keep any service/broker specifics out of this file.
 # pylint: disable=W0702
 
 import logging
-from proton import DELEGATED, generate_uuid, Delivery
+from proton import PN_PYREF, DELEGATED, generate_uuid, Delivery, EventBase
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from proton.reactor import ApplicationEvent
+from proton.reactor import EventType
 
 try:
     import Queue
@@ -27,6 +27,18 @@ except:
     import queue as Queue
 
 log = logging.getLogger("eventhubs")
+
+class InjectorEvent(EventBase):
+    STOP_CLIENT = EventType("stop_client")
+    SEND = EventType("send")
+
+    def __init__(self, event_type, subject=None):
+        super(InjectorEvent, self).__init__(PN_PYREF, self, event_type)
+        self.subject = subject
+        self.connection = None
+
+    def __repr__(self):
+        return self.type
 
 class ClientHandler(Handler):
     def __init__(self, prefix, client):
@@ -131,9 +143,9 @@ class ReceiverHandler(ClientHandler):
                      self.source)
 
 class SenderHandler(ClientHandler):
-    class DeliveryEvent(ApplicationEvent):
+    class DeliveryEvent(InjectorEvent):
         def __init__(self, handler, message, callback, state):
-            super(SenderHandler.DeliveryEvent, self).__init__("send", subject=handler)
+            super(SenderHandler.DeliveryEvent, self).__init__(InjectorEvent.SEND, subject=handler)
             self.message = message
             self.callback = callback
             self.state = state

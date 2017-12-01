@@ -22,11 +22,11 @@ import sys
 import threading
 from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
 from proton import Delivery, Message
-from proton.reactor import dispatch, Container, Selector, ApplicationEvent
+from proton.reactor import dispatch, Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from ._impl import SenderHandler, ReceiverHandler, SessionPolicy
+from ._impl import SenderHandler, ReceiverHandler, SessionPolicy, InjectorEvent
 
 if sys.platform.startswith("win"):
     from ._win import EventInjector
@@ -79,7 +79,7 @@ class EventHubClient(object):
         """
         if self.daemon is not None:
             log.info("%s: stopping daemon", self.container_id)
-            self.injector.trigger(ApplicationEvent("stop_client"))
+            self.injector.trigger(InjectorEvent(InjectorEvent.STOP_CLIENT))
             self.injector.close()
             self.daemon.join()
         else:
