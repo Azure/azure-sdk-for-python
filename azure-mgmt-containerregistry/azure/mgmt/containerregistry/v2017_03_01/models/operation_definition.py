@@ -19,8 +19,8 @@ class OperationDefinition(Model):
     :type name: str
     :param display: The display information for the container registry
      operation.
-    :type display: :class:`OperationDisplayDefinition
-     <azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition>`
+    :type display:
+     ~azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition
     """
 
     _attribute_map = {

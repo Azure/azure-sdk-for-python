@@ -27,6 +27,8 @@ class RegistriesOperations(object):
     :ivar api_version: The client API version. Constant value: "2017-03-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,13 +51,10 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RegistryNameStatus
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RegistryNameStatus
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RegistryNameStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         registry_name_check_request = models.RegistryNameCheckRequest(name=name)
@@ -119,13 +118,9 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Registry or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.Registry or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -182,20 +177,16 @@ class RegistriesOperations(object):
         :type registry_name: str
         :param registry_create_parameters: The parameters for creating a
          container registry.
-        :type registry_create_parameters: :class:`RegistryCreateParameters
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryCreateParameters>`
+        :type registry_create_parameters:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Registry or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -282,11 +273,8 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -336,20 +324,16 @@ class RegistriesOperations(object):
         :type registry_name: str
         :param registry_update_parameters: The parameters for updating a
          container registry.
-        :type registry_update_parameters: :class:`RegistryUpdateParameters
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryUpdateParameters>`
+        :type registry_update_parameters:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Registry or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.Registry or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -411,10 +395,9 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
-        :rtype: :class:`RegistryPaged
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged>`
+        :return: An iterator like instance of Registry
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -477,10 +460,9 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Registry
-         <azure.mgmt.containerregistry.v2017_03_01.models.Registry>`
-        :rtype: :class:`RegistryPaged
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged>`
+        :return: An iterator like instance of Registry
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPaged[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -547,13 +529,11 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RegistryListCredentialsResult
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: RegistryListCredentialsResult or ClientRawResponse if
          raw=true
-        :rtype: :class:`RegistryListCredentialsResult
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -612,20 +592,18 @@ class RegistriesOperations(object):
         :param name: Specifies name of the password which should be
          regenerated -- password or password2. Possible values include:
          'password', 'password2'
-        :type name: str or :class:`PasswordName
-         <azure.mgmt.containerregistry.v2017_03_01.models.PasswordName>`
+        :type name: str or
+         ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RegistryListCredentialsResult
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: RegistryListCredentialsResult or ClientRawResponse if
          raw=true
-        :rtype: :class:`RegistryListCredentialsResult
-         <azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         regenerate_credential_parameters = models.RegenerateCredentialParameters(name=name)
