@@ -18,7 +18,7 @@ class EventResponseMessage(Model):
     :param content: The content of the event response message.
     :type content: str
     :param headers: The headers of the event response message.
-    :type headers: dict
+    :type headers: dict[str, str]
     :param reason_phrase: The reason phrase of the event response message.
     :type reason_phrase: str
     :param status_code: The status code of the event response message.

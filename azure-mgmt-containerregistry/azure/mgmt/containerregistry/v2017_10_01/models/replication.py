@@ -28,16 +28,15 @@ class Replication(Resource):
      after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the replication at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was
      called.
-    :vartype status: :class:`Status
-     <azure.mgmt.containerregistry.v2017_10_01.models.Status>`
+    :vartype status: ~azure.mgmt.containerregistry.v2017_10_01.models.Status
     """
 
     _validation = {
