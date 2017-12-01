@@ -15,6 +15,9 @@ from .dataset_storage_format import DatasetStorageFormat
 class TextFormat(DatasetStorageFormat):
     """The data stored in text format.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param serializer: Serializer. Type: string (or Expression with resultType
      string).
     :type serializer: object
@@ -65,6 +68,7 @@ class TextFormat(DatasetStorageFormat):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'serializer': {'key': 'serializer', 'type': 'object'},
         'deserializer': {'key': 'deserializer', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -79,8 +83,8 @@ class TextFormat(DatasetStorageFormat):
         'first_row_as_header': {'key': 'firstRowAsHeader', 'type': 'object'},
     }
 
-    def __init__(self, serializer=None, deserializer=None, column_delimiter=None, row_delimiter=None, escape_char=None, quote_char=None, null_value=None, encoding_name=None, treat_empty_as_null=None, skip_line_count=None, first_row_as_header=None):
-        super(TextFormat, self).__init__(serializer=serializer, deserializer=deserializer)
+    def __init__(self, additional_properties=None, serializer=None, deserializer=None, column_delimiter=None, row_delimiter=None, escape_char=None, quote_char=None, null_value=None, encoding_name=None, treat_empty_as_null=None, skip_line_count=None, first_row_as_header=None):
+        super(TextFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
         self.column_delimiter = column_delimiter
         self.row_delimiter = row_delimiter
         self.escape_char = escape_char

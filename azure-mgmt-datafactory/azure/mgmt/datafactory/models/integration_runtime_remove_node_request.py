@@ -15,13 +15,18 @@ from msrest.serialization import Model
 class IntegrationRuntimeRemoveNodeRequest(Model):
     """Request to remove a node.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param node_name: The name of the node to be removed.
     :type node_name: str
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'node_name': {'key': 'nodeName', 'type': 'str'},
     }
 
-    def __init__(self, node_name=None):
+    def __init__(self, additional_properties=None, node_name=None):
+        self.additional_properties = additional_properties
         self.node_name = node_name

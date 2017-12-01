@@ -18,6 +18,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
@@ -59,6 +62,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      been turned on. Possible values include: 'On', 'Off'
     :vartype auto_update: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
+    :ivar version_status: Status of the integration runtime version.
+    :vartype version_status: str
     """
 
     _validation = {
@@ -74,9 +79,11 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'capabilities': {'readonly': True},
         'service_urls': {'readonly': True},
         'auto_update': {'readonly': True},
+        'version_status': {'readonly': True},
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
@@ -90,10 +97,11 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'capabilities': {'key': 'typeProperties.capabilities', 'type': '{str}'},
         'service_urls': {'key': 'typeProperties.serviceUrls', 'type': '[str]'},
         'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
+        'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
     }
 
-    def __init__(self, nodes=None):
-        super(SelfHostedIntegrationRuntimeStatus, self).__init__()
+    def __init__(self, additional_properties=None, nodes=None):
+        super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties)
         self.create_time = None
         self.task_queue_id = None
         self.internal_channel_encryption = None
@@ -105,4 +113,5 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.capabilities = None
         self.service_urls = None
         self.auto_update = None
+        self.version_status = None
         self.type = 'SelfHosted'

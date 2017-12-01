@@ -15,6 +15,9 @@ from .dataset_storage_format import DatasetStorageFormat
 class OrcFormat(DatasetStorageFormat):
     """The data stored in Optimized Row Columnar (ORC) format.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param serializer: Serializer. Type: string (or Expression with resultType
      string).
     :type serializer: object
@@ -29,6 +32,6 @@ class OrcFormat(DatasetStorageFormat):
         'type': {'required': True},
     }
 
-    def __init__(self, serializer=None, deserializer=None):
-        super(OrcFormat, self).__init__(serializer=serializer, deserializer=deserializer)
+    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
+        super(OrcFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
         self.type = 'OrcFormat'

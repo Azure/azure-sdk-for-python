@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .trigger import Trigger
+from .multiple_pipeline_trigger import MultiplePipelineTrigger
 
 
-class ScheduleTrigger(Trigger):
+class ScheduleTrigger(MultiplePipelineTrigger):
     """Trigger that creates pipeline runs periodically, on schedule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Trigger description.
     :type description: str
-    :param pipelines: Pipelines that need to be started.
-    :type pipelines:
-     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :ivar runtime_state: Indicates if trigger is running or not. Updated when
      Start/Stop APIs are called on the Trigger. Possible values include:
      'Started', 'Stopped', 'Disabled'
@@ -30,6 +30,9 @@ class ScheduleTrigger(Trigger):
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
     :param type: Constant filled by server.
     :type type: str
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines:
+     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
     :param recurrence: Recurrence schedule configuration.
     :type recurrence: ~azure.mgmt.datafactory.models.ScheduleTriggerRecurrence
     """
@@ -37,17 +40,19 @@ class ScheduleTrigger(Trigger):
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'recurrence': {'required': True},
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
-        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'recurrence': {'key': 'typeProperties.recurrence', 'type': 'ScheduleTriggerRecurrence'},
     }
 
-    def __init__(self, description=None, pipelines=None, recurrence=None):
-        super(ScheduleTrigger, self).__init__(description=description, pipelines=pipelines)
+    def __init__(self, recurrence, additional_properties=None, description=None, pipelines=None):
+        super(ScheduleTrigger, self).__init__(additional_properties=additional_properties, description=description, pipelines=pipelines)
         self.recurrence = recurrence
         self.type = 'ScheduleTrigger'

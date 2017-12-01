@@ -15,6 +15,9 @@ from .execution_activity import ExecutionActivity
 class HDInsightStreamingActivity(ExecutionActivity):
     """HDInsight streaming activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
@@ -75,6 +78,7 @@ class HDInsightStreamingActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -95,8 +99,8 @@ class HDInsightStreamingActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, mapper, reducer, input, output, file_paths, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, file_linked_service=None, combiner=None, command_environment=None, defines=None):
-        super(HDInsightStreamingActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, mapper, reducer, input, output, file_paths, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, file_linked_service=None, combiner=None, command_environment=None, defines=None):
+        super(HDInsightStreamingActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info

@@ -19,6 +19,9 @@ class IntegrationRuntime(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SelfHostedIntegrationRuntime, ManagedIntegrationRuntime
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
     :param type: Constant filled by server.
@@ -30,6 +33,7 @@ class IntegrationRuntime(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -38,6 +42,7 @@ class IntegrationRuntime(Model):
         'type': {'SelfHosted': 'SelfHostedIntegrationRuntime', 'Managed': 'ManagedIntegrationRuntime'}
     }
 
-    def __init__(self, description=None):
+    def __init__(self, additional_properties=None, description=None):
+        self.additional_properties = additional_properties
         self.description = description
         self.type = None

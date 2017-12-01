@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class OracleSource(CopySource):
     """A copy activity Oracle source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -38,6 +41,7 @@ class OracleSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -45,8 +49,8 @@ class OracleSource(CopySource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, oracle_reader_query=None, query_timeout=None):
-        super(OracleSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, oracle_reader_query=None, query_timeout=None):
+        super(OracleSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.oracle_reader_query = oracle_reader_query
         self.query_timeout = query_timeout
         self.type = 'OracleSource'
