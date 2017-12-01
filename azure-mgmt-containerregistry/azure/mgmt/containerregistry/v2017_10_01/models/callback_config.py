@@ -19,7 +19,7 @@ class CallbackConfig(Model):
     :type service_uri: str
     :param custom_headers: Custom headers that will be added to the webhook
      notifications.
-    :type custom_headers: dict
+    :type custom_headers: dict[str, str]
     """
 
     _validation = {
