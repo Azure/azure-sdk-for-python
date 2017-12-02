@@ -23,6 +23,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-mgmt-applicationinsights": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.applicationinsights"
+    ],
+    "service_name": "ApplicationInsights"
+  },
   "azure-mgmt-authorization": {
     "category ": "Management",
     "namespaces": [
