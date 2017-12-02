@@ -248,6 +248,13 @@
     ],
     "service_name": "Power BI Embedded"
   },
+  "azure-mgmt-provisioningservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.provisioningservices"
+    ],
+    "service_name": "Provisioning Services"
+  },
   "azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
     "category ": "Management",
     "namespaces": [
