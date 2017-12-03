@@ -6,6 +6,7 @@
 import uuid
 import asyncio
 from eventprocessorhost.partition_manager import PartitionManager
+
 class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.
@@ -38,7 +39,7 @@ class EventProcessorHost:
         Stops the host
         """
         await self.partition_manager.stop_async()
-
+        
 class EPHOptions:
     """
     Class that contains default and overidable EPH option

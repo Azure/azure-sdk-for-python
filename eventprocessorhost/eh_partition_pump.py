@@ -90,7 +90,7 @@ class PartitionReceiver:
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eph_options.max_batch_size
         self.recieve_timeout = self.eh_partition_pump.host.eph_options.receive_timeout
-
+    
     async def run(self):
         """
         Runs the async partion reciever event loop to retrive messages from the event queue

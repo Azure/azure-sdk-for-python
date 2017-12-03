@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Internal implementations.
+Internal implementations of protocol handlers. It should be implementing send/recv over AMQP
+for general purposes. Keep any service/broker specifics out of this file.
 
 """
 
@@ -14,30 +15,41 @@ Internal implementations.
 # pylint: disable=W0702
 
 import logging
-
-import datetime
-from proton import DELEGATED, generate_uuid, timestamp, utf82unicode
-from proton.reactor import EventInjector, ApplicationEvent, Selector
+from proton import PN_PYREF, DELEGATED, generate_uuid, Delivery, EventBase
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
+from proton.reactor import EventType
 
 try:
     import Queue
 except:
     import queue as Queue
 
+log = logging.getLogger("eventhubs")
+
+class InjectorEvent(EventBase):
+    STOP_CLIENT = EventType("stop_client")
+    SEND = EventType("send")
+
+    def __init__(self, event_type, subject=None):
+        super(InjectorEvent, self).__init__(PN_PYREF, self, event_type)
+        self.subject = subject
+        self.connection = None
+
+    def __repr__(self):
+        return self.type
+
 class ClientHandler(Handler):
-    def __init__(self, prefix):
+    def __init__(self, prefix, client):
         super(ClientHandler, self).__init__()
         self.name = "%s-%s" % (prefix, str(generate_uuid())[:8])
-        self.container = None
+        self.client = client
         self.link = None
         self.iteration = 0
         self.fatal_conditions = ["amqp:unauthorized-access", "amqp:not-found"]
 
-    def start(self, container):
-        self.container = container
+    def start(self):
         self.iteration += 1
         self.on_start()
 
@@ -57,39 +69,43 @@ class ClientHandler(Handler):
     def on_stop(self):
         pass
 
+    def on_link_error(self, condition):
+        pass
+
     def on_link_remote_close(self, event):
         link = event.link
         if EndpointStateHandler.is_local_closed(link):
             return DELEGATED
         link.close()
+        link.free()
         condition = link.remote_condition
         connection = event.connection
         if condition:
-            logging.error("%s: link detached name:%s ref:%s %s:%s",
+            log.error("%s: link detached name:%s ref:%s %s:%s",
                           connection.container,
                           link.name,
                           condition.name,
                           connection.remote_container,
                           condition.description)
         else:
-            logging.error("%s: link detached name=%s ref:%s",
+            log.error("%s: link detached name=%s ref:%s",
                           connection.container,
                           link.name,
                           connection.remote_container)
-        link.free()
+        self.on_link_error(condition)
         if condition and condition.name in self.fatal_conditions:
             connection.close()
-        elif link.__eq__(self.link):
+        elif link == self.link:
             self.link = None
-            event.reactor.schedule(2.0, self)
+            event.reactor.schedule(1.0, self)
 
     def on_timer_task(self, event):
-        if self.link is None:
-            self.start(self.container)
+        if self.link is None and not self.client.stopped:
+            self.start()
 
 class ReceiverHandler(ClientHandler):
-    def __init__(self, receiver, source, selector):
-        super(ReceiverHandler, self).__init__("recv")
+    def __init__(self, client, receiver, source, selector):
+        super(ReceiverHandler, self).__init__("recv", client)
         self.receiver = receiver
         self.source = source
         self.selector = selector
@@ -99,114 +115,109 @@ class ReceiverHandler(ClientHandler):
         self.handlers.append(IncomingMessageHandler(True, self))
 
     def on_start(self):
-        self.link = self.container.create_receiver(
-            self.container.shared_connection,
+        self.link = self.client.container.create_receiver(
+            self.client.connection,
             self.source,
             name=self._get_link_name(),
             handler=self,
             options=self.receiver.selector(self.selector))
-        self.receiver.on_start(self.link)
+        self.receiver.on_start(self.link, self.iteration)
+
+    def on_stop(self):
+        self.receiver.on_stop(self.client.stopped)
 
     def on_message(self, event):
         self.receiver.on_message(event)
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. name=%s source=%s offset=%s",
+        log.info("%s: link local open. name=%s source=%s offset=%s",
                      event.connection.container,
                      event.link.name,
                      self.source,
                      self.selector.filter_set["selector"].value)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. name=%s source=%s",
+        log.info("%s: link remote open. name=%s source=%s",
                      event.connection.container,
                      event.link.name,
                      self.source)
 
 class SenderHandler(ClientHandler):
-    def __init__(self):
-        super(SenderHandler, self).__init__("send")
-        self.target = None
-        self.handlers = [OutgoingMessageHandler(False, self)]
-        self.messages = Queue.Queue()
-        self.count = 0
-        self.injector = None
+    class DeliveryEvent(InjectorEvent):
+        def __init__(self, handler, message, callback, state):
+            super(SenderHandler.DeliveryEvent, self).__init__(InjectorEvent.SEND, subject=handler)
+            self.message = message
+            self.callback = callback
+            self.state = state
 
-    def set_target(self, value):
-        self.target = value
+        def complete(self, outcome):
+            self.callback(self.state, outcome)
 
-    def send(self, message):
-        self.injector.trigger(ApplicationEvent(self, "message", subject=message))
+    def __init__(self, client, sender, target):
+        super(SenderHandler, self).__init__("send", client)
+        self.sender = sender
+        self.target = target
+        self.handlers = [OutgoingMessageHandler(True, self)]
+        self.queue = Queue.Queue()
+        self.deliveries = {}
+
+    def send(self, message, callback, state):
+        event = SenderHandler.DeliveryEvent(self, message, callback, state)
+        self.queue.put(event)
+        self.client.injector.trigger(event)
 
     def on_start(self):
-        if self.injector is None:
-            self.injector = EventInjector()
-            self.container.selectable(self.injector)
-        self.link = self.container.create_sender(
-            self.container.shared_connection,
+        self.link = self.client.container.create_sender(
+            self.client.connection,
             self.target,
             name=self._get_link_name(),
             handler=self)
+        self.sender.on_start(self.link, self.iteration)
 
-    def on_stop(self):
-        if self.injector is not None:
-            self.injector.close()
+    def on_link_error(self, condition):
+        for dlv in self.deliveries:
+            self.deliveries[dlv].complete(condition or Delivery.RELEASED)
+        self.deliveries.clear()
 
     def on_link_local_open(self, event):
-        logging.info("%s: link local open. name=%s target=%s",
+        log.info("%s: link local open. name=%s target=%s",
                      event.connection.container,
                      event.link.name,
                      self.target)
 
     def on_link_remote_open(self, event):
-        logging.info("%s: link remote open. name=%s",
+        log.info("%s: link remote open. name=%s",
                      event.connection.container,
                      event.link.name)
 
-    def on_message(self, event):
-        self.messages.put(event.subject)
-        self.on_sendable(None)
-
     def on_sendable(self, event):
-        while self.link.credit and not self.messages.empty():
-            message = self.messages.get(False)
-            self.link.send(message, tag=str(self.count))
-            self.count += 1
+        while self.link and self.link.credit and not self.queue.empty():
+            dlv_event = self.queue.get(False)
+            delivery = dlv_event.message.send(self.link)
+            self.deliveries[delivery] = dlv_event
+            log.debug("%s: send message %s", self.client.container_id, delivery.tag)
 
-    def on_accepted(self, event):
-        pass
-
-    def on_released(self, event):
-        pass
-
-    def on_rejected(self, event):
-        pass
+    def on_delivery(self, event):
+        dlv = event.delivery
+        log.debug("%s: on_delivery %s", self.client.container_id, dlv.tag)
+        if dlv.updated:
+            dlv_event = self.deliveries.pop(dlv, None)
+            if dlv_event:
+                dlv_event.complete(dlv.remote_state)
+            dlv.settle()
 
 class SessionPolicy(object):
     def __init__(self):
-        self.shared_session = None
+        self._session = None
 
     def session(self, context):
-        if not self.shared_session:
-            self.shared_session = context.session()
-            self.shared_session.open()
-        return self.shared_session
+        if not self._session:
+            self._session = context.session()
+            self._session.open()
+        return self._session
 
-    def free(self):
-        if self.shared_session:
-            self.shared_session.close()
-            self.shared_session.free()
-            self.shared_session = None
-
-class OffsetUtil(object):
-    @classmethod
-    def selector(cls, value, inclusive=False):
-        if isinstance(value, datetime.datetime):
-            epoch = datetime.datetime.utcfromtimestamp(0)
-            milli_seconds = timestamp((value - epoch).total_seconds() * 1000.0)
-            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(milli_seconds) + "'")
-        elif isinstance(value, timestamp):
-            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(value) + "'")
-        else:
-            operator = ">=" if inclusive else ">"
-            return Selector(u"amqp.annotation.x-opt-offset " + operator + " '" + utf82unicode(value) + "'")
+    def reset(self):
+        if self._session:
+            self._session.close()
+            self._session.free()
+            self._session = None

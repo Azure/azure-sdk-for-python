@@ -143,19 +143,17 @@ class PartitionManager:
             # Acquire any expired leases.
             # Renew any leases that currently belong to us.
             getting_all_leases = await lease_manager.get_all_leases()
-
             leases_owned_by_others_q = Queue()
             possible_lease_threads = []
-
             for get_lease_task in getting_all_leases:
                 t = threading.Thread(target=self.attempt_renew_lease, args=(get_lease_task,),\
                                      kwargs={'owned_by_others_q': leases_owned_by_others_q, 
                                              'lease_manager': lease_manager})
                 possible_lease_threads.append(t)
                 t.start()
+                
             # Wait to calculate possible leases
             [t.join() for t in possible_lease_threads]
-
             # Extract all leasees leases_owned_by_others and our_lease_count from the
             all_leases = {}
             leases_owned_by_others = []
@@ -335,3 +333,4 @@ class PartitionManager:
         except Exception as err:
             logging.error("Failure during getting/acquiring/renewing lease,\
                         skipping %s", repr(err))
+
