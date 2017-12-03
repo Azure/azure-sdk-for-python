@@ -9,10 +9,10 @@ import uuid
 import logging
 import requests
 from azure.storage.blob import BlockBlobService
-from eventhubsprocessor.azure_blob_lease import AzureBlobLease
-from eventhubsprocessor.checkpoint import Checkpoint
-from eventhubsprocessor.abstract_lease_manager import AbstractLeaseManager
-from eventhubsprocessor.abstract_checkpoint_manager import AbstractCheckpointManager
+from eventprocessorhost.azure_blob_lease import AzureBlobLease
+from eventprocessorhost.checkpoint import Checkpoint
+from eventprocessorhost.abstract_lease_manager import AbstractLeaseManager
+from eventprocessorhost.abstract_checkpoint_manager import AbstractCheckpointManager
 
 class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeaseManager):
     """

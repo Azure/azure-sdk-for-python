@@ -6,10 +6,10 @@
 import logging
 import asyncio
 import sys
-from eventhubsprocessor.abstract_event_processor import AbstractEventProcessor
-from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-from eventhubsprocessor.eh_config import EventHubConfig
-from eventhubsprocessor.eph import EventProcessorHost
+from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
+from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventprocessorhost.eh_config import EventHubConfig
+from eventprocessorhost.eph import EventProcessorHost
 
 class EventProcessor(AbstractEventProcessor):
     """

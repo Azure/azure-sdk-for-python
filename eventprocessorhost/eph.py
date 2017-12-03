@@ -5,7 +5,7 @@
 
 import uuid
 import asyncio
-from eventhubsprocessor.partition_manager import PartitionManager
+from eventprocessorhost.partition_manager import PartitionManager
 class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.

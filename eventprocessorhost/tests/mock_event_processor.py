@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import logging
-from eventhubsprocessor.abstract_event_processor import AbstractEventProcessor
+from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 
 class MockEventProcessor(AbstractEventProcessor):
     """

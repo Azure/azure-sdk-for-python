@@ -9,8 +9,8 @@ import asyncio
 import time
 from mock_credentials import MockCredentials
 from mock_event_processor import MockEventProcessor
-from eventhubsprocessor.eph import EventProcessorHost
-from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventprocessorhost.eph import EventProcessorHost
+from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
 
 class AzureStorageCheckpointLeaseManagerTestCase(unittest.TestCase):
     """Tests for `eh_partition_pump.py`."""

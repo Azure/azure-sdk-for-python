@@ -9,9 +9,9 @@ import asyncio
 import sys
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
-from eventhubsprocessor.eh_config import EventHubConfig
-from eventhubsprocessor.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-from eventhubsprocessor.eph import EventProcessorHost
+from eventprocessorhost.eh_config import EventHubConfig
+from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventprocessorhost.eph import EventProcessorHost
 
 class EventProcessorHostTestCase(unittest.TestCase):
     """Tests for `partition_manager.py`."""
@@ -44,7 +44,6 @@ class EventProcessorHostTestCase(unittest.TestCase):
             self._loop.run_until_complete(self._host.close_async())
         finally:
             self._loop.stop()
-
 
 if __name__ == '__main__':
     unittest.main()

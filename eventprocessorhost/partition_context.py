@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import logging
-from eventhubsprocessor.checkpoint import Checkpoint
+from eventprocessorhost.checkpoint import Checkpoint
 
 class PartitionContext:
     """
