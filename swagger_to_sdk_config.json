@@ -5,7 +5,7 @@
       "use": "@microsoft.azure/autorest.python@preview",
       "python": "",
       "python-mode": "update",
-      "python-sdks-folder": ".",
+      "sdkrel:python-sdks-folder": ".",
       "multiapi": ""
     },
     "version": "0.2.0"
