@@ -24,14 +24,14 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by processor host to initialize the event processor.
         """
-        logger.info("Connection established %s", context.partition_id)
+        logging.info("Connection established %s", context.partition_id)
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        logger.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
+        logging.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
                      context.partition_id, context.offset, context.sequence_number)
 
     async def process_events_async(self, context, messages):
@@ -40,7 +40,7 @@ class EventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        logger.info("Events processed %s %s", context.partition_id, messages)
+        logging.info("Events processed %s %s", context.partition_id, messages)
         await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
@@ -54,13 +54,13 @@ class EventProcessor(AbstractEventProcessor):
 
 try:
     # Storage Account Credentials
-    STORAGE_ACCOUNT_NAME = "mystorageaccount"
-    STORAGE_KEY = "sas encoded storage key"
+    STORAGE_ACCOUNT_NAME = "<mystorageaccount>"
+    STORAGE_KEY = "<storage_key>"
     LEASE_CONTAINER_NAME = "leases"
 
     # Eventhub config and storage manager 
-    EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<URL-encoded-SAS-policy>', 
-                               '<URL-encoded-SAS-key>', consumer_group="$default")
+    EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<SAS-policy>', 
+                               '<SAS-key>', consumer_group="$default")
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
     #Event loop and host
