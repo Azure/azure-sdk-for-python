@@ -33,7 +33,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :param azure_asn: The Azure ASN.
     :type azure_asn: int
     :param peer_asn: The peer ASN.
-    :type peer_asn: int
+    :type peer_asn: long
     :param primary_peer_address_prefix: The primary address prefix.
     :type primary_peer_address_prefix: str
     :param secondary_peer_address_prefix: The secondary address prefix.
@@ -74,6 +74,7 @@ class ExpressRouteCircuitPeering(SubResource):
     """
 
     _validation = {
+        'peer_asn': {'maximum': 4294967295, 'minimum': 1},
         'etag': {'readonly': True},
     }
 
@@ -82,7 +83,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'int'},
+        'peer_asn': {'key': 'properties.peerASN', 'type': 'long'},
         'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
         'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
         'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
