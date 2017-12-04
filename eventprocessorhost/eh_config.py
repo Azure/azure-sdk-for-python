@@ -12,8 +12,8 @@ import base64
 class EventHubConfig:
     """
     A container class for event hub properties. Takes sb_name (service bus name),
-    eh_name (event hub name), policy (URL-encoded-SAS-policy),
-    sas_key(URL-encoded-SAS-key), consumer_group
+    eh_name (event hub name), policy (SAS-policy),
+    sas_key(SAS-key), consumer_group
     """
     def __init__(self, sb_name, eh_name, policy, sas_key, consumer_group):
         self.sb_name = sb_name
