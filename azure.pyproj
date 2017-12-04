@@ -1735,6 +1735,23 @@
     </Compile>
     <Compile Include="azure-mgmt-storage\tests\test_mgmt_storage.py" />
     <Compile Include="azure-mgmt-storage\tests\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\error_response.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\operation.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\operation_display.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\operation_paged.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\subscription_definition.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\subscription_definition_paged.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\models\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\operations\subscription_definitions_operations.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\operations\subscription_definitions_operation_metadata_operations.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\operations\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\subscription_definitions_client.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\version.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\subscription\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure\__init__.py" />
+    <Compile Include="azure-mgmt-subscription\azure_bdist_wheel.py" />
+    <Compile Include="azure-mgmt-subscription\setup.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\check_traffic_manager_relative_dns_name_availability_parameters.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\dns_config.py" />
     <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\endpoint.py" />
@@ -2269,6 +2286,12 @@
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\v2017_06_01\operations\" />
     <Folder Include="azure-mgmt-storage\tests\" />
     <Folder Include="azure-mgmt-storage\tests\recordings\" />
+    <Folder Include="azure-mgmt-subscription\" />
+    <Folder Include="azure-mgmt-subscription\azure\" />
+    <Folder Include="azure-mgmt-subscription\azure\mgmt\" />
+    <Folder Include="azure-mgmt-subscription\azure\mgmt\subscription\" />
+    <Folder Include="azure-mgmt-subscription\azure\mgmt\subscription\models\" />
+    <Folder Include="azure-mgmt-subscription\azure\mgmt\subscription\operations\" />
     <Folder Include="azure-mgmt-trafficmanager\" />
     <Folder Include="azure-mgmt-trafficmanager\azure\" />
     <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\" />
@@ -2493,6 +2516,10 @@
     <Content Include="azure-mgmt-nspkg\MANIFEST.in" />
     <Content Include="azure-mgmt-nspkg\README.rst" />
     <Content Include="azure-mgmt-nspkg\setup.cfg" />
+    <Content Include="azure-mgmt-subscription\HISTORY.rst" />
+    <Content Include="azure-mgmt-subscription\MANIFEST.in" />
+    <Content Include="azure-mgmt-subscription\README.rst" />
+    <Content Include="azure-mgmt-subscription\setup.cfg" />
     <Content Include="azure-mgmt-trafficmanager\HISTORY.rst" />
     <Content Include="azure-mgmt-trafficmanager\MANIFEST.in" />
     <Content Include="azure-mgmt-trafficmanager\README.rst" />
