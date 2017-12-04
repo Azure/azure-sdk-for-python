@@ -13,308 +13,247 @@
   "projects": {
     "authorization": {
       "build_dir": "azure-mgmt-authorization",
-      "markdown": "specification/authorization/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/authorization/resource-manager/readme.md"
     },
     "batch": {
       "build_dir": "azure-batch",
-      "generated_relative_base_directory": "azure/batch",
       "markdown": "specification/batch/data-plane/readme.md",
-      "output_dir": "azure-batch/azure/batch/",
       "wrapper_filesOrDirs": [
-        "batch_auth.py"
+        "azure-batch/azure/batch/batch_auth.py"
       ]
     },
     "batch.management": {
       "build_dir": "azure-mgmt-batch",
-      "markdown": "specification/batch/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/batch/resource-manager/readme.md"
     },
     "batchai.management": {
       "build_dir": "azure-mgmt-batchai",
-      "markdown": "specification/batchai/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/batchai/resource-manager/readme.md"
     },
     "billing": {
       "build_dir": "azure-mgmt-billing",
-      "markdown": "specification/billing/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/billing/resource-manager/readme.md"
     },
     "cdn": {
       "build_dir": "azure-mgmt-cdn",
-      "markdown": "specification/cdn/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/cdn/resource-manager/readme.md"
     },
     "cognitiveservices.mgmt": {
       "build_dir": "azure-mgmt-cognitiveservices",
-      "markdown": "specification/cognitiveservices/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/cognitiveservices/resource-manager/readme.md"
     },
     "cognitiveservices.language.textanalytics": {
-      "markdown": "specification/cognitiveservices/data-plane/TextAnalytics/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-language-textanalytics"
+      "build_dir": "azure-cognitiveservices-language-textanalytics",
+      "markdown": "specification/cognitiveservices/data-plane/TextAnalytics/readme.md"
     },
     "cognitiveservices.language.spellcheck": {
-      "markdown": "specification/cognitiveservices/data-plane/SpellCheck/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-language-spellcheck"
+      "build_dir": "azure-cognitiveservices-language-spellcheck",
+      "markdown": "specification/cognitiveservices/data-plane/SpellCheck/readme.md"
     },
     "cognitiveservices.search.entitysearch": {
-      "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-search-entitysearch"
+      "build_dir": "azure-cognitiveservices-search-entitysearch",
+      "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md"
     },    
     "cognitiveservices.search.videosearch": {
-      "markdown": "specification/cognitiveservices/data-plane/VideoSearch/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-search-videosearch"
+      "build_dir": "azure-cognitiveservices-search-videosearch",
+      "markdown": "specification/cognitiveservices/data-plane/VideoSearch/readme.md"
     },
     "cognitiveservices.search.websearch": {
-      "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-search-websearch/azure/cognitiveservices/search/websearch"
+      "build_dir": "azure-cognitiveservices-search-websearch",
+      "markdown": "specification/cognitiveservices/data-plane/WebSearch/readme.md"
     },
     "cognitiveservices.vision.computervision": {
-      "markdown": "specification/cognitiveservices/data-plane/ComputerVision/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-vision-computervision"
+      "build_dir": "azure-cognitiveservices-vision-computervision",      
+      "markdown": "specification/cognitiveservices/data-plane/ComputerVision/readme.md"
     },
     "cognitiveservices.vision.contentmoderator": {
-      "markdown": "specification/cognitiveservices/data-plane/ContentModerator/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-vision-contentmoderator"
+      "build_dir": "azure-cognitiveservices-vision-contentmoderator",      
+      "markdown": "specification/cognitiveservices/data-plane/ContentModerator/readme.md"
     },
     "cognitiveservices.vision.face": {
-      "markdown": "specification/cognitiveservices/data-plane/Face/readme.md",
-      "output_dir": ".",
-      "build_dir": "azure-cognitiveservices-vision-face"
+      "build_dir": "azure-cognitiveservices-vision-face",      
+      "markdown": "specification/cognitiveservices/data-plane/Face/readme.md"
     },
     "commerce": {
       "build_dir": "azure-mgmt-commerce",
-      "markdown": "specification/commerce/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/commerce/resource-manager/readme.md"
     },
     "compute": {
       "build_dir": "azure-mgmt-compute",
-      "markdown": "specification/compute/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/compute/resource-manager/readme.md"
     },
     "consumption": {
       "build_dir": "azure-mgmt-consumption",
-      "markdown": "specification/consumption/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/consumption/resource-manager/readme.md"
     },
     "containerinstance": {
       "build_dir": "azure-mgmt-containerinstance",
-      "markdown": "specification/containerinstance/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/containerinstance/resource-manager/readme.md"
     },
     "containerregistry": {
       "build_dir": "azure-mgmt-containerregistry.",
-      "markdown": "specification/containerregistry/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/containerregistry/resource-manager/readme.md"
     },
     "containerservice": {
       "build_dir": "azure-mgmt-containerservice",
-      "markdown": "specification/containerservices/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/containerservices/resource-manager/readme.md"
     },
     "cosmosdb": {
       "build_dir": "azure-mgmt-cosmosdb",
-      "markdown": "specification/cosmos-db/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/cosmos-db/resource-manager/readme.md"
     },
     "datafactory": {
       "build_dir": "azure-mgmt-datafactory",
-      "markdown": "specification/datafactory/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/datafactory/resource-manager/readme.md"
     },
     "datalake.analytics.account": {
       "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/",
-      "markdown": "specification/datalake-analytics/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/datalake-analytics/resource-manager/readme.md"
     },
     "datalake.analytics.catalog_job": {
       "build_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
-      "markdown": "specification/datalake-analytics/data-plane/readme.md",
-      "output_dir": "."
+      "markdown": "specification/datalake-analytics/data-plane/readme.md"
     },
     "datalake.store.account": {
       "build_dir": "azure-mgmt-datalake-store",
-      "markdown": "specification/datalake-store/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/datalake-store/resource-manager/readme.md"
     },
     "devtestlabs": {
       "build_dir": "azure-mgmt-devtestlabs",
-      "markdown": "specification/devtestlabs/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/devtestlabs/resource-manager/readme.md"
     },
     "dns": {
       "build_dir": "azure-mgmt-dns",
-      "markdown": "specification/dns/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/dns/resource-manager/readme.md"
     },
     "eventgrid": {
       "build_dir": "azure-mgmt-eventgrid",
-      "markdown": "specification/eventgrid/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/eventgrid/resource-manager/readme.md"
     },
     "eventhub": {
       "build_dir": "azure-mgmt-eventhub",
-      "markdown": "specification/eventhub/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/eventhub/resource-manager/readme.md"
     },
     "graphrbac": {
       "build_dir": "azure-graphrbac",
-      "markdown": "specification/graphrbac/data-plane/readme.md",
-      "output_dir": "."
+      "markdown": "specification/graphrbac/data-plane/readme.md"
     },
     "iothub": {
       "build_dir": "azure-mgmt-iothub",
-      "markdown": "specification/iothub/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/iothub/resource-manager/readme.md"
     },
     "keyvault.data": {
       "build_dir": "azure-keyvault",
-      "generated_relative_base_directory": "azure/keyvault",
       "markdown": "specification/keyvault/data-plane/readme.md",
-      "output_dir": "azure-keyvault/azure/keyvault",
       "wrapper_filesOrDirs": [
-        "custom",
-        "generated",
-        "__init__.py"
+        "azure-keyvault/azure/keyvault/custom",
+        "azure-keyvault/azure/keyvault/generated",
+        "azure-keyvault/azure/keyvault/__init__.py"
       ]
     },
     "keyvault.mgmt": {
       "build_dir": "azure-mgmt-keyvault",
-      "markdown": "specification/keyvault/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/keyvault/resource-manager/readme.md"
     },
     "loganalytics": {
       "build_dir": "azure-mgmt-loganalytics",
-      "markdown": "specification/operationalinsights/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/operationalinsights/resource-manager/readme.md"
     },
     "logic": {
       "build_dir": "azure-mgmt-logic",
-      "markdown": "specification/logic/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/logic/resource-manager/readme.md"
     },
     "machinelearningcompute": {
       "build_dir": "azure-mgmt-machinelearningcompute",
-      "markdown": "specification/machinelearningcompute/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/machinelearningcompute/resource-manager/readme.md"
     },
     "media": {
       "build_dir": "azure-mgmt-media",
-      "markdown": "specification/mediaservices/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/mediaservices/resource-manager/readme.md"
     },
     "monitor": {
       "build_dir": "azure-mgmt-monitor",
-      "markdown": "specification/monitor/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/monitor/resource-manager/readme.md"
     },
     "network": {
       "build_dir": "azure-mgmt-network",
-      "markdown": "specification/network/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/network/resource-manager/readme.md"
     },
     "notificationhubs": {
       "build_dir": "azure-mgmt-notificationhubs",
-      "markdown": "specification/notificationhubs/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/notificationhubs/resource-manager/readme.md"
     },
     "powerbiembedded": {
       "build_dir": "azure-mgmt-powerbiembedded",
-      "markdown": "specification/powerbiembedded/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/powerbiembedded/resource-manager/readme.md"
     },
     "rdbms.mysql": {
       "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
-      "markdown": "specification/mysql/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/mysql/resource-manager/readme.md"
     },
     "rdbms.postgres": {
       "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql",
-      "markdown": "specification/postgresql/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/postgresql/resource-manager/readme.md"
     },
     "recoveryservices": {
       "build_dir": "azure-mgmt-recoveryservices",
-      "markdown": "specification/recoveryservices/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/recoveryservices/resource-manager/readme.md"
     },
     "recoveryservicesbackup": {
       "build_dir": "azure-mgmt-recoveryservicesbackup",
-      "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/recoveryservicesbackup/resource-manager/readme.md"
     },
     "redis": {
       "build_dir": "azure-mgmt-redis",
-      "markdown": "specification/redis/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/redis/resource-manager/readme.md"
     },
     "relay.mgmt": {
       "build_dir": "azure-mgmt-relay",
-      "markdown": "specification/relay/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/relay/resource-manager/readme.md"
     },
     "resources": {
       "build_dir": "azure-mgmt-resource",
-      "markdown": "specification/resources/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/resources/resource-manager/readme.md"
     },
     "scheduler": {
       "build_dir": "azure-mgmt-scheduler",
-      "markdown": "specification/scheduler/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/scheduler/resource-manager/readme.md"
     },
     "search": {
       "build_dir": "azure-mgmt-search",
-      "markdown": "specification/search/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/search/resource-manager/readme.md"
     },
     "servermanager": {
       "build_dir": "azure-mgmt-servermanager",
-      "markdown": "specification/servermanagement/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/servermanagement/resource-manager/readme.md"
     },
     "servicebus": {
       "build_dir": "azure-mgmt-servicebus",
-      "markdown": "specification/servicebus/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/servicebus/resource-manager/readme.md"
     },
     "servicefabric.data": {
       "build_dir": "azure-servicefabric",
-      "markdown": "specification/servicefabric/data-plane/readme.md",
-      "output_dir": "."
+      "markdown": "specification/servicefabric/data-plane/readme.md"
     },
     "servicefabric.mgmt": {
       "build_dir": "azure-mgmt-servicefabric",
-      "markdown": "specification/servicefabric/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/servicefabric/resource-manager/readme.md"
     },
     "sql": {
       "build_dir": "azure-mgmt-sql",
-      "markdown": "specification/sql/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/sql/resource-manager/readme.md"
     },
     "storage": {
       "build_dir": "azure-mgmt-storage",
-      "markdown": "specification/storage/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/storage/resource-manager/readme.md"
     },
     "trafficmanager": {
       "build_dir": "azure-mgmt-trafficmanager",
-      "markdown": "specification/trafficmanager/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/trafficmanager/resource-manager/readme.md"
     },
     "web": {
       "build_dir": "azure-mgmt-web",
-      "markdown": "specification/web/resource-manager/readme.md",
-      "output_dir": "."
+      "markdown": "specification/web/resource-manager/readme.md"
     }
   }
 }
