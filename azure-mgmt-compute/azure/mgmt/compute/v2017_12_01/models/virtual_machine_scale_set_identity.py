@@ -19,16 +19,25 @@ class VirtualMachineScaleSetIdentity(Model):
     sending a request.
 
     :ivar principal_id: The principal id of virtual machine scale set
+     identity. This property will only be provided for a system assigned
      identity.
     :vartype principal_id: str
     :ivar tenant_id: The tenant id associated with the virtual machine scale
-     set.
+     set. This property will only be provided for a system assigned identity.
     :vartype tenant_id: str
     :param type: The type of identity used for the virtual machine scale set.
-     Currently, the only supported type is 'SystemAssigned', which implicitly
-     creates an identity. Possible values include: 'SystemAssigned'
+     The type 'SystemAssigned, UserAssigned' includes both an implicitly
+     created identity and a set of user assigned identities. The type 'None'
+     will remove any identities from the virtual machine scale set. Possible
+     values include: 'SystemAssigned', 'UserAssigned', 'SystemAssigned,
+     UserAssigned', 'None'
     :type type: str or
      ~azure.mgmt.compute.v2017_12_01.models.ResourceIdentityType
+    :param identity_ids: The list of user identities associated with the
+     virtual machine scale set. The user identity references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/identities/{identityName}'.
+    :type identity_ids: list[str]
     """
 
     _validation = {
@@ -40,9 +49,11 @@ class VirtualMachineScaleSetIdentity(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'identity_ids': {'key': 'identityIds', 'type': '[str]'},
     }
 
-    def __init__(self, type=None):
+    def __init__(self, type=None, identity_ids=None):
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+        self.identity_ids = identity_ids
