@@ -38,13 +38,13 @@ class AvailabilitySetsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create or update an availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: The name of the availability set.
-        :type name: str
+        :param availability_set_name: The name of the availability set.
+        :type availability_set_name: str
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
         :type parameters:
@@ -60,10 +60,10 @@ class AvailabilitySetsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'availabilitySetName': self._serialize.url("availability_set_name", availability_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

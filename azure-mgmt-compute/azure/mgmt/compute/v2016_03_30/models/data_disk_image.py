@@ -18,9 +18,9 @@ class DataDiskImage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar lun: The LUN number for a data disk. This value is used to identify
-     data disk image inside the VMImage and therefore it must be unique for
-     each data disk.
+    :ivar lun: Specifies the logical unit number of the data disk. This value
+     is used to identify data disks within the VM and therefore must be unique
+     for each data disk attached to a VM.
     :vartype lun: int
     """
 
