@@ -13,12 +13,22 @@ from msrest.serialization import Model
 
 
 class HardwareProfile(Model):
-    """Describes a hardware profile.
+    """Specifies the hardware settings for the virtual machine.
 
-    :param vm_size: The virtual machine size name. Possible values include:
-     'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4', 'Standard_A0',
-     'Standard_A1', 'Standard_A2', 'Standard_A3', 'Standard_A4', 'Standard_A5',
-     'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A9',
+    :param vm_size: Specifies the size of the virtual machine. For more
+     information about virtual machine sizes, see [Sizes for virtual
+     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+     <br><br> The available VM sizes depend on region and availability set. For
+     a list of available sizes use these APIs:  <br><br> [List all available
+     virtual machine sizes in an availability
+     set](virtualmachines-list-sizes-availability-set.md) <br><br> [List all
+     available virtual machine sizes in a
+     region](virtualmachines-list-sizes-region.md) <br><br> [List all available
+     virtual machine sizes for
+     resizing](virtualmachines-list-sizes-for-resizing.md). Possible values
+     include: 'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4',
+     'Standard_A0', 'Standard_A1', 'Standard_A2', 'Standard_A3', 'Standard_A4',
+     'Standard_A5', 'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A9',
      'Standard_A10', 'Standard_A11', 'Standard_D1', 'Standard_D2',
      'Standard_D3', 'Standard_D4', 'Standard_D11', 'Standard_D12',
      'Standard_D13', 'Standard_D14', 'Standard_D1_v2', 'Standard_D2_v2',

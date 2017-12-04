@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class KeyVaultKeyReference(Model):
     """Describes a reference to Key Vault Key.
 
-    :param key_url: The URL referencing a key in a Key Vault.
+    :param key_url: The URL referencing a key encryption key in Key Vault.
     :type key_url: str
     :param source_vault: The relative URL of the Key Vault containing the key.
     :type source_vault: ~azure.mgmt.compute.v2015_06_15.models.SubResource
