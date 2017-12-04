@@ -9,7 +9,7 @@ class AbstractEventProcessor(ABC):
     """
     Abstract that must be extended by event processor classes.
     """
-    def __init__(self):
+    def __init__(self, params=None):
         pass
 
     @abstractmethod

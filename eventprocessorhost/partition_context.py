@@ -39,7 +39,7 @@ class PartitionContext:
         if not starting_checkpoint:
             # No checkpoint was ever stored. Use the initialOffsetProvider instead
             # defaults to "-1"
-            self.offset = self.host.eh_options.initial_offset_provider
+            self.offset = self.host.eph_options.initial_offset_provider
             self.sequence_number = -1
         else:
             self.offset = starting_checkpoint.offset
@@ -90,8 +90,9 @@ class PartitionContext:
         """
         Persists the checkpoint
         """
-        logging.info("PartitionPumpCheckpointStart %s %s %s %s",
-                         self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number)
+        logging.debug("PartitionPumpCheckpointStart %s %s %s %s",
+                      self.host.guid, checkpoint.partition_id,
+                      checkpoint.offset, checkpoint.sequence_number)
         try:
             in_store_checkpoint = await self.host.storage_manager \
                                                  .get_checkpoint_async(checkpoint.partition_id)
@@ -113,8 +114,9 @@ class PartitionContext:
                 raise Exception("offset/sequenceNumber invalid")
 
         except Exception as err:
-            logging.error("PartitionPumpCheckpointError", self.host.guid, checkpoint.partition_id, repr(err))
+            logging.error("PartitionPumpCheckpointError %s %s %s",
+                          self.host.guid, checkpoint.partition_id, repr(err))
             raise
         finally:
-            logging.info("PartitionPumpCheckpointStop %s %s",
-                         self.host.guid, checkpoint.partition_id)
+            logging.debug("PartitionPumpCheckpointStop %s %s",
+                          self.host.guid, checkpoint.partition_id)

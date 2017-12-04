@@ -58,7 +58,7 @@ class EventHubPartitionPump(PartitionPump):
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
         self.partition_receive_handler = AsyncReceiver(loop=self.loop)
-        self.eh_client = EventHubClient(self.host.eh_connection_string) \
+        self.eh_client = EventHubClient(self.host.eh_config.client_address) \
                         .subscribe(self.partition_receive_handler,
                                    self.partition_context.consumer_group_name,
                                    self.partition_context.partition_id,
@@ -88,9 +88,9 @@ class PartitionReceiver:
     """
     def __init__(self, eh_partition_pump):
         self.eh_partition_pump = eh_partition_pump
-        self.max_batch_size = self.eh_partition_pump.host.eh_options.max_batch_size
-        self.recieve_timeout = self.eh_partition_pump.host.eh_options.receive_timeout
-
+        self.max_batch_size = self.eh_partition_pump.host.eph_options.max_batch_size
+        self.recieve_timeout = self.eh_partition_pump.host.eph_options.receive_timeout
+    
     async def run(self):
         """
         Runs the async partion reciever event loop to retrive messages from the event queue
@@ -111,9 +111,9 @@ class PartitionReceiver:
                     logging.info("No events received, queue size %d, delivered %d",
                                 self.eh_partition_pump.partition_receive_handler.messages.qsize(),
                                 self.eh_partition_pump.partition_receive_handler.delivered)
-                await self.process_error_async(err)
-        # Handle close
-
+                if self.eh_partition_pump.host.eph_options.release_pump_on_timeout:
+                    await self.process_error_async(err)
+    
     async def process_events_async(self, events):
         """
         # This method is called on the thread that the EH client uses to run the pump.

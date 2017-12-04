@@ -10,10 +10,11 @@ class MockEventProcessor(AbstractEventProcessor):
     """
     Mock Implmentation of AbstractEventProcessor for testing
     """
-    def __init__(self):
+    def __init__(self, params=None):
         """
         Init Event processor
         """
+        self.params = params
         self._msg_counter = 0
     async def open_async(self, context):
         """

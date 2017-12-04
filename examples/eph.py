@@ -5,23 +5,17 @@
 
 import logging
 import asyncio
-import time
-import urllib
-import hmac
-import hashlib
-import base64
+import sys
 from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from eventprocessorhost.eh_config import EventHubConfig
 from eventprocessorhost.eph import EventProcessorHost
-
-import examples
-logger = examples.get_logger(logging.INFO)
 
 class EventProcessor(AbstractEventProcessor):
     """
     Example Implmentation of AbstractEventProcessor
     """
-    def __init__(self):
+    def __init__(self, params=None):
         """
         Init Event processor
         """
@@ -30,14 +24,14 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by processor host to initialize the event processor.
         """
-        logger.info("Connection established %s", context.partition_id)
+        logging.info("Connection established %s", context.partition_id)
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        logger.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
+        logging.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
                      context.partition_id, context.offset, context.sequence_number)
 
     async def process_events_async(self, context, messages):
@@ -46,7 +40,7 @@ class EventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        logger.info("Events processed %s %s", context.partition_id, messages)
+        logging.info("Events processed %s %s", context.partition_id, messages)
         await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
@@ -56,59 +50,23 @@ class EventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        logger.error("Event Processor Error %s ", repr(error))
-        await context.host.close_async()
-
-def generate_eh_rest_credentials(sb_name, eh_name, key_name, sas_token):
-    """
-    Returns an auth token dictionary for making calls to eventhub
-    REST API.
-    """
-    uri = urllib.parse.quote_plus("https://{}.servicebus.windows.net/{}" \
-                                  .format(sb_name, eh_name))
-    sas = sas_token.encode('utf-8')
-    expiry = str(int(time.time() + 10000))
-    string_to_sign = ('{}\n{}'.format(uri,expiry)).encode('utf-8')
-    signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
-    signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
-    return  {"sb_name": sb_name,
-             "eh_name": eh_name,
-             "token":'SharedAccessSignature sr={}&sig={}&se={}&skn={}' \
-                     .format(uri, signature, expiry, key_name)
-            }
-
+        logging.error("Event Processor Error %s ", repr(error))
 
 try:
     # Storage Account Credentials
-    STORAGE_ACCOUNT_NAME = "mystorageaccount"
-    STORAGE_KEY = "sas encoded storage key"
+    STORAGE_ACCOUNT_NAME = "<mystorageaccount>"
+    STORAGE_KEY = "<storage_key>"
     LEASE_CONTAINER_NAME = "leases"
 
-    # Eventhub client address and consumer group
-    ADDRESS = ("amqps://"
-               "<URL-encoded-SAS-policy>"
-               ":"
-               "<URL-encoded-SAS-key>"
-               "@"
-               "<mynamespace>.servicebus.windows.net"
-               "/"
-               "myeventhub")
-
-    CONSUMER_GROUP = "$default"
-
-    # Generate Auth credentials for EH Rest API (Used to list of partitions)
-    EH_REST_CREDENTIALS = generate_eh_rest_credentials('<mynamespace>',
-                                                       '<myeventhub>',
-                                                       '<URL-encoded-SAS-policy>',
-                                                       '<URL-encoded-SAS-key>')
-
+    # Eventhub config and storage manager 
+    EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<SAS-policy>', 
+                               '<SAS-key>', consumer_group="$default")
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
-
+    #Event loop and host
     LOOP = asyncio.get_event_loop()
-
-    HOST = EventProcessorHost(EventProcessor, ADDRESS, CONSUMER_GROUP,
-                              STORAGE_MANAGER, EH_REST_CREDENTIALS, loop=LOOP)
+    HOST = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
+                              ep_params=["param1","param2"], loop=LOOP)
 
     LOOP.run_until_complete(HOST.open_async())
     LOOP.run_until_complete(HOST.close_async())
