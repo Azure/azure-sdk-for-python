@@ -13,22 +13,27 @@ from msrest.serialization import Model
 
 
 class WindowsConfiguration(Model):
-    """Describes Windows Configuration of the OS Profile.
+    """Specifies Windows operating system settings on the virtual machine.
 
-    :param provision_vm_agent: Indicates whether the virtual machine agent
-     should be provisioned on the Virtual Machine. If not specified, then the
-     default behavior is to set it to true.
+    :param provision_vm_agent: Indicates whether virtual machine agent should
+     be provisioned on the virtual machine. <br><br> When this property is not
+     specified in the request body, default behavior is to set it to true.
+     This will ensure that VM Agent is installed on the VM so that extensions
+     can be added to the VM later.
     :type provision_vm_agent: bool
-    :param enable_automatic_updates: Indicates whether Windows updates are
-     automatically installed on the VM.
+    :param enable_automatic_updates: Indicates whether virtual machine is
+     enabled for automatic updates.
     :type enable_automatic_updates: bool
-    :param time_zone: The time zone of the VM
+    :param time_zone: Specifies the time zone of the virtual machine. e.g.
+     "Pacific Standard Time"
     :type time_zone: str
-    :param additional_unattend_content: Additional base-64 encoded XML
-     formatted information that can be included in the Unattend.xml file.
+    :param additional_unattend_content: Specifies additional base-64 encoded
+     XML formatted information that can be included in the Unattend.xml file,
+     which is used by Windows Setup.
     :type additional_unattend_content:
      list[~azure.mgmt.compute.v2016_03_30.models.AdditionalUnattendContent]
-    :param win_rm: The Windows Remote Management configuration of the VM
+    :param win_rm: Specifies the Windows Remote Management listeners. This
+     enables remote Windows PowerShell.
     :type win_rm: ~azure.mgmt.compute.v2016_03_30.models.WinRMConfiguration
     """
 

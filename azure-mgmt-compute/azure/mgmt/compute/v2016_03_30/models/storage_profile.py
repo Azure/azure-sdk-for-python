@@ -13,14 +13,24 @@ from msrest.serialization import Model
 
 
 class StorageProfile(Model):
-    """Describes a storage profile.
+    """Specifies the storage settings for the virtual machine disks.
 
-    :param image_reference: The image reference.
+    :param image_reference: Specifies information about the image to use. You
+     can specify information about platform images, marketplace images, or
+     virtual machine images. This element is required when you want to use a
+     platform image, marketplace image, or virtual machine image, but is not
+     used in other creation operations.
     :type image_reference:
      ~azure.mgmt.compute.v2016_03_30.models.ImageReference
-    :param os_disk: The OS disk.
+    :param os_disk: Specifies information about the operating system disk used
+     by the virtual machine. <br><br> For more information about disks, see
+     [About disks and VHDs for Azure virtual
+     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type os_disk: ~azure.mgmt.compute.v2016_03_30.models.OSDisk
-    :param data_disks: The data disks.
+    :param data_disks: Specifies the parameters that are used to add a data
+     disk to a virtual machine. <br><br> For more information about disks, see
+     [About disks and VHDs for Azure virtual
+     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks: list[~azure.mgmt.compute.v2016_03_30.models.DataDisk]
     """
 

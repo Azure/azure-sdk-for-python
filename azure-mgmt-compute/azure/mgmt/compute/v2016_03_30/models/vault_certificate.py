@@ -16,11 +16,22 @@ class VaultCertificate(Model):
     """Describes a single certificate reference in a Key Vault, and where the
     certificate should reside on the VM.
 
-    :param certificate_url: The URL referencing a secret in a Key Vault which
-     contains a properly formatted certificate.
+    :param certificate_url: This is the URL of a certificate that has been
+     uploaded to Key Vault as a secret. For adding a secret to the Key Vault,
+     see [Add a key or secret to the key
+     vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add).
+     In this case, your certificate needs to be It is the Base64 encoding of
+     the following JSON Object which is encoded in UTF-8: <br><br> {<br>
+     "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
+     "password":"<pfx-file-password>"<br>}
     :type certificate_url: str
-    :param certificate_store: The Certificate store in LocalMachine to add the
-     certificate to on Windows, leave empty on Linux.
+    :param certificate_store: For Windows VMs, specifies the certificate store
+     on the Virtual Machine to which the certificate should be added. The
+     specified certificate store is implicitly in the LocalMachine account.
+     <br><br>For Linux VMs, the certificate file is placed under the
+     /var/lib/waagent directory, with the file name <UppercaseThumbprint>.crt
+     for the X509 certificate file and <UppercaseThumbpring>.prv for private
+     key. Both of these files are .pem formatted.
     :type certificate_store: str
     """
 

@@ -17,9 +17,11 @@ class Sku(Model):
 
     :param name: The sku name.
     :type name: str
-    :param tier: The sku tier.
+    :param tier: Specifies the tier of virtual machines in a scale set.<br
+     /><br /> Possible Values:<br /><br /> **Standard**<br /><br /> **Basic**
     :type tier: str
-    :param capacity: The sku capacity.
+    :param capacity: Specifies the number of virtual machines in the scale
+     set.
     :type capacity: long
     """
 

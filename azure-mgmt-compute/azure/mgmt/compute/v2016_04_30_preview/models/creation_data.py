@@ -15,8 +15,9 @@ from msrest.serialization import Model
 class CreationData(Model):
     """Data used when creating a disk.
 
-    :param create_option: Possible values include: 'Empty', 'Attach',
-     'FromImage', 'Import', 'Copy', 'Restore'
+    :param create_option: This enumerates the possible sources of a disk's
+     creation. Possible values include: 'Empty', 'Attach', 'FromImage',
+     'Import', 'Copy', 'Restore'
     :type create_option: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
     :param storage_account_id: If createOption is Import, the Azure Resource

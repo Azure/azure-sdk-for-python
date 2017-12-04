@@ -129,8 +129,8 @@ class VirtualMachineScaleSetVMsOperations(object):
     def reimage_all(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
         """Allows you to re-image all the disks ( including data disks ) in the a
-        virtual machine scale set instance. This operation is only supported
-        for managed disks.
+        VM scale set instance. This operation is only supported for managed
+        disks.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
