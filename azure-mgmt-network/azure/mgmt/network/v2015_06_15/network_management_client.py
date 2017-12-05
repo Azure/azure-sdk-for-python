@@ -65,7 +65,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
         super(NetworkManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-network/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
