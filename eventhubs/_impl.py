@@ -15,6 +15,7 @@ for general purposes. Keep any service/broker specifics out of this file.
 # pylint: disable=W0702
 
 import logging
+import time
 from proton import PN_PYREF, DELEGATED, generate_uuid, Delivery, EventBase
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
@@ -69,7 +70,7 @@ class ClientHandler(Handler):
     def on_stop(self):
         pass
 
-    def on_link_error(self, condition):
+    def on_link_closed(self, condition):
         pass
 
     def on_link_remote_close(self, event):
@@ -92,7 +93,7 @@ class ClientHandler(Handler):
                           connection.container,
                           link.name,
                           connection.remote_container)
-        self.on_link_error(condition)
+        self.on_link_closed(condition)
         if condition and condition.name in self.fatal_conditions:
             connection.close()
         elif link == self.link:
@@ -143,15 +144,38 @@ class ReceiverHandler(ClientHandler):
                      self.source)
 
 class SenderHandler(ClientHandler):
+    TIMEOUT = 60.0
+
     class DeliveryEvent(InjectorEvent):
         def __init__(self, handler, message, callback, state):
             super(SenderHandler.DeliveryEvent, self).__init__(InjectorEvent.SEND, subject=handler)
             self.message = message
             self.callback = callback
             self.state = state
+            self.start = time.time()
+
+        def elapsed(self):
+            return time.time() - self.start
 
         def complete(self, outcome):
             self.callback(self.state, outcome)
+
+    class DeliveryTracker(object):
+        def __init__(self, handler):
+            self.handler = handler
+            self.task = None
+
+        def track(self):
+            if self.task is None:
+                self.task = self.handler.client.container.schedule(SenderHandler.TIMEOUT, self)
+
+        def stop(self):
+            if self.task:
+                self.task.cancel()
+
+        def on_timer_task(self, event):
+            self.task = None
+            self.handler.check_timeout()
 
     def __init__(self, client, sender, target):
         super(SenderHandler, self).__init__("send", client)
@@ -160,6 +184,7 @@ class SenderHandler(ClientHandler):
         self.handlers = [OutgoingMessageHandler(True, self)]
         self.queue = Queue.Queue()
         self.deliveries = {}
+        self.tracker = SenderHandler.DeliveryTracker(self)
 
     def send(self, message, callback, state):
         event = SenderHandler.DeliveryEvent(self, message, callback, state)
@@ -174,28 +199,35 @@ class SenderHandler(ClientHandler):
             handler=self)
         self.sender.on_start(self.link, self.iteration)
 
-    def on_link_error(self, condition):
+    def on_stop(self):
+        self.tracker.stop()
+
+    def on_link_closed(self, condition):
         for dlv in self.deliveries:
             self.deliveries[dlv].complete(condition or Delivery.RELEASED)
         self.deliveries.clear()
 
     def on_link_local_open(self, event):
         log.info("%s: link local open. name=%s target=%s",
-                     event.connection.container,
-                     event.link.name,
-                     self.target)
+                 event.connection.container,
+                 event.link.name,
+                 self.target)
 
     def on_link_remote_open(self, event):
         log.info("%s: link remote open. name=%s",
-                     event.connection.container,
-                     event.link.name)
+                 event.connection.container,
+                 event.link.name)
 
     def on_sendable(self, event):
+        count = 0
         while self.link and self.link.credit and not self.queue.empty():
             dlv_event = self.queue.get(False)
             delivery = dlv_event.message.send(self.link)
             self.deliveries[delivery] = dlv_event
+            count += 1
             log.debug("%s: send message %s", self.client.container_id, delivery.tag)
+        if count > 0:
+            self.tracker.track()
 
     def on_delivery(self, event):
         dlv = event.delivery
@@ -205,6 +237,19 @@ class SenderHandler(ClientHandler):
             if dlv_event:
                 dlv_event.complete(dlv.remote_state)
             dlv.settle()
+
+    def check_timeout(self):
+        expired = []
+        for dlv in self.deliveries:
+            if self.deliveries[dlv].elapsed() >= SenderHandler.TIMEOUT:
+                expired.append(dlv)
+        for dlv in expired:
+            dlv_event = self.deliveries.pop(dlv)
+            dlv.update(Delivery.RELEASED)
+            dlv.settle()
+            dlv_event.complete("timeout")
+        if self.deliveries:
+            self.tracker.track()
 
 class SessionPolicy(object):
     def __init__(self):

@@ -327,7 +327,7 @@ class Sender(Entity):
 
     @staticmethod
     def _error(outcome):
-        return None if outcome == Delivery.ACCEPTED else EventHubError("Send failed", outcome)
+        return None if outcome == Delivery.ACCEPTED else EventHubError(outcome)
 
 class Receiver(Entity):
     """
