@@ -21,26 +21,21 @@ class CertificatePolicy(Model):
     :ivar id: The certificate id.
     :vartype id: str
     :param key_properties: Properties of the key backing a certificate.
-    :type key_properties: :class:`KeyProperties
-     <azure.keyvault.models.KeyProperties>`
+    :type key_properties: ~azure.keyvault.models.KeyProperties
     :param secret_properties: Properties of the secret backing a certificate.
-    :type secret_properties: :class:`SecretProperties
-     <azure.keyvault.models.SecretProperties>`
+    :type secret_properties: ~azure.keyvault.models.SecretProperties
     :param x509_certificate_properties: Properties of the X509 component of a
      certificate.
-    :type x509_certificate_properties: :class:`X509CertificateProperties
-     <azure.keyvault.models.X509CertificateProperties>`
+    :type x509_certificate_properties:
+     ~azure.keyvault.models.X509CertificateProperties
     :param lifetime_actions: Actions that will be performed by Key Vault over
      the lifetime of a certificate.
-    :type lifetime_actions: list of :class:`LifetimeAction
-     <azure.keyvault.models.LifetimeAction>`
+    :type lifetime_actions: list[~azure.keyvault.models.LifetimeAction]
     :param issuer_parameters: Parameters for the issuer of the X509 component
      of a certificate.
-    :type issuer_parameters: :class:`IssuerParameters
-     <azure.keyvault.models.IssuerParameters>`
+    :type issuer_parameters: ~azure.keyvault.models.IssuerParameters
     :param attributes: The certificate attributes.
-    :type attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type attributes: ~azure.keyvault.models.CertificateAttributes
     """
 
     _validation = {

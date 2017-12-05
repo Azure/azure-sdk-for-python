@@ -24,10 +24,10 @@ class StorageAccountUpdateParameters(Model):
      in ISO-8601 format.
     :type regeneration_period: str
     :param storage_account_attributes: The attributes of the storage account.
-    :type storage_account_attributes: :class:`StorageAccountAttributes
-     <azure.keyvault.models.StorageAccountAttributes>`
+    :type storage_account_attributes:
+     ~azure.keyvault.models.StorageAccountAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
