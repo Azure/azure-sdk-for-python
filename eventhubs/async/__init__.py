@@ -11,9 +11,32 @@ import logging
 import queue
 import asyncio
 from threading import Lock
-from eventhubs import Receiver, EventData
+from eventhubs import Sender, Receiver, EventData, EventHubError
 
 log = logging.getLogger("eventhubs")
+
+class AsyncSender(Sender):
+    """
+    Implements the async API of a L{Sender}.
+    """
+    def __init__(self, loop=None):
+        self.loop = loop or asyncio.get_event_loop()
+
+    async def send(self, event_data):
+        """
+        Sends an event data.
+
+        @param event_data: the L{EventData} to be sent.
+        """
+        self._check()
+        task = self.loop.create_future()
+        self._handler.send(event_data.message, self.on_result, task)
+        error = await task
+        if error:
+            raise EventHubError(error)
+
+    def on_result(self, task, outcome):
+        self.loop.call_soon_threadsafe(task.set_result, self._error(outcome))
 
 class AsyncReceiver(Receiver):
     """

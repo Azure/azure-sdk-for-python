@@ -276,19 +276,16 @@ class Sender(Entity):
         self._event = threading.Event()
         self._outcome = None
 
-    def send(self, event_data, timeout=60):
+    def send(self, event_data):
         """
-        Sends an event data.
+        Sends an event data and blocks until acknowledgement is
+        received or operation times out.
 
         @param event_data: the L{EventData} to be sent.
-
-        @param timeout: time in seconds to wait for the acknowledgement.
         """
         self._check()
         self._event.clear()
         self._handler.send(event_data.message, self.on_outcome, None)
-        if not self._event.wait(timeout):
-            raise EventHubError("Send operation timed out", timeout, self._handler.client.container_id)
         if self._outcome != Delivery.ACCEPTED:
             raise self._error(self._outcome)
 
@@ -298,9 +295,9 @@ class Sender(Entity):
 
         @param event_data: the L{EventData} to be transferred.
 
-        @param callback: a function invoked when the operation is completed. The argument
-        to the callback function is a tuple where the first item is the event data and the
-        second item is the result (None on success, or a L{EventHubError} on failure).
+        @param callback: a function invoked when the operation is completed. The first
+        argument to the callback function is the event data and the second item is the
+        result (None on success, or a L{EventHubError} on failure).
         """
         self._check()
         self._handler.send(event_data.message,
