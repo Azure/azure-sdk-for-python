@@ -26,13 +26,13 @@ class CreationData(Model):
     :param image_reference: Disk source information.
     :type image_reference:
      ~azure.mgmt.compute.v2016_04_30_preview.models.ImageDiskReference
-    :param source_uri: If creationOption is Import, this is a SAS URI to a
-     blob to be imported into a managed disk. If creationOption is Copy, this
-     is a relative Uri containing the id of the source snapshot to be copied
-     into a managed disk.
+    :param source_uri: If createOption is Import, this is a SAS URI to a blob
+     to be imported into a managed disk. If createOption is Copy, this is a
+     relative Uri containing the id of the source snapshot to be copied into a
+     managed disk.
     :type source_uri: str
     :param source_resource_id: If createOption is Copy, this is the ARM id of
-     the source snapshot or disk. If creationOption is Restore, this is the
+     the source snapshot or disk. If createOption is Restore, this is the
      ARM-like id of the source disk restore point.
     :type source_resource_id: str
     """

@@ -18,7 +18,8 @@ class ResourceSkuRestrictions(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: The type of restrictions. Possible values include: 'Location'
+    :ivar type: The type of restrictions. Possible values include: 'Location',
+     'Zone'
     :vartype type: str or
      ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionsType
     :ivar values: The value of restrictions. If the restriction type is set to
