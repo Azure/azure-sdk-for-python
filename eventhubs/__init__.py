@@ -31,7 +31,7 @@ from ._impl import SenderHandler, ReceiverHandler, SessionPolicy, InjectorEvent
 if sys.platform.startswith("win"):
     from ._win import EventInjector
 else:
-    from proton.reactor import EventInjector
+    from ._impl import ReactorEventInjector as EventInjector
 
 log = logging.getLogger("eventhubs")
 
@@ -141,7 +141,7 @@ class EventHubClient(object):
     def on_reactor_final(self, event):
         """ Handles reactor final event. """
         log.info("%s: reactor final", self.container_id)
-        self.injector.pipe.close()
+        self.injector.free()
 
     def on_connection_local_open(self, event):
         """Handles on_connection_local_open event."""

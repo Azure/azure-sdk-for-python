@@ -108,6 +108,9 @@ class EventInjector(object):
         self._closed = True
         self.pipe.sink.send(b'!')
 
+    def free(self):
+        self.pipe.close()
+
     def on_selectable_init(self, event):
         sel = event.context
         sel.fileno(self.pipe.source.fileno())

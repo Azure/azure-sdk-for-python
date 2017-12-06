@@ -16,11 +16,12 @@ for general purposes. Keep any service/broker specifics out of this file.
 
 import logging
 import time
+import os
 from proton import PN_PYREF, DELEGATED, generate_uuid, Delivery, EventBase
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
-from proton.reactor import EventType
+from proton.reactor import EventType, EventInjector
 
 try:
     import Queue
@@ -40,6 +41,11 @@ class InjectorEvent(EventBase):
 
     def __repr__(self):
         return self.type
+
+class ReactorEventInjector(EventInjector):
+    def free(self):
+        os.close(self.pipe[0])
+        os.close(self.pipe[1])
 
 class ClientHandler(Handler):
     def __init__(self, prefix, client):
