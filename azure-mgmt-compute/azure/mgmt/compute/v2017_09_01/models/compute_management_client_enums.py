@@ -22,6 +22,7 @@ class ResourceSkuCapacityScaleType(Enum):
 class ResourceSkuRestrictionsType(Enum):
 
     location = "Location"
+    zone = "Zone"
 
 
 class ResourceSkuRestrictionsReasonCode(Enum):
