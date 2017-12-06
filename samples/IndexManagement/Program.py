@@ -530,32 +530,21 @@ def PerformIndexTransformations(client, database_id):
         doc1 = client.CreateDocument(collection_link, { "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
         doc2 = client.CreateDocument(collection_link, { "id" : "dyn2", "length" : 7, "width" : 15 })
         doc3 = client.CreateDocument(collection_link, { "id" : "dyn3", "length" : 2 })
-        print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"])
-
-        # Switch to lazy indexing and wait till complete.
-        print("Chaning the indexing mode of the collection from default to lazy")
-        created_collection['indexingPolicy']['indexingMode'] = documents.IndexingMode.Lazy
-
-        created_collection = client.ReplaceCollection(collection_link, created_collection)
-        print_dictionary_items(created_collection["indexingPolicy"])
-
-        # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
-        # collections will take time.
-        
-        """ Not sure how to wait for index transformation to complete """
+        print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"], " with indexing mode", created_collection['indexingPolicy']['indexingMode'])
 
         # Switch to use string & number range indexing with maximum precision.
         print("Changing to string & number range indexing with maximum precision (needed for Order By).")
 
-        created_collection['indexingPolicy']['indexingMode'] = documents.IndexingMode.Consistent
         created_collection['indexingPolicy']['includedPaths'][0]['indexes'] = [{
             'kind': documents.IndexKind.Range, 
             'dataType': documents.DataType.String, 
             'precision': -1
         }]
 
-        collection_link = GetCollectionLink(database_id, COLLECTION_ID)
         created_collection = client.ReplaceCollection(collection_link, created_collection)
+
+        # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
+        # collections will take time.
         print_dictionary_items(created_collection["indexingPolicy"])
 
         # Now exclude a path from indexing to save on storage space.
