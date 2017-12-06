@@ -225,14 +225,12 @@ class SenderHandler(ClientHandler):
                  event.link.name)
 
     def on_sendable(self, event):
-        count = 0
         while self.link and self.link.credit and not self.queue.empty():
             dlv_event = self.queue.get(False)
             delivery = dlv_event.message.send(self.link)
             self.deliveries[delivery] = dlv_event
-            count += 1
             log.debug("%s: send message %s", self.client.container_id, delivery.tag)
-        if count > 0:
+        if self.deliveries:
             self.tracker.track()
 
     def on_delivery(self, event):
@@ -254,8 +252,7 @@ class SenderHandler(ClientHandler):
             dlv.update(Delivery.RELEASED)
             dlv.settle()
             dlv_event.complete("timeout")
-        if self.deliveries:
-            self.tracker.track()
+        self.on_sendable(None)
 
 class SessionPolicy(object):
     def __init__(self):
