@@ -1,16 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DatabaseManagement", "DatabaseManagement\DatabaseManagement.pyproj", "{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D86C5C17-FA0D-41E0-9425-5B2110E53BD9}"
 	ProjectSection(SolutionItems) = preProject
 		Shared\config.py = Shared\config.py
+		Shared\PossibleOptions.txt = Shared\PossibleOptions.txt
 	EndProjectSection
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CollectionManagement", "CollectionManagement\CollectionManagement.pyproj", "{D65BAD79-205D-4B95-BC98-294974EAB39C}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DocumentManagement", "DocumentManagement\DocumentManagement.pyproj", "{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "IndexManagement", "IndexManagement\IndexManagement.pyproj", "{B1869509-4DC8-4AA8-8F2A-220FDBC14154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,8 +27,15 @@ Global
 		{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D65BAD79-205D-4B95-BC98-294974EAB39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D65BAD79-205D-4B95-BC98-294974EAB39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976E1CAA-D0A9-40AA-B4C2-1A0B4DB71703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1869509-4DC8-4AA8-8F2A-220FDBC14154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {234DBA1B-B556-466F-BD7C-2B0230AC2DD9}
 	EndGlobalSection
 EndGlobal
