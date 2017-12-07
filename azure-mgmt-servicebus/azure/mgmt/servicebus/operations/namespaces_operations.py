@@ -26,6 +26,8 @@ class NamespacesOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,13 +51,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.servicebus.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.servicebus.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -114,10 +112,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>`
-        :rtype: :class:`SBNamespacePaged
-         <azure.mgmt.servicebus.models.SBNamespacePaged>`
+        :return: An iterator like instance of SBNamespace
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBNamespacePaged[~azure.mgmt.servicebus.models.SBNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -181,10 +178,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>`
-        :rtype: :class:`SBNamespacePaged
-         <azure.mgmt.servicebus.models.SBNamespacePaged>`
+        :return: An iterator like instance of SBNamespace
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBNamespacePaged[~azure.mgmt.servicebus.models.SBNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -248,20 +244,15 @@ class NamespacesOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param parameters: Parameters supplied to create a namespace resource.
-        :type parameters: :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>`
+        :type parameters: ~azure.mgmt.servicebus.models.SBNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns SBNamespace
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicebus.models.SBNamespace]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -308,14 +299,14 @@ class NamespacesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 202]:
+            if response.status_code not in [200, 201, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
-            if response.status_code == 201:
-                deserialized = self._deserialize('SBNamespace', response)
             if response.status_code == 200:
+                deserialized = self._deserialize('SBNamespace', response)
+            if response.status_code == 201:
                 deserialized = self._deserialize('SBNamespace', response)
 
             if raw:
@@ -348,14 +339,10 @@ class NamespacesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -398,7 +385,7 @@ class NamespacesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 200, 202]:
+            if response.status_code not in [200, 202, 204]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
@@ -430,13 +417,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBNamespace or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -492,20 +475,16 @@ class NamespacesOperations(object):
         :param namespace_name: The namespace name
         :type namespace_name: str
         :param parameters: Parameters supplied to update a namespace resource.
-        :type parameters: :class:`SBNamespaceUpdateParameters
-         <azure.mgmt.servicebus.models.SBNamespaceUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.servicebus.models.SBNamespaceUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBNamespace
-         <azure.mgmt.servicebus.models.SBNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBNamespace or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -540,14 +519,14 @@ class NamespacesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [201, 200, 202]:
+        if response.status_code not in [200, 201, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('SBNamespace', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('SBNamespace', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('SBNamespace', response)
 
         if raw:
@@ -570,10 +549,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`SBAuthorizationRulePaged
-         <azure.mgmt.servicebus.models.SBAuthorizationRulePaged>`
+        :return: An iterator like instance of SBAuthorizationRule
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBAuthorizationRulePaged[~azure.mgmt.servicebus.models.SBAuthorizationRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -628,7 +606,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, rights=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an authorization rule for a namespace.
 
         :param resource_group_name: Name of the Resource group within the
@@ -639,20 +617,15 @@ class NamespacesOperations(object):
         :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.servicebus.models.AccessRights>`
+        :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -720,11 +693,8 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -756,7 +726,7 @@ class NamespacesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -779,13 +749,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -847,11 +813,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -911,8 +875,7 @@ class NamespacesOperations(object):
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.servicebus.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.servicebus.models.KeyType
         :param key: Optional, if the key value provided, is reset for KeyType
          value or autogenerate Key value set for keyType
         :type key: str
@@ -921,11 +884,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

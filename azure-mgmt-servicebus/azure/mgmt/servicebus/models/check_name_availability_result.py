@@ -27,8 +27,7 @@ class CheckNameAvailabilityResult(Model):
     :param reason: The reason for unavailability of a namespace. Possible
      values include: 'None', 'InvalidName', 'SubscriptionIsDisabled',
      'NameInUse', 'NameInLockdown', 'TooManyNamespaceInCurrentSubscription'
-    :type reason: str or :class:`UnavailableReason
-     <azure.mgmt.servicebus.models.UnavailableReason>`
+    :type reason: str or ~azure.mgmt.servicebus.models.UnavailableReason
     """
 
     _validation = {

@@ -20,8 +20,8 @@ class CaptureDescription(Model):
     :type enabled: bool
     :param encoding: Enumerates the possible values for the encoding format of
      capture description. Possible values include: 'Avro', 'AvroDeflate'
-    :type encoding: str or :class:`EncodingCaptureDescription
-     <azure.mgmt.servicebus.models.EncodingCaptureDescription>`
+    :type encoding: str or
+     ~azure.mgmt.servicebus.models.EncodingCaptureDescription
     :param interval_in_seconds: The time window allows you to set the
      frequency with which the capture to Azure Blobs will happen, value should
      between 60 to 900 seconds
@@ -32,8 +32,7 @@ class CaptureDescription(Model):
     :type size_limit_in_bytes: int
     :param destination: Properties of Destination where capture will be
      stored. (Storage Account, Blob Names)
-    :type destination: :class:`Destination
-     <azure.mgmt.servicebus.models.Destination>`
+    :type destination: ~azure.mgmt.servicebus.models.Destination
     """
 
     _validation = {
