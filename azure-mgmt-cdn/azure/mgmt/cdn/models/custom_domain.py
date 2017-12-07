@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class CustomDomain(Resource):
+class CustomDomain(ProxyResource):
     """Friendly domain name mapping to the endpoint hostname that the customer
     provides for branding purposes, e.g. www.consoto.com.
 
@@ -25,10 +25,6 @@ class CustomDomain(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param host_name: The host name of the custom domain. Must be a domain
      name.
     :type host_name: str
@@ -64,7 +60,6 @@ class CustomDomain(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'host_name': {'required': True},
         'resource_state': {'readonly': True},
         'custom_https_provisioning_state': {'readonly': True},
@@ -76,8 +71,6 @@ class CustomDomain(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
@@ -86,8 +79,8 @@ class CustomDomain(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, host_name, tags=None, validation_data=None):
-        super(CustomDomain, self).__init__(location=location, tags=tags)
+    def __init__(self, host_name, validation_data=None):
+        super(CustomDomain, self).__init__()
         self.host_name = host_name
         self.resource_state = None
         self.custom_https_provisioning_state = None

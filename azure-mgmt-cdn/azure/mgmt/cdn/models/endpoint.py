@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Endpoint(Resource):
+class Endpoint(TrackedResource):
     """CDN endpoint is the entity within a CDN profile containing configuration
     information such as origin, protocol, content caching and delivery
     behavior. The CDN endpoint uses the URL format
@@ -31,8 +31,11 @@ class Endpoint(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param origin_host_header: The host header CDN sends along with content
-     requests to origin. The default value is the host name of the origin.
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default.
     :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
      retreive content from, e.g. contoso.cloudapp.net/originpath.

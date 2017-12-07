@@ -51,7 +51,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
 
         super(CdnManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cdnmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cdn/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

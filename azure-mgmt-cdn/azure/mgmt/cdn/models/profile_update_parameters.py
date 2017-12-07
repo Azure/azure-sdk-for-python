@@ -19,13 +19,9 @@ class ProfileUpdateParameters(Model):
     :type tags: dict[str, str]
     """
 
-    _validation = {
-        'tags': {'required': True},
-    }
-
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, tags):
+    def __init__(self, tags=None):
         self.tags = tags
