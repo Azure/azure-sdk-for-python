@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.7.0 (2017-XX-XX)
+++++++++++++++++++
+
+**Unreleased**
+
+**Bug fixes**
+
+- Added valid ASN range in ExpressRouteCircuitPeering (#1672)
+
 1.6.0 (2017-11-28)
 ++++++++++++++++++
 
