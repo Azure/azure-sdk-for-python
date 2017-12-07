@@ -183,7 +183,7 @@ class EventHubClient(object):
             log.error("%s: connection closed by peer %s",
                       self.container_id,
                       event.connection.remote_container)
-        self._close_clients()
+        self._close_clients(condition)
         self._close_session()
         self._close_connection()
         self.container.schedule(1.0, self)
@@ -203,7 +203,7 @@ class EventHubClient(object):
             log.error("%s, session close %s",
                       self.container_id,
                       self.connection.remote_container)
-        self._close_clients()
+        self._close_clients(condition)
         self._close_session()
         self.container.schedule(1.0, self)
 
@@ -214,7 +214,7 @@ class EventHubClient(object):
         if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
             return DELEGATED
         log.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
-        self._close_clients()
+        self._close_clients(event.transport.condition)
         self._close_session()
         self._close_connection()
         self.on_reactor_init(None)
@@ -228,7 +228,7 @@ class EventHubClient(object):
         """ Handles on_stop_client event. """
         log.info("%s: on_stop_client", self.container_id)
         self.stopped = True
-        self._close_clients()
+        self._close_clients(None)
         self._close_session()
         self._close_connection()
 
@@ -254,9 +254,9 @@ class EventHubClient(object):
         if self.session_policy:
             self.session_policy.reset()
 
-    def _close_clients(self):
+    def _close_clients(self, condition):
         for client in self.clients:
-            client.stop()
+            client.stop(condition)
 
 class Entity(object):
     """

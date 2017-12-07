@@ -61,8 +61,8 @@ class ClientHandler(Handler):
         self.iteration += 1
         self.on_start()
 
-    def stop(self):
-        self.on_stop()
+    def stop(self, condition):
+        self.on_stop(condition)
         if self.link:
             self.link.close()
             self.link.free()
@@ -74,7 +74,7 @@ class ClientHandler(Handler):
     def on_start(self):
         assert False, "Subclass must override this!"
 
-    def on_stop(self):
+    def on_stop(self, condition):
         pass
 
     def on_link_closed(self, condition):
@@ -131,7 +131,7 @@ class ReceiverHandler(ClientHandler):
             options=self.receiver.selector(self.selector))
         self.receiver.on_start(self.link, self.iteration)
 
-    def on_stop(self):
+    def on_stop(self, condition):
         self.receiver.on_stop(self.client.stopped)
 
     def on_message(self, event):
@@ -179,6 +179,7 @@ class SenderHandler(ClientHandler):
         def stop(self):
             if self.task:
                 self.task.cancel()
+                self.task = None
 
         def on_timer_task(self, event):
             log.debug("delivery tracker timer event")
@@ -207,13 +208,14 @@ class SenderHandler(ClientHandler):
             handler=self)
         self.sender.on_start(self.link, self.iteration)
 
-    def on_stop(self):
-        self.tracker.stop()
+    def on_stop(self, condition):
+        self.on_link_closed(condition)
 
     def on_link_closed(self, condition):
         for dlv in self.deliveries:
-            self.deliveries[dlv].complete(condition or Delivery.RELEASED)
+            self.deliveries[dlv].complete(Delivery.RELEASED, condition)
         self.deliveries.clear()
+        self.tracker.stop()
 
     def on_link_local_open(self, event):
         log.info("%s: link local open. name=%s target=%s",
@@ -222,9 +224,12 @@ class SenderHandler(ClientHandler):
                  self.target)
 
     def on_link_remote_open(self, event):
-        log.info("%s: link remote open. name=%s",
+        log.info("%s: link remote open. name=%s, credit=%d, queue=%d, map=%d",
                  event.connection.container,
-                 event.link.name)
+                 event.link.name,
+                 event.link.credit,
+                 self.queue.qsize(),
+                 len(self.deliveries))
 
     def on_sendable(self, event):
         while self.link and self.link.credit and not self.queue.empty():
