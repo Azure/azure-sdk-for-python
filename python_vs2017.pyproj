@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ea429a23-2afb-4bf7-a345-28e2bd129564}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <SearchPath>.</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>Global|PythonCore|2.7</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup />
+  <ItemGroup>
+    <Content Include="README.md" />
+    <Compile Include="pydocumentdb\consistent_hash_ring.py" />
+    <Compile Include="pydocumentdb\constants.py" />
+    <Compile Include="pydocumentdb\endpoint_discovery_retry_policy.py" />
+    <Compile Include="pydocumentdb\errors.py" />
+    <Compile Include="pydocumentdb\execution_context\__init__.py" />
+    <Compile Include="pydocumentdb\execution_context\base_execution_context.py" />
+    <Compile Include="pydocumentdb\execution_context\document_producer.py" />
+    <Compile Include="pydocumentdb\execution_context\endpoint_component.py" />
+    <Compile Include="pydocumentdb\execution_context\execution_dispatcher.py" />
+    <Compile Include="pydocumentdb\execution_context\multi_execution_aggregator.py" />
+    <Compile Include="pydocumentdb\execution_context\query_execution_info.py" />
+    <Compile Include="pydocumentdb\execution_context\aggregators.py" />
+    <Compile Include="pydocumentdb\global_endpoint_manager.py" />
+    <Compile Include="pydocumentdb\hash_partition_resolver.py" />
+    <Compile Include="pydocumentdb\http_constants.py" />
+    <Compile Include="pydocumentdb\murmur_hash.py" />
+    <Compile Include="pydocumentdb\partition.py" />
+    <Compile Include="pydocumentdb\query_iterable.py" />
+    <Compile Include="pydocumentdb\range.py" />
+    <Compile Include="pydocumentdb\range_partition_resolver.py" />
+    <Compile Include="pydocumentdb\resource_throttle_retry_policy.py" />
+    <Compile Include="pydocumentdb\retry_options.py" />
+    <Compile Include="pydocumentdb\retry_utility.py" />
+    <Compile Include="pydocumentdb\routing\collection_routing_map.py" />
+    <Compile Include="pydocumentdb\routing\routing_map_provider.py" />
+    <Compile Include="pydocumentdb\routing\routing_range.py" />
+    <Compile Include="pydocumentdb\routing\__init__.py" />
+    <Compile Include="pydocumentdb\runtime_constants.py" />
+    <Compile Include="pydocumentdb\session.py" />
+    <Compile Include="pydocumentdb\utils.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="test\crud_tests.py" />
+    <Compile Include="test\encoding_tests.py" />
+    <Compile Include="test\query_tests.py" />
+    <Compile Include="test\orderby_tests.py" />
+    <Compile Include="test\aggregate_tests.py" />
+    <Compile Include="test\globaldb_tests.py" />
+    <Compile Include="test\globaldb_mock_tests.py" />
+    <Compile Include="test\retry_policy_tests.py" />
+    <Compile Include="test\routing_map_tests.py" />
+    <Compile Include="test\routing\collection_routing_map_test.py" />
+    <Compile Include="test\routing\routing_map_provider_tests.py" />
+    <Compile Include="test\query_execution_context_tests.py" />
+    <Compile Include="test\routing\__init__.py" />
+    <Compile Include="test\session_container_tests.py" />
+    <Compile Include="test\test_config.py" />
+    <Compile Include="test\ttl_tests.py" />
+    <Compile Include="test\ru_per_min_tests.py" />
+    <Compile Include="pydocumentdb\auth.py" />
+    <Compile Include="pydocumentdb\base.py" />
+    <Compile Include="pydocumentdb\documents.py" />
+    <Compile Include="pydocumentdb\document_client.py" />
+    <Compile Include="pydocumentdb\synchronized_request.py" />
+    <Compile Include="pydocumentdb\__init__.py" />
+    <Compile Include="test\test_partition_resolver.py" />
+    <Compile Include="test\__init__.py" />
+    <Content Include="requirements.txt" />
+    <Content Include="test-requirements.txt" />
+    <Content Include="test\test-requirements.txt" />
+    <Content Include="tox.ini" />
+    <Content Include="test\BaselineTest.PathParser.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="pydocumentdb" />
+    <Folder Include="pydocumentdb\execution_context\" />
+    <Folder Include="pydocumentdb\routing\" />
+    <Folder Include="test" />
+    <Folder Include="test\routing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|2.7" />
+    <InterpreterReference Include="Global|PythonCore|3.4" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
