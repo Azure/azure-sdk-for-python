@@ -33,10 +33,13 @@ class AsyncSender(Sender):
         self._handler.send(event_data.message, self.on_result, task)
         error = await task
         if error:
-            raise EventHubError(error)
+            raise error
 
-    def on_result(self, task, outcome):
-        self.loop.call_soon_threadsafe(task.set_result, self._error(outcome))
+    def on_result(self, task, outcome, condition):
+        """
+        Called when the send task is completed.
+        """
+        self.loop.call_soon_threadsafe(task.set_result, self._error(outcome, condition))
 
 class AsyncReceiver(Receiver):
     """

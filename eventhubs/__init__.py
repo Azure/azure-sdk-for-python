@@ -122,6 +122,13 @@ class EventHubClient(object):
         self.clients.append(handler)
         return self
 
+    @property
+    def remote_container(self):
+        """
+        Gets the remote AMQP container id if available.
+        """
+        return self.connection.remote_container if self.connection else None
+
     def on_reactor_init(self, event):
         """ Handles reactor init event. """
         log.info("%s: on_reactor_init", self.container_id)
@@ -275,6 +282,7 @@ class Sender(Entity):
         self._handler = None
         self._event = threading.Event()
         self._outcome = None
+        self._condition = None
 
     def send(self, event_data):
         """
@@ -286,8 +294,9 @@ class Sender(Entity):
         self._check()
         self._event.clear()
         self._handler.send(event_data.message, self.on_outcome, None)
+        self._event.wait()
         if self._outcome != Delivery.ACCEPTED:
-            raise self._error(self._outcome)
+            raise Sender._error(self._outcome, self._condition)
 
     def transfer(self, event_data, callback):
         """
@@ -301,7 +310,7 @@ class Sender(Entity):
         """
         self._check()
         self._handler.send(event_data.message,
-                           lambda d, o: callback(d, Sender._error(o)),
+                           lambda d, o, c: callback(d, Sender._error(o, c)),
                            event_data)
 
     def handler(self, client, target):
@@ -311,11 +320,12 @@ class Sender(Entity):
         self._handler = SenderHandler(client, self, target)
         return self._handler
 
-    def on_outcome(self, state, outcome):
+    def on_outcome(self, state, outcome, condition):
         """
         Called when the outcome is received for a delivery.
         """
         self._outcome = outcome
+        self._condition = condition
         self._event.set()
 
     def _check(self):
@@ -323,8 +333,8 @@ class Sender(Entity):
             raise EventHubError("Call publish to register the sender before using it.")
 
     @staticmethod
-    def _error(outcome):
-        return None if outcome == Delivery.ACCEPTED else EventHubError(outcome)
+    def _error(outcome, condition):
+        return None if outcome == Delivery.ACCEPTED else EventHubError(outcome, condition)
 
 class Receiver(Entity):
     """

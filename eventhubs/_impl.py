@@ -17,7 +17,8 @@ for general purposes. Keep any service/broker specifics out of this file.
 import logging
 import time
 import os
-from proton import PN_PYREF, DELEGATED, generate_uuid, Delivery, EventBase
+from proton import PN_PYREF, DELEGATED, generate_uuid
+from proton import Delivery, EventBase, Condition
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import IncomingMessageHandler
 from proton.handlers import CFlowController, OutgoingMessageHandler
@@ -163,8 +164,8 @@ class SenderHandler(ClientHandler):
         def elapsed(self):
             return time.time() - self.start
 
-        def complete(self, outcome):
-            self.callback(self.state, outcome)
+        def complete(self, outcome, condition):
+            self.callback(self.state, outcome, condition)
 
     class DeliveryTracker(object):
         def __init__(self, handler):
@@ -180,6 +181,7 @@ class SenderHandler(ClientHandler):
                 self.task.cancel()
 
         def on_timer_task(self, event):
+            log.debug("delivery tracker timer event")
             self.task = None
             self.handler.check_timeout()
 
@@ -239,7 +241,7 @@ class SenderHandler(ClientHandler):
         if dlv.updated:
             dlv_event = self.deliveries.pop(dlv, None)
             if dlv_event:
-                dlv_event.complete(dlv.remote_state)
+                dlv_event.complete(dlv.remote_state, dlv.remote.condition)
             dlv.settle()
 
     def check_timeout(self):
@@ -251,7 +253,8 @@ class SenderHandler(ClientHandler):
             dlv_event = self.deliveries.pop(dlv)
             dlv.update(Delivery.RELEASED)
             dlv.settle()
-            dlv_event.complete("timeout")
+            dlv_event.complete(Delivery.RELEASED, Condition("timeout",\
+                description="Send not complete after %d seconds. ref %s" % (SenderHandler.TIMEOUT, self.client.remote_container)))
         self.on_sendable(None)
 
 class SessionPolicy(object):
