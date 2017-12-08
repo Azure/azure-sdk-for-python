@@ -25,6 +25,8 @@ class RegionsOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -45,10 +47,9 @@ class RegionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PremiumMessagingRegions
-         <azure.mgmt.servicebus.models.PremiumMessagingRegions>`
-        :rtype: :class:`PremiumMessagingRegionsPaged
-         <azure.mgmt.servicebus.models.PremiumMessagingRegionsPaged>`
+        :return: An iterator like instance of PremiumMessagingRegions
+        :rtype:
+         ~azure.mgmt.servicebus.models.PremiumMessagingRegionsPaged[~azure.mgmt.servicebus.models.PremiumMessagingRegions]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """

@@ -34,8 +34,7 @@ class SBSubscription(Resource):
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: datetime
     :ivar count_details: Message count details
-    :vartype count_details: :class:`MessageCountDetails
-     <azure.mgmt.servicebus.models.MessageCountDetails>`
+    :vartype count_details: ~azure.mgmt.servicebus.models.MessageCountDetails
     :param lock_duration: ISO 8061 lock duration timespan for the
      subscription. The default value is 1 minute.
     :type lock_duration: timedelta
@@ -60,14 +59,18 @@ class SBSubscription(Resource):
      messaging entity. Possible values include: 'Active', 'Disabled',
      'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting',
      'Renaming', 'Unknown'
-    :type status: str or :class:`EntityStatus
-     <azure.mgmt.servicebus.models.EntityStatus>`
+    :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
     :param enable_batched_operations: Value that indicates whether server-side
      batched operations are enabled.
     :type enable_batched_operations: bool
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which
      the topic is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: timedelta
+    :param forward_to: Queue/Topic name to forward the messages
+    :type forward_to: str
+    :param forward_dead_lettered_messages_to: Queue/Topic name to forward the
+     Dead Letter message
+    :type forward_dead_lettered_messages_to: str
     """
 
     _validation = {
@@ -99,9 +102,11 @@ class SBSubscription(Resource):
         'status': {'key': 'properties.status', 'type': 'EntityStatus'},
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
+        'forward_to': {'key': 'properties.forwardTo', 'type': 'str'},
+        'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
     }
 
-    def __init__(self, lock_duration=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, enable_batched_operations=None, auto_delete_on_idle=None):
+    def __init__(self, lock_duration=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, enable_batched_operations=None, auto_delete_on_idle=None, forward_to=None, forward_dead_lettered_messages_to=None):
         super(SBSubscription, self).__init__()
         self.message_count = None
         self.created_at = None
@@ -117,3 +122,5 @@ class SBSubscription(Resource):
         self.status = status
         self.enable_batched_operations = enable_batched_operations
         self.auto_delete_on_idle = auto_delete_on_idle
+        self.forward_to = forward_to
+        self.forward_dead_lettered_messages_to = forward_dead_lettered_messages_to
