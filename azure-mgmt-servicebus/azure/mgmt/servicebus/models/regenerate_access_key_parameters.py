@@ -18,8 +18,7 @@ class RegenerateAccessKeyParameters(Model):
 
     :param key_type: The access key to regenerate. Possible values include:
      'PrimaryKey', 'SecondaryKey'
-    :type key_type: str or :class:`KeyType
-     <azure.mgmt.servicebus.models.KeyType>`
+    :type key_type: str or ~azure.mgmt.servicebus.models.KeyType
     :param key: Optional, if the key value provided, is reset for KeyType
      value or autogenerate Key value set for keyType
     :type key: str

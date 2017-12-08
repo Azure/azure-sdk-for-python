@@ -16,8 +16,7 @@ class AuthorizationRuleProperties(Model):
     """AuthorizationRule properties.
 
     :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.servicebus.models.AccessRights>`
+    :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
     """
 
     _validation = {

@@ -25,6 +25,8 @@ class DisasterRecoveryConfigsOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -48,10 +50,9 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ArmDisasterRecovery
-         <azure.mgmt.servicebus.models.ArmDisasterRecovery>`
-        :rtype: :class:`ArmDisasterRecoveryPaged
-         <azure.mgmt.servicebus.models.ArmDisasterRecoveryPaged>`
+        :return: An iterator like instance of ArmDisasterRecovery
+        :rtype:
+         ~azure.mgmt.servicebus.models.ArmDisasterRecoveryPaged[~azure.mgmt.servicebus.models.ArmDisasterRecovery]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -124,13 +125,9 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ArmDisasterRecovery
-         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ArmDisasterRecovery
-         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ArmDisasterRecovery or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.ArmDisasterRecovery or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -198,11 +195,8 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -258,13 +252,9 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ArmDisasterRecovery
-         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ArmDisasterRecovery
-         <azure.mgmt.servicebus.models.ArmDisasterRecovery>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ArmDisasterRecovery or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.ArmDisasterRecovery or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -327,11 +317,8 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -387,11 +374,8 @@ class DisasterRecoveryConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
