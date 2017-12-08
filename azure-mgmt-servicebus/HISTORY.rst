@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.3.1 (2017-12-08)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Add missing forward_to, forward_dead_lettered_messages_to
+- "rights" is now required, as expected, for operations called create_or_update_authorization_rule
+
 0.3.0 (2017-10-26)
 ++++++++++++++++++
 
