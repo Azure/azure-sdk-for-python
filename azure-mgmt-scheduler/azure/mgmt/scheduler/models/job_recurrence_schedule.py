@@ -17,22 +17,20 @@ class JobRecurrenceSchedule(Model):
 
     :param week_days: Gets or sets the days of the week that the job should
      execute on.
-    :type week_days: list of str or :class:`DayOfWeek
-     <azure.mgmt.scheduler.models.DayOfWeek>`
+    :type week_days: list[str or ~azure.mgmt.scheduler.models.DayOfWeek]
     :param hours: Gets or sets the hours of the day that the job should
      execute at.
-    :type hours: list of int
+    :type hours: list[int]
     :param minutes: Gets or sets the minutes of the hour that the job should
      execute at.
-    :type minutes: list of int
+    :type minutes: list[int]
     :param month_days: Gets or sets the days of the month that the job should
      execute on. Must be between 1 and 31.
-    :type month_days: list of int
+    :type month_days: list[int]
     :param monthly_occurrences: Gets or sets the occurrences of days within a
      month.
-    :type monthly_occurrences: list of
-     :class:`JobRecurrenceScheduleMonthlyOccurrence
-     <azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence>`
+    :type monthly_occurrences:
+     list[~azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence]
     """
 
     _attribute_map = {

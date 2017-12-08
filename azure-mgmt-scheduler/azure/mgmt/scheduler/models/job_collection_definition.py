@@ -27,10 +27,9 @@ class JobCollectionDefinition(Model):
     :param location: Gets or sets the storage account location.
     :type location: str
     :param tags: Gets or sets the tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties: Gets or sets the job collection properties.
-    :type properties: :class:`JobCollectionProperties
-     <azure.mgmt.scheduler.models.JobCollectionProperties>`
+    :type properties: ~azure.mgmt.scheduler.models.JobCollectionProperties
     """
 
     _validation = {

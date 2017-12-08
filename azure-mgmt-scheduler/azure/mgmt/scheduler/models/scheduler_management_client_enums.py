@@ -46,14 +46,6 @@ class JobActionType(Enum):
     service_bus_topic = "ServiceBusTopic"
 
 
-class HttpAuthenticationType(Enum):
-
-    not_specified = "NotSpecified"
-    client_certificate = "ClientCertificate"
-    active_directory_oauth = "ActiveDirectoryOAuth"
-    basic = "Basic"
-
-
 class RetryType(Enum):
 
     none = "None"

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -26,6 +26,8 @@ class JobCollectionsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The API version. Constant value: "2016-03-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -45,8 +47,9 @@ class JobCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobCollectionDefinitionPaged
-         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
+        :return: An iterator like instance of JobCollectionDefinition
+        :rtype:
+         ~azure.mgmt.scheduler.models.JobCollectionDefinitionPaged[~azure.mgmt.scheduler.models.JobCollectionDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -110,8 +113,9 @@ class JobCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobCollectionDefinitionPaged
-         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
+        :return: An iterator like instance of JobCollectionDefinition
+        :rtype:
+         ~azure.mgmt.scheduler.models.JobCollectionDefinitionPaged[~azure.mgmt.scheduler.models.JobCollectionDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -178,10 +182,9 @@ class JobCollectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobCollectionDefinition
-         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobCollectionDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -236,17 +239,16 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param job_collection: The job collection definition.
-        :type job_collection: :class:`JobCollectionDefinition
-         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
+        :type job_collection:
+         ~azure.mgmt.scheduler.models.JobCollectionDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobCollectionDefinition
-         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobCollectionDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -307,17 +309,16 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param job_collection: The job collection definition.
-        :type job_collection: :class:`JobCollectionDefinition
-         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
+        :type job_collection:
+         ~azure.mgmt.scheduler.models.JobCollectionDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobCollectionDefinition
-         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobCollectionDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -378,11 +379,10 @@ class JobCollectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -455,11 +455,10 @@ class JobCollectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -532,11 +531,10 @@ class JobCollectionsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

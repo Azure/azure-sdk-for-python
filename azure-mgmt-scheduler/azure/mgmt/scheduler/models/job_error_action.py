@@ -18,25 +18,21 @@ class JobErrorAction(Model):
     :param type: Gets or sets the job error action type. Possible values
      include: 'Http', 'Https', 'StorageQueue', 'ServiceBusQueue',
      'ServiceBusTopic'
-    :type type: str or :class:`JobActionType
-     <azure.mgmt.scheduler.models.JobActionType>`
+    :type type: str or ~azure.mgmt.scheduler.models.JobActionType
     :param request: Gets or sets the http requests.
-    :type request: :class:`HttpRequest
-     <azure.mgmt.scheduler.models.HttpRequest>`
+    :type request: ~azure.mgmt.scheduler.models.HttpRequest
     :param queue_message: Gets or sets the storage queue message.
-    :type queue_message: :class:`StorageQueueMessage
-     <azure.mgmt.scheduler.models.StorageQueueMessage>`
+    :type queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
     :param service_bus_queue_message: Gets or sets the service bus queue
      message.
-    :type service_bus_queue_message: :class:`ServiceBusQueueMessage
-     <azure.mgmt.scheduler.models.ServiceBusQueueMessage>`
+    :type service_bus_queue_message:
+     ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
     :param service_bus_topic_message: Gets or sets the service bus topic
      message.
-    :type service_bus_topic_message: :class:`ServiceBusTopicMessage
-     <azure.mgmt.scheduler.models.ServiceBusTopicMessage>`
+    :type service_bus_topic_message:
+     ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
     :param retry_policy: Gets or sets the retry policy.
-    :type retry_policy: :class:`RetryPolicy
-     <azure.mgmt.scheduler.models.RetryPolicy>`
+    :type retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
     """
 
     _attribute_map = {
