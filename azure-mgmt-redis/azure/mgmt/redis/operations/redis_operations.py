@@ -24,15 +24,17 @@ class RedisOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-04-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-10-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-01"
+        self.api_version = "2017-10-01"
 
         self.config = config
 
@@ -100,16 +102,16 @@ class RedisOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200]:
+            if response.status_code not in [200, 201]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
-            if response.status_code == 201:
-                deserialized = self._deserialize('RedisResource', response)
             if response.status_code == 200:
+                deserialized = self._deserialize('RedisResource', response)
+            if response.status_code == 201:
                 deserialized = self._deserialize('RedisResource', response)
 
             if raw:
@@ -738,7 +740,7 @@ class RedisOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200, 204]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -820,7 +822,7 @@ class RedisOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200, 204]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp

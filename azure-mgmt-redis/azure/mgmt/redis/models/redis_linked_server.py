@@ -9,16 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .redis_operations import RedisOperations
-from .firewall_rules_operations import FirewallRulesOperations
-from .patch_schedules_operations import PatchSchedulesOperations
-from .linked_server_operations import LinkedServerOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'Operations',
-    'RedisOperations',
-    'FirewallRulesOperations',
-    'PatchSchedulesOperations',
-    'LinkedServerOperations',
-]
+
+class RedisLinkedServer(Model):
+    """Linked server Id.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Linked server Id.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self):
+        self.id = None
