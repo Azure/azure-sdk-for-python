@@ -68,6 +68,8 @@ class RestoreRequest(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'storage_account_url': {'required': True},
+        'overwrite': {'required': True},
     }
 
     _attribute_map = {
@@ -88,7 +90,7 @@ class RestoreRequest(ProxyOnlyResource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, app_service_plan=None, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
+    def __init__(self, storage_account_url, overwrite, kind=None, blob_name=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, app_service_plan=None, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
         super(RestoreRequest, self).__init__(kind=kind)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
