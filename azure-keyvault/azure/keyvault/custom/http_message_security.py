@@ -29,11 +29,6 @@ class HttpMessageSecurity(object):
         self.server_encryption_key = server_encryption_key
 
     def protect_request(self, request):
-
-        print('\nunprotected request:')
-        print(request.body)
-
-        # print('request=' + request.body)
         # Setup the auth header on the request
         # Due to limitations in the service we hard code the auth scheme to 'Bearer' as the service will fail with any
         # other scheme or a different casing such as 'bearer', once this is fixed the following line should be replaced:
@@ -75,17 +70,10 @@ class HttpMessageSecurity(object):
 
         request.prepare_body(data=jws.to_flattened_jws(), files=None)
 
-        # print('request=' + request.body)
-        # return the protected request
-        print('\nprotected request:')
-        print(request.body)
-
         return request
 
     def unprotect_response(self, response, **kwargs):
         body = response.content
-        print('\nprotected response:')
-        print(body)
         # if the current message security doesn't support message protection, the body is empty, or the request failed
         # skip protection and return the original response
         if not self.supports_protection() or len(response.content) == 0 or response.status_code != 200:
@@ -115,8 +103,6 @@ class HttpMessageSecurity(object):
         # get the unprotected response body
         decrypted = self._unprotect_payload(jws.payload)
 
-        print('\nresponse:')
-        print(body)
         response._content = decrypted
         response.headers['Content-Type'] = 'application/json'
         return response
