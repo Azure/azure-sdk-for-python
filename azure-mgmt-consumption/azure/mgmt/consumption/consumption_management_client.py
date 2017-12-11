@@ -14,6 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.reservations_summaries_operations import ReservationsSummariesOperations
+from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.operations import Operations
 from . import models
 
@@ -43,7 +45,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         super(ConsumptionManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('consumptionmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-consumption/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -58,6 +60,10 @@ class ConsumptionManagementClient(object):
 
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar reservations_summaries: ReservationsSummaries operations
+    :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
+    :ivar reservations_details: ReservationsDetails operations
+    :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
 
@@ -81,6 +87,10 @@ class ConsumptionManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.usage_details = UsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_summaries = ReservationsSummariesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_details = ReservationsDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
