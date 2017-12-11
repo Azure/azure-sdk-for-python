@@ -9,14 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_details_operations import UsageDetailsOperations
-from .reservations_summaries_operations import ReservationsSummariesOperations
-from .reservations_details_operations import ReservationsDetailsOperations
-from .operations import Operations
+from enum import Enum
 
-__all__ = [
-    'UsageDetailsOperations',
-    'ReservationsSummariesOperations',
-    'ReservationsDetailsOperations',
-    'Operations',
-]
+
+class Datagrain(Enum):
+
+    daily_grain = "daily"
+    monthly_grain = "monthly"
