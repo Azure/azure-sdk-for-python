@@ -360,6 +360,13 @@
     ],
     "service_name": "Storage"
   },
+  "azure-mgmt-subscription": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.subscription"
+    ],
+    "service_name": "Subscription"
+  },
   "azure-mgmt-trafficmanager": {
     "category ": "Management",
     "namespaces": [

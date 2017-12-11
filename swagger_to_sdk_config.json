@@ -247,6 +247,13 @@
       "build_dir": "azure-mgmt-storage",
       "markdown": "specification/storage/resource-manager/readme.md"
     },
+    "subscription": {
+      "build_dir": "azure-mgmt-subscription",
+      "markdown": "specification/subscription/resource-manager/readme.md",
+      "autorest_options": {
+        "tag": "package-all-subscription"
+      }
+    },
     "trafficmanager": {
       "build_dir": "azure-mgmt-trafficmanager",
       "markdown": "specification/trafficmanager/resource-manager/readme.md"
