@@ -30,9 +30,12 @@ class ArmDisasterRecovery(Resource):
      'Failed'. Possible values include: 'Accepted', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.servicebus.models.ProvisioningStateDR
-    :param partner_namespace: Primary/Secondary eventhub namespace name, which
-     is part of GEO DR pairning
+    :param partner_namespace: ARM Id of the Primary/Secondary eventhub
+     namespace name, which is part of GEO DR pairning
     :type partner_namespace: str
+    :param alternate_name: Primary/Secondary eventhub namespace name, which is
+     part of GEO DR pairning
+    :type alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or
      'PrimaryNotReplicating' or 'Secondary'. Possible values include:
      'Primary', 'PrimaryNotReplicating', 'Secondary'
@@ -53,11 +56,13 @@ class ArmDisasterRecovery(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateDR'},
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
+        'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
     }
 
-    def __init__(self, partner_namespace=None):
+    def __init__(self, partner_namespace=None, alternate_name=None):
         super(ArmDisasterRecovery, self).__init__()
         self.provisioning_state = None
         self.partner_namespace = partner_namespace
+        self.alternate_name = alternate_name
         self.role = None
