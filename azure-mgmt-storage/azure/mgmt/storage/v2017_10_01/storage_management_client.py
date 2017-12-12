@@ -13,6 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
+from .operations.skus_operations import SkusOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.usage_operations import UsageOperations
 from . import models
@@ -26,9 +28,9 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -58,17 +60,21 @@ class StorageManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.storage.v2017_10_01.operations.Operations
+    :ivar skus: Skus operations
+    :vartype skus: azure.mgmt.storage.v2017_10_01.operations.SkusOperations
     :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.storage.v2015_06_15.operations.StorageAccountsOperations
+    :vartype storage_accounts: azure.mgmt.storage.v2017_10_01.operations.StorageAccountsOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.storage.v2015_06_15.operations.UsageOperations
+    :vartype usage: azure.mgmt.storage.v2017_10_01.operations.UsageOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -80,10 +86,14 @@ class StorageManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-06-15'
+        self.api_version = '2017-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(
