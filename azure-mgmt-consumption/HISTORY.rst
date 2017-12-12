@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.1.0 (2017-12-12)
+++++++++++++++++++
+
+**Features**
+
+- Reservation summaries based on Reservation Order Id and/or ReservationId
+- Reservation details based on Reservation Order Id and/or ReservationId
+
 1.0.0 (2017-11-15)
 ++++++++++++++++++
 
