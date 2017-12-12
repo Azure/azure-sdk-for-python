@@ -10,9 +10,7 @@ import unittest
 import azure.mgmt.containerservice
 from azure.mgmt.containerservice.models import ContainerServiceVMSizeTypes
 
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtContainerServiceTest(AzureMgmtTestCase):
 
@@ -22,19 +20,16 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
             azure.mgmt.containerservice.ContainerServiceClient
         )
 
-        if not self.is_playback():
-            self.create_resource_group()
-
-    @record
-    def test_container(self):
+    @ResourceGroupPreparer(location='westus2')
+    def test_container(self, resource_group, location):
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
         async_create = self.cs_client.container_services.create_or_update(
-            self.group_name,
+            resource_group.name,
             container_name,
             {
-                'location': 'westus2',
+                'location': location,
                 "orchestrator_profile": {
                     "orchestrator_type": "DCOS"
                 },
@@ -63,12 +58,12 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
         container = async_create.result()
 
         container = self.cs_client.container_services.get(
-            self.group_name,
+            resource_group.name,
             container.name
         )
 
         containers = list(self.cs_client.container_services.list_by_resource_group(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(containers), 1)
 
@@ -76,7 +71,7 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
         self.assertGreaterEqual(len(containers), 1)
 
         async_delete = self.cs_client.container_services.delete(
-            self.group_name,
+            resource_group.name,
             container.name
         )
         async_delete.wait()
