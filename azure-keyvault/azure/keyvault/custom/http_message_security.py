@@ -13,10 +13,20 @@ from .rsa_key import RsaKey
 
 
 def generate_pop_key():
+    """
+    Generates a key which can be used for Proof Of Possession token authentication.   
+    :return:
+    """
     return RsaKey.generate()
 
 
 class HttpMessageSecurity(object):
+    """
+    Used for message authorization, encryption and decrtyption.
+
+    This class is intended for internal use only.  Details are subject to non-compatible changes, consumers of the
+    azure-keyvault module should not take dependencies on this class or its current implementation.
+    """
     def __init__(self, client_security_token=None,
                  client_signature_key=None,
                  client_encryption_key=None,
@@ -29,6 +39,11 @@ class HttpMessageSecurity(object):
         self.server_encryption_key = server_encryption_key
 
     def protect_request(self, request):
+        """
+        Adds authorization header, and encrypts and signs the request if supported on the specific request.
+        :param request: unprotected request to apply security protocol
+        :return: protected request with appropriate security protocal applied
+        """
         # Setup the auth header on the request
         # Due to limitations in the service we hard code the auth scheme to 'Bearer' as the service will fail with any
         # other scheme or a different casing such as 'bearer', once this is fixed the following line should be replaced:
@@ -73,6 +88,11 @@ class HttpMessageSecurity(object):
         return request
 
     def unprotect_response(self, response, **kwargs):
+        """
+        Removes protection from the specified response
+        :param request: response from the key vault service
+        :return: unprotected response with any security protocal encryption removed
+        """
         body = response.content
         # if the current message security doesn't support message protection, the body is empty, or the request failed
         # skip protection and return the original response
@@ -108,6 +128,10 @@ class HttpMessageSecurity(object):
         return response
 
     def supports_protection(self):
+        """
+        Determines if the the current HttpMessageSecurity object supports the message protection protocol.
+        :return: True if the current object supports protection, otherwise False
+        """
         return self.client_signature_key \
                and self.client_encryption_key \
                and self.server_signature_key \
