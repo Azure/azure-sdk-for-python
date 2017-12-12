@@ -27,7 +27,7 @@ class TrackedResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

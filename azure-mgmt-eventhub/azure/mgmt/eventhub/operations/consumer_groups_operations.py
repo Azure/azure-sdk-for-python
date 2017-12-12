@@ -25,6 +25,8 @@ class ConsumerGroupsOperations(object):
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -58,13 +60,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -136,11 +134,8 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -173,7 +168,7 @@ class ConsumerGroupsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -198,13 +193,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -268,10 +259,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>`
-        :rtype: :class:`ConsumerGroupPaged
-         <azure.mgmt.eventhub.models.ConsumerGroupPaged>`
+        :return: An iterator like instance of ConsumerGroup
+        :rtype:
+         ~azure.mgmt.eventhub.models.ConsumerGroupPaged[~azure.mgmt.eventhub.models.ConsumerGroup]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
