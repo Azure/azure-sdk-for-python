@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.3.0 (2017-12-12)
+++++++++++++++++++
+
+**Features**
+
+- Add integration_runtime_nodes operations
+- Add additional_properties on several objects
+- Add several linked service, dataset and copysource
+
 0.2.2 (2017-11-13)
 ++++++++++++++++++
 
