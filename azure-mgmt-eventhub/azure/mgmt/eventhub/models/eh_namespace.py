@@ -27,9 +27,9 @@ class EHNamespace(TrackedResource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: Properties of sku resource
-    :type sku: :class:`Sku <azure.mgmt.eventhub.models.Sku>`
+    :type sku: ~azure.mgmt.eventhub.models.Sku
     :ivar provisioning_state: Provisioning state of the Namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the Namespace was created.
