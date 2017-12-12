@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-11-30"
+from enum import Enum
 
+
+class Datagrain(Enum):
+
+    daily_grain = "daily"
+    monthly_grain = "monthly"
