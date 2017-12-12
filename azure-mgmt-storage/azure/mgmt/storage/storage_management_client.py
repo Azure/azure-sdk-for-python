@@ -80,8 +80,6 @@ class StorageManagementClient(object):
     DEFAULT_API_VERSION='2017-10-01'
     DEFAULT_PROFILE = None
 
-    DEFAULT_API_VERSION = '2017-10-01'
-
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)

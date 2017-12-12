@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.5.0 (2017-12-12)
+++++++++++++++++++
+
+**Features**
+
+- Add StorageV2 as valid kind
+- Add official support for API version 2017-10-01
+
 1.4.0 (2017-09-26)
 ++++++++++++++++++
 
