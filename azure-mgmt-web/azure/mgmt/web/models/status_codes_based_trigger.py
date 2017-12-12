@@ -17,11 +17,11 @@ class StatusCodesBasedTrigger(Model):
 
     :param status: HTTP status code.
     :type status: int
-    :param sub_status: SubStatus.
+    :param sub_status: Request Sub Status.
     :type sub_status: int
     :param win32_status: Win32 error code.
     :type win32_status: int
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str

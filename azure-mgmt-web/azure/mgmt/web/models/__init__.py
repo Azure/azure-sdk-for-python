@@ -21,13 +21,11 @@ from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
 from .site_seal import SiteSeal
 from .site_seal_request import SiteSealRequest
-from .managed_service_identity import ManagedServiceIdentity
-from .slot_swap_status import SlotSwapStatus
-from .snapshot_recovery_target import SnapshotRecoveryTarget
 from .vnet_route import VnetRoute
 from .vnet_info import VnetInfo
 from .vnet_gateway import VnetGateway
 from .user import User
+from .snapshot_recovery_target import SnapshotRecoveryTarget
 from .snapshot_recovery_request import SnapshotRecoveryRequest
 from .resource_metric_availability import ResourceMetricAvailability
 from .resource_metric_name import ResourceMetricName
@@ -36,6 +34,8 @@ from .push_settings import PushSettings
 from .hybrid_connection_key import HybridConnectionKey
 from .hybrid_connection import HybridConnection
 from .proxy_only_resource import ProxyOnlyResource
+from .managed_service_identity import ManagedServiceIdentity
+from .slot_swap_status import SlotSwapStatus
 from .cloning_info import CloningInfo
 from .hosting_environment_profile import HostingEnvironmentProfile
 from .ip_security_restriction import IpSecurityRestriction
@@ -66,6 +66,13 @@ from .sku_description import SkuDescription
 from .app_service_plan import AppServicePlan
 from .resource import Resource
 from .name_identifier import NameIdentifier
+from .metric_availability import MetricAvailability
+from .dimension import Dimension
+from .metric_specification import MetricSpecification
+from .service_specification import ServiceSpecification
+from .csm_operation_description_properties import CsmOperationDescriptionProperties
+from .csm_operation_display import CsmOperationDisplay
+from .csm_operation_description import CsmOperationDescription
 from .address import Address
 from .contact import Contact
 from .host_name import HostName
@@ -96,13 +103,19 @@ from .resource_metric_value import ResourceMetricValue
 from .resource_metric import ResourceMetric
 from .web_app_collection import WebAppCollection
 from .deleted_site import DeletedSite
-from .csm_operation_display import CsmOperationDisplay
-from .dimension import Dimension
-from .metric_availability import MetricAvailability
-from .metric_specification import MetricSpecification
-from .service_specification import ServiceSpecification
-from .csm_operation_description_properties import CsmOperationDescriptionProperties
-from .csm_operation_description import CsmOperationDescription
+from .solution import Solution
+from .detector_abnormal_time_period import DetectorAbnormalTimePeriod
+from .abnormal_time_period import AbnormalTimePeriod
+from .detector_definition import DetectorDefinition
+from .diagnostic_metric_sample import DiagnosticMetricSample
+from .diagnostic_metric_set import DiagnosticMetricSet
+from .data_source import DataSource
+from .response_meta_data import ResponseMetaData
+from .analysis_data import AnalysisData
+from .analysis_definition import AnalysisDefinition
+from .diagnostic_analysis import DiagnosticAnalysis
+from .diagnostic_category import DiagnosticCategory
+from .diagnostic_detector_response import DiagnosticDetectorResponse
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
@@ -196,6 +209,7 @@ from .app_service_plan_patch_resource import AppServicePlanPatchResource
 from .hybrid_connection_limits import HybridConnectionLimits
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
 from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
+from .csm_operation_description_paged import CsmOperationDescriptionPaged
 from .domain_paged import DomainPaged
 from .name_identifier_paged import NameIdentifierPaged
 from .domain_ownership_identifier_paged import DomainOwnershipIdentifierPaged
@@ -203,7 +217,9 @@ from .top_level_domain_paged import TopLevelDomainPaged
 from .tld_legal_agreement_paged import TldLegalAgreementPaged
 from .certificate_paged import CertificatePaged
 from .deleted_site_paged import DeletedSitePaged
-from .csm_operation_description_paged import CsmOperationDescriptionPaged
+from .diagnostic_category_paged import DiagnosticCategoryPaged
+from .analysis_definition_paged import AnalysisDefinitionPaged
+from .detector_definition_paged import DetectorDefinitionPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .premier_add_on_offer_paged import PremierAddOnOfferPaged
@@ -268,6 +284,8 @@ from .web_site_management_client_enums import (
     WorkerSizeOptions,
     AccessControlEntryAction,
     OperationStatus,
+    IssueType,
+    SolutionType,
     ResourceScopeType,
     NotificationLevel,
     Channels,
@@ -309,13 +327,11 @@ __all__ = [
     'RenewCertificateOrderRequest',
     'SiteSeal',
     'SiteSealRequest',
-    'ManagedServiceIdentity',
-    'SlotSwapStatus',
-    'SnapshotRecoveryTarget',
     'VnetRoute',
     'VnetInfo',
     'VnetGateway',
     'User',
+    'SnapshotRecoveryTarget',
     'SnapshotRecoveryRequest',
     'ResourceMetricAvailability',
     'ResourceMetricName',
@@ -324,6 +340,8 @@ __all__ = [
     'HybridConnectionKey',
     'HybridConnection',
     'ProxyOnlyResource',
+    'ManagedServiceIdentity',
+    'SlotSwapStatus',
     'CloningInfo',
     'HostingEnvironmentProfile',
     'IpSecurityRestriction',
@@ -354,6 +372,13 @@ __all__ = [
     'AppServicePlan',
     'Resource',
     'NameIdentifier',
+    'MetricAvailability',
+    'Dimension',
+    'MetricSpecification',
+    'ServiceSpecification',
+    'CsmOperationDescriptionProperties',
+    'CsmOperationDisplay',
+    'CsmOperationDescription',
     'Address',
     'Contact',
     'HostName',
@@ -384,13 +409,19 @@ __all__ = [
     'ResourceMetric',
     'WebAppCollection',
     'DeletedSite',
-    'CsmOperationDisplay',
-    'Dimension',
-    'MetricAvailability',
-    'MetricSpecification',
-    'ServiceSpecification',
-    'CsmOperationDescriptionProperties',
-    'CsmOperationDescription',
+    'Solution',
+    'DetectorAbnormalTimePeriod',
+    'AbnormalTimePeriod',
+    'DetectorDefinition',
+    'DiagnosticMetricSample',
+    'DiagnosticMetricSet',
+    'DataSource',
+    'ResponseMetaData',
+    'AnalysisData',
+    'AnalysisDefinition',
+    'DiagnosticAnalysis',
+    'DiagnosticCategory',
+    'DiagnosticDetectorResponse',
     'Recommendation',
     'RecommendationRule',
     'CsmMoveResourceEnvelope',
@@ -484,6 +515,7 @@ __all__ = [
     'HybridConnectionLimits',
     'AppServiceCertificateOrderPaged',
     'AppServiceCertificateResourcePaged',
+    'CsmOperationDescriptionPaged',
     'DomainPaged',
     'NameIdentifierPaged',
     'DomainOwnershipIdentifierPaged',
@@ -491,7 +523,9 @@ __all__ = [
     'TldLegalAgreementPaged',
     'CertificatePaged',
     'DeletedSitePaged',
-    'CsmOperationDescriptionPaged',
+    'DiagnosticCategoryPaged',
+    'AnalysisDefinitionPaged',
+    'DetectorDefinitionPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
     'PremierAddOnOfferPaged',
@@ -555,6 +589,8 @@ __all__ = [
     'WorkerSizeOptions',
     'AccessControlEntryAction',
     'OperationStatus',
+    'IssueType',
+    'SolutionType',
     'ResourceScopeType',
     'NotificationLevel',
     'Channels',
