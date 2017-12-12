@@ -24,27 +24,35 @@ class ManagedClusterUpgradeProfile(Model):
     :vartype name: str
     :ivar type: Type of upgrade profile.
     :vartype type: str
-    :param properties: Properties of upgrade profile.
-    :type properties: :class:`ManagedClusterUpgradeProfileProperties
-     <azure.mgmt.containerservice.models.ManagedClusterUpgradeProfileProperties>`
+    :param control_plane_profile: The list of available upgrade versions for
+     the control plane.
+    :type control_plane_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile
+    :param agent_pool_profiles: The list of available upgrade versions for
+     agent pools.
+    :type agent_pool_profiles:
+     list[~azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
+        'control_plane_profile': {'required': True},
+        'agent_pool_profiles': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ManagedClusterUpgradeProfileProperties'},
+        'control_plane_profile': {'key': 'properties.controlPlaneProfile', 'type': 'ManagedClusterPoolUpgradeProfile'},
+        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterPoolUpgradeProfile]'},
     }
 
-    def __init__(self, properties):
+    def __init__(self, control_plane_profile, agent_pool_profiles):
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.control_plane_profile = control_plane_profile
+        self.agent_pool_profiles = agent_pool_profiles

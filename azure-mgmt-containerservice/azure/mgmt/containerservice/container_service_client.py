@@ -45,7 +45,7 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
 
         super(ContainerServiceClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('containerserviceclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-containerservice/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

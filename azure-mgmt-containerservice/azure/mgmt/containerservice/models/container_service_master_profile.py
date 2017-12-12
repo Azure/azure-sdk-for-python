@@ -62,8 +62,8 @@ class ContainerServiceMasterProfile(Model):
      'Standard_L32s', 'Standard_L4s', 'Standard_L8s', 'Standard_M128s',
      'Standard_M64ms', 'Standard_NC12', 'Standard_NC24', 'Standard_NC24r',
      'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
-    :type vm_size: str or :class:`ContainerServiceVMSizeTypes
-     <azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes>`
+    :type vm_size: str or
+     ~azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -79,8 +79,8 @@ class ContainerServiceMasterProfile(Model):
      used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
      choose for you based on the orchestrator choice. Possible values include:
      'StorageAccount', 'ManagedDisks'
-    :type storage_profile: str or :class:`ContainerServiceStorageProfileTypes
-     <azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes>`
+    :type storage_profile: str or
+     ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FDQN for the master pool.
     :vartype fqdn: str
     """
