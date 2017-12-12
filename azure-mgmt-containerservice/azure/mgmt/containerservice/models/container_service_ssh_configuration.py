@@ -17,8 +17,8 @@ class ContainerServiceSshConfiguration(Model):
 
     :param public_keys: The list of SSH public keys used to authenticate with
      Linux-based VMs. Only expect one key specified.
-    :type public_keys: list of :class:`ContainerServiceSshPublicKey
-     <azure.mgmt.containerservice.models.ContainerServiceSshPublicKey>`
+    :type public_keys:
+     list[~azure.mgmt.containerservice.models.ContainerServiceSshPublicKey]
     """
 
     _validation = {

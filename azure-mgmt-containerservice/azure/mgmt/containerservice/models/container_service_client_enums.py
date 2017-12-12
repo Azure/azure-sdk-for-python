@@ -165,9 +165,3 @@ class OSType(Enum):
 
     linux = "Linux"
     windows = "Windows"
-
-
-class ContainerServiceOSTypes(Enum):
-
-    linux = "Linux"
-    windows = "Windows"
