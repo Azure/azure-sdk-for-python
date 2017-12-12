@@ -7,8 +7,6 @@ matrix:
     - os: linux
       python: "2.7"
     - os: linux
-      python: "3.3"
-    - os: linux
       python: "3.4"
     - os: linux
       python: "3.5"
@@ -26,7 +24,6 @@ matrix:
   allow_failures:
     - os: osx
 #    - python: "pypy2.7-5.8.0"
-    - python: "3.3"
     - python: "pypy3.5-5.8.0"
     - python: "nightly"
   fast_finish: true
