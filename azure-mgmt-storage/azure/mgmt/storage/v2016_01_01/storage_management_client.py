@@ -45,7 +45,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 
         super(StorageManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('storagemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-storage/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
