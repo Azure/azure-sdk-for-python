@@ -22,8 +22,8 @@ class OrchestratorVersionProfile(Model):
     :param default: Installed by default if version is not specified.
     :type default: bool
     :param upgrades: The list of available upgrade versions.
-    :type upgrades: list of :class:`OrchestratorProfile
-     <azure.mgmt.containerservice.models.OrchestratorProfile>`
+    :type upgrades:
+     list[~azure.mgmt.containerservice.models.OrchestratorProfile]
     """
 
     _validation = {

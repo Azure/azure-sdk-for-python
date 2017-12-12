@@ -22,11 +22,10 @@ class ManagedClusterPoolUpgradeProfile(Model):
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
-    :type os_type: str or :class:`OSType
-     <azure.mgmt.containerservice.models.OSType>`
+    :type os_type: str or ~azure.mgmt.containerservice.models.OSType
     :param upgrades: List of orchestrator types and versions available for
      upgrade.
-    :type upgrades: list of str
+    :type upgrades: list[str]
     """
 
     _validation = {

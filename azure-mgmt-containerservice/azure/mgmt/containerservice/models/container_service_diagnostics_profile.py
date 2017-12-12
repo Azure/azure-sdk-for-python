@@ -17,8 +17,8 @@ class ContainerServiceDiagnosticsProfile(Model):
 
     :param vm_diagnostics: Profile for diagnostics on the container service
      VMs.
-    :type vm_diagnostics: :class:`ContainerServiceVMDiagnostics
-     <azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics>`
+    :type vm_diagnostics:
+     ~azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics
     """
 
     _validation = {

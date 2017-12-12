@@ -63,8 +63,8 @@ class ContainerServiceAgentPoolProfile(Model):
      'Standard_L32s', 'Standard_L4s', 'Standard_L8s', 'Standard_M128s',
      'Standard_M64ms', 'Standard_NC12', 'Standard_NC24', 'Standard_NC24r',
      'Standard_NC6', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
-    :type vm_size: str or :class:`ContainerServiceVMSizeTypes
-     <azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes>`
+    :type vm_size: str or
+     ~azure.mgmt.containerservice.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
@@ -76,13 +76,13 @@ class ContainerServiceAgentPoolProfile(Model):
     :vartype fqdn: str
     :param ports: Ports number array used to expose on this agent pool. The
      default opened ports are different based on your choice of orchestrator.
-    :type ports: list of int
+    :type ports: list[int]
     :param storage_profile: Storage profile specifies what kind of storage
      used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
      choose for you based on the orchestrator choice. Possible values include:
      'StorageAccount', 'ManagedDisks'
-    :type storage_profile: str or :class:`ContainerServiceStorageProfileTypes
-     <azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes>`
+    :type storage_profile: str or
+     ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
      identifier. If you specify either master VNet Subnet, or agent VNet
      Subnet, you need to specify both. And they have to be in the same VNet.
@@ -90,8 +90,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :param os_type: OsType to be used to specify os type. Choose from Linux
      and Windows. Default to Linux. Possible values include: 'Linux',
      'Windows'. Default value: "Linux" .
-    :type os_type: str or :class:`OSType
-     <azure.mgmt.containerservice.models.OSType>`
+    :type os_type: str or ~azure.mgmt.containerservice.models.OSType
     """
 
     _validation = {
