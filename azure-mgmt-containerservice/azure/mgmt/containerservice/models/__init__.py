@@ -23,19 +23,12 @@ from .container_service_linux_profile import ContainerServiceLinuxProfile
 from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
 from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
 from .container_service import ContainerService
-from .orchestrator_profile import OrchestratorProfile
-from .pool_upgrade_profile import PoolUpgradeProfile
-from .upgrade_profile_properties import UpgradeProfileProperties
-from .upgrade_profile import UpgradeProfile
-from .access_profile import AccessProfile
-from .managed_cluster_properties_access_profiles import ManagedClusterPropertiesAccessProfiles
-from .managed_cluster_properties import ManagedClusterProperties
 from .managed_cluster import ManagedCluster
+from .orchestrator_profile import OrchestratorProfile
+from .managed_cluster_access_profile import ManagedClusterAccessProfile
 from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
-from .managed_cluster_upgrade_profile_properties import ManagedClusterUpgradeProfileProperties
 from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
 from .orchestrator_version_profile import OrchestratorVersionProfile
-from .orchestrator_version_profile_properties import OrchestratorVersionProfileProperties
 from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
 from .managed_cluster_paged import ManagedClusterPaged
@@ -44,7 +37,6 @@ from .container_service_client_enums import (
     ContainerServiceVMSizeTypes,
     ContainerServiceOrchestratorTypes,
     OSType,
-    ContainerServiceOSTypes,
 )
 
 __all__ = [
@@ -62,19 +54,12 @@ __all__ = [
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
-    'OrchestratorProfile',
-    'PoolUpgradeProfile',
-    'UpgradeProfileProperties',
-    'UpgradeProfile',
-    'AccessProfile',
-    'ManagedClusterPropertiesAccessProfiles',
-    'ManagedClusterProperties',
     'ManagedCluster',
+    'OrchestratorProfile',
+    'ManagedClusterAccessProfile',
     'ManagedClusterPoolUpgradeProfile',
-    'ManagedClusterUpgradeProfileProperties',
     'ManagedClusterUpgradeProfile',
     'OrchestratorVersionProfile',
-    'OrchestratorVersionProfileProperties',
     'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
     'ManagedClusterPaged',
@@ -82,5 +67,4 @@ __all__ = [
     'ContainerServiceVMSizeTypes',
     'ContainerServiceOrchestratorTypes',
     'OSType',
-    'ContainerServiceOSTypes',
 ]

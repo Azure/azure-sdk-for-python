@@ -24,27 +24,27 @@ class OrchestratorVersionProfileListResult(Model):
     :vartype name: str
     :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param properties: The properties of an orchestrator version profile.
-    :type properties: :class:`OrchestratorVersionProfileProperties
-     <azure.mgmt.containerservice.models.OrchestratorVersionProfileProperties>`
+    :param orchestrators: List of orchstrator version profiles.
+    :type orchestrators:
+     ~azure.mgmt.containerservice.models.OrchestratorVersionProfile
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
+        'orchestrators': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OrchestratorVersionProfileProperties'},
+        'orchestrators': {'key': 'properties.orchestrators', 'type': 'OrchestratorVersionProfile'},
     }
 
-    def __init__(self, properties):
+    def __init__(self, orchestrators):
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.orchestrators = orchestrators
