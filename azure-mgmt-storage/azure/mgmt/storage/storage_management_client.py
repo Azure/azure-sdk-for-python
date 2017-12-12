@@ -42,7 +42,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 
         super(StorageManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('storagemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-storage/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -52,33 +52,49 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 class StorageManagementClient(object):
     """The Azure Storage Management API.
 
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation 
+    group is not described in the profile.
+
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms part
-     of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A dict using operation group name to API version.
+    :type profile: dict[str, str]
     """
 
-    DEFAULT_API_VERSION = '2017-06-01'
+    DEFAULT_API_VERSION='2017-10-01'
+    DEFAULT_PROFILE = None
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
+    DEFAULT_API_VERSION = '2017-10-01'
+
+    def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
         self.api_version = api_version
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
+
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
     @classmethod
     def models(cls, api_version=DEFAULT_API_VERSION):
@@ -88,6 +104,7 @@ class StorageManagementClient(object):
            * 2016-01-01: :mod:`v2016_01_01.models<azure.mgmt.storage.v2016_01_01.models>`
            * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.storage.v2016_12_01.models>`
            * 2017-06-01: :mod:`v2017_06_01.models<azure.mgmt.storage.v2017_06_01.models>`
+           * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.storage.v2017_10_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -101,6 +118,9 @@ class StorageManagementClient(object):
         elif api_version == '2017-06-01':
             from .v2017_06_01 import models
             return models
+        elif api_version == '2017-10-01':
+            from .v2017_10_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
     @property
@@ -108,24 +128,32 @@ class StorageManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`Operations<azure.mgmt.storage.v2017_06_01.operations.Operations>`
+           * 2017-10-01: :class:`Operations<azure.mgmt.storage.v2017_10_01.operations.Operations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('operations', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import Operations as OperationClass
+        elif api_version == '2017-10-01':
+            from .v2017_10_01.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def skus(self):
         """Instance depends on the API version:
 
            * 2017-06-01: :class:`SkusOperations<azure.mgmt.storage.v2017_06_01.operations.SkusOperations>`
+           * 2017-10-01: :class:`SkusOperations<azure.mgmt.storage.v2017_10_01.operations.SkusOperations>`
         """
-        if self.api_version == '2017-06-01':
+        api_version = self.profile.get('skus', self.api_version)
+        if api_version == '2017-06-01':
             from .v2017_06_01.operations import SkusOperations as OperationClass
+        elif api_version == '2017-10-01':
+            from .v2017_10_01.operations import SkusOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def storage_accounts(self):
@@ -135,18 +163,22 @@ class StorageManagementClient(object):
            * 2016-01-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2016_01_01.operations.StorageAccountsOperations>`
            * 2016-12-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2016_12_01.operations.StorageAccountsOperations>`
            * 2017-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations>`
+           * 2017-10-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_10_01.operations.StorageAccountsOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('storage_accounts', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
-        elif self.api_version == '2016-01-01':
+        elif api_version == '2016-01-01':
             from .v2016_01_01.operations import StorageAccountsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import StorageAccountsOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import StorageAccountsOperations as OperationClass
+        elif api_version == '2017-10-01':
+            from .v2017_10_01.operations import StorageAccountsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def usage(self):
@@ -156,15 +188,19 @@ class StorageManagementClient(object):
            * 2016-01-01: :class:`UsageOperations<azure.mgmt.storage.v2016_01_01.operations.UsageOperations>`
            * 2016-12-01: :class:`UsageOperations<azure.mgmt.storage.v2016_12_01.operations.UsageOperations>`
            * 2017-06-01: :class:`UsageOperations<azure.mgmt.storage.v2017_06_01.operations.UsageOperations>`
+           * 2017-10-01: :class:`UsageOperations<azure.mgmt.storage.v2017_10_01.operations.UsageOperations>`
         """
-        if self.api_version == '2015-06-15':
+        api_version = self.profile.get('usage', self.api_version)
+        if api_version == '2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
-        elif self.api_version == '2016-01-01':
+        elif api_version == '2016-01-01':
             from .v2016_01_01.operations import UsageOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import UsageOperations as OperationClass
-        elif self.api_version == '2017-06-01':
+        elif api_version == '2017-06-01':
             from .v2017_06_01.operations import UsageOperations as OperationClass
+        elif api_version == '2017-10-01':
+            from .v2017_10_01.operations import UsageOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
