@@ -57,7 +57,8 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
-        self.partition_receive_handler = AsyncReceiver(loop=self.loop)
+        self.partition_receive_handler = AsyncReceiver(loop=self.loop,
+                                                       prefetch=self.host.eph_options.prefetch_count)
         self.eh_client = EventHubClient(self.host.eh_config.client_address) \
                         .subscribe(self.partition_receive_handler,
                                    self.partition_context.consumer_group_name,
