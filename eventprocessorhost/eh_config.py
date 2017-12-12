@@ -23,7 +23,6 @@ class EventHubConfig:
         self.consumer_group = consumer_group
         self.client_address = self.get_client_address()
         self.rest_token = self.get_rest_token()
-        
 
     def get_client_address(self):
         """
@@ -31,7 +30,7 @@ class EventHubConfig:
         REST API.
         """
         return ("amqps://{}:{}@{}.servicebus.windows.net:5671/{}"\
-                .format(self.policy, self.sas_key, self.sb_name, self.eh_name))
+                .format(self.policy, urllib.parse.quote_plus(self.sas_key), self.sb_name, self.eh_name))
 
     def get_rest_token(self):
         """
@@ -46,4 +45,3 @@ class EventHubConfig:
         signature = urllib.parse.quote(base64.b64encode(signed_hmac_sha256.digest()))
         return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}' \
                 .format(uri, signature, expiry, self.policy)
-                
