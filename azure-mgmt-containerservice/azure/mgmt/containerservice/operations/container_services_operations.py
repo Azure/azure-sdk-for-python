@@ -438,7 +438,7 @@ class ContainerServicesOperations(object):
         return deserialized
 
     def list_orchestrators(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, location, resource_type=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of supported orchestrators in the specified subscription.
 
         Gets a list of supported orchestrators in the specified subscription.
@@ -447,6 +447,9 @@ class ContainerServicesOperations(object):
 
         :param location: The name of a supported Azure region.
         :type location: str
+        :param resource_type: resource type for which the list of
+         orchestrators needs to be returned
+        :type resource_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -472,8 +475,8 @@ class ContainerServicesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if self.config.resource_type is not None:
-            query_parameters['resource-type'] = self._serialize.query("self.config.resource_type", self.config.resource_type, 'str')
+        if resource_type is not None:
+            query_parameters['resource-type'] = self._serialize.query("resource_type", resource_type, 'str')
 
         # Construct headers
         header_parameters = {}

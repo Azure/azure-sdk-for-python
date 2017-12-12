@@ -30,14 +30,11 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param resource_type: resource type for which the list of orchestrators
-     needs to be returned
-    :type resource_type: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_type=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -53,7 +50,6 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.resource_type = resource_type
 
 
 class ContainerServiceClient(object):
@@ -74,16 +70,13 @@ class ContainerServiceClient(object):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param resource_type: resource type for which the list of orchestrators
-     needs to be returned
-    :type resource_type: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_type=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ContainerServiceClientConfiguration(credentials, subscription_id, resource_type, base_url)
+        self.config = ContainerServiceClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
