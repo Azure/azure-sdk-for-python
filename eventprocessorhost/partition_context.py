@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
-
+import asyncio
 import logging
 from eventprocessorhost.checkpoint import Checkpoint
 
@@ -10,7 +10,7 @@ class PartitionContext:
     """
     Encapsulates information related to an Event Hubs partition used by AbstractEventProcessor
     """
-    def __init__(self, host, partition_id, eh_path, consumer_group_name):
+    def __init__(self, host, partition_id, eh_path, consumer_group_name, pump_loop=None):
         self.host = host
         self.partition_id = partition_id
         self.eh_path = eh_path
@@ -18,6 +18,7 @@ class PartitionContext:
         self.offset = "-1"
         self.sequence_number = 0
         self.lease = None
+        self.pump_loop = pump_loop or asyncio.get_event_loop()
 
     def set_offset_and_sequence_number(self, event_data):
         """
