@@ -220,6 +220,13 @@
     ],
     "service_name": "Monitoring"
   },
+  "azure-mgmt-msi": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.msi"
+    ],
+    "service_name": "MSI"
+  },
   "azure-mgmt-network": {
     "category ": "Management",
     "namespaces": [
