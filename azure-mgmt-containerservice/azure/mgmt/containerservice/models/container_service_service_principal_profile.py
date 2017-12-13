@@ -24,8 +24,8 @@ class ContainerServiceServicePrincipalProfile(Model):
     :type secret: str
     :param key_vault_secret_ref: Reference to a secret stored in Azure Key
      Vault.
-    :type key_vault_secret_ref: :class:`KeyVaultSecretRef
-     <azure.mgmt.containerservice.models.KeyVaultSecretRef>`
+    :type key_vault_secret_ref:
+     ~azure.mgmt.containerservice.models.KeyVaultSecretRef
     """
 
     _validation = {

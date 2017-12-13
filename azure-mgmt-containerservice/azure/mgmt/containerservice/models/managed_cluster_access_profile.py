@@ -9,42 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class UpgradeProfile(Model):
-    """The list of available upgrades for compute pools.
+class ManagedClusterAccessProfile(Resource):
+    """Managed cluster Access Profile.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Id of upgrade profile.
+    :ivar id: Resource Id
     :vartype id: str
-    :ivar name: Name of upgrade profile.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Type of upgrade profile.
+    :ivar type: Resource type
     :vartype type: str
-    :param properties: Properties of upgrade profile.
-    :type properties: :class:`UpgradeProfileProperties
-     <azure.mgmt.containerservice.models.UpgradeProfileProperties>`
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param kube_config: Base64-encoded Kubernetes configuration file.
+    :type kube_config: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'UpgradeProfileProperties'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
     }
 
-    def __init__(self, properties):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.properties = properties
+    def __init__(self, location, tags=None, kube_config=None):
+        super(ManagedClusterAccessProfile, self).__init__(location=location, tags=tags)
+        self.kube_config = kube_config
