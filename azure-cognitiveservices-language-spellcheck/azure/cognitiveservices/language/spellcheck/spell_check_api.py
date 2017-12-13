@@ -16,8 +16,8 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class SpellCheckClientConfiguration(Configuration):
-    """Configuration for SpellCheckClient
+class SpellCheckAPIConfiguration(Configuration):
+    """Configuration for SpellCheckAPI
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,18 +35,18 @@ class SpellCheckClientConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
 
-        super(SpellCheckClientConfiguration, self).__init__(base_url)
+        super(SpellCheckAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('spellcheckclient/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-language-spellcheck/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class SpellCheckClient(object):
-    """The Spell Check API lets you check a text string for spelling and grammar errors.
+class SpellCheckAPI(object):
+    """The Spell Check API - V7 lets you check a text string for spelling and grammar errors.
 
     :ivar config: Configuration for client.
-    :vartype config: SpellCheckClientConfiguration
+    :vartype config: SpellCheckAPIConfiguration
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -57,7 +57,7 @@ class SpellCheckClient(object):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = SpellCheckClientConfiguration(credentials, base_url)
+        self.config = SpellCheckAPIConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -66,8 +66,8 @@ class SpellCheckClient(object):
         self._deserialize = Deserializer(client_models)
 
 
-    def spell_check_method(
-            self, text, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, custom_headers=None, raw=False, **operation_config):
+    def spell_checker(
+            self, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, text=None, custom_headers=None, raw=False, **operation_config):
         """The Bing Spell Check API lets you perform contextual grammar and spell
         checking. Bing has developed a web-based spell-checker that leverages
         machine learning and statistical machine translation to dynamically
@@ -75,14 +75,6 @@ class SpellCheckClient(object):
         spell-checker is based on a massive corpus of web searches and
         documents.
 
-        :param text: The text string to check for spelling and grammar errors.
-         The combined length of the text string, preContextText string, and
-         postContextText string may not exceed 10,000 characters. You may
-         specify this parameter in the query string of a GET request or in the
-         body of a POST request. Because of the query string length limit,
-         you'll typically use a POST request unless you're checking only short
-         strings.
-        :type text: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
          order of preference. For additional information, including expected
@@ -266,8 +258,7 @@ class SpellCheckClient(object):
          mistakes. 2) Spell—Finds most spelling mistakes but does not find some
          of the grammar errors that Proof catches (for example, capitalization
          and repeated words). Possible values include: 'Proof', 'Spell'
-        :type mode: str or
-         ~azure.cognitiveservices.language.spellcheck.models.Mode
+        :type mode: str
         :param pre_context_text: A string that gives context to the text
          string. For example, the text string petal is valid. However, if you
          set preContextText to bike, the context changes and the text string
@@ -288,6 +279,14 @@ class SpellCheckClient(object):
          10,000 characters. You may specify this parameter in the query string
          of a GET request or in the body of a POST request.
         :type post_context_text: str
+        :param text: The text string to check for spelling and grammar errors.
+         The combined length of the text string, preContextText string, and
+         postContextText string may not exceed 10,000 characters. You may
+         specify this parameter in the query string of a GET request or in the
+         body of a POST request. Because of the query string length limit,
+         you'll typically use a POST request unless you're checking only short
+         strings.
+        :type text: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -346,10 +345,10 @@ class SpellCheckClient(object):
 
         # Construct form data
         form_data_content = {
-            'Text': text,
             'Mode': mode,
             'PreContextText': pre_context_text,
             'PostContextText': post_context_text,
+            'Text': text,
         }
 
         # Construct and send request

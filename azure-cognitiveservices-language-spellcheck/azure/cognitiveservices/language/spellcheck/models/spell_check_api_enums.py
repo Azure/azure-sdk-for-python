@@ -47,9 +47,3 @@ class ActionType(Enum):
 
     edit = "Edit"
     load = "Load"
-
-
-class Mode(Enum):
-
-    proof = "Proof"
-    spell = "Spell"

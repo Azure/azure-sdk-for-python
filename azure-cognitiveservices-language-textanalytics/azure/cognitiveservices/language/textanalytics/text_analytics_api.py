@@ -23,7 +23,9 @@ class TextAnalyticsAPIConfiguration(Configuration):
 
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus'
+     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+     'brazilsouth'
     :type azure_region: str or
      ~azure.cognitiveservices.language.textanalytics.models.AzureRegions
     :param credentials: Subscription credentials which uniquely identify
@@ -42,7 +44,7 @@ class TextAnalyticsAPIConfiguration(Configuration):
 
         super(TextAnalyticsAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('textanalyticsapi/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-language-textanalytics/{}'.format(VERSION))
 
         self.azure_region = azure_region
         self.credentials = credentials
@@ -56,7 +58,9 @@ class TextAnalyticsAPI(object):
 
     :param azure_region: Supported Azure regions for Cognitive Services
      endpoints. Possible values include: 'westus', 'westeurope',
-     'southeastasia', 'eastus2', 'westcentralus'
+     'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+     'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+     'brazilsouth'
     :type azure_region: str or
      ~azure.cognitiveservices.language.textanalytics.models.AzureRegions
     :param credentials: Subscription credentials which uniquely identify
@@ -143,17 +147,13 @@ class TextAnalyticsAPI(object):
         return deserialized
 
     def detect_language(
-            self, number_of_languages_to_detect=None, documents=None, custom_headers=None, raw=False, **operation_config):
+            self, documents=None, custom_headers=None, raw=False, **operation_config):
         """The API returns the detected language and a numeric score between 0 and
         1.
 
         Scores close to 1 indicate 100% certainty that the identified language
         is true. A total of 120 languages are supported.
 
-        :param number_of_languages_to_detect: (Optional. Deprecated) Number of
-         languages to detect. Set to 1 by default. Irrespective of the value,
-         the language with the highest score is returned.
-        :type number_of_languages_to_detect: int
         :param documents:
         :type documents:
          list[~azure.cognitiveservices.language.textanalytics.models.Input]
@@ -180,8 +180,6 @@ class TextAnalyticsAPI(object):
 
         # Construct parameters
         query_parameters = {}
-        if number_of_languages_to_detect is not None:
-            query_parameters['numberOfLanguagesToDetect'] = self._serialize.query("number_of_languages_to_detect", number_of_languages_to_detect, 'int')
 
         # Construct headers
         header_parameters = {}
