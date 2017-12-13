@@ -50,9 +50,21 @@
       "build_dir": "azure-cognitiveservices-language-spellcheck",
       "markdown": "specification/cognitiveservices/data-plane/SpellCheck/readme.md"
     },
+    "cognitiveservices.search.customsearch": {
+      "build_dir": "azure-cognitiveservices-search-customsearch",
+      "markdown": "specification/cognitiveservices/data-plane/CustomSearch/readme.md"
+    },
     "cognitiveservices.search.entitysearch": {
       "build_dir": "azure-cognitiveservices-search-entitysearch",
       "markdown": "specification/cognitiveservices/data-plane/EntitySearch/readme.md"
+    },
+    "cognitiveservices.search.imagesearch": {
+      "build_dir": "azure-cognitiveservices-search-imagesearch",
+      "markdown": "specification/cognitiveservices/data-plane/ImageSearch/readme.md"
+    },
+    "cognitiveservices.search.newssearch": {
+      "build_dir": "azure-cognitiveservices-search-newssearch",
+      "markdown": "specification/cognitiveservices/data-plane/NewsSearch/readme.md"
     },    
     "cognitiveservices.search.videosearch": {
       "build_dir": "azure-cognitiveservices-search-videosearch",
