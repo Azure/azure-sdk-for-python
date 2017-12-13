@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.4.0 (2017-12-12)
+++++++++++++++++++
+
+**Features**
+
+- Add alternate_name to some models (GEO DR pairing)
+- Add disaster_recovery_configs.check_name_availability_method
+- Add disaster_recovery_configs.list_authorization_rules
+- Add disaster_recovery_configs.get_authorization_rule
+- Add disaster_recovery_configs.list_keys
+
 0.3.1 (2017-12-08)
 ++++++++++++++++++
 
