@@ -34,7 +34,8 @@ class FindSimilarRequest(Model):
     :param mode: Similar face searching mode. It can be "matchPerson" or
      "matchFace". Possible values include: 'matchPerson', 'matchFace'. Default
      value: "matchPerson" .
-    :type mode: str or ~azure.cognitiveservices.vision.face.models.enum
+    :type mode: str or
+     ~azure.cognitiveservices.vision.face.models.FaceMatchingMode
     """
 
     _validation = {
@@ -49,7 +50,7 @@ class FindSimilarRequest(Model):
         'face_list_id': {'key': 'faceListId', 'type': 'str'},
         'face_ids': {'key': 'faceIds', 'type': '[str]'},
         'max_num_of_candidates_returned': {'key': 'maxNumOfCandidatesReturned', 'type': 'int'},
-        'mode': {'key': 'mode', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'FaceMatchingMode'},
     }
 
     def __init__(self, face_id, face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson"):

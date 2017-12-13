@@ -17,14 +17,13 @@ class IdentifyResultCandidate(Model):
 
     :param person_id: Id of candidate
     :type person_id: str
-    :param confidence: Confidence level in the candidate person: a float
-     number between 0.0 and 1.0.
+    :param confidence:
     :type confidence: float
     """
 
     _validation = {
         'person_id': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True},
     }
 
     _attribute_map = {

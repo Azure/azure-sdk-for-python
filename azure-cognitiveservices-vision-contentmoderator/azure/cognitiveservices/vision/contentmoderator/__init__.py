@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_moderator_api import ContentModeratorAPI
+from .content_moderator_client import ContentModeratorClient
 from .version import VERSION
 
-__all__ = ['ContentModeratorAPI']
+__all__ = ['ContentModeratorClient']
 
 __version__ = VERSION
 

@@ -9,22 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .images_operations import ImagesOperations
-from .text_operations import TextOperations
-from .image_list_operations import ImageListOperations
-from .terms_list_operations import TermsListOperations
-from .termlist_operations import TermlistOperations
-from .termlists_operations import TermlistsOperations
+from .image_moderation_operations import ImageModerationOperations
+from .text_moderation_operations import TextModerationOperations
+from .list_management_image_lists_operations import ListManagementImageListsOperations
+from .list_management_term_lists_operations import ListManagementTermListsOperations
+from .list_management_image_operations import ListManagementImageOperations
+from .list_management_term_operations import ListManagementTermOperations
 from .reviews_operations import ReviewsOperations
-from .jobs_operations import JobsOperations
 
 __all__ = [
-    'ImagesOperations',
-    'TextOperations',
-    'ImageListOperations',
-    'TermsListOperations',
-    'TermlistOperations',
-    'TermlistsOperations',
+    'ImageModerationOperations',
+    'TextModerationOperations',
+    'ListManagementImageListsOperations',
+    'ListManagementTermListsOperations',
+    'ListManagementImageOperations',
+    'ListManagementTermOperations',
     'ReviewsOperations',
-    'JobsOperations',
 ]

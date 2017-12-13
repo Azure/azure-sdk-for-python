@@ -23,6 +23,8 @@ class PersonOperations(object):
     :param deserializer: An object model deserializer.
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -97,13 +99,19 @@ class PersonOperations(object):
         return deserialized
 
     def list(
-            self, person_group_id, custom_headers=None, raw=False, **operation_config):
+            self, person_group_id, start=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all persons in a person group, and retrieve person information
         (including personId, name, userData and persistedFaceIds of registered
         faces of the person).
 
         :param person_group_id: personGroupId of the target person group.
         :type person_group_id: str
+        :param start: Starting person id to return (used to list a range of
+         persons).
+        :type start: str
+        :param top: Number of persons to return starting with the person id
+         indicated by the 'start' parameter.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -125,6 +133,10 @@ class PersonOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if start is not None:
+            query_parameters['start'] = self._serialize.query("start", start, 'str')
+        if top is not None:
+            query_parameters['top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
         # Construct headers
         header_parameters = {}
@@ -492,8 +504,8 @@ class PersonOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def add_face(
-            self, person_group_id, person_id, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+    def add_person_face(
+            self, person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
 
@@ -502,6 +514,8 @@ class PersonOperations(object):
         :type person_group_id: str
         :param person_id: Target person that the face is added to.
         :type person_id: str
+        :param url:
+        :type url: str
         :param user_data: User-specified data about the target face to add for
          any purpose. The maximum length is 1KB.
         :type user_data: str
@@ -510,17 +524,21 @@ class PersonOperations(object):
          E.g. "targetFace=10,10,100,100". If there is more than one face in the
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
-        :type target_face: str
+        :type target_face: list[int]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: PersistedFaceResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
+        image_url = models.ImageUrl(url=url)
+
         # Construct URL
         url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'
         path_format_arguments = {
@@ -535,7 +553,7 @@ class PersonOperations(object):
         if user_data is not None:
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
         if target_face is not None:
-            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, 'str')
+            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -543,19 +561,30 @@ class PersonOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PersistedFaceResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
-    def add_face_from_stream(
-            self, person_group_id, person_id, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+        return deserialized
+
+    def add_person_face_from_stream(
+            self, person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
 
@@ -564,23 +593,31 @@ class PersonOperations(object):
         :type person_group_id: str
         :param person_id: Target person that the face is added to.
         :type person_id: str
+        :param image: An image stream.
+        :type image: Generator
         :param user_data: User-specified data about the target face to add for
          any purpose. The maximum length is 1KB.
         :type user_data: str
         :param target_face: A face rectangle to specify the target face to be
-         added to a person, in the format of
-         "targetFace=left,top,width,height". E.g. "targetFace=10,10,100,100".
-         If there is more than one face in the image, targetFace is required to
-         specify which face to add. No targetFace means there is only one face
-         detected in the entire image.
-        :type target_face: str
+         added to a person in the format of "targetFace=left,top,width,height".
+         E.g. "targetFace=10,10,100,100". If there is more than one face in the
+         image, targetFace is required to specify which face to add. No
+         targetFace means there is only one face detected in the entire image.
+        :type target_face: list[int]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: PersistedFaceResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -598,21 +635,32 @@ class PersonOperations(object):
         if user_data is not None:
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
         if target_face is not None:
-            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, 'str')
+            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._client.stream_upload(image, callback)
+
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PersistedFaceResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized

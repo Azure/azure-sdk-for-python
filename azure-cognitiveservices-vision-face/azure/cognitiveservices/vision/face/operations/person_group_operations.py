@@ -23,6 +23,8 @@ class PersonGroupOperations(object):
     :param deserializer: An object model deserializer.
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -254,8 +256,8 @@ class PersonGroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TrainingStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus or
+        :return: TrainingStatus1 or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus1 or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -287,7 +289,7 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TrainingStatus', response)
+            deserialized = self._deserialize('TrainingStatus1', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -23,8 +23,7 @@ class IdentifyRequest(Model):
     :param max_num_of_candidates_returned: The number of top similar faces
      returned. Default value: 1 .
     :type max_num_of_candidates_returned: int
-    :param confidence_threshold: Confidence threshold of identification, used
-     to judge whether one face belong to one person.
+    :param confidence_threshold:
     :type confidence_threshold: float
     """
 
@@ -32,7 +31,6 @@ class IdentifyRequest(Model):
         'person_group_id': {'required': True},
         'face_ids': {'required': True, 'max_items': 1000},
         'max_num_of_candidates_returned': {'maximum': 1000, 'minimum': 1},
-        'confidence_threshold': {'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {

@@ -9,124 +9,126 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response_status import ResponseStatus
-from .email_properties import EmailProperties
-from .ipa_properties import IPAProperties
-from .phone_properties import PhoneProperties
-from .address_properties import AddressProperties
-from .pii_details_properties import PIIDetailsProperties
-from .terms_properties import TermsProperties
-from .screen import Screen
-from .found_face import FoundFace
-from .found_faces import FoundFaces
 from .key_value_pair import KeyValuePair
+from .tag import Tag
+from .frame import Frame
+from .frames import Frames
+from .classification import Classification
+from .status import Status
+from .email import Email
+from .ipa import IPA
+from .phone import Phone
+from .address import Address
+from .pii import PII
+from .detected_terms import DetectedTerms
+from .screen import Screen
+from .face import Face
+from .found_faces import FoundFaces
 from .candidate import Candidate
 from .ocr import OCR
 from .evaluate import Evaluate
-from .match_detail_tag import MatchDetailTag
-from .match_detail_properties import MatchDetailProperties
+from .match import Match
 from .match_response import MatchResponse
-from .detected_language_result import DetectedLanguageResult
-from .create_image_list_metadata import CreateImageListMetadata
-from .create_image_list import CreateImageList
-from .create_term_list_metadata import CreateTermListMetadata
-from .create_term_list import CreateTermList
-from .image_list_get_details_metadata import ImageListGetDetailsMetadata
-from .image_list_get_details import ImageListGetDetails
-from .term_list_get_list_id_details_metadata import TermListGetListIdDetailsMetadata
-from .term_list_get_list_id_details import TermListGetListIdDetails
-from .get_all_image_list_item_metadata import GetAllImageListItemMetadata
-from .get_all_image_list_item import GetAllImageListItem
-from .get_all_term_list_item_metadata import GetAllTermListItemMetadata
-from .get_all_term_list_item import GetAllTermListItem
+from .detected_language import DetectedLanguage
+from .image_list_metadata import ImageListMetadata
+from .image_list import ImageList
+from .term_list_metadata import TermListMetadata
+from .term_list import TermList
 from .refresh_index_advanced_info_item import RefreshIndexAdvancedInfoItem
-from .add_get_refresh_status import AddGetRefreshStatus
 from .refresh_index import RefreshIndex
-from .update_image_list_metadata import UpdateImageListMetadata
-from .update_image_list import UpdateImageList
-from .update_term_list_metadata import UpdateTermListMetadata
-from .update_term_list import UpdateTermList
-from .add_image_additional_info_item import AddImageAdditionalInfoItem
-from .add_image import AddImage
-from .get_all_image_ids import GetAllImageIds
+from .image_additional_info_item import ImageAdditionalInfoItem
+from .image import Image
+from .image_ids import ImageIds
 from .terms_in_list import TermsInList
-from .term_data import TermData
-from .get_all_terms_paging import GetAllTermsPaging
-from .get_all_terms import GetAllTerms
+from .terms_data import TermsData
+from .terms_paging import TermsPaging
+from .terms import Terms
 from .review import Review
-from .job_execution_report_values import JobExecutionReportValues
+from .job_execution_report_details import JobExecutionReportDetails
 from .job import Job
-from .review_list_result import ReviewListResult
 from .job_list_result import JobListResult
-from .create_job import CreateJob
+from .job_id import JobId
+from .error import Error
+from .api_error import APIError, APIErrorException
 from .body_metadata import BodyMetadata
 from .body import Body
-from .image_url import ImageUrl
-from .body_item_metadata_item import BodyItemMetadataItem
-from .body_item import BodyItem
+from .create_review_body_item_metadata_item import CreateReviewBodyItemMetadataItem
+from .create_review_body_item import CreateReviewBodyItem
 from .content import Content
-from .content_moderator_api_enums import (
-    AzureRegion,
+from .transcript_moderation_body_item_terms_item import TranscriptModerationBodyItemTermsItem
+from .transcript_moderation_body_item import TranscriptModerationBodyItem
+from .body_model import BodyModel
+from .create_video_reviews_body_item_video_frames_item_reviewer_result_tags_item import CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem
+from .create_video_reviews_body_item_video_frames_item_metadata_item import CreateVideoReviewsBodyItemVideoFramesItemMetadataItem
+from .create_video_reviews_body_item_video_frames_item import CreateVideoReviewsBodyItemVideoFramesItem
+from .create_video_reviews_body_item_metadata_item import CreateVideoReviewsBodyItemMetadataItem
+from .create_video_reviews_body_item import CreateVideoReviewsBodyItem
+from .video_frame_body_item_reviewer_result_tags_item import VideoFrameBodyItemReviewerResultTagsItem
+from .video_frame_body_item_metadata_item import VideoFrameBodyItemMetadataItem
+from .video_frame_body_item import VideoFrameBodyItem
+from .content_moderator_client_enums import (
+    AzureRegionBaseUrl,
     ContentTypes,
 )
 
 __all__ = [
-    'ResponseStatus',
-    'EmailProperties',
-    'IPAProperties',
-    'PhoneProperties',
-    'AddressProperties',
-    'PIIDetailsProperties',
-    'TermsProperties',
-    'Screen',
-    'FoundFace',
-    'FoundFaces',
     'KeyValuePair',
+    'Tag',
+    'Frame',
+    'Frames',
+    'Classification',
+    'Status',
+    'Email',
+    'IPA',
+    'Phone',
+    'Address',
+    'PII',
+    'DetectedTerms',
+    'Screen',
+    'Face',
+    'FoundFaces',
     'Candidate',
     'OCR',
     'Evaluate',
-    'MatchDetailTag',
-    'MatchDetailProperties',
+    'Match',
     'MatchResponse',
-    'DetectedLanguageResult',
-    'CreateImageListMetadata',
-    'CreateImageList',
-    'CreateTermListMetadata',
-    'CreateTermList',
-    'ImageListGetDetailsMetadata',
-    'ImageListGetDetails',
-    'TermListGetListIdDetailsMetadata',
-    'TermListGetListIdDetails',
-    'GetAllImageListItemMetadata',
-    'GetAllImageListItem',
-    'GetAllTermListItemMetadata',
-    'GetAllTermListItem',
+    'DetectedLanguage',
+    'ImageListMetadata',
+    'ImageList',
+    'TermListMetadata',
+    'TermList',
     'RefreshIndexAdvancedInfoItem',
-    'AddGetRefreshStatus',
     'RefreshIndex',
-    'UpdateImageListMetadata',
-    'UpdateImageList',
-    'UpdateTermListMetadata',
-    'UpdateTermList',
-    'AddImageAdditionalInfoItem',
-    'AddImage',
-    'GetAllImageIds',
+    'ImageAdditionalInfoItem',
+    'Image',
+    'ImageIds',
     'TermsInList',
-    'TermData',
-    'GetAllTermsPaging',
-    'GetAllTerms',
+    'TermsData',
+    'TermsPaging',
+    'Terms',
     'Review',
-    'JobExecutionReportValues',
+    'JobExecutionReportDetails',
     'Job',
-    'ReviewListResult',
     'JobListResult',
-    'CreateJob',
+    'JobId',
+    'Error',
+    'APIError', 'APIErrorException',
     'BodyMetadata',
     'Body',
-    'ImageUrl',
-    'BodyItemMetadataItem',
-    'BodyItem',
+    'CreateReviewBodyItemMetadataItem',
+    'CreateReviewBodyItem',
     'Content',
-    'AzureRegion',
+    'TranscriptModerationBodyItemTermsItem',
+    'TranscriptModerationBodyItem',
+    'BodyModel',
+    'CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem',
+    'CreateVideoReviewsBodyItemVideoFramesItemMetadataItem',
+    'CreateVideoReviewsBodyItemVideoFramesItem',
+    'CreateVideoReviewsBodyItemMetadataItem',
+    'CreateVideoReviewsBodyItem',
+    'VideoFrameBodyItemReviewerResultTagsItem',
+    'VideoFrameBodyItemMetadataItem',
+    'VideoFrameBodyItem',
+    'AzureRegionBaseUrl',
     'ContentTypes',
 ]

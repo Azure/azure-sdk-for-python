@@ -47,7 +47,7 @@ class FaceAPIConfiguration(Configuration):
 
         super(FaceAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('faceapi/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-vision-face/{}'.format(VERSION))
 
         self.azure_region = azure_region
         self.credentials = credentials

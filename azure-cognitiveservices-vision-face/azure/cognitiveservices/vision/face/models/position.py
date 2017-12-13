@@ -16,9 +16,9 @@ class Position(Model):
     """Coordinates within an image.
 
     :param x: The horizontal component, in pixels.
-    :type x: int
+    :type x: float
     :param y: The vertical component, in pixels.
-    :type y: int
+    :type y: float
     """
 
     _validation = {
@@ -27,8 +27,8 @@ class Position(Model):
     }
 
     _attribute_map = {
-        'x': {'key': 'x', 'type': 'int'},
-        'y': {'key': 'y', 'type': 'int'},
+        'x': {'key': 'x', 'type': 'float'},
+        'y': {'key': 'y', 'type': 'float'},
     }
 
     def __init__(self, x, y):

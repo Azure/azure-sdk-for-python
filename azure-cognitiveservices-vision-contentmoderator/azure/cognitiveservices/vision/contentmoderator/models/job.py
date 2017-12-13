@@ -35,7 +35,7 @@ class Job(Model):
     :param job_execution_report: Job execution report- Array of KeyValue pairs
      object.
     :type job_execution_report:
-     list[~azure.cognitiveservices.vision.contentmoderator.models.JobExecutionReportValues]
+     list[~azure.cognitiveservices.vision.contentmoderator.models.JobExecutionReportDetails]
     """
 
     _attribute_map = {
@@ -47,7 +47,7 @@ class Job(Model):
         'call_back_endpoint': {'key': 'callBackEndpoint', 'type': 'str'},
         'review_id': {'key': 'reviewId', 'type': 'str'},
         'result_meta_data': {'key': 'resultMetaData', 'type': '[KeyValuePair]'},
-        'job_execution_report': {'key': 'jobExecutionReport', 'type': '[JobExecutionReportValues]'},
+        'job_execution_report': {'key': 'jobExecutionReport', 'type': '[JobExecutionReportDetails]'},
     }
 
     def __init__(self, id=None, team_name=None, status=None, workflow_id=None, type=None, call_back_endpoint=None, review_id=None, result_meta_data=None, job_execution_report=None):
