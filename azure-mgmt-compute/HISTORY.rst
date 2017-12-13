@@ -3,6 +3,15 @@
 Release History
 ===============
 
+3.1.0rc2 (2017-XX-XX)
++++++++++++++++++++++
+
+**Unreleased**
+
+**Bugfixes**
+
+- Add RestrictionInfo to SKUs list (2017-09-01)
+
 3.1.0rc1 (2017-11-27)
 +++++++++++++++++++++
 
