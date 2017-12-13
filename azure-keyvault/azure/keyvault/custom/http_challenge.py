@@ -43,8 +43,8 @@ class HttpChallenge(object):
             raise ValueError('Invalid challenge parameters')
 
         # get the message signing key and message key encryption key from the headers
-        self.server_signature_key = response_headers.get('x-ms-message-key-encryption-key', None)
-        self.server_encryption_key = response_headers.get('x-ms-message-key-encryption-key', None)
+        self.server_signature_key = response_headers.get('x-ms-message-signing-key', None)
+        self.server_encryption_key = response_headers.get('x-ms-message-encryption-key', None)
 
     def is_bearer_challenge(self):
         """ Tests whether the HttpChallenge a Bearer challenge.
