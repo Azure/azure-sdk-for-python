@@ -46,7 +46,7 @@ class SpellCheckTest(ReplayableTest):
             self.settings.CS_SUBSCRIPTION_KEY
         )
         text_analytics = SpellCheckAPI(credentials=credentials)
-        response = text_analytics.spell_check_method(
+        response = text_analytics.spell_checker(
             "cognituve services"
         )
         self.assertEquals(response.flagged_tokens[0].token, "cognituve")
