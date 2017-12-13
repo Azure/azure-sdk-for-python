@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0"
+from .custom_instance_operations import CustomInstanceOperations
 
+__all__ = [
+    'CustomInstanceOperations',
+]

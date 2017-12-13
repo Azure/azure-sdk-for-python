@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EntitiesOperations(object):
-    """EntitiesOperations operations.
+class CustomInstanceOperations(object):
+    """CustomInstanceOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,16 +36,13 @@ class EntitiesOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def search(
-            self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market="en-us", response_filter=None, response_format=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
-        """The Entity Search API lets you send a search query to Bing and get back
-        search results that include entities and places. Place results include
-        restaurants, hotel, or other local businesses. For places, the query
-        can specify the name of the local business or it can ask for a list
-        (for example, restaurants near me). Entity results include persons,
-        places, or things. Place in this context is tourist attractions,
-        states, countries, etc.
+            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, custom_config=None, country_code=None, count=None, market="en-us", offset=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
+        """The Custom Search API lets you send a search query to Bing and get back
+        web pages found in your custom view of the web.
 
-        :param query: The user's search term.
+        :param query: The user's search query term. The term may not be empty.
+         The term may contain Bing Advanced Operators. For example, to limit
+         results to a specific domain, use the site: operator.
         :type query: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -67,10 +64,6 @@ class EntitiesOperations(object):
          JSON response objects. Any links in the response objects to Bing.com
          properties will apply the specified language.
         :type accept_language: str
-        :param pragma: By default, Bing returns cached content, if available.
-         To prevent Bing from returning cached content, set the Pragma header
-         to no-cache (for example, Pragma: no-cache).
-        :type pragma: str
         :param user_agent: The user agent originating the request. Bing uses
          the user agent to provide mobile users with an optimized experience.
          Although optional, you are strongly encouraged to always specify this
@@ -158,6 +151,9 @@ class EntitiesOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
+        :param custom_config: The identifier for the custom search
+         configuration
+        :type custom_config: int
         :param country_code: A 2-character country code of the country where
          the results come from. This API supports only the United States
          market. If you specify this query parameter, it must be set to us. If
@@ -173,23 +169,36 @@ class EntitiesOperations(object):
          should use the mkt and setLang query parameters. This parameter and
          the mkt query parameter are mutually exclusive—do not specify both.
         :type country_code: str
-        :param market: The market where the results come from. You are
-         strongly encouraged to always specify the market, if known. Specifying
-         the market helps Bing route the request and return an appropriate and
-         optimal response. This parameter and the cc query parameter are
-         mutually exclusive—do not specify both.
+        :param count: The number of search results to return in the response.
+         The default is 10 and the maximum value is 50. The actual number
+         delivered may be less than requested.Use this parameter along with the
+         offset parameter to page results.For example, if your user interface
+         displays 10 search results per page, set count to 10 and offset to 0
+         to get the first page of results. For each subsequent page, increment
+         offset by 10 (for example, 0, 10, 20). It is possible for multiple
+         pages to include some overlap in results.
+        :type count: int
+        :param market: The market where the results come from. Typically, mkt
+         is the country where the user is making the request from. However, it
+         could be a different country if the user is not located in a country
+         where Bing delivers results. The market must be in the form <language
+         code>-<country code>. For example, en-US. The string is case
+         insensitive. If known, you are encouraged to always specify the
+         market. Specifying the market helps Bing route the request and return
+         an appropriate and optimal response. If you specify a market that is
+         not listed in Market Codes, Bing uses a best fit market code based on
+         an internal mapping that is subject to change. This parameter and the
+         cc query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param response_filter: A comma-delimited list of answers to include
-         in the response. If you do not specify this parameter, the response
-         includes all search answers for which there's relevant data.
-        :type response_filter: list[str or
-         ~azure.cognitiveservices.search.entitysearch.models.AnswerType]
-        :param response_format: The media type to use for the response. The
-         following are the possible case-insensitive values: JSON, JSONLD. The
-         default is JSON. If you specify JSONLD, the response body includes
-         JSON-LD objects that contain the search results.
-        :type response_format: list[str or
-         ~azure.cognitiveservices.search.entitysearch.models.ResponseFormat]
+        :param offset: The zero-based offset that indicates the number of
+         search results to skip before returning results. The default is 0. The
+         offset should be less than (totalEstimatedMatches - count). Use this
+         parameter along with the count parameter to page results. For example,
+         if your user interface displays 10 search results per page, set count
+         to 10 and offset to 0 to get the first page of results. For each
+         subsequent page, increment offset by 10 (for example, 0, 10, 20). it
+         is possible for multiple pages to include some overlap in results.
+        :type offset: int
         :param safe_search: A filter used to filter adult content. Off: Return
          webpages with adult text, images, or videos. Moderate: Return webpages
          with adult text, but not adult images or videos. Strict: Do not return
@@ -203,7 +212,7 @@ class EntitiesOperations(object):
          possibility of adult content. Possible values include: 'Off',
          'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.entitysearch.models.SafeSearch
+         ~azure.cognitiveservices.search.customsearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -217,6 +226,25 @@ class EntitiesOperations(object):
          Bing.com properties in the response objects apply the specified
          language.
         :type set_lang: str
+        :param text_decorations: A Boolean value that determines whether
+         display strings should contain decoration markers such as hit
+         highlighting characters. If true, the strings may include markers. The
+         default is false. To specify whether to use Unicode characters or HTML
+         tags as the markers, see the textFormat query parameter.
+        :type text_decorations: bool
+        :param text_format: The type of markers to use for text decorations
+         (see the textDecorations query parameter). Possible values are Raw—Use
+         Unicode characters to mark content that needs special formatting. The
+         Unicode characters are in the range E000 through E019. For example,
+         Bing uses E000 and E001 to mark the beginning and end of query terms
+         for hit highlighting. HTML—Use HTML tags to mark content that needs
+         special formatting. For example, use <b> tags to highlight query terms
+         in display strings. The default is Raw. For display strings that
+         contain escapable HTML characters such as <, >, and &, if textFormat
+         is set to HTML, Bing escapes the characters as appropriate (for
+         example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
+        :type text_format: str or
+         ~azure.cognitiveservices.search.customsearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -224,29 +252,35 @@ class EntitiesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: SearchResponse or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.search.entitysearch.models.SearchResponse or
+         ~azure.cognitiveservices.search.customsearch.models.SearchResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.entitysearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.customsearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/entities'
+        url = '/search'
 
         # Construct parameters
         query_parameters = {}
+        if custom_config is not None:
+            query_parameters['customConfig'] = self._serialize.query("custom_config", custom_config, 'int')
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
+        if count is not None:
+            query_parameters['count'] = self._serialize.query("count", count, 'int')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
+        if offset is not None:
+            query_parameters['offset'] = self._serialize.query("offset", offset, 'int')
         query_parameters['q'] = self._serialize.query("query", query, 'str')
-        if response_filter is not None:
-            query_parameters['ResponseFilter'] = self._serialize.query("response_filter", response_filter, '[str]', div=',')
-        if response_format is not None:
-            query_parameters['ResponseFormat'] = self._serialize.query("response_format", response_format, '[str]', div=',')
         if safe_search is not None:
-            query_parameters['SafeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
-            query_parameters['SetLang'] = self._serialize.query("set_lang", set_lang, 'str')
+            query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
+        if text_decorations is not None:
+            query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
+        if text_format is not None:
+            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -256,8 +290,6 @@ class EntitiesOperations(object):
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
         if accept_language is not None:
             header_parameters['Accept-Language'] = self._serialize.header("accept_language", accept_language, 'str')
-        if pragma is not None:
-            header_parameters['Pragma'] = self._serialize.header("pragma", pragma, 'str')
         if user_agent is not None:
             header_parameters['User-Agent'] = self._serialize.header("user_agent", user_agent, 'str')
         if client_id is not None:

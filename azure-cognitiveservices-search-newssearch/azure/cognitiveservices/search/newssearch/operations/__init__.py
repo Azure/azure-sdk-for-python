@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0"
+from .news_operations import NewsOperations
 
+__all__ = [
+    'NewsOperations',
+]

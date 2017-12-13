@@ -37,7 +37,7 @@ class WebSearchAPIConfiguration(Configuration):
 
         super(WebSearchAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('websearchapi/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-search-websearch/{}'.format(VERSION))
 
         self.credentials = credentials
 

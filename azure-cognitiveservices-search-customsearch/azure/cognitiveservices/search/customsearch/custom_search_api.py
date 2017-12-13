@@ -12,12 +12,12 @@
 from msrest.service_client import ServiceClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from .operations.videos_operations import VideosOperations
+from .operations.custom_instance_operations import CustomInstanceOperations
 from . import models
 
 
-class VideoSearchAPIConfiguration(Configuration):
-    """Configuration for VideoSearchAPI
+class CustomSearchAPIConfiguration(Configuration):
+    """Configuration for CustomSearchAPI
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -33,23 +33,23 @@ class VideoSearchAPIConfiguration(Configuration):
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
+            base_url = 'https://api.cognitive.microsoft.com/bingcustomsearch/v7.0'
 
-        super(VideoSearchAPIConfiguration, self).__init__(base_url)
+        super(CustomSearchAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-cognitiveservices-search-videosearch/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-search-customsearch/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class VideoSearchAPI(object):
-    """The Video Search API lets you search on Bing for video that are relevant to the user's search query, for insights about a video or for videos that are trending based on search requests made by others. This section provides technical details about the query parameters and headers that you use to request videos and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the Web for Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
+class CustomSearchAPI(object):
+    """The Bing Custom Search API lets you send a search query to Bing and get back search results customized to meet your custom search definition.
 
     :ivar config: Configuration for client.
-    :vartype config: VideoSearchAPIConfiguration
+    :vartype config: CustomSearchAPIConfiguration
 
-    :ivar videos: Videos operations
-    :vartype videos: azure.cognitiveservices.search.videosearch.operations.VideosOperations
+    :ivar custom_instance: CustomInstance operations
+    :vartype custom_instance: azure.cognitiveservices.search.customsearch.operations.CustomInstanceOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -60,7 +60,7 @@ class VideoSearchAPI(object):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = VideoSearchAPIConfiguration(credentials, base_url)
+        self.config = CustomSearchAPIConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -68,5 +68,5 @@ class VideoSearchAPI(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.videos = VideosOperations(
+        self.custom_instance = CustomInstanceOperations(
             self._client, self.config, self._serialize, self._deserialize)

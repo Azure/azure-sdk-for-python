@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0"
+from .news_search_api import NewsSearchAPI
+from .version import VERSION
+
+__all__ = ['NewsSearchAPI']
+
+__version__ = VERSION
 

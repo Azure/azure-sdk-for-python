@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VideosOperations(object):
-    """VideosOperations operations.
+class ImagesOperations(object):
+    """ImagesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,22 +36,24 @@ class VideosOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def search(
-            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, freshness=None, id=None, length=None, market=None, offset=None, pricing=None, resolution=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Search API lets you send a search query to Bing and get back
-        a list of videos that are relevant to the search query. This section
-        provides technical details about the query parameters and headers that
-        you use to request videos and the JSON response objects that contain
-        them. For examples that show how to make requests, see [Searching the
-        Web for
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
+            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, aspect=None, color=None, country_code=None, count=None, freshness=None, height=None, id=None, image_content=None, image_type=None, license=None, market=None, max_file_size=None, max_height=None, max_width=None, min_file_size=None, min_height=None, min_width=None, offset=None, safe_search=None, size=None, set_lang=None, width=None, custom_headers=None, raw=False, **operation_config):
+        """The Image Search API lets you send a search query to Bing and get back
+        a list of relevant images. This section provides technical details
+        about the query parameters and headers that you use to request images
+        and the JSON response objects that contain them. For examples that show
+        how to make requests, see [Searching the Web for
+        Images](https://docs.microsoft.com/azure/cognitive-services/bing-image-search/search-the-web).
 
-        :param query: The user's search query string. The query string cannot
-         be empty. The query string may contain [Bing Advanced
+        :param query: The user's search query term. The term cannot be empty.
+         The term may contain [Bing Advanced
          Operators](http://msdn.microsoft.com/library/ff795620.aspx). For
-         example, to limit videos to a specific domain, use the
-         [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. Use
-         this parameter only with the Video Search API. Do not specify this
-         parameter when calling the Trending Videos API.
+         example, to limit images to a specific domain, use the
+         [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. To
+         help improve relevance of an insights query (see
+         [insightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
+         you should always include the user's query term. Use this parameter
+         only with the Image Search API.Do not specify this parameter when
+         calling the Trending Images API.
         :type query: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -59,10 +61,10 @@ class VideosOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -71,9 +73,9 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -177,10 +179,28 @@ class VideosOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
+        :param aspect: Filter images by the following aspect ratios. All: Do
+         not filter by aspect.Specifying this value is the same as not
+         specifying the aspect parameter. Square: Return images with standard
+         aspect ratio. Wide: Return images with wide screen aspect ratio. Tall:
+         Return images with tall aspect ratio. Possible values include: 'All',
+         'Square', 'Wide', 'Tall'
+        :type aspect: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageAspect
+        :param color: Filter images by the following color options. ColorOnly:
+         Return color images. Monochrome: Return black and white images. Return
+         images with one of the following dominant colors: Black, Blue, Brown,
+         Gray, Green, Orange, Pink, Purple, Red, Teal, White, Yellow. Possible
+         values include: 'ColorOnly', 'Monochrome', 'Black', 'Blue', 'Brown',
+         'Gray', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'Teal', 'White',
+         'Yellow'
+        :type color: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageColor
         :param country_code: A 2-character country code of the country where
-         the results come from. This API supports only the United States
-         market. If you specify this query parameter, it must be set to us. If
-         you set this parameter, you must also specify the Accept-Language
+         the results come from. For a list of possible values, see [Market
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         If you set this parameter, you must also specify the
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header. Bing uses the first supported language it finds from the
          languages list, and combine that language with the country code that
          you specify to determine the market to return results for. If the
@@ -190,105 +210,176 @@ class VideosOperations(object):
          one. You should use this query parameter and the Accept-Language query
          parameter only if you specify multiple languages; otherwise, you
          should use the mkt and setLang query parameters. This parameter and
-         the mkt query parameter are mutually exclusive—do not specify both.
+         the
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         query parameter are mutually exclusive—do not specify both.
         :type country_code: str
-        :param count: The number of videos to return in the response. The
+        :param count: The number of images to return in the response. The
          actual number delivered may be less than requested. The default is 35.
-         The maximum is 105. You may use this parameter along with the offset
-         parameter to page results. For example, if your user interface
-         presents 20 videos per page, set count to 20 and offset to 0 to get
-         the first page of results. For each subsequent page, increment offset
-         by 20 (for example, 0, 20, 40). Use this parameter only with the Video
-         Search API. Do not specify this parameter when calling the Trending
-         Videos API or the Web Search API.
+         The maximum value is 150. You use this parameter along with the offset
+         parameter to page results.For example, if your user interface displays
+         20 images per page, set count to 20 and offset to 0 to get the first
+         page of results.For each subsequent page, increment offset by 20 (for
+         example, 0, 20, 40). Use this parameter only with the Image Search
+         API.Do not specify this parameter when calling the Insights, Trending
+         Images, or Web Search APIs.
         :type count: int
-        :param freshness: Filter videos by the date and time that Bing
-         discovered the video. The following are the possible filter values.
-         Day: Return videos discovered within the last 24 hours. Week: Return
-         videos discovered within the last 7 days. Month: Return videos
-         discovered within the last 30 days. Possible values include: 'Day',
-         'Week', 'Month'
+        :param freshness: Filter images by the following discovery options.
+         Day: Return images discovered by Bing within the last 24 hours. Week:
+         Return images discovered by Bing within the last 7 days. Month: Return
+         images discovered by Bing within the last 30 days. Possible values
+         include: 'Day', 'Week', 'Month'
         :type freshness: str or
-         ~azure.cognitiveservices.search.videosearch.models.Freshness
-        :param id: An ID that uniquely identifies a video. The
-         [Video](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#video)
-         object's videoId field contains the ID that you set this parameter to.
-         You use this parameter to ensure that the specified video is the first
-         video in the list of videos that Bing returns.
+         ~azure.cognitiveservices.search.imagesearch.models.Freshness
+        :param height: Filter images that have the specified height, in
+         pixels. You may use this filter with the size filter to return small
+         images that have a height of 150 pixels.
+        :type height: int
+        :param id: An ID that uniquely identifies an image. Use this parameter
+         to ensure that the specified image is the first image in the list of
+         images that Bing returns. The
+         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         object's imageId field contains the ID that you set this parameter to.
         :type id: str
-        :param length: Filter videos by the following lengths: Short: Return
-         videos that are less than 5 minutes. Medium: Return videos that are
-         between 5 and 20 minutes, inclusive. Long: Return videos that are
-         longer than 20 minutes. All: Do not filter by length.Specifying this
-         value is the same as not specifying the videoLength parameter.
-         Possible values include: 'All', 'Short', 'Medium', 'Long'
-        :type length: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoLength
+        :param image_content: Filter images by the following content types.
+         Face: Return images that show only a person's face. Portrait: Return
+         images that show only a person's head and shoulders. Possible values
+         include: 'Face', 'Portrait'
+        :type image_content: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageContent
+        :param image_type: Filter images by the following image types.
+         AnimatedGif: Return only animated GIFs. Clipart: Return only clip art
+         images. Line: Return only line drawings. Photo: Return only
+         photographs(excluding line drawings, animated Gifs, and clip art).
+         Shopping: Return only images that contain items where Bing knows of a
+         merchant that is selling the items. This option is valid in the en -
+         US market only.Transparent: Return only images with a transparent
+         background. Possible values include: 'AnimatedGif', 'Clipart', 'Line',
+         'Photo', 'Shopping', 'Transparent'
+        :type image_type: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageType
+        :param license: Filter images by the following license types. All: Do
+         not filter by license type.Specifying this value is the same as not
+         specifying the license parameter. Any: Return images that are under
+         any license type. The response doesn't include images that do not
+         specify a license or the license is unknown. Public: Return images
+         where the creator has waived their exclusive rights, to the fullest
+         extent allowed by law. Share: Return images that may be shared with
+         others. Changing or editing the image might not be allowed. Also,
+         modifying, sharing, and using the image for commercial purposes might
+         not be allowed. Typically, this option returns the most images.
+         ShareCommercially: Return images that may be shared with others for
+         personal or commercial purposes. Changing or editing the image might
+         not be allowed. Modify: Return images that may be modified, shared,
+         and used. Changing or editing the image might not be allowed.
+         Modifying, sharing, and using the image for commercial purposes might
+         not be allowed. ModifyCommercially: Return images that may be
+         modified, shared, and used for personal or commercial purposes.
+         Typically, this option returns the fewest images. For more information
+         about these license types, see [Filter Images By License
+         Type](http://go.microsoft.com/fwlink/?LinkId=309768). Possible values
+         include: 'All', 'Any', 'Public', 'Share', 'ShareCommercially',
+         'Modify', 'ModifyCommercially'
+        :type license: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageLicense
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
          could be a different country if the user is not located in a country
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
+        :param max_file_size: Filter images that are less than or equal to the
+         specified file size. The maximum file size that you may specify is
+         520,192 bytes. If you specify a larger value, the API uses 520,192. It
+         is possible that the response may include images that are slightly
+         larger than the specified maximum. You may specify this filter and
+         minFileSize to filter images within a range of file sizes.
+        :type max_file_size: long
+        :param max_height: Filter images that have a height that is less than
+         or equal to the specified height. Specify the height in pixels. You
+         may specify this filter and minHeight to filter images within a range
+         of heights. This filter and the height filter are mutually exclusive.
+        :type max_height: long
+        :param max_width: Filter images that have a width that is less than or
+         equal to the specified width. Specify the width in pixels. You may
+         specify this filter and maxWidth to filter images within a range of
+         widths. This filter and the width filter are mutually exclusive.
+        :type max_width: long
+        :param min_file_size: Filter images that are greater than or equal to
+         the specified file size. The maximum file size that you may specify is
+         520,192 bytes. If you specify a larger value, the API uses 520,192. It
+         is possible that the response may include images that are slightly
+         smaller than the specified minimum. You may specify this filter and
+         maxFileSize to filter images within a range of file sizes.
+        :type min_file_size: long
+        :param min_height: Filter images that have a height that is greater
+         than or equal to the specified height. Specify the height in pixels.
+         You may specify this filter and maxHeight to filter images within a
+         range of heights. This filter and the height filter are mutually
+         exclusive.
+        :type min_height: long
+        :param min_width: Filter images that have a width that is greater than
+         or equal to the specified width. Specify the width in pixels. You may
+         specify this filter and maxWidth to filter images within a range of
+         widths. This filter and the width filter are mutually exclusive.
+        :type min_width: long
         :param offset: The zero-based offset that indicates the number of
-         videos to skip before returning videos. The default is 0. The offset
+         images to skip before returning images. The default is 0. The offset
          should be less than
-         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#videos-totalmatches)
+         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#totalestimatedmatches)
          - count). Use this parameter along with the count parameter to page
-         results. For example, if your user interface displays 20 videos per
+         results. For example, if your user interface displays 20 images per
          page, set count to 20 and offset to 0 to get the first page of
          results. For each subsequent page, increment offset by 20 (for
          example, 0, 20, 40). It is possible for multiple pages to include some
          overlap in results. To prevent duplicates, see
-         [nextOffset](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#videos-nextoffset).
-         Use this parameter only with the Video Search API.
-        :type offset: int
-        :param pricing: Filter videos by the following pricing options: Free:
-         Return videos that are free to view. Paid: Return videos that require
-         a subscription or payment to view. All: Do not filter by
-         pricing.Specifying this value is the same as not specifying the
-         pricing parameter. Possible values include: 'All', 'Free', 'Paid'
-        :type pricing: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoPricing
-        :param resolution: Filter videos by the following resolutions: SD480p:
-         Return videos with a 480p or higher resolution. HD720p: Return videos
-         with a 720p or higher resolution. HD1080p: Return videos with a 1080p
-         or higher resolution. All: Do not filter by resolution.Specifying this
-         value is the same as not specifying the resolution parameter. Possible
-         values include: 'All', 'SD480p', 'HD720p', 'HD1080p'
-        :type resolution: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoResolution
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+         [nextOffset](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#nextoffset).
+         Use this parameter only with the Image API. Do not specify this
+         parameter when calling the Trending Images API or the Web Search API.
+        :type offset: long
+        :param safe_search: Filter images for adult content. The following are
+         the possible filter values. Off: May return images with adult content.
+         If the request is through the Image Search API, the response includes
+         thumbnail images that are clear (non-fuzzy). However, if the request
+         is through the Web Search API, the response includes thumbnail images
+         that are pixelated (fuzzy). Moderate: If the request is through the
+         Image Search API, the response doesn't include images with adult
+         content. If the request is through the Web Search API, the response
+         may include images with adult content (the thumbnail images are
+         pixelated (fuzzy)). Strict: Do not return images with adult content.
+         The default is Moderate. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.imagesearch.models.SafeSearch
+        :param size: Filter images by the following sizes. All: Do not filter
+         by size. Specifying this value is the same as not specifying the size
+         parameter. Small: Return images that are less than 200x200 pixels.
+         Medium: Return images that are greater than or equal to 200x200 pixels
+         but less than 500x500 pixels. Large: Return images that are 500x500
+         pixels or larger. Wallpaper: Return wallpaper images. You may use this
+         parameter along with the height or width parameters. For example, you
+         may use height and size to request small images that are 150 pixels
+         tall. Possible values include: 'All', 'Small', 'Medium', 'Large',
+         'Wallpaper'
+        :type size: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageSize
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -296,78 +387,78 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
          links to Bing.com properties in the response objects apply the
          specified language.
         :type set_lang: str
-        :param text_decorations: A Boolean value that determines whether
-         display strings contain decoration markers such as hit highlighting
-         characters. If true, the strings may include markers. The default is
-         false. To specify whether to use Unicode characters or HTML tags as
-         the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
-         query parameter. For information about hit highlighting, see [Hit
-         Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
-        :type text_decorations: bool
-        :param text_format: The type of markers to use for text decorations
-         (see the textDecorations query parameter). Possible values are Raw—Use
-         Unicode characters to mark content that needs special formatting. The
-         Unicode characters are in the range E000 through E019. For example,
-         Bing uses E000 and E001 to mark the beginning and end of query terms
-         for hit highlighting. HTML—Use HTML tags to mark content that needs
-         special formatting. For example, use <b> tags to highlight query terms
-         in display strings. The default is Raw. For display strings that
-         contain escapable HTML characters such as <, >, and &, if textFormat
-         is set to HTML, Bing escapes the characters as appropriate (for
-         example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
-        :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
+        :param width: Filter images that have the specified width, in pixels.
+         You may use this filter with the size filter to return small images
+         that have a width of 150 pixels.
+        :type width: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Videos or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.search.videosearch.models.Videos or
+        :return: Images or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.search.imagesearch.models.Images or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/search'
+        url = '/images/search'
 
         # Construct parameters
         query_parameters = {}
+        if aspect is not None:
+            query_parameters['aspect'] = self._serialize.query("aspect", aspect, 'str')
+        if color is not None:
+            query_parameters['color'] = self._serialize.query("color", color, 'str')
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
         if count is not None:
             query_parameters['count'] = self._serialize.query("count", count, 'int')
         if freshness is not None:
-            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'Freshness')
+            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'str')
+        if height is not None:
+            query_parameters['height'] = self._serialize.query("height", height, 'int')
         if id is not None:
             query_parameters['id'] = self._serialize.query("id", id, 'str')
-        if length is not None:
-            query_parameters['length'] = self._serialize.query("length", length, 'VideoLength')
+        if image_content is not None:
+            query_parameters['imageContent'] = self._serialize.query("image_content", image_content, 'str')
+        if image_type is not None:
+            query_parameters['imageType'] = self._serialize.query("image_type", image_type, 'str')
+        if license is not None:
+            query_parameters['license'] = self._serialize.query("license", license, 'str')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
+        if max_file_size is not None:
+            query_parameters['maxFileSize'] = self._serialize.query("max_file_size", max_file_size, 'long')
+        if max_height is not None:
+            query_parameters['maxHeight'] = self._serialize.query("max_height", max_height, 'long')
+        if max_width is not None:
+            query_parameters['maxWidth'] = self._serialize.query("max_width", max_width, 'long')
+        if min_file_size is not None:
+            query_parameters['minFileSize'] = self._serialize.query("min_file_size", min_file_size, 'long')
+        if min_height is not None:
+            query_parameters['minHeight'] = self._serialize.query("min_height", min_height, 'long')
+        if min_width is not None:
+            query_parameters['minWidth'] = self._serialize.query("min_width", min_width, 'long')
         if offset is not None:
-            query_parameters['offset'] = self._serialize.query("offset", offset, 'int')
-        if pricing is not None:
-            query_parameters['pricing'] = self._serialize.query("pricing", pricing, 'VideoPricing')
+            query_parameters['offset'] = self._serialize.query("offset", offset, 'long')
         query_parameters['q'] = self._serialize.query("query", query, 'str')
-        if resolution is not None:
-            query_parameters['resolution'] = self._serialize.query("resolution", resolution, 'VideoResolution')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
+        if size is not None:
+            query_parameters['size'] = self._serialize.query("size", size, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
-        if text_decorations is not None:
-            query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
-        if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
+        if width is not None:
+            query_parameters['width'] = self._serialize.query("width", width, 'int')
 
         # Construct headers
         header_parameters = {}
@@ -396,7 +487,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Videos', response)
+            deserialized = self._deserialize('Images', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -405,22 +496,25 @@ class VideosOperations(object):
         return deserialized
 
     def details(
-            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, id=None, modules=None, market=None, resolution=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Detail Search API lets you search on Bing and get back
-        insights about a video, such as related videos. This section provides
-        technical details about the query parameters and headers that you use
-        to request insights of videos and the JSON response objects that
-        contain them. For examples that show how to make requests, see
-        [Searching the Web for
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
+            self, query, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, crop_bottom=None, crop_left=None, crop_right=None, crop_top=None, crop_type=None, country_code=None, id=None, image_url=None, insights_token=None, modules=None, market=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
+        """The Image Detail Search API lets you search on Bing and get back
+        insights about an image, such as webpages that include the image. This
+        section provides technical details about the query parameters and
+        headers that you use to request insights of images and the JSON
+        response objects that contain them. For examples that show how to make
+        requests, see [Searching the Web for
+        Images](https://docs.microsoft.com/azure/cognitive-services/bing-image-search/search-the-web).
 
-        :param query: The user's search query string. The query string cannot
-         be empty. The query string may contain [Bing Advanced
+        :param query: The user's search query term. The term cannot be empty.
+         The term may contain [Bing Advanced
          Operators](http://msdn.microsoft.com/library/ff795620.aspx). For
-         example, to limit videos to a specific domain, use the
-         [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. Use
-         this parameter only with the Video Search API. Do not specify this
-         parameter when calling the Trending Videos API.
+         example, to limit images to a specific domain, use the
+         [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. To
+         help improve relevance of an insights query (see
+         [insightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
+         you should always include the user's query term. Use this parameter
+         only with the Image Search API.Do not specify this parameter when
+         calling the Trending Images API.
         :type query: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -428,10 +522,10 @@ class VideosOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -440,14 +534,21 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
          response objects apply the specified language.
         :type accept_language: str
+        :param content_type: Optional request header. If you set the
+         [modules](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
+         query parameter to RecognizedEntities, you may specify the binary of
+         an image in the body of a POST request. If you specify the image in
+         the body of a POST request, you must specify this header and set its
+         value to multipart/form-data. The maximum image size is 1 MB.
+        :type content_type: str
         :param user_agent: The user agent originating the request. Bing uses
          the user agent to provide mobile users with an optimized experience.
          Although optional, you are encouraged to always specify this header.
@@ -546,10 +647,47 @@ class VideosOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
+        :param crop_bottom: The bottom coordinate of the region to crop. The
+         coordinate is a fractional value of the original image's height and is
+         measured from the top, left corner of the image. Specify the
+         coordinate as a value from 0.0 through 1.0. Use this parameter only
+         with the Insights API. Do not specify this parameter when calling the
+         Images, Trending Images, or Web Search APIs.
+        :type crop_bottom: float
+        :param crop_left: The left coordinate of the region to crop. The
+         coordinate is a fractional value of the original image's height and is
+         measured from the top, left corner of the image. Specify the
+         coordinate as a value from 0.0 through 1.0. Use this parameter only
+         with the Insights API. Do not specify this parameter when calling the
+         Images, Trending Images, or Web Search APIs.
+        :type crop_left: float
+        :param crop_right: The right coordinate of the region to crop. The
+         coordinate is a fractional value of the original image's height and is
+         measured from the top, left corner of the image. Specify the
+         coordinate as a value from 0.0 through 1.0. Use this parameter only
+         with the Insights API. Do not specify this parameter when calling the
+         Images, Trending Images, or Web Search APIs.
+        :type crop_right: float
+        :param crop_top: The top coordinate of the region to crop. The
+         coordinate is a fractional value of the original image's height and is
+         measured from the top, left corner of the image. Specify the
+         coordinate as a value from 0.0 through 1.0. Use this parameter only
+         with the Insights API. Do not specify this parameter when calling the
+         Images, Trending Images, or Web Search APIs.
+        :type crop_top: float
+        :param crop_type: The crop type to use when cropping the image based
+         on the coordinates specified in the cal, cat, car, and cab parameters.
+         The following are the possible values. 0: Rectangular (default). Use
+         this parameter only with the Insights API. Do not specify this
+         parameter when calling the Images, Trending Images, or Web Search
+         APIs. Possible values include: 'Rectangular'
+        :type crop_type: str or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageCropType
         :param country_code: A 2-character country code of the country where
-         the results come from. This API supports only the United States
-         market. If you specify this query parameter, it must be set to us. If
-         you set this parameter, you must also specify the Accept-Language
+         the results come from. For a list of possible values, see [Market
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         If you set this parameter, you must also specify the
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header. Bing uses the first supported language it finds from the
          languages list, and combine that language with the country code that
          you specify to determine the market to return results for. If the
@@ -559,72 +697,108 @@ class VideosOperations(object):
          one. You should use this query parameter and the Accept-Language query
          parameter only if you specify multiple languages; otherwise, you
          should use the mkt and setLang query parameters. This parameter and
-         the mkt query parameter are mutually exclusive—do not specify both.
+         the
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         query parameter are mutually exclusive—do not specify both.
         :type country_code: str
-        :param id: An ID that uniquely identifies a video. The
-         [Video](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#video)
-         object's videoId field contains the ID that you set this parameter to.
-         You use this parameter to identify the video to get insights of.
+        :param id: An ID that uniquely identifies an image. Use this parameter
+         to ensure that the specified image is the first image in the list of
+         images that Bing returns. The
+         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         object's imageId field contains the ID that you set this parameter to.
         :type id: str
+        :param image_url: The URL of an image that you want to get insights
+         of. Use this parameter as an alternative to using the insightsToken
+         parameter to specify the image. You may also specify the image by
+         placing the binary of the image in the body of a POST request. If you
+         use the binary option, see the
+         [Content-Type](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#contenttype)
+         header. The maximum supported image size is 1 MB. Use this parameter
+         only with the Insights API. Do not specify this parameter when calling
+         the Images, Trending Images, or Web Search APIs.
+        :type image_url: str
+        :param insights_token: An image token. The
+         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         object's
+         [imageInsightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image-imageinsightstoken)
+         contains the token. Specify this parameter to get additional
+         information about an image, such as a caption or shopping source. For
+         a list of the additional information about an image that you can get,
+         see the
+         [modules](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
+         query parameter. Use this parameter only with the Insights API. Do not
+         specify this parameter when calling the Images, Trending Images, or
+         Web Search APIs.
+        :type insights_token: str
         :param modules: A comma-delimited list of insights to request. The
          following are the possible case-insensitive values. All: Return all
-         available insights. RelatedVideos: Return a list of videos that are
-         similar to the video specified by the id query parameter. VideoResult:
-         Return the video that you're requesting insights of (this is the video
-         that you set the id query parameter to in your insights request). If
-         you specify an insight and there is no data for it, the response
-         object does not include the related field. For example, if you specify
-         RelatedVideos and none exist, the response does not include the
-         relatedVideos field. Although the user's query term is not required,
-         you should always include it because it helps to improve relevance and
-         the results.
+         insights, if available, except RecognizedEntities. BRQ: Best
+         representative query. The query term that best describes the image.
+         Caption: A caption that provides information about the image. If the
+         caption contains entities, the response may include links to images of
+         those entities. Collections: A list of related images. Recipes: A list
+         of recipes for cooking the food shown in the images. PagesIncluding: A
+         list of webpages that include the image. RecognizedEntities: A list of
+         entities (people) that were recognized in the image. NOTE: You may not
+         specify this module with any other module. If you specify it with
+         other modules, the response doesn't include recognized entities.
+         RelatedSearches: A list of related searches made by others.
+         ShoppingSources: A list of merchants where you can buy related
+         offerings. SimilarImages: A list of images that are visually similar
+         to the original image. SimilarProducts: A list of images that contain
+         a product that is similar to a product found in the original image.
+         Tags: Provides characteristics of the type of content found in the
+         image. For example, if the image is of a person, the tags might
+         indicate the person's gender and type of clothes they're wearing. If
+         you specify a module and there is no data for the module, the response
+         object doesn't include the related field. For example, if you specify
+         Caption and it does not exist, the response doesn't include the
+         imageCaption field. To include related searches, the request must
+         include the original query string. Although the original query string
+         is not required for similar images or products, you should always
+         include it because it can help improve relevance and the results. Use
+         this parameter only with the Insights API. Do not specify this
+         parameter when calling the Images, Trending Images, or Web Search
+         APIs.
         :type modules: list[str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoInsightModule]
+         ~azure.cognitiveservices.search.imagesearch.models.ImageInsightModule]
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
          could be a different country if the user is not located in a country
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param resolution: Filter videos by the following resolutions: SD480p:
-         Return videos with a 480p or higher resolution. HD720p: Return videos
-         with a 720p or higher resolution. HD1080p: Return videos with a 1080p
-         or higher resolution. All: Do not filter by resolution.Specifying this
-         value is the same as not specifying the resolution parameter. Possible
-         values include: 'All', 'SD480p', 'HD720p', 'HD1080p'
-        :type resolution: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoResolution
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :param safe_search: Filter images for adult content. The following are
+         the possible filter values. Off: May return images with adult content.
+         If the request is through the Image Search API, the response includes
+         thumbnail images that are clear (non-fuzzy). However, if the request
+         is through the Web Search API, the response includes thumbnail images
+         that are pixelated (fuzzy). Moderate: If the request is through the
+         Image Search API, the response doesn't include images with adult
+         content. If the request is through the Web Search API, the response
+         may include images with adult content (the thumbnail images are
+         pixelated (fuzzy)). Strict: Do not return images with adult content.
+         The default is Moderate. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.imagesearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -632,71 +806,57 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
          links to Bing.com properties in the response objects apply the
          specified language.
         :type set_lang: str
-        :param text_decorations: A Boolean value that determines whether
-         display strings contain decoration markers such as hit highlighting
-         characters. If true, the strings may include markers. The default is
-         false. To specify whether to use Unicode characters or HTML tags as
-         the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
-         query parameter. For information about hit highlighting, see [Hit
-         Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
-        :type text_decorations: bool
-        :param text_format: The type of markers to use for text decorations
-         (see the textDecorations query parameter). Possible values are Raw—Use
-         Unicode characters to mark content that needs special formatting. The
-         Unicode characters are in the range E000 through E019. For example,
-         Bing uses E000 and E001 to mark the beginning and end of query terms
-         for hit highlighting. HTML—Use HTML tags to mark content that needs
-         special formatting. For example, use <b> tags to highlight query terms
-         in display strings. The default is Raw. For display strings that
-         contain escapable HTML characters such as <, >, and &, if textFormat
-         is set to HTML, Bing escapes the characters as appropriate (for
-         example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
-        :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VideoDetails or ClientRawResponse if raw=true
+        :return: ImageInsights or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.search.videosearch.models.VideoDetails or
+         ~azure.cognitiveservices.search.imagesearch.models.ImageInsights or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/details'
+        url = '/images/details'
 
         # Construct parameters
         query_parameters = {}
+        if crop_bottom is not None:
+            query_parameters['cab'] = self._serialize.query("crop_bottom", crop_bottom, 'float')
+        if crop_left is not None:
+            query_parameters['cal'] = self._serialize.query("crop_left", crop_left, 'float')
+        if crop_right is not None:
+            query_parameters['car'] = self._serialize.query("crop_right", crop_right, 'float')
+        if crop_top is not None:
+            query_parameters['cat'] = self._serialize.query("crop_top", crop_top, 'float')
+        if crop_type is not None:
+            query_parameters['ct'] = self._serialize.query("crop_type", crop_type, 'str')
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
         if id is not None:
             query_parameters['id'] = self._serialize.query("id", id, 'str')
+        if image_url is not None:
+            query_parameters['imgUrl'] = self._serialize.query("image_url", image_url, 'str')
+        if insights_token is not None:
+            query_parameters['insightsToken'] = self._serialize.query("insights_token", insights_token, 'str')
         if modules is not None:
-            query_parameters['modules'] = self._serialize.query("modules", modules, '[VideoInsightModule]', div=',')
+            query_parameters['modules'] = self._serialize.query("modules", modules, '[str]', div=',')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
         query_parameters['q'] = self._serialize.query("query", query, 'str')
-        if resolution is not None:
-            query_parameters['resolution'] = self._serialize.query("resolution", resolution, 'VideoResolution')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
-        if text_decorations is not None:
-            query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
-        if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
 
         # Construct headers
         header_parameters = {}
@@ -706,6 +866,8 @@ class VideosOperations(object):
         header_parameters['X-BingApis-SDK'] = self._serialize.header("self.x_bing_apis_sdk", self.x_bing_apis_sdk, 'str')
         if accept_language is not None:
             header_parameters['Accept-Language'] = self._serialize.header("accept_language", accept_language, 'str')
+        if content_type is not None:
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         if user_agent is not None:
             header_parameters['User-Agent'] = self._serialize.header("user_agent", user_agent, 'str')
         if client_id is not None:
@@ -725,7 +887,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VideoDetails', response)
+            deserialized = self._deserialize('ImageInsights', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -734,13 +896,13 @@ class VideosOperations(object):
         return deserialized
 
     def trending(
-            self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Trending Search API lets you search on Bing and get back a
-        list of videos that are trending based on search requests made by
-        others. The videos are broken out into different categories. For
-        example, Top Music Videos. For a list of markets that support trending
-        videos, see [Trending
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/trending-videos).
+            self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, safe_search=None, set_lang=None, custom_headers=None, raw=False, **operation_config):
+        """The Image Trending Search API lets you search on Bing and get back a
+        list of images that are trending based on search requests made by
+        others. The images are broken out into different categories. For
+        example, Popular People Searches. For a list of markets that support
+        trending images, see [Trending
+        Images](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-image-search/trending-images).
 
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -748,10 +910,10 @@ class VideosOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -760,9 +922,9 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -867,19 +1029,20 @@ class VideosOperations(object):
          at a minimum, you should include this header.
         :type location: str
         :param country_code: A 2-character country code of the country where
-         the results come from. This API supports only the United States
-         market. If you specify this query parameter, it must be set to us. If
-         you set this parameter, you must also specify the Accept-Language
-         header. Bing uses the first supported language it finds from the
-         languages list, and combine that language with the country code that
-         you specify to determine the market to return results for. If the
-         languages list does not include a supported language, Bing finds the
-         closest language and market that supports the request, or it may use
-         an aggregated or default market for the results instead of a specified
-         one. You should use this query parameter and the Accept-Language query
-         parameter only if you specify multiple languages; otherwise, you
-         should use the mkt and setLang query parameters. This parameter and
-         the mkt query parameter are mutually exclusive—do not specify both.
+         the results come from. This API supports only the United States,
+         Canada, Australia, and China markets. If you specify this query
+         parameter, it must be set to us, ca, au, or cn. If you set this
+         parameter, you must also specify the Accept-Language header. Bing uses
+         the first supported language it finds from the languages list, and
+         combine that language with the country code that you specify to
+         determine the market to return results for. If the languages list does
+         not include a supported language, Bing finds the closest language and
+         market that supports the request, or it may use an aggregated or
+         default market for the results instead of a specified one. You should
+         use this query parameter and the Accept-Language query parameter only
+         if you specify multiple languages; otherwise, you should use the mkt
+         and setLang query parameters. This parameter and the mkt query
+         parameter are mutually exclusive—do not specify both.
         :type country_code: str
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
@@ -887,37 +1050,37 @@ class VideosOperations(object):
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :param safe_search: Filter images for adult content. The following are
+         the possible filter values. Off: May return images with adult content.
+         If the request is through the Image Search API, the response includes
+         thumbnail images that are clear (non-fuzzy). However, if the request
+         is through the Web Search API, the response includes thumbnail images
+         that are pixelated (fuzzy). Moderate: If the request is through the
+         Image Search API, the response doesn't include images with adult
+         content. If the request is through the Web Search API, the response
+         may include images with adult content (the thumbnail images are
+         pixelated (fuzzy)). Strict: Do not return images with adult content.
+         The default is Moderate. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.imagesearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -925,49 +1088,27 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
          links to Bing.com properties in the response objects apply the
          specified language.
         :type set_lang: str
-        :param text_decorations: A Boolean value that determines whether
-         display strings contain decoration markers such as hit highlighting
-         characters. If true, the strings may include markers. The default is
-         false. To specify whether to use Unicode characters or HTML tags as
-         the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
-         query parameter. For information about hit highlighting, see [Hit
-         Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
-        :type text_decorations: bool
-        :param text_format: The type of markers to use for text decorations
-         (see the textDecorations query parameter). Possible values are Raw—Use
-         Unicode characters to mark content that needs special formatting. The
-         Unicode characters are in the range E000 through E019. For example,
-         Bing uses E000 and E001 to mark the beginning and end of query terms
-         for hit highlighting. HTML—Use HTML tags to mark content that needs
-         special formatting. For example, use <b> tags to highlight query terms
-         in display strings. The default is Raw. For display strings that
-         contain escapable HTML characters such as <, >, and &, if textFormat
-         is set to HTML, Bing escapes the characters as appropriate (for
-         example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
-        :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TrendingVideos or ClientRawResponse if raw=true
+        :return: TrendingImages or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.search.videosearch.models.TrendingVideos or
+         ~azure.cognitiveservices.search.imagesearch.models.TrendingImages or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.imagesearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/trending'
+        url = '/images/trending'
 
         # Construct parameters
         query_parameters = {}
@@ -976,13 +1117,9 @@ class VideosOperations(object):
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
-        if text_decorations is not None:
-            query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
-        if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
 
         # Construct headers
         header_parameters = {}
@@ -1011,7 +1148,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TrendingVideos', response)
+            deserialized = self._deserialize('TrendingImages', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

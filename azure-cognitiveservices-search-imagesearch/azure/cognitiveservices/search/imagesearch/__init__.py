@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0"
+from .image_search_api import ImageSearchAPI
+from .version import VERSION
+
+__all__ = ['ImageSearchAPI']
+
+__version__ = VERSION
 

@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VideosOperations(object):
-    """VideosOperations operations.
+class NewsOperations(object):
+    """NewsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,22 +36,22 @@ class VideosOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def search(
-            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, freshness=None, id=None, length=None, market=None, offset=None, pricing=None, resolution=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Search API lets you send a search query to Bing and get back
-        a list of videos that are relevant to the search query. This section
+            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, freshness=None, market=None, offset=None, original_image=None, safe_search=None, set_lang=None, sort_by=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
+        """The News Search API lets you send a search query to Bing and get back a
+        list of news that are relevant to the search query. This section
         provides technical details about the query parameters and headers that
-        you use to request videos and the JSON response objects that contain
-        them. For examples that show how to make requests, see [Searching the
-        Web for
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
+        you use to request news and the JSON response objects that contain
+        them.  For examples that show how to make requests, see [Searching the
+        web for
+        news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
         :param query: The user's search query string. The query string cannot
          be empty. The query string may contain [Bing Advanced
          Operators](http://msdn.microsoft.com/library/ff795620.aspx). For
-         example, to limit videos to a specific domain, use the
+         example, to limit news to a specific domain, use the
          [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. Use
-         this parameter only with the Video Search API. Do not specify this
-         parameter when calling the Trending Videos API.
+         this parameter only with the News Search API. Do not specify this
+         parameter when calling the Trending Topics API or News Category API.
         :type query: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -59,10 +59,10 @@ class VideosOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -71,9 +71,9 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -192,103 +192,79 @@ class VideosOperations(object):
          should use the mkt and setLang query parameters. This parameter and
          the mkt query parameter are mutually exclusive—do not specify both.
         :type country_code: str
-        :param count: The number of videos to return in the response. The
-         actual number delivered may be less than requested. The default is 35.
-         The maximum is 105. You may use this parameter along with the offset
+        :param count: The number of news articles to return in the response.
+         The actual number delivered may be less than requested. The default is
+         10 and the maximum value is 100. The actual number delivered may be
+         less than requested.You may use this parameter along with the offset
          parameter to page results. For example, if your user interface
-         presents 20 videos per page, set count to 20 and offset to 0 to get
+         displays 20 articles per page, set count to 20 and offset to 0 to get
          the first page of results. For each subsequent page, increment offset
-         by 20 (for example, 0, 20, 40). Use this parameter only with the Video
-         Search API. Do not specify this parameter when calling the Trending
-         Videos API or the Web Search API.
+         by 20 (for example, 0, 20, 40). It is possible for multiple pages to
+         include some overlap in results.
         :type count: int
-        :param freshness: Filter videos by the date and time that Bing
-         discovered the video. The following are the possible filter values.
-         Day: Return videos discovered within the last 24 hours. Week: Return
-         videos discovered within the last 7 days. Month: Return videos
-         discovered within the last 30 days. Possible values include: 'Day',
-         'Week', 'Month'
+        :param freshness: Filter news by the date and time that Bing
+         discovered the news. The following are the possible filter values.
+         Day: Return news discovered within the last 24 hours. Week: Return
+         news discovered within the last 7 days. Month: Return news discovered
+         within the last 30 days. Use this parameter only with the News Search
+         API. Do not specify this parameter when calling the News Category API
+         or the Trending Topics API. Possible values include: 'Day', 'Week',
+         'Month'
         :type freshness: str or
-         ~azure.cognitiveservices.search.videosearch.models.Freshness
-        :param id: An ID that uniquely identifies a video. The
-         [Video](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#video)
-         object's videoId field contains the ID that you set this parameter to.
-         You use this parameter to ensure that the specified video is the first
-         video in the list of videos that Bing returns.
-        :type id: str
-        :param length: Filter videos by the following lengths: Short: Return
-         videos that are less than 5 minutes. Medium: Return videos that are
-         between 5 and 20 minutes, inclusive. Long: Return videos that are
-         longer than 20 minutes. All: Do not filter by length.Specifying this
-         value is the same as not specifying the videoLength parameter.
-         Possible values include: 'All', 'Short', 'Medium', 'Long'
-        :type length: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoLength
+         ~azure.cognitiveservices.search.newssearch.models.Freshness
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
          could be a different country if the user is not located in a country
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param offset: The zero-based offset that indicates the number of
-         videos to skip before returning videos. The default is 0. The offset
-         should be less than
-         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#videos-totalmatches)
+        :param offset: The zero-based offset that indicates the number of news
+         to skip before returning news. The default is 0. The offset should be
+         less than
+         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#news-totalmatches)
          - count). Use this parameter along with the count parameter to page
-         results. For example, if your user interface displays 20 videos per
+         results. For example, if your user interface displays 20 news per
          page, set count to 20 and offset to 0 to get the first page of
          results. For each subsequent page, increment offset by 20 (for
          example, 0, 20, 40). It is possible for multiple pages to include some
-         overlap in results. To prevent duplicates, see
-         [nextOffset](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#videos-nextoffset).
-         Use this parameter only with the Video Search API.
+         overlap in results.
         :type offset: int
-        :param pricing: Filter videos by the following pricing options: Free:
-         Return videos that are free to view. Paid: Return videos that require
-         a subscription or payment to view. All: Do not filter by
-         pricing.Specifying this value is the same as not specifying the
-         pricing parameter. Possible values include: 'All', 'Free', 'Paid'
-        :type pricing: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoPricing
-        :param resolution: Filter videos by the following resolutions: SD480p:
-         Return videos with a 480p or higher resolution. HD720p: Return videos
-         with a 720p or higher resolution. HD1080p: Return videos with a 1080p
-         or higher resolution. All: Do not filter by resolution.Specifying this
-         value is the same as not specifying the resolution parameter. Possible
-         values include: 'All', 'SD480p', 'HD720p', 'HD1080p'
-        :type resolution: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoResolution
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :param original_image: A Boolean value that determines whether the
+         image's contentUrl contains a URL that points to a thumbnail of the
+         original article's image or the image itself. If the article includes
+         an image, and this parameter is set to true, the image's contentUrl
+         property contains a URL that you may use to download the original
+         image from the publisher's website. Otherwise, if this parameter is
+         false, the image's contentUrl and thumbnailUrl URLs both point to the
+         same thumbnail image. Use this parameter only with the News Search
+         API. Do not specify this parameter when calling the Trending Topics
+         API or News Category API.
+        :type original_image: bool
+        :param safe_search: Filter news for adult content. The following are
+         the possible filter values. Off: Return news articles with adult text,
+         images, or videos. Moderate: Return news articles with adult text but
+         not adult images or videos. Strict: Do not return news articles with
+         adult text, images, or videos. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.newssearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -296,19 +272,26 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
          links to Bing.com properties in the response objects apply the
          specified language.
         :type set_lang: str
+        :param sort_by: The order to return the news in. The following are the
+         possible case-insensitive values. Date: If the request is through the
+         News Search API, the response returns news articles sorted by date
+         from the most recent to the oldest. If the request is through the News
+         Trending Topics API, the response returns trending topics sorted by
+         date from the most recent to the oldest.
+        :type sort_by: str
         :param text_decorations: A Boolean value that determines whether
          display strings contain decoration markers such as hit highlighting
          characters. If true, the strings may include markers. The default is
          false. To specify whether to use Unicode characters or HTML tags as
          the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
+         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#textformat)
          query parameter. For information about hit highlighting, see [Hit
          Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
         :type text_decorations: bool
@@ -324,20 +307,20 @@ class VideosOperations(object):
          is set to HTML, Bing escapes the characters as appropriate (for
          example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
         :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
+         ~azure.cognitiveservices.search.newssearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Videos or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.search.videosearch.models.Videos or
+        :return: News or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.search.newssearch.models.News or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/search'
+        url = '/news/search'
 
         # Construct parameters
         query_parameters = {}
@@ -346,28 +329,24 @@ class VideosOperations(object):
         if count is not None:
             query_parameters['count'] = self._serialize.query("count", count, 'int')
         if freshness is not None:
-            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'Freshness')
-        if id is not None:
-            query_parameters['id'] = self._serialize.query("id", id, 'str')
-        if length is not None:
-            query_parameters['length'] = self._serialize.query("length", length, 'VideoLength')
+            query_parameters['freshness'] = self._serialize.query("freshness", freshness, 'str')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
         if offset is not None:
             query_parameters['offset'] = self._serialize.query("offset", offset, 'int')
-        if pricing is not None:
-            query_parameters['pricing'] = self._serialize.query("pricing", pricing, 'VideoPricing')
+        if original_image is not None:
+            query_parameters['originalImg'] = self._serialize.query("original_image", original_image, 'bool')
         query_parameters['q'] = self._serialize.query("query", query, 'str')
-        if resolution is not None:
-            query_parameters['resolution'] = self._serialize.query("resolution", resolution, 'VideoResolution')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
+        if sort_by is not None:
+            query_parameters['sortBy'] = self._serialize.query("sort_by", sort_by, 'str')
         if text_decorations is not None:
             query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
         if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
+            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -396,7 +375,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Videos', response)
+            deserialized = self._deserialize('News', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -404,34 +383,25 @@ class VideosOperations(object):
 
         return deserialized
 
-    def details(
-            self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, id=None, modules=None, market=None, resolution=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Detail Search API lets you search on Bing and get back
-        insights about a video, such as related videos. This section provides
-        technical details about the query parameters and headers that you use
-        to request insights of videos and the JSON response objects that
-        contain them. For examples that show how to make requests, see
-        [Searching the Web for
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
+    def category(
+            self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, category=None, count=None, headline_count=None, market=None, offset=None, original_image=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
+        """The News Category API lets lets you search on Bing and get back a list
+        of top news articles by category. This section provides technical
+        details about the query parameters and headers that you use to request
+        news and the JSON response objects that contain them.  For examples
+        that show how to make requests, see [Searching the web for
+        news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
-        :param query: The user's search query string. The query string cannot
-         be empty. The query string may contain [Bing Advanced
-         Operators](http://msdn.microsoft.com/library/ff795620.aspx). For
-         example, to limit videos to a specific domain, use the
-         [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. Use
-         this parameter only with the Video Search API. Do not specify this
-         parameter when calling the Trending Videos API.
-        :type query: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
          order of preference. For additional information, including expected
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -440,9 +410,9 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -561,70 +531,92 @@ class VideosOperations(object):
          should use the mkt and setLang query parameters. This parameter and
          the mkt query parameter are mutually exclusive—do not specify both.
         :type country_code: str
-        :param id: An ID that uniquely identifies a video. The
-         [Video](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#video)
-         object's videoId field contains the ID that you set this parameter to.
-         You use this parameter to identify the video to get insights of.
-        :type id: str
-        :param modules: A comma-delimited list of insights to request. The
-         following are the possible case-insensitive values. All: Return all
-         available insights. RelatedVideos: Return a list of videos that are
-         similar to the video specified by the id query parameter. VideoResult:
-         Return the video that you're requesting insights of (this is the video
-         that you set the id query parameter to in your insights request). If
-         you specify an insight and there is no data for it, the response
-         object does not include the related field. For example, if you specify
-         RelatedVideos and none exist, the response does not include the
-         relatedVideos field. Although the user's query term is not required,
-         you should always include it because it helps to improve relevance and
-         the results.
-        :type modules: list[str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoInsightModule]
+        :param category: The category of articles to return. For example,
+         Sports articles or Entertainment articles. For a list of possible
+         categories, see [News Categories by
+         Market](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#categories-by-market).
+         Use this parameter only with News Category API. If you do not specify
+         this parameter, the response includes both: Headline articles
+         typically published in the last 24 hours from any category and
+         articles from each parent category (up to four articles). If the
+         article is a headline, the article's headline field is set to true. By
+         default, the response includes up to 12 headline articles. To specify
+         the number of headline articles to return, set the
+         [headlineCount](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#headlineCount)
+         query parameter.
+        :type category: str
+        :param count: The number of news articles to return in the response.
+         The actual number delivered may be less than requested. The default is
+         10 and the maximum value is 100. The actual number delivered may be
+         less than requested.You may use this parameter along with the offset
+         parameter to page results. For example, if your user interface
+         displays 20 articles per page, set count to 20 and offset to 0 to get
+         the first page of results. For each subsequent page, increment offset
+         by 20 (for example, 0, 20, 40). It is possible for multiple pages to
+         include some overlap in results. If you do not specify the
+         [category](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#category)
+         parameter, Bing ignores this paramter.
+        :type count: int
+        :param headline_count: The number of headline articles to return in
+         the response. The default is 12. Specify this parameter only if you do
+         not specify the
+         [category](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#category)
+         parameter.
+        :type headline_count: int
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
          could be a different country if the user is not located in a country
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param resolution: Filter videos by the following resolutions: SD480p:
-         Return videos with a 480p or higher resolution. HD720p: Return videos
-         with a 720p or higher resolution. HD1080p: Return videos with a 1080p
-         or higher resolution. All: Do not filter by resolution.Specifying this
-         value is the same as not specifying the resolution parameter. Possible
-         values include: 'All', 'SD480p', 'HD720p', 'HD1080p'
-        :type resolution: str or
-         ~azure.cognitiveservices.search.videosearch.models.VideoResolution
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :param offset: The zero-based offset that indicates the number of news
+         to skip before returning news. The default is 0. The offset should be
+         less than
+         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#news-totalmatches)
+         - count). Use this parameter along with the count parameter to page
+         results. For example, if your user interface displays 20 news per
+         page, set count to 20 and offset to 0 to get the first page of
+         results. For each subsequent page, increment offset by 20 (for
+         example, 0, 20, 40). It is possible for multiple pages to include some
+         overlap in results. If you do not specify the
+         [category](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#category)
+         parameter, Bing ignores this paramter.
+        :type offset: int
+        :param original_image: A Boolean value that determines whether the
+         image's contentUrl contains a URL that points to a thumbnail of the
+         original article's image or the image itself. If the article includes
+         an image, and this parameter is set to true, the image's contentUrl
+         property contains a URL that you may use to download the original
+         image from the publisher's website. Otherwise, if this parameter is
+         false, the image's contentUrl and thumbnailUrl URLs both point to the
+         same thumbnail image. Use this parameter only with the News Search API
+         or News Category API. Trending Topics API ignore this parameter.
+        :type original_image: bool
+        :param safe_search: Filter news for adult content. The following are
+         the possible filter values. Off: Return news articles with adult text,
+         images, or videos. Moderate: Return news articles with adult text but
+         not adult images or videos. Strict: Do not return news articles with
+         adult text, images, or videos. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.newssearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -632,7 +624,7 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
@@ -644,7 +636,7 @@ class VideosOperations(object):
          characters. If true, the strings may include markers. The default is
          false. To specify whether to use Unicode characters or HTML tags as
          the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
+         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#textformat)
          query parameter. For information about hit highlighting, see [Hit
          Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
         :type text_decorations: bool
@@ -660,43 +652,45 @@ class VideosOperations(object):
          is set to HTML, Bing escapes the characters as appropriate (for
          example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
         :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
+         ~azure.cognitiveservices.search.newssearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VideoDetails or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.search.videosearch.models.VideoDetails or
+        :return: News or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.search.newssearch.models.News or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/details'
+        url = '/news'
 
         # Construct parameters
         query_parameters = {}
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
-        if id is not None:
-            query_parameters['id'] = self._serialize.query("id", id, 'str')
-        if modules is not None:
-            query_parameters['modules'] = self._serialize.query("modules", modules, '[VideoInsightModule]', div=',')
+        if category is not None:
+            query_parameters['category'] = self._serialize.query("category", category, 'str')
+        if count is not None:
+            query_parameters['count'] = self._serialize.query("count", count, 'int')
+        if headline_count is not None:
+            query_parameters['headlineCount'] = self._serialize.query("headline_count", headline_count, 'int')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
-        query_parameters['q'] = self._serialize.query("query", query, 'str')
-        if resolution is not None:
-            query_parameters['resolution'] = self._serialize.query("resolution", resolution, 'VideoResolution')
+        if offset is not None:
+            query_parameters['offset'] = self._serialize.query("offset", offset, 'int')
+        if original_image is not None:
+            query_parameters['originalImg'] = self._serialize.query("original_image", original_image, 'bool')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
         if text_decorations is not None:
             query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
         if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
+            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -725,7 +719,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VideoDetails', response)
+            deserialized = self._deserialize('News', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -734,13 +728,14 @@ class VideosOperations(object):
         return deserialized
 
     def trending(
-            self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
-        """The Video Trending Search API lets you search on Bing and get back a
-        list of videos that are trending based on search requests made by
-        others. The videos are broken out into different categories. For
-        example, Top Music Videos. For a list of markets that support trending
-        videos, see [Trending
-        Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/trending-videos).
+            self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, count=None, market=None, offset=None, safe_search=None, set_lang=None, since=None, sort_by=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
+        """The News Trending Topics API lets lets you search on Bing and get back
+        a list of trending news topics that are currently trending on Bing.
+        This section provides technical details about the query parameters and
+        headers that you use to request news and the JSON response objects that
+        contain them.  For examples that show how to make requests, see
+        [Searching the web for
+        news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -748,10 +743,10 @@ class VideosOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -760,9 +755,9 @@ class VideosOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -881,43 +876,58 @@ class VideosOperations(object):
          should use the mkt and setLang query parameters. This parameter and
          the mkt query parameter are mutually exclusive—do not specify both.
         :type country_code: str
+        :param count: The number of news articles to return in the response.
+         The actual number delivered may be less than requested. The default is
+         10 and the maximum value is 100. The actual number delivered may be
+         less than requested.You may use this parameter along with the offset
+         parameter to page results. For example, if your user interface
+         displays 20 articles per page, set count to 20 and offset to 0 to get
+         the first page of results. For each subsequent page, increment offset
+         by 20 (for example, 0, 20, 40). It is possible for multiple pages to
+         include some overlap in results.
+        :type count: int
         :param market: The market where the results come from. Typically, mkt
          is the country where the user is making the request from. However, it
          could be a different country if the user is not located in a country
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
-        :param safe_search: Filter videos for adult content. The following are
-         the possible filter values. Off: If the request is through the Video
-         Search API, the response includes adult videos and the thumbnail
-         images of the videos are clear (non-fuzzy). If the request is through
-         the Web Search API, the response includes adult videos but the
-         thumbnail images of the videos are pixelated (fuzzy). Moderate: If the
-         request is through the Video Search API, the response does not include
-         videos with adult content. If the request is through the Web Search
-         API, the response may include videos with adult content but the
-         thumbnail images of the videos are pixelated (fuzzy). Strict: Does not
-         return videos with adult content. The default is Moderate. If the
-         request comes from a market that Bing's adult policy requires that
-         safeSearch is set to Strict, Bing ignores the safeSearch value and
-         uses Strict. If you use the site: query operator, there is the chance
-         that the response may contain adult content regardless of what the
-         safeSearch query parameter is set to. Use site: only if you are aware
-         of the content on the site and your scenario supports the possibility
-         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :param offset: The zero-based offset that indicates the number of news
+         to skip before returning news. The default is 0. The offset should be
+         less than
+         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#news-totalmatches)
+         - count). Use this parameter along with the count parameter to page
+         results. For example, if your user interface displays 20 news per
+         page, set count to 20 and offset to 0 to get the first page of
+         results. For each subsequent page, increment offset by 20 (for
+         example, 0, 20, 40). It is possible for multiple pages to include some
+         overlap in results.
+        :type offset: int
+        :param safe_search: Filter news for adult content. The following are
+         the possible filter values. Off: Return news articles with adult text,
+         images, or videos. Moderate: Return news articles with adult text but
+         not adult images or videos. Strict: Do not return news articles with
+         adult text, images, or videos. If the request comes from a market that
+         Bing's adult policy requires that safeSearch is set to Strict, Bing
+         ignores the safeSearch value and uses Strict. If you use the site:
+         query operator, there is the chance that the response may contain
+         adult content regardless of what the safeSearch query parameter is set
+         to. Use site: only if you are aware of the content on the site and
+         your scenario supports the possibility of adult content. Possible
+         values include: 'Off', 'Moderate', 'Strict'
         :type safe_search: str or
-         ~azure.cognitiveservices.search.videosearch.models.SafeSearch
+         ~azure.cognitiveservices.search.newssearch.models.SafeSearch
         :param set_lang: The language to use for user interface strings.
          Specify the language using the ISO 639-1 2-letter language code. For
          example, the language code for English is EN. The default is EN
@@ -925,19 +935,34 @@ class VideosOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
          links to Bing.com properties in the response objects apply the
          specified language.
         :type set_lang: str
+        :param since: The Unix epoch time (Unix timestamp) that Bing uses to
+         select the trending topics. Bing returns trending topics that it
+         discovered on or after the specified date and time, not the date the
+         topic was published. To use this parameter, also specify the sortBy
+         parameter. Use this parameter only with the News Trending Topics API.
+         Do not specify this parameter when calling the News Search API or News
+         Category API.
+        :type since: long
+        :param sort_by: The order to return the news in. The following are the
+         possible case-insensitive values. Date: If the request is through the
+         News Search API, the response returns news articles sorted by date
+         from the most recent to the oldest. If the request is through the News
+         Trending Topics API, the response returns trending topics sorted by
+         date from the most recent to the oldest.
+        :type sort_by: str
         :param text_decorations: A Boolean value that determines whether
          display strings contain decoration markers such as hit highlighting
          characters. If true, the strings may include markers. The default is
          false. To specify whether to use Unicode characters or HTML tags as
          the markers, see the
-         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-video-api-v7-reference#textformat)
+         [textFormat](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-news-api-v7-reference#textformat)
          query parameter. For information about hit highlighting, see [Hit
          Highlighting](https://docs.microsoft.com/azure/cognitive-services/bing-news-search/hit-highlighting).
         :type text_decorations: bool
@@ -953,36 +978,44 @@ class VideosOperations(object):
          is set to HTML, Bing escapes the characters as appropriate (for
          example, < is escaped to &lt;). Possible values include: 'Raw', 'Html'
         :type text_format: str or
-         ~azure.cognitiveservices.search.videosearch.models.TextFormat
+         ~azure.cognitiveservices.search.newssearch.models.TextFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TrendingVideos or ClientRawResponse if raw=true
+        :return: TrendingTopics or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.search.videosearch.models.TrendingVideos or
+         ~azure.cognitiveservices.search.newssearch.models.TrendingTopics or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.search.newssearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/trending'
+        url = '/news/trendingtopics'
 
         # Construct parameters
         query_parameters = {}
         if country_code is not None:
             query_parameters['cc'] = self._serialize.query("country_code", country_code, 'str')
+        if count is not None:
+            query_parameters['count'] = self._serialize.query("count", count, 'int')
         if market is not None:
             query_parameters['mkt'] = self._serialize.query("market", market, 'str')
+        if offset is not None:
+            query_parameters['offset'] = self._serialize.query("offset", offset, 'int')
         if safe_search is not None:
-            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'SafeSearch')
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
         if set_lang is not None:
             query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
+        if since is not None:
+            query_parameters['since'] = self._serialize.query("since", since, 'long')
+        if sort_by is not None:
+            query_parameters['sortBy'] = self._serialize.query("sort_by", sort_by, 'str')
         if text_decorations is not None:
             query_parameters['textDecorations'] = self._serialize.query("text_decorations", text_decorations, 'bool')
         if text_format is not None:
-            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'TextFormat')
+            query_parameters['textFormat'] = self._serialize.query("text_format", text_format, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1011,7 +1044,7 @@ class VideosOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TrendingVideos', response)
+            deserialized = self._deserialize('TrendingTopics', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
