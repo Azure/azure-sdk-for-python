@@ -32,7 +32,6 @@ class _EndpointDiscoveryRetryPolicy(object):
 
     Max_retry_attempt_count = 120
     Retry_after_in_milliseconds = 1000
-    FORBIDDEN_STATUS_CODE = 403
     WRITE_FORBIDDEN_SUB_STATUS_CODE = 3
 
     def __init__(self, global_endpoint_manager):

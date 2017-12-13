@@ -25,7 +25,6 @@
 import pydocumentdb.http_constants as http_constants
 
 class _ResourceThrottleRetryPolicy(object):
-    THROTTLE_STATUS_CODE = 429
 
     def __init__(self, max_retry_attempt_count, fixed_retry_interval_in_milliseconds, max_wait_time_in_seconds):
         self._max_retry_attempt_count = max_retry_attempt_count

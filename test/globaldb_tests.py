@@ -168,7 +168,7 @@ class Test_globaldb_tests(unittest.TestCase):
         # Create Document will fail for the read location client since it has EnableEndpointDiscovery set to false, and hence the request will directly go to 
         # the endpoint that was used to create the client instance(which happens to be a read endpoint)
         self.__AssertHTTPFailureWithStatus(
-            403,
+            http_constants.HttpStatusCodes.FORBIDDEN,
             3,
             read_location_client.CreateDocument,
             self.test_coll['_self'],
@@ -372,7 +372,7 @@ class Test_globaldb_tests(unittest.TestCase):
                                 'key': 'value'} 
 
         self.__AssertHTTPFailureWithStatus(
-            403,
+            http_constants.HttpStatusCodes.FORBIDDEN,
             3,
             client.CreateDocument,
             self.test_coll['_self'],
@@ -381,7 +381,7 @@ class Test_globaldb_tests(unittest.TestCase):
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(403, "Write Forbidden", {'x-ms-substatus' : 3})
+        raise errors.HTTPFailure(http_constants.HttpStatusCodes.FORBIDDEN, "Write Forbidden", {'x-ms-substatus' : 3})
             
     def _MockGetDatabaseAccount(self, url_conection):
         database_account = documents.DatabaseAccount()

@@ -115,7 +115,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
         except errors.HTTPFailure as e:
-            self.assertEqual(e.status_code, 429)
+            self.assertEqual(e.status_code, http_constants.HttpStatusCodes.TOO_MANY_REQUESTS)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
@@ -138,7 +138,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
         except errors.HTTPFailure as e:
-            self.assertEqual(e.status_code, 429)
+            self.assertEqual(e.status_code, http_constants.HttpStatusCodes.TOO_MANY_REQUESTS)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
@@ -161,7 +161,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
         except errors.HTTPFailure as e:
-            self.assertEqual(e.status_code, 429)
+            self.assertEqual(e.status_code, http_constants.HttpStatusCodes.TOO_MANY_REQUESTS)
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
@@ -191,14 +191,14 @@ class Test_retry_policy_tests(unittest.TestCase):
                 ]
             }))
         except errors.HTTPFailure as e:
-            self.assertEqual(e.status_code, 429)
+            self.assertEqual(e.status_code, http_constants.HttpStatusCodes.TOO_MANY_REQUESTS)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(429, "Request rate is too large", {http_constants.HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
+        raise errors.HTTPFailure(http_constants.HttpStatusCodes.TOO_MANY_REQUESTS, "Request rate is too large", {http_constants.HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
 
 if __name__ == '__main__':
     unittest.main()

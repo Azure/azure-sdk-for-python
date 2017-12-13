@@ -24,6 +24,7 @@ import time
 
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
+import pydocumentdb.http_constants as http_constants
 import test.test_config as test_config
 
 
@@ -92,7 +93,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # None is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -102,7 +103,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # 0 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -112,7 +113,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateCollection,
             created_db['_self'],
             collection_definition)
@@ -124,7 +125,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
@@ -134,7 +135,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         # None is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
@@ -144,7 +145,7 @@ class Test_ttl_tests(unittest.TestCase):
         
         # -10 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
-            400,
+            http_constants.HttpStatusCodes.BAD_REQUEST,
             client.CreateDocument,
             created_collection['_self'],
             document_definition)
