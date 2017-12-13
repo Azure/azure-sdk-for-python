@@ -12,6 +12,7 @@
 from .resource_sku_capacity import ResourceSkuCapacity
 from .resource_sku_costs import ResourceSkuCosts
 from .resource_sku_capabilities import ResourceSkuCapabilities
+from .resource_sku_restriction_info import ResourceSkuRestrictionInfo
 from .resource_sku_restrictions import ResourceSkuRestrictions
 from .resource_sku_location_info import ResourceSkuLocationInfo
 from .resource_sku import ResourceSku
@@ -26,6 +27,7 @@ __all__ = [
     'ResourceSkuCapacity',
     'ResourceSkuCosts',
     'ResourceSkuCapabilities',
+    'ResourceSkuRestrictionInfo',
     'ResourceSkuRestrictions',
     'ResourceSkuLocationInfo',
     'ResourceSku',
