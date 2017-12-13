@@ -187,6 +187,10 @@
       "build_dir": "azure-mgmt-monitor",
       "markdown": "specification/monitor/resource-manager/readme.md"
     },
+    "msi": {
+      "build_dir": "azure-mgmt-msi",
+      "markdown": "specification/msi/resource-manager/readme.md"
+    },
     "network": {
       "build_dir": "azure-mgmt-network",
       "markdown": "specification/network/resource-manager/readme.md"
