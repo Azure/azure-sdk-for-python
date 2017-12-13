@@ -43,14 +43,12 @@ class EventHubManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(EventHubManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('eventhubmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-eventhub/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

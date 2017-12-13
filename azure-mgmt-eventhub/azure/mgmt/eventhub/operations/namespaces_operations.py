@@ -26,6 +26,8 @@ class NamespacesOperations(object):
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -46,13 +48,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.eventhub.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.eventhub.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -111,10 +109,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EHNamespace
-         <azure.mgmt.eventhub.models.EHNamespace>`
-        :rtype: :class:`EHNamespacePaged
-         <azure.mgmt.eventhub.models.EHNamespacePaged>`
+        :return: An iterator like instance of EHNamespace
+        :rtype:
+         ~azure.mgmt.eventhub.models.EHNamespacePaged[~azure.mgmt.eventhub.models.EHNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -178,10 +175,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EHNamespace
-         <azure.mgmt.eventhub.models.EHNamespace>`
-        :rtype: :class:`EHNamespacePaged
-         <azure.mgmt.eventhub.models.EHNamespacePaged>`
+        :return: An iterator like instance of EHNamespace
+        :rtype:
+         ~azure.mgmt.eventhub.models.EHNamespacePaged[~azure.mgmt.eventhub.models.EHNamespace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -245,20 +241,15 @@ class NamespacesOperations(object):
         :param namespace_name: The Namespace name
         :type namespace_name: str
         :param parameters: Parameters for creating a namespace resource.
-        :type parameters: :class:`EHNamespace
-         <azure.mgmt.eventhub.models.EHNamespace>`
+        :type parameters: ~azure.mgmt.eventhub.models.EHNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EHNamespace
-         <azure.mgmt.eventhub.models.EHNamespace>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns EHNamespace
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventhub.models.EHNamespace]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -305,14 +296,14 @@ class NamespacesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 202]:
+            if response.status_code not in [200, 201, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
-            if response.status_code == 201:
-                deserialized = self._deserialize('EHNamespace', response)
             if response.status_code == 200:
+                deserialized = self._deserialize('EHNamespace', response)
+            if response.status_code == 201:
                 deserialized = self._deserialize('EHNamespace', response)
 
             if raw:
@@ -345,14 +336,10 @@ class NamespacesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -395,7 +382,7 @@ class NamespacesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 200, 202]:
+            if response.status_code not in [200, 202, 204]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
@@ -427,11 +414,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`EHNamespace <azure.mgmt.eventhub.models.EHNamespace>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`EHNamespace <azure.mgmt.eventhub.models.EHNamespace>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: EHNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.EHNamespace or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -489,18 +474,15 @@ class NamespacesOperations(object):
         :param namespace_name: The Namespace name
         :type namespace_name: str
         :param parameters: Parameters for updating a namespace resource.
-        :type parameters: :class:`EHNamespace
-         <azure.mgmt.eventhub.models.EHNamespace>`
+        :type parameters: ~azure.mgmt.eventhub.models.EHNamespace
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`EHNamespace <azure.mgmt.eventhub.models.EHNamespace>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`EHNamespace <azure.mgmt.eventhub.models.EHNamespace>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: EHNamespace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.EHNamespace or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -535,14 +517,14 @@ class NamespacesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [201, 200, 202]:
+        if response.status_code not in [200, 201, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('EHNamespace', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('EHNamespace', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('EHNamespace', response)
 
         if raw:
@@ -565,10 +547,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>`
-        :rtype: :class:`AuthorizationRulePaged
-         <azure.mgmt.eventhub.models.AuthorizationRulePaged>`
+        :return: An iterator like instance of AuthorizationRule
+        :rtype:
+         ~azure.mgmt.eventhub.models.AuthorizationRulePaged[~azure.mgmt.eventhub.models.AuthorizationRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -623,7 +604,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, rights=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an AuthorizationRule for a Namespace.
 
         :param resource_group_name: Name of the resource group within the
@@ -634,20 +615,15 @@ class NamespacesOperations(object):
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.eventhub.models.AccessRights>`
+        :type rights: list[str or ~azure.mgmt.eventhub.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -715,11 +691,8 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -751,7 +724,7 @@ class NamespacesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -774,13 +747,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -842,11 +811,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -906,8 +873,7 @@ class NamespacesOperations(object):
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.eventhub.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.eventhub.models.KeyType
         :param key: Optional, if the key value provided, is set for KeyType or
          autogenerated Key value set for keyType
         :type key: str
@@ -916,11 +882,9 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """

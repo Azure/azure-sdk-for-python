@@ -25,7 +25,7 @@ class Eventhub(Resource):
     :ivar type: Resource type
     :vartype type: str
     :ivar partition_ids: Current number of shards on the Event Hub.
-    :vartype partition_ids: list of str
+    :vartype partition_ids: list[str]
     :ivar created_at: Exact time the Event Hub was created.
     :vartype created_at: datetime
     :ivar updated_at: The exact time the message was updated.
@@ -40,11 +40,9 @@ class Eventhub(Resource):
      Hub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
      'Unknown'
-    :type status: str or :class:`EntityStatus
-     <azure.mgmt.eventhub.models.EntityStatus>`
+    :type status: str or ~azure.mgmt.eventhub.models.EntityStatus
     :param capture_description: Properties of capture description
-    :type capture_description: :class:`CaptureDescription
-     <azure.mgmt.eventhub.models.CaptureDescription>`
+    :type capture_description: ~azure.mgmt.eventhub.models.CaptureDescription
     """
 
     _validation = {
@@ -54,8 +52,8 @@ class Eventhub(Resource):
         'partition_ids': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
-        'message_retention_in_days': {'maximum': 7, 'minimum': 1},
-        'partition_count': {'maximum': 32, 'minimum': 1},
+        'message_retention_in_days': {'minimum': 1},
+        'partition_count': {'minimum': 1},
     }
 
     _attribute_map = {
