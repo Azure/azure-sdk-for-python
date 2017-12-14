@@ -6,11 +6,11 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 12.0,\r\
         \n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\"\
@@ -125,7 +125,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['9576']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 27 Nov 2017 23:24:26 GMT']
+      date: ['Thu, 14 Dec 2017 18:28:08 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]

@@ -77,7 +77,7 @@ class NetworkManagementClient(object):
     :type profile: dict[str, str]
     """
 
-    DEFAULT_API_VERSION='2017-10-01'
+    DEFAULT_API_VERSION='2017-11-01'
     DEFAULT_PROFILE = None
 
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
