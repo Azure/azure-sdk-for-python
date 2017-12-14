@@ -86,7 +86,7 @@ class HttpChallenge(object):
 
     def supports_pop(self):
         """ Returns True if challenge supports pop token auth else False """
-        return self._parameters.get('supportspop', None).lower() == 'true'
+        return self._parameters.get('supportspop', '').lower() == 'true'
 
     def supports_message_protection(self):
         """ Returns True if challenge vault supports message protection """
