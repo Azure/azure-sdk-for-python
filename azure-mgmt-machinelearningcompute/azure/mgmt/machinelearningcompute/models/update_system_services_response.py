@@ -43,6 +43,7 @@ class UpdateSystemServicesResponse(Model):
     }
 
     def __init__(self):
+        super(UpdateSystemServicesResponse, self).__init__()
         self.update_status = None
         self.update_started_on = None
         self.update_completed_on = None

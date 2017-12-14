@@ -45,6 +45,7 @@ class AutoScaleConfiguration(Model):
     }
 
     def __init__(self, status="Disabled", min_replicas=1, max_replicas=100, target_utilization=None, refresh_period_in_seconds=None):
+        super(AutoScaleConfiguration, self).__init__()
         self.status = status
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas

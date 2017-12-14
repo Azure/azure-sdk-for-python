@@ -43,6 +43,7 @@ class ContainerServiceCredentials(Model):
     }
 
     def __init__(self):
+        super(ContainerServiceCredentials, self).__init__()
         self.acs_kube_config = None
         self.service_principal_configuration = None
         self.image_pull_secret_name = None

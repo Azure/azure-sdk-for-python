@@ -25,4 +25,5 @@ class KubernetesClusterProperties(Model):
     }
 
     def __init__(self, service_principal=None):
+        super(KubernetesClusterProperties, self).__init__()
         self.service_principal = service_principal

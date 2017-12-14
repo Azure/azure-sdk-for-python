@@ -39,6 +39,7 @@ class StorageAccountCredentials(Model):
     }
 
     def __init__(self):
+        super(StorageAccountCredentials, self).__init__()
         self.resource_id = None
         self.primary_key = None
         self.secondary_key = None
