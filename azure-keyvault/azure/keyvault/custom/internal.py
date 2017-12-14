@@ -5,12 +5,21 @@
 
 import hmac
 import hashlib
-import struct
 import json
 import codecs
 from base64 import b64encode, b64decode
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
+
+
+def _const_time_compare(bstr_1, bstr_2):
+    eq = len(bstr_1) == len(bstr_2)
+
+    for i in range(min(len(bstr_1), len(bstr_2))):
+        eq &= bstr_1[i] == bstr_2[i]
+
+    return eq
+
 
 
 def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
@@ -31,7 +40,7 @@ def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
     auth_data_length = _int_to_bigendian_8_bytes(len(authdata) * 8)
 
     # pad the data so it is a multiple of blocksize
-    # pkcs7 padding is expected to the pad bytes are the value of the number of pad bytes added
+    # pkcs7 padding dictates the pad bytes are the value of the number of pad bytes added
     padlen = 16 - len(plaintext) % 16
     padval = _int_to_bytes(padlen)
     plaintext += padval * padlen
@@ -62,17 +71,21 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
     aes_key = key[16:32]
     auth_data_length = _int_to_bigendian_8_bytes(len(authdata) * 8)
 
+    # ensure the authtag is the expected length for SHA256 hash
+    if not len(authtag) == 16:
+        raise ValueError('invalid tag')
+
     hashdata = authdata + iv + ciphertext + auth_data_length
     tag = hmac.new(key=hmac_key, msg=hashdata, digestmod=hashlib.sha256).digest()[:16]
 
-    if tag != authtag:
-        raise ValueError('"ciphertext" is not authentic.')
+    if not _const_time_compare(tag, authtag):
+        raise ValueError('"ciphertext" is not authentic')
 
-    cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv),backend=default_backend())
+    cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
-    # remove the pad bytes for pkcs7 the # of pad bytes == the value of the last byte
+    # remove the pad bytes (for pkcs7 the # of pad bytes == the value of the last byte)
     padlen = plaintext[-1]
     plaintext = plaintext[:-1 * padlen]
 
@@ -96,7 +109,7 @@ def _int_to_bytes(i):
     return codecs.decode(h, 'hex')
 
 
-def _bstr_to_b64(bstr, **kwargs):
+def _bstr_to_b64url(bstr, **kwargs):
     """Serialize str into base-64 string.
     :param str: Object to be serialized.
     :rtype: str
@@ -105,12 +118,12 @@ def _bstr_to_b64(bstr, **kwargs):
     return encoded.strip('=').replace('+', '-').replace('/', '_')
 
 
-def _str_to_b64(s, **kwargs):
+def _str_to_b64url(s, **kwargs):
     """Serialize str into base-64 string.
     :param str: Object to be serialized.
     :rtype: str
     """
-    return _bstr_to_b64(s.encode(encoding='utf8'))
+    return _bstr_to_b64url(s.encode(encoding='utf8'))
 
 
 def _b64_to_bstr(b64str):
@@ -133,14 +146,15 @@ def _b64_to_str(b64str):
     """
     return _b64_to_bstr(b64str).decode('utf8')
 
+
 def _int_to_bigendian_8_bytes(i):
-    #return struct.pack('>I', i)
     b = _int_to_bytes(i)
 
     if len(b) < 8:
         b = (b'\0' * (8 - len(b))) + b
 
     return b
+
 
 class JoseObject(object):
 
@@ -157,15 +171,13 @@ class JoseObject(object):
         return json.dumps(self.__dict__)
 
     def serialize_b64url(self):
-        return _str_to_b64(self.serialize())
+        return _str_to_b64url(self.serialize())
+
 
 class JoseHeader(JoseObject):
 
-    def __init__(self):
-        pass
-
     def to_compact_header(self):
-        return _str_to_b64(json.dumps(self.__dict__))
+        return _str_to_b64url(json.dumps(self.__dict__))
 
 
 class JweHeader(JoseHeader):

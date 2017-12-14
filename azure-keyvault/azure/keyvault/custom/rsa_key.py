@@ -81,7 +81,9 @@ class RsaKey(object):
         key.kid = kid or str(uuid.uuid4())
         key.kty = kty
         key.key_ops = RsaKey.PRIVATE_KEY_DEFAULT_OPS
-        key._rsa_impl = generate_private_key(public_exponent=e, key_size=size, backend=cryptography.hazmat.backends.default_backend())
+        key._rsa_impl = generate_private_key(public_exponent=e,
+                                             key_size=size,
+                                             backend=cryptography.hazmat.backends.default_backend())
 
         # set the appropriate callbacks for retrieving the public and private key material
         key._private_key_material = key._rsa_impl.private_numbers
@@ -160,13 +162,13 @@ class RsaKey(object):
 
     def decrypt(self, ciphertext, padding=_default_encryption_padding()):
         if not self.is_private_key():
-            raise NotImplementedError('The current RsaKey contains no private key material and does not support decrypt')
+            raise NotImplementedError('The current RsaKey does not support decrypt')
 
         return self.private_key.decrypt(ciphertext, padding)
 
     def sign(self, data, padding=_default_signature_padding(), algorithm=_default_signature_algorithm()):
         if not self.is_private_key():
-            raise NotImplementedError('The current RsaKey contains no private key material and does not support sign')
+            raise NotImplementedError('The current RsaKey does not support sign')
 
         return self.private_key.sign(data, padding, algorithm)
 

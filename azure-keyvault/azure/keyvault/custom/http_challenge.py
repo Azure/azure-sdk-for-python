@@ -86,15 +86,14 @@ class HttpChallenge(object):
 
     def supports_pop(self):
         """ Returns True if challenge supports pop token auth else False """
-        return self._parameters.get('supportspop', None) == 'true'
+        return self._parameters.get('supportspop', None).lower() == 'true'
 
     def supports_message_protection(self):
         """ Returns True if challenge vault supports message protection """
-        return True if self.supports_pop() and self.server_encryption_key and self.server_signature_key else False
+        return self.supports_pop() and self.server_encryption_key and self.server_signature_key
 
     def _validate_challenge(self, challenge):
         """ Verifies that the challenge is a valid auth challenge and returns the key=value pairs. """
-        bearer_string = 'Bearer '
         if not challenge:
             raise ValueError('Challenge cannot be empty')
 
