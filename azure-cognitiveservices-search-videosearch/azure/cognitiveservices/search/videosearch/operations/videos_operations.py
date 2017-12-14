@@ -24,6 +24,8 @@ class VideosOperations(object):
     :ivar x_bing_apis_sdk: Activate swagger compliance. Constant value: "true".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

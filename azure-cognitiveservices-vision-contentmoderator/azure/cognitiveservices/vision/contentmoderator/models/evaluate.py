@@ -32,10 +32,11 @@ class Evaluate(Model):
      racy.
     :type is_image_racy_classified: bool
     :param advanced_info: The advanced info.
-    :type advanced_info: list[str]
+    :type advanced_info:
+     list[~azure.cognitiveservices.vision.contentmoderator.models.KeyValuePair]
     :param status: The evaluate status
     :type status:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ResponseStatus
+     ~azure.cognitiveservices.vision.contentmoderator.models.Status
     """
 
     _attribute_map = {
@@ -46,8 +47,8 @@ class Evaluate(Model):
         'is_image_adult_classified': {'key': 'isImageAdultClassified', 'type': 'bool'},
         'racy_classification_score': {'key': 'racyClassificationScore', 'type': 'float'},
         'is_image_racy_classified': {'key': 'isImageRacyClassified', 'type': 'bool'},
-        'advanced_info': {'key': 'advancedInfo', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'ResponseStatus'},
+        'advanced_info': {'key': 'advancedInfo', 'type': '[KeyValuePair]'},
+        'status': {'key': 'status', 'type': 'Status'},
     }
 
     def __init__(self, cache_id=None, result=None, tracking_id=None, adult_classification_score=None, is_image_adult_classified=None, racy_classification_score=None, is_image_racy_classified=None, advanced_info=None, status=None):

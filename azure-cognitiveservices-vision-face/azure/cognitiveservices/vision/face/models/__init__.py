@@ -14,11 +14,20 @@ from .api_error import APIError, APIErrorException
 from .face_rectangle import FaceRectangle
 from .position import Position
 from .face_landmarks import FaceLandmarks
-from .detected_face import DetectedFace
 from .facial_hair_properties import FacialHairProperties
 from .head_pose_properties import HeadPoseProperties
 from .emotion_properties import EmotionProperties
+from .color_property import ColorProperty
+from .hair_properties import HairProperties
+from .makeup_properties import MakeupProperties
+from .occlusion_properties import OcclusionProperties
+from .accessory_item import AccessoryItem
+from .blur_properties import BlurProperties
+from .exposure_properties import ExposureProperties
+from .noise_properties import NoiseProperties
 from .face_attributes import FaceAttributes
+from .detected_face import DetectedFace
+from .persisted_face_result import PersistedFaceResult
 from .find_similar_request import FindSimilarRequest
 from .similar_face_result import SimilarFaceResult
 from .group_request import GroupRequest
@@ -26,20 +35,29 @@ from .group_response import GroupResponse
 from .identify_request import IdentifyRequest
 from .identify_result_candidate import IdentifyResultCandidate
 from .identify_result_item import IdentifyResultItem
+from .verify_person_group_request import VerifyPersonGroupRequest
 from .verify_request import VerifyRequest
 from .verify_result import VerifyResult
 from .create_face_list_request import CreateFaceListRequest
+from .person_face_result import PersonFaceResult
 from .get_face_list_result import GetFaceListResult
 from .create_person_group_request import CreatePersonGroupRequest
 from .person_group_result import PersonGroupResult
 from .create_person_request import CreatePersonRequest
 from .create_person_result import CreatePersonResult
 from .person_result import PersonResult
-from .person_face_result import PersonFaceResult
 from .update_person_face_data_request import UpdatePersonFaceDataRequest
-from .training_status import TrainingStatus
+from .training_status1 import TrainingStatus1
 from .image_url import ImageUrl
 from .face_api_enums import (
+    Gender,
+    GlassesTypes,
+    BlurLevels,
+    ExposureLevels,
+    NoiseLevels,
+    FaceMatchingMode,
+    TrainingStatus,
+    FaceAttributeTypes,
     AzureRegions,
 )
 
@@ -49,11 +67,20 @@ __all__ = [
     'FaceRectangle',
     'Position',
     'FaceLandmarks',
-    'DetectedFace',
     'FacialHairProperties',
     'HeadPoseProperties',
     'EmotionProperties',
+    'ColorProperty',
+    'HairProperties',
+    'MakeupProperties',
+    'OcclusionProperties',
+    'AccessoryItem',
+    'BlurProperties',
+    'ExposureProperties',
+    'NoiseProperties',
     'FaceAttributes',
+    'DetectedFace',
+    'PersistedFaceResult',
     'FindSimilarRequest',
     'SimilarFaceResult',
     'GroupRequest',
@@ -61,18 +88,27 @@ __all__ = [
     'IdentifyRequest',
     'IdentifyResultCandidate',
     'IdentifyResultItem',
+    'VerifyPersonGroupRequest',
     'VerifyRequest',
     'VerifyResult',
     'CreateFaceListRequest',
+    'PersonFaceResult',
     'GetFaceListResult',
     'CreatePersonGroupRequest',
     'PersonGroupResult',
     'CreatePersonRequest',
     'CreatePersonResult',
     'PersonResult',
-    'PersonFaceResult',
     'UpdatePersonFaceDataRequest',
-    'TrainingStatus',
+    'TrainingStatus1',
     'ImageUrl',
+    'Gender',
+    'GlassesTypes',
+    'BlurLevels',
+    'ExposureLevels',
+    'NoiseLevels',
+    'FaceMatchingMode',
+    'TrainingStatus',
+    'FaceAttributeTypes',
     'AzureRegions',
 ]

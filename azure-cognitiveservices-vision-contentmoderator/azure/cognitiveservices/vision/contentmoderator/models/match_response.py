@@ -23,18 +23,18 @@ class MatchResponse(Model):
     :type is_match: bool
     :param matches: The match details.
     :type matches:
-     ~azure.cognitiveservices.vision.contentmoderator.models.MatchDetailProperties
+     list[~azure.cognitiveservices.vision.contentmoderator.models.Match]
     :param status: The evaluate status
     :type status:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ResponseStatus
+     ~azure.cognitiveservices.vision.contentmoderator.models.Status
     """
 
     _attribute_map = {
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
         'cache_id': {'key': 'cacheID', 'type': 'str'},
         'is_match': {'key': 'isMatch', 'type': 'bool'},
-        'matches': {'key': 'matches', 'type': 'MatchDetailProperties'},
-        'status': {'key': 'status', 'type': 'ResponseStatus'},
+        'matches': {'key': 'matches', 'type': '[Match]'},
+        'status': {'key': 'status', 'type': 'Status'},
     }
 
     def __init__(self, tracking_id=None, cache_id=None, is_match=None, matches=None, status=None):

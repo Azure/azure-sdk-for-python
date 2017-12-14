@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class EmotionProperties(Model):
-    """Properties describing facial emotion.
+    """Properties describing facial emotion in form of confidence ranging from 0
+    to 1.
 
     :param anger:
     :type anger: float

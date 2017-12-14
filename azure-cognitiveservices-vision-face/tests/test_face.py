@@ -11,6 +11,7 @@
 from os.path import dirname, join, realpath
 
 from azure.cognitiveservices.vision.face import FaceAPI
+from azure.cognitiveservices.vision.face.models import Gender
 from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
@@ -51,8 +52,10 @@ class FaceTest(ReplayableTest):
         with open(join(CWD, "facefindsimilar.queryface.jpg"), "rb") as face_fd:
             result = face_api.face.detect_in_stream(
                 face_fd,
-                return_face_attributes='age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
+                return_face_attributes=['age','gender','headPose','smile','facialHair','glasses','emotion','hair','makeup','occlusion','accessories','blur','exposure','noise']
             )
 
         detected = result[0]
-        
+        self.assertEquals(detected.face_attributes.age, 52.4)
+        self.assertEquals(detected.face_attributes.gender, Gender.female)
+        self.assertEquals(detected.face_attributes.emotion.happiness, 1.0)
