@@ -6,18 +6,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 networkmanagementclient/ Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 azure-mgmt-network/ Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"available\": true\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['25']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 27 Nov 2017 23:18:54 GMT']
+      date: ['Thu, 14 Dec 2017 18:22:19 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
