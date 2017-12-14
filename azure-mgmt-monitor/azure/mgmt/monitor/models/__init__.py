@@ -74,6 +74,11 @@ from .metadata_value import MetadataValue
 from .time_series_element import TimeSeriesElement
 from .metric import Metric
 from .response import Response
+from .baseline_metadata_value import BaselineMetadataValue
+from .baseline import Baseline
+from .baseline_response import BaselineResponse
+from .time_series_information import TimeSeriesInformation
+from .calculate_baseline_response import CalculateBaselineResponse
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -97,6 +102,7 @@ from .monitor_management_client_enums import (
     EventLevel,
     Unit,
     AggregationType,
+    Sensitivity,
     ResultType,
 )
 
@@ -166,6 +172,11 @@ __all__ = [
     'TimeSeriesElement',
     'Metric',
     'Response',
+    'BaselineMetadataValue',
+    'Baseline',
+    'BaselineResponse',
+    'TimeSeriesInformation',
+    'CalculateBaselineResponse',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -188,5 +199,6 @@ __all__ = [
     'EventLevel',
     'Unit',
     'AggregationType',
+    'Sensitivity',
     'ResultType',
 ]

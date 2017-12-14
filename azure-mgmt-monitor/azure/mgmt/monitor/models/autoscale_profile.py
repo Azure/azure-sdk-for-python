@@ -46,6 +46,7 @@ class AutoscaleProfile(Model):
     }
 
     def __init__(self, name, capacity, rules, fixed_date=None, recurrence=None):
+        super(AutoscaleProfile, self).__init__()
         self.name = name
         self.capacity = capacity
         self.rules = rules

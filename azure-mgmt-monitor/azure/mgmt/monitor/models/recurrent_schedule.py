@@ -81,6 +81,7 @@ class RecurrentSchedule(Model):
     }
 
     def __init__(self, time_zone, days, hours, minutes):
+        super(RecurrentSchedule, self).__init__()
         self.time_zone = time_zone
         self.days = days
         self.hours = hours

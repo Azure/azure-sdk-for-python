@@ -40,5 +40,6 @@ class AutoscaleNotification(Model):
     operation = "Scale"
 
     def __init__(self, email=None, webhooks=None):
+        super(AutoscaleNotification, self).__init__()
         self.email = email
         self.webhooks = webhooks
