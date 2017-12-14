@@ -6,8 +6,6 @@ Release History
 3.1.0rc2 (2017-12-14)
 +++++++++++++++++++++
 
-**Unreleased**
-
 **Features**
 
 - Add User Assigned Identity parameters to VM/VMSS creation
