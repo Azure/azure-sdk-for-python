@@ -13,8 +13,7 @@ from azure.keyvault import HttpChallenge
 from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
 from msrest.authentication import OAuthTokenAuthentication
 from .http_message_security import HttpMessageSecurity
-from ..models import JsonWebKey
-from .rsa_key import RsaKey
+from .internal import _RsaKey
 
 
 AccessToken = namedtuple('AccessToken', ['scheme', 'token', 'key'])
@@ -177,8 +176,8 @@ class KeyVaultAuthBase(AuthBase):
         if scheme == 'PoP':
             security.client_signature_key = token.key
             security.client_encryption_key = token.key
-            security.server_encryption_key = RsaKey.from_jwk_str(challenge.server_encryption_key)
-            security.server_signature_key = RsaKey.from_jwk_str(challenge.server_signature_key)
+            security.server_encryption_key = _RsaKey.from_jwk_str(challenge.server_encryption_key)
+            security.server_signature_key = _RsaKey.from_jwk_str(challenge.server_signature_key)
 
         return security
 

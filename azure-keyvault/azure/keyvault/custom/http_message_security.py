@@ -6,9 +6,8 @@
 import json
 import time
 import os
-from .internal import _a128cbc_hs256_encrypt, _a128cbc_hs256_decrypt, JwsHeader, JwsObject, \
-    JweHeader, JweObject, _str_to_b64url, _bstr_to_b64url, _b64_to_bstr
-from .rsa_key import RsaKey
+from .internal import _a128cbc_hs256_encrypt, _a128cbc_hs256_decrypt, _JwsHeader, _JwsObject, \
+    _JweHeader, _JweObject, _str_to_b64url, _bstr_to_b64url, _b64_to_bstr, _RsaKey
 
 
 def generate_pop_key():
@@ -16,7 +15,7 @@ def generate_pop_key():
     Generates a key which can be used for Proof Of Possession token authentication.
     :return:
     """
-    return RsaKey.generate()
+    return _RsaKey.generate()
 
 
 class HttpMessageSecurity(object):
@@ -66,14 +65,14 @@ class HttpMessageSecurity(object):
             plain_text = json.dumps(body_dict).encode(encoding='utf8')
 
         # build the header for the jws body
-        jws_header = JwsHeader()
+        jws_header = _JwsHeader()
         jws_header.alg = 'RS256'
         jws_header.kid = self.client_signature_key.kid
         jws_header.at = self.client_security_token
         jws_header.ts = int(time.time())
         jws_header.typ = 'PoP'
 
-        jws = JwsObject()
+        jws = _JwsObject()
 
         jws.protected = jws_header.to_compact_header()
         jws.payload = self._protect_payload(plain_text)
@@ -103,10 +102,10 @@ class HttpMessageSecurity(object):
             raise ValueError('Invalid protected response')
 
         # deserialize the response into a JwsObject, using response.text so requests handles the encoding
-        jws = JwsObject().deserialize(body)
+        jws = _JwsObject().deserialize(body)
 
         # deserialize the protected header
-        jws_header = JwsHeader.from_compact_header(jws.protected)
+        jws_header = _JwsHeader.from_compact_header(jws.protected)
 
         # ensure the jws signature kid matches the key from original challenge
         # and the alg matches expected signature alg
@@ -140,13 +139,13 @@ class HttpMessageSecurity(object):
     def _protect_payload(self, plaintext):
         # create the jwe header for the payload
         kek = self.server_encryption_key
-        jwe_header = JweHeader()
+        jwe_header = _JweHeader()
         jwe_header.alg = 'RSA-OAEP'
         jwe_header.kid = kek.kid
         jwe_header.enc = 'A128CBC-HS256'
 
         # create the jwe object
-        jwe = JweObject()
+        jwe = _JweObject()
         jwe.protected = jwe_header.to_compact_header()
 
         # generate the content encryption key and iv
@@ -170,10 +169,10 @@ class HttpMessageSecurity(object):
 
     def _unprotect_payload(self, payload):
         # deserialize the payload
-        jwe = JweObject().deserialize_b64(payload)
+        jwe = _JweObject().deserialize_b64(payload)
 
         # deserialize the payload header
-        jwe_header = JweHeader.from_compact_header(jwe.protected)
+        jwe_header = _JweHeader.from_compact_header(jwe.protected)
 
         # ensure the kid matches the specified client encryption key
         # and the key wrap alg and the data encrtyption enc match the expected
