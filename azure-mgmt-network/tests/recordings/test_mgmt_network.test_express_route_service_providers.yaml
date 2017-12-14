@@ -6,11 +6,11 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.14 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"AT&T Netbond\
         \ Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
@@ -47,7 +47,25 @@ interactions:
         \            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n    \
         \        \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\
         \n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\"\
-        : \"Console Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        : \"CenturyLink\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
+        ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
+        \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
+        ,\r\n        \"peeringLocations\": [\r\n          \"Silicon Valley\"\r\n \
+        \       ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n        \
+        \    \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n   \
+        \       },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n \
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n      \
+        \      \"offerName\": \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"500Mbps\",\r\n\
+        \            \"valueInMbps\": 500\r\n          },\r\n          {\r\n     \
+        \       \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n\
+        \            \"valueInMbps\": 2000\r\n          },\r\n          {\r\n    \
+        \        \"offerName\": \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n\
+        \          },\r\n          {\r\n            \"offerName\": \"10Gbps\",\r\n\
+        \            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n      }\r\
+        \n    },\r\n    {\r\n      \"name\": \"Console Test\",\r\n      \"id\": \"\
+        /subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
         ,\r\n      \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"peeringLocations\": [\r\n          \"Silicon Valley Test\"\
@@ -190,9 +208,9 @@ interactions:
         \n          }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       cache-control: [no-cache]
-      content-length: ['12032']
+      content-length: ['13200']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 27 Nov 2017 23:19:18 GMT']
+      date: ['Thu, 14 Dec 2017 18:22:44 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
