@@ -5,16 +5,15 @@
 
 import json
 import time
-import uuid
 import os
 from .internal import _a128cbc_hs256_encrypt, _a128cbc_hs256_decrypt, JwsHeader, JwsObject, \
-    JweHeader, JweObject, _str_to_b64, _b64_to_str, _bstr_to_b64, _b64_to_bstr
+    JweHeader, JweObject, _str_to_b64url, _bstr_to_b64url, _b64_to_bstr
 from .rsa_key import RsaKey
 
 
 def generate_pop_key():
     """
-    Generates a key which can be used for Proof Of Possession token authentication.   
+    Generates a key which can be used for Proof Of Possession token authentication.
     :return:
     """
     return RsaKey.generate()
@@ -64,7 +63,7 @@ class HttpMessageSecurity(object):
             # need to be revisited when the types of
             body_dict = json.loads(plain_text)
             body_dict['rek'] = self.client_encryption_key.to_jwk().serialize()
-            plain_text = json.dumps(body_dict).encode()
+            plain_text = json.dumps(body_dict).encode(encoding='utf8')
 
         # build the header for the jws body
         jws_header = JwsHeader()
@@ -79,7 +78,7 @@ class HttpMessageSecurity(object):
         jws.protected = jws_header.to_compact_header()
         jws.payload = self._protect_payload(plain_text)
         data = (jws.protected + '.' + jws.payload).encode('ascii')
-        jws.signature = _bstr_to_b64(self.client_signature_key.sign(data))
+        jws.signature = _bstr_to_b64url(self.client_signature_key.sign(data))
 
         request.headers['Content-Type'] = 'application/jose+json'
 
@@ -125,6 +124,7 @@ class HttpMessageSecurity(object):
 
         response._content = decrypted
         response.headers['Content-Type'] = 'application/json'
+
         return response
 
     def supports_protection(self):
@@ -152,21 +152,21 @@ class HttpMessageSecurity(object):
         # generate the content encryption key and iv
         cek = os.urandom(32)
         iv = os.urandom(16)
-        jwe.iv = _bstr_to_b64(iv)
+        jwe.iv = _bstr_to_b64url(iv)
         # wrap the cek using the server encryption key
-        wrapped = _bstr_to_b64(kek.encrypt(cek))
+        wrapped = _bstr_to_b64url(kek.encrypt(cek))
         jwe.encrypted_key = wrapped
 
         # encrypt the plaintext body with the cek using the protected header
         # as the authdata to get the ciphertext and the authtag
         ciphertext, tag = _a128cbc_hs256_encrypt(cek, iv, plaintext, jwe.protected.encode('ascii'))
 
-        jwe.ciphertext = _bstr_to_b64(ciphertext)
-        jwe.tag = _bstr_to_b64(tag)
+        jwe.ciphertext = _bstr_to_b64url(ciphertext)
+        jwe.tag = _bstr_to_b64url(tag)
 
         # flatten and encode the jwe for the final jws payload content
         flat = jwe.to_flattened_jwe()
-        return _str_to_b64(flat)
+        return _str_to_b64url(flat)
 
     def _unprotect_payload(self, payload):
         # deserialize the payload
