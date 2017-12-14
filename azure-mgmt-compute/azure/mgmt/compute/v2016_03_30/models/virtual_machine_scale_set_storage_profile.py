@@ -29,5 +29,6 @@ class VirtualMachineScaleSetStorageProfile(Model):
     }
 
     def __init__(self, image_reference=None, os_disk=None):
+        super(VirtualMachineScaleSetStorageProfile, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk

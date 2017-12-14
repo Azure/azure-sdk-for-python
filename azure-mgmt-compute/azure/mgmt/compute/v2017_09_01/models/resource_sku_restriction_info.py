@@ -35,5 +35,6 @@ class ResourceSkuRestrictionInfo(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuRestrictionInfo, self).__init__()
         self.locations = None
         self.zones = None

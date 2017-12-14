@@ -30,4 +30,5 @@ class DiagnosticsProfile(Model):
     }
 
     def __init__(self, boot_diagnostics=None):
+        super(DiagnosticsProfile, self).__init__()
         self.boot_diagnostics = boot_diagnostics

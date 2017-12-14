@@ -35,5 +35,6 @@ class ResourceSkuLocationInfo(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuLocationInfo, self).__init__()
         self.location = None
         self.zones = None

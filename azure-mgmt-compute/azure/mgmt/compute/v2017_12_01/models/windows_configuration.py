@@ -46,6 +46,7 @@ class WindowsConfiguration(Model):
     }
 
     def __init__(self, provision_vm_agent=None, enable_automatic_updates=None, time_zone=None, additional_unattend_content=None, win_rm=None):
+        super(WindowsConfiguration, self).__init__()
         self.provision_vm_agent = provision_vm_agent
         self.enable_automatic_updates = enable_automatic_updates
         self.time_zone = time_zone

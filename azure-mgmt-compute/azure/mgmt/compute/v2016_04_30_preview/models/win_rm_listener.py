@@ -15,12 +15,19 @@ from msrest.serialization import Model
 class WinRMListener(Model):
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
-    :param protocol: The Protocol used by the WinRM listener. Http and Https
-     are supported. Possible values include: 'Http', 'Https'
+    :param protocol: Specifies the protocol of listener. <br><br> Possible
+     values are: <br>**http** <br><br> **https**. Possible values include:
+     'Http', 'Https'
     :type protocol: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.ProtocolTypes
-    :param certificate_url: The Certificate URL in KMS for Https listeners.
-     Should be null for Http listeners.
+    :param certificate_url: This is the URL of a certificate that has been
+     uploaded to Key Vault as a secret. For adding a secret to the Key Vault,
+     see [Add a key or secret to the key
+     vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add).
+     In this case, your certificate needs to be It is the Base64 encoding of
+     the following JSON Object which is encoded in UTF-8: <br><br> {<br>
+     "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
+     "password":"<pfx-file-password>"<br>}
     :type certificate_url: str
     """
 
@@ -30,5 +37,6 @@ class WinRMListener(Model):
     }
 
     def __init__(self, protocol=None, certificate_url=None):
+        super(WinRMListener, self).__init__()
         self.protocol = protocol
         self.certificate_url = certificate_url

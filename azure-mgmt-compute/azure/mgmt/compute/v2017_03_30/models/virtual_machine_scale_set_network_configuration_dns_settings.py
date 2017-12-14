@@ -25,4 +25,5 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
     }
 
     def __init__(self, dns_servers=None):
+        super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__()
         self.dns_servers = dns_servers

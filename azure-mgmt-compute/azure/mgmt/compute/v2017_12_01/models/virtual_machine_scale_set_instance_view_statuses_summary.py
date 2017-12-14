@@ -33,4 +33,5 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__()
         self.statuses_summary = None

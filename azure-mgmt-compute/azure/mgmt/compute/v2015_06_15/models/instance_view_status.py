@@ -39,6 +39,7 @@ class InstanceViewStatus(Model):
     }
 
     def __init__(self, code=None, level=None, display_status=None, message=None, time=None):
+        super(InstanceViewStatus, self).__init__()
         self.code = code
         self.level = level
         self.display_status = display_status

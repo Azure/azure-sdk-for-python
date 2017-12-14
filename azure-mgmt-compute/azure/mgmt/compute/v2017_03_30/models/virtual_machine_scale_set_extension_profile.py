@@ -26,4 +26,5 @@ class VirtualMachineScaleSetExtensionProfile(Model):
     }
 
     def __init__(self, extensions=None):
+        super(VirtualMachineScaleSetExtensionProfile, self).__init__()
         self.extensions = extensions

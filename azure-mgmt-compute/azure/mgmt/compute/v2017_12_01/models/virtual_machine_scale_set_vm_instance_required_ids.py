@@ -28,4 +28,5 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
     }
 
     def __init__(self, instance_ids):
+        super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__()
         self.instance_ids = instance_ids

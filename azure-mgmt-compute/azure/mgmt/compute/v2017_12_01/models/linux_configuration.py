@@ -34,5 +34,6 @@ class LinuxConfiguration(Model):
     }
 
     def __init__(self, disable_password_authentication=None, ssh=None):
+        super(LinuxConfiguration, self).__init__()
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh

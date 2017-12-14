@@ -46,6 +46,7 @@ class RunCommandDocumentBase(Model):
     }
 
     def __init__(self, schema, id, os_type, label, description):
+        super(RunCommandDocumentBase, self).__init__()
         self.schema = schema
         self.id = id
         self.os_type = os_type

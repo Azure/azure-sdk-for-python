@@ -171,6 +171,9 @@ class ProtocolTypes(Enum):
 class ResourceIdentityType(Enum):
 
     system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
 
 
 class MaintenanceOperationResultCodeTypes(Enum):

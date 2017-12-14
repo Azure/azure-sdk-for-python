@@ -78,6 +78,7 @@ class OSDisk(Model):
     }
 
     def __init__(self, create_option, os_type=None, encryption_settings=None, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
+        super(OSDisk, self).__init__()
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name

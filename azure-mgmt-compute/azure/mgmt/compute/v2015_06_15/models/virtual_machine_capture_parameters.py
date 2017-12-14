@@ -37,6 +37,7 @@ class VirtualMachineCaptureParameters(Model):
     }
 
     def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds):
+        super(VirtualMachineCaptureParameters, self).__init__()
         self.vhd_prefix = vhd_prefix
         self.destination_container_name = destination_container_name
         self.overwrite_vhds = overwrite_vhds

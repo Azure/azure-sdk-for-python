@@ -50,6 +50,7 @@ class MaintenanceRedeployStatus(Model):
     }
 
     def __init__(self, is_customer_initiated_maintenance_allowed=None, pre_maintenance_window_start_time=None, pre_maintenance_window_end_time=None, maintenance_window_start_time=None, maintenance_window_end_time=None, last_operation_result_code=None, last_operation_message=None):
+        super(MaintenanceRedeployStatus, self).__init__()
         self.is_customer_initiated_maintenance_allowed = is_customer_initiated_maintenance_allowed
         self.pre_maintenance_window_start_time = pre_maintenance_window_start_time
         self.pre_maintenance_window_end_time = pre_maintenance_window_end_time

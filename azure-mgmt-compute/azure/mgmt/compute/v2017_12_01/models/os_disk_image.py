@@ -30,4 +30,5 @@ class OSDiskImage(Model):
     }
 
     def __init__(self, operating_system):
+        super(OSDiskImage, self).__init__()
         self.operating_system = operating_system

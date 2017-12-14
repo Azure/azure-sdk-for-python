@@ -31,4 +31,5 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(Model):
     }
 
     def __init__(self, domain_name_label):
+        super(VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings, self).__init__()
         self.domain_name_label = domain_name_label

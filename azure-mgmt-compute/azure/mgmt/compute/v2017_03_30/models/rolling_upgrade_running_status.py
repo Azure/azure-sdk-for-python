@@ -47,6 +47,7 @@ class RollingUpgradeRunningStatus(Model):
     }
 
     def __init__(self):
+        super(RollingUpgradeRunningStatus, self).__init__()
         self.code = None
         self.start_time = None
         self.last_action = None

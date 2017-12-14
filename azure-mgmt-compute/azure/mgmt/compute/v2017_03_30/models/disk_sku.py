@@ -36,5 +36,6 @@ class DiskSku(Model):
     }
 
     def __init__(self, name=None):
+        super(DiskSku, self).__init__()
         self.name = name
         self.tier = None

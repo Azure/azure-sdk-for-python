@@ -27,5 +27,6 @@ class BootDiagnosticsInstanceView(Model):
     }
 
     def __init__(self, console_screenshot_blob_uri=None, serial_console_log_blob_uri=None):
+        super(BootDiagnosticsInstanceView, self).__init__()
         self.console_screenshot_blob_uri = console_screenshot_blob_uri
         self.serial_console_log_blob_uri = serial_console_log_blob_uri

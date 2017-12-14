@@ -33,5 +33,6 @@ class GrantAccessData(Model):
     }
 
     def __init__(self, access, duration_in_seconds):
+        super(GrantAccessData, self).__init__()
         self.access = access
         self.duration_in_seconds = duration_in_seconds

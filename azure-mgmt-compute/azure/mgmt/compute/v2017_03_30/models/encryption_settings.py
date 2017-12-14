@@ -38,6 +38,7 @@ class EncryptionSettings(Model):
     }
 
     def __init__(self, enabled=None, disk_encryption_key=None, key_encryption_key=None):
+        super(EncryptionSettings, self).__init__()
         self.enabled = enabled
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key

@@ -25,4 +25,5 @@ class SourceVault(Model):
     }
 
     def __init__(self, id=None):
+        super(SourceVault, self).__init__()
         self.id = id

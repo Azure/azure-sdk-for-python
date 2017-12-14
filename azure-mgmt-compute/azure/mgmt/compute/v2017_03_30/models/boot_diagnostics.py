@@ -33,5 +33,6 @@ class BootDiagnostics(Model):
     }
 
     def __init__(self, enabled=None, storage_uri=None):
+        super(BootDiagnostics, self).__init__()
         self.enabled = enabled
         self.storage_uri = storage_uri
