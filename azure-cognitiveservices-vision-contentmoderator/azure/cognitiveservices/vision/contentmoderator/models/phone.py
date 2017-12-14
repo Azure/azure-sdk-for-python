@@ -21,16 +21,17 @@ class Phone(Model):
     :type text: str
     :param index: Index(Location) of the Phone number in the input text
      content.
-    :type index: float
+    :type index: int
     """
 
     _attribute_map = {
         'country_code': {'key': 'countryCode', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'float'},
+        'index': {'key': 'index', 'type': 'int'},
     }
 
     def __init__(self, country_code=None, text=None, index=None):
+        super(Phone, self).__init__()
         self.country_code = country_code
         self.text = text
         self.index = index

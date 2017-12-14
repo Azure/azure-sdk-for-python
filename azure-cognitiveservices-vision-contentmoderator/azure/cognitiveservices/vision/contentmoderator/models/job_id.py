@@ -24,4 +24,5 @@ class JobId(Model):
     }
 
     def __init__(self, job_id=None):
+        super(JobId, self).__init__()
         self.job_id = job_id

@@ -18,7 +18,7 @@ class ImageIds(Model):
     :param content_source: Source of the content.
     :type content_source: str
     :param content_ids: Id of the contents.
-    :type content_ids: list[float]
+    :type content_ids: list[int]
     :param status: Get Image status.
     :type status:
      ~azure.cognitiveservices.vision.contentmoderator.models.Status
@@ -28,12 +28,13 @@ class ImageIds(Model):
 
     _attribute_map = {
         'content_source': {'key': 'contentSource', 'type': 'str'},
-        'content_ids': {'key': 'contentIds', 'type': '[float]'},
+        'content_ids': {'key': 'contentIds', 'type': '[int]'},
         'status': {'key': 'status', 'type': 'Status'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
     }
 
     def __init__(self, content_source=None, content_ids=None, status=None, tracking_id=None):
+        super(ImageIds, self).__init__()
         self.content_source = content_source
         self.content_ids = content_ids
         self.status = status

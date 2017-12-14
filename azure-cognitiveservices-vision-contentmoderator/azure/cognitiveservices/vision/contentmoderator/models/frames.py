@@ -28,5 +28,6 @@ class Frames(Model):
     }
 
     def __init__(self, review_id=None, video_frames=None):
+        super(Frames, self).__init__()
         self.review_id = review_id
         self.video_frames = video_frames

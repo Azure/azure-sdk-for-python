@@ -53,6 +53,7 @@ class Review(Model):
     }
 
     def __init__(self, review_id=None, sub_team=None, status=None, reviewer_result_tags=None, created_by=None, metadata=None, type=None, content=None, content_id=None, callback_endpoint=None):
+        super(Review, self).__init__()
         self.review_id = review_id
         self.sub_team = sub_team
         self.status = status

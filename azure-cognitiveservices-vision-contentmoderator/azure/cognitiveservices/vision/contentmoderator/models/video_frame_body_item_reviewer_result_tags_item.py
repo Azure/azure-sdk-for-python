@@ -32,5 +32,6 @@ class VideoFrameBodyItemReviewerResultTagsItem(Model):
     }
 
     def __init__(self, key, value):
+        super(VideoFrameBodyItemReviewerResultTagsItem, self).__init__()
         self.key = key
         self.value = value

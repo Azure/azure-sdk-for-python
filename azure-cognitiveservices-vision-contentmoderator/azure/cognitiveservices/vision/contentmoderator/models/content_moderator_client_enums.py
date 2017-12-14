@@ -27,12 +27,3 @@ class AzureRegionBaseUrl(Enum):
     australiaeastapicognitivemicrosoftcom = "australiaeast.api.cognitive.microsoft.com"
     brazilsouthapicognitivemicrosoftcom = "brazilsouth.api.cognitive.microsoft.com"
     contentmoderatortestazure_apinet = "contentmoderatortest.azure-api.net"
-
-
-class ContentTypes(Enum):
-
-    imagegif = "image/gif"
-    imagejpeg = "image/jpeg"
-    imagepng = "image/png"
-    imagebmp = "image/bmp"
-    imagetiff = "image/tiff"

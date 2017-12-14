@@ -61,6 +61,7 @@ class CreateVideoReviewsBodyItem(Model):
     type = "Video"
 
     def __init__(self, content, content_id, status, video_frames=None, metadata=None, timescale=None, callback_endpoint=None):
+        super(CreateVideoReviewsBodyItem, self).__init__()
         self.video_frames = video_frames
         self.metadata = metadata
         self.content = content

@@ -32,5 +32,6 @@ class TranscriptModerationBodyItemTermsItem(Model):
     }
 
     def __init__(self, index, term):
+        super(TranscriptModerationBodyItemTermsItem, self).__init__()
         self.index = index
         self.term = term

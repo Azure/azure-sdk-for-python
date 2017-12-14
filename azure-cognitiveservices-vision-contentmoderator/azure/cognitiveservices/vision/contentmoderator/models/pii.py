@@ -37,6 +37,7 @@ class PII(Model):
     }
 
     def __init__(self, email=None, ipa=None, phone=None, address=None):
+        super(PII, self).__init__()
         self.email = email
         self.ipa = ipa
         self.phone = phone

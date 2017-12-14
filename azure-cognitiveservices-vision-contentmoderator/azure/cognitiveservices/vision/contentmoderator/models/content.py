@@ -28,4 +28,5 @@ class Content(Model):
     }
 
     def __init__(self, content_value):
+        super(Content, self).__init__()
         self.content_value = content_value
