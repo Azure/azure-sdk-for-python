@@ -327,10 +327,13 @@ class ComputeManagementClient(object):
         """Instance depends on the API version:
 
            * 2017-03-30: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_03_30.operations.VirtualMachineRunCommandsOperations>`
+           * 2017-12-01: :class:`VirtualMachineRunCommandsOperations<azure.mgmt.compute.v2017_12_01.operations.VirtualMachineRunCommandsOperations>`
         """
         api_version = self.profile.get('virtual_machine_run_commands', self.api_version)
         if api_version == '2017-03-30':
             from .v2017_03_30.operations import VirtualMachineRunCommandsOperations as OperationClass
+        elif api_version == '2017-12-01':
+            from .v2017_12_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

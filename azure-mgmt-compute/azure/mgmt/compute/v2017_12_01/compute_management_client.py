@@ -25,6 +25,7 @@ from .operations.virtual_machine_scale_sets_operations import VirtualMachineScal
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
+from .operations.virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from . import models
 
 
@@ -92,6 +93,8 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_scale_set_rolling_upgrades: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
     :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineScaleSetVMsOperations
+    :ivar virtual_machine_run_commands: VirtualMachineRunCommands operations
+    :vartype virtual_machine_run_commands: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineRunCommandsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -137,4 +140,6 @@ class ComputeManagementClient(object):
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self.config, self._serialize, self._deserialize)
