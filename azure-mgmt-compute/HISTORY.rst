@@ -3,14 +3,19 @@
 Release History
 ===============
 
-3.1.0rc2 (2017-XX-XX)
+3.1.0rc2 (2017-12-14)
 +++++++++++++++++++++
 
 **Unreleased**
 
+**Features**
+
+- Add User Assigned Identity parameters to VM/VMSS creation
+
 **Bugfixes**
 
 - Add RestrictionInfo to SKUs list (2017-09-01)
+- Restore virtual_machines.run_commands (broken in rc1)
 
 3.1.0rc1 (2017-11-27)
 +++++++++++++++++++++
