@@ -3,10 +3,13 @@
 Release History
 ===============
 
-1.7.0 (2017-XX-XX)
+1.7.0 (2017-12-14)
 ++++++++++++++++++
 
-**Unreleased**
+**Features**
+
+- Add iptag. IpTag is way to restrict the range of IPaddresses to be allocated.
+- Default API version is now 2017-11-01
 
 **Bug fixes**
 
