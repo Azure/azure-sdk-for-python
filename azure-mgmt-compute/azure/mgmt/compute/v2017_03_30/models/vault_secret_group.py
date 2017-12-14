@@ -30,5 +30,6 @@ class VaultSecretGroup(Model):
     }
 
     def __init__(self, source_vault=None, vault_certificates=None):
+        super(VaultSecretGroup, self).__init__()
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates

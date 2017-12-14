@@ -33,6 +33,7 @@ class DiskInstanceView(Model):
     }
 
     def __init__(self, name=None, encryption_settings=None, statuses=None):
+        super(DiskInstanceView, self).__init__()
         self.name = name
         self.encryption_settings = encryption_settings
         self.statuses = statuses

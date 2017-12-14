@@ -26,4 +26,5 @@ class VirtualMachineScaleSetNetworkProfile(Model):
     }
 
     def __init__(self, network_interface_configurations=None):
+        super(VirtualMachineScaleSetNetworkProfile, self).__init__()
         self.network_interface_configurations = network_interface_configurations

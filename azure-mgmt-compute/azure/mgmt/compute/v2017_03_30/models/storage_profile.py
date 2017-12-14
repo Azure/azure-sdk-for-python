@@ -41,6 +41,7 @@ class StorageProfile(Model):
     }
 
     def __init__(self, image_reference=None, os_disk=None, data_disks=None):
+        super(StorageProfile, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks

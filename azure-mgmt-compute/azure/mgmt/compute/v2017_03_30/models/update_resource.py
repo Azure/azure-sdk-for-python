@@ -24,4 +24,5 @@ class UpdateResource(Model):
     }
 
     def __init__(self, tags=None):
+        super(UpdateResource, self).__init__()
         self.tags = tags

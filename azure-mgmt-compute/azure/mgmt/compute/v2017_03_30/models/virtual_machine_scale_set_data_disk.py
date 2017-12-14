@@ -54,6 +54,7 @@ class VirtualMachineScaleSetDataDisk(Model):
     }
 
     def __init__(self, lun, create_option, name=None, caching=None, disk_size_gb=None, managed_disk=None):
+        super(VirtualMachineScaleSetDataDisk, self).__init__()
         self.name = name
         self.lun = lun
         self.caching = caching

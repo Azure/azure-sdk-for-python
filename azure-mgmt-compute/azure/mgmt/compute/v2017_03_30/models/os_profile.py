@@ -89,6 +89,7 @@ class OSProfile(Model):
     }
 
     def __init__(self, computer_name=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+        super(OSProfile, self).__init__()
         self.computer_name = computer_name
         self.admin_username = admin_username
         self.admin_password = admin_password

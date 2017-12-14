@@ -35,5 +35,6 @@ class ResourceSkuCapabilities(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuCapabilities, self).__init__()
         self.name = None
         self.value = None

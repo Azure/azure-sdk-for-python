@@ -41,5 +41,6 @@ class VaultCertificate(Model):
     }
 
     def __init__(self, certificate_url=None, certificate_store=None):
+        super(VaultCertificate, self).__init__()
         self.certificate_url = certificate_url
         self.certificate_store = certificate_store

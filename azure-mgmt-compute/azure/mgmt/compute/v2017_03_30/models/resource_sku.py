@@ -81,6 +81,7 @@ class ResourceSku(Model):
     }
 
     def __init__(self):
+        super(ResourceSku, self).__init__()
         self.resource_type = None
         self.name = None
         self.tier = None

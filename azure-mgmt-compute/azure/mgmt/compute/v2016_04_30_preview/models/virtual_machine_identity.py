@@ -41,6 +41,7 @@ class VirtualMachineIdentity(Model):
     }
 
     def __init__(self, type=None):
+        super(VirtualMachineIdentity, self).__init__()
         self.principal_id = None
         self.tenant_id = None
         self.type = type

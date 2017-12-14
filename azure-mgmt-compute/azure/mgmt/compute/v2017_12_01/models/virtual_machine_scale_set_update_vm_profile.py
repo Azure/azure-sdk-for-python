@@ -46,6 +46,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     }
 
     def __init__(self, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type=None):
+        super(VirtualMachineScaleSetUpdateVMProfile, self).__init__()
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile

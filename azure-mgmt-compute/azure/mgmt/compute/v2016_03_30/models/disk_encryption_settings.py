@@ -15,11 +15,12 @@ from msrest.serialization import Model
 class DiskEncryptionSettings(Model):
     """Describes a Encryption Settings for a Disk.
 
-    :param disk_encryption_key: The disk encryption key which is a Key Vault
-     Secret.
+    :param disk_encryption_key: Specifies the location of the disk encryption
+     key, which is a Key Vault Secret.
     :type disk_encryption_key:
      ~azure.mgmt.compute.v2016_03_30.models.KeyVaultSecretReference
-    :param key_encryption_key: The key encryption key which is Key Vault Key.
+    :param key_encryption_key: Specifies the location of the key encryption
+     key in Key Vault.
     :type key_encryption_key:
      ~azure.mgmt.compute.v2016_03_30.models.KeyVaultKeyReference
     :param enabled: Specifies whether disk encryption should be enabled on the
@@ -34,6 +35,7 @@ class DiskEncryptionSettings(Model):
     }
 
     def __init__(self, disk_encryption_key=None, key_encryption_key=None, enabled=None):
+        super(DiskEncryptionSettings, self).__init__()
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key
         self.enabled = enabled

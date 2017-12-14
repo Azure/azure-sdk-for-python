@@ -87,6 +87,7 @@ class VirtualMachineScaleSetOSProfile(Model):
     }
 
     def __init__(self, computer_name_prefix=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+        super(VirtualMachineScaleSetOSProfile, self).__init__()
         self.computer_name_prefix = computer_name_prefix
         self.admin_username = admin_username
         self.admin_password = admin_password

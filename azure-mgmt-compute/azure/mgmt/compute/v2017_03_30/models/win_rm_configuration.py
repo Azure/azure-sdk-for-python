@@ -25,4 +25,5 @@ class WinRMConfiguration(Model):
     }
 
     def __init__(self, listeners=None):
+        super(WinRMConfiguration, self).__init__()
         self.listeners = listeners

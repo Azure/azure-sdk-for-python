@@ -30,8 +30,13 @@ class VirtualMachineScaleSet(Resource):
     :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
     :type sku: ~azure.mgmt.compute.v2016_04_30_preview.models.Sku
-    :param plan: The purchase plan when deploying a virtual machine scale set
-     from VM Marketplace images.
+    :param plan: Specifies information about the marketplace image used to
+     create the virtual machine. This element is only used for marketplace
+     images. Before you can use a marketplace image from an API, you must
+     enable the image for programmatic use.  In the Azure portal, find the
+     marketplace image that you want to use and then click **Want to deploy
+     programmatically, Get Started ->**. Enter any required information and
+     then click **Save**.
     :type plan: ~azure.mgmt.compute.v2016_04_30_preview.models.Plan
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy:
@@ -42,9 +47,9 @@ class VirtualMachineScaleSet(Resource):
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param overprovision: Specifies whether the Virtual Machine Scale Set
+    :param over_provision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
-    :type overprovision: bool
+    :type over_provision: bool
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
@@ -73,18 +78,18 @@ class VirtualMachineScaleSet(Resource):
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
+    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, over_provision=None, single_placement_group=None, identity=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.plan = plan
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
-        self.overprovision = overprovision
+        self.over_provision = over_provision
         self.single_placement_group = single_placement_group
         self.identity = identity

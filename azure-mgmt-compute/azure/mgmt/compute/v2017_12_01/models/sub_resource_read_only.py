@@ -31,4 +31,5 @@ class SubResourceReadOnly(Model):
     }
 
     def __init__(self):
+        super(SubResourceReadOnly, self).__init__()
         self.id = None

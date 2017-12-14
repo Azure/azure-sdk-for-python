@@ -64,6 +64,7 @@ class ImageOSDisk(Model):
     }
 
     def __init__(self, os_type, os_state, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
+        super(ImageOSDisk, self).__init__()
         self.os_type = os_type
         self.os_state = os_state
         self.snapshot = snapshot

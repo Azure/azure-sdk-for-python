@@ -31,7 +31,11 @@ class VirtualMachineInstanceView(Model):
     :param extensions: The extensions information.
     :type extensions:
      list[~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionInstanceView]
-    :param boot_diagnostics: The boot diagnostics.
+    :param boot_diagnostics: Boot Diagnostics is a debugging feature which
+     allows you to view Console Output and Screenshot to diagnose VM status.
+     <br><br> For Linux Virtual Machines, you can easily view the output of
+     your console log. <br><br> For both Windows and Linux virtual machines,
+     Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
      ~azure.mgmt.compute.v2016_03_30.models.BootDiagnosticsInstanceView
     :param statuses: The resource status information.
@@ -51,6 +55,7 @@ class VirtualMachineInstanceView(Model):
     }
 
     def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
+        super(VirtualMachineInstanceView, self).__init__()
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.rdp_thumb_print = rdp_thumb_print
