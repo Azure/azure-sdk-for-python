@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Iterable query results in the Azure DocumentDB database service.
+"""Iterable query results in the Azure Cosmos DB database service.
 """
 from pydocumentdb.execution_context import execution_dispatcher
 from pydocumentdb.execution_context import base_execution_context
@@ -34,12 +34,14 @@ class QueryIterable(object):
         Instantiates a QueryIterable for non-client side partitioning queries.
         _ProxyQueryExecutionContext will be used as the internal query execution context
          
-        :Parameters:
-            - client (DocumentClient), instance of document client
-            - query (dict) or (str), query
-            - options (dict), the request options for the request.
-            - fetch_function: method, fetch function
-            - collection_link (str): if this is a Document query/feed collection_link is required
+        :param DocumentClient client:
+            Instance of document client
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param method fetch_function:
+        :param str collection_link:
+            If this is a Document query/feed collection_link is required
  
         Example of `fetch_function`:
  
@@ -63,12 +65,15 @@ class QueryIterable(object):
         This constructor instantiates a QueryIterable for
         client side partitioning queries, and sets _MultiCollectionQueryExecutionContext
         as the internal execution context.
-        :Parameters:
-            - `client`: DocumentClient, instance of document client
-            - `query`: str or dict
-            - `options`: dict, the request options for the request.
-            - `database_link`: str, database self link or ID based link
-            - `partition_key`: str, partition key for the query
+        :param DocumentClient client:
+            Instance of document client
+        :param (str or dict) options:
+        :param dict options:
+            The request options for the request.
+        :param str database_link:
+            Database self link or ID based link
+        :param str partition_key:
+            Partition key for the query
         """
         # This will call the base constructor(__init__ method above)
         
@@ -116,8 +121,10 @@ class QueryIterable(object):
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
 
-        :Returns:
-            list. List of results.
+        :return:
+            List of results.
+        :rtype:
+            list
         """
                 
         if self._ex_context is None:

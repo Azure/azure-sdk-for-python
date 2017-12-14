@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""AzureDocument classes and enums for the Azure DocumentDB database service.
+"""AzureDocument classes and enums for the Azure Cosmos DB database service.
 """
 
 import pydocumentdb.retry_options as retry_options
@@ -27,26 +27,26 @@ import pydocumentdb.retry_options as retry_options
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
 
-    :Attributes:
-        - `DatabaseLink`: str, the self-link for Databases in the
-          databaseAccount.
-        - `MediaLink`: str, the self-link for Media in the databaseAccount.
-        - `MaxMediaStorageUsageInMB`: int, attachment content (media) storage
-          quota in MBs ( Retrieved from gateway ).
-        - `CurrentMediaStorageUsageInMB`: int, current attachment content
-          (media) usage in MBs (Retrieved from gateway ).
-
-          Value is returned from cached information updated periodically and
-          is not guaranteed to be real time.
-        - `ConsistencyPolicy`: dict, UserConsistencyPolicy settings.
-        - `ConsistencyPolicy['defaultConsistencyLevel']`: dict, the default
-          consistency level.
-        - `ConsistencyPolicy['maxStalenessPrefix']`: int, in bounded staleness
-          consistency, the maximum allowed staleness in terms difference in
-          sequence numbers (aka version).
-        - `ConsistencyPolicy['maxStalenessIntervalInSeconds']`: int, In bounded
-          staleness consistency, the maximum allowed staleness in terms time
-          interval.
+    :ivar str DatabaseLink:
+        The self-link for Databases in the databaseAccount.
+    :ivar str MediaLink:
+        The self-link for Media in the databaseAccount.
+    :ivar int MaxMediaStorageUsageInMB:
+        Attachment content (media) storage quota in MBs ( Retrieved from gateway ).
+    :ivar int CurrentMediaStorageUsageInMB:
+        Current attachment content (media) usage in MBs (Retrieved from gateway ).
+        Value is returned from cached information updated periodically and
+        is not guaranteed to be real time.
+    :ivar dict ConsistencyPolicy:
+        UserConsistencyPolicy settings.
+    :ivar dict ConsistencyPolicy['defaultConsistencyLevel']:
+        The default consistency level.
+    :ivar int ConsistencyPolicy['maxStalenessPrefix']: 
+        In bounded staleness consistency, the maximum allowed staleness in 
+        terms difference in sequence numbers (aka version).
+    :ivar int ConsistencyPolicy['maxStalenessIntervalInSeconds']:
+        In bounded staleness consistency, the maximum allowed staleness in 
+        terms time interval.
     """
 
     def __init__(self):
@@ -74,7 +74,7 @@ class DatabaseAccount(object):
         return self._ReadableLocations
 
 class ConsistencyLevel(object):
-    """Represents the consistency levels supported for DocumentDB client
+    """Represents the consistency levels supported for Azure Cosmos DB client
     operations.
 
     The requested ConsistencyLevel must match or be weaker than that provisioned
@@ -83,22 +83,26 @@ class ConsistencyLevel(object):
     Consistency levels by order of strength are Strong, BoundedStaleness,
     Session, ConsistentPrefix and Eventual.
 
-    :Attributes:
-        - `Strong`: Strong Consistency guarantees that read operations always
-          return the value that was last written.
-        - `BoundedStaleness` Bounded Staleness guarantees that reads are not
-          too out-of-date. This can be configured based on number of operations
-          (MaxStalenessPrefix) or time (MaxStalenessIntervalInSeconds).
-        - `Session`: Session Consistency guarantees monotonic reads (you never
-          read old data, then new, then old again), monotonic writes (writes
-          are ordered) and read your writes (your writes are immediately
-          visible to your reads) within any single session.
-        - `Eventual`: Eventual Consistency guarantees that reads will return
-          a subset of writes. All writes will be eventually be available for
-          reads.
-        - `ConsistentPrefix`: ConsistentPrefix Consistency guarantees that
-          reads will return some prefix of all writes with no gaps. All writes
-          will be eventually be available for reads.
+    :ivar str Strong:
+        Strong Consistency guarantees that read operations always
+        return the value that was last written.
+    :ivar str BoundedStaleness:
+        Bounded Staleness guarantees that reads are not
+        too out-of-date. This can be configured based on number of operations
+        (MaxStalenessPrefix) or time (MaxStalenessIntervalInSeconds).
+    :ivar str Session:
+        Session Consistency guarantees monotonic reads (you never
+        read old data, then new, then old again), monotonic writes (writes
+        are ordered) and read your writes (your writes are immediately
+        visible to your reads) within any single session.
+    :ivar str Eventual:
+        Eventual Consistency guarantees that reads will return
+        a subset of writes. All writes will be eventually be available for
+        reads.
+    :ivar str ConsistentPrefix: 
+        ConsistentPrefix Consistency guarantees that
+        reads will return some prefix of all writes with no gaps. All writes
+        will be eventually be available for reads.
     """
     Strong = 'Strong'
     BoundedStaleness = 'BoundedStaleness'
@@ -110,24 +114,26 @@ class ConsistencyLevel(object):
 class IndexingMode(object):
     """Specifies the supported indexing modes.
 
-    :Attributes:
-        - `Consistent`: Index is updated synchronously with a create or
-          update operation. With consistent indexing, query behavior is the
-          same as the default consistency level for the collection.
+    :ivar str Consistent:
+        Index is updated synchronously with a create or
+        update operation. With consistent indexing, query behavior is the
+        same as the default consistency level for the collection.
 
-          The index is
-          always kept up to date with the data.
-        - `Lazy`: Index is updated asynchronously with respect to a create
-          or update operation.
+        The index is
+        always kept up to date with the data.
+    :ivar str Lazy:
+        Index is updated asynchronously with respect to a create
+        or update operation.
 
-          With lazy indexing, queries are eventually consistent. The index is
-          updated when the collection is idle.
-        - `NoIndex`: No index is provided.
+        With lazy indexing, queries are eventually consistent. The index is
+        updated when the collection is idle.
+    :ivar str NoIndex:
+        No index is provided.
 
-          Setting IndexingMode to "None" drops the index. Use this if you don't
-          want to maintain the index for a document collection, to save the
-          storage cost or improve the write throughput. Your queries will
-          degenerate to scans of the entire collection.
+        Setting IndexingMode to "None" drops the index. Use this if you don't
+        want to maintain the index for a document collection, to save the
+        storage cost or improve the write throughput. Your queries will
+        degenerate to scans of the entire collection.
     """
     Consistent = 'consistent'
     Lazy = 'lazy'
@@ -137,13 +143,14 @@ class IndexingMode(object):
 class IndexKind(object):
     """Specifies the index kind of index specs.
 
-    :Attributes:
-        - `Hash`: The index entries are hashed to serve point look up queries.
-          Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
+    :ivar str Hash:
+        The index entries are hashed to serve point look up queries.
+        Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
 
-        - `Range`: The index entries are ordered. Range indexes are optimized for
-          inequality predicate queries with efficient range scans.
-          Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
+    :ivar str Range:
+        The index entries are ordered. Range indexes are optimized for
+        inequality predicate queries with efficient range scans.
+        Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
     """
     Hash = 'Hash'
     Range = 'Range'
@@ -151,20 +158,24 @@ class IndexKind(object):
 class PartitionKind(object):
     """Specifies the kind of partitioning to be applied.
 
-    :Attributes:
-        - `Hash`: The partition key definition path is hashed.
+    :ivar str Hash:
+        The partition key definition path is hashed.
     """
     Hash = 'Hash'
 
 class DataType(object):
     """Specifies the data type of index specs.
 
-    :Attributes:
-        - `Number`: Represents a numeric data type
-        - `String`: Represents a string data type.
-        - `Point`: Represents a point data type
-        - `LineString`: Represents a line string data type
-        - `Polygon`: Represents a polygon data type
+    :ivar str Number:
+        Represents a numeric data type
+    :ivar str String:
+        Represents a string data type.
+    :ivar str Point:
+        Represents a point data type
+    :ivar str LineString:
+        Represents a line string data type
+    :ivar str Polygon:
+        Represents a polygon data type
     """
     Number = 'Number'
     String = 'String'
@@ -176,10 +187,12 @@ class DataType(object):
 class IndexingDirective(object):
     """Specifies whether or not the resource is to be indexed.
 
-    :Attributes:
-        - `Default`: Use any pre-defined/pre-configured defaults.
-        - `Include`: Index the resource.
-        - `Exclude`: Do not index the resource.
+    :ivar int Default:
+        Use any pre-defined/pre-configured defaults.
+    :ivar int Exclude:
+        Index the resource.
+    :ivar int Include:
+        Do not index the resource.
     """
     Default = 0
     Exclude = 1
@@ -189,9 +202,9 @@ class IndexingDirective(object):
 class ConnectionMode(object):
     """Represents the connection mode to be used by the client.
 
-    :Attributes:
-        - `Gateway`: Use the DocumentDB gateway to route all requests. The
-          gateway proxies requests to the right data partition.
+    :ivar int Gateway:
+        Use the Azure Cosmos DB gateway to route all requests. The
+        gateway proxies requests to the right data partition.
     """
     Gateway = 0
 
@@ -200,16 +213,17 @@ class MediaReadMode(object):
     """Represents the mode for use with downloading attachment content
     (aka media).
 
-    :Attributes:
-        - `Buffered`: Content is buffered at the client and not directly
-          streamed from the content store.
+    :ivar str Buffered:
+        Content is buffered at the client and not directly
+        streamed from the content store.
 
-          Use Buffered to reduce the time taken to read and write media files.
-        - `Streamed`: Content is directly streamed from the content store
-          without any buffering at the client.
+        Use Buffered to reduce the time taken to read and write media files.
+    :ivar str Streamed:
+        Content is directly streamed from the content store
+        without any buffering at the client.
 
-          Use Streamed to reduce the client memory overhead of reading and
-          writing media files.
+        Use Streamed to reduce the client memory overhead of reading and
+        writing media files.
     """
     Buffered = 'Buffered'
     Streamed = 'Streamed'
@@ -218,10 +232,12 @@ class MediaReadMode(object):
 class PermissionMode(object):
     """Enumeration specifying applicability of permission.
 
-    :Attributes:
-        - `NoneMode`: None.
-        - `Read`: Permission applicable for read operations only.
-        - `All`: Permission applicable for all operations.
+    :ivar str NoneMode:
+        None.
+    :ivar str Read:
+        Permission applicable for read operations only.
+    :ivar str All:
+        Permission applicable for all operations.
     """
     NoneMode = 'none'  # None is python's key word.
     Read = 'read'
@@ -231,9 +247,10 @@ class PermissionMode(object):
 class TriggerType(object):
     """Specifies the type of the trigger.
 
-    :Attributes:
-        - `Pre`: Trigger should be executed before the associated operation(s).
-        - `Post`: Trigger should be executed after the associated operation(s).
+    :ivar str Pre:
+        Trigger should be executed before the associated operation(s).
+    :ivar str Post:
+        Trigger should be executed after the associated operation(s).
     """
     Pre = 'pre'
     Post = 'post'
@@ -242,12 +259,16 @@ class TriggerType(object):
 class TriggerOperation(object):
     """Specifies the operations on which a trigger should be executed.
 
-    :Attributes:
-        - `All`: All operations.
-        - `Create`: Create operations only.
-        - `Update`: Update operations only.
-        - `Delete`: Delete operations only.
-        - `Replace`: Replace operations only.
+    :ivar str All:
+        All operations.
+    :ivar str Create:
+        Create operations only.
+    :ivar str Update:
+        Update operations only.
+    :ivar str Delete:
+        Delete operations only.
+    :ivar str Replace:
+        Replace operations only.
     """
     All = 'all'
     Create = 'create'
@@ -261,10 +282,12 @@ class SSLConfiguration(object):
 
     Please refer to http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification for more detail.
 
-    :Attributes:
-        - `SSLKeyFile`: str, the path of the key file for ssl connection.
-        - `SSLCertFile`: str, the path of the cert file for ssl connection.
-        - `SSLCaCerts`: str, the path of the CA_BUNDLE file with certificates of trusted CAs.
+    :ivar str SSLKeyFIle:
+        The path of the key file for ssl connection.
+    :ivar str SSLCertFile:
+        The path of the cert file for ssl connection.
+    :ivar str SSLCaCerts:
+        The path of the CA_BUNDLE file with certificates of trusted CAs.
     """
     def __init__(self):
         self.SSLKeyFile = None
@@ -275,9 +298,10 @@ class SSLConfiguration(object):
 class ProxyConfiguration(object):
     """Configurations for proxy.
 
-    :Attributes:
-        - `Host`: str, the host address of the proxy.
-        - `Port`: int, the port number of the proxy.
+    :ivar str Host:
+        The host address of the proxy.
+    :ivar int Port:
+        The port number of the proxy.
     """
     def __init__(self):
         self.Host = None
@@ -287,30 +311,38 @@ class ProxyConfiguration(object):
 class ConnectionPolicy(object):
     """Represents the Connection policy assocated with a DocumentClient.
 
-    :Attributes:
-        - `RequestTimeout`: int, gets or sets the request timeout (time to wait
-          for response from network peer)
-        - `MediaRequestTimeout`: int, gets or sets Time to wait for response
-          from network peer for attachment content (aka media) operations.
-        - `ConnectionMode`: int (documents.ConnectionMode), gets or sets the
-          connection mode used in the client. Currently only Gateway is supported.
-        - `MediaReadMode`: str (MediaReadMode.Buffered), gets or sets the
-          attachment content (aka media) download mode.
-        - `SSLConfiguration`: documents.SSLConfiguration, gets or sets the SSL configuration.
-        - `ProxyConfiguration`: documents.ProxyConfiguration, gets or sets the proxy configuration.
-        - `EnableEndpointDiscovery`: boolean, gets or sets endpoint discovery flag for geo-replicated database accounts.
-           When EnableEndpointDiscovery is true, the client will automatically discover the
-           current write and read locations and direct the requests to the correct location
-           taking into consideration of the user's preference(if provided) as PreferredLocations.
-        - `PreferredLocations`: list, gets or sets the preferred locations for geo-replicated database accounts.
-           When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
-           the client will use this list to evaluate the final location, taking into consideration
-           the order specified in PreferredLocations list. The locations in this list are specified as the names of
-           the azure documentdb locations like, 'West US', 'East US', 'Central India' and so on.
-        - `RetryOptions`: RetryOptions, gets or sets the retry options to be applied to all requests when retrying.
-        - `DisableSSLVerification` : boolean, flag to disable SSL verification for the requests. SSL verification is enabled by default. 
-           Don't set this when targeting production endpoints.
-           This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
+    :ivar int RequestTimeout:
+        Gets or sets the request timeout (time to wait
+        for response from network peer)
+    :ivar int MediaRequestTimeout: 
+        Gets or sets Time to wait for response
+        from network peer for attachment content (aka media) operations.
+    :ivar documents.ConnectionMode ConnectionMode:
+        Gets or sets the connection mode used in the client. Currently 
+        only Gateway is supported.
+    :ivar MediaReadMode.Buffered MediaReadMode:
+        Gets or sets the attachment content (aka media) download mode.
+    :ivar documents.SSLConfiguration SSLConfiguration:
+        Gets or sets the SSL configuration.
+    :ivar documents.ProxyConfiguration ProxyConfiguration:
+        Gets or sets the proxy configuration.
+    :ivar boolean EnableEndpointDiscovery:
+        Gets or sets endpoint discovery flag for geo-replicated database accounts.
+        When EnableEndpointDiscovery is true, the client will automatically discover the
+        current write and read locations and direct the requests to the correct location
+        taking into consideration of the user's preference(if provided) as PreferredLocations.
+    :ivar list PreferredLocations:
+        Gets or sets the preferred locations for geo-replicated database accounts.
+        When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
+        the client will use this list to evaluate the final location, taking into consideration
+        the order specified in PreferredLocations list. The locations in this list are specified as the names of
+        the azure cosmos db locations like, 'West US', 'East US', 'Central India' and so on.
+    :ivar RetryOptions RetryOptions:
+        Gets or sets the retry options to be applied to all requests when retrying.
+    :ivar boolean DisableSSLVerification:
+        Flag to disable SSL verification for the requests. SSL verification is enabled by default. 
+        Don't set this when targeting production endpoints.
+        This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds

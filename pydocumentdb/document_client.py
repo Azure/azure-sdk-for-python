@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Document client class for the Azure DocumentDB database service.
+"""Document client class for the Azure Cosmos DB database service.
 """
 
 import requests
@@ -40,12 +40,12 @@ import pydocumentdb.utils as utils
 class DocumentClient(object):
     """Represents a document client.
 
-    Provides a client-side logical representation of the Azure DocumentDB
+    Provides a client-side logical representation of the Azure Cosmos DB
     service. This client is used to configure and execute requests against the
     service.
 
     The service client encapsulates the endpoint and credentials used to access
-    the DocumentDB service.
+    the Azure Cosmos DB service.
     """
 
     class _QueryCompatibilityMode:
@@ -67,16 +67,17 @@ class DocumentClient(object):
                  connection_policy=None,
                  consistency_level=documents.ConsistencyLevel.Session):
         """
-        :Parameters:
-            - `url_connection`: str, the URL for connecting to the DB server.
-            - `auth`: dict, contains 'masterKey' or 'resourceTokens', where
-               auth['masterKey'] is the default authorization key to use to
-               create the client, and auth['resourceTokens'] is the alternative
-               authorization key.
-            - `connection_policy`: documents.ConnectionPolicy, the connection
-              policy for the client.
-            - `consistency_level`: documents.ConsistencyLevel, the default
-              consistency policy for client operations.
+        :param str url_connection:
+            The URL for connecting to the DB server.
+        :param dict auth:
+            Contains 'masterKey' or 'resourceTokens', where
+            auth['masterKey'] is the default authorization key to use to
+            create the client, and auth['resourceTokens'] is the alternative
+            authorization key.
+        :param documents.ConnectionPolicy connection_policy:
+            The connection policy for the client.
+        :param documents.ConsistencyLevel consistency_level:
+            The default consistency policy for client operations.
 
         """
         self.url_connection = url_connection
@@ -167,9 +168,10 @@ class DocumentClient(object):
     def RegisterPartitionResolver(self, database_link, partition_resolver):
         """Registers the partition resolver associated with the database link
 
-        :Parameters:
-            - `database_link`: str, database Self Link or ID based link
-            - `partition_resolver`: object, an instance of PartitionResolver
+        :param str database_link:
+            Database Self Link or ID based link
+        :param object partition_resolver:
+            An instance of PartitionResolver
         
         """
         if not database_link:
@@ -184,12 +186,13 @@ class DocumentClient(object):
     def GetPartitionResolver(self, database_link):
         """Gets the partition resolver associated with the database link
 
-        :Parameters:
-            - `database_link`: str, database self link or ID based link
+        :param str database_link:
+            Database self link or ID based link
 
-        :Returns:
-            object, an instance of PartitionResolver
-        
+        :return:
+            An instance of PartitionResolver
+        :rtype: object
+
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
@@ -200,12 +203,14 @@ class DocumentClient(object):
     def CreateDatabase(self, database, options=None):
         """Creates a database.
 
-        :Parameters:
-            - `database`: dict, the Azure DocumentDB database to create.
-            - `options`: dict, the request options for the request.
+        :param dict database:
+            The Azure Cosmos DB database to create.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
-            dict
+        :return:
+            The Database that was created
+        :rtype: dict
 
         """
         if options is None:
@@ -218,12 +223,14 @@ class DocumentClient(object):
     def ReadDatabase(self, database_link, options=None):
         """Reads a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
-            dict
+        :return:
+            The Database that was read
+        :rtype: dict
 
         """
         if options is None:
@@ -236,10 +243,12 @@ class DocumentClient(object):
     def ReadDatabases(self, options=None):
         """Reads all databases.
 
-        :Parameters:
-            - `options`: dict, the request options for the request.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return: 
+            Query Iterable of Databases
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -251,11 +260,12 @@ class DocumentClient(object):
     def QueryDatabases(self, query, options=None):
         """Queries databases.
 
-        :Parameters:
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return: Query Iterable of Databases
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -275,11 +285,13 @@ class DocumentClient(object):
     def ReadCollections(self, database_link, options=None):
         """Reads all collections in a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return: Query Iterable of Collections
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -291,12 +303,14 @@ class DocumentClient(object):
     def QueryCollections(self, database_link, query, options=None):
         """Queries collections in a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return: Query Iterable of Collections
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -318,13 +332,15 @@ class DocumentClient(object):
     def CreateCollection(self, database_link, collection, options=None):
         """Creates a collection in a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `collection`: dict, the Azure DocumentDB collection to create.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict collection:
+            The Azure Cosmos DB collection to create.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
-            dict
+        :return: The Collection that was created
+        :rtype: dict
 
         """
         if options is None:
@@ -343,12 +359,16 @@ class DocumentClient(object):
     def ReplaceCollection(self, collection_link, collection, options=None):
         """Replaces a collection and return it.
 
-        :Parameters:
-            - `collection_link`: str, the link to the collection entity.
-            - `collection`: dict, the collection to be used.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the collection entity.
+        :param dict collection: 
+            The collection to be used.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new Collection
+        :rtype:
             dict
 
         """
@@ -368,11 +388,14 @@ class DocumentClient(object):
     def ReadCollection(self, collection_link, options=None):
         """Reads a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read Collection
+        :rtype:
             dict
 
         """
@@ -390,12 +413,16 @@ class DocumentClient(object):
     def CreateUser(self, database_link, user, options=None):
         """Creates a user.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `user`: dict, the Azure DocumentDB user to create.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict user:
+            The Azure Cosmos DB user to create.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created User
+        :rtype:
             dict
 
         """
@@ -413,14 +440,16 @@ class DocumentClient(object):
     def UpsertUser(self, database_link, user, options=None):
         """Upserts a user.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `user`: dict, the Azure DocumentDB user to upsert.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict user:
+            The Azure Cosmos DB user to upsert.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
-            dict
-
+        :return:
+            The upserted User
+        :rtype: dict
         """
         if options is None:
             options = {}
@@ -443,11 +472,14 @@ class DocumentClient(object):
     def ReadUser(self, user_link, options=None):
         """Reads a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read User
+        :rtype:
             dict
 
         """
@@ -461,10 +493,13 @@ class DocumentClient(object):
     def ReadUsers(self, database_link, options=None):
         """Reads all users in a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `options`: dict, the request options for the request.
-        :Returns:
+        :params str database_link:
+            The link to the database.
+        :params dict options:
+            The request options for the request.
+        :return:
+            Query iterable of Users
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -476,12 +511,15 @@ class DocumentClient(object):
     def QueryUsers(self, database_link, query, options=None):
         """Queries users in a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Users
+        :rtype:   
             query_iterable.QueryIterable
 
         """
@@ -503,11 +541,14 @@ class DocumentClient(object):
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
 
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `options`: dict, the request options for the request.
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Database
+        :rtype:
             dict
 
         """
@@ -525,12 +566,16 @@ class DocumentClient(object):
     def CreatePermission(self, user_link, permission, options=None):
         """Creates a permission for a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `permission`: dict, the Azure DocumentDB user permission to create.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict permission:
+            The Azure Cosmos DB user permission to create.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Permission
+        :rtype:
             dict
 
         """
@@ -548,12 +593,16 @@ class DocumentClient(object):
     def UpsertPermission(self, user_link, permission, options=None):
         """Upserts a permission for a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `permission`: dict, the Azure DocumentDB user permission to upsert.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict permission:
+            The Azure Cosmos DB user permission to upsert.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted permission
+        :rtype:
             dict
 
         """
@@ -578,11 +627,14 @@ class DocumentClient(object):
     def ReadPermission(self, permission_link, options=None):
         """Reads a permission.
 
-        :Parameters:
-            - `permission_link`: str, the link to the permission.
-            - `options`: dict, the request options for the request.
+        :param str permission_link:
+            The link to the permission.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read permission
+        :rtype:
             dict
 
         """
@@ -600,11 +652,14 @@ class DocumentClient(object):
     def ReadPermissions(self, user_link, options=None):
         """Reads all permissions for a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Permissions
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -616,12 +671,15 @@ class DocumentClient(object):
     def QueryPermissions(self, user_link, query, options=None):
         """Queries permissions for a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Permissions
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -643,12 +701,15 @@ class DocumentClient(object):
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `user`: dict
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict user:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new User
+        :rtype:
             dict
 
         """
@@ -668,11 +729,14 @@ class DocumentClient(object):
     def DeleteUser(self, user_link, options=None):
         """Deletes a user.
 
-        :Parameters:
-            - `user_link`: str, the link to the user entity.
-            - `options`: dict, the request options for the request.
+        :param str user_link:
+            The link to the user entity.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted user
+        :rtype:
             dict
 
         """
@@ -690,12 +754,15 @@ class DocumentClient(object):
     def ReplacePermission(self, permission_link, permission, options=None):
         """Replaces a permission and return it.
 
-        :Parameters:
-            - `permission_link`: str, the link to the permission.
-            - `permission`: dict
-            - `options`: dict, the request options for the request.
+        :param str permission_link:
+            The link to the permission.
+        :param dict permission:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new Permission
+        :rtype:
             dict
 
         """
@@ -715,11 +782,14 @@ class DocumentClient(object):
     def DeletePermission(self, permission_link, options=None):
         """Deletes a permission.
 
-        :Parameters:
-            - `permission_link`: str, the link to the permission.
-            - `options`: dict, the request options for the request.
+        :param str permission_link:
+            The link to the permission.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Permission
+        :rtype:
             dict
 
         """
@@ -737,11 +807,13 @@ class DocumentClient(object):
     def ReadDocuments(self, collection_link, feed_options=None):
         """Reads all documents in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `feed_options`: dict
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
 
-        :Returns:
+        :return:
+            Query Iterable of Documents
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -753,13 +825,17 @@ class DocumentClient(object):
     def QueryDocuments(self, database_or_collection_link, query, options=None, partition_key=None):
         """Queries documents in a collection.
 
-        :Parameters:
-            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
-            - `partition_key`: str, partition key for the query(default value None)
+        :param str database_or_collection_link:
+            The link to the database when using partitioning, otherwise link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key:
+            Partition key for the query(default value None)
 
-        :Returns:
+        :return:
+            Query Iterable of Documents
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -787,11 +863,13 @@ class DocumentClient(object):
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
         """Reads Partition Key Ranges.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `feed_options`: dict
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
 
-        :Returns:
+        :return:
+            Query Iterable of PartitionKeyRanges
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -803,12 +881,15 @@ class DocumentClient(object):
     def _QueryPartitionKeyRanges(self, collection_link, query, options=None):
         """Queries Partition Key Ranges in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of PartitionKeyRanges
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -830,15 +911,19 @@ class DocumentClient(object):
     def CreateDocument(self, database_or_collection_link, document, options=None):
         """Creates a document in a collection.
 
-        :Parameters:
-            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
-            - `document`: dict, the Azure DocumentDB document to create.
-            - `options`: dict, the request options for the request.
-            - `options['disableAutomaticIdGeneration']`: bool, disables the
-              automatic id generation. If id is missing in the body and this
-              option is true, an error will be returned.
+        :param str database_or_collection_link:
+            The link to the database when using partitioning, otherwise link to the document collection.
+        :param dict document:
+            The Azure Cosmos DB document to create.
+        :param dict options:
+            The request options for the request.
+        :param bool options['disableAutomaticIdGeneration']:
+            Disables the automatic id generation. If id is missing in the body and this
+            option is true, an error will be returned.
 
-        :Returns:
+        :return:
+            The created Document
+        :rtype:
             dict
 
         """
@@ -864,15 +949,19 @@ class DocumentClient(object):
     def UpsertDocument(self, database_or_collection_link, document, options=None):
         """Upserts a document in a collection.
 
-        :Parameters:
-            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
-            - `document`: dict, the Azure DocumentDB document to upsert.
-            - `options`: dict, the request options for the request.
-            - `options['disableAutomaticIdGeneration']`: bool, disables the
-              automatic id generation. If id is missing in the body and this
-              option is true, an error will be returned.
+        :param str database_or_collection_link:
+            The link to the database when using partitioning, otherwise link to the document collection.
+        :param dict document:
+            The Azure Cosmos DB document to upsert.
+        :param dict options:
+            The request options for the request.
+        :param bool options['disableAutomaticIdGeneration']:
+            Disables the automatic id generation. If id is missing in the body and this
+            option is true, an error will be returned.
 
-        :Returns:
+        :return:
+            The upserted Document
+        :rtype:
             dict
 
         """
@@ -929,11 +1018,14 @@ class DocumentClient(object):
     def ReadDocument(self, document_link, options=None):
         """Reads a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read Document
+        :rtype:
             dict
 
         """
@@ -951,11 +1043,14 @@ class DocumentClient(object):
     def ReadTriggers(self, collection_link, options=None):
         """Reads all triggers in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Triggers
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -967,12 +1062,15 @@ class DocumentClient(object):
     def QueryTriggers(self, collection_link, query, options=None):
         """Queries triggers in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Triggers
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -994,12 +1092,15 @@ class DocumentClient(object):
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `trigger`: dict
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Trigger
+        :rtype:
             dict
 
         """
@@ -1017,12 +1118,15 @@ class DocumentClient(object):
     def UpsertTrigger(self, collection_link, trigger, options=None):
         """Upserts a trigger in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `trigger`: dict
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted Trigger
+        :rtype:
             dict
 
         """
@@ -1053,11 +1157,14 @@ class DocumentClient(object):
     def ReadTrigger(self, trigger_link, options=None):
         """Reads a trigger.
 
-        :Parameters:
-            - `trigger_link`: str, the link to the trigger.
-            - `options`: dict, the request options for the request.
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read Trigger
+        :rtype:
             dict
 
         """
@@ -1071,11 +1178,14 @@ class DocumentClient(object):
     def ReadUserDefinedFunctions(self, collection_link, options=None):
         """Reads all user defined functions in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of UDFs
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1087,12 +1197,15 @@ class DocumentClient(object):
     def QueryUserDefinedFunctions(self, collection_link, query, options=None):
         """Queries user defined functions in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of UDFs
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1114,12 +1227,15 @@ class DocumentClient(object):
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the collection.
-            - `udf`: str
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the collection.
+        :param str udf:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created UDF
+        :rtype:
             dict
 
         """
@@ -1137,12 +1253,15 @@ class DocumentClient(object):
     def UpsertUserDefinedFunction(self, collection_link, udf, options=None):
         """Upserts a user defined function in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the collection.
-            - `udf`: str
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the collection.
+        :param str udf:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted UDF
+        :rtype:
             dict
 
         """
@@ -1173,11 +1292,14 @@ class DocumentClient(object):
     def ReadUserDefinedFunction(self, udf_link, options=None):
         """Reads a user defined function.
 
-        :Parameters:
-            - `udf_link`: str, the link to the user defined function.
-            - `options`: dict, the request options for the request.
+        :param str udf_link:
+            The link to the user defined function.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read UDF
+        :rtype:
             dict
 
         """
@@ -1191,11 +1313,14 @@ class DocumentClient(object):
     def ReadStoredProcedures(self, collection_link, options=None):
         """Reads all store procedures in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Stored Procedures
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1207,12 +1332,15 @@ class DocumentClient(object):
     def QueryStoredProcedures(self, collection_link, query, options=None):
         """Queries stored procedures in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Stored Procedures
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1234,12 +1362,15 @@ class DocumentClient(object):
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `sproc`: str
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param str sproc:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Stored Procedure
+        :rtype:
             dict
 
         """
@@ -1257,12 +1388,15 @@ class DocumentClient(object):
     def UpsertStoredProcedure(self, collection_link, sproc, options=None):
         """Upserts a stored procedure in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `sproc`: str
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param str sproc:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted Stored Procedure
+        :rtype:
             dict
 
         """
@@ -1292,11 +1426,14 @@ class DocumentClient(object):
     def ReadStoredProcedure(self, sproc_link, options=None):
         """Reads a stored procedure.
 
-        :Parameters:
-            - `sproc_link`: str, the link to the stored procedure.
-            - `options`: dict, the request options for the request.
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read Stored Procedure
+        :rtype:
             dict
 
         """
@@ -1310,11 +1447,13 @@ class DocumentClient(object):
     def ReadConflicts(self, collection_link, feed_options=None):
         """Reads conflicts.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `feed_options`: dict
+        :param str collection_link:
+            The link to the document collection.
+        :param dict feed_options:
 
-        :Returns:
+        :return:
+            Query Iterable of Conflicts
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1326,12 +1465,15 @@ class DocumentClient(object):
     def QueryConflicts(self, collection_link, query, options=None):
         """Queries conflicts in a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Conflicts
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1353,11 +1495,13 @@ class DocumentClient(object):
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
 
-        :Parameters:
-            - `conflict_link`: str, the link to the conflict.
-            - `opitions`: dict
+        :param str conflict_link:
+            The link to the conflict.
+        :param dict options:
 
-        :Returns:
+        :return:
+            The read Conflict
+        :rtype:
             dict
 
         """
@@ -1375,11 +1519,14 @@ class DocumentClient(object):
     def DeleteCollection(self, collection_link, options=None):
         """Deletes a collection.
 
-        :Parameters:
-            - `collection_link`: str, the link to the document collection.
-            - `options`: dict, the request options for the request.
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Collection
+        :rtype:
             dict
 
         """
@@ -1397,12 +1544,15 @@ class DocumentClient(object):
     def ReplaceDocument(self, document_link, new_document, options=None):
         """Replaces a document and returns it.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `new_document`: dict
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict new_document:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new Document
+        :rtype:
             dict
 
         """
@@ -1431,11 +1581,14 @@ class DocumentClient(object):
     def DeleteDocument(self, document_link, options=None):
         """Deletes a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Document
+        :rtype:
             dict
 
         """
@@ -1453,12 +1606,16 @@ class DocumentClient(object):
     def CreateAttachment(self, document_link, attachment, options=None):
         """Creates an attachment in a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `attachment`: dict, the Azure DocumentDB attachment to create.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict attachment:
+            The Azure Cosmos DB attachment to create.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Attachment
+        :rtype:
             dict
 
         """
@@ -1476,12 +1633,16 @@ class DocumentClient(object):
     def UpsertAttachment(self, document_link, attachment, options=None):
         """Upserts an attachment in a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `attachment`: dict, the Azure DocumentDB attachment to upsert.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict attachment:
+            The Azure Cosmos DB attachment to upsert.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted Attachment
+        :rtype:
             dict
 
         """
@@ -1508,12 +1669,15 @@ class DocumentClient(object):
                                        options=None):
         """Creates an attachment and upload media.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `readable_stream`: file-like stream object
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param (file-like stream object) readable_stream: 
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Attachment
+        :rtype:
             dict
 
         """
@@ -1534,12 +1698,15 @@ class DocumentClient(object):
                                        options=None):
         """Upserts an attachment and upload media.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `readable_stream`: file-like stream object
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param (file-like stream object) readable_stream:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted Attachment
+        :rtype:
             dict
 
         """
@@ -1576,11 +1743,14 @@ class DocumentClient(object):
     def ReadAttachment(self, attachment_link, options=None):
         """Reads an attachment.
 
-        :Parameters:
-            - `attachment_link`: str, the link to the attachment.
-            - `options`: dict, the request options for the request.
+        :param str attachment_link:
+            The link to the attachment.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The read Attachment
+        :rtype:
             dict
 
         """
@@ -1598,11 +1768,14 @@ class DocumentClient(object):
     def ReadAttachments(self, document_link, options=None):
         """Reads all attachments in a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Attachments
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1614,12 +1787,15 @@ class DocumentClient(object):
     def QueryAttachments(self, document_link, query, options=None):
         """Queries attachments in a document.
 
-        :Parameters:
-            - `document_link`: str, the link to the document.
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request.
+        :param str document_link:
+            The link to the document.
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            Query Iterable of Attachments
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -1647,10 +1823,12 @@ class DocumentClient(object):
         documents.MediaReadMode.Streamed, returns a file-like stream object;
         otherwise, returns a str.
 
-        :Parameters:
-            - `media_link`: str, the link to the media.
+        :param str media_link:
+            The link to the media.
 
-        :Returns:
+        :return:
+            The read Media
+        :rtype:
             str or file-like stream object
 
         """
@@ -1677,12 +1855,15 @@ class DocumentClient(object):
     def UpdateMedia(self, media_link, readable_stream, options=None):
         """Updates a media and returns it.
 
-        :Parameters:
-            - `media_link`: str, the link to the media.
-            - `readable_stream`: file-like stream object
-            - `options`: dict, the request options for the request.
+        :param str media_link:
+            The link to the media.
+        :param (file-like stream object) readable_stream:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The updated Media
+        :rtype:
             str or file-like stream object
 
         """
@@ -1727,12 +1908,15 @@ class DocumentClient(object):
     def ReplaceAttachment(self, attachment_link, attachment, options=None):
         """Replaces an attachment and returns it.
 
-        :Parameters:
-            - `attachment_link`: str, the link to the attachment.
-            - `attachment`: dict
-            - `options`: dict, the request options for the request.
+        :param str attachment_link:
+            The link to the attachment.
+        :param dict attachment:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The replaced Attachment
+        :rtype:
             dict
 
         """
@@ -1752,11 +1936,14 @@ class DocumentClient(object):
     def DeleteAttachment(self, attachment_link, options=None):
         """Deletes an attachment.
 
-        :Parameters:
-            - `attachment_link`: str, the link to the attachment.
-            - `options`: dict, the request options for the request.
+        :param str attachment_link:
+            The link to the attachment.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Attachment
+        :rtype:
             dict
 
         """
@@ -1774,12 +1961,15 @@ class DocumentClient(object):
     def ReplaceTrigger(self, trigger_link, trigger, options=None):
         """Replaces a trigger and returns it.
 
-        :Parameters:
-            - `trigger_link`: str, the link to the trigger.
-            - `trigger`: dict
-            - `options`: dict, the request options for the request.
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict trigger:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The replaced Trigger
+        :rtype:
             dict
 
         """
@@ -1805,11 +1995,14 @@ class DocumentClient(object):
     def DeleteTrigger(self, trigger_link, options=None):
         """Deletes a trigger.
 
-        :Parameters:
-            - `trigger_link`: str, the link to the trigger.
-            - `options`: dict, the request options for the request.
+        :param str trigger_link:
+            The link to the trigger.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Trigger
+        :rtype:
             dict
 
         """
@@ -1827,12 +2020,15 @@ class DocumentClient(object):
     def ReplaceUserDefinedFunction(self, udf_link, udf, options=None):
         """Replaces a user defined function and returns it.
 
-        :Parameters:
-            - `udf_link`: str, the link to the user defined function.
-            - `udf`: dict
-            - `options`: dict, the request options for the request.
+        :param str udf_link:
+            The link to the user defined function.
+        :param dict udf:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new UDF
+        :rtype:
             dict
 
         """
@@ -1858,11 +2054,14 @@ class DocumentClient(object):
     def DeleteUserDefinedFunction(self, udf_link, options=None):
         """Deletes a user defined function.
 
-        :Parameters:
-            - `udf_link`: str, the link to the user defined function.
-            - `options`: dict, the request options for the request.
+        :param str udf_link:
+            The link to the user defined function.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted UDF
+        :rtype:
             dict
 
         """
@@ -1880,12 +2079,16 @@ class DocumentClient(object):
     def ExecuteStoredProcedure(self, sproc_link, params, options=None):
         """Executes a store procedure.
 
-        :Parameters:
-            - `sproc_link`: str, the link to the stored procedure.
-            - `params`: dict, list or None
-            - `options`: dict, the request options for the request.
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict params:
+            List or None
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The Stored Procedure response
+        :rtype:
             dict
 
         """
@@ -1923,12 +2126,15 @@ class DocumentClient(object):
     def ReplaceStoredProcedure(self, sproc_link, sproc, options=None):
         """Replaces a stored procedure and returns it.
 
-        :Parameters:
-            - `sproc_link`: str, the link to the stored procedure.
-            - `sproc`: dict
-            - `options`: dict, the request options for the request.
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict sproc:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The replaced Stored Procedure
+        :rtype:
             dict
 
         """
@@ -1954,11 +2160,14 @@ class DocumentClient(object):
     def DeleteStoredProcedure(self, sproc_link, options=None):
         """Deletes a stored procedure.
 
-        :Parameters:
-            - `sproc_link`: str, the link to the stored procedure.
-            - `options`: dict, the request options for the request.
+        :param str sproc_link:
+            The link to the stored procedure.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Stored Procedure
+        :rtype:
             dict
 
         """
@@ -1976,11 +2185,14 @@ class DocumentClient(object):
     def DeleteConflict(self, conflict_link, options=None):
         """Deletes a conflict.
 
-        :Parameters:
-            - `conflict_link`: str, the link to the conflict.
-            - `options`: dict, the request options for the request.
+        :param str conflict_link:
+            The link to the conflict.
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Conflict
+        :rtype:
             dict
 
         """
@@ -1998,11 +2210,13 @@ class DocumentClient(object):
     def ReplaceOffer(self, offer_link, offer):
         """Replaces an offer and returns it.
 
-        :Parameters:
-            - `offer_link`: str, the link to the offer.
-            - `offer`: dict
+        :param str offer_link:
+            The link to the offer.
+        :param dict offer:
 
-        :Returns:
+        :return:
+            The replaced Offer
+        :rtype:
             dict
 
         """
@@ -2014,10 +2228,12 @@ class DocumentClient(object):
     def ReadOffer(self, offer_link):
         """Reads an offer.
 
-        :Parameters:
-            - `offer_link`: str, the link to the offer.
+        :param str offer_link:
+            The link to the offer.
 
-        :Returns:
+        :return:
+            The read Offer
+        :rtype:
             dict
 
         """
@@ -2028,10 +2244,12 @@ class DocumentClient(object):
     def ReadOffers(self, options=None):
         """Reads all offers.
 
-        :Parameters:
-            - `options`: dict, the request options for the request
+        :param dict options:
+            The request options for the request
 
-        :Returns:
+        :return:
+            Query Iterable of Offers
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -2043,11 +2261,13 @@ class DocumentClient(object):
     def QueryOffers(self, query, options=None):
         """Query for all offers.
 
-        :Parameters:
-            - `query`: str or dict.
-            - `options`: dict, the request options for the request
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request
 
-        :Returns:
+        :return:
+            Query Iterable of Offers
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -2067,7 +2287,9 @@ class DocumentClient(object):
     def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
 
-        :Returns:
+        :return:
+            The Database Account
+        :rtype:
             documents.DatabaseAccount
 
         """
@@ -2108,17 +2330,19 @@ class DocumentClient(object):
         return database_account
 
     def Create(self, body, path, type, id, initial_headers, options=None):
-        """Creates a DocumentDB resource and returns it.
+        """Creates a Azure Cosmos DB resource and returns it.
 
-        :Parameters:
-            - `body`: dict
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `initial_headers`: dict
-            - `options`: dict, the request options for the request.
+        :param dict body:
+        :param str path:
+        :param str type:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The created Azure Cosmos DB resource
+        :rtype:
             dict
 
         """
@@ -2145,17 +2369,19 @@ class DocumentClient(object):
         return result
 
     def Upsert(self, body, path, type, id, initial_headers, options=None):
-        """Upserts a DocumentDB resource and returns it.
+        """Upserts a Azure Cosmos DB resource and returns it.
+        
+        :param dict body:
+        :param str path:
+        :param str type:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
 
-        :Parameters:
-            - `body`: dict
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `initial_headers`: dict
-            - `options`: dict, the request options for the request.
-
-        :Returns:
+        :return:
+            The upserted Azure Cosmos DB resource
+        :rtype:
             dict
 
         """
@@ -2184,17 +2410,19 @@ class DocumentClient(object):
         return result
 
     def Replace(self, resource, path, type, id, initial_headers, options=None):
-        """Replaces a DocumentDB resource and returns it.
+        """Replaces a Azure Cosmos DB resource and returns it.
 
-        :Parameters:
-            - `resource`: dict
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `initial_headers`: dict
-            - `options`: dict, the request options for the request.
+        :param dict resource:
+        :param str path:
+        :param str type:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The new Azure Cosmos DB resource
+        :rtype:
             dict
 
         """
@@ -2221,16 +2449,18 @@ class DocumentClient(object):
         return result
 
     def Read(self, path, type, id, initial_headers, options=None):
-        """Reads a DocumentDB resource and returns it.
+        """Reads a Azure Cosmos DB resource and returns it.
 
-        :Parameters:
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `initial_headers`: dict
-            - `options`: dict, the request options for the request.
+        :param str path:
+        :param str type:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The upserted Azure Cosmos DB resource
+        :rtype:
             dict
 
         """
@@ -2253,16 +2483,18 @@ class DocumentClient(object):
         return result
 
     def DeleteResource(self, path, type, id, initial_headers, options=None):
-        """Deletes a DocumentDB resource and returns it.
+        """Deletes a Azure Cosmos DB resource and returns it.
 
-        :Parameters:
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `initial_headers`: dict
-            - `options`: dict, the request options for the request.
+        :param str path:
+        :param str type:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
 
-        :Returns:
+        :return:
+            The deleted Azure Cosmos DB resource
+        :rtype:
             dict
 
         """
@@ -2290,16 +2522,16 @@ class DocumentClient(object):
         return result
 
     def __Get(self, url, path, headers):
-        """DocumentDB 'GET' http request.
+        """Azure Cosmos DB 'GET' http request.
 
-        :Parameters:
-            - `url`: str
-            - `path`: str
-            - `headers`: dict
+        :params str url:
+        :params str path:
+        :params dict headers:
 
-        :Returns:
-            tuple (result, headers), and result and headers are both
-            dicts
+        :return:
+            tuple of (result, headers)
+        :rtype:
+            tuple of (dict, dict)
 
         """
         return synchronized_request.SynchronizedRequest(self,
@@ -2314,17 +2546,17 @@ class DocumentClient(object):
                                                         headers)
 
     def __Post(self, url, path, body, headers):
-        """DocumentDB 'POST' http request.
+        """Azure Cosmos DB 'POST' http request.
 
-        :Parameters:
-            - `url`: str
-            - `path`: str
-            - `body`: str, unicode or dict
-            - `headers`: dict
+        :params str url:
+        :params str path:
+        :params (str, unicode, dict) body:
+        :params dict headers:
 
-        :Returns:
-            tuple (result, headers), and result and headers are both
-            dicts
+        :return:
+            tuple of (result, headers)
+        :rtype:
+            tuple of (dict, dict)
 
         """
         return synchronized_request.SynchronizedRequest(self,
@@ -2339,17 +2571,17 @@ class DocumentClient(object):
                                                         headers=headers)
 
     def __Put(self, url, path, body, headers):
-        """DocumentDB 'PUT' http request.
+        """Azure Cosmos DB 'PUT' http request.
 
-        :Parameters:
-            - `url`: str
-            - `path`: str
-            - `body`: str, unicode or dict
-            - `headers`: dict
+        :params str url:
+        :params str path:
+        :params (str, unicode, dict) body:
+        :params dict headers:
 
-        :Returns:
-            tuple (result, headers), and result and headers are both
-            dicts
+        :return:
+            tuple of (result, headers)
+        :rtype:
+            tuple of (dict, dict)
 
         """
         return synchronized_request.SynchronizedRequest(self,
@@ -2364,16 +2596,16 @@ class DocumentClient(object):
                                                         headers=headers)
 
     def __Delete(self, url, path, headers):
-        """DocumentDB 'DELETE' http request.
+        """Azure Cosmos DB 'DELETE' http request.
 
-        :Parameters:
-            - `url`: str
-            - `path`: str
-            - `headers`: dict
+        :params str url:
+        :params str path:
+        :params dict headers:
 
-        :Returns:
-            tuple (result, headers), and result and headers are both
-            dicts
+        :return:
+            tuple of (result, headers)
+        :rtype:
+            tuple of (dict, dict)
 
         """
         return synchronized_request.SynchronizedRequest(self,
@@ -2390,13 +2622,16 @@ class DocumentClient(object):
     def QueryFeed(self, path, collection_id, query, options, partition_key_range_id = None):
         """Query Feed for Document Collection resource.
 
-        :Parameters:
-            - `path`: str, path to the document collection
-            - `collection_id`: str, id of the document collection
-            - `query`: str or dict
-            - `options`: dict, the request options for the request.
-            - `partition_key_range_id`: str, partition key range id
-        :Returns:
+        :param str path:
+            Path to the document collection
+        :param str collection_id:
+            Id of the document collection
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Partition key range id
+        :rtype:
             tuple
 
         """
@@ -2418,22 +2653,23 @@ class DocumentClient(object):
                     query,
                     options=None,
                     partition_key_range_id=None):
-        """Query for more than one DocumentDB resources.
+        """Query for more than one Azure Cosmos DB resources.
 
-        Raises :exc:`SystemError` is the query compatibility mode is undefined.
+        :param str path:
+        :param str type:
+        :param str id:
+        :param function result_fn:
+        :param function create_fn:
+        :param (str or dict) query:
+        :param dict options:
+            The request options for the request.
+        :param str partition_key_range_id:
+            Specifies partition key range id
 
-        :Parameters:
-            - `path`: str
-            - `type`: str
-            - `id`: str
-            - `result_fn`: function
-            - `create_fn`: function
-            - `query`: str or dict
-            - `options`: dict, the request options for the request.
-            - `partition_key_range_id`: str, specifies partition key range id
-
-        :Returns:
+        :rtype:
             list
+        
+        :raises SystemError: If the query compatibility mode is undefined.
 
         """
         if options is None:
@@ -2492,15 +2728,16 @@ class DocumentClient(object):
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
 
-        Raises :exc:`TypeError` if query_body is not of expected type (depending on the query compatibility mode).
-        Raises :exc:`ValueError` is query_body is a dict but doesn\'t have valid query text.
-        Raises :exc:`SystemError` is the query compatibility mode is undefined.
+        :raises TypeError: If query_body is not of expected type (depending on the query compatibility mode).
+        :raises ValueError: If query_body is a dict but doesn\'t have valid query text.
+        :raises SystemError: If the query compatibility mode is undefined.
 
-        :Parameters:
-            - `query_body`: str or dict
+        :param (str or dict) query_body:
 
-        :Returns:
-            dict or string, the formatted query body.
+        :return:
+            The formatted query body
+        :rtype:
+            dict or string
         """
         if (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Default or
                self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Query):
@@ -2588,11 +2825,11 @@ class DocumentClient(object):
         """
         Updates session if necessary.
 
-        :Parameters:
-            - `response_result`- response result
-            - `response_headers` - response headers
+        :param dict response_result:
+        :param dict response_headers:
+        :param dict response_headers
 
-        :Returns:
+        :return:
             None, but updates the client session if necessary
 
         """

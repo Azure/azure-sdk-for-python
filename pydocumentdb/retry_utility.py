@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal methods for executing functions in the Azure DocumentDB database service.
+"""Internal methods for executing functions in the Azure Cosmos DB database service.
 """
 
 import time
@@ -32,12 +32,15 @@ import pydocumentdb.http_constants as http_constants
 def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies
 
-    :Parameters:
-        - `client`: object, document client instance
-        - `global_endpoint_manager`: object, instance of _GlobalEndpointManager class
-        - `function`: function to be called wrapped with retries
-        - `*args`: non-keyworded, variable number of arguments list
-        - `**kwargs`: keyworded, variable number of arguments list
+    :param object client:
+        Document client instance
+    :param object global_endpoint_manager:
+        Instance of _GlobalEndpointManager class
+    :param function function:
+        Function to be called wrapped with retries
+    :param (non-keyworded, variable number of arguments list) *args:
+    :param (keyworded, variable number of arguments list) **kwargs:
+
     """
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(global_endpoint_manager)

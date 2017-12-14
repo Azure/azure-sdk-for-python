@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Authorization helper functions in the Azure DocumentDB database service.
+"""Authorization helper functions in the Azure Cosmos DB database service.
 """
 
 from hashlib import sha256
@@ -36,17 +36,16 @@ def GetAuthorizationHeader(document_client,
                            headers):
     """Gets the authorization header.
 
-    :Parameters:
-        - `document_client`: document_client.DocumentClient
-        - `verb`: str
-        - `path`: str
-        - `resource_id_or_fullname`: str
-        - `resource_type`: str
-        - `headers`: dict
+    :param document_client.DocumentClient document_client:
+    :param str verb:
+    :param str path:
+    :param str resource_id_or_fullname:
+    :param str resource_type:
+    :param dict headers:
 
-    :Returns:
-        dict, the authorization headers.
-
+    :return:
+        The authorization headers.
+    :rtype: dict
     """
     if document_client.master_key:
         return __GetAuthorizationTokenUsingMasterKey(verb,
@@ -68,15 +67,15 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
                                          master_key):
     """Gets the authorization token using `master_key.
 
-    :Parameters:
-        - `verb`: str
-        - `resource_id_or_fullname`: str
-        - `resource_type`: str
-        - `headers`: dict
-        - `master_key`: st
+    :param str verb:
+    :param str resource_id_or_fullname:
+    :param str resource_type:
+    :param dict headers:
+    :param str master_key:
 
-    :Returns:
-        dict
+    :return:
+        The authorization token
+    :rtype: dict
 
     """
 
@@ -113,13 +112,13 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
                                               resource_id_or_fullname):
     """Get the authorization token using `resource_tokens`.
 
-    :Parameters:
-        - `resource_tokens`: dict
-        - `path`: str
-        - `resource_id_or_fullname`: str
+    :param dict resource_tokens:
+    :param str path:
+    :param str resource_id_or_fullname:
 
-    :Returns:
-        dict
+    :return:
+        The authorization token
+    :rtype: dict
 
     """
     if resource_tokens and len(resource_tokens) > 0:

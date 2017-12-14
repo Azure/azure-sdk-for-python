@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for consistent hash ring implementation in the Azure DocumentDB database service.
+"""Internal class for consistent hash ring implementation in the Azure Cosmos DB database service.
 """
 
 import pydocumentdb.partition as partition
@@ -33,10 +33,12 @@ class _ConsistentHashRing(object):
     """
     def __init__(self, collection_links, partitions_per_node, hash_generator):
         """
-        :Parameters:
-            - `collection_links`: list, the links of collections participating in partitioning.
-            - `partitions_per_node`: int, the partitions per node
-            - `hash_generator`: HashGenerator, the hash generator to be used for hashing algorithm.
+        :param list collection_links:
+            The links of collections participating in partitioning.
+        :param int partitions_per_node:
+            The partitions per node
+        :param HashGenerator hash_generator: 
+            The hash generator to be used for hashing algorithm.
         """
         if collection_links is None:
             raise ValueError("collection_links is None.")
@@ -56,11 +58,12 @@ class _ConsistentHashRing(object):
         """Gets the SelfLink/ID based link of the collection node that maps to the partition key
         based on the hashing algorithm used for finding the node in the ring.
 
-        :Parameters:
-            - `partition_key`: str, the partition key to be used for finding the node in the ring.
+        :param str partition_key:
+            The partition key to be used for finding the node in the ring.
 
-        :Returns:
-            str, the name of the collection mapped to that partition.
+        :return:
+            The name of the collection mapped to that partition.
+        :rtype: str
 
         """
         if partition_key is None:

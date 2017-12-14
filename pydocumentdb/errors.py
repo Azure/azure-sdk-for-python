@@ -19,23 +19,22 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""PyDocumentDB Exceptions in the Azure DocumentDB database service.
+"""PyDocumentDB Exceptions in the Azure Cosmos DB database service.
 """
 import pydocumentdb.http_constants as http_constants
 
 class DocumentDBError(Exception):
-    """Base class for all DocumentDB errors.
+    """Base class for all Azure Cosmos DB errors.
     """
 
 
 class HTTPFailure(DocumentDBError):
-    """Raised when a HTTP request to the DocumentDB has failed.
+    """Raised when a HTTP request to the Azure Cosmos DB has failed.
     """
     def __init__(self, status_code, message='', headers=None):
         """
-        :Parameters:
-            status_code: int
-            message: str
+        :param int status_code:
+        :param str message:
 
         """
         if headers is None:

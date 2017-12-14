@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for document producer implementation in the Azure DocumentDB database service.
+"""Internal class for document producer implementation in the Azure Cosmos DB database service.
 """
 
 import six
@@ -64,8 +64,9 @@ class _DocumentProducer(object):
         
     def get_target_range(self):
         """Returns the target partition key range.
-            :Returns:
-                dict. target partition key range.
+            :return:
+                Target partition key range.
+            :rtype: dict
         """
         return self._partition_key_target_range
         
@@ -74,10 +75,10 @@ class _DocumentProducer(object):
 
     def next(self):
         """
-        :Returns:
-            dict. the next result item.
-        :Raises:
-            StopIteration. If there is no more result.
+        :return: The next result item.
+        :rtype: dict 
+        :raises StopIteration: If there is no more result.
+            
         """
         if self._cur_item is not None:
             res = self._cur_item
@@ -93,10 +94,10 @@ class _DocumentProducer(object):
     def peek(self):
         """
         TODO: use more_itertools.peekable instead
-        :Returns:
-            dict. the current result item.
-        :Raises:
-            StopIteration. If there is no current item.
+        :return: The current result item.
+        :rtype: dict. 
+        :raises StopIteration: If there is no current item.
+            
         """
         if self._cur_item is None:
             self._cur_item = next(self._ex_context)
@@ -128,16 +129,15 @@ class _OrderByHelper:
     def getTypeOrd(orderby_item):
         """Returns the ordinal of the value of the item pair in the dictionary.
         
-        :Parameters:
-            orderby_item (dict).
+        :param dict orderby_item:
         
-        :Returns:
-            int
+        :return:
             0 if the item_pair doesn't have any 'item' key
             1 if the value is undefined
             2 if the value is a boolean
             4 if the value is a number
             5 if the value is a str or a unicode
+        :rtype: int
         """
         if 'item' not in orderby_item:
             return 0
@@ -153,11 +153,10 @@ class _OrderByHelper:
     def getTypeStr(orderby_item):
         """Returns the string representation of the type
         
-        :Parameters:
-            orderby_item (dict).
+        :param dict orderby_item:
         
-        :Returns:
-            (str)
+        :return: String representation of the type
+        :rtype: str
         """
         if 'item' not in orderby_item:
             return 'NoValue'
@@ -172,19 +171,19 @@ class _OrderByHelper:
     @staticmethod
     def compare(orderby_item1, orderby_item2):
         """compares the two orderby item pairs.
-        :Parameters:
-            orderby_item1 (dict).
-            orderby_item2 (dict).
-        
-        :Returns:
-            int. integer comparison result.
-            
+        :param dict orderby_item1:
+        :param dict orderby_item2:
+
+        :return:
+            Integer comparison result.
             The comparator acts such that 
-                - if the types are different we get:
-                    Undefined value < Null < booleans < Numbers < Strings
-                - if both arguments are of the same type:
-                    it simply compares the values.
-            
+            - if the types are different we get:
+                Undefined value < Null < booleans < Numbers < Strings
+            - if both arguments are of the same type:
+                it simply compares the values.
+
+        :rtype: int
+
         """
         
         type1_ord = _OrderByHelper.getTypeOrd(orderby_item1)
@@ -210,11 +209,11 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
     def __init__(self, sort_order):
         """Instantiates this class
         
-        :Parameters:
-            sort_order (list): List of sort orders (i.e., Ascending, Descending)
+        :param list sort_order:
+            List of sort orders (i.e., Ascending, Descending)
             
-        :Attributes:
-            _sort_order (list): List of sort orders (i.e., Ascending, Descending)
+        :ivar list sort_order:
+            List of sort orders (i.e., Ascending, Descending)
         
         """
         self._sort_order = sort_order
@@ -233,14 +232,16 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         comparator compares the target partition key range of the 
         two DocumentProducers.
         
-        :Parameters:
-            doc_producers1 (_DocumentProducer): first instance
-            doc_producers2 (_DocumentProducer): first instance
+        :param _DocumentProducer doc_producers1:
+             first instance
+        :param _DocumentProducer doc_producers2:
+             first instance
         
-        :Returns:
-            integer value of compare result.
+        :return:
+            Integer value of compare result.
                 positive integer if doc_producers1 > doc_producers2
                 negative integer if doc_producers1 < doc_producers2
+        :rtype: int
         """
         
         res1 = self._peek_order_by_items(doc_producer1.peek())

@@ -7,13 +7,13 @@ import config as cfg
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
 # 
-# 1. An Azure DocumentDB account - 
+# 1. An Azure Cosmos DB account - 
 #    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
 #
 # 2. Microsoft Azure DocumentDB PyPi package - 
 #    https://pypi.python.org/pypi/pydocumentdb/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic CRUD operations on a Collection resource for Azure DocumentDB
+# Sample - demonstrates the basic CRUD operations on a Collection resource for Azure Cosmos DB
 # 
 # 1. Query for Collection
 #  
@@ -179,7 +179,7 @@ class CollectionManagement:
         print("\n4. Get a Collection by id")
 
         try:
-            # All DocumentDB resources are addressable via a link
+            # All Azure Cosmos DB resources are addressable via a link
             # This link is constructed from a combination of resource hierachy and 
             # the resource id. 
             # Eg. The link for collection with an id of Bar in database Foo would be dbs/Foo/colls/Bar

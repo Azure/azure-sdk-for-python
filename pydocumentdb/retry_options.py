@@ -19,16 +19,18 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Class for retry options in the Azure DocumentDB database service.
+"""Class for retry options in the Azure Cosmos DB database service.
 """
 
 class RetryOptions(object):
     """The retry options to be applied to all requests when retrying
 
-    :Properties:
-        - `MaxRetryAttemptCount`: int, Max number of retries to be performed for a request. Default value 9.
-        - `FixedRetryIntervalInMilliseconds`: int, Fixed retry interval in milliseconds to wait between each retry ignoring the retryAfter returned as part of the response.
-        - `MaxRetryAttemptCount`: int, Max wait time in seconds to wait for a request while the retries are happening. Default value 30 seconds.
+    :ivar int MaxRetryAttemptCount:
+        Max number of retries to be performed for a request. Default value 9.
+    :ivar int FixedRetryIntervalInMilliseconds:
+        Fixed retry interval in milliseconds to wait between each retry ignoring the retryAfter returned as part of the response.
+    :ivar int MaxRetryAttemptCount:
+        Max wait time in seconds to wait for a request while the retries are happening. Default value 30 seconds.
     """
     def __init__(self, max_retry_attempt_count = 9, fixed_retry_interval_in_milliseconds = None, max_wait_time_in_seconds = 30):
         self._max_retry_attempt_count = max_retry_attempt_count
