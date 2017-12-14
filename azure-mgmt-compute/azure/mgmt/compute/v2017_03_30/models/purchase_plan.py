@@ -38,6 +38,7 @@ class PurchasePlan(Model):
     }
 
     def __init__(self, publisher, name, product):
+        super(PurchasePlan, self).__init__()
         self.publisher = publisher
         self.name = name
         self.product = product

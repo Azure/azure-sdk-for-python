@@ -13,13 +13,19 @@ from msrest.serialization import Model
 
 
 class OSDisk(Model):
-    """Describes an Operating System disk.
+    """Specifies information about the operating system disk used by the virtual
+    machine. <br><br> For more information about disks, see [About disks and
+    VHDs for Azure virtual
+    machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
 
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
+    :param os_type: This property allows you to specify the type of the OS
+     that is included in the disk if creating a VM from user-image or a
+     specialized VHD. <br><br> Possible values are: <br><br> **Windows**
+     <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes
-    :param encryption_settings: The disk encryption settings.
+    :param encryption_settings: Specifies the encryption settings for the OS
+     Disk. <br><br> Minimum api-version: 2015-06-15
     :type encryption_settings:
      ~azure.mgmt.compute.v2016_04_30_preview.models.DiskEncryptionSettings
     :param name: The disk name.
@@ -27,20 +33,30 @@ class OSDisk(Model):
     :param vhd: The virtual hard disk.
     :type vhd: ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard
-     disk will be copied before using it to attach to the virtual machine. If
-     SourceImage is provided, the destination virtual hard disk must not exist.
+     disk will be copied before being attached to the virtual machine. If
+     SourceImage is provided, the destination virtual hard drive must not
+     exist.
     :type image:
      ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualHardDisk
-    :param caching: The caching type. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
+    :param caching: Specifies the caching requirements. <br><br> Possible
+     values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
+     <br><br> Default: **None for Standard storage. ReadOnly for Premium
+     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes
-    :param create_option: The create option. Possible values include:
-     'fromImage', 'empty', 'attach'
+    :param create_option: Specifies how the virtual machine should be
+     created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
+     value is used when you are using a specialized disk to create the virtual
+     machine.<br><br> **FromImage** \\u2013 This value is used when you are
+     using an image to create the virtual machine. If you are using a platform
+     image, you also use the imageReference element described above. If you are
+     using a marketplace image, you  also use the plan element previously
+     described. Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOptionTypes
-    :param disk_size_gb: The initial disk size, in GB, for blank data disks,
-     and the new desired size for resizing existing OS and data disks.
+    :param disk_size_gb: Specifies the size of an empty data disk in
+     gigabytes. This element can be used to overwrite the name of the disk in a
+     virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
@@ -64,6 +80,7 @@ class OSDisk(Model):
     }
 
     def __init__(self, create_option, os_type=None, encryption_settings=None, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
+        super(OSDisk, self).__init__()
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name

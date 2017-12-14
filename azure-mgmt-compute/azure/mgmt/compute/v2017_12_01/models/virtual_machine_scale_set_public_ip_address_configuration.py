@@ -37,6 +37,7 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     }
 
     def __init__(self, name, idle_timeout_in_minutes=None, dns_settings=None):
+        super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__()
         self.name = name
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.dns_settings = dns_settings

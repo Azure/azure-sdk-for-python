@@ -31,4 +31,5 @@ class VirtualMachineHealthStatus(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineHealthStatus, self).__init__()
         self.status = None

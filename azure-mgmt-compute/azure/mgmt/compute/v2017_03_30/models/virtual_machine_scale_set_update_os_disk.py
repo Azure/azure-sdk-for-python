@@ -38,6 +38,7 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     }
 
     def __init__(self, caching=None, image=None, vhd_containers=None, managed_disk=None):
+        super(VirtualMachineScaleSetUpdateOSDisk, self).__init__()
         self.caching = caching
         self.image = image
         self.vhd_containers = vhd_containers

@@ -48,6 +48,7 @@ class RollingUpgradeProgressInfo(Model):
     }
 
     def __init__(self):
+        super(RollingUpgradeProgressInfo, self).__init__()
         self.successful_instance_count = None
         self.failed_instance_count = None
         self.in_progress_instance_count = None

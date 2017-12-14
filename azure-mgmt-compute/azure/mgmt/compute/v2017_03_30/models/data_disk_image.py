@@ -33,4 +33,5 @@ class DataDiskImage(Model):
     }
 
     def __init__(self):
+        super(DataDiskImage, self).__init__()
         self.lun = None

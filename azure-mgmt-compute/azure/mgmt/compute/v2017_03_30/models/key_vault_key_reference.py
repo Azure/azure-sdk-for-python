@@ -32,5 +32,6 @@ class KeyVaultKeyReference(Model):
     }
 
     def __init__(self, key_url, source_vault):
+        super(KeyVaultKeyReference, self).__init__()
         self.key_url = key_url
         self.source_vault = source_vault

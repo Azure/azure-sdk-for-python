@@ -16,13 +16,15 @@ class SshPublicKey(Model):
     """Contains information about SSH certificate public key and the path on the
     Linux VM where the public key is placed.
 
-    :param path: Specifies the full path on the created VM where SSH public
+    :param path: Specifies the full path on the created VM where ssh public
      key is stored. If the file already exists, the specified key is appended
-     to the file.
+     to the file. Example: /home/user/.ssh/authorized_keys
     :type path: str
-    :param key_data: Certificate public key used to authenticate to the VM
-     through SSH. The certificate must be in Pem format with or without
-     headers.
+    :param key_data: SSH public key certificate used to authenticate with the
+     VM through ssh. The key needs to be at least 2048-bit and in ssh-rsa
+     format. <br><br> For creating ssh keys, see [Create SSH keys on Linux and
+     Mac for Linux VMs in
+     Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
     :type key_data: str
     """
 
@@ -32,5 +34,6 @@ class SshPublicKey(Model):
     }
 
     def __init__(self, path=None, key_data=None):
+        super(SshPublicKey, self).__init__()
         self.path = path
         self.key_data = key_data

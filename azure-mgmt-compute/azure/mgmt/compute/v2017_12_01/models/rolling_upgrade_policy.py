@@ -56,6 +56,7 @@ class RollingUpgradePolicy(Model):
     }
 
     def __init__(self, max_batch_instance_percent=None, max_unhealthy_instance_percent=None, max_unhealthy_upgraded_instance_percent=None, pause_time_between_batches=None):
+        super(RollingUpgradePolicy, self).__init__()
         self.max_batch_instance_percent = max_batch_instance_percent
         self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
         self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent

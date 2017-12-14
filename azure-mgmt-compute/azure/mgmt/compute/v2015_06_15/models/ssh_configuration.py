@@ -26,4 +26,5 @@ class SshConfiguration(Model):
     }
 
     def __init__(self, public_keys=None):
+        super(SshConfiguration, self).__init__()
         self.public_keys = public_keys

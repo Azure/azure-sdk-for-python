@@ -39,6 +39,7 @@ class RunCommandParameterDefinition(Model):
     }
 
     def __init__(self, name, type, default_value=None, required=False):
+        super(RunCommandParameterDefinition, self).__init__()
         self.name = name
         self.type = type
         self.default_value = default_value

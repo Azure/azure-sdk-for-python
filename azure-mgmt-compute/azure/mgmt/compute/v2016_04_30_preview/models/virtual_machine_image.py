@@ -21,7 +21,10 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :type name: str
     :param location: The supported Azure location of the resource.
     :type location: str
-    :param tags: The tags attached to the resource.
+    :param tags: Specifies the tags that are assigned to the virtual machine.
+     For more information about using tags, see [Using tags to organize your
+     Azure
+     resources](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md).
     :type tags: dict[str, str]
     :param plan:
     :type plan: ~azure.mgmt.compute.v2016_04_30_preview.models.PurchasePlan

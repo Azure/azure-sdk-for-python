@@ -36,6 +36,7 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
     }
 
     def __init__(self, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+        super(VirtualMachineScaleSetUpdateOSProfile, self).__init__()
         self.custom_data = custom_data
         self.windows_configuration = windows_configuration
         self.linux_configuration = linux_configuration

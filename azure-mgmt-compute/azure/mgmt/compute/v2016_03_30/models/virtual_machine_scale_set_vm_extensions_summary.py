@@ -36,5 +36,6 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineScaleSetVMExtensionsSummary, self).__init__()
         self.name = None
         self.statuses_summary = None

@@ -15,8 +15,9 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetManagedDiskParameters(Model):
     """Describes the parameters of a ScaleSet managed disk.
 
-    :param storage_account_type: The Storage Account type. Possible values
-     include: 'Standard_LRS', 'Premium_LRS'
+    :param storage_account_type: Specifies the storage account type for the
+     managed disk. Possible values are: Standard_LRS or Premium_LRS. Possible
+     values include: 'Standard_LRS', 'Premium_LRS'
     :type storage_account_type: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.StorageAccountTypes
     """
@@ -26,4 +27,5 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
     }
 
     def __init__(self, storage_account_type=None):
+        super(VirtualMachineScaleSetManagedDiskParameters, self).__init__()
         self.storage_account_type = storage_account_type

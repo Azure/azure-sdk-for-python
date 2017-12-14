@@ -36,5 +36,6 @@ class VirtualMachineStatusCodeCount(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineStatusCodeCount, self).__init__()
         self.code = None
         self.count = None

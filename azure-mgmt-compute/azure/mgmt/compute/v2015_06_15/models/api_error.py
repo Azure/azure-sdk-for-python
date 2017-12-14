@@ -36,6 +36,7 @@ class ApiError(Model):
     }
 
     def __init__(self, details=None, innererror=None, code=None, target=None, message=None):
+        super(ApiError, self).__init__()
         self.details = details
         self.innererror = innererror
         self.code = code

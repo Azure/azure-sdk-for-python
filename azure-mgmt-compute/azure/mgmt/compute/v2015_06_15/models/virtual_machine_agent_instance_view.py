@@ -33,6 +33,7 @@ class VirtualMachineAgentInstanceView(Model):
     }
 
     def __init__(self, vm_agent_version=None, extension_handlers=None, statuses=None):
+        super(VirtualMachineAgentInstanceView, self).__init__()
         self.vm_agent_version = vm_agent_version
         self.extension_handlers = extension_handlers
         self.statuses = statuses

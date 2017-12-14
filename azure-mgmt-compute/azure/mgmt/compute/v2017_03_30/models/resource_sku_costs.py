@@ -39,6 +39,7 @@ class ResourceSkuCosts(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuCosts, self).__init__()
         self.meter_id = None
         self.quantity = None
         self.extended_unit = None

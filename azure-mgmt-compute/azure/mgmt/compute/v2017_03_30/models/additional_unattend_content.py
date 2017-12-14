@@ -45,6 +45,7 @@ class AdditionalUnattendContent(Model):
     }
 
     def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None):
+        super(AdditionalUnattendContent, self).__init__()
         self.pass_name = pass_name
         self.component_name = component_name
         self.setting_name = setting_name

@@ -56,6 +56,7 @@ class ImageDataDisk(Model):
     }
 
     def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
+        super(ImageDataDisk, self).__init__()
         self.lun = lun
         self.snapshot = snapshot
         self.managed_disk = managed_disk

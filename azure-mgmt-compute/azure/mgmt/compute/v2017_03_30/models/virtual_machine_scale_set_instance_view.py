@@ -42,6 +42,7 @@ class VirtualMachineScaleSetInstanceView(Model):
     }
 
     def __init__(self, statuses=None):
+        super(VirtualMachineScaleSetInstanceView, self).__init__()
         self.virtual_machine = None
         self.extensions = None
         self.statuses = statuses

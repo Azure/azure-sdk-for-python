@@ -33,5 +33,6 @@ class KeyVaultSecretReference(Model):
     }
 
     def __init__(self, secret_url, source_vault):
+        super(KeyVaultSecretReference, self).__init__()
         self.secret_url = secret_url
         self.source_vault = source_vault

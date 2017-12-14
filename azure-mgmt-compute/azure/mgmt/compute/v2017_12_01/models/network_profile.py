@@ -26,4 +26,5 @@ class NetworkProfile(Model):
     }
 
     def __init__(self, network_interfaces=None):
+        super(NetworkProfile, self).__init__()
         self.network_interfaces = network_interfaces

@@ -43,6 +43,7 @@ class ResourceSkuRestrictions(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuRestrictions, self).__init__()
         self.type = None
         self.values = None
         self.reason_code = None

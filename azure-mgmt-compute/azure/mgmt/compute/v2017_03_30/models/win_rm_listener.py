@@ -37,5 +37,6 @@ class WinRMListener(Model):
     }
 
     def __init__(self, protocol=None, certificate_url=None):
+        super(WinRMListener, self).__init__()
         self.protocol = protocol
         self.certificate_url = certificate_url
