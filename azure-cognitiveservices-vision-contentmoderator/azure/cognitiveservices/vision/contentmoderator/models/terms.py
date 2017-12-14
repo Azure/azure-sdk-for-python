@@ -29,5 +29,6 @@ class Terms(Model):
     }
 
     def __init__(self, data=None, paging=None):
+        super(Terms, self).__init__()
         self.data = data
         self.paging = paging

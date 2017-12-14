@@ -16,7 +16,7 @@ class Status(Model):
     """Status properties.
 
     :param code: Status code.
-    :type code: float
+    :type code: int
     :param description: Status description.
     :type description: str
     :param exception: Exception status.
@@ -24,12 +24,13 @@ class Status(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'float'},
+        'code': {'key': 'code', 'type': 'int'},
         'description': {'key': 'description', 'type': 'str'},
         'exception': {'key': 'exception', 'type': 'str'},
     }
 
     def __init__(self, code=None, description=None, exception=None):
+        super(Status, self).__init__()
         self.code = code
         self.description = description
         self.exception = exception

@@ -31,6 +31,7 @@ class Body(Model):
     }
 
     def __init__(self, name=None, description=None, metadata=None):
+        super(Body, self).__init__()
         self.name = name
         self.description = description
         self.metadata = metadata

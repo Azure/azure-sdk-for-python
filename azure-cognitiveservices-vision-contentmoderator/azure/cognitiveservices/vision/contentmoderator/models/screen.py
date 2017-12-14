@@ -54,6 +54,7 @@ class Screen(Model):
     }
 
     def __init__(self, original_text=None, normalized_text=None, auto_corrected_text=None, misrepresentation=None, classification=None, status=None, pii=None, language=None, terms=None, tracking_id=None):
+        super(Screen, self).__init__()
         self.original_text = original_text
         self.normalized_text = normalized_text
         self.auto_corrected_text = auto_corrected_text

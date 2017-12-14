@@ -20,16 +20,17 @@ class IPA(Model):
     :param text: Detected IP Address.
     :type text: str
     :param index: Index(Location) of the IP Address in the input text content.
-    :type index: float
+    :type index: int
     """
 
     _attribute_map = {
         'sub_type': {'key': 'subType', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'float'},
+        'index': {'key': 'index', 'type': 'int'},
     }
 
     def __init__(self, sub_type=None, text=None, index=None):
+        super(IPA, self).__init__()
         self.sub_type = sub_type
         self.text = text
         self.index = index

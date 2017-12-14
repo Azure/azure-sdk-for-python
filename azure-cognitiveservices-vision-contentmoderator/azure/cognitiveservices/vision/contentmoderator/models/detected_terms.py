@@ -17,24 +17,25 @@ class DetectedTerms(Model):
 
     :param index: Index(Location) of the detected profanity term in the input
      text content.
-    :type index: float
+    :type index: int
     :param original_index: Original Index(Location) of the detected profanity
      term in the input text content.
-    :type original_index: float
+    :type original_index: int
     :param list_id: Matched Terms list Id.
-    :type list_id: float
+    :type list_id: int
     :param term: Detected profanity term.
     :type term: str
     """
 
     _attribute_map = {
-        'index': {'key': 'index', 'type': 'float'},
-        'original_index': {'key': 'originalIndex', 'type': 'float'},
-        'list_id': {'key': 'listId', 'type': 'float'},
+        'index': {'key': 'index', 'type': 'int'},
+        'original_index': {'key': 'originalIndex', 'type': 'int'},
+        'list_id': {'key': 'listId', 'type': 'int'},
         'term': {'key': 'term', 'type': 'str'},
     }
 
     def __init__(self, index=None, original_index=None, list_id=None, term=None):
+        super(DetectedTerms, self).__init__()
         self.index = index
         self.original_index = original_index
         self.list_id = list_id

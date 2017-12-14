@@ -45,6 +45,7 @@ class OCR(Model):
     }
 
     def __init__(self, status=None, metadata=None, tracking_id=None, cache_id=None, language=None, text=None, candidates=None):
+        super(OCR, self).__init__()
         self.status = status
         self.metadata = metadata
         self.tracking_id = tracking_id

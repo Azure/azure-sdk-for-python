@@ -24,4 +24,5 @@ class TermsInList(Model):
     }
 
     def __init__(self, term=None):
+        super(TermsInList, self).__init__()
         self.term = term

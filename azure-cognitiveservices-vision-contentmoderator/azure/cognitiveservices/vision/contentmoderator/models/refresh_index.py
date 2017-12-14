@@ -38,6 +38,7 @@ class RefreshIndex(Model):
     }
 
     def __init__(self, content_source_id=None, is_update_success=None, advanced_info=None, status=None, tracking_id=None):
+        super(RefreshIndex, self).__init__()
         self.content_source_id = content_source_id
         self.is_update_success = is_update_success
         self.advanced_info = advanced_info

@@ -35,6 +35,7 @@ class TermsData(Model):
     }
 
     def __init__(self, language=None, terms=None, status=None, tracking_id=None):
+        super(TermsData, self).__init__()
         self.language = language
         self.terms = terms
         self.status = status

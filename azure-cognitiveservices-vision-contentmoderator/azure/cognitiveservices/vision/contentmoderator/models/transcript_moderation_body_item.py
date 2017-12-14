@@ -33,5 +33,6 @@ class TranscriptModerationBodyItem(Model):
     }
 
     def __init__(self, timestamp, terms):
+        super(TranscriptModerationBodyItem, self).__init__()
         self.timestamp = timestamp
         self.terms = terms

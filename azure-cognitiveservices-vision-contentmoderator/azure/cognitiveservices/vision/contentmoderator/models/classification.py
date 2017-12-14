@@ -33,6 +33,7 @@ class Classification(Model):
     }
 
     def __init__(self, adult_score=None, racy_score=None, offensive_score=None, review_recommended=None):
+        super(Classification, self).__init__()
         self.adult_score = adult_score
         self.racy_score = racy_score
         self.offensive_score = offensive_score

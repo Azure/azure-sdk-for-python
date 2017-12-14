@@ -24,4 +24,5 @@ class JobListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(JobListResult, self).__init__()
         self.value = value
