@@ -17,7 +17,7 @@ class OCR(Model):
 
     :param status: The evaluate status
     :type status:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ResponseStatus
+     ~azure.cognitiveservices.vision.contentmoderator.models.Status
     :param metadata: Array of KeyValue.
     :type metadata:
      list[~azure.cognitiveservices.vision.contentmoderator.models.KeyValuePair]
@@ -35,7 +35,7 @@ class OCR(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'ResponseStatus'},
+        'status': {'key': 'status', 'type': 'Status'},
         'metadata': {'key': 'metadata', 'type': '[KeyValuePair]'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
         'cache_id': {'key': 'cacheId', 'type': 'str'},

@@ -19,19 +19,23 @@ class Screen(Model):
     :type original_text: str
     :param normalized_text: The normalized text.
     :type normalized_text: str
+    :param auto_corrected_text: The autocorrected text
+    :type auto_corrected_text: str
     :param misrepresentation: The misrepresentation text.
     :type misrepresentation: list[str]
+    :param classification: The classification details of the text.
+    :type classification:
+     ~azure.cognitiveservices.vision.contentmoderator.models.Classification
     :param status: The evaluate status.
     :type status:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ResponseStatus
+     ~azure.cognitiveservices.vision.contentmoderator.models.Status
     :param pii: Personal Identifier Information details.
-    :type pii:
-     ~azure.cognitiveservices.vision.contentmoderator.models.PIIDetailsProperties
+    :type pii: ~azure.cognitiveservices.vision.contentmoderator.models.PII
     :param language: Language of the input text content.
     :type language: str
     :param terms:
     :type terms:
-     list[~azure.cognitiveservices.vision.contentmoderator.models.TermsProperties]
+     list[~azure.cognitiveservices.vision.contentmoderator.models.DetectedTerms]
     :param tracking_id: Unique Content Moderator transaction Id.
     :type tracking_id: str
     """
@@ -39,18 +43,22 @@ class Screen(Model):
     _attribute_map = {
         'original_text': {'key': 'originalText', 'type': 'str'},
         'normalized_text': {'key': 'normalizedText', 'type': 'str'},
+        'auto_corrected_text': {'key': 'autoCorrectedText', 'type': 'str'},
         'misrepresentation': {'key': 'misrepresentation', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'ResponseStatus'},
-        'pii': {'key': 'pii', 'type': 'PIIDetailsProperties'},
+        'classification': {'key': 'classification', 'type': 'Classification'},
+        'status': {'key': 'status', 'type': 'Status'},
+        'pii': {'key': 'pii', 'type': 'PII'},
         'language': {'key': 'language', 'type': 'str'},
-        'terms': {'key': 'terms', 'type': '[TermsProperties]'},
+        'terms': {'key': 'terms', 'type': '[DetectedTerms]'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
     }
 
-    def __init__(self, original_text=None, normalized_text=None, misrepresentation=None, status=None, pii=None, language=None, terms=None, tracking_id=None):
+    def __init__(self, original_text=None, normalized_text=None, auto_corrected_text=None, misrepresentation=None, classification=None, status=None, pii=None, language=None, terms=None, tracking_id=None):
         self.original_text = original_text
         self.normalized_text = normalized_text
+        self.auto_corrected_text = auto_corrected_text
         self.misrepresentation = misrepresentation
+        self.classification = classification
         self.status = status
         self.pii = pii
         self.language = language

@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class FacialHairProperties(Model):
     """Properties describing facial hair attributes.
 
-    :param mustache:
-    :type mustache: float
+    :param moustache:
+    :type moustache: float
     :param beard:
     :type beard: float
     :param sideburns:
@@ -24,18 +24,18 @@ class FacialHairProperties(Model):
     """
 
     _validation = {
-        'mustache': {'maximum': 1, 'minimum': 0},
+        'moustache': {'maximum': 1, 'minimum': 0},
         'beard': {'maximum': 1, 'minimum': 0},
         'sideburns': {'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'mustache': {'key': 'mustache', 'type': 'float'},
+        'moustache': {'key': 'moustache', 'type': 'float'},
         'beard': {'key': 'beard', 'type': 'float'},
         'sideburns': {'key': 'sideburns', 'type': 'float'},
     }
 
-    def __init__(self, mustache=None, beard=None, sideburns=None):
-        self.mustache = mustache
+    def __init__(self, moustache=None, beard=None, sideburns=None):
+        self.moustache = moustache
         self.beard = beard
         self.sideburns = sideburns

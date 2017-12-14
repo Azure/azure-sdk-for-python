@@ -23,6 +23,8 @@ class FaceListOperations(object):
     :param deserializer: An object model deserializer.
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -340,33 +342,38 @@ class FaceListOperations(object):
             return client_raw_response
 
     def add_face(
-            self, face_list_id, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+            self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
         """Add a face to a face list. The input face is specified as an image with
         a targetFace rectangle. It returns a persistedFaceId representing the
         added face, and persistedFaceId will not expire. .
 
         :param face_list_id: Id referencing a Face List.
         :type face_list_id: str
+        :param url:
+        :type url: str
         :param user_data: User-specified data about the face list for any
          purpose. The  maximum length is 1KB.
         :type user_data: str
         :param target_face: A face rectangle to specify the target face to be
-         added into the face list, in the format of
-         "targetFace=left,top,width,height". E.g. "targetFace=10,10,100,100".
-         If there is more than one face in the image, targetFace is required to
-         specify which face to add. No targetFace means there is only one face
-         detected in the entire image.
-        :type target_face: str
+         added to a person in the format of "targetFace=left,top,width,height".
+         E.g. "targetFace=10,10,100,100". If there is more than one face in the
+         image, targetFace is required to specify which face to add. No
+         targetFace means there is only one face detected in the entire image.
+        :type target_face: list[int]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: PersistedFaceResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
+        image_url = models.ImageUrl(url=url)
+
         # Construct URL
         url = '/facelists/{faceListId}/persistedFaces'
         path_format_arguments = {
@@ -380,7 +387,7 @@ class FaceListOperations(object):
         if user_data is not None:
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
         if target_face is not None:
-            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, 'str')
+            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -388,42 +395,61 @@ class FaceListOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PersistedFaceResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
+        return deserialized
+
     def add_face_from_stream(
-            self, face_list_id, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+            self, face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a face to a face list. The input face is specified as an image with
         a targetFace rectangle. It returns a persistedFaceId representing the
         added face, and persistedFaceId will not expire.
 
         :param face_list_id: Id referencing a Face List.
         :type face_list_id: str
+        :param image: An image stream.
+        :type image: Generator
         :param user_data: User-specified data about the face list for any
          purpose. The  maximum length is 1KB.
         :type user_data: str
         :param target_face: A face rectangle to specify the target face to be
-         added into the face list, in the format of
-         "targetFace=left,top,width,height". E.g. "targetFace=10,10,100,100".
-         If there is more than one face in the image, targetFace is required to
-         specify which face to add. No targetFace means there is only one face
-         detected in the entire image.
-        :type target_face: str
+         added to a person in the format of "targetFace=left,top,width,height".
+         E.g. "targetFace=10,10,100,100". If there is more than one face in the
+         image, targetFace is required to specify which face to add. No
+         targetFace means there is only one face detected in the entire image.
+        :type target_face: list[int]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: PersistedFaceResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -440,21 +466,32 @@ class FaceListOperations(object):
         if user_data is not None:
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
         if target_face is not None:
-            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, 'str')
+            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._client.stream_upload(image, callback)
+
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PersistedFaceResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized

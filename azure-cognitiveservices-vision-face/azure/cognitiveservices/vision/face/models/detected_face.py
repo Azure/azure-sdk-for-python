@@ -23,6 +23,9 @@ class DetectedFace(Model):
     :param face_landmarks:
     :type face_landmarks:
      ~azure.cognitiveservices.vision.face.models.FaceLandmarks
+    :param face_attributes:
+    :type face_attributes:
+     ~azure.cognitiveservices.vision.face.models.FaceAttributes
     """
 
     _validation = {
@@ -34,9 +37,11 @@ class DetectedFace(Model):
         'face_id': {'key': 'faceId', 'type': 'str'},
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
         'face_landmarks': {'key': 'faceLandmarks', 'type': 'FaceLandmarks'},
+        'face_attributes': {'key': 'faceAttributes', 'type': 'FaceAttributes'},
     }
 
-    def __init__(self, face_rectangle, face_id=None, face_landmarks=None):
+    def __init__(self, face_rectangle, face_id=None, face_landmarks=None, face_attributes=None):
         self.face_id = face_id
         self.face_rectangle = face_rectangle
         self.face_landmarks = face_landmarks
+        self.face_attributes = face_attributes

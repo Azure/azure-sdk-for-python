@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class RefreshIndexAdvancedInfoItem(Model):
     """RefreshIndexAdvancedInfoItem.
 
-    :param key_one: Key value pair.
+    :param key_one: Key parameter to describe advanced info.
     :type key_one: str
-    :param key_two: Key value pair.
+    :param key_two: Key parameter to describe advanced info.
     :type key_two: str
     """
 

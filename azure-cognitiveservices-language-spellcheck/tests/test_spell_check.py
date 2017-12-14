@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.cognitiveservices.language.spellcheck import SpellCheckClient
+from azure.cognitiveservices.language.spellcheck import SpellCheckAPI
 from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
@@ -45,8 +45,8 @@ class SpellCheckTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        text_analytics = SpellCheckClient(credentials=credentials)
-        response = text_analytics.spell_check_method(
+        text_analytics = SpellCheckAPI(credentials=credentials)
+        response = text_analytics.spell_checker(
             "cognituve services"
         )
         self.assertEquals(response.flagged_tokens[0].token, "cognituve")

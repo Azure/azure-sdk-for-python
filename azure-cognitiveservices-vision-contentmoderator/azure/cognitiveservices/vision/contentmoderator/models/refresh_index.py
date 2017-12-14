@@ -24,7 +24,7 @@ class RefreshIndex(Model):
      list[~azure.cognitiveservices.vision.contentmoderator.models.RefreshIndexAdvancedInfoItem]
     :param status: Refresh index status.
     :type status:
-     ~azure.cognitiveservices.vision.contentmoderator.models.AddGetRefreshStatus
+     ~azure.cognitiveservices.vision.contentmoderator.models.Status
     :param tracking_id: Tracking Id.
     :type tracking_id: str
     """
@@ -33,7 +33,7 @@ class RefreshIndex(Model):
         'content_source_id': {'key': 'contentSourceId', 'type': 'str'},
         'is_update_success': {'key': 'isUpdateSuccess', 'type': 'bool'},
         'advanced_info': {'key': 'advancedInfo', 'type': '[RefreshIndexAdvancedInfoItem]'},
-        'status': {'key': 'status', 'type': 'AddGetRefreshStatus'},
+        'status': {'key': 'status', 'type': 'Status'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
     }
 

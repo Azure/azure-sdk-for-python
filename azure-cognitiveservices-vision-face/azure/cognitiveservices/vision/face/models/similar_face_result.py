@@ -22,14 +22,12 @@ class SimilarFaceResult(Model):
      faceListId. persistedFaceId in face list is persisted and will not expire.
      As showed in below response
     :type persisted_face_id: str
-    :param confidence: Similarity confidence of the candidate face. The higher
-     confidence, the more similar. Range between [0,1
+    :param confidence:
     :type confidence: float
     """
 
     _validation = {
-        'face_id': {'required': True, 'max_length': 64},
-        'persisted_face_id': {'required': True},
+        'face_id': {'max_length': 64},
     }
 
     _attribute_map = {
@@ -38,7 +36,7 @@ class SimilarFaceResult(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, face_id, persisted_face_id, confidence=None):
+    def __init__(self, face_id=None, persisted_face_id=None, confidence=None):
         self.face_id = face_id
         self.persisted_face_id = persisted_face_id
         self.confidence = confidence

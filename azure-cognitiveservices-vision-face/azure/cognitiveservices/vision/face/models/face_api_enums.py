@@ -12,6 +12,73 @@
 from enum import Enum
 
 
+class Gender(Enum):
+
+    male = "male"
+    female = "female"
+
+
+class GlassesTypes(Enum):
+
+    no_glasses = "noGlasses"
+    reading_glasses = "readingGlasses"
+    sunglasses = "sunglasses"
+    swimming_goggles = "swimmingGoggles"
+
+
+class BlurLevels(Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class ExposureLevels(Enum):
+
+    under_exposure = "UnderExposure"
+    good_exposure = "GoodExposure"
+    over_exposure = "OverExposure"
+
+
+class NoiseLevels(Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class FaceMatchingMode(Enum):
+
+    match_person = "matchPerson"
+    match_face = "matchFace"
+
+
+class TrainingStatus(Enum):
+
+    nonstarted = "nonstarted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+
+
+class FaceAttributeTypes(Enum):
+
+    age = "age"
+    gender = "gender"
+    head_pose = "headPose"
+    smile = "smile"
+    facial_hair = "facialHair"
+    glasses = "glasses"
+    emotion = "emotion"
+    hair = "hair"
+    makeup = "makeup"
+    occlusion = "occlusion"
+    accessories = "accessories"
+    blur = "blur"
+    exposure = "exposure"
+    noise = "noise"
+
+
 class AzureRegions(Enum):
 
     westus = "westus"

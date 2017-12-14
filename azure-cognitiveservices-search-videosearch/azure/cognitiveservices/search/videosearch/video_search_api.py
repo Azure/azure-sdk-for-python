@@ -37,7 +37,7 @@ class VideoSearchAPIConfiguration(Configuration):
 
         super(VideoSearchAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('videosearchapi/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-search-videosearch/{}'.format(VERSION))
 
         self.credentials = credentials
 

@@ -37,7 +37,7 @@ class EntitySearchAPIConfiguration(Configuration):
 
         super(EntitySearchAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('entitysearchapi/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-search-entitysearch/{}'.format(VERSION))
 
         self.credentials = credentials
 

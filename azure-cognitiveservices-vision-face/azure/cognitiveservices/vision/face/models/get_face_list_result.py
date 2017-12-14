@@ -21,6 +21,9 @@ class GetFaceListResult(Model):
     :type name: str
     :param user_data: User-provided data attached to this face list.
     :type user_data: str
+    :param persisted_faces: Persisted faces within the face list.
+    :type persisted_faces:
+     list[~azure.cognitiveservices.vision.face.models.PersonFaceResult]
     """
 
     _validation = {
@@ -33,9 +36,11 @@ class GetFaceListResult(Model):
         'face_list_id': {'key': 'faceListId', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
+        'persisted_faces': {'key': 'persistedFaces', 'type': '[PersonFaceResult]'},
     }
 
-    def __init__(self, face_list_id, name=None, user_data=None):
+    def __init__(self, face_list_id, name=None, user_data=None, persisted_faces=None):
         self.face_list_id = face_list_id
         self.name = name
         self.user_data = user_data
+        self.persisted_faces = persisted_faces
