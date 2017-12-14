@@ -11,7 +11,7 @@ except ImportError:
 
 class HttpChallenge(object):
 
-    def __init__(self, request_uri, challenge, response_headers):
+    def __init__(self, request_uri, challenge, response_headers=None):
         """ Parses an HTTP WWW-Authentication Bearer challenge from a server. """
         self.source_authority = self._validate_request_uri(request_uri)
         self.source_uri = request_uri
@@ -42,9 +42,11 @@ class HttpChallenge(object):
         if 'authorization' not in self._parameters and 'authorization_uri' not in self._parameters:
             raise ValueError('Invalid challenge parameters')
 
-        # get the message signing key and message key encryption key from the headers
-        self.server_signature_key = response_headers.get('x-ms-message-signing-key', None)
-        self.server_encryption_key = response_headers.get('x-ms-message-encryption-key', None)
+        # if the response headers were supplied
+        if response_headers:
+            # get the message signing key and message key encryption key from the headers
+            self.server_signature_key = response_headers.get('x-ms-message-signing-key', None)
+            self.server_encryption_key = response_headers.get('x-ms-message-encryption-key', None)
 
     def is_bearer_challenge(self):
         """ Tests whether the HttpChallenge a Bearer challenge.
