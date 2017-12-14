@@ -18,14 +18,15 @@ class Address(Model):
     :param text: Detected Address.
     :type text: str
     :param index: Index(Location) of the Address in the input text content.
-    :type index: float
+    :type index: int
     """
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'float'},
+        'index': {'key': 'index', 'type': 'int'},
     }
 
     def __init__(self, text=None, index=None):
+        super(Address, self).__init__()
         self.text = text
         self.index = index

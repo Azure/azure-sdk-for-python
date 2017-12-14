@@ -16,7 +16,7 @@ class TermList(Model):
     """Term List  Properties.
 
     :param id: Term list Id.
-    :type id: float
+    :type id: int
     :param name: Term list name.
     :type name: str
     :param description: Description for term list.
@@ -27,13 +27,14 @@ class TermList(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'float'},
+        'id': {'key': 'id', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'TermListMetadata'},
     }
 
     def __init__(self, id=None, name=None, description=None, metadata=None):
+        super(TermList, self).__init__()
         self.id = id
         self.name = name
         self.description = description

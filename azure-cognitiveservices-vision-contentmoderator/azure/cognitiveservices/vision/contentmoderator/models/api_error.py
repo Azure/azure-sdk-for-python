@@ -25,6 +25,7 @@ class APIError(Model):
     }
 
     def __init__(self, error=None):
+        super(APIError, self).__init__()
         self.error = error
 
 

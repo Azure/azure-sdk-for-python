@@ -44,6 +44,7 @@ class CreateVideoReviewsBodyItemVideoFramesItem(Model):
     }
 
     def __init__(self, id, timestamp, frame_image, reviewer_result_tags=None, metadata=None):
+        super(CreateVideoReviewsBodyItemVideoFramesItem, self).__init__()
         self.id = id
         self.timestamp = timestamp
         self.frame_image = frame_image

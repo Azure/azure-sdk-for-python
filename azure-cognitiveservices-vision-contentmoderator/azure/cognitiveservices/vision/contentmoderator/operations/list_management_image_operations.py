@@ -330,14 +330,11 @@ class ListManagementImageOperations(object):
         return deserialized
 
     def add_image_file_input(
-            self, list_id, content_type, image_stream, tag=None, label=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, list_id, image_stream, tag=None, label=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Add an image to the list with list Id equal to list Id passed.
 
         :param list_id: List Id of the image list.
         :type list_id: str
-        :param content_type: The content type. Possible values include:
-         'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tiff'
-        :type content_type: str
         :param image_stream: The image file.
         :type image_stream: Generator
         :param tag: Tag for the image.
@@ -381,7 +378,6 @@ class ListManagementImageOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image_stream, callback)

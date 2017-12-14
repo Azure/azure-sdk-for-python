@@ -27,5 +27,6 @@ class BodyMetadata(Model):
     }
 
     def __init__(self, key_one=None, key_two=None):
+        super(BodyMetadata, self).__init__()
         self.key_one = key_one
         self.key_two = key_two

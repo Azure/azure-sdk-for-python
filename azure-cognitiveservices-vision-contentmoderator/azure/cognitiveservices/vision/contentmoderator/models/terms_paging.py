@@ -16,23 +16,24 @@ class TermsPaging(Model):
     """Paging details.
 
     :param total: Total details.
-    :type total: float
+    :type total: int
     :param limit: Limit details.
-    :type limit: float
+    :type limit: int
     :param offset: Offset details.
-    :type offset: float
+    :type offset: int
     :param returned: Returned text details.
-    :type returned: float
+    :type returned: int
     """
 
     _attribute_map = {
-        'total': {'key': 'Total', 'type': 'float'},
-        'limit': {'key': 'Limit', 'type': 'float'},
-        'offset': {'key': 'Offset', 'type': 'float'},
-        'returned': {'key': 'Returned', 'type': 'float'},
+        'total': {'key': 'Total', 'type': 'int'},
+        'limit': {'key': 'Limit', 'type': 'int'},
+        'offset': {'key': 'Offset', 'type': 'int'},
+        'returned': {'key': 'Returned', 'type': 'int'},
     }
 
     def __init__(self, total=None, limit=None, offset=None, returned=None):
+        super(TermsPaging, self).__init__()
         self.total = total
         self.limit = limit
         self.offset = offset

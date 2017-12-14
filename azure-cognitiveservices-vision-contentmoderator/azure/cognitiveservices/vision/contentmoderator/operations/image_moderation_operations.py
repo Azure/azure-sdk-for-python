@@ -279,12 +279,9 @@ class ImageModerationOperations(object):
         return deserialized
 
     def find_faces_file_input(
-            self, content_type, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns the list of faces found.
 
-        :param content_type: The content type. Possible values include:
-         'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tiff'
-        :type content_type: str
         :param image_stream: The image file.
         :type image_stream: Generator
         :param cache_image: Whether to retain the submitted image for future
@@ -325,7 +322,6 @@ class ImageModerationOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image_stream, callback)
@@ -498,15 +494,12 @@ class ImageModerationOperations(object):
         return deserialized
 
     def ocr_file_input(
-            self, language, content_type, image_stream, cache_image=None, enhanced=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, language, image_stream, cache_image=None, enhanced=False, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns any text found in the image for the language specified. If no
         language is specified in input then the detection defaults to English.
 
         :param language: Language of the terms.
         :type language: str
-        :param content_type: The content type. Possible values include:
-         'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tiff'
-        :type content_type: str
         :param image_stream: The image file.
         :type image_stream: Generator
         :param cache_image: Whether to retain the submitted image for future
@@ -554,7 +547,6 @@ class ImageModerationOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image_stream, callback)
@@ -579,12 +571,9 @@ class ImageModerationOperations(object):
         return deserialized
 
     def evaluate_file_input(
-            self, content_type, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns probabilities of the image containing racy or adult content.
 
-        :param content_type: The content type. Possible values include:
-         'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tiff'
-        :type content_type: str
         :param image_stream: The image file.
         :type image_stream: Generator
         :param cache_image: Whether to retain the submitted image for future
@@ -625,7 +614,6 @@ class ImageModerationOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image_stream, callback)
@@ -799,7 +787,7 @@ class ImageModerationOperations(object):
         return deserialized
 
     def match_file_input(
-            self, content_type, image_stream, list_id=None, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image_stream, list_id=None, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Fuzzily match an image against one of your custom Image Lists. You can
         create and manage your custom image lists using <a
         href="/docs/services/578ff44d2703741568569ab9/operations/578ff7b12703741568569abe">this</a>
@@ -809,9 +797,6 @@ class ImageModerationOperations(object):
         Note: Refresh Index must be run on the corresponding Image List before
         additions and removals are reflected in the response.
 
-        :param content_type: The content type. Possible values include:
-         'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tiff'
-        :type content_type: str
         :param image_stream: The image file.
         :type image_stream: Generator
         :param list_id: The list Id.
@@ -856,7 +841,6 @@ class ImageModerationOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         # Construct body
         body_content = self._client.stream_upload(image_stream, callback)

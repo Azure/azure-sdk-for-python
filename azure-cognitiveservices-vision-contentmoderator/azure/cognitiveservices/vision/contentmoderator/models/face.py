@@ -33,6 +33,7 @@ class Face(Model):
     }
 
     def __init__(self, bottom=None, left=None, right=None, top=None):
+        super(Face, self).__init__()
         self.bottom = bottom
         self.left = left
         self.right = right

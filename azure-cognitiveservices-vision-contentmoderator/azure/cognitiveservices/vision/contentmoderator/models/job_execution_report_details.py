@@ -27,5 +27,6 @@ class JobExecutionReportDetails(Model):
     }
 
     def __init__(self, ts=None, msg=None):
+        super(JobExecutionReportDetails, self).__init__()
         self.ts = ts
         self.msg = msg

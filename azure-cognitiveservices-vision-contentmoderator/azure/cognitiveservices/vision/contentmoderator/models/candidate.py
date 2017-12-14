@@ -27,5 +27,6 @@ class Candidate(Model):
     }
 
     def __init__(self, text=None, confidence=None):
+        super(Candidate, self).__init__()
         self.text = text
         self.confidence = confidence
