@@ -68,7 +68,6 @@ from .video_frame_body_item_metadata_item import VideoFrameBodyItemMetadataItem
 from .video_frame_body_item import VideoFrameBodyItem
 from .content_moderator_client_enums import (
     AzureRegionBaseUrl,
-    ContentTypes,
 )
 
 __all__ = [
@@ -130,5 +129,4 @@ __all__ = [
     'VideoFrameBodyItemMetadataItem',
     'VideoFrameBodyItem',
     'AzureRegionBaseUrl',
-    'ContentTypes',
 ]

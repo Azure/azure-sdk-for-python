@@ -51,6 +51,7 @@ class Job(Model):
     }
 
     def __init__(self, id=None, team_name=None, status=None, workflow_id=None, type=None, call_back_endpoint=None, review_id=None, result_meta_data=None, job_execution_report=None):
+        super(Job, self).__init__()
         self.id = id
         self.team_name = team_name
         self.status = status

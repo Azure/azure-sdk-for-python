@@ -45,6 +45,7 @@ class FoundFaces(Model):
     }
 
     def __init__(self, status=None, tracking_id=None, cache_id=None, result=None, count=None, advanced_info=None, faces=None):
+        super(FoundFaces, self).__init__()
         self.status = status
         self.tracking_id = tracking_id
         self.cache_id = cache_id

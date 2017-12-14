@@ -35,6 +35,7 @@ class Frame(Model):
     }
 
     def __init__(self, timestamp=None, frame_image=None, metadata=None, reviewer_result_tags=None):
+        super(Frame, self).__init__()
         self.timestamp = timestamp
         self.frame_image = frame_image
         self.metadata = metadata

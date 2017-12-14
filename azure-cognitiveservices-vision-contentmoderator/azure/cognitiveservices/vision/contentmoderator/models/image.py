@@ -35,6 +35,7 @@ class Image(Model):
     }
 
     def __init__(self, content_id=None, additional_info=None, status=None, tracking_id=None):
+        super(Image, self).__init__()
         self.content_id = content_id
         self.additional_info = additional_info
         self.status = status

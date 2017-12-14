@@ -44,6 +44,7 @@ class CreateReviewBodyItem(Model):
     }
 
     def __init__(self, type, content, content_id, callback_endpoint=None, metadata=None):
+        super(CreateReviewBodyItem, self).__init__()
         self.type = type
         self.content = content
         self.content_id = content_id

@@ -27,5 +27,6 @@ class ImageListMetadata(Model):
     }
 
     def __init__(self, key_one=None, key_two=None):
+        super(ImageListMetadata, self).__init__()
         self.key_one = key_one
         self.key_two = key_two

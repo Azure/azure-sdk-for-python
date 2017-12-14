@@ -52,6 +52,7 @@ class Evaluate(Model):
     }
 
     def __init__(self, cache_id=None, result=None, tracking_id=None, adult_classification_score=None, is_image_adult_classified=None, racy_classification_score=None, is_image_racy_classified=None, advanced_info=None, status=None):
+        super(Evaluate, self).__init__()
         self.cache_id = cache_id
         self.result = result
         self.tracking_id = tracking_id

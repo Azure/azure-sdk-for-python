@@ -40,6 +40,7 @@ class VideoFrameBodyItem(Model):
     }
 
     def __init__(self, timestamp, frame_image, reviewer_result_tags=None, metadata=None):
+        super(VideoFrameBodyItem, self).__init__()
         self.timestamp = timestamp
         self.frame_image = frame_image
         self.reviewer_result_tags = reviewer_result_tags

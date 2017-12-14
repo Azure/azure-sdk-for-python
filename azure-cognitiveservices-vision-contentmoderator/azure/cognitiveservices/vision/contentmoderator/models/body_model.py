@@ -27,5 +27,6 @@ class BodyModel(Model):
     }
 
     def __init__(self, data_representation="URL", value=None):
+        super(BodyModel, self).__init__()
         self.data_representation = data_representation
         self.value = value

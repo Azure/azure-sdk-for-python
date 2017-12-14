@@ -23,17 +23,18 @@ class Email(Model):
     :type text: str
     :param index: Index(Location) of the Email address in the input text
      content.
-    :type index: float
+    :type index: int
     """
 
     _attribute_map = {
         'detected': {'key': 'detected', 'type': 'str'},
         'sub_type': {'key': 'subType', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'float'},
+        'index': {'key': 'index', 'type': 'int'},
     }
 
     def __init__(self, detected=None, sub_type=None, text=None, index=None):
+        super(Email, self).__init__()
         self.detected = detected
         self.sub_type = sub_type
         self.text = text

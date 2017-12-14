@@ -31,6 +31,7 @@ class DetectedLanguage(Model):
     }
 
     def __init__(self, detected_language=None, status=None, tracking_id=None):
+        super(DetectedLanguage, self).__init__()
         self.detected_language = detected_language
         self.status = status
         self.tracking_id = tracking_id
