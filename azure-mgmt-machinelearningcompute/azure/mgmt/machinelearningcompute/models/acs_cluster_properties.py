@@ -74,6 +74,7 @@ class AcsClusterProperties(Model):
     }
 
     def __init__(self, orchestrator_type, orchestrator_properties=None, system_services=None, master_count=1, agent_count=2, agent_vm_size="Standard_D3_v2"):
+        super(AcsClusterProperties, self).__init__()
         self.cluster_fqdn = None
         self.orchestrator_type = orchestrator_type
         self.orchestrator_properties = orchestrator_properties

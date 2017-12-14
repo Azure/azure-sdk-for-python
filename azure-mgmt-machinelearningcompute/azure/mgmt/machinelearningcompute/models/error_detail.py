@@ -32,5 +32,6 @@ class ErrorDetail(Model):
     }
 
     def __init__(self, code, message):
+        super(ErrorDetail, self).__init__()
         self.code = code
         self.message = message

@@ -33,4 +33,5 @@ class CheckSystemServicesUpdatesAvailableResponse(Model):
     }
 
     def __init__(self):
+        super(CheckSystemServicesUpdatesAvailableResponse, self).__init__()
         self.updates_available = None

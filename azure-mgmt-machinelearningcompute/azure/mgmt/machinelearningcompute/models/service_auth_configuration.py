@@ -37,5 +37,6 @@ class ServiceAuthConfiguration(Model):
     }
 
     def __init__(self, primary_auth_key_hash, secondary_auth_key_hash):
+        super(ServiceAuthConfiguration, self).__init__()
         self.primary_auth_key_hash = primary_auth_key_hash
         self.secondary_auth_key_hash = secondary_auth_key_hash
