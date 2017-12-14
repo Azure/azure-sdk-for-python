@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SubResource(Model):
-    """A subresource.
+    """SubResource.
 
     :param id: Resource Id
     :type id: str
@@ -24,4 +24,5 @@ class SubResource(Model):
     }
 
     def __init__(self, id=None):
+        super(SubResource, self).__init__()
         self.id = id

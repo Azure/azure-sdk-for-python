@@ -47,6 +47,7 @@ class OperationStatusResponse(Model):
     }
 
     def __init__(self):
+        super(OperationStatusResponse, self).__init__()
         self.name = None
         self.status = None
         self.start_time = None

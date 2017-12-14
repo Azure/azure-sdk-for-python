@@ -44,6 +44,7 @@ class VirtualMachineSize(Model):
     }
 
     def __init__(self, name=None, number_of_cores=None, os_disk_size_in_mb=None, resource_disk_size_in_mb=None, memory_in_mb=None, max_data_disk_count=None):
+        super(VirtualMachineSize, self).__init__()
         self.name = name
         self.number_of_cores = number_of_cores
         self.os_disk_size_in_mb = os_disk_size_in_mb

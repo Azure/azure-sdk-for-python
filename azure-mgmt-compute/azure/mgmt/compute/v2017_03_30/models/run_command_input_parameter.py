@@ -32,5 +32,6 @@ class RunCommandInputParameter(Model):
     }
 
     def __init__(self, name, value):
+        super(RunCommandInputParameter, self).__init__()
         self.name = name
         self.value = value

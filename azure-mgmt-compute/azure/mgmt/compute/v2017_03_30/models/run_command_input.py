@@ -36,6 +36,7 @@ class RunCommandInput(Model):
     }
 
     def __init__(self, command_id, script=None, parameters=None):
+        super(RunCommandInput, self).__init__()
         self.command_id = command_id
         self.script = script
         self.parameters = parameters

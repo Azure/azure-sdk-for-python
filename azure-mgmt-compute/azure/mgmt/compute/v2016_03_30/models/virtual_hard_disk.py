@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class VirtualHardDisk(Model):
     """Describes the uri of a disk.
 
-    :param uri: The virtual hard disk's URI. Must be a valid URI to a virtual
-     hard disk.
+    :param uri: Specifies the virtual hard disk's uri.
     :type uri: str
     """
 
@@ -25,4 +24,5 @@ class VirtualHardDisk(Model):
     }
 
     def __init__(self, uri=None):
+        super(VirtualHardDisk, self).__init__()
         self.uri = uri

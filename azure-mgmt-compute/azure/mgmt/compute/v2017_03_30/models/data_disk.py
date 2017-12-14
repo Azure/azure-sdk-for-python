@@ -69,6 +69,7 @@ class DataDisk(Model):
     }
 
     def __init__(self, lun, create_option, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
+        super(DataDisk, self).__init__()
         self.lun = lun
         self.name = name
         self.vhd = vhd

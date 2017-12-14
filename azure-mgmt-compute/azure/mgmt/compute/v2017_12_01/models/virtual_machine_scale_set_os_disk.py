@@ -63,6 +63,7 @@ class VirtualMachineScaleSetOSDisk(Model):
     }
 
     def __init__(self, create_option, name=None, caching=None, os_type=None, image=None, vhd_containers=None, managed_disk=None):
+        super(VirtualMachineScaleSetOSDisk, self).__init__()
         self.name = name
         self.caching = caching
         self.create_option = create_option

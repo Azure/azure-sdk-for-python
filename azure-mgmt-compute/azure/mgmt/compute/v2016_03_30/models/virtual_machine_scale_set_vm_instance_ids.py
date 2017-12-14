@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMInstanceIDs(Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
-    :param instance_ids: The virtual machine scale set instance ids.
+    :param instance_ids: The virtual machine scale set instance ids. Omitting
+     the virtual machine scale set instance ids will result in the operation
+     being performed on all virtual machines in the virtual machine scale set.
     :type instance_ids: list[str]
     """
 
@@ -24,4 +26,5 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
     }
 
     def __init__(self, instance_ids=None):
+        super(VirtualMachineScaleSetVMInstanceIDs, self).__init__()
         self.instance_ids = instance_ids

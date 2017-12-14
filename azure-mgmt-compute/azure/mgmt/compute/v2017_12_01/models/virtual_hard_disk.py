@@ -24,4 +24,5 @@ class VirtualHardDisk(Model):
     }
 
     def __init__(self, uri=None):
+        super(VirtualHardDisk, self).__init__()
         self.uri = uri

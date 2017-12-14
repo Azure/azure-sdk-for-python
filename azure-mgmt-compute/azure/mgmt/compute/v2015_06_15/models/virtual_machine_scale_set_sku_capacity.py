@@ -45,6 +45,7 @@ class VirtualMachineScaleSetSkuCapacity(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineScaleSetSkuCapacity, self).__init__()
         self.minimum = None
         self.maximum = None
         self.default_capacity = None

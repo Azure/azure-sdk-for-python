@@ -34,5 +34,6 @@ class SshPublicKey(Model):
     }
 
     def __init__(self, path=None, key_data=None):
+        super(SshPublicKey, self).__init__()
         self.path = path
         self.key_data = key_data

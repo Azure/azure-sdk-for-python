@@ -48,6 +48,7 @@ class CreationData(Model):
     }
 
     def __init__(self, create_option, storage_account_id=None, image_reference=None, source_uri=None, source_resource_id=None):
+        super(CreationData, self).__init__()
         self.create_option = create_option
         self.storage_account_id = storage_account_id
         self.image_reference = image_reference

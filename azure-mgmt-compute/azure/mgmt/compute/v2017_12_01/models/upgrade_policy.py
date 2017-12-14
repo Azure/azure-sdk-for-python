@@ -39,6 +39,7 @@ class UpgradePolicy(Model):
     }
 
     def __init__(self, mode=None, rolling_upgrade_policy=None, automatic_os_upgrade=None):
+        super(UpgradePolicy, self).__init__()
         self.mode = mode
         self.rolling_upgrade_policy = rolling_upgrade_policy
         self.automatic_os_upgrade = automatic_os_upgrade

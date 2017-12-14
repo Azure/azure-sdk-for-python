@@ -27,4 +27,5 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
     }
 
     def __init__(self, storage_account_type=None):
+        super(VirtualMachineScaleSetManagedDiskParameters, self).__init__()
         self.storage_account_type = storage_account_type

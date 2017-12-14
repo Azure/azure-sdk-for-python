@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ImageDataDisk(Model):
     """Describes a data disk.
 
-    :param lun: The logical unit number.
+    :param lun: Specifies the logical unit number of the data disk. This value
+     is used to identify data disks within the VM and therefore must be unique
+     for each data disk attached to a VM.
     :type lun: int
     :param snapshot: The snapshot.
     :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.SubResource
@@ -24,12 +26,15 @@ class ImageDataDisk(Model):
      ~azure.mgmt.compute.v2016_04_30_preview.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
-    :param caching: The caching type. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
+    :param caching: Specifies the caching requirements. <br><br> Possible
+     values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
+     <br><br> Default: **None for Standard storage. ReadOnly for Premium
+     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes
-    :param disk_size_gb: The initial disk size in GB for blank data disks, and
-     the new desired size for existing OS and Data disks.
+    :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
+     This element can be used to overwrite the name of the disk in a virtual
+     machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     """
 
@@ -47,6 +52,7 @@ class ImageDataDisk(Model):
     }
 
     def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None):
+        super(ImageDataDisk, self).__init__()
         self.lun = lun
         self.snapshot = snapshot
         self.managed_disk = managed_disk

@@ -27,5 +27,6 @@ class InnerError(Model):
     }
 
     def __init__(self, exceptiontype=None, errordetail=None):
+        super(InnerError, self).__init__()
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail

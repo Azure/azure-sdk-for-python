@@ -90,14 +90,14 @@ class CachingTypes(Enum):
 
 class DiskCreateOptionTypes(Enum):
 
-    from_image = "fromImage"
-    empty = "empty"
-    attach = "attach"
+    from_image = "FromImage"
+    empty = "Empty"
+    attach = "Attach"
 
 
 class PassNames(Enum):
 
-    oobe_system = "oobeSystem"
+    oobe_system = "OobeSystem"
 
 
 class ComponentNames(Enum):
