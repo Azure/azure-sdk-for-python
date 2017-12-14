@@ -106,15 +106,17 @@ class NetworkManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_10_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2017_11_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2017_10_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2017_11_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if self.api_version == '2017-10-01':
+        if self.api_version == '2017-11-01':
+            from .v2017_11_01 import NetworkManagementClient as ClientClass
+        elif self.api_version == '2017-10-01':
             from .v2017_10_01 import NetworkManagementClient as ClientClass
         elif self.api_version == '2017-09-01':
             from .v2017_09_01 import NetworkManagementClient as ClientClass
