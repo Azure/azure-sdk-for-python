@@ -804,6 +804,10 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         for cert in certificates:
             if cert.id in expected.keys():
                 attributes = expected[cert.id]
+                # To Accomodate tiny change in == semantic in msrest 0.4.20
+                attributes.additional_properties = {}
+                cert.attributes.additional_properties = {}
+
                 self.assertEqual(attributes, cert.attributes)
                 del expected[cert.id]
 
@@ -820,6 +824,10 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         if credentials:
             self.assertEqual(bundle.credentials.account_id, credentials.account_id)
         if org_details:
+            # To Accomodate tiny change in == semantic in msrest 0.4.20
+            org_details.additional_properties = {}
+            bundle.organization_details.additional_properties = {}
+
             self.assertEqual(bundle.organization_details, org_details)
 
     def _validate_certificate_issuer_list(self, issuers, expected):
