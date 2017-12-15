@@ -37,5 +37,6 @@ class ScaleSettings(Model):
     }
 
     def __init__(self, fixed_scale=None, auto_scale=None):
+        super(ScaleSettings, self).__init__()
         self.fixed_scale = fixed_scale
         self.auto_scale = auto_scale

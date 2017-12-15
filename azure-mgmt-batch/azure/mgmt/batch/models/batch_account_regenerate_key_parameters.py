@@ -29,4 +29,5 @@ class BatchAccountRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_name):
+        super(BatchAccountRegenerateKeyParameters, self).__init__()
         self.key_name = key_name
