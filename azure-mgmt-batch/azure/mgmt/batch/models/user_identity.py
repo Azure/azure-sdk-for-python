@@ -33,5 +33,6 @@ class UserIdentity(Model):
     }
 
     def __init__(self, user_name=None, auto_user=None):
+        super(UserIdentity, self).__init__()
         self.user_name = user_name
         self.auto_user = auto_user
