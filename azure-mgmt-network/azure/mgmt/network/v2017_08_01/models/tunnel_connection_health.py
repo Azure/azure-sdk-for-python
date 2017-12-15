@@ -53,6 +53,7 @@ class TunnelConnectionHealth(Model):
     }
 
     def __init__(self):
+        super(TunnelConnectionHealth, self).__init__()
         self.tunnel = None
         self.connection_status = None
         self.ingress_bytes_transferred = None

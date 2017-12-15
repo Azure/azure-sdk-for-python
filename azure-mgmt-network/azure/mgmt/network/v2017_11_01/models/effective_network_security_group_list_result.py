@@ -35,5 +35,6 @@ class EffectiveNetworkSecurityGroupListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(EffectiveNetworkSecurityGroupListResult, self).__init__()
         self.value = value
         self.next_link = None

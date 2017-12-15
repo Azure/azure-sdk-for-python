@@ -35,5 +35,6 @@ class SubnetAssociation(Model):
     }
 
     def __init__(self, security_rules=None):
+        super(SubnetAssociation, self).__init__()
         self.id = None
         self.security_rules = security_rules

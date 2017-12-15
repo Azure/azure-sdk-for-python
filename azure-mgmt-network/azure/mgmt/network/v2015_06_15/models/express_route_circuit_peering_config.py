@@ -39,6 +39,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     }
 
     def __init__(self, advertised_public_prefixes=None, advertised_public_prefixes_state=None, customer_asn=None, routing_registry_name=None):
+        super(ExpressRouteCircuitPeeringConfig, self).__init__()
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_public_prefixes_state = advertised_public_prefixes_state
         self.customer_asn = customer_asn
