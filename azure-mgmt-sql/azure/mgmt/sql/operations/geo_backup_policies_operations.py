@@ -27,6 +27,8 @@ class GeoBackupPoliciesOperations(object):
     :ivar geo_backup_policy_name: The name of the geo backup policy. Constant value: "Default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -97,16 +99,16 @@ class GeoBackupPoliciesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('GeoBackupPolicy', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('GeoBackupPolicy', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('GeoBackupPolicy', response)
 
         if raw:

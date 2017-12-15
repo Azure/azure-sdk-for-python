@@ -40,6 +40,7 @@ class ResourceIdentity(Model):
     }
 
     def __init__(self, type=None):
+        super(ResourceIdentity, self).__init__()
         self.principal_id = None
         self.type = type
         self.tenant_id = None

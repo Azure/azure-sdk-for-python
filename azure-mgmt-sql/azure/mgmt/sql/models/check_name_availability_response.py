@@ -47,6 +47,7 @@ class CheckNameAvailabilityResponse(Model):
     }
 
     def __init__(self):
+        super(CheckNameAvailabilityResponse, self).__init__()
         self.available = None
         self.message = None
         self.name = None

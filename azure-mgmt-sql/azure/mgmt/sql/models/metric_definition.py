@@ -53,6 +53,7 @@ class MetricDefinition(Model):
     }
 
     def __init__(self):
+        super(MetricDefinition, self).__init__()
         self.name = None
         self.primary_aggregation_type = None
         self.resource_uri = None

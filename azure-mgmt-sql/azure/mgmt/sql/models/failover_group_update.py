@@ -37,6 +37,7 @@ class FailoverGroupUpdate(Model):
     }
 
     def __init__(self, read_write_endpoint=None, read_only_endpoint=None, databases=None, tags=None):
+        super(FailoverGroupUpdate, self).__init__()
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
         self.databases = databases

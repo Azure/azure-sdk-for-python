@@ -41,6 +41,7 @@ class MaxSizeCapability(Model):
     }
 
     def __init__(self):
+        super(MaxSizeCapability, self).__init__()
         self.limit = None
         self.unit = None
         self.status = None

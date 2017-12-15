@@ -53,6 +53,7 @@ class Metric(Model):
     }
 
     def __init__(self):
+        super(Metric, self).__init__()
         self.start_time = None
         self.end_time = None
         self.time_grain = None

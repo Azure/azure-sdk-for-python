@@ -68,6 +68,7 @@ class ImportExtensionRequest(Model):
     operation_mode = "Import"
 
     def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, name=None, type=None, authentication_type="SQL"):
+        super(ImportExtensionRequest, self).__init__()
         self.name = name
         self.type = type
         self.storage_key_type = storage_key_type

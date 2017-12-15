@@ -27,5 +27,6 @@ class SyncGroupSchemaTable(Model):
     }
 
     def __init__(self, columns=None, quoted_name=None):
+        super(SyncGroupSchemaTable, self).__init__()
         self.columns = columns
         self.quoted_name = quoted_name

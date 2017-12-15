@@ -47,6 +47,7 @@ class ServerVersionCapability(Model):
     }
 
     def __init__(self):
+        super(ServerVersionCapability, self).__init__()
         self.name = None
         self.status = None
         self.supported_editions = None

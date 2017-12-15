@@ -27,6 +27,8 @@ class ReplicationLinksOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -233,7 +235,7 @@ class ReplicationLinksOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 202]:
+            if response.status_code not in [202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -319,7 +321,7 @@ class ReplicationLinksOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 202]:
+            if response.status_code not in [202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
