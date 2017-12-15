@@ -26,4 +26,5 @@ class FailoverGroupReadOnlyEndpoint(Model):
     }
 
     def __init__(self, failover_policy=None):
+        super(FailoverGroupReadOnlyEndpoint, self).__init__()
         self.failover_policy = failover_policy

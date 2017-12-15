@@ -38,5 +38,6 @@ class FailoverGroupReadWriteEndpoint(Model):
     }
 
     def __init__(self, failover_policy, failover_with_data_loss_grace_period_minutes=None):
+        super(FailoverGroupReadWriteEndpoint, self).__init__()
         self.failover_policy = failover_policy
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes

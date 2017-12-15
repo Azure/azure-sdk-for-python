@@ -41,6 +41,7 @@ class LocationCapabilities(Model):
     }
 
     def __init__(self):
+        super(LocationCapabilities, self).__init__()
         self.name = None
         self.status = None
         self.supported_server_versions = None

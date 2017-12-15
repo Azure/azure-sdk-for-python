@@ -52,6 +52,7 @@ class SyncGroupLogProperties(Model):
     }
 
     def __init__(self):
+        super(SyncGroupLogProperties, self).__init__()
         self.timestamp = None
         self.type = None
         self.source = None

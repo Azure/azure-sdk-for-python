@@ -47,6 +47,7 @@ class ElasticPoolEditionCapability(Model):
     }
 
     def __init__(self):
+        super(ElasticPoolEditionCapability, self).__init__()
         self.name = None
         self.status = None
         self.supported_elastic_pool_dtus = None

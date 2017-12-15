@@ -62,6 +62,7 @@ class ElasticPoolDtuCapability(Model):
     }
 
     def __init__(self):
+        super(ElasticPoolDtuCapability, self).__init__()
         self.limit = None
         self.max_database_count = None
         self.status = None

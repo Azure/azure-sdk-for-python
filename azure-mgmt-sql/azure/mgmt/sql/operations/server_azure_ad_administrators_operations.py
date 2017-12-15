@@ -28,6 +28,8 @@ class ServerAzureADAdministratorsOperations(object):
     :ivar administrator_name: Name of the server administrator resource. Constant value: "activeDirectory".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -197,18 +199,18 @@ class ServerAzureADAdministratorsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 204, 200]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('ServerAzureADAdministrator', response)
             if response.status_code == 202:
                 deserialized = self._deserialize('ServerAzureADAdministrator', response)
             if response.status_code == 204:
-                deserialized = self._deserialize('ServerAzureADAdministrator', response)
-            if response.status_code == 200:
                 deserialized = self._deserialize('ServerAzureADAdministrator', response)
 
             if raw:

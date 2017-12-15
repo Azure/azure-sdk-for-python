@@ -27,6 +27,8 @@ class TransparentDataEncryptionActivitiesOperations(object):
     :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

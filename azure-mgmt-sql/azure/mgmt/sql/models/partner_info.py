@@ -41,6 +41,7 @@ class PartnerInfo(Model):
     }
 
     def __init__(self, id):
+        super(PartnerInfo, self).__init__()
         self.id = id
         self.location = None
         self.replication_role = None
