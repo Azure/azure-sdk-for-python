@@ -1,24 +1,30 @@
-The eventhubs package provides a simple client to read events from an Event Hub.
+The eventhubs Python client provides,
+* a sender to publish events to the Event Hubs service.
+* a receiver to read events from the Event Hubs service.
+On Python 3.5 and above, it also includes,
+* async sender and receiver that supports async/await methods.
+* an event processor host module that manages the distribution of partition readers.
 
-**This project is under active development. Major API changes may be excepted.**
+# Build and Install
+* Proton-C and its Python binding: https://github.com/apache/qpid-proton/blob/master/INSTALL.md
+For eventprocessorhost, you will also need (list for Fedora 26, adjust for other distributions),
+* libs: libxml2-devel, libxslt-devel, libffi-devel, python3-cffi, redhat-rpm-config
+* Python packages: requests, bs4, lxml, azure-storage, azure-storage-blob
 
-It is built on top of the [Apache Qpid Proton](https://qpid.apache.org/proton/) Python binding and provides the following extra functionalities.
-* Specifies address with Event Hubs specific concepts, e.g. entity name, consumer group, and partition. The client constructs the AMQP address from those.
-* Provides an offset to read events. The client constructs the AMQP filter supported by the Event Hubs service.
-* Provides fault tolerance with transient errors. When the AMQP link, session or connection is closed due to transient errors, the client automatically recover.
-* Provides an EventData helper to read data from the AMQP message.
+*On Windows a private patch to proton-c code is required for the library to work.*
 
+# Examples
+* ./examples/send.py - use sender to publish events
+* ./examples/recv.py - use receiver to read events
+* ./examples/send_async.py - async/await support of a sender
+* ./examples/recv_async.py - async/await support of a receiver
+* ./examples/eph.py - event processor host
+* ./tests/send.py - how to perform parallel send operations to achieve high throughput
+* ./tests/recv.py - how to write an event pump to read events from multiple partitions
 
-# Example
-
-Follow the steps below to run the `recv.py` example.
-* Install Proton if not done yet. Please follow the [instructions here](https://git-wip-us.apache.org/repos/asf?p=qpid-proton.git;a=blob;f=INSTALL.md;hb=0.17.0) to install Proton. Ensure that SSL prerequisites are available so Proton is built and installed with SSL support.
-* Install eventhubs (by running `setup.py`) if not done yet.
-* In `./examples/recv.py`, update `ADDRESS` with your Event Hub configuration.
-* Run `recv.py`.
-
-If anything goes wrong, set the frame trace environment variable to enable Proton frame tracing (`export PN_TRACE_FRM=1`).
+# Logging
+* enable 'eventhubs' logger to collect traces from the library
+* enable AMQP frame level trace by setting environment variable (`export PN_TRACE_FRM=1`)
 
 # Contributing
-
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
