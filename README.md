@@ -6,7 +6,9 @@ On Python 3.5 and above, it also includes,
 * an event processor host module that manages the distribution of partition readers.
 
 # Build and Install
-* Proton-C and its Python binding: https://github.com/apache/qpid-proton/blob/master/INSTALL.md
+The core library requires Apache Proton-C and its Python binding.
+* build Proton-C: https://github.com/apache/qpid-proton/blob/master/INSTALL.md  
+
 For eventprocessorhost, you will also need (list for Fedora 26, adjust for other distributions),
 * libs: libxml2-devel, libxslt-devel, libffi-devel, python3-cffi, redhat-rpm-config
 * Python packages: requests, bs4, lxml, azure-storage, azure-storage-blob
