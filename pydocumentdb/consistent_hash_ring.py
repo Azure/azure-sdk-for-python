@@ -36,7 +36,7 @@ class _ConsistentHashRing(object):
         :param list collection_links:
             The links of collections participating in partitioning.
         :param int partitions_per_node:
-            The partitions per node
+            The partitions per node.
         :param HashGenerator hash_generator: 
             The hash generator to be used for hashing algorithm.
         """

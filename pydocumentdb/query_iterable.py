@@ -35,13 +35,13 @@ class QueryIterable(object):
         _ProxyQueryExecutionContext will be used as the internal query execution context
          
         :param DocumentClient client:
-            Instance of document client
+            Instance of document client.
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
         :param method fetch_function:
         :param str collection_link:
-            If this is a Document query/feed collection_link is required
+            If this is a Document query/feed collection_link is required.
  
         Example of `fetch_function`:
  

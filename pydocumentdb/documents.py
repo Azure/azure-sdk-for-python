@@ -32,9 +32,9 @@ class DatabaseAccount(object):
     :ivar str MediaLink:
         The self-link for Media in the databaseAccount.
     :ivar int MaxMediaStorageUsageInMB:
-        Attachment content (media) storage quota in MBs ( Retrieved from gateway ).
+        Attachment content (media) storage quota in MBs (Retrieved from gateway).
     :ivar int CurrentMediaStorageUsageInMB:
-        Current attachment content (media) usage in MBs (Retrieved from gateway ).
+        Current attachment content (media) usage in MBs (Retrieved from gateway).
         Value is returned from cached information updated periodically and
         is not guaranteed to be real time.
     :ivar dict ConsistencyPolicy:
@@ -167,15 +167,15 @@ class DataType(object):
     """Specifies the data type of index specs.
 
     :ivar str Number:
-        Represents a numeric data type
+        Represents a numeric data type.
     :ivar str String:
         Represents a string data type.
     :ivar str Point:
-        Represents a point data type
+        Represents a point data type.
     :ivar str LineString:
-        Represents a line string data type
+        Represents a line string data type.
     :ivar str Polygon:
-        Represents a polygon data type
+        Represents a polygon data type.
     """
     Number = 'Number'
     String = 'String'
@@ -313,7 +313,7 @@ class ConnectionPolicy(object):
 
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
-        for response from network peer)
+        for response from network peer).
     :ivar int MediaRequestTimeout: 
         Gets or sets Time to wait for response
         from network peer for attachment content (aka media) operations.

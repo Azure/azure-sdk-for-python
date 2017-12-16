@@ -54,7 +54,7 @@ class _MurmurHash(object):
             Byte array representing the key to be hashed.
 
         :return:
-            32 bit hash value
+            32 bit hash value.
         :rtype: int
         """
         if key is None:

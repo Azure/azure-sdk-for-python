@@ -169,9 +169,9 @@ class DocumentClient(object):
         """Registers the partition resolver associated with the database link
 
         :param str database_link:
-            Database Self Link or ID based link
+            Database Self Link or ID based link.
         :param object partition_resolver:
-            An instance of PartitionResolver
+            An instance of PartitionResolver.
         
         """
         if not database_link:
@@ -187,10 +187,10 @@ class DocumentClient(object):
         """Gets the partition resolver associated with the database link
 
         :param str database_link:
-            Database self link or ID based link
+            Database self link or ID based link.
 
         :return:
-            An instance of PartitionResolver
+            An instance of PartitionResolver.
         :rtype: object
 
         """
@@ -209,7 +209,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The Database that was created
+            The Database that was created.
         :rtype: dict
 
         """
@@ -229,7 +229,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The Database that was read
+            The Database that was read.
         :rtype: dict
 
         """
@@ -247,7 +247,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return: 
-            Query Iterable of Databases
+            Query Iterable of Databases.
         :rtype:
             query_iterable.QueryIterable
 
@@ -264,7 +264,7 @@ class DocumentClient(object):
         :param dict options:
             The request options for the request.
 
-        :return: Query Iterable of Databases
+        :return: Query Iterable of Databases.
         :rtype:
             query_iterable.QueryIterable
 
@@ -289,8 +289,8 @@ class DocumentClient(object):
             The link to the database.
         :param dict options:
             The request options for the request.
-
-        :return: Query Iterable of Collections
+            
+        :return: Query Iterable of Collections.
         :rtype:
             query_iterable.QueryIterable
 
@@ -309,7 +309,7 @@ class DocumentClient(object):
         :param dict options:
             The request options for the request.
 
-        :return: Query Iterable of Collections
+        :return: Query Iterable of Collections.
         :rtype:
             query_iterable.QueryIterable
 
@@ -339,7 +339,7 @@ class DocumentClient(object):
         :param dict options:
             The request options for the request.
 
-        :return: The Collection that was created
+        :return: The Collection that was created.
         :rtype: dict
 
         """
@@ -367,7 +367,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new Collection
+            The new Collection.
         :rtype:
             dict
 
@@ -394,7 +394,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read Collection
+            The read Collection.
         :rtype:
             dict
 
@@ -421,7 +421,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created User
+            The created User.
         :rtype:
             dict
 
@@ -448,7 +448,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted User
+            The upserted User.
         :rtype: dict
         """
         if options is None:
@@ -478,7 +478,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read User
+            The read User.
         :rtype:
             dict
 
@@ -498,7 +498,7 @@ class DocumentClient(object):
         :params dict options:
             The request options for the request.
         :return:
-            Query iterable of Users
+            Query iterable of Users.
         :rtype:
             query_iterable.QueryIterable
 
@@ -518,7 +518,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Users
+            Query Iterable of Users.
         :rtype:   
             query_iterable.QueryIterable
 
@@ -547,7 +547,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Database
+            The deleted Database.
         :rtype:
             dict
 
@@ -574,7 +574,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Permission
+            The created Permission.
         :rtype:
             dict
 
@@ -601,7 +601,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted permission
+            The upserted permission.
         :rtype:
             dict
 
@@ -633,7 +633,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read permission
+            The read permission.
         :rtype:
             dict
 
@@ -658,7 +658,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Permissions
+            Query Iterable of Permissions.
         :rtype:
             query_iterable.QueryIterable
 
@@ -678,7 +678,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Permissions
+            Query Iterable of Permissions.
         :rtype:
             query_iterable.QueryIterable
 
@@ -708,7 +708,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new User
+            The new User.
         :rtype:
             dict
 
@@ -735,7 +735,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted user
+            The deleted user.
         :rtype:
             dict
 
@@ -761,7 +761,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new Permission
+            The new Permission.
         :rtype:
             dict
 
@@ -788,7 +788,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Permission
+            The deleted Permission.
         :rtype:
             dict
 
@@ -812,7 +812,7 @@ class DocumentClient(object):
         :param dict feed_options:
 
         :return:
-            Query Iterable of Documents
+            Query Iterable of Documents.
         :rtype:
             query_iterable.QueryIterable
 
@@ -834,7 +834,7 @@ class DocumentClient(object):
             Partition key for the query(default value None)
 
         :return:
-            Query Iterable of Documents
+            Query Iterable of Documents.
         :rtype:
             query_iterable.QueryIterable
 
@@ -868,7 +868,7 @@ class DocumentClient(object):
         :param dict feed_options:
 
         :return:
-            Query Iterable of PartitionKeyRanges
+            Query Iterable of PartitionKeyRanges.
         :rtype:
             query_iterable.QueryIterable
 
@@ -888,7 +888,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of PartitionKeyRanges
+            Query Iterable of PartitionKeyRanges.
         :rtype:
             query_iterable.QueryIterable
 
@@ -922,7 +922,7 @@ class DocumentClient(object):
             option is true, an error will be returned.
 
         :return:
-            The created Document
+            The created Document.
         :rtype:
             dict
 
@@ -960,7 +960,7 @@ class DocumentClient(object):
             option is true, an error will be returned.
 
         :return:
-            The upserted Document
+            The upserted Document.
         :rtype:
             dict
 
@@ -1024,7 +1024,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read Document
+            The read Document.
         :rtype:
             dict
 
@@ -1049,7 +1049,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Triggers
+            Query Iterable of Triggers.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1069,7 +1069,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Triggers
+            Query Iterable of Triggers.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1099,7 +1099,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Trigger
+            The created Trigger.
         :rtype:
             dict
 
@@ -1125,7 +1125,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Trigger
+            The upserted Trigger.
         :rtype:
             dict
 
@@ -1163,7 +1163,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read Trigger
+            The read Trigger.
         :rtype:
             dict
 
@@ -1184,7 +1184,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of UDFs
+            Query Iterable of UDFs.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1204,7 +1204,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of UDFs
+            Query Iterable of UDFs.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1234,7 +1234,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created UDF
+            The created UDF.
         :rtype:
             dict
 
@@ -1260,7 +1260,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted UDF
+            The upserted UDF.
         :rtype:
             dict
 
@@ -1298,7 +1298,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read UDF
+            The read UDF.
         :rtype:
             dict
 
@@ -1319,7 +1319,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Stored Procedures
+            Query Iterable of Stored Procedures.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1339,7 +1339,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Stored Procedures
+            Query Iterable of Stored Procedures.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1369,7 +1369,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Stored Procedure
+            The created Stored Procedure.
         :rtype:
             dict
 
@@ -1395,7 +1395,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Stored Procedure
+            The upserted Stored Procedure.
         :rtype:
             dict
 
@@ -1432,7 +1432,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read Stored Procedure
+            The read Stored Procedure.
         :rtype:
             dict
 
@@ -1452,7 +1452,7 @@ class DocumentClient(object):
         :param dict feed_options:
 
         :return:
-            Query Iterable of Conflicts
+            Query Iterable of Conflicts.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1472,7 +1472,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Conflicts
+            Query Iterable of Conflicts.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1500,7 +1500,7 @@ class DocumentClient(object):
         :param dict options:
 
         :return:
-            The read Conflict
+            The read Conflict.
         :rtype:
             dict
 
@@ -1525,7 +1525,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Collection
+            The deleted Collection.
         :rtype:
             dict
 
@@ -1551,7 +1551,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new Document
+            The new Document.
         :rtype:
             dict
 
@@ -1587,7 +1587,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Document
+            The deleted Document.
         :rtype:
             dict
 
@@ -1614,7 +1614,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Attachment
+            The created Attachment.
         :rtype:
             dict
 
@@ -1641,7 +1641,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Attachment
+            The upserted Attachment.
         :rtype:
             dict
 
@@ -1676,7 +1676,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Attachment
+            The created Attachment.
         :rtype:
             dict
 
@@ -1705,7 +1705,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Attachment
+            The upserted Attachment.
         :rtype:
             dict
 
@@ -1749,7 +1749,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The read Attachment
+            The read Attachment.
         :rtype:
             dict
 
@@ -1774,7 +1774,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Attachments
+            Query Iterable of Attachments.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1794,7 +1794,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            Query Iterable of Attachments
+            Query Iterable of Attachments.
         :rtype:
             query_iterable.QueryIterable
 
@@ -1827,7 +1827,7 @@ class DocumentClient(object):
             The link to the media.
 
         :return:
-            The read Media
+            The read Media.
         :rtype:
             str or file-like stream object
 
@@ -1862,7 +1862,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The updated Media
+            The updated Media.
         :rtype:
             str or file-like stream object
 
@@ -1942,7 +1942,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Attachment
+            The deleted Attachment.
         :rtype:
             dict
 
@@ -1968,7 +1968,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The replaced Trigger
+            The replaced Trigger.
         :rtype:
             dict
 
@@ -2001,7 +2001,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Trigger
+            The deleted Trigger.
         :rtype:
             dict
 
@@ -2027,7 +2027,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new UDF
+            The new UDF.
         :rtype:
             dict
 
@@ -2060,7 +2060,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted UDF
+            The deleted UDF.
         :rtype:
             dict
 
@@ -2087,7 +2087,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The Stored Procedure response
+            The Stored Procedure response.
         :rtype:
             dict
 
@@ -2133,7 +2133,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The replaced Stored Procedure
+            The replaced Stored Procedure.
         :rtype:
             dict
 
@@ -2166,7 +2166,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Stored Procedure
+            The deleted Stored Procedure.
         :rtype:
             dict
 
@@ -2191,7 +2191,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Conflict
+            The deleted Conflict.
         :rtype:
             dict
 
@@ -2215,7 +2215,7 @@ class DocumentClient(object):
         :param dict offer:
 
         :return:
-            The replaced Offer
+            The replaced Offer.
         :rtype:
             dict
 
@@ -2232,7 +2232,7 @@ class DocumentClient(object):
             The link to the offer.
 
         :return:
-            The read Offer
+            The read Offer.
         :rtype:
             dict
 
@@ -2248,7 +2248,7 @@ class DocumentClient(object):
             The request options for the request
 
         :return:
-            Query Iterable of Offers
+            Query Iterable of Offers.
         :rtype:
             query_iterable.QueryIterable
 
@@ -2266,7 +2266,7 @@ class DocumentClient(object):
             The request options for the request
 
         :return:
-            Query Iterable of Offers
+            Query Iterable of Offers.
         :rtype:
             query_iterable.QueryIterable
 
@@ -2288,7 +2288,7 @@ class DocumentClient(object):
         """Gets database account info.
 
         :return:
-            The Database Account
+            The Database Account.
         :rtype:
             documents.DatabaseAccount
 
@@ -2341,7 +2341,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The created Azure Cosmos DB resource
+            The created Azure Cosmos DB resource.
         :rtype:
             dict
 
@@ -2380,7 +2380,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Azure Cosmos DB resource
+            The upserted Azure Cosmos DB resource.
         :rtype:
             dict
 
@@ -2421,7 +2421,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The new Azure Cosmos DB resource
+            The new Azure Cosmos DB resource.
         :rtype:
             dict
 
@@ -2459,7 +2459,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The upserted Azure Cosmos DB resource
+            The upserted Azure Cosmos DB resource.
         :rtype:
             dict
 
@@ -2493,7 +2493,7 @@ class DocumentClient(object):
             The request options for the request.
 
         :return:
-            The deleted Azure Cosmos DB resource
+            The deleted Azure Cosmos DB resource.
         :rtype:
             dict
 
@@ -2529,7 +2529,7 @@ class DocumentClient(object):
         :params dict headers:
 
         :return:
-            tuple of (result, headers)
+            Tuple of (result, headers).
         :rtype:
             tuple of (dict, dict)
 
@@ -2554,7 +2554,7 @@ class DocumentClient(object):
         :params dict headers:
 
         :return:
-            tuple of (result, headers)
+            Tuple of (result, headers).
         :rtype:
             tuple of (dict, dict)
 
@@ -2579,7 +2579,7 @@ class DocumentClient(object):
         :params dict headers:
 
         :return:
-            tuple of (result, headers)
+            Tuple of (result, headers).
         :rtype:
             tuple of (dict, dict)
 
@@ -2603,7 +2603,7 @@ class DocumentClient(object):
         :params dict headers:
 
         :return:
-            tuple of (result, headers)
+            Tuple of (result, headers).
         :rtype:
             tuple of (dict, dict)
 
@@ -2623,14 +2623,14 @@ class DocumentClient(object):
         """Query Feed for Document Collection resource.
 
         :param str path:
-            Path to the document collection
+            Path to the document collection.
         :param str collection_id:
-            Id of the document collection
+            Id of the document collection.
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
         :param str partition_key_range_id:
-            Partition key range id
+            Partition key range id.
         :rtype:
             tuple
 
@@ -2664,7 +2664,7 @@ class DocumentClient(object):
         :param dict options:
             The request options for the request.
         :param str partition_key_range_id:
-            Specifies partition key range id
+            Specifies partition key range id.
 
         :rtype:
             list
@@ -2735,7 +2735,7 @@ class DocumentClient(object):
         :param (str or dict) query_body:
 
         :return:
-            The formatted query body
+            The formatted query body.
         :rtype:
             dict or string
         """
@@ -2830,7 +2830,7 @@ class DocumentClient(object):
         :param dict response_headers
 
         :return:
-            None, but updates the client session if necessary
+            None, but updates the client session if necessary.
 
         """
 

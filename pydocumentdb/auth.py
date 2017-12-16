@@ -74,7 +74,7 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
     :param str master_key:
 
     :return:
-        The authorization token
+        The authorization token.
     :rtype: dict
 
     """
@@ -117,7 +117,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
     :param str resource_id_or_fullname:
 
     :return:
-        The authorization token
+        The authorization token.
     :rtype: dict
 
     """

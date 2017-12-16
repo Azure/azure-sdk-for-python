@@ -8,7 +8,7 @@ import config as cfg
 # Prerequistes - 
 # 
 # 1. An Azure Cosmos DB account - 
-#    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
+#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure DocumentDB PyPi package - 
 #    https://pypi.python.org/pypi/pydocumentdb/

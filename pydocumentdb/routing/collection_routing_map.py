@@ -66,7 +66,7 @@ class _CollectionRoutingMap(object):
         """Gets the ordered partition key ranges
 
         :return:
-            Ordered list of partition key ranges
+            Ordered list of partition key ranges.
         :rtype: list
         """
         return self._orderedPartitionKeyRanges
@@ -75,7 +75,7 @@ class _CollectionRoutingMap(object):
         """Gets the range containing the given partition key
 
         :param str effective_partition_key_value:
-            The partition key value
+            The partition key value.
         :return:
             The partition key range.
         :rtype: dict
@@ -97,7 +97,7 @@ class _CollectionRoutingMap(object):
         """Gets the partition key range given the partition key range id
 
         :param str partition_key_range_id:
-            The partition key range id
+            The partition key range id.
         :return:
             The partition key range.
         :rtype: dict
@@ -112,9 +112,9 @@ class _CollectionRoutingMap(object):
         """Gets the partition key ranges overlapping the provided ranges
 
         :param list provided_partition_key_ranges:
-            List of partition key ranges
+            List of partition key ranges.
         :return:
-            list of partition key ranges, where each is a dict
+            List of partition key ranges, where each is a dict.
         :rtype: list
         """
 

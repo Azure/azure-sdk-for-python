@@ -48,12 +48,12 @@ class _PartitionKeyRangeCache(object):
         returns the list of overlapping partition key ranges
         
         :param str collection_link:
-            The name of the collection
+            The name of the collection.
         :param list partition_key_range: 
-            List of partition key range
+            List of partition key range.
         
         :return:
-            List of overlapping partition key ranges
+            List of overlapping partition key ranges.
         :rtype: list
         '''
         cl = self._documentClient
@@ -97,10 +97,10 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
         """
         Evaluates and returns r - partition_key_range
         :param dict partition_key_range:
-            Partition key range
-        :param routing_range._Range r: query range
+            Partition key range.
+        :param routing_range._Range r: query range.
         :return:
-            The subtract r - partition_key_range
+            The subtract r - partition_key_range.
         :rtype: routing_range._Range
         """
         
@@ -121,10 +121,10 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
         Returns the list of overlapping partition key ranges
         
         :param str collection_link:
-            The collection link
-        :param (list of routing_range._Range) sorted_ranges: The sorted list of non-overlapping ranges
+            The collection link.
+        :param (list of routing_range._Range) sorted_ranges: The sorted list of non-overlapping ranges.
         :return:
-            List of partition key ranges
+            List of partition key ranges.
         :rtype: list of dict
         :raises ValueError: If two ranges in sorted_ranges overlap or if the list is not sorted
         '''
