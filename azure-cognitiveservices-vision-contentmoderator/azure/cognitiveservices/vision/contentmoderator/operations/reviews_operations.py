@@ -71,7 +71,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -127,7 +126,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -213,7 +211,6 @@ class ReviewsOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['UrlContentType'] = self._serialize.header("url_content_type", url_content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(create_review_body, '[CreateReviewBodyItem]')
@@ -335,7 +332,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
         header_parameters['Content-Type'] = self._serialize.header("job_content_type", job_content_type, 'str')
 
         # Construct body
@@ -422,7 +418,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -507,7 +502,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -562,7 +556,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -620,7 +613,6 @@ class ReviewsOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(transcript_moderation_body, '[TranscriptModerationBodyItem]')
@@ -681,7 +673,6 @@ class ReviewsOperations(object):
         header_parameters['Content-Type'] = 'text/plain'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
         header_parameters['Content-Type'] = self._serialize.header("self.content_type", self.content_type, 'str')
 
         # Construct body
@@ -765,7 +756,6 @@ class ReviewsOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(create_video_reviews_body, '[CreateVideoReviewsBodyItem]')
@@ -838,7 +828,6 @@ class ReviewsOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(video_frame_body, '[VideoFrameBodyItem]')
@@ -905,7 +894,6 @@ class ReviewsOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct form data
         form_data_content = {
