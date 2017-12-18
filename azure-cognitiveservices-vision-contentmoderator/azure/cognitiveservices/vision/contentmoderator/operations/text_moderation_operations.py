@@ -91,7 +91,6 @@ class TextModerationOperations(object):
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Type'] = self._serialize.header("text_content_type", text_content_type, 'str')
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(text_content, 'str')
@@ -154,7 +153,6 @@ class TextModerationOperations(object):
         header_parameters['Content-Type'] = 'text/plain'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
         header_parameters['Content-Type'] = self._serialize.header("text_content_type", text_content_type, 'str')
 
         # Construct body
