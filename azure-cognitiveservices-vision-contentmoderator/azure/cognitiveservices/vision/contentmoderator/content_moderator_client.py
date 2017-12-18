@@ -27,8 +27,6 @@ class ContentModeratorClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param ocp_apim_subscription_key: The subscription key in header
-    :type ocp_apim_subscription_key: str
     :param base_url: Supported Azure regions for Content Moderator endpoints.
      Possible values include: 'westus.api.cognitive.microsoft.com',
      'westus2.api.cognitive.microsoft.com',
@@ -51,10 +49,8 @@ class ContentModeratorClientConfiguration(Configuration):
     """
 
     def __init__(
-            self, ocp_apim_subscription_key, base_url, credentials):
+            self, base_url, credentials):
 
-        if ocp_apim_subscription_key is None:
-            raise ValueError("Parameter 'ocp_apim_subscription_key' must not be None.")
         if base_url is None:
             raise ValueError("Parameter 'base_url' must not be None.")
         if credentials is None:
@@ -65,7 +61,6 @@ class ContentModeratorClientConfiguration(Configuration):
 
         self.add_user_agent('azure-cognitiveservices-vision-contentmoderator/{}'.format(VERSION))
 
-        self.ocp_apim_subscription_key = ocp_apim_subscription_key
         self.base_url = base_url
         self.credentials = credentials
 
@@ -100,8 +95,6 @@ class ContentModeratorClient(object):
     :ivar reviews: Reviews operations
     :vartype reviews: azure.cognitiveservices.vision.contentmoderator.operations.ReviewsOperations
 
-    :param ocp_apim_subscription_key: The subscription key in header
-    :type ocp_apim_subscription_key: str
     :param base_url: Supported Azure regions for Content Moderator endpoints.
      Possible values include: 'westus.api.cognitive.microsoft.com',
      'westus2.api.cognitive.microsoft.com',
@@ -124,9 +117,9 @@ class ContentModeratorClient(object):
     """
 
     def __init__(
-            self, ocp_apim_subscription_key, base_url, credentials):
+            self, base_url, credentials):
 
-        self.config = ContentModeratorClientConfiguration(ocp_apim_subscription_key, base_url, credentials)
+        self.config = ContentModeratorClientConfiguration(base_url, credentials)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
