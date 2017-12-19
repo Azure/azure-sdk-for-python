@@ -18,8 +18,8 @@ except ImportError:
     cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-search-videosearch"
-PACKAGE_PPRINT_NAME = "Cognitive Services VideoSearch"
+PACKAGE_NAME = "azure-cognitiveservices-search-customsearch"
+PACKAGE_PPRINT_NAME = "CustomSearch"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -69,7 +69,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
