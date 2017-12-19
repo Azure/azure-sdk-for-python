@@ -50,6 +50,7 @@ class SpellingFlaggedToken(Model):
     }
 
     def __init__(self, offset, token, type="UnknownToken"):
+        super(SpellingFlaggedToken, self).__init__()
         self.offset = offset
         self.token = token
         self.type = type

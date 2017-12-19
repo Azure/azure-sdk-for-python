@@ -67,7 +67,7 @@ class SpellCheckAPI(object):
 
 
     def spell_checker(
-            self, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, text=None, custom_headers=None, raw=False, **operation_config):
+            self, text, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, custom_headers=None, raw=False, **operation_config):
         """The Bing Spell Check API lets you perform contextual grammar and spell
         checking. Bing has developed a web-based spell-checker that leverages
         machine learning and statistical machine translation to dynamically
@@ -75,6 +75,14 @@ class SpellCheckAPI(object):
         spell-checker is based on a massive corpus of web searches and
         documents.
 
+        :param text: The text string to check for spelling and grammar errors.
+         The combined length of the text string, preContextText string, and
+         postContextText string may not exceed 10,000 characters. You may
+         specify this parameter in the query string of a GET request or in the
+         body of a POST request. Because of the query string length limit,
+         you'll typically use a POST request unless you're checking only short
+         strings.
+        :type text: str
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
          order of preference. For additional information, including expected
@@ -279,14 +287,6 @@ class SpellCheckAPI(object):
          10,000 characters. You may specify this parameter in the query string
          of a GET request or in the body of a POST request.
         :type post_context_text: str
-        :param text: The text string to check for spelling and grammar errors.
-         The combined length of the text string, preContextText string, and
-         postContextText string may not exceed 10,000 characters. You may
-         specify this parameter in the query string of a GET request or in the
-         body of a POST request. Because of the query string length limit,
-         you'll typically use a POST request unless you're checking only short
-         strings.
-        :type text: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -345,10 +345,10 @@ class SpellCheckAPI(object):
 
         # Construct form data
         form_data_content = {
+            'Text': text,
             'Mode': mode,
             'PreContextText': pre_context_text,
             'PostContextText': post_context_text,
-            'Text': text,
         }
 
         # Construct and send request
