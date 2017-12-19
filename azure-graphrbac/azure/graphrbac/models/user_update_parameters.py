@@ -15,6 +15,9 @@ from .user_base import UserBase
 class UserUpdateParameters(UserBase):
     """Request parameters for updating an existing work or school account user.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
      user account. It is used to associate an on-premises Active Directory user
@@ -33,6 +36,9 @@ class UserUpdateParameters(UserBase):
      in your directory, such as 'Member' and 'Guest'. Possible values include:
      'Member', 'Guest'
     :type user_type: str or ~azure.graphrbac.models.UserType
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param account_enabled: Whether the account is enabled.
     :type account_enabled: bool
     :param display_name: The display name of the user.
@@ -48,11 +54,13 @@ class UserUpdateParameters(UserBase):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'immutable_id': {'key': 'immutableId', 'type': 'str'},
         'usage_location': {'key': 'usageLocation', 'type': 'str'},
         'given_name': {'key': 'givenName', 'type': 'str'},
         'surname': {'key': 'surname', 'type': 'str'},
         'user_type': {'key': 'userType', 'type': 'str'},
+        'additional_properties': {'key': '', 'type': '{object}'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'password_profile': {'key': 'passwordProfile', 'type': 'PasswordProfile'},
@@ -60,8 +68,9 @@ class UserUpdateParameters(UserBase):
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
     }
 
-    def __init__(self, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, password_profile=None, user_principal_name=None, mail_nickname=None):
-        super(UserUpdateParameters, self).__init__(immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
+    def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, additional_properties=None, account_enabled=None, display_name=None, password_profile=None, user_principal_name=None, mail_nickname=None):
+        super(UserUpdateParameters, self).__init__(additional_properties=additional_properties, immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
+        self.additional_properties = additional_properties
         self.account_enabled = account_enabled
         self.display_name = display_name
         self.password_profile = password_profile

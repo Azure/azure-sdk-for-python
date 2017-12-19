@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .graph_error import GraphError, GraphErrorException
+from .directory_object import DirectoryObject
 from .key_credential import KeyCredential
 from .password_credential import PasswordCredential
 from .resource_access import ResourceAccess
@@ -17,6 +18,7 @@ from .required_resource_access import RequiredResourceAccess
 from .application_create_parameters import ApplicationCreateParameters
 from .application_update_parameters import ApplicationUpdateParameters
 from .application import Application
+from .application_add_owner_parameters import ApplicationAddOwnerParameters
 from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
 from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
 from .aad_object import AADObject
@@ -39,6 +41,7 @@ from .get_objects_parameters import GetObjectsParameters
 from .domain import Domain
 from .aad_object_paged import AADObjectPaged
 from .application_paged import ApplicationPaged
+from .directory_object_paged import DirectoryObjectPaged
 from .key_credential_paged import KeyCredentialPaged
 from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
@@ -52,6 +55,7 @@ from .graph_rbac_management_client_enums import (
 
 __all__ = [
     'GraphError', 'GraphErrorException',
+    'DirectoryObject',
     'KeyCredential',
     'PasswordCredential',
     'ResourceAccess',
@@ -59,6 +63,7 @@ __all__ = [
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
     'Application',
+    'ApplicationAddOwnerParameters',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
     'AADObject',
@@ -81,6 +86,7 @@ __all__ = [
     'Domain',
     'AADObjectPaged',
     'ApplicationPaged',
+    'DirectoryObjectPaged',
     'KeyCredentialPaged',
     'PasswordCredentialPaged',
     'ADGroupPaged',
