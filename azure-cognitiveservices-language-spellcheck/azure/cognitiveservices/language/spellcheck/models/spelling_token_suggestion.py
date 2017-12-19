@@ -39,6 +39,7 @@ class SpellingTokenSuggestion(Model):
     }
 
     def __init__(self, suggestion):
+        super(SpellingTokenSuggestion, self).__init__()
         self.suggestion = suggestion
         self.score = None
         self.ping_url_suffix = None
