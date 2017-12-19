@@ -25,6 +25,8 @@ class UsersOperations(object):
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -332,7 +334,7 @@ class UsersOperations(object):
             return client_raw_response
 
     def get_member_groups(
-            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
+            self, object_id, security_enabled_only, additional_properties=None, custom_headers=None, raw=False, **operation_config):
         """Gets a collection that contains the object IDs of the groups of which
         the user is a member.
 
@@ -343,6 +345,9 @@ class UsersOperations(object):
          security-enabled groups should be checked. Otherwise, membership in
          all groups should be checked.
         :type security_enabled_only: bool
+        :param additional_properties: Unmatched properties from the message
+         are deserialized this collection
+        :type additional_properties: dict[str, object]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -353,7 +358,7 @@ class UsersOperations(object):
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
-        parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
+        parameters = models.UserGetMemberGroupsParameters(additional_properties=additional_properties, security_enabled_only=security_enabled_only)
 
         def internal_paging(next_link=None, raw=False):
 

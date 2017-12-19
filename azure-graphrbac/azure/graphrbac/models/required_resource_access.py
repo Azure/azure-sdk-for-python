@@ -20,6 +20,9 @@ class RequiredResourceAccess(Model):
     application. The requiredResourceAccess property of the Application entity
     is a collection of ReqiredResourceAccess.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param resource_access: The list of OAuth2.0 permission scopes and app
      roles that the application requires from the specified resource.
     :type resource_access: list[~azure.graphrbac.models.ResourceAccess]
@@ -34,10 +37,13 @@ class RequiredResourceAccess(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'resource_access': {'key': 'resourceAccess', 'type': '[ResourceAccess]'},
         'resource_app_id': {'key': 'resourceAppId', 'type': 'str'},
     }
 
-    def __init__(self, resource_access, resource_app_id=None):
+    def __init__(self, resource_access, additional_properties=None, resource_app_id=None):
+        super(RequiredResourceAccess, self).__init__()
+        self.additional_properties = additional_properties
         self.resource_access = resource_access
         self.resource_app_id = resource_app_id
