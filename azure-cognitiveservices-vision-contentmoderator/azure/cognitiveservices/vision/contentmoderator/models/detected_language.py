@@ -25,9 +25,9 @@ class DetectedLanguage(Model):
     """
 
     _attribute_map = {
-        'detected_language': {'key': 'detectedLanguage', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'Status'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'detected_language': {'key': 'DetectedLanguage', 'type': 'str'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
     def __init__(self, detected_language=None, status=None, tracking_id=None):

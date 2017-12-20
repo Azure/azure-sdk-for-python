@@ -23,8 +23,8 @@ class Frames(Model):
     """
 
     _attribute_map = {
-        'review_id': {'key': 'reviewId', 'type': 'str'},
-        'video_frames': {'key': 'videoFrames', 'type': '[Frame]'},
+        'review_id': {'key': 'ReviewId', 'type': 'str'},
+        'video_frames': {'key': 'VideoFrames', 'type': '[Frame]'},
     }
 
     def __init__(self, review_id=None, video_frames=None):

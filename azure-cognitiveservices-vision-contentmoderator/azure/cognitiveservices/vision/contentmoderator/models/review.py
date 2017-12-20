@@ -40,16 +40,16 @@ class Review(Model):
     """
 
     _attribute_map = {
-        'review_id': {'key': 'reviewId', 'type': 'str'},
-        'sub_team': {'key': 'subTeam', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'reviewer_result_tags': {'key': 'reviewerResultTags', 'type': '[KeyValuePair]'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '[KeyValuePair]'},
-        'type': {'key': 'type', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
-        'content_id': {'key': 'contentId', 'type': 'str'},
-        'callback_endpoint': {'key': 'callbackEndpoint', 'type': 'str'},
+        'review_id': {'key': 'ReviewId', 'type': 'str'},
+        'sub_team': {'key': 'SubTeam', 'type': 'str'},
+        'status': {'key': 'Status', 'type': 'str'},
+        'reviewer_result_tags': {'key': 'ReviewerResultTags', 'type': '[KeyValuePair]'},
+        'created_by': {'key': 'CreatedBy', 'type': 'str'},
+        'metadata': {'key': 'Metadata', 'type': '[KeyValuePair]'},
+        'type': {'key': 'Type', 'type': 'str'},
+        'content': {'key': 'Content', 'type': 'str'},
+        'content_id': {'key': 'ContentId', 'type': 'str'},
+        'callback_endpoint': {'key': 'CallbackEndpoint', 'type': 'str'},
     }
 
     def __init__(self, review_id=None, sub_team=None, status=None, reviewer_result_tags=None, created_by=None, metadata=None, type=None, content=None, content_id=None, callback_endpoint=None):

@@ -25,9 +25,9 @@ class Phone(Model):
     """
 
     _attribute_map = {
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'int'},
+        'country_code': {'key': 'CountryCode', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
     def __init__(self, country_code=None, text=None, index=None):

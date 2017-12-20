@@ -20,7 +20,7 @@ class TermsInList(Model):
     """
 
     _attribute_map = {
-        'term': {'key': 'term', 'type': 'str'},
+        'term': {'key': 'Term', 'type': 'str'},
     }
 
     def __init__(self, term=None):

@@ -22,8 +22,8 @@ class BodyModel(Model):
     """
 
     _attribute_map = {
-        'data_representation': {'key': 'dataRepresentation', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'data_representation': {'key': 'DataRepresentation', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
     def __init__(self, data_representation="URL", value=None):

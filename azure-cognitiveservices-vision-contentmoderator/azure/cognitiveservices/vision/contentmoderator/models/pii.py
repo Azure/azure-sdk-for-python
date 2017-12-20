@@ -30,10 +30,10 @@ class PII(Model):
     """
 
     _attribute_map = {
-        'email': {'key': 'email', 'type': '[Email]'},
-        'ipa': {'key': 'ipa', 'type': '[IPA]'},
-        'phone': {'key': 'phone', 'type': '[Phone]'},
-        'address': {'key': 'address', 'type': '[Address]'},
+        'email': {'key': 'Email', 'type': '[Email]'},
+        'ipa': {'key': 'IPA', 'type': '[IPA]'},
+        'phone': {'key': 'Phone', 'type': '[Phone]'},
+        'address': {'key': 'Address', 'type': '[Address]'},
     }
 
     def __init__(self, email=None, ipa=None, phone=None, address=None):

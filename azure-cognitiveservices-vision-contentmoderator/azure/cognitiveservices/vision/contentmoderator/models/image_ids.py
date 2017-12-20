@@ -27,10 +27,10 @@ class ImageIds(Model):
     """
 
     _attribute_map = {
-        'content_source': {'key': 'contentSource', 'type': 'str'},
-        'content_ids': {'key': 'contentIds', 'type': '[int]'},
-        'status': {'key': 'status', 'type': 'Status'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'content_source': {'key': 'ContentSource', 'type': 'str'},
+        'content_ids': {'key': 'ContentIds', 'type': '[int]'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
     def __init__(self, content_source=None, content_ids=None, status=None, tracking_id=None):
