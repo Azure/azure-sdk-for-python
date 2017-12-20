@@ -24,9 +24,9 @@ class IPA(Model):
     """
 
     _attribute_map = {
-        'sub_type': {'key': 'subType', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'int'},
+        'sub_type': {'key': 'SubType', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
     def __init__(self, sub_type=None, text=None, index=None):

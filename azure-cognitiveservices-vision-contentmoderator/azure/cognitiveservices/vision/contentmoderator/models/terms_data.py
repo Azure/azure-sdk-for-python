@@ -28,10 +28,10 @@ class TermsData(Model):
     """
 
     _attribute_map = {
-        'language': {'key': 'language', 'type': 'str'},
-        'terms': {'key': 'terms', 'type': '[TermsInList]'},
-        'status': {'key': 'status', 'type': 'Status'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'language': {'key': 'Language', 'type': 'str'},
+        'terms': {'key': 'Terms', 'type': '[TermsInList]'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
     def __init__(self, language=None, terms=None, status=None, tracking_id=None):

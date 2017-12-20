@@ -22,8 +22,8 @@ class Tag(Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
     def __init__(self, key=None, value=None):

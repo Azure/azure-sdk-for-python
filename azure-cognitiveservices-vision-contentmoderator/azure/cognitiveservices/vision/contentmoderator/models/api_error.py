@@ -21,7 +21,7 @@ class APIError(Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
+        'error': {'key': 'Error', 'type': 'Error'},
     }
 
     def __init__(self, error=None):

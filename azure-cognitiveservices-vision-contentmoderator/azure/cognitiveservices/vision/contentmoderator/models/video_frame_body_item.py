@@ -34,7 +34,7 @@ class VideoFrameBodyItem(Model):
 
     _attribute_map = {
         'timestamp': {'key': 'Timestamp', 'type': 'str'},
-        'frame_image': {'key': 'frameImage', 'type': 'str'},
+        'frame_image': {'key': 'FrameImage', 'type': 'str'},
         'reviewer_result_tags': {'key': 'ReviewerResultTags', 'type': '[VideoFrameBodyItemReviewerResultTagsItem]'},
         'metadata': {'key': 'Metadata', 'type': '[VideoFrameBodyItemMetadataItem]'},
     }
