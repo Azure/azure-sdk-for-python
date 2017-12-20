@@ -35,13 +35,13 @@ class FoundFaces(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'Status'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'cache_id': {'key': 'cacheId', 'type': 'str'},
-        'result': {'key': 'result', 'type': 'bool'},
-        'count': {'key': 'count', 'type': 'int'},
-        'advanced_info': {'key': 'advancedInfo', 'type': '[KeyValuePair]'},
-        'faces': {'key': 'faces', 'type': '[Face]'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
+        'cache_id': {'key': 'CacheId', 'type': 'str'},
+        'result': {'key': 'Result', 'type': 'bool'},
+        'count': {'key': 'Count', 'type': 'int'},
+        'advanced_info': {'key': 'AdvancedInfo', 'type': '[KeyValuePair]'},
+        'faces': {'key': 'Faces', 'type': '[Face]'},
     }
 
     def __init__(self, status=None, tracking_id=None, cache_id=None, result=None, count=None, advanced_info=None, faces=None):

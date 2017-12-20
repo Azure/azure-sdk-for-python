@@ -41,16 +41,16 @@ class Screen(Model):
     """
 
     _attribute_map = {
-        'original_text': {'key': 'originalText', 'type': 'str'},
-        'normalized_text': {'key': 'normalizedText', 'type': 'str'},
-        'auto_corrected_text': {'key': 'autoCorrectedText', 'type': 'str'},
-        'misrepresentation': {'key': 'misrepresentation', 'type': '[str]'},
-        'classification': {'key': 'classification', 'type': 'Classification'},
-        'status': {'key': 'status', 'type': 'Status'},
-        'pii': {'key': 'pii', 'type': 'PII'},
-        'language': {'key': 'language', 'type': 'str'},
-        'terms': {'key': 'terms', 'type': '[DetectedTerms]'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'original_text': {'key': 'OriginalText', 'type': 'str'},
+        'normalized_text': {'key': 'NormalizedText', 'type': 'str'},
+        'auto_corrected_text': {'key': 'AutoCorrectedText', 'type': 'str'},
+        'misrepresentation': {'key': 'Misrepresentation', 'type': '[str]'},
+        'classification': {'key': 'Classification', 'type': 'Classification'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'pii': {'key': 'PII', 'type': 'PII'},
+        'language': {'key': 'Language', 'type': 'str'},
+        'terms': {'key': 'Terms', 'type': '[DetectedTerms]'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
     def __init__(self, original_text=None, normalized_text=None, auto_corrected_text=None, misrepresentation=None, classification=None, status=None, pii=None, language=None, terms=None, tracking_id=None):

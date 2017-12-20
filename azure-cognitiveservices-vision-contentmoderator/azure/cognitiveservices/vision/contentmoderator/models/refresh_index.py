@@ -30,11 +30,11 @@ class RefreshIndex(Model):
     """
 
     _attribute_map = {
-        'content_source_id': {'key': 'contentSourceId', 'type': 'str'},
-        'is_update_success': {'key': 'isUpdateSuccess', 'type': 'bool'},
-        'advanced_info': {'key': 'advancedInfo', 'type': '[RefreshIndexAdvancedInfoItem]'},
-        'status': {'key': 'status', 'type': 'Status'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'content_source_id': {'key': 'ContentSourceId', 'type': 'str'},
+        'is_update_success': {'key': 'IsUpdateSuccess', 'type': 'bool'},
+        'advanced_info': {'key': 'AdvancedInfo', 'type': '[RefreshIndexAdvancedInfoItem]'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
     def __init__(self, content_source_id=None, is_update_success=None, advanced_info=None, status=None, tracking_id=None):

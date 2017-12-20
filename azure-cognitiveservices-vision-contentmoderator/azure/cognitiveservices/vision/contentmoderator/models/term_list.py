@@ -27,10 +27,10 @@ class TermList(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'TermListMetadata'},
+        'id': {'key': 'Id', 'type': 'int'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'description': {'key': 'Description', 'type': 'str'},
+        'metadata': {'key': 'Metadata', 'type': 'TermListMetadata'},
     }
 
     def __init__(self, id=None, name=None, description=None, metadata=None):

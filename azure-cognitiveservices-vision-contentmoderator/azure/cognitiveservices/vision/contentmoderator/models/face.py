@@ -26,10 +26,10 @@ class Face(Model):
     """
 
     _attribute_map = {
-        'bottom': {'key': 'bottom', 'type': 'int'},
-        'left': {'key': 'left', 'type': 'int'},
-        'right': {'key': 'right', 'type': 'int'},
-        'top': {'key': 'top', 'type': 'int'},
+        'bottom': {'key': 'Bottom', 'type': 'int'},
+        'left': {'key': 'Left', 'type': 'int'},
+        'right': {'key': 'Right', 'type': 'int'},
+        'top': {'key': 'Top', 'type': 'int'},
     }
 
     def __init__(self, bottom=None, left=None, right=None, top=None):

@@ -22,8 +22,8 @@ class JobExecutionReportDetails(Model):
     """
 
     _attribute_map = {
-        'ts': {'key': 'ts', 'type': 'str'},
-        'msg': {'key': 'msg', 'type': 'str'},
+        'ts': {'key': 'Ts', 'type': 'str'},
+        'msg': {'key': 'Msg', 'type': 'str'},
     }
 
     def __init__(self, ts=None, msg=None):

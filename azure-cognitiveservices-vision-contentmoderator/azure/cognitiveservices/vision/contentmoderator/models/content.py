@@ -24,7 +24,7 @@ class Content(Model):
     }
 
     _attribute_map = {
-        'content_value': {'key': 'contentValue', 'type': 'str'},
+        'content_value': {'key': 'ContentValue', 'type': 'str'},
     }
 
     def __init__(self, content_value):

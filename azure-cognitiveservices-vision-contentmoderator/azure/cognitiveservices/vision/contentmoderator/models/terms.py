@@ -24,8 +24,8 @@ class Terms(Model):
     """
 
     _attribute_map = {
-        'data': {'key': 'data', 'type': 'TermsData'},
-        'paging': {'key': 'paging', 'type': 'TermsPaging'},
+        'data': {'key': 'Data', 'type': 'TermsData'},
+        'paging': {'key': 'Paging', 'type': 'TermsPaging'},
     }
 
     def __init__(self, data=None, paging=None):

@@ -26,10 +26,10 @@ class Classification(Model):
     """
 
     _attribute_map = {
-        'adult_score': {'key': 'adultScore', 'type': 'float'},
-        'racy_score': {'key': 'racyScore', 'type': 'float'},
-        'offensive_score': {'key': 'offensiveScore', 'type': 'float'},
-        'review_recommended': {'key': 'reviewRecommended', 'type': 'bool'},
+        'adult_score': {'key': 'AdultScore', 'type': 'float'},
+        'racy_score': {'key': 'RacyScore', 'type': 'float'},
+        'offensive_score': {'key': 'OffensiveScore', 'type': 'float'},
+        'review_recommended': {'key': 'ReviewRecommended', 'type': 'bool'},
     }
 
     def __init__(self, adult_score=None, racy_score=None, offensive_score=None, review_recommended=None):

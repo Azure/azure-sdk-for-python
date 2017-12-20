@@ -20,7 +20,7 @@ class JobId(Model):
     """
 
     _attribute_map = {
-        'job_id': {'key': 'jobId', 'type': 'str'},
+        'job_id': {'key': 'JobId', 'type': 'str'},
     }
 
     def __init__(self, job_id=None):

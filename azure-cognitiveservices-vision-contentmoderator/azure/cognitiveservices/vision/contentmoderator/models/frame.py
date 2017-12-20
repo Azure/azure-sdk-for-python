@@ -28,10 +28,10 @@ class Frame(Model):
     """
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'str'},
-        'frame_image': {'key': 'frameImage', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '[KeyValuePair]'},
-        'reviewer_result_tags': {'key': 'reviewerResultTags', 'type': '[Tag]'},
+        'timestamp': {'key': 'Timestamp', 'type': 'str'},
+        'frame_image': {'key': 'FrameImage', 'type': 'str'},
+        'metadata': {'key': 'Metadata', 'type': '[KeyValuePair]'},
+        'reviewer_result_tags': {'key': 'ReviewerResultTags', 'type': '[Tag]'},
     }
 
     def __init__(self, timestamp=None, frame_image=None, metadata=None, reviewer_result_tags=None):

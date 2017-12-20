@@ -22,8 +22,8 @@ class TermListMetadata(Model):
     """
 
     _attribute_map = {
-        'key_one': {'key': 'key One', 'type': 'str'},
-        'key_two': {'key': 'key Two', 'type': 'str'},
+        'key_one': {'key': 'Key One', 'type': 'str'},
+        'key_two': {'key': 'Key Two', 'type': 'str'},
     }
 
     def __init__(self, key_one=None, key_two=None):

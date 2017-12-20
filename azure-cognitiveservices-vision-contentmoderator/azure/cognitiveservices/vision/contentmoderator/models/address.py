@@ -22,8 +22,8 @@ class Address(Model):
     """
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'int'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
     def __init__(self, text=None, index=None):

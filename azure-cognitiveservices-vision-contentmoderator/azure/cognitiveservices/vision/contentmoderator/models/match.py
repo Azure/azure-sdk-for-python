@@ -28,11 +28,11 @@ class Match(Model):
     """
 
     _attribute_map = {
-        'score': {'key': 'score', 'type': 'float'},
-        'match_id': {'key': 'matchId', 'type': 'int'},
-        'source': {'key': 'source', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[int]'},
-        'label': {'key': 'label', 'type': 'str'},
+        'score': {'key': 'Score', 'type': 'float'},
+        'match_id': {'key': 'MatchId', 'type': 'int'},
+        'source': {'key': 'Source', 'type': 'str'},
+        'tags': {'key': 'Tags', 'type': '[int]'},
+        'label': {'key': 'Label', 'type': 'str'},
     }
 
     def __init__(self, score=None, match_id=None, source=None, tags=None, label=None):

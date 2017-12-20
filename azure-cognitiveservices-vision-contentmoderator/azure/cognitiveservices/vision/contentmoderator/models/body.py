@@ -25,9 +25,9 @@ class Body(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'BodyMetadata'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'description': {'key': 'Description', 'type': 'str'},
+        'metadata': {'key': 'Metadata', 'type': 'BodyMetadata'},
     }
 
     def __init__(self, name=None, description=None, metadata=None):
