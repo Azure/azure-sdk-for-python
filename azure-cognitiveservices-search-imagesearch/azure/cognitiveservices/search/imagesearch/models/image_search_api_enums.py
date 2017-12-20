@@ -110,7 +110,6 @@ class Currency(Enum):
     mmk = "MMK"
     mnt = "MNT"
     mop = "MOP"
-    mro = "MRO"
     mur = "MUR"
     mvr = "MVR"
     mwk = "MWK"
