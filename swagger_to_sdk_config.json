@@ -82,6 +82,14 @@
       "build_dir": "azure-cognitiveservices-vision-contentmoderator",      
       "markdown": "specification/cognitiveservices/data-plane/ContentModerator/readme.md"
     },
+    "cognitiveservices.vision.customvision.prediction": {
+      "build_dir": "azure-cognitiveservices-vision-customvision/azure/cognitiveservices/vision/customvision/prediction",
+      "markdown": "specification/cognitiveservices/data-plane/CustomVision/Prediction/readme.md"
+    },
+    "cognitiveservices.vision.customvision.training": {
+      "build_dir": "azure-cognitiveservices-vision-customvision/azure/cognitiveservices/vision/customvision/training",
+      "markdown": "specification/cognitiveservices/data-plane/CustomVision/Training/readme.md"
+    },
     "cognitiveservices.vision.face": {
       "build_dir": "azure-cognitiveservices-vision-face",      
       "markdown": "specification/cognitiveservices/data-plane/Face/readme.md"
