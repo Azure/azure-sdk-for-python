@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Range partition resolver implementation in the Azure DocumentDB database service.
+"""Range partition resolver implementation in the Azure Cosmos DB database service.
 """
 
 import pydocumentdb.range as prange
@@ -30,9 +30,10 @@ class RangePartitionResolver(object):
     """
     def __init__(self, partition_key_extractor, partition_map):
         """
-        :Parameters:
-            - `partition_key_extractor`: lambda, returning the partition key from the document passed.
-            - `partition_map`: dict, the dictionary of ranges mapped to their associated collection
+        :param lambda partition_key_extractor:
+            Returning the partition key from the document passed.
+        :param dict partition_map:
+            The dictionary of ranges mapped to their associated collection
         """
         if partition_key_extractor is None:
             raise ValueError("partition_key_extractor is None.")
@@ -45,11 +46,13 @@ class RangePartitionResolver(object):
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.
 
-        :Parameters:
-            - `document`: dict, the document to be created.
+        :param dict document:
+            The document to be created.
 
-        :Returns:
-            str, collection Self link or Name based link which should handle the Create operation.
+        :return:
+            Collection Self link or Name based link which should handle the Create operation.
+        :rtype:
+            str
         """
         if document is None:
             raise ValueError("document is None.")
@@ -65,11 +68,13 @@ class RangePartitionResolver(object):
     def ResolveForRead(self, partition_key):
         """Resolves the collection for reading/querying the documents based on the partition key.
 
-        :Parameters:
-            - `document`: dict, the document to be read/queried.
+        :param dict document:
+            The document to be read/queried.
 
-        :Returns:
-            list, collection Self link(s) or Name based link(s) which should handle the Read operation.
+        :return:
+            Collection Self link(s) or Name based link(s) which should handle the Read operation.
+        :rtype:
+            list
         """
         intersecting_ranges = self._GetIntersectingRanges(partition_key)
 

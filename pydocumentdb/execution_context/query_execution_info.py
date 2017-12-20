@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for partitioned query execution info implementation in the Azure DocumentDB database service.
+"""Internal class for partitioned query execution info implementation in the Azure Cosmos DB database service.
 """
 
 import six
@@ -40,8 +40,7 @@ class _PartitionedQueryExecutionInfo(object):
     def __init__(self, query_execution_info):
         '''
         Constructor
-        :Parameters:
-            - query_execution_info (dict)
+        :param dict query_execution_info:
         '''
         self._query_execution_info = query_execution_info
 

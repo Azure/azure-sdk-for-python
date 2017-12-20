@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for client side partition implementation in the Azure DocumentDB database service.
+"""Internal class for client side partition implementation in the Azure Cosmos DB database service.
 """
 
 from six.moves import xrange

@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for multi execution context aggregator implementation in the Azure DocumentDB database service.
+"""Internal class for multi execution context aggregator implementation in the Azure Cosmos DB database service.
 """
 
 import heapq
@@ -102,10 +102,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     def next(self):
         """returns the next result
         
-        :Returns:
-            dict. the next result.
-        :Raises:
-            StopIteration. If no more result is left.
+        :return:
+            The next result.
+        :rtype: dict
+        :raises StopIteration: If no more result is left.
+            
         """
         if self._orderByPQ.size() > 0:
             

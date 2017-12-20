@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Base functions in the Azure DocumentDB database service.
+"""Base functions in the Azure Cosmos DB database service.
 """
 
 import base64
@@ -47,19 +47,18 @@ def GetHeaders(document_client,
                partition_key_range_id = None):
     """Gets HTTP request headers.
 
-    :Parameters:
-        - `document_client`: document_client.DocumentClient
-        - `default_headers`: dict
-        - `verb`: str
-        - `path`: str
-        - `resource_id`: str
-        - `resource_type`: str
-        - `options`: dict
-        - `partition_key_range_id` : str
+    :param document_client.DocumentClient document_client:
+    :param dict default_headers:
+    :param str verb:
+    :param str path:
+    :param str resource_id:
+    :param str resource_type:
+    :param dict options:
+    :param str partition_key_range_id:
 
-    :Returns:
-        dict, the HTTP request headers.
-
+    :return:
+        The HTTP request headers.
+    :rtype: dict
     """
     headers = dict(default_headers)
     options = options or {}
@@ -193,12 +192,11 @@ def GetHeaders(document_client,
 def GetResourceIdOrFullNameFromLink(resource_link):
     """Gets resource id or full name from resource link.
 
-    :Parameters:
-        - `resource_link`: str
+    :param str resource_link:
 
-    :Returns:
-        str, the resource id or full name from the resource link.
-
+    :return:
+        The resource id or full name from the resource link.
+    :rtype: str
     """
     # For named based, the resource link is the full name
     if IsNameBased(resource_link):
@@ -234,12 +232,11 @@ def GetResourceIdOrFullNameFromLink(resource_link):
 def GetAttachmentIdFromMediaId(media_id):
     """Gets attachment id from media id.
 
-    :Parameters:
-        - `media_id`: str
+    :param str media_id:
 
-    :Returns:
-        str, the attachment id from the media id.
-
+    :return:
+        The attachment id from the media id.
+    :rtype: str
     """
     altchars = '+-'
     # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
@@ -263,22 +260,21 @@ def GenerateGuidId():
     Note that here we use python's UUID generation library. Basically UUID
     is the same as GUID when represented as a string.
 
-    :Returns:
-        str, the generated random GUID.
-
+    :return:
+        The generated random GUID.
+    :rtype: str
     """
     return str(uuid.uuid4())
 
 def GetPathFromLink(resource_link, resource_type=''):
     """Gets path from resource link with optional resource type
 
-    :Parameters:
-        - `resource_link`: str
-        - `resource_type`: str
+    :param str resource_link:
+    :param str resource_type:
 
-    :Returns:
-        str, path from resource link with resource type appended(if provided).
-
+    :return:
+        Path from resource link with resource type appended (if provided).
+    :rtype: str
     """
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
         
@@ -296,12 +292,11 @@ def GetPathFromLink(resource_link, resource_type=''):
 def IsNameBased(link):
     """Finds whether the link is name based or not
 
-    :Parameters:
-        - `link`: str
+    :param str link:
 
-    :Returns:
-        boolean, True if link is name based otherwise False.
-
+    :return:
+        True if link is name-based; otherwise, False.
+    :rtype: boolean
     """
     if not link:
         return False
@@ -340,12 +335,12 @@ def IsNameBased(link):
 def IsDatabaseLink(link):
     """Finds whether the link is a database Self Link or a database ID based link
 
-    :Parameters:
-        - `link`: str, link to analyze
+    :param str link:
+        Link to analyze
 
-    :Returns:
-        boolean, True or False.
-
+    :return:
+        True or False.
+    :rtype: boolean
     """
     if not link:
         return False
@@ -372,12 +367,12 @@ def IsDatabaseLink(link):
 def IsDocumentCollectionLink(link):
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
-    :Parameters:
-        - `link`: str, link to analyze
+    :param str link:
+        Link to analyze
 
-    :Returns:
-        boolean, True or False.
-
+    :return:
+        True or False.
+    :rtype: boolean
     """
     if not link:
         return False
@@ -418,14 +413,17 @@ def GetDocumentCollectionInfo(self_link, alt_content_path, id_from_response):
         to get the collection name, but for collection create response, we can't use it.
         So we also rely on  
 
-    :Parameters:
-        - `self_link` - str, self link of the resource, as obtained from response result
-        - `alt_content_path` - owner path of the resource, as obtained from response header
-        - `resource_id` - 'id' as returned from the response result. This is only used if it is deduced that the
-            request was to create collection
+    :param str self_link:
+        Self link of the resource, as obtained from response result.
+    :param str alt_content_path:
+        Owner path of the resource, as obtained from response header.
+    :param str resource_id:
+        'id' as returned from the response result. This is only used if it is deduced that the
+         request was to create a collection.
 
-    :Returns:
+    :return:
         tuple of (collection rid, collection name)
+    :rtype: tuple
     """ 
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + '/'
@@ -453,11 +451,12 @@ def GetDocumentCollectionInfo(self_link, alt_content_path, id_from_response):
 def GetDocumentCollectionLink(link):
     """Gets the document collection link
 
-    :Parameters:
-        - `link`: str, resource link
+    :param str link:
+        Resource link
 
-    :Returns:
-        str, document collection link
+    :return:
+        Document collection link.
+    :rtype: str
 
     """
     link = TrimBeginningAndEndingSlashes(link) + '/'
@@ -472,13 +471,16 @@ def GetDocumentCollectionLink(link):
 def IndexOfNth(s, value, n):
     """Gets the index of Nth occurance of a given character in a string
 
-    :Parameters:
-        - `s`: str, input string
-        - `value`: char, input char to be searched
-        - `n`: int, Nth occurance of char to be searched
+    :param str s:
+        Input string
+    :param char value:
+        Input char to be searched.
+    :param int n:
+        Nth occurrence of char to be searched.
 
-    :Returns:
-        int, index of the Nth occurance in the string
+    :return:
+        Index of the Nth occurrence in the string.
+    :rtype: int
 
     """
     remaining = n
@@ -492,12 +494,12 @@ def IndexOfNth(s, value, n):
 def DecodeBase64String(string_to_decode):
     """Decodes a Base64 encoded string by replacing '-' with '/' 
 
-    :Parameters:
-        - `string_to_decode`: string to decode
+    :param string string_to_decode:
+        String to decode.
 
-    :Returns:
-        str, path with beginning and ending slashes trimmed
-
+    :return:
+        Path with beginning and ending slashes trimmed.
+    :rtype: str
     """
     # '-' is not supported char for decoding in Python(same as C# and Java) which has similar logic while parsing ResourceID generated by backend
     return base64.standard_b64decode(string_to_decode.replace('-', '/'))
@@ -505,12 +507,11 @@ def DecodeBase64String(string_to_decode):
 def TrimBeginningAndEndingSlashes(path):
     """Trims beginning and ending slashes
 
-    :Parameters:
-        - `path`: str
+    :param str path:
 
-    :Returns:
-        str, path with beginning and ending slashes trimmed
-
+    :return:
+        Path with beginning and ending slashes trimmed.
+    :rtype: str
     """
     if path.startswith('/'):
         # Returns substring starting from index 1 to end of the string

@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Runtime Constants in the Azure DocumentDB database service.
+"""Runtime Constants in the Azure Cosmos DB database service.
 """
 
 

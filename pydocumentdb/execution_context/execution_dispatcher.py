@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for proxy query execution context implementation in the Azure DocumentDB database service.
+"""Internal class for proxy query execution context implementation in the Azure Cosmos DB database service.
 """
 
 import json
@@ -53,10 +53,11 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
     def next(self):
         """Returns the next query result.
         
-        :Returns:
-            dict. the next query result.
-        :Raises:
-            StopIteration. If no more result is left.
+        :return:
+            The next query result.
+        :rtype: dict
+        :raises StopIteration: If no more result is left.
+            
         """
         try:
             return next(self._execution_context)
@@ -75,8 +76,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
         
-        :Returns:
-            list. List of results.
+        :return:
+            List of results.
+        :rtype: list
         """
         try:
             return self._execution_context.fetch_next_block()
@@ -138,10 +140,11 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
     def next(self):
         """Returns the next query result.
         
-        :Returns:
-            dict. the next query result.
-        :Raises:
-            StopIteration. If no more result is left.
+        :return:
+            The next query result.
+        :rtype: dict
+        :raises StopIteration: If no more result is left.
+            
         """
         return next(self._endpoint)
 
@@ -154,8 +157,9 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
         This method internally invokes next() as many times required to collect the 
         requested fetch size.
         
-        :Returns:
-            list. List of results.
+        :return:
+            List of results.
+        :rtype: list
         """
         
         results = []
