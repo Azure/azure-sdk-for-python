@@ -40,15 +40,15 @@ class Evaluate(Model):
     """
 
     _attribute_map = {
-        'cache_id': {'key': 'cacheID', 'type': 'str'},
-        'result': {'key': 'result', 'type': 'bool'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'adult_classification_score': {'key': 'adultClassificationScore', 'type': 'float'},
-        'is_image_adult_classified': {'key': 'isImageAdultClassified', 'type': 'bool'},
-        'racy_classification_score': {'key': 'racyClassificationScore', 'type': 'float'},
-        'is_image_racy_classified': {'key': 'isImageRacyClassified', 'type': 'bool'},
-        'advanced_info': {'key': 'advancedInfo', 'type': '[KeyValuePair]'},
-        'status': {'key': 'status', 'type': 'Status'},
+        'cache_id': {'key': 'CacheID', 'type': 'str'},
+        'result': {'key': 'Result', 'type': 'bool'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
+        'adult_classification_score': {'key': 'AdultClassificationScore', 'type': 'float'},
+        'is_image_adult_classified': {'key': 'IsImageAdultClassified', 'type': 'bool'},
+        'racy_classification_score': {'key': 'RacyClassificationScore', 'type': 'float'},
+        'is_image_racy_classified': {'key': 'IsImageRacyClassified', 'type': 'bool'},
+        'advanced_info': {'key': 'AdvancedInfo', 'type': '[KeyValuePair]'},
+        'status': {'key': 'Status', 'type': 'Status'},
     }
 
     def __init__(self, cache_id=None, result=None, tracking_id=None, adult_classification_score=None, is_image_adult_classified=None, racy_classification_score=None, is_image_racy_classified=None, advanced_info=None, status=None):

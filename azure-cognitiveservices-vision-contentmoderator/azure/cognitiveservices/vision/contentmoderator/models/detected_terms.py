@@ -28,10 +28,10 @@ class DetectedTerms(Model):
     """
 
     _attribute_map = {
-        'index': {'key': 'index', 'type': 'int'},
-        'original_index': {'key': 'originalIndex', 'type': 'int'},
-        'list_id': {'key': 'listId', 'type': 'int'},
-        'term': {'key': 'term', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
+        'original_index': {'key': 'OriginalIndex', 'type': 'int'},
+        'list_id': {'key': 'ListId', 'type': 'int'},
+        'term': {'key': 'Term', 'type': 'str'},
     }
 
     def __init__(self, index=None, original_index=None, list_id=None, term=None):

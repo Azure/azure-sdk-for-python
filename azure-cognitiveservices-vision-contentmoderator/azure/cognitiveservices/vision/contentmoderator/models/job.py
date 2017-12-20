@@ -39,15 +39,15 @@ class Job(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'team_name': {'key': 'teamName', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'workflow_id': {'key': 'workflowId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'call_back_endpoint': {'key': 'callBackEndpoint', 'type': 'str'},
-        'review_id': {'key': 'reviewId', 'type': 'str'},
-        'result_meta_data': {'key': 'resultMetaData', 'type': '[KeyValuePair]'},
-        'job_execution_report': {'key': 'jobExecutionReport', 'type': '[JobExecutionReportDetails]'},
+        'id': {'key': 'Id', 'type': 'str'},
+        'team_name': {'key': 'TeamName', 'type': 'str'},
+        'status': {'key': 'Status', 'type': 'str'},
+        'workflow_id': {'key': 'WorkflowId', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
+        'call_back_endpoint': {'key': 'CallBackEndpoint', 'type': 'str'},
+        'review_id': {'key': 'ReviewId', 'type': 'str'},
+        'result_meta_data': {'key': 'ResultMetaData', 'type': '[KeyValuePair]'},
+        'job_execution_report': {'key': 'JobExecutionReport', 'type': '[JobExecutionReportDetails]'},
     }
 
     def __init__(self, id=None, team_name=None, status=None, workflow_id=None, type=None, call_back_endpoint=None, review_id=None, result_meta_data=None, job_execution_report=None):

@@ -27,10 +27,10 @@ class Email(Model):
     """
 
     _attribute_map = {
-        'detected': {'key': 'detected', 'type': 'str'},
-        'sub_type': {'key': 'subType', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'index': {'key': 'index', 'type': 'int'},
+        'detected': {'key': 'Detected', 'type': 'str'},
+        'sub_type': {'key': 'SubType', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
     def __init__(self, detected=None, sub_type=None, text=None, index=None):

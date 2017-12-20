@@ -30,11 +30,11 @@ class MatchResponse(Model):
     """
 
     _attribute_map = {
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'cache_id': {'key': 'cacheID', 'type': 'str'},
-        'is_match': {'key': 'isMatch', 'type': 'bool'},
-        'matches': {'key': 'matches', 'type': '[Match]'},
-        'status': {'key': 'status', 'type': 'Status'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
+        'cache_id': {'key': 'CacheID', 'type': 'str'},
+        'is_match': {'key': 'IsMatch', 'type': 'bool'},
+        'matches': {'key': 'Matches', 'type': '[Match]'},
+        'status': {'key': 'Status', 'type': 'Status'},
     }
 
     def __init__(self, tracking_id=None, cache_id=None, is_match=None, matches=None, status=None):

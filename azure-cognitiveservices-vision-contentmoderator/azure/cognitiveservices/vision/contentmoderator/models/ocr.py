@@ -35,13 +35,13 @@ class OCR(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'Status'},
-        'metadata': {'key': 'metadata', 'type': '[KeyValuePair]'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'cache_id': {'key': 'cacheId', 'type': 'str'},
-        'language': {'key': 'language', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'candidates': {'key': 'candidates', 'type': '[Candidate]'},
+        'status': {'key': 'Status', 'type': 'Status'},
+        'metadata': {'key': 'Metadata', 'type': '[KeyValuePair]'},
+        'tracking_id': {'key': 'TrackingId', 'type': 'str'},
+        'cache_id': {'key': 'CacheId', 'type': 'str'},
+        'language': {'key': 'Language', 'type': 'str'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'candidates': {'key': 'Candidates', 'type': '[Candidate]'},
     }
 
     def __init__(self, status=None, metadata=None, tracking_id=None, cache_id=None, language=None, text=None, candidates=None):

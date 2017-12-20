@@ -24,9 +24,9 @@ class Status(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'int'},
-        'description': {'key': 'description', 'type': 'str'},
-        'exception': {'key': 'exception', 'type': 'str'},
+        'code': {'key': 'Code', 'type': 'int'},
+        'description': {'key': 'Description', 'type': 'str'},
+        'exception': {'key': 'Exception', 'type': 'str'},
     }
 
     def __init__(self, code=None, description=None, exception=None):

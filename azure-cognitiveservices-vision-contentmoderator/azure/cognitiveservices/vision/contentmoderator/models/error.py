@@ -22,8 +22,8 @@ class Error(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'code': {'key': 'Code', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
     def __init__(self, code=None, message=None):

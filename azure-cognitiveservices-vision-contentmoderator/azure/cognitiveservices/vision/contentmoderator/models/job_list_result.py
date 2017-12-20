@@ -20,7 +20,7 @@ class JobListResult(Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
+        'value': {'key': 'Value', 'type': '[str]'},
     }
 
     def __init__(self, value=None):

@@ -22,8 +22,8 @@ class Candidate(Model):
     """
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'confidence': {'key': 'Confidence', 'type': 'float'},
     }
 
     def __init__(self, text=None, confidence=None):
