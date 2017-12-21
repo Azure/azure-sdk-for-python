@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.7.1 (2017-12-20)
+++++++++++++++++++
+
+**Bugfixes**
+
+Fix `SecurityRule` constructor parameters order to respect the one used until 1.5.0.
+This indeed introduces a breaking change for users of 1.6.0 and 1.7.0, but this constructor signature change was
+not expected, and following semantic versionning all 1.x versions should follow the same signature.
+
+This fixes third party library, like Ansible, that expects (for excellent reasons) this SDK to follow strictly semantic versionning
+with regards to breaking changes and have their dependency system asking for `>=1.0;<2.0`
+
 1.7.0 (2017-12-14)
 ++++++++++++++++++
 
