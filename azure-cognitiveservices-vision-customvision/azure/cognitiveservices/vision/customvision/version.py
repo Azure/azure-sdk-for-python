@@ -9,8 +9,4 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .version import VERSION
-
-__all__ = ['ManagedServiceIdentityClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
