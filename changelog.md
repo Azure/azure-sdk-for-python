@@ -1,5 +1,9 @@
 ## Changes in 2.3.0 : ##
 
+- Updated documentation to reference Azure Cosmos DB instead of DocumentDB
+
+## Changes in 2.3.0 : ##
+
 - This SDK version requires the latest version of Azure Cosmos DB Emulator available for download from https://aka.ms/cosmosdb-emulator.
 
 ## Changes in 2.2.1 : ##
