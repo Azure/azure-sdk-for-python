@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for collection routing map implementation in the Azure DocumentDB database service.
+"""Internal class for collection routing map implementation in the Azure Cosmos DB database service.
 """
 
 import bisect
@@ -65,18 +65,20 @@ class _CollectionRoutingMap(object):
     def get_ordered_partition_key_ranges(self):
         """Gets the ordered partition key ranges
 
-        :Returns:
-            list. ordered list of partition key ranges
+        :return:
+            Ordered list of partition key ranges.
+        :rtype: list
         """
         return self._orderedPartitionKeyRanges
     
     def get_range_by_effective_partition_key(self, effective_partition_key_value):
         """Gets the range containing the given partition key
 
-        :Parameters:
-            - `effective_partition_key_value` (str): the partition key value
-        :Returns:
-            dict. the partition key range.
+        :param str effective_partition_key_value:
+            The partition key value.
+        :return:
+            The partition key range.
+        :rtype: dict
         """
         if _CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey == effective_partition_key_value:
             return self._orderedPartitionKeyRanges[0]
@@ -94,10 +96,11 @@ class _CollectionRoutingMap(object):
     def get_range_by_partition_key_range_id(self, partition_key_range_id):
         """Gets the partition key range given the partition key range id
 
-        :Parameters:
-            - `partition_key_range_id` (str): the partition key range id
-        :Returns:
-            dict. the partition key range.
+        :param str partition_key_range_id:
+            The partition key range id.
+        :return:
+            The partition key range.
+        :rtype: dict
         """
         t = self._rangeById.get(partition_key_range_id)
 
@@ -108,10 +111,11 @@ class _CollectionRoutingMap(object):
     def get_overlapping_ranges(self, provided_partition_key_ranges):
         """Gets the partition key ranges overlapping the provided ranges
 
-        :Parameters:
-            - `provided_partition_key_ranges` (list): list of partition key ranges
-        :Returns:
-            list of partition key ranges, where each is a dict
+        :param list provided_partition_key_ranges:
+            List of partition key ranges.
+        :return:
+            List of partition key ranges, where each is a dict.
+        :rtype: list
         """
 
         if isinstance(provided_partition_key_ranges, routing_range._Range):

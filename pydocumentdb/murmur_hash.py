@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for Murmur hash implementation in the Azure DocumentDB database service.
+"""Internal class for Murmur hash implementation in the Azure Cosmos DB database service.
 """
 
 from struct import *
@@ -50,11 +50,12 @@ class _MurmurHash(object):
         """
         Computes the hash of the value passed using MurmurHash3 algorithm.
 
-        :Parameters:
-            - `key`: bytearray, byte array representing the key to be hashed.
+        :param bytearray key:
+            Byte array representing the key to be hashed.
 
-        :Returns:
-            int, 32 bit hash value
+        :return:
+            32 bit hash value.
+        :rtype: int
         """
         if key is None:
             raise ValueError("key is None.")

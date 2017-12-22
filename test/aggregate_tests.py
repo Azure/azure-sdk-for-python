@@ -70,7 +70,7 @@ class AggregateQueryTestSequenceMeta(type):
         def _setup():
             if (not _config.master_key or not _config.host):
                 raise Exception(
-                    "You must specify your Azure DocumentDB account values for "
+                    "You must specify your Azure Cosmos DB account values for "
                     "'masterKey' and 'host' at the top of this class to run the "
                     "tests.")
 

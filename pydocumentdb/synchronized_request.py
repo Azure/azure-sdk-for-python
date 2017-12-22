@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Synchronized request in the Azure DocumentDB database service.
+"""Synchronized request in the Azure Cosmos DB database service.
 """
 
 import json
@@ -35,7 +35,7 @@ import pydocumentdb.retry_utility as retry_utility
 def _IsReadableStream(obj):
     """Checks whether obj is a file-like readable stream.
 
-    :Returns:
+    :rtype:
         boolean
 
     """
@@ -50,10 +50,9 @@ def _RequestBodyFromData(data):
     When `data` is dict and list into unicode string; otherwise return `data`
     without making any change.
 
-    :Parameters:
-        - `data`: str, unicode, file-like stream object, dict, list or None
+    :param (str, unicode, file-like stream object, dict, list or None) data:
 
-    :Returns:
+    :rtype:
         str, unicode, file-like stream object, or None
 
     """
@@ -73,16 +72,19 @@ def _RequestBodyFromData(data):
 def _Request(connection_policy, requests_session, resource_url, request_options, request_body):
     """Makes one http request using the requests module.
 
-    :Parameters:
-        - `connection_policy`: documents.ConnectionPolicy
-        - `requests_session`: requests.Session, Session object in requests module
-        - `resource_url`: str, the url for the resource
-        - `request_options`: dict
-        - `request_body`: str, unicode or None
+    :param documents.ConnectionPolicy connection_policy:
+    :param requests.Session requests_session:
+        Session object in requests module
+    :param str resource_url:
+        The url for the resource
+    :param dict request_options:
+    :param str request_body:
+        Unicode or None
 
-    :Returns:
-        tuple of (result, headers), where both result and headers
-        are dicts.
+    :return:
+        tuple of (result, headers)
+    :rtype:
+        tuple of (dict, dict)
 
     """
     is_media = request_options['path'].find('media') > -1
@@ -163,22 +165,23 @@ def SynchronizedRequest(client,
                         headers):
     """Performs one synchronized http request according to the parameters.
 
-    :Parameters:
-        - `client`: object, document client instance
-        - `global_endpoint_manager`: _GlobalEndpointManager
-        - `connection_policy`: documents.ConnectionPolicy
-        - `requests_session`: requests.Session, Session object in requests module
-        - `method`: str
-        - `base_url`: str
-        - `path`: str
-        - `request_data`: str, unicode, file-like stream object, dict, list
-          or None
-        - `query_params`: dict
-        - `headers`: dict
+    :param object client:
+        Document client instance
+    :param _GlobalEndpointManager global_endpoint_manager: 
+    :param  documents.ConnectionPolicy connection_policy:
+    :param requests.Session requests_session:
+        Session object in requests module
+    :param str method:
+    :param str base_url:
+    :param str path:
+    :param (str, unicode, file-like stream object, dict, list or None) request_data:
+    :param dict query_params:
+    :param dict headers:
 
-    :Returns:
-        tuple of (result, headers), where both result and headers
-        are dicts.
+    :return:
+        tuple of (result, headers)
+    :rtype:
+        tuple of (dict dict)
 
     """
     request_body = None

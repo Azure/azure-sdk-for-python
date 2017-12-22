@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for aggregation queries implementation in the Azure DocumentDB database service.
+"""Internal class for aggregation queries implementation in the Azure Cosmos DB database service.
 """
 from abc import *
 from pydocumentdb.execution_context.document_producer import _OrderByHelper

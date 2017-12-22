@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""HTTP Constants in the Azure DocumentDB database service.
+"""HTTP Constants in the Azure Cosmos DB database service.
 """
 
 
@@ -246,7 +246,7 @@ class Versions:
     """
     CurrentVersion = '2017-11-15'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.3.0'
+    SDKVersion = '2.3.1'
 
 
 class Delimiters:

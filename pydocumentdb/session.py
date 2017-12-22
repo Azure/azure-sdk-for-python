@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Session Consistency Tracking in the Azure DocumentDB database service.
+"""Session Consistency Tracking in the Azure Cosmos DB database service.
 """
 
 import sys, traceback
@@ -39,11 +39,13 @@ class SessionContainer(object):
         """
         Get Session Token for collection_link
         
-        :Parameters:
-            - `resource_path` - self link / path to the resource
+        :param str resource_path:
+            Self link / path to the resource
 
-        :Returns:
-            - Session Token dictionary for the collection_id
+        :return:
+            Session Token dictionary for the collection_id
+        :rtype:
+            dict
         """
 
         with self.session_lock:
@@ -77,11 +79,10 @@ class SessionContainer(object):
         Session token must only be updated from response of requests that successfully mutate resource on the 
         server side (write, replace, delete etc) 
         
-        :Parameters:
-            - `response_result` - response result
-            - `response_headers` - response headers
-        
-        :Returns:
+        :param dict response_result:
+        :param dict response_headers:
+
+        :return:
             - None
         """
 
@@ -150,12 +151,13 @@ class SessionContainer(object):
     def parse_session_token(response_headers):
         """ Extracts session token from response headers and parses
 
-        :Parameters:
-            - `response_headers` - response headers from the request
+        :param dict response_headers:
 
-        :Returns:
-            - a dictionary of partition id to session lsn
-            for given collection """
+        :return:
+            A dictionary of partition id to session lsn
+            for given collection 
+        :rtype: dict    
+        """
 
         # extract session token from response header
         session_token = ''
@@ -177,7 +179,7 @@ class SessionContainer(object):
 
 class Session:
     """ 
-    State of a DocumentDB session. This session object
+    State of a Azure Cosmos DB session. This session object
     can be shared across clients within the same process
     """
 

@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Range class implementation in the Azure DocumentDB database service.
+"""Range class implementation in the Azure Cosmos DB database service.
 """
 
 

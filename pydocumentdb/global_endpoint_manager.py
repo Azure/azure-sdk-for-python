@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for global endpoint manager implementation in the Azure DocumentDB database service.
+"""Internal class for global endpoint manager implementation in the Azure Cosmos DB database service.
 """
 
 from six.moves.urllib.parse import urlparse
