@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for partition key range cache implementation in the Azure DocumentDB database service.
+"""Internal class for partition key range cache implementation in the Azure Cosmos DB database service.
 """
 
 import pydocumentdb.base as base
@@ -47,12 +47,14 @@ class _PartitionKeyRangeCache(object):
         Given a partition key range and a collection, 
         returns the list of overlapping partition key ranges
         
-        :Parameters:
-            `collection_link` (str): the name of the collection
-            `partition_key_range` (list): List of partition key range
+        :param str collection_link:
+            The name of the collection.
+        :param list partition_key_range: 
+            List of partition key range.
         
-        :Returns:
-            list. List of overlapping partition key ranges
+        :return:
+            List of overlapping partition key ranges.
+        :rtype: list
         '''
         cl = self._documentClient
         
@@ -94,11 +96,12 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
     def _subtract_range(self, r, partition_key_range):
         """
         Evaluates and returns r - partition_key_range
-        :Parameters:
-            partition_key_range (dict): partition key range
-            r (routing_range._Range): query range
-        :Returns:
-            (routing_range._Range): the subtract r - partition_key_range
+        :param dict partition_key_range:
+            Partition key range.
+        :param routing_range._Range r: query range.
+        :return:
+            The subtract r - partition_key_range.
+        :rtype: routing_range._Range
         """
         
         left = max(partition_key_range[routing_range._PartitionKeyRange.MaxExclusive], r.min)
@@ -117,13 +120,13 @@ class _SmartRoutingMapProvider(_PartitionKeyRangeCache):
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
         
-        :Parameters:
-            - collection_link (str): the collection link
-            - sorted_ranges (list of routing_range._Range) the sorted list of non-overlapping ranges
-        :Returns:
-            (list of dict): list of partition key ranges
-        :Raises:
-            ValueError if two ranges in sorted_ranges overlap or if the list is not sorted
+        :param str collection_link:
+            The collection link.
+        :param (list of routing_range._Range) sorted_ranges: The sorted list of non-overlapping ranges.
+        :return:
+            List of partition key ranges.
+        :rtype: list of dict
+        :raises ValueError: If two ranges in sorted_ranges overlap or if the list is not sorted
         '''
         
         # validate if the list is non-overlapping and sorted

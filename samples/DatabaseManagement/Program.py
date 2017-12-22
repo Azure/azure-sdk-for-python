@@ -7,13 +7,13 @@ import config as cfg
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
 # 
-# 1. An Azure DocumentDB account - 
-#    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
+# 1. An Azure Cosmos DB account - 
+#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure DocumentDB PyPi package - 
 #    https://pypi.python.org/pypi/pydocumentdb/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic CRUD operations on a Database resource for Azure DocumentDB
+# Sample - demonstrates the basic CRUD operations on a Database resource for Azure Cosmos DB
 #
 # 1. Query for Database (QueryDatabases)
 #
@@ -80,7 +80,7 @@ class DatabaseManagement:
         print("\n3. Get a Database by id")
 
         try:
-            # All DocumentDB resources are addressable via a link
+            # All Azure Cosmos DB resources are addressable via a link
             # This link is constructed from a combination of resource hierachy and 
             # the resource id. 
             # Eg. The link for database with an id of Foo would be dbs/Foo

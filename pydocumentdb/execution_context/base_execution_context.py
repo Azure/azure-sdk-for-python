@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal class for query execution context implementation in the Azure DocumentDB database service.
+"""Internal class for query execution context implementation in the Azure Cosmos DB database service.
 """
 
 from collections import deque
@@ -34,9 +34,10 @@ class _QueryExecutionContextBase(object):
     def __init__(self, client, options):
         """
         Constructor
-        :Parameters:
-            client (DocumentClient), 
-            options (dict): the request options for the request.
+
+        :param DocumentClient client:
+        :param dict options:
+            The request options for the request.
             
         """
         self._client = client
@@ -55,8 +56,9 @@ class _QueryExecutionContextBase(object):
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
         
-        :Returns:
-            list. List of results.
+        :return:
+            List of results.
+        :rtype: list
         """
         if not self._has_more_pages():
             return []
@@ -80,10 +82,10 @@ class _QueryExecutionContextBase(object):
     def next(self):
         """Returns the next query result.
         
-        :Returns:
-            dict. the next query result.
-        :Raises:
-            StopIteration. If no more result is left.
+        :return:
+            The next query result.
+        :rtype: dict
+        :raises StopIteration: If no more result is left.
         """
         if self._has_finished:
             raise StopIteration
@@ -105,9 +107,9 @@ class _QueryExecutionContextBase(object):
     def _fetch_items_helper_no_retries(self, fetch_function): 
         """Fetches more items and doesn't retry on failure
 
-        :Returns:
-            list of fetched items.
-
+        :return:
+            List of fetched items.
+        :rtype: list
         """
         fetched_items = []
         # Continues pages till finds a non empty page or all results are exhausted
@@ -137,15 +139,15 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     def __init__(self, client, options, fetch_function):
         """
         Constructor
-        :Parameters:
-            - client (DocumentClient)
-            - options (dict) the request options for the request.
-            - fetch_function (method): will be invoked for retrieving each page
 
-        Example of `fetch_function`:
-
-        >>> def result_fn(result):
-        >>>     return result['Databases']
+        :param DocumentClient client:
+        :param dict options:
+            The request options for the request.
+        :param method fetch_function: 
+            Will be invoked for retrieving each page
+            Example of `fetch_function`:
+            >>> def result_fn(result):
+            >>>     return result['Databases']
 
         """
         super(self.__class__, self).__init__(client, options)
@@ -162,12 +164,12 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
     def __init__(self, client, options, database_link, query, partition_key):
         """
         Constructor
-        :Parameters:
-            - client (DocumentClient), instance of document client
-            - options (dict), the request options for the request.
-            - database_link (str): database self link or ID based link
-            - query (str or dict)
-            - partition_key (str): partition key for the query
+        :param DocumentClient client:
+        :param dict options:
+            The request options for the request.
+        :param str database_link: database self link or ID based link
+        :param (str or dict) query:
+            Partition_key (str): partition key for the query
         
         """
         super(self.__class__, self).__init__(client, options)
@@ -217,9 +219,9 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         This iterates fetches the next block of results from the current collection link.
         Once the current collection results were exhausted. It moves to the next collection link.
 
-        :Returns:
-            list. list of fetched items.
-
+        :return:
+            List of fetched items.
+        :rtype: list
         """
         # Fetch next block of results by executing the query against the current document collection
         fetched_items = self._fetch_items_helper_with_retries(self._fetch_function)

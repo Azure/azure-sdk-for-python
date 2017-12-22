@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal Helper functions in the Azure DocumentDB database service.
+"""Internal Helper functions in the Azure Cosmos DB database service.
 """
 
 import platform

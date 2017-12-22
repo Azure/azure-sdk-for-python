@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Hash partition resolver implementation in the Azure DocumentDB database service.
+"""Hash partition resolver implementation in the Azure Cosmos DB database service.
 """
 
 import pydocumentdb.murmur_hash as murmur_hash
@@ -31,11 +31,14 @@ class HashPartitionResolver(object):
     """
     def __init__(self, partition_key_extractor, collection_links, default_number_of_virtual_nodes_per_collection = 128, hash_generator = None):
         """
-        :Parameters:
-            - `partition_key_extractor`: lambda, returning the partition key from the document passed.
-            - `collection_links`: list, the links of collections participating in partitioning.
-            - `default_number_of_virtual_nodes_per_collection`: int, number of virtual nodes per collection.
-            - `hash_generator`: HashGenerator, the hash generator to be used for hashing algorithm.
+        :param lambda partition_key_extractor:
+            Returning the partition key from the document passed.
+        :param list collection_links:
+            The links of collections participating in partitioning.
+        :param int default_number_of_virtual_nodes_per_collection:
+            Number of virtual nodes per collection.
+        :param HashGenerator hash_generator:
+            The hash generator to be used for hashing algorithm.
         """
         if partition_key_extractor is None:
             raise ValueError("partition_key_extractor is None.")
@@ -55,11 +58,13 @@ class HashPartitionResolver(object):
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.
         
-        :Parameters:
-            - `document`: dict, the document to be created.
+        :param dict document:
+            The document to be created.
 
-        :Returns:
-            str, collection Self link or Name based link which should handle the Create operation.
+        :return:
+            Collection Self link or Name based link which should handle the Create operation.
+        :rtype:
+            str
         """
         if document is None:
             raise ValueError("document is None.")
@@ -70,11 +75,13 @@ class HashPartitionResolver(object):
     def ResolveForRead(self, partition_key):
         """Resolves the collection for reading/querying the documents based on the partition key.
 
-        :Parameters:
-            - `document`: dict, the document to be read/queried.
+        :param dict document:
+            The document to be read/queried.
 
-        :Returns:
-            list, collection Self link(s) or Name based link(s) which should handle the Read operation.
+        :return:
+            Collection Self link(s) or Name based link(s) which should handle the Read operation.
+        :rtype:
+            list
         """
         if partition_key is None:
             return self.collection_links

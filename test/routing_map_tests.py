@@ -28,11 +28,11 @@ import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
-#      Most test cases in this file create collections in your DocumentDB account.
+#      Most test cases in this file create collections in your Azure Cosmos DB account.
 #      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
   
 #      To Run the test, replace the two member fields (masterKey and host) with values 
-#   associated with your DocumentDB account.
+#   associated with your Azure Cosmos DB account.
 
 class RoutingMapEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
@@ -57,7 +57,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
-                "You must specify your Azure DocumentDB account values for "
+                "You must specify your Azure Cosmos DB account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
