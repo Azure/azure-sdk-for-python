@@ -1,6 +1,6 @@
-## Changes in 2.3.0 : ##
+## Changes in 2.3.1 : ##
 
-- Updated documentation to reference Azure Cosmos DB instead of DocumentDB
+- Updated documentation to reference Azure Cosmos DB instead of Azure DocumentDB
 
 ## Changes in 2.3.0 : ##
 
