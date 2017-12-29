@@ -18,10 +18,13 @@ from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
+from .operations.certificate_registration_provider_operations import CertificateRegistrationProviderOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
+from .operations.domain_registration_provider_operations import DomainRegistrationProviderOperations
 from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
+from .operations.diagnostics_operations import DiagnosticsOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.web_apps_operations import WebAppsOperations
@@ -56,7 +59,7 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
 
         super(WebSiteManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('websitemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-web/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -71,14 +74,20 @@ class WebSiteManagementClient(object):
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrders operations
     :vartype app_service_certificate_orders: azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
+    :ivar certificate_registration_provider: CertificateRegistrationProvider operations
+    :vartype certificate_registration_provider: azure.mgmt.web.operations.CertificateRegistrationProviderOperations
     :ivar domains: Domains operations
     :vartype domains: azure.mgmt.web.operations.DomainsOperations
     :ivar top_level_domains: TopLevelDomains operations
     :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
+    :ivar domain_registration_provider: DomainRegistrationProvider operations
+    :vartype domain_registration_provider: azure.mgmt.web.operations.DomainRegistrationProviderOperations
     :ivar certificates: Certificates operations
     :vartype certificates: azure.mgmt.web.operations.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebApps operations
     :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
+    :ivar diagnostics: Diagnostics operations
+    :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
     :ivar provider: Provider operations
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
@@ -111,13 +120,19 @@ class WebSiteManagementClient(object):
 
         self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.top_level_domains = TopLevelDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.domain_registration_provider = DomainRegistrationProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostics = DiagnosticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -167,7 +182,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -228,7 +243,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -291,7 +306,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -353,7 +368,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -420,7 +435,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -447,7 +462,9 @@ class WebSiteManagementClient(object):
         :param name: Resource name to verify.
         :type name: str
         :param type: Resource type used for verification. Possible values
-         include: 'Site', 'Slot', 'HostingEnvironment'
+         include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
+         'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
+         'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
         :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name.
         :type is_fqdn: bool
@@ -492,7 +509,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -551,7 +568,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -629,7 +646,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -697,7 +714,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -757,7 +774,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -824,7 +841,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -896,7 +913,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -958,7 +975,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1030,7 +1047,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
