@@ -27,5 +27,6 @@ class HostingEnvironmentDiagnostics(Model):
     }
 
     def __init__(self, name=None, diagnosics_output=None):
+        super(HostingEnvironmentDiagnostics, self).__init__()
         self.name = name
         self.diagnosics_output = diagnosics_output

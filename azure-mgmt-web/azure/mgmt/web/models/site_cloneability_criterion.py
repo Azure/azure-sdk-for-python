@@ -27,5 +27,6 @@ class SiteCloneabilityCriterion(Model):
     }
 
     def __init__(self, name=None, description=None):
+        super(SiteCloneabilityCriterion, self).__init__()
         self.name = name
         self.description = description

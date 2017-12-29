@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """Operation.
+    """An operation on a resource.
 
     :param id: Operation ID.
     :type id: str
@@ -46,6 +46,7 @@ class Operation(Model):
     }
 
     def __init__(self, id=None, name=None, status=None, errors=None, created_time=None, modified_time=None, expiration_time=None, geo_master_operation_id=None):
+        super(Operation, self).__init__()
         self.id = id
         self.name = name
         self.status = status

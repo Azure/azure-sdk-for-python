@@ -31,5 +31,6 @@ class WebAppCollection(Model):
     }
 
     def __init__(self, value, next_link=None):
+        super(WebAppCollection, self).__init__()
         self.value = value
         self.next_link = next_link

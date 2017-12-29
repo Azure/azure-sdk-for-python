@@ -36,6 +36,7 @@ class PerfMonSet(Model):
     }
 
     def __init__(self, name=None, start_time=None, end_time=None, time_grain=None, values=None):
+        super(PerfMonSet, self).__init__()
         self.name = name
         self.start_time = start_time
         self.end_time = end_time

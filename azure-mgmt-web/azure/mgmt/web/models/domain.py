@@ -92,6 +92,10 @@ class Domain(Resource):
         'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
+        'contact_admin': {'required': True},
+        'contact_billing': {'required': True},
+        'contact_registrant': {'required': True},
+        'contact_tech': {'required': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'name_servers': {'readonly': True},
@@ -100,6 +104,7 @@ class Domain(Resource):
         'last_renewed_time': {'readonly': True},
         'ready_for_dns_record_management': {'readonly': True},
         'managed_host_names': {'readonly': True},
+        'consent': {'required': True},
         'domain_not_renewable_reasons': {'readonly': True},
     }
 
@@ -132,7 +137,7 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None, auth_code=None):
+    def __init__(self, location, contact_admin, contact_billing, contact_registrant, contact_tech, consent, kind=None, tags=None, privacy=None, auto_renew=True, dns_type=None, dns_zone_id=None, target_dns_type=None, auth_code=None):
         super(Domain, self).__init__(kind=kind, location=location, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing

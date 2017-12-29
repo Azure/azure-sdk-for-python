@@ -35,6 +35,7 @@ class DeploymentLocations(Model):
     }
 
     def __init__(self, locations=None, hosting_environments=None, hosting_environment_deployment_infos=None):
+        super(DeploymentLocations, self).__init__()
         self.locations = locations
         self.hosting_environments = hosting_environments
         self.hosting_environment_deployment_infos = hosting_environment_deployment_infos
