@@ -49,6 +49,7 @@ class PushSettings(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'is_push_enabled': {'required': True},
     }
 
     _attribute_map = {
@@ -62,7 +63,7 @@ class PushSettings(ProxyOnlyResource):
         'dynamic_tags_json': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, is_push_enabled=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
+    def __init__(self, is_push_enabled, kind=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
         super(PushSettings, self).__init__(kind=kind)
         self.is_push_enabled = is_push_enabled
         self.tag_whitelist_json = tag_whitelist_json

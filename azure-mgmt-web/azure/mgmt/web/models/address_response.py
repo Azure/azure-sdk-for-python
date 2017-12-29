@@ -22,10 +22,9 @@ class AddressResponse(Model):
     :type internal_ip_address: str
     :param outbound_ip_addresses: IP addresses appearing on outbound
      connections.
-    :type outbound_ip_addresses: list of str
+    :type outbound_ip_addresses: list[str]
     :param vip_mappings: Additional virtual IPs.
-    :type vip_mappings: list of :class:`VirtualIPMapping
-     <azure.mgmt.web.models.VirtualIPMapping>`
+    :type vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
     """
 
     _attribute_map = {
@@ -36,6 +35,7 @@ class AddressResponse(Model):
     }
 
     def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None):
+        super(AddressResponse, self).__init__()
         self.service_ip_address = service_ip_address
         self.internal_ip_address = internal_ip_address
         self.outbound_ip_addresses = outbound_ip_addresses

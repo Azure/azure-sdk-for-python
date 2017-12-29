@@ -26,6 +26,8 @@ class DeletedWebAppsOperations(object):
     :ivar api_version: API Version. Constant value: "2016-03-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -46,10 +48,9 @@ class DeletedWebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`DeletedSite
-         <azure.mgmt.web.models.DeletedSite>`
-        :rtype: :class:`DeletedSitePaged
-         <azure.mgmt.web.models.DeletedSitePaged>`
+        :return: An iterator like instance of DeletedSite
+        :rtype:
+         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -83,7 +84,7 @@ class DeletedWebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

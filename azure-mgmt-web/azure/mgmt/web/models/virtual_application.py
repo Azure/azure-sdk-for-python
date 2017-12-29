@@ -23,8 +23,7 @@ class VirtualApplication(Model):
      otherwise, <code>false</code>.
     :type preload_enabled: bool
     :param virtual_directories: Virtual directories for virtual application.
-    :type virtual_directories: list of :class:`VirtualDirectory
-     <azure.mgmt.web.models.VirtualDirectory>`
+    :type virtual_directories: list[~azure.mgmt.web.models.VirtualDirectory]
     """
 
     _attribute_map = {
@@ -35,6 +34,7 @@ class VirtualApplication(Model):
     }
 
     def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None):
+        super(VirtualApplication, self).__init__()
         self.virtual_path = virtual_path
         self.physical_path = physical_path
         self.preload_enabled = preload_enabled

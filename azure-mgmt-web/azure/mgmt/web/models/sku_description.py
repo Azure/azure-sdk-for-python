@@ -26,14 +26,12 @@ class SkuDescription(Model):
     :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
     :param sku_capacity: Min, max, and default scale values of the SKU.
-    :type sku_capacity: :class:`SkuCapacity
-     <azure.mgmt.web.models.SkuCapacity>`
+    :type sku_capacity: ~azure.mgmt.web.models.SkuCapacity
     :param locations: Locations of the SKU.
-    :type locations: list of str
+    :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list of :class:`Capability
-     <azure.mgmt.web.models.Capability>`
+    :type capabilities: list[~azure.mgmt.web.models.Capability]
     """
 
     _attribute_map = {
@@ -48,6 +46,7 @@ class SkuDescription(Model):
     }
 
     def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
+        super(SkuDescription, self).__init__()
         self.name = name
         self.tier = tier
         self.size = size

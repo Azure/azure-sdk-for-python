@@ -16,11 +16,10 @@ class HttpLogsConfig(Model):
     """Http logs configuration.
 
     :param file_system: Http logs to file system configuration.
-    :type file_system: :class:`FileSystemHttpLogsConfig
-     <azure.mgmt.web.models.FileSystemHttpLogsConfig>`
+    :type file_system: ~azure.mgmt.web.models.FileSystemHttpLogsConfig
     :param azure_blob_storage: Http logs to azure blob storage configuration.
-    :type azure_blob_storage: :class:`AzureBlobStorageHttpLogsConfig
-     <azure.mgmt.web.models.AzureBlobStorageHttpLogsConfig>`
+    :type azure_blob_storage:
+     ~azure.mgmt.web.models.AzureBlobStorageHttpLogsConfig
     """
 
     _attribute_map = {
@@ -29,5 +28,6 @@ class HttpLogsConfig(Model):
     }
 
     def __init__(self, file_system=None, azure_blob_storage=None):
+        super(HttpLogsConfig, self).__init__()
         self.file_system = file_system
         self.azure_blob_storage = azure_blob_storage

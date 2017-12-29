@@ -19,7 +19,7 @@ class Contact(Model):
     directories as per ICANN requirements.
 
     :param address_mailing: Mailing address.
-    :type address_mailing: :class:`Address <azure.mgmt.web.models.Address>`
+    :type address_mailing: ~azure.mgmt.web.models.Address
     :param email: Email address.
     :type email: str
     :param fax: Fax number.
@@ -58,6 +58,7 @@ class Contact(Model):
     }
 
     def __init__(self, email, name_first, name_last, phone, address_mailing=None, fax=None, job_title=None, name_middle=None, organization=None):
+        super(Contact, self).__init__()
         self.address_mailing = address_mailing
         self.email = email
         self.fax = fax

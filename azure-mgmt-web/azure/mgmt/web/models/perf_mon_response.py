@@ -20,7 +20,7 @@ class PerfMonResponse(Model):
     :param message: The message.
     :type message: str
     :param data: The performance monitor counters.
-    :type data: :class:`PerfMonSet <azure.mgmt.web.models.PerfMonSet>`
+    :type data: ~azure.mgmt.web.models.PerfMonSet
     """
 
     _attribute_map = {
@@ -30,6 +30,7 @@ class PerfMonResponse(Model):
     }
 
     def __init__(self, code=None, message=None, data=None):
+        super(PerfMonResponse, self).__init__()
         self.code = code
         self.message = message
         self.data = data

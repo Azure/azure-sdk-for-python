@@ -36,6 +36,7 @@ class StatusCodesBasedTrigger(Model):
     }
 
     def __init__(self, status=None, sub_status=None, win32_status=None, count=None, time_interval=None):
+        super(StatusCodesBasedTrigger, self).__init__()
         self.status = status
         self.sub_status = sub_status
         self.win32_status = win32_status

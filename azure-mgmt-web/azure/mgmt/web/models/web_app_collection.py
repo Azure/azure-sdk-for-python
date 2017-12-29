@@ -16,7 +16,7 @@ class WebAppCollection(Model):
     """Collection of App Service apps.
 
     :param value: Collection of resources.
-    :type value: list of :class:`Site <azure.mgmt.web.models.Site>`
+    :type value: list[~azure.mgmt.web.models.Site]
     :param next_link: Link to next page of resources.
     :type next_link: str
     """
@@ -31,5 +31,6 @@ class WebAppCollection(Model):
     }
 
     def __init__(self, value, next_link=None):
+        super(WebAppCollection, self).__init__()
         self.value = value
         self.next_link = next_link

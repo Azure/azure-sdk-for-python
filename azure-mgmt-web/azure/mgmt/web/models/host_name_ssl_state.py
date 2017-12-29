@@ -19,7 +19,7 @@ class HostNameSslState(Model):
     :type name: str
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
+    :type ssl_state: str or ~azure.mgmt.web.models.SslState
     :param virtual_ip: Virtual IP address assigned to the hostname if IP based
      SSL is enabled.
     :type virtual_ip: str
@@ -29,7 +29,7 @@ class HostNameSslState(Model):
     :type to_update: bool
     :param host_type: Indicates whether the hostname is a standard or
      repository hostname. Possible values include: 'Standard', 'Repository'
-    :type host_type: str or :class:`HostType <azure.mgmt.web.models.HostType>`
+    :type host_type: str or ~azure.mgmt.web.models.HostType
     """
 
     _attribute_map = {
@@ -42,6 +42,7 @@ class HostNameSslState(Model):
     }
 
     def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None, host_type=None):
+        super(HostNameSslState, self).__init__()
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip

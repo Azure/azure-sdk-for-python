@@ -23,8 +23,7 @@ class ResourceNameAvailability(Model):
      match Azure App Service naming requirements. <code>AlreadyExists</code>
      indicates that the name is already in use and is therefore unavailable.
      Possible values include: 'Invalid', 'AlreadyExists'
-    :type reason: str or :class:`InAvailabilityReasonType
-     <azure.mgmt.web.models.InAvailabilityReasonType>`
+    :type reason: str or ~azure.mgmt.web.models.InAvailabilityReasonType
     :param message: If reason == invalid, provide the user with the reason why
      the given name is invalid, and provide the resource naming requirements so
      that the user can select a valid name. If reason == AlreadyExists, explain
@@ -40,6 +39,7 @@ class ResourceNameAvailability(Model):
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(ResourceNameAvailability, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message

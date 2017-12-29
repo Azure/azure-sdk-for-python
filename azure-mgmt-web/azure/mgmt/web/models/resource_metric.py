@@ -19,8 +19,7 @@ class ResourceMetric(Model):
     sending a request.
 
     :ivar name: Name of metric.
-    :vartype name: :class:`ResourceMetricName
-     <azure.mgmt.web.models.ResourceMetricName>`
+    :vartype name: ~azure.mgmt.web.models.ResourceMetricName
     :ivar unit: Metric unit.
     :vartype unit: str
     :ivar time_grain: Metric granularity. E.g PT1H, PT5M, P1D
@@ -34,11 +33,9 @@ class ResourceMetric(Model):
     :ivar id: Resource Id.
     :vartype id: str
     :ivar metric_values: Metric values.
-    :vartype metric_values: list of :class:`ResourceMetricValue
-     <azure.mgmt.web.models.ResourceMetricValue>`
+    :vartype metric_values: list[~azure.mgmt.web.models.ResourceMetricValue]
     :ivar properties: Properties.
-    :vartype properties: list of :class:`ResourceMetricProperty
-     <azure.mgmt.web.models.ResourceMetricProperty>`
+    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
     """
 
     _validation = {
@@ -66,6 +63,7 @@ class ResourceMetric(Model):
     }
 
     def __init__(self):
+        super(ResourceMetric, self).__init__()
         self.name = None
         self.unit = None
         self.time_grain = None

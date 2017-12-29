@@ -26,8 +26,7 @@ class Recommendation(Model):
     :param resource_scope: Name of a resource type this recommendation
      applies, e.g. Subscription, ServerFarm, Site. Possible values include:
      'ServerFarm', 'Subscription', 'WebSite'
-    :type resource_scope: str or :class:`ResourceScopeType
-     <azure.mgmt.web.models.ResourceScopeType>`
+    :type resource_scope: str or ~azure.mgmt.web.models.ResourceScopeType
     :param rule_name: Unique name of the rule.
     :type rule_name: str
     :param display_name: UI friendly name of the rule (may not be unique).
@@ -37,14 +36,13 @@ class Recommendation(Model):
     :param level: Level indicating how critical this recommendation can
      impact. Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or :class:`NotificationLevel
-     <azure.mgmt.web.models.NotificationLevel>`
+    :type level: str or ~azure.mgmt.web.models.NotificationLevel
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
+    :type channels: str or ~azure.mgmt.web.models.Channels
     :param tags: The list of category tags that this recommendation belongs
      to.
-    :type tags: list of str
+    :type tags: list[str]
     :param action_name: Name of action recommended by this object.
     :type action_name: str
     :param start_time: The beginning time in UTC of a range that the
@@ -101,6 +99,7 @@ class Recommendation(Model):
     }
 
     def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
+        super(Recommendation, self).__init__()
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id

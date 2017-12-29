@@ -27,12 +27,10 @@ class StampCapacity(Model):
     :type unit: str
     :param compute_mode: Shared/dedicated workers. Possible values include:
      'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
      'Default', 'Small', 'Medium', 'Large'
-    :type worker_size: str or :class:`WorkerSizeOptions
-     <azure.mgmt.web.models.WorkerSizeOptions>`
+    :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
      1 - Medium
@@ -63,6 +61,7 @@ class StampCapacity(Model):
     }
 
     def __init__(self, name=None, available_capacity=None, total_capacity=None, unit=None, compute_mode=None, worker_size=None, worker_size_id=None, exclude_from_capacity_allocation=None, is_applicable_for_all_compute_modes=None, site_mode=None):
+        super(StampCapacity, self).__init__()
         self.name = name
         self.available_capacity = available_capacity
         self.total_capacity = total_capacity

@@ -36,20 +36,17 @@ class HostNameBinding(ProxyOnlyResource):
     :type azure_resource_name: str
     :param azure_resource_type: Azure resource type. Possible values include:
      'Website', 'TrafficManager'
-    :type azure_resource_type: str or :class:`AzureResourceType
-     <azure.mgmt.web.models.AzureResourceType>`
+    :type azure_resource_type: str or ~azure.mgmt.web.models.AzureResourceType
     :param custom_host_name_dns_record_type: Custom DNS record type. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
-     :class:`CustomHostNameDnsRecordType
-     <azure.mgmt.web.models.CustomHostNameDnsRecordType>`
+     ~azure.mgmt.web.models.CustomHostNameDnsRecordType
     :param host_name_type: Hostname type. Possible values include: 'Verified',
      'Managed'
-    :type host_name_type: str or :class:`HostNameType
-     <azure.mgmt.web.models.HostNameType>`
+    :type host_name_type: str or ~azure.mgmt.web.models.HostNameType
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
+    :type ssl_state: str or ~azure.mgmt.web.models.SslState
     :param thumbprint: SSL certificate thumbprint
     :type thumbprint: str
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based
@@ -61,6 +58,7 @@ class HostNameBinding(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'host_name_binding_name': {'required': True},
         'virtual_ip': {'readonly': True},
     }
 
@@ -81,7 +79,7 @@ class HostNameBinding(ProxyOnlyResource):
         'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None):
+    def __init__(self, host_name_binding_name, kind=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None):
         super(HostNameBinding, self).__init__(kind=kind)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name

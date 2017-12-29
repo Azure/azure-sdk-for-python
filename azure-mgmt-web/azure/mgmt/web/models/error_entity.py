@@ -24,10 +24,9 @@ class ErrorEntity(Model):
     :param message_template: Message template.
     :type message_template: str
     :param parameters: Parameters for the template.
-    :type parameters: list of str
+    :type parameters: list[str]
     :param inner_errors: Inner errors.
-    :type inner_errors: list of :class:`ErrorEntity
-     <azure.mgmt.web.models.ErrorEntity>`
+    :type inner_errors: list[~azure.mgmt.web.models.ErrorEntity]
     """
 
     _attribute_map = {
@@ -40,6 +39,7 @@ class ErrorEntity(Model):
     }
 
     def __init__(self, code=None, message=None, extended_code=None, message_template=None, parameters=None, inner_errors=None):
+        super(ErrorEntity, self).__init__()
         self.code = code
         self.message = message
         self.extended_code = extended_code

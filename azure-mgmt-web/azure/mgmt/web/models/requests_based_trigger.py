@@ -27,5 +27,6 @@ class RequestsBasedTrigger(Model):
     }
 
     def __init__(self, count=None, time_interval=None):
+        super(RequestsBasedTrigger, self).__init__()
         self.count = count
         self.time_interval = time_interval

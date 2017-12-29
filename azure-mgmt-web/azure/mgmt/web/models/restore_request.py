@@ -38,8 +38,7 @@ class RestoreRequest(ProxyOnlyResource):
     :type site_name: str
     :param databases: Collection of databases which should be restored. This
      list has to match the list of databases included in the backup.
-    :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
     :param ignore_conflicting_host_names: Changes a logic when restoring an
      app with custom domains. <code>true</code> to remove custom domains
      automatically. If <code>false</code>, custom domains are added to
@@ -54,8 +53,8 @@ class RestoreRequest(ProxyOnlyResource):
     :type app_service_plan: str
     :param operation_type: Operation type. Possible values include: 'Default',
      'Clone', 'Relocation', 'Snapshot'. Default value: "Default" .
-    :type operation_type: str or :class:`BackupRestoreOperationType
-     <azure.mgmt.web.models.BackupRestoreOperationType>`
+    :type operation_type: str or
+     ~azure.mgmt.web.models.BackupRestoreOperationType
     :param adjust_connection_strings: <code>true</code> if
      SiteConfig.ConnectionStrings should be set in new app; otherwise,
      <code>false</code>.
@@ -69,6 +68,8 @@ class RestoreRequest(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'storage_account_url': {'required': True},
+        'overwrite': {'required': True},
     }
 
     _attribute_map = {
@@ -89,7 +90,7 @@ class RestoreRequest(ProxyOnlyResource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, app_service_plan=None, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
+    def __init__(self, storage_account_url, overwrite, kind=None, blob_name=None, site_name=None, databases=None, ignore_conflicting_host_names=False, ignore_databases=False, app_service_plan=None, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
         super(RestoreRequest, self).__init__(kind=kind)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name

@@ -28,8 +28,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :vartype type: str
     :param status: Job status. Possible values include: 'Initializing',
      'Starting', 'Running', 'PendingRestart', 'Stopped'
-    :type status: str or :class:`ContinuousWebJobStatus
-     <azure.mgmt.web.models.ContinuousWebJobStatus>`
+    :type status: str or ~azure.mgmt.web.models.ContinuousWebJobStatus
     :param detailed_status: Detailed status.
     :type detailed_status: str
     :param log_url: Log URL.
@@ -45,8 +44,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type job_type: str or :class:`WebJobType
-     <azure.mgmt.web.models.WebJobType>`
+    :type job_type: str or ~azure.mgmt.web.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?

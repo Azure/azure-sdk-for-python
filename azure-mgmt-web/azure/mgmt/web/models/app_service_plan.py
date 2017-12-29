@@ -29,7 +29,7 @@ class AppServicePlan(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param app_service_plan_name: Name for the App Service plan.
     :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
@@ -37,16 +37,15 @@ class AppServicePlan(Resource):
     :type worker_tier_name: str
     :ivar status: App Service plan status. Possible values include: 'Ready',
      'Pending'
-    :vartype status: str or :class:`StatusOptions
-     <azure.mgmt.web.models.StatusOptions>`
+    :vartype status: str or ~azure.mgmt.web.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
     :param admin_site_name: App Service plan administration site.
     :type admin_site_name: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
-    :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+    :type hosting_environment_profile:
+     ~azure.mgmt.web.models.HostingEnvironmentProfile
     :ivar maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service plan.
     :vartype maximum_number_of_workers: int
@@ -70,10 +69,10 @@ class AppServicePlan(Resource):
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :param sku:
-    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
+    :type sku: ~azure.mgmt.web.models.SkuDescription
     """
 
     _validation = {
@@ -81,6 +80,7 @@ class AppServicePlan(Resource):
         'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
+        'app_service_plan_name': {'required': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
         'maximum_number_of_workers': {'readonly': True},
@@ -115,7 +115,7 @@ class AppServicePlan(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, kind=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
+    def __init__(self, location, app_service_plan_name, kind=None, tags=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
         super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags)
         self.app_service_plan_name = app_service_plan_name
         self.worker_tier_name = worker_tier_name

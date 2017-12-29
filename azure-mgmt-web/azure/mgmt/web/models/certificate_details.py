@@ -63,6 +63,7 @@ class CertificateDetails(Model):
     }
 
     def __init__(self):
+        super(CertificateDetails, self).__init__()
         self.version = None
         self.serial_number = None
         self.thumbprint = None

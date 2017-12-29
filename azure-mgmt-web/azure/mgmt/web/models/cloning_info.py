@@ -41,7 +41,7 @@ class CloningInfo(Model):
      app. If specified, these settings override the settings cloned
      from source app. Otherwise, application settings from source app are
      retained.
-    :type app_settings_overrides: dict
+    :type app_settings_overrides: dict[str, str]
     :param configure_load_balancing: <code>true</code> to configure load
      balancing for source and destination app.
     :type configure_load_balancing: bool
@@ -77,6 +77,7 @@ class CloningInfo(Model):
     }
 
     def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None, ignore_quotas=None):
+        super(CloningInfo, self).__init__()
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names

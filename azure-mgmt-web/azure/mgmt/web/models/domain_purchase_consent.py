@@ -19,7 +19,7 @@ class DomainPurchaseConsent(Model):
     :param agreement_keys: List of applicable legal agreement keys. This list
      can be retrieved using ListLegalAgreements API under
      <code>TopLevelDomain</code> resource.
-    :type agreement_keys: list of str
+    :type agreement_keys: list[str]
     :param agreed_by: Client IP address.
     :type agreed_by: str
     :param agreed_at: Timestamp when the agreements were accepted.
@@ -33,6 +33,7 @@ class DomainPurchaseConsent(Model):
     }
 
     def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None):
+        super(DomainPurchaseConsent, self).__init__()
         self.agreement_keys = agreement_keys
         self.agreed_by = agreed_by
         self.agreed_at = agreed_at

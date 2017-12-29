@@ -35,21 +35,21 @@ class BackupRequest(ProxyOnlyResource):
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
      periodically.
-    :type backup_schedule: :class:`BackupSchedule
-     <azure.mgmt.web.models.BackupSchedule>`
+    :type backup_schedule: ~azure.mgmt.web.models.BackupSchedule
     :param databases: Databases included in the backup.
-    :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
     :param backup_request_type: Type of the backup. Possible values include:
      'Default', 'Clone', 'Relocation', 'Snapshot'
-    :type backup_request_type: str or :class:`BackupRestoreOperationType
-     <azure.mgmt.web.models.BackupRestoreOperationType>`
+    :type backup_request_type: str or
+     ~azure.mgmt.web.models.BackupRestoreOperationType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'backup_request_name': {'required': True},
+        'storage_account_url': {'required': True},
     }
 
     _attribute_map = {
@@ -65,7 +65,7 @@ class BackupRequest(ProxyOnlyResource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, kind=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+    def __init__(self, backup_request_name, storage_account_url, kind=None, enabled=None, backup_schedule=None, databases=None, backup_request_type=None):
         super(BackupRequest, self).__init__(kind=kind)
         self.backup_request_name = backup_request_name
         self.enabled = enabled

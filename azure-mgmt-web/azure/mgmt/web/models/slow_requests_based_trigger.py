@@ -30,6 +30,7 @@ class SlowRequestsBasedTrigger(Model):
     }
 
     def __init__(self, time_taken=None, count=None, time_interval=None):
+        super(SlowRequestsBasedTrigger, self).__init__()
         self.time_taken = time_taken
         self.count = count
         self.time_interval = time_interval

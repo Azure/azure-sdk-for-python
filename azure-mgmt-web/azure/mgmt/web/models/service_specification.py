@@ -16,8 +16,8 @@ class ServiceSpecification(Model):
     """ServiceSpecification.
 
     :param metric_specifications:
-    :type metric_specifications: list of :class:`MetricSpecification
-     <azure.mgmt.web.models.MetricSpecification>`
+    :type metric_specifications:
+     list[~azure.mgmt.web.models.MetricSpecification]
     """
 
     _attribute_map = {
@@ -25,4 +25,5 @@ class ServiceSpecification(Model):
     }
 
     def __init__(self, metric_specifications=None):
+        super(ServiceSpecification, self).__init__()
         self.metric_specifications = metric_specifications

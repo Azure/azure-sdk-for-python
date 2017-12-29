@@ -21,11 +21,9 @@ class Operation(Model):
     :type name: str
     :param status: The current status of the operation. Possible values
      include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
-    :type status: str or :class:`OperationStatus
-     <azure.mgmt.web.models.OperationStatus>`
+    :type status: str or ~azure.mgmt.web.models.OperationStatus
     :param errors: Any errors associate with the operation.
-    :type errors: list of :class:`ErrorEntity
-     <azure.mgmt.web.models.ErrorEntity>`
+    :type errors: list[~azure.mgmt.web.models.ErrorEntity]
     :param created_time: Time when operation has started.
     :type created_time: datetime
     :param modified_time: Time when operation has been updated.
@@ -48,6 +46,7 @@ class Operation(Model):
     }
 
     def __init__(self, id=None, name=None, status=None, errors=None, created_time=None, modified_time=None, expiration_time=None, geo_master_operation_id=None):
+        super(Operation, self).__init__()
         self.id = id
         self.name = name
         self.status = status

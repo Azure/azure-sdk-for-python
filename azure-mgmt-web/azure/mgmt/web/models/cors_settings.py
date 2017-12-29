@@ -18,7 +18,7 @@ class CorsSettings(Model):
     :param allowed_origins: Gets or sets the list of origins that should be
      allowed to make cross-origin
      calls (for example: http://example.com:12345). Use "*" to allow all.
-    :type allowed_origins: list of str
+    :type allowed_origins: list[str]
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class CorsSettings(Model):
     }
 
     def __init__(self, allowed_origins=None):
+        super(CorsSettings, self).__init__()
         self.allowed_origins = allowed_origins

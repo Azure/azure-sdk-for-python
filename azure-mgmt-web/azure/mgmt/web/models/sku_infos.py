@@ -18,8 +18,7 @@ class SkuInfos(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param skus: List of SKUs the subscription is able to use.
-    :type skus: list of :class:`GlobalCsmSkuDescription
-     <azure.mgmt.web.models.GlobalCsmSkuDescription>`
+    :type skus: list[~azure.mgmt.web.models.GlobalCsmSkuDescription]
     """
 
     _attribute_map = {
@@ -28,5 +27,6 @@ class SkuInfos(Model):
     }
 
     def __init__(self, resource_type=None, skus=None):
+        super(SkuInfos, self).__init__()
         self.resource_type = resource_type
         self.skus = skus

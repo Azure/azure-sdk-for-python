@@ -29,8 +29,7 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
     :param failed: A flag describing whether or not validation failed.
     :type failed: bool
     :param failed_tests: A list of tests that failed in the validation.
-    :type failed_tests: list of :class:`VnetValidationTestFailure
-     <azure.mgmt.web.models.VnetValidationTestFailure>`
+    :type failed_tests: list[~azure.mgmt.web.models.VnetValidationTestFailure]
     """
 
     _validation = {

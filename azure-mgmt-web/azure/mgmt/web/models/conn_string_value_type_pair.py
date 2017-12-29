@@ -20,8 +20,7 @@ class ConnStringValueTypePair(Model):
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or :class:`ConnectionStringType
-     <azure.mgmt.web.models.ConnectionStringType>`
+    :type type: str or ~azure.mgmt.web.models.ConnectionStringType
     """
 
     _validation = {
@@ -35,5 +34,6 @@ class ConnStringValueTypePair(Model):
     }
 
     def __init__(self, value, type):
+        super(ConnStringValueTypePair, self).__init__()
         self.value = value
         self.type = type

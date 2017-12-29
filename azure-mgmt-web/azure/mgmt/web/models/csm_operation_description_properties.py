@@ -16,8 +16,7 @@ class CsmOperationDescriptionProperties(Model):
     """CsmOperationDescriptionProperties.
 
     :param service_specification:
-    :type service_specification: :class:`ServiceSpecification
-     <azure.mgmt.web.models.ServiceSpecification>`
+    :type service_specification: ~azure.mgmt.web.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class CsmOperationDescriptionProperties(Model):
     }
 
     def __init__(self, service_specification=None):
+        super(CsmOperationDescriptionProperties, self).__init__()
         self.service_specification = service_specification

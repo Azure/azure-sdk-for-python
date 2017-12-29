@@ -19,8 +19,7 @@ class ResourceNameAvailabilityRequest(Model):
     :type name: str
     :param type: Resource type used for verification. Possible values include:
      'Site', 'Slot', 'HostingEnvironment'
-    :type type: str or :class:`CheckNameResourceTypes
-     <azure.mgmt.web.models.CheckNameResourceTypes>`
+    :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
     :param is_fqdn: Is fully qualified domain name.
     :type is_fqdn: bool
     """
@@ -37,6 +36,7 @@ class ResourceNameAvailabilityRequest(Model):
     }
 
     def __init__(self, name, type, is_fqdn=None):
+        super(ResourceNameAvailabilityRequest, self).__init__()
         self.name = name
         self.type = type
         self.is_fqdn = is_fqdn

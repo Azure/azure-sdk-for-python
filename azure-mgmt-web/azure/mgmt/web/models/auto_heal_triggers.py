@@ -16,16 +16,13 @@ class AutoHealTriggers(Model):
     """Triggers for auto-heal.
 
     :param requests: A rule based on total requests.
-    :type requests: :class:`RequestsBasedTrigger
-     <azure.mgmt.web.models.RequestsBasedTrigger>`
+    :type requests: ~azure.mgmt.web.models.RequestsBasedTrigger
     :param private_bytes_in_kb: A rule based on private bytes.
     :type private_bytes_in_kb: int
     :param status_codes: A rule based on status codes.
-    :type status_codes: list of :class:`StatusCodesBasedTrigger
-     <azure.mgmt.web.models.StatusCodesBasedTrigger>`
+    :type status_codes: list[~azure.mgmt.web.models.StatusCodesBasedTrigger]
     :param slow_requests: A rule based on request execution time.
-    :type slow_requests: :class:`SlowRequestsBasedTrigger
-     <azure.mgmt.web.models.SlowRequestsBasedTrigger>`
+    :type slow_requests: ~azure.mgmt.web.models.SlowRequestsBasedTrigger
     """
 
     _attribute_map = {
@@ -36,6 +33,7 @@ class AutoHealTriggers(Model):
     }
 
     def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
+        super(AutoHealTriggers, self).__init__()
         self.requests = requests
         self.private_bytes_in_kb = private_bytes_in_kb
         self.status_codes = status_codes

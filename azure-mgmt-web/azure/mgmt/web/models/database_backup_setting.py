@@ -17,8 +17,7 @@ class DatabaseBackupSetting(Model):
 
     :param database_type: Database type (e.g. SqlAzure / MySql). Possible
      values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
-    :type database_type: str or :class:`DatabaseType
-     <azure.mgmt.web.models.DatabaseType>`
+    :type database_type: str or ~azure.mgmt.web.models.DatabaseType
     :param name:
     :type name: str
     :param connection_string_name: Contains a connection string name that is
@@ -43,6 +42,7 @@ class DatabaseBackupSetting(Model):
     }
 
     def __init__(self, database_type, name=None, connection_string_name=None, connection_string=None):
+        super(DatabaseBackupSetting, self).__init__()
         self.database_type = database_type
         self.name = name
         self.connection_string_name = connection_string_name

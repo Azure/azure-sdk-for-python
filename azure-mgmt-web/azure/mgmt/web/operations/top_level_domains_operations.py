@@ -26,6 +26,8 @@ class TopLevelDomainsOperations(object):
     :ivar api_version: API Version. Constant value: "2015-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -46,10 +48,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TopLevelDomain
-         <azure.mgmt.web.models.TopLevelDomain>`
-        :rtype: :class:`TopLevelDomainPaged
-         <azure.mgmt.web.models.TopLevelDomainPaged>`
+        :return: An iterator like instance of TopLevelDomain
+        :rtype:
+         ~azure.mgmt.web.models.TopLevelDomainPaged[~azure.mgmt.web.models.TopLevelDomain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -83,7 +84,7 @@ class TopLevelDomainsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -115,12 +116,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TopLevelDomain
-         <azure.mgmt.web.models.TopLevelDomain>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TopLevelDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TopLevelDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -147,7 +145,7 @@ class TopLevelDomainsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -188,10 +186,9 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TldLegalAgreement
-         <azure.mgmt.web.models.TldLegalAgreement>`
-        :rtype: :class:`TldLegalAgreementPaged
-         <azure.mgmt.web.models.TldLegalAgreementPaged>`
+        :return: An iterator like instance of TldLegalAgreement
+        :rtype:
+         ~azure.mgmt.web.models.TldLegalAgreementPaged[~azure.mgmt.web.models.TldLegalAgreement]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)
@@ -231,7 +228,7 @@ class TopLevelDomainsOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, body_content, **operation_config)
+                request, header_parameters, body_content, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

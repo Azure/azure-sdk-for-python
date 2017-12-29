@@ -21,7 +21,7 @@ class SiteConfig(Model):
     :param number_of_workers: Number of workers.
     :type number_of_workers: int
     :param default_documents: Default documents.
-    :type default_documents: list of str
+    :type default_documents: list[str]
     :param net_framework_version: .NET Framework version. Default value:
      "v4.6" .
     :type net_framework_version: str
@@ -54,23 +54,19 @@ class SiteConfig(Model):
     :param publishing_username: Publishing user name.
     :type publishing_username: str
     :param app_settings: Application settings.
-    :type app_settings: list of :class:`NameValuePair
-     <azure.mgmt.web.models.NameValuePair>`
+    :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
     :param connection_strings: Connection strings.
-    :type connection_strings: list of :class:`ConnStringInfo
-     <azure.mgmt.web.models.ConnStringInfo>`
+    :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
-    :vartype machine_key: :class:`SiteMachineKey
-     <azure.mgmt.web.models.SiteMachineKey>`
+    :vartype machine_key: ~azure.mgmt.web.models.SiteMachineKey
     :param handler_mappings: Handler mappings.
-    :type handler_mappings: list of :class:`HandlerMapping
-     <azure.mgmt.web.models.HandlerMapping>`
+    :type handler_mappings: list[~azure.mgmt.web.models.HandlerMapping]
     :param document_root: Document root.
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
-    :type scm_type: str or :class:`ScmType <azure.mgmt.web.models.ScmType>`
+    :type scm_type: str or ~azure.mgmt.web.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -90,47 +86,43 @@ class SiteConfig(Model):
     :type app_command_line: str
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
-    :type managed_pipeline_mode: str or :class:`ManagedPipelineMode
-     <azure.mgmt.web.models.ManagedPipelineMode>`
+    :type managed_pipeline_mode: str or
+     ~azure.mgmt.web.models.ManagedPipelineMode
     :param virtual_applications: Virtual applications.
-    :type virtual_applications: list of :class:`VirtualApplication
-     <azure.mgmt.web.models.VirtualApplication>`
+    :type virtual_applications:
+     list[~azure.mgmt.web.models.VirtualApplication]
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
-    :type load_balancing: str or :class:`SiteLoadBalancing
-     <azure.mgmt.web.models.SiteLoadBalancing>`
+    :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
     :param experiments: This is work around for polymophic types.
-    :type experiments: :class:`Experiments
-     <azure.mgmt.web.models.Experiments>`
+    :type experiments: ~azure.mgmt.web.models.Experiments
     :param limits: Site limits.
-    :type limits: :class:`SiteLimits <azure.mgmt.web.models.SiteLimits>`
+    :type limits: ~azure.mgmt.web.models.SiteLimits
     :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
      otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto Heal rules.
-    :type auto_heal_rules: :class:`AutoHealRules
-     <azure.mgmt.web.models.AutoHealRules>`
+    :type auto_heal_rules: ~azure.mgmt.web.models.AutoHealRules
     :param tracing_options: Tracing options.
     :type tracing_options: str
     :param vnet_name: Virtual Network name.
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: :class:`CorsSettings <azure.mgmt.web.models.CorsSettings>`
+    :type cors: ~azure.mgmt.web.models.CorsSettings
     :param push: Push endpoint settings.
-    :type push: :class:`PushSettings <azure.mgmt.web.models.PushSettings>`
+    :type push: ~azure.mgmt.web.models.PushSettings
     :param api_definition: Information about the formal API definition for the
      app.
-    :type api_definition: :class:`ApiDefinitionInfo
-     <azure.mgmt.web.models.ApiDefinitionInfo>`
+    :type api_definition: ~azure.mgmt.web.models.ApiDefinitionInfo
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
      otherwise, <code>false</code>. Default value: False .
     :type local_my_sql_enabled: bool
     :param ip_security_restrictions: IP security restrictions.
-    :type ip_security_restrictions: list of :class:`IpSecurityRestriction
-     <azure.mgmt.web.models.IpSecurityRestriction>`
+    :type ip_security_restrictions:
+     list[~azure.mgmt.web.models.IpSecurityRestriction]
     """
 
     _validation = {
@@ -184,6 +176,7 @@ class SiteConfig(Model):
     }
 
     def __init__(self, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
+        super(SiteConfig, self).__init__()
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version

@@ -22,8 +22,7 @@ class MSDeployLogEntry(Model):
     :vartype time: datetime
     :ivar type: Log entry type. Possible values include: 'Message', 'Warning',
      'Error'
-    :vartype type: str or :class:`MSDeployLogEntryType
-     <azure.mgmt.web.models.MSDeployLogEntryType>`
+    :vartype type: str or ~azure.mgmt.web.models.MSDeployLogEntryType
     :ivar message: Log entry message
     :vartype message: str
     """
@@ -41,6 +40,7 @@ class MSDeployLogEntry(Model):
     }
 
     def __init__(self):
+        super(MSDeployLogEntry, self).__init__()
         self.time = None
         self.type = None
         self.message = None

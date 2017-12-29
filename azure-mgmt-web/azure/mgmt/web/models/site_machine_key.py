@@ -33,6 +33,7 @@ class SiteMachineKey(Model):
     }
 
     def __init__(self, validation=None, validation_key=None, decryption=None, decryption_key=None):
+        super(SiteMachineKey, self).__init__()
         self.validation = validation
         self.validation_key = validation_key
         self.decryption = decryption

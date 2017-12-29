@@ -31,8 +31,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     :type snapshot_time: str
     :param recovery_target: Specifies the web app that snapshot contents will
      be written to.
-    :type recovery_target: :class:`SnapshotRecoveryTarget
-     <azure.mgmt.web.models.SnapshotRecoveryTarget>`
+    :type recovery_target: ~azure.mgmt.web.models.SnapshotRecoveryTarget
     :param overwrite: If <code>true</code> the recovery operation can
      overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool
@@ -49,6 +48,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'overwrite': {'required': True},
     }
 
     _attribute_map = {
@@ -63,7 +63,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, snapshot_time=None, recovery_target=None, overwrite=None, recover_configuration=None, ignore_conflicting_host_names=None):
+    def __init__(self, overwrite, kind=None, snapshot_time=None, recovery_target=None, recover_configuration=None, ignore_conflicting_host_names=None):
         super(SnapshotRecoveryRequest, self).__init__(kind=kind)
         self.snapshot_time = snapshot_time
         self.recovery_target = recovery_target

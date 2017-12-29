@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -26,6 +27,8 @@ class WebAppsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: API Version. Constant value: "2016-08-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -47,9 +50,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An iterator like instance of Site
+        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -83,7 +85,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -120,9 +122,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An iterator like instance of Site
+        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -159,7 +160,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -194,11 +195,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Site or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Site or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -226,7 +225,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -244,49 +243,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_or_update(
+
+    def _create_or_update_initial(
             self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
-
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Unique name of the app to create or update. To create or
-         update a deployment slot, use the {slot} parameter.
-        :type name: str
-        :param site_envelope: A JSON representation of the app properties. See
-         example.
-        :type site_envelope: :class:`Site <azure.mgmt.web.models.Site>`
-        :param skip_dns_registration: If true web app hostname is not
-         registered with DNS on creation. This parameter is
-         only used for app creation.
-        :type skip_dns_registration: bool
-        :param skip_custom_domain_verification: If true, custom (non
-         *.azurewebsites.net) domains associated with web app are not verified.
-        :type skip_custom_domain_verification: bool
-        :param force_dns_registration: If true, web app hostname is force
-         registered with DNS.
-        :type force_dns_registration: bool
-        :param ttl_in_seconds: Time to live in seconds for web app's default
-         domain name.
-        :type ttl_in_seconds: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}'
         path_format_arguments = {
@@ -322,19 +281,96 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(site_envelope, 'Site')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Site', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Site', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Unique name of the app to create or update. To create or
+         update a deployment slot, use the {slot} parameter.
+        :type name: str
+        :param site_envelope: A JSON representation of the app properties. See
+         example.
+        :type site_envelope: ~azure.mgmt.web.models.Site
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Site or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.Site]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_envelope=site_envelope,
+            skip_dns_registration=skip_dns_registration,
+            skip_custom_domain_verification=skip_custom_domain_verification,
+            force_dns_registration=force_dns_registration,
+            ttl_in_seconds=ttl_in_seconds,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -343,22 +379,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Site', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('Site', response)
+            deserialized = self._deserialize('Site', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -391,11 +418,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -429,7 +453,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -458,13 +482,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CustomHostnameAnalysisResult
-         <azure.mgmt.web.models.CustomHostnameAnalysisResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CustomHostnameAnalysisResult
-         <azure.mgmt.web.models.CustomHostnameAnalysisResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CustomHostnameAnalysisResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.CustomHostnameAnalysisResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -494,7 +514,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -535,11 +555,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
@@ -573,7 +590,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -597,18 +614,15 @@ class WebAppsOperations(object):
         :type name: str
         :param request: Backup configuration. You can use the JSON response
          from the POST action as input here.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -640,7 +654,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -674,10 +688,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackupItem
-         <azure.mgmt.web.models.BackupItem>`
-        :rtype: :class:`BackupItemPaged
-         <azure.mgmt.web.models.BackupItemPaged>`
+        :return: An iterator like instance of BackupItem
+        :rtype:
+         ~azure.mgmt.web.models.BackupItemPaged[~azure.mgmt.web.models.BackupItem]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -713,7 +726,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -747,19 +760,15 @@ class WebAppsOperations(object):
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage
          URL and blog name for discovery of backup.
-        :type request: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>`
+        :type request: ~azure.mgmt.web.models.RestoreRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RestoreRequest <azure.mgmt.web.models.RestoreRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RestoreRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RestoreRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -791,7 +800,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -827,11 +836,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -860,7 +867,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -896,11 +903,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -929,7 +933,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -960,18 +964,15 @@ class WebAppsOperations(object):
         :param backup_id: ID of backup.
         :type backup_id: str
         :param request: Information on backup request.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1004,7 +1005,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1022,38 +1023,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def restore(
+
+    def _restore_initial(
             self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
-        """Restores a specific backup to another app (or deployment slot, if
-        specified).
-
-        Restores a specific backup to another app (or deployment slot, if
-        specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param backup_id: ID of the backup.
-        :type backup_id: str
-        :param request: Information on restore request .
-        :type request: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`RestoreResponse
-         <azure.mgmt.web.models.RestoreResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups/{backupId}/restore'
         path_format_arguments = {
@@ -1082,19 +1054,78 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(request, 'RestoreRequest')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RestoreResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def restore(
+            self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
+        """Restores a specific backup to another app (or deployment slot, if
+        specified).
+
+        Restores a specific backup to another app (or deployment slot, if
+        specified).
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param backup_id: ID of the backup.
+        :type backup_id: str
+        :param request: Information on restore request .
+        :type request: ~azure.mgmt.web.models.RestoreRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         RestoreResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.RestoreResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._restore_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            backup_id=backup_id,
+            request=request,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1103,20 +1134,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('RestoreResponse', response)
+            deserialized = self._deserialize('RestoreResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -1141,10 +1165,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
-        :rtype: :class:`SiteConfigResourcePaged
-         <azure.mgmt.web.models.SiteConfigResourcePaged>`
+        :return: An iterator like instance of SiteConfigResource
+        :rtype:
+         ~azure.mgmt.web.models.SiteConfigResourcePaged[~azure.mgmt.web.models.SiteConfigResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1180,7 +1203,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1213,19 +1236,15 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Settings.
-        :type properties: dict
+        :type properties: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         app_settings = models.StringDictionary(kind=kind, properties=properties)
@@ -1259,7 +1278,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1293,13 +1312,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1327,7 +1342,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1359,20 +1374,15 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param site_auth_settings: Auth settings associated with web app.
-        :type site_auth_settings: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>`
+        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteAuthSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1404,7 +1414,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1438,13 +1448,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteAuthSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1472,7 +1478,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1502,18 +1508,15 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Edited backup configuration.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1545,7 +1548,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1579,11 +1582,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1611,7 +1611,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1638,11 +1638,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1670,7 +1668,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1702,19 +1700,16 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Connection strings.
-        :type properties: dict
+        :type properties: dict[str,
+         ~azure.mgmt.web.models.ConnStringValueTypePair]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConnectionStringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
@@ -1748,7 +1743,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1782,13 +1777,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConnectionStringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1816,7 +1807,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1850,12 +1841,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteLogsConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1883,7 +1871,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1914,19 +1902,15 @@ class WebAppsOperations(object):
         :type name: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains
          the logging configuration to change in the "properties" property.
-        :type site_logs_config: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>`
+        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteLogsConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1958,7 +1942,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1990,19 +1974,15 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Settings.
-        :type properties: dict
+        :type properties: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         metadata = models.StringDictionary(kind=kind, properties=properties)
@@ -2036,7 +2016,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2070,13 +2050,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2104,7 +2080,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2122,30 +2098,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def list_publishing_credentials(
+
+    def _list_publishing_credentials_initial(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Git/FTP publishing credentials of an app.
-
-        Gets the Git/FTP publishing credentials of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`User <azure.mgmt.web.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/publishingcredentials/list'
         path_format_arguments = {
@@ -2170,18 +2125,69 @@ class WebAppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('User', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list_publishing_credentials(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Git/FTP publishing credentials of an app.
+
+        Gets the Git/FTP publishing credentials of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns User or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.User]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._list_publishing_credentials_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -2190,20 +2196,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('User', response)
+            deserialized = self._deserialize('User', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -2224,18 +2223,15 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param push_settings: Push settings associated with web app.
-        :type push_settings: :class:`PushSettings
-         <azure.mgmt.web.models.PushSettings>`
+        :type push_settings: ~azure.mgmt.web.models.PushSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PushSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PushSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2267,7 +2263,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2301,11 +2297,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PushSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PushSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2333,7 +2327,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2369,13 +2363,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SlotConfigNamesResource
-         <azure.mgmt.web.models.SlotConfigNamesResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SlotConfigNamesResource
-         <azure.mgmt.web.models.SlotConfigNamesResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SlotConfigNamesResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SlotConfigNamesResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2403,7 +2393,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2436,20 +2426,16 @@ class WebAppsOperations(object):
         :type name: str
         :param slot_config_names: Names of application settings and connection
          strings. See example.
-        :type slot_config_names: :class:`SlotConfigNamesResource
-         <azure.mgmt.web.models.SlotConfigNamesResource>`
+        :type slot_config_names:
+         ~azure.mgmt.web.models.SlotConfigNamesResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SlotConfigNamesResource
-         <azure.mgmt.web.models.SlotConfigNamesResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SlotConfigNamesResource
-         <azure.mgmt.web.models.SlotConfigNamesResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SlotConfigNamesResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SlotConfigNamesResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2481,7 +2467,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2517,13 +2503,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2551,7 +2533,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2582,20 +2564,15 @@ class WebAppsOperations(object):
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See
          example.
-        :type site_config: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2627,7 +2604,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2658,20 +2635,15 @@ class WebAppsOperations(object):
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See
          example.
-        :type site_config: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2703,7 +2675,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2739,13 +2711,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`SiteConfigurationSnapshotInfo
-         <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`SiteConfigurationSnapshotInfo
-         <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2773,7 +2741,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2811,13 +2779,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2846,7 +2810,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2882,11 +2846,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2915,7 +2876,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -2942,10 +2903,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>`
-        :rtype: :class:`ContinuousWebJobPaged
-         <azure.mgmt.web.models.ContinuousWebJobPaged>`
+        :return: An iterator like instance of ContinuousWebJob
+        :rtype:
+         ~azure.mgmt.web.models.ContinuousWebJobPaged[~azure.mgmt.web.models.ContinuousWebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2981,7 +2941,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3020,13 +2980,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContinuousWebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ContinuousWebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3056,7 +3012,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -3094,11 +3050,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3128,7 +3081,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -3159,11 +3112,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3193,7 +3143,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -3224,11 +3174,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3258,7 +3205,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -3285,10 +3232,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Deployment
-         <azure.mgmt.web.models.Deployment>`
-        :rtype: :class:`DeploymentPaged
-         <azure.mgmt.web.models.DeploymentPaged>`
+        :return: An iterator like instance of Deployment
+        :rtype:
+         ~azure.mgmt.web.models.DeploymentPaged[~azure.mgmt.web.models.Deployment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -3324,7 +3270,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3361,11 +3307,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3394,7 +3338,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -3426,18 +3370,15 @@ class WebAppsOperations(object):
         :param id: ID of an existing deployment.
         :type id: str
         :param deployment: Deployment details.
-        :type deployment: :class:`Deployment
-         <azure.mgmt.web.models.Deployment>`
+        :type deployment: ~azure.mgmt.web.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3470,7 +3411,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -3506,11 +3447,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3539,7 +3477,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -3572,11 +3510,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3605,7 +3541,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -3639,10 +3575,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Identifier
-         <azure.mgmt.web.models.Identifier>`
-        :rtype: :class:`IdentifierPaged
-         <azure.mgmt.web.models.IdentifierPaged>`
+        :return: An iterator like instance of Identifier
+        :rtype:
+         ~azure.mgmt.web.models.IdentifierPaged[~azure.mgmt.web.models.Identifier]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -3678,7 +3613,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3716,11 +3651,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3749,7 +3682,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -3792,11 +3725,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
@@ -3831,7 +3762,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -3868,11 +3799,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -3901,7 +3829,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -3937,11 +3865,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
@@ -3976,7 +3902,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4010,12 +3936,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployStatus <azure.mgmt.web.models.MSDeployStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4043,7 +3966,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4061,33 +3984,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_ms_deploy_operation(
+
+    def _create_ms_deploy_operation_initial(
             self, resource_group_name, name, ms_deploy, custom_headers=None, raw=False, **operation_config):
-        """Invoke the MSDeploy web app extension.
-
-        Invoke the MSDeploy web app extension.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: :class:`MSDeploy <azure.mgmt.web.models.MSDeploy>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/extensions/MSDeploy'
         path_format_arguments = {
@@ -4115,19 +4014,73 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(ms_deploy, 'MSDeploy')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('MSDeployStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_ms_deploy_operation(
+            self, resource_group_name, name, ms_deploy, custom_headers=None, raw=False, **operation_config):
+        """Invoke the MSDeploy web app extension.
+
+        Invoke the MSDeploy web app extension.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param ms_deploy: Details of MSDeploy operation
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         MSDeployStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.MSDeployStatus]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_ms_deploy_operation_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            ms_deploy=ms_deploy,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -4136,20 +4089,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('MSDeployStatus', response)
+            deserialized = self._deserialize('MSDeployStatus', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -4174,11 +4120,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployLog or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployLog or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4206,7 +4150,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -4240,10 +4184,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>`
-        :rtype: :class:`FunctionEnvelopePaged
-         <azure.mgmt.web.models.FunctionEnvelopePaged>`
+        :return: An iterator like instance of FunctionEnvelope
+        :rtype:
+         ~azure.mgmt.web.models.FunctionEnvelopePaged[~azure.mgmt.web.models.FunctionEnvelope]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -4279,7 +4222,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -4314,11 +4257,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4346,7 +4286,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4382,13 +4322,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionEnvelope or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionEnvelope or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4417,7 +4353,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -4435,36 +4371,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_function(
+
+    def _create_function_initial(
             self, resource_group_name, name, function_name, function_envelope, custom_headers=None, raw=False, **operation_config):
-        """Create function for web site, or a deployment slot.
-
-        Create function for web site, or a deployment slot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: Function name.
-        :type function_name: str
-        :param function_envelope: Function details.
-        :type function_envelope: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/functions/{functionName}'
         path_format_arguments = {
@@ -4493,19 +4402,76 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(function_envelope, 'FunctionEnvelope')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('FunctionEnvelope', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_function(
+            self, resource_group_name, name, function_name, function_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create function for web site, or a deployment slot.
+
+        Create function for web site, or a deployment slot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: Function name.
+        :type function_name: str
+        :param function_envelope: Function details.
+        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         FunctionEnvelope or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.FunctionEnvelope]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_function_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            function_name=function_name,
+            function_envelope=function_envelope,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -4514,20 +4480,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('FunctionEnvelope', response)
+            deserialized = self._deserialize('FunctionEnvelope', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -4554,11 +4513,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4587,7 +4543,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -4618,13 +4574,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionSecrets or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionSecrets or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4653,7 +4605,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4687,10 +4639,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>`
-        :rtype: :class:`HostNameBindingPaged
-         <azure.mgmt.web.models.HostNameBindingPaged>`
+        :return: An iterator like instance of HostNameBinding
+        :rtype:
+         ~azure.mgmt.web.models.HostNameBindingPaged[~azure.mgmt.web.models.HostNameBinding]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -4726,7 +4677,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -4765,13 +4716,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HostNameBinding or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HostNameBinding or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4800,7 +4747,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4833,20 +4780,15 @@ class WebAppsOperations(object):
         :type host_name: str
         :param host_name_binding: Binding details. This is the JSON
          representation of a HostNameBinding object.
-        :type host_name_binding: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>`
+        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HostNameBinding or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HostNameBinding or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4879,7 +4821,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -4915,11 +4857,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -4948,7 +4887,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -4981,13 +4920,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5017,7 +4952,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5051,20 +4986,15 @@ class WebAppsOperations(object):
         :param relay_name: The relay name for this hybrid connection.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
-        :type connection_envelope: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5098,7 +5028,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5136,11 +5066,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5170,7 +5097,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -5197,20 +5124,15 @@ class WebAppsOperations(object):
         :param relay_name: The relay name for this hybrid connection.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
-        :type connection_envelope: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5244,7 +5166,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5282,13 +5204,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnectionKey
-         <azure.mgmt.web.models.HybridConnectionKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnectionKey
-         <azure.mgmt.web.models.HybridConnectionKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnectionKey or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnectionKey or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5318,7 +5236,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5352,13 +5270,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5386,7 +5300,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5422,13 +5336,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5456,7 +5366,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5492,13 +5402,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5527,7 +5433,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5562,20 +5468,16 @@ class WebAppsOperations(object):
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection
          configuration.
-        :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :type connection_envelope:
+         ~azure.mgmt.web.models.RelayServiceConnectionEntity
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5608,7 +5510,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5644,11 +5546,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5677,7 +5576,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -5705,20 +5604,16 @@ class WebAppsOperations(object):
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection
          configuration.
-        :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :type connection_envelope:
+         ~azure.mgmt.web.models.RelayServiceConnectionEntity
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5751,7 +5646,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5785,10 +5680,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteInstance
-         <azure.mgmt.web.models.SiteInstance>`
-        :rtype: :class:`SiteInstancePaged
-         <azure.mgmt.web.models.SiteInstancePaged>`
+        :return: An iterator like instance of SiteInstance
+        :rtype:
+         ~azure.mgmt.web.models.SiteInstancePaged[~azure.mgmt.web.models.SiteInstance]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -5824,7 +5718,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -5861,12 +5755,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployStatus <azure.mgmt.web.models.MSDeployStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -5895,7 +5786,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -5913,35 +5804,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_instance_ms_deploy_operation(
+
+    def _create_instance_ms_deploy_operation_initial(
             self, resource_group_name, name, instance_id, ms_deploy, custom_headers=None, raw=False, **operation_config):
-        """Invoke the MSDeploy web app extension.
-
-        Invoke the MSDeploy web app extension.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param instance_id: ID of web app instance.
-        :type instance_id: str
-        :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: :class:`MSDeploy <azure.mgmt.web.models.MSDeploy>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/extensions/MSDeploy'
         path_format_arguments = {
@@ -5970,19 +5835,76 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(ms_deploy, 'MSDeploy')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('MSDeployStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_instance_ms_deploy_operation(
+            self, resource_group_name, name, instance_id, ms_deploy, custom_headers=None, raw=False, **operation_config):
+        """Invoke the MSDeploy web app extension.
+
+        Invoke the MSDeploy web app extension.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param instance_id: ID of web app instance.
+        :type instance_id: str
+        :param ms_deploy: Details of MSDeploy operation
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         MSDeployStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.MSDeployStatus]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_instance_ms_deploy_operation_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            instance_id=instance_id,
+            ms_deploy=ms_deploy,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -5991,20 +5913,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('MSDeployStatus', response)
+            deserialized = self._deserialize('MSDeployStatus', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -6031,11 +5946,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployLog or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployLog or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6064,7 +5977,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -6104,10 +6017,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessInfo
-         <azure.mgmt.web.models.ProcessInfo>`
-        :rtype: :class:`ProcessInfoPaged
-         <azure.mgmt.web.models.ProcessInfoPaged>`
+        :return: An iterator like instance of ProcessInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessInfoPaged[~azure.mgmt.web.models.ProcessInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -6144,7 +6056,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -6187,11 +6099,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6221,7 +6131,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -6263,11 +6173,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6297,7 +6204,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -6309,7 +6216,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_instance_process_dump(
-            self, resource_group_name, name, process_id, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, instance_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -6330,13 +6237,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6366,7 +6275,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -6376,7 +6285,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -6408,10 +6317,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>`
-        :rtype: :class:`ProcessModuleInfoPaged
-         <azure.mgmt.web.models.ProcessModuleInfoPaged>`
+        :return: An iterator like instance of ProcessModuleInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessModuleInfoPaged[~azure.mgmt.web.models.ProcessModuleInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -6449,7 +6357,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -6496,13 +6404,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessModuleInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessModuleInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6534,7 +6438,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -6576,10 +6480,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>`
-        :rtype: :class:`ProcessThreadInfoPaged
-         <azure.mgmt.web.models.ProcessThreadInfoPaged>`
+        :return: An iterator like instance of ProcessThreadInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessThreadInfoPaged[~azure.mgmt.web.models.ProcessThreadInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -6617,7 +6520,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -6662,13 +6565,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessThreadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessThreadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6699,7 +6598,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -6735,13 +6634,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteCloneability
-         <azure.mgmt.web.models.SiteCloneability>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteCloneability
-         <azure.mgmt.web.models.SiteCloneability>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteCloneability or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteCloneability or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6769,7 +6664,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -6803,13 +6698,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionSecrets or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionSecrets or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -6837,7 +6728,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -6873,10 +6764,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -6912,7 +6802,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -6956,10 +6846,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -6999,7 +6888,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -7018,36 +6907,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def migrate_storage(
+
+    def _migrate_storage_initial(
             self, subscription_name, resource_group_name, name, migration_options, custom_headers=None, raw=False, **operation_config):
-        """Restores a web app.
-
-        Restores a web app.
-
-        :param subscription_name: Azure subscription.
-        :type subscription_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param migration_options: Migration migrationOptions.
-        :type migration_options: :class:`StorageMigrationOptions
-         <azure.mgmt.web.models.StorageMigrationOptions>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`StorageMigrationResponse
-         <azure.mgmt.web.models.StorageMigrationResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/migrate'
         path_format_arguments = {
@@ -7076,19 +6938,77 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(migration_options, 'StorageMigrationOptions')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageMigrationResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def migrate_storage(
+            self, subscription_name, resource_group_name, name, migration_options, custom_headers=None, raw=False, **operation_config):
+        """Restores a web app.
+
+        Restores a web app.
+
+        :param subscription_name: Azure subscription.
+        :type subscription_name: str
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param migration_options: Migration migrationOptions.
+        :type migration_options:
+         ~azure.mgmt.web.models.StorageMigrationOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         StorageMigrationResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.StorageMigrationResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._migrate_storage_initial(
+            subscription_name=subscription_name,
+            resource_group_name=resource_group_name,
+            name=name,
+            migration_options=migration_options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -7097,20 +7017,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('StorageMigrationResponse', response)
+            deserialized = self._deserialize('StorageMigrationResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -7119,34 +7032,9 @@ class WebAppsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def migrate_my_sql(
+
+    def _migrate_my_sql_initial(
             self, resource_group_name, name, migration_request_envelope, custom_headers=None, raw=False, **operation_config):
-        """Migrates a local (in-app) MySql database to a remote MySql database.
-
-        Migrates a local (in-app) MySql database to a remote MySql database.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param migration_request_envelope: MySql migration options.
-        :type migration_request_envelope: :class:`MigrateMySqlRequest
-         <azure.mgmt.web.models.MigrateMySqlRequest>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Operation
-         <azure.mgmt.web.models.Operation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/migratemysql'
         path_format_arguments = {
@@ -7174,19 +7062,74 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(migration_request_envelope, 'MigrateMySqlRequest')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Operation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def migrate_my_sql(
+            self, resource_group_name, name, migration_request_envelope, custom_headers=None, raw=False, **operation_config):
+        """Migrates a local (in-app) MySql database to a remote MySql database.
+
+        Migrates a local (in-app) MySql database to a remote MySql database.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param migration_request_envelope: MySql migration options.
+        :type migration_request_envelope:
+         ~azure.mgmt.web.models.MigrateMySqlRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Operation or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.Operation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._migrate_my_sql_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            migration_request_envelope=migration_request_envelope,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -7195,20 +7138,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Operation', response)
+            deserialized = self._deserialize('Operation', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -7235,13 +7171,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MigrateMySqlStatus
-         <azure.mgmt.web.models.MigrateMySqlStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MigrateMySqlStatus
-         <azure.mgmt.web.models.MigrateMySqlStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MigrateMySqlStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MigrateMySqlStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7269,7 +7201,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7308,13 +7240,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkFeatures
-         <azure.mgmt.web.models.NetworkFeatures>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkFeatures
-         <azure.mgmt.web.models.NetworkFeatures>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkFeatures or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.NetworkFeatures or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7343,7 +7271,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -7383,11 +7311,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7421,7 +7346,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7455,11 +7380,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7487,7 +7409,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7523,11 +7445,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7555,7 +7474,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -7587,10 +7506,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PerfMonResponse
-         <azure.mgmt.web.models.PerfMonResponse>`
-        :rtype: :class:`PerfMonResponsePaged
-         <azure.mgmt.web.models.PerfMonResponsePaged>`
+        :return: An iterator like instance of PerfMonResponse
+        :rtype:
+         ~azure.mgmt.web.models.PerfMonResponsePaged[~azure.mgmt.web.models.PerfMonResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -7628,7 +7546,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -7663,13 +7581,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SitePhpErrorLogFlag
-         <azure.mgmt.web.models.SitePhpErrorLogFlag>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SitePhpErrorLogFlag
-         <azure.mgmt.web.models.SitePhpErrorLogFlag>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SitePhpErrorLogFlag or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SitePhpErrorLogFlag or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7697,7 +7611,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7731,11 +7645,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7763,7 +7675,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7799,11 +7711,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7832,7 +7742,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7865,18 +7775,15 @@ class WebAppsOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
-        :type premier_add_on: :class:`PremierAddOn
-         <azure.mgmt.web.models.PremierAddOn>`
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7909,7 +7816,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -7945,11 +7852,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -7978,7 +7882,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -8007,10 +7911,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessInfo
-         <azure.mgmt.web.models.ProcessInfo>`
-        :rtype: :class:`ProcessInfoPaged
-         <azure.mgmt.web.models.ProcessInfoPaged>`
+        :return: An iterator like instance of ProcessInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessInfoPaged[~azure.mgmt.web.models.ProcessInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -8046,7 +7949,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -8085,11 +7988,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8118,7 +8019,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -8156,11 +8057,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8189,7 +8087,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -8201,7 +8099,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_process_dump(
-            self, resource_group_name, name, process_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -8218,13 +8116,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8253,7 +8153,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -8263,7 +8163,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -8291,10 +8191,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>`
-        :rtype: :class:`ProcessModuleInfoPaged
-         <azure.mgmt.web.models.ProcessModuleInfoPaged>`
+        :return: An iterator like instance of ProcessModuleInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessModuleInfoPaged[~azure.mgmt.web.models.ProcessModuleInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -8331,7 +8230,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -8374,13 +8273,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessModuleInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessModuleInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8411,7 +8306,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -8449,10 +8344,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>`
-        :rtype: :class:`ProcessThreadInfoPaged
-         <azure.mgmt.web.models.ProcessThreadInfoPaged>`
+        :return: An iterator like instance of ProcessThreadInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessThreadInfoPaged[~azure.mgmt.web.models.ProcessThreadInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -8489,7 +8383,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -8530,13 +8424,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessThreadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessThreadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8566,7 +8456,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -8600,10 +8490,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>`
-        :rtype: :class:`PublicCertificatePaged
-         <azure.mgmt.web.models.PublicCertificatePaged>`
+        :return: An iterator like instance of PublicCertificate
+        :rtype:
+         ~azure.mgmt.web.models.PublicCertificatePaged[~azure.mgmt.web.models.PublicCertificate]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -8639,7 +8528,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -8678,13 +8567,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PublicCertificate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PublicCertificate or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8713,7 +8598,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -8746,20 +8631,15 @@ class WebAppsOperations(object):
         :type public_certificate_name: str
         :param public_certificate: Public certificate details. This is the
          JSON representation of a PublicCertificate object.
-        :type public_certificate: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>`
+        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PublicCertificate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PublicCertificate or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8792,7 +8672,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -8828,11 +8708,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -8861,7 +8738,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -8889,8 +8766,7 @@ class WebAppsOperations(object):
          FileZilla3
          WebDeploy -- default
          Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
-        :type format: str or :class:`PublishingProfileFormat
-         <azure.mgmt.web.models.PublishingProfileFormat>`
+        :type format: str or ~azure.mgmt.web.models.PublishingProfileFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8901,11 +8777,8 @@ class WebAppsOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         publishing_profile_options = models.CsmPublishingProfileOptions(format=format)
@@ -8939,7 +8812,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -8957,35 +8830,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def recover(
+
+    def _recover_initial(
             self, resource_group_name, name, recovery_entity, custom_headers=None, raw=False, **operation_config):
-        """Recovers a web app to a previous snapshot.
-
-        Recovers a web app to a previous snapshot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param recovery_entity: Snapshot data used for web app recovery.
-         Snapshot information can be obtained by calling GetDeletedSites or
-         GetSiteSnapshots API.
-        :type recovery_entity: :class:`SnapshotRecoveryRequest
-         <azure.mgmt.web.models.SnapshotRecoveryRequest>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/recover'
         path_format_arguments = {
@@ -9013,19 +8860,67 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(recovery_entity, 'SnapshotRecoveryRequest')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def recover(
+            self, resource_group_name, name, recovery_entity, custom_headers=None, raw=False, **operation_config):
+        """Recovers a web app to a previous snapshot.
+
+        Recovers a web app to a previous snapshot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param recovery_entity: Snapshot data used for web app recovery.
+         Snapshot information can be obtained by calling GetDeletedSites or
+         GetSiteSnapshots API.
+        :type recovery_entity: ~azure.mgmt.web.models.SnapshotRecoveryRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._recover_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            recovery_entity=recovery_entity,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -9037,10 +8932,6 @@ class WebAppsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -9067,11 +8958,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9099,7 +8987,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -9134,11 +9022,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9170,7 +9055,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -9197,10 +9082,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>`
-        :rtype: :class:`SiteExtensionInfoPaged
-         <azure.mgmt.web.models.SiteExtensionInfoPaged>`
+        :return: An iterator like instance of SiteExtensionInfo
+        :rtype:
+         ~azure.mgmt.web.models.SiteExtensionInfoPaged[~azure.mgmt.web.models.SiteExtensionInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -9236,7 +9120,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -9277,13 +9161,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteExtensionInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteExtensionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9313,7 +9193,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -9331,35 +9211,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def install_site_extension(
+
+    def _install_site_extension_initial(
             self, resource_group_name, name, site_extension_id, extension_name, custom_headers=None, raw=False, **operation_config):
-        """Install site extension on a web site, or a deployment slot.
-
-        Install site extension on a web site, or a deployment slot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param site_extension_id: Site extension name.
-        :type site_extension_id: str
-        :param extension_name:
-        :type extension_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/siteextensions/{extensionName}'
         path_format_arguments = {
@@ -9386,42 +9240,92 @@ class WebAppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 201, 429]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteExtensionInfo', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteExtensionInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def install_site_extension(
+            self, resource_group_name, name, site_extension_id, extension_name, custom_headers=None, raw=False, **operation_config):
+        """Install site extension on a web site, or a deployment slot.
+
+        Install site extension on a web site, or a deployment slot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param site_extension_id: Site extension name.
+        :type site_extension_id: str
+        :param extension_name:
+        :type extension_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         SiteExtensionInfo or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.SiteExtensionInfo]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._install_site_extension_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_extension_id=site_extension_id,
+            extension_name=extension_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 429]:
+            if response.status_code not in [200, 201, 429]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
+            deserialized = self._deserialize('SiteExtensionInfo', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -9450,11 +9354,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9484,7 +9385,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -9511,9 +9412,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An iterator like instance of Site
+        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -9549,7 +9449,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -9587,11 +9487,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Site or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Site or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9620,7 +9518,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -9638,52 +9536,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_or_update_slot(
+
+    def _create_or_update_slot_initial(
             self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
-
-        Creates a new web, mobile, or API app in an existing resource group, or
-        updates an existing app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Unique name of the app to create or update. To create or
-         update a deployment slot, use the {slot} parameter.
-        :type name: str
-        :param site_envelope: A JSON representation of the app properties. See
-         example.
-        :type site_envelope: :class:`Site <azure.mgmt.web.models.Site>`
-        :param slot: Name of the deployment slot to create or update. By
-         default, this API attempts to create or modify the production slot.
-        :type slot: str
-        :param skip_dns_registration: If true web app hostname is not
-         registered with DNS on creation. This parameter is
-         only used for app creation.
-        :type skip_dns_registration: bool
-        :param skip_custom_domain_verification: If true, custom (non
-         *.azurewebsites.net) domains associated with web app are not verified.
-        :type skip_custom_domain_verification: bool
-        :param force_dns_registration: If true, web app hostname is force
-         registered with DNS.
-        :type force_dns_registration: bool
-        :param ttl_in_seconds: Time to live in seconds for web app's default
-         domain name.
-        :type ttl_in_seconds: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site <azure.mgmt.web.models.Site>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}'
         path_format_arguments = {
@@ -9720,19 +9575,100 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(site_envelope, 'Site')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Site', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Site', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_slot(
+            self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        Creates a new web, mobile, or API app in an existing resource group, or
+        updates an existing app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Unique name of the app to create or update. To create or
+         update a deployment slot, use the {slot} parameter.
+        :type name: str
+        :param site_envelope: A JSON representation of the app properties. See
+         example.
+        :type site_envelope: ~azure.mgmt.web.models.Site
+        :param slot: Name of the deployment slot to create or update. By
+         default, this API attempts to create or modify the production slot.
+        :type slot: str
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Site or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.Site]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_envelope=site_envelope,
+            slot=slot,
+            skip_dns_registration=skip_dns_registration,
+            skip_custom_domain_verification=skip_custom_domain_verification,
+            force_dns_registration=force_dns_registration,
+            ttl_in_seconds=ttl_in_seconds,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -9741,22 +9677,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Site', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('Site', response)
+            deserialized = self._deserialize('Site', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -9792,11 +9719,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9831,7 +9755,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -9863,13 +9787,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CustomHostnameAnalysisResult
-         <azure.mgmt.web.models.CustomHostnameAnalysisResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CustomHostnameAnalysisResult
-         <azure.mgmt.web.models.CustomHostnameAnalysisResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CustomHostnameAnalysisResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.CustomHostnameAnalysisResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -9900,7 +9820,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -9944,11 +9864,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
@@ -9983,7 +9900,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10007,8 +9924,7 @@ class WebAppsOperations(object):
         :type name: str
         :param request: Backup configuration. You can use the JSON response
          from the POST action as input here.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a backup for the production slot.
         :type slot: str
@@ -10017,11 +9933,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10054,7 +9968,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10091,10 +10005,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackupItem
-         <azure.mgmt.web.models.BackupItem>`
-        :rtype: :class:`BackupItemPaged
-         <azure.mgmt.web.models.BackupItemPaged>`
+        :return: An iterator like instance of BackupItem
+        :rtype:
+         ~azure.mgmt.web.models.BackupItemPaged[~azure.mgmt.web.models.BackupItem]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -10131,7 +10044,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -10165,8 +10078,7 @@ class WebAppsOperations(object):
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage
          URL and blog name for discovery of backup.
-        :type request: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>`
+        :type request: ~azure.mgmt.web.models.RestoreRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will perform discovery for the production slot.
         :type slot: str
@@ -10175,12 +10087,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RestoreRequest <azure.mgmt.web.models.RestoreRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RestoreRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RestoreRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10213,7 +10122,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10252,11 +10161,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10286,7 +10193,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10325,11 +10232,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10359,7 +10263,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -10390,8 +10294,7 @@ class WebAppsOperations(object):
         :param backup_id: ID of backup.
         :type backup_id: str
         :param request: Information on backup request.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -10400,11 +10303,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupItem or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupItem or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10438,7 +10339,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10456,41 +10357,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def restore_slot(
+
+    def _restore_slot_initial(
             self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
-        """Restores a specific backup to another app (or deployment slot, if
-        specified).
-
-        Restores a specific backup to another app (or deployment slot, if
-        specified).
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param backup_id: ID of the backup.
-        :type backup_id: str
-        :param request: Information on restore request .
-        :type request: :class:`RestoreRequest
-         <azure.mgmt.web.models.RestoreRequest>`
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will restore a backup of the production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`RestoreResponse
-         <azure.mgmt.web.models.RestoreResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups/{backupId}/restore'
         path_format_arguments = {
@@ -10520,19 +10389,82 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(request, 'RestoreRequest')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RestoreResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def restore_slot(
+            self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
+        """Restores a specific backup to another app (or deployment slot, if
+        specified).
+
+        Restores a specific backup to another app (or deployment slot, if
+        specified).
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param backup_id: ID of the backup.
+        :type backup_id: str
+        :param request: Information on restore request .
+        :type request: ~azure.mgmt.web.models.RestoreRequest
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API will restore a backup of the production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         RestoreResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.RestoreResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._restore_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            backup_id=backup_id,
+            request=request,
+            slot=slot,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -10541,20 +10473,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('RestoreResponse', response)
+            deserialized = self._deserialize('RestoreResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -10582,10 +10507,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
-        :rtype: :class:`SiteConfigResourcePaged
-         <azure.mgmt.web.models.SiteConfigResourcePaged>`
+        :return: An iterator like instance of SiteConfigResource
+        :rtype:
+         ~azure.mgmt.web.models.SiteConfigResourcePaged[~azure.mgmt.web.models.SiteConfigResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -10622,7 +10546,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -10658,19 +10582,15 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Settings.
-        :type properties: dict
+        :type properties: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         app_settings = models.StringDictionary(kind=kind, properties=properties)
@@ -10705,7 +10625,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10742,13 +10662,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10777,7 +10693,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10809,8 +10725,7 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param site_auth_settings: Auth settings associated with web app.
-        :type site_auth_settings: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>`
+        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -10819,13 +10734,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteAuthSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10858,7 +10769,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10895,13 +10806,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteAuthSettings
-         <azure.mgmt.web.models.SiteAuthSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteAuthSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -10930,7 +10837,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -10960,8 +10867,7 @@ class WebAppsOperations(object):
         :param name: Name of the app.
         :type name: str
         :param request: Edited backup configuration.
-        :type request: :class:`BackupRequest
-         <azure.mgmt.web.models.BackupRequest>`
+        :type request: ~azure.mgmt.web.models.BackupRequest
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the backup configuration for the production slot.
         :type slot: str
@@ -10970,11 +10876,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11007,7 +10911,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11044,11 +10948,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11077,7 +10978,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11107,11 +11008,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupRequest or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.BackupRequest or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11140,7 +11039,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11175,19 +11074,16 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Connection strings.
-        :type properties: dict
+        :type properties: dict[str,
+         ~azure.mgmt.web.models.ConnStringValueTypePair]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConnectionStringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         connection_strings = models.ConnectionStringDictionary(kind=kind, properties=properties)
@@ -11222,7 +11118,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11259,13 +11155,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConnectionStringDictionary
-         <azure.mgmt.web.models.ConnectionStringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConnectionStringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11294,7 +11186,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11331,12 +11223,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteLogsConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11365,7 +11254,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11396,8 +11285,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains
          the logging configuration to change in the "properties" property.
-        :type site_logs_config: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>`
+        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the logging configuration for the production slot.
         :type slot: str
@@ -11406,12 +11294,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteLogsConfig
-         <azure.mgmt.web.models.SiteLogsConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteLogsConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11444,7 +11329,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11479,19 +11364,15 @@ class WebAppsOperations(object):
         :param kind: Kind of resource.
         :type kind: str
         :param properties: Settings.
-        :type properties: dict
+        :type properties: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         metadata = models.StringDictionary(kind=kind, properties=properties)
@@ -11526,7 +11407,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11563,13 +11444,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StringDictionary
-         <azure.mgmt.web.models.StringDictionary>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StringDictionary or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.StringDictionary or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11598,7 +11475,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11616,33 +11493,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def list_publishing_credentials_slot(
+
+    def _list_publishing_credentials_slot_initial(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """Gets the Git/FTP publishing credentials of an app.
-
-        Gets the Git/FTP publishing credentials of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will get the publishing credentials for the production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`User <azure.mgmt.web.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/publishingcredentials/list'
         path_format_arguments = {
@@ -11668,18 +11521,73 @@ class WebAppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('User', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list_publishing_credentials_slot(
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
+        """Gets the Git/FTP publishing credentials of an app.
+
+        Gets the Git/FTP publishing credentials of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API will get the publishing credentials for the production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns User or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.User]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._list_publishing_credentials_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            slot=slot,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -11688,20 +11596,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('User', response)
+            deserialized = self._deserialize('User', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -11722,8 +11623,7 @@ class WebAppsOperations(object):
         :param name: Name of web app.
         :type name: str
         :param push_settings: Push settings associated with web app.
-        :type push_settings: :class:`PushSettings
-         <azure.mgmt.web.models.PushSettings>`
+        :type push_settings: ~azure.mgmt.web.models.PushSettings
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -11732,11 +11632,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PushSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PushSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11769,7 +11667,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11806,11 +11704,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PushSettings <azure.mgmt.web.models.PushSettings>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PushSettings or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PushSettings or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11839,7 +11735,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11878,13 +11774,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11913,7 +11805,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -11944,8 +11836,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See
          example.
-        :type site_config: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update configuration for the production slot.
         :type slot: str
@@ -11954,13 +11845,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -11993,7 +11880,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12024,8 +11911,7 @@ class WebAppsOperations(object):
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See
          example.
-        :type site_config: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>`
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update configuration for the production slot.
         :type slot: str
@@ -12034,13 +11920,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12073,7 +11955,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12112,13 +11994,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`SiteConfigurationSnapshotInfo
-         <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`SiteConfigurationSnapshotInfo
-         <azure.mgmt.web.models.SiteConfigurationSnapshotInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.SiteConfigurationSnapshotInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12147,7 +12025,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12188,13 +12066,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteConfigResource
-         <azure.mgmt.web.models.SiteConfigResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteConfigResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteConfigResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12224,7 +12098,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12263,11 +12137,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12297,7 +12168,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -12327,10 +12198,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>`
-        :rtype: :class:`ContinuousWebJobPaged
-         <azure.mgmt.web.models.ContinuousWebJobPaged>`
+        :return: An iterator like instance of ContinuousWebJob
+        :rtype:
+         ~azure.mgmt.web.models.ContinuousWebJobPaged[~azure.mgmt.web.models.ContinuousWebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -12367,7 +12237,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -12409,13 +12279,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ContinuousWebJob
-         <azure.mgmt.web.models.ContinuousWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ContinuousWebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ContinuousWebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12446,7 +12312,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -12487,11 +12353,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12522,7 +12385,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -12556,11 +12419,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12591,7 +12451,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -12625,11 +12485,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12660,7 +12517,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -12690,10 +12547,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Deployment
-         <azure.mgmt.web.models.Deployment>`
-        :rtype: :class:`DeploymentPaged
-         <azure.mgmt.web.models.DeploymentPaged>`
+        :return: An iterator like instance of Deployment
+        :rtype:
+         ~azure.mgmt.web.models.DeploymentPaged[~azure.mgmt.web.models.Deployment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -12730,7 +12586,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -12770,11 +12626,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12804,7 +12658,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12839,18 +12693,15 @@ class WebAppsOperations(object):
          the API creates a deployment for the production slot.
         :type slot: str
         :param deployment: Deployment details.
-        :type deployment: :class:`Deployment
-         <azure.mgmt.web.models.Deployment>`
+        :type deployment: ~azure.mgmt.web.models.Deployment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12884,7 +12735,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -12923,11 +12774,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -12957,7 +12805,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -12993,11 +12841,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13027,7 +12873,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13064,10 +12910,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Identifier
-         <azure.mgmt.web.models.Identifier>`
-        :rtype: :class:`IdentifierPaged
-         <azure.mgmt.web.models.IdentifierPaged>`
+        :return: An iterator like instance of Identifier
+        :rtype:
+         ~azure.mgmt.web.models.IdentifierPaged[~azure.mgmt.web.models.Identifier]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -13104,7 +12949,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -13145,11 +12990,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13179,7 +13022,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13225,11 +13068,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
@@ -13265,7 +13106,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13305,11 +13146,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13339,7 +13177,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -13378,11 +13216,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Identifier <azure.mgmt.web.models.Identifier>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Identifier or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.Identifier or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         domain_ownership_identifier = models.Identifier(kind=kind, identifier_id=identifier_id)
@@ -13418,7 +13254,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13455,12 +13291,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployStatus <azure.mgmt.web.models.MSDeployStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13489,7 +13322,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13507,36 +13340,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_ms_deploy_operation_slot(
+
+    def _create_ms_deploy_operation_slot_initial(
             self, resource_group_name, name, slot, ms_deploy, custom_headers=None, raw=False, **operation_config):
-        """Invoke the MSDeploy web app extension.
-
-        Invoke the MSDeploy web app extension.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: :class:`MSDeploy <azure.mgmt.web.models.MSDeploy>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/extensions/MSDeploy'
         path_format_arguments = {
@@ -13565,19 +13371,77 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(ms_deploy, 'MSDeploy')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('MSDeployStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_ms_deploy_operation_slot(
+            self, resource_group_name, name, slot, ms_deploy, custom_headers=None, raw=False, **operation_config):
+        """Invoke the MSDeploy web app extension.
+
+        Invoke the MSDeploy web app extension.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param ms_deploy: Details of MSDeploy operation
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         MSDeployStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.MSDeployStatus]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_ms_deploy_operation_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            slot=slot,
+            ms_deploy=ms_deploy,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -13586,20 +13450,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('MSDeployStatus', response)
+            deserialized = self._deserialize('MSDeployStatus', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -13627,11 +13484,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployLog or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployLog or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13660,7 +13515,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -13697,10 +13552,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>`
-        :rtype: :class:`FunctionEnvelopePaged
-         <azure.mgmt.web.models.FunctionEnvelopePaged>`
+        :return: An iterator like instance of FunctionEnvelope
+        :rtype:
+         ~azure.mgmt.web.models.FunctionEnvelopePaged[~azure.mgmt.web.models.FunctionEnvelope]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -13737,7 +13591,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -13775,11 +13629,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13808,7 +13659,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -13847,13 +13698,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionEnvelope or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionEnvelope or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -13883,7 +13730,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -13901,39 +13748,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_instance_function_slot(
+
+    def _create_instance_function_slot_initial(
             self, resource_group_name, name, function_name, slot, function_envelope, custom_headers=None, raw=False, **operation_config):
-        """Create function for web site, or a deployment slot.
-
-        Create function for web site, or a deployment slot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Site name.
-        :type name: str
-        :param function_name: Function name.
-        :type function_name: str
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API deletes a deployment for the production slot.
-        :type slot: str
-        :param function_envelope: Function details.
-        :type function_envelope: :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`FunctionEnvelope
-         <azure.mgmt.web.models.FunctionEnvelope>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/functions/{functionName}'
         path_format_arguments = {
@@ -13963,19 +13780,80 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(function_envelope, 'FunctionEnvelope')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('FunctionEnvelope', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_instance_function_slot(
+            self, resource_group_name, name, function_name, slot, function_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create function for web site, or a deployment slot.
+
+        Create function for web site, or a deployment slot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site name.
+        :type name: str
+        :param function_name: Function name.
+        :type function_name: str
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API deletes a deployment for the production slot.
+        :type slot: str
+        :param function_envelope: Function details.
+        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         FunctionEnvelope or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.FunctionEnvelope]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_instance_function_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            function_name=function_name,
+            slot=slot,
+            function_envelope=function_envelope,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -13984,20 +13862,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('FunctionEnvelope', response)
+            deserialized = self._deserialize('FunctionEnvelope', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -14027,11 +13898,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14061,7 +13929,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -14095,13 +13963,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionSecrets or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionSecrets or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14131,7 +13995,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14168,10 +14032,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>`
-        :rtype: :class:`HostNameBindingPaged
-         <azure.mgmt.web.models.HostNameBindingPaged>`
+        :return: An iterator like instance of HostNameBinding
+        :rtype:
+         ~azure.mgmt.web.models.HostNameBindingPaged[~azure.mgmt.web.models.HostNameBinding]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -14208,7 +14071,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -14250,13 +14113,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HostNameBinding or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HostNameBinding or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14286,7 +14145,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14319,8 +14178,7 @@ class WebAppsOperations(object):
         :type host_name: str
         :param host_name_binding: Binding details. This is the JSON
          representation of a HostNameBinding object.
-        :type host_name_binding: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>`
+        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a binding for the production slot.
         :type slot: str
@@ -14329,13 +14187,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HostNameBinding
-         <azure.mgmt.web.models.HostNameBinding>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HostNameBinding or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HostNameBinding or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14369,7 +14223,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14408,11 +14262,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14442,7 +14293,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -14477,13 +14328,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14514,7 +14361,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14548,8 +14395,7 @@ class WebAppsOperations(object):
         :param relay_name: The relay name for this hybrid connection.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
-        :type connection_envelope: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -14557,13 +14403,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14598,7 +14440,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14638,11 +14480,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14673,7 +14512,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -14700,8 +14539,7 @@ class WebAppsOperations(object):
         :param relay_name: The relay name for this hybrid connection.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection.
-        :type connection_envelope: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -14709,13 +14547,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14750,7 +14584,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14790,13 +14624,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnectionKey
-         <azure.mgmt.web.models.HybridConnectionKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnectionKey
-         <azure.mgmt.web.models.HybridConnectionKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnectionKey or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnectionKey or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14827,7 +14657,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14863,13 +14693,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: HybridConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.HybridConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14898,7 +14724,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -14937,13 +14763,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -14972,7 +14794,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -15011,13 +14833,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15047,7 +14865,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -15082,8 +14900,8 @@ class WebAppsOperations(object):
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection
          configuration.
-        :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :type connection_envelope:
+         ~azure.mgmt.web.models.RelayServiceConnectionEntity
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create or update a hybrid connection for the production
          slot.
@@ -15093,13 +14911,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15133,7 +14947,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -15172,11 +14986,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15206,7 +15017,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -15234,8 +15045,8 @@ class WebAppsOperations(object):
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection
          configuration.
-        :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :type connection_envelope:
+         ~azure.mgmt.web.models.RelayServiceConnectionEntity
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create or update a hybrid connection for the production
          slot.
@@ -15245,13 +15056,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RelayServiceConnectionEntity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15285,7 +15092,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -15322,10 +15129,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteInstance
-         <azure.mgmt.web.models.SiteInstance>`
-        :rtype: :class:`SiteInstancePaged
-         <azure.mgmt.web.models.SiteInstancePaged>`
+        :return: An iterator like instance of SiteInstance
+        :rtype:
+         ~azure.mgmt.web.models.SiteInstancePaged[~azure.mgmt.web.models.SiteInstance]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -15362,7 +15168,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -15402,12 +15208,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployStatus <azure.mgmt.web.models.MSDeployStatus>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15437,7 +15240,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -15455,38 +15258,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_instance_ms_deploy_operation_slot(
+
+    def _create_instance_ms_deploy_operation_slot_initial(
             self, resource_group_name, name, slot, instance_id, ms_deploy, custom_headers=None, raw=False, **operation_config):
-        """Invoke the MSDeploy web app extension.
-
-        Invoke the MSDeploy web app extension.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param instance_id: ID of web app instance.
-        :type instance_id: str
-        :param ms_deploy: Details of MSDeploy operation
-        :type ms_deploy: :class:`MSDeploy <azure.mgmt.web.models.MSDeploy>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`MSDeployStatus
-         <azure.mgmt.web.models.MSDeployStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/extensions/MSDeploy'
         path_format_arguments = {
@@ -15516,19 +15290,80 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(ms_deploy, 'MSDeploy')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('MSDeployStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_instance_ms_deploy_operation_slot(
+            self, resource_group_name, name, slot, instance_id, ms_deploy, custom_headers=None, raw=False, **operation_config):
+        """Invoke the MSDeploy web app extension.
+
+        Invoke the MSDeploy web app extension.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param instance_id: ID of web app instance.
+        :type instance_id: str
+        :param ms_deploy: Details of MSDeploy operation
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         MSDeployStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.MSDeployStatus]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_instance_ms_deploy_operation_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            slot=slot,
+            instance_id=instance_id,
+            ms_deploy=ms_deploy,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -15537,20 +15372,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('MSDeployStatus', response)
+            deserialized = self._deserialize('MSDeployStatus', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -15580,11 +15408,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MSDeployLog <azure.mgmt.web.models.MSDeployLog>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MSDeployLog or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MSDeployLog or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15614,7 +15440,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -15657,10 +15483,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessInfo
-         <azure.mgmt.web.models.ProcessInfo>`
-        :rtype: :class:`ProcessInfoPaged
-         <azure.mgmt.web.models.ProcessInfoPaged>`
+        :return: An iterator like instance of ProcessInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessInfoPaged[~azure.mgmt.web.models.ProcessInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -15698,7 +15523,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -15744,11 +15569,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15779,7 +15602,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -15824,11 +15647,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15859,7 +15679,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -15871,7 +15691,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_instance_process_dump_slot(
-            self, resource_group_name, name, process_id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, slot, instance_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -15895,13 +15715,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -15932,7 +15754,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -15942,7 +15764,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -15977,10 +15799,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>`
-        :rtype: :class:`ProcessModuleInfoPaged
-         <azure.mgmt.web.models.ProcessModuleInfoPaged>`
+        :return: An iterator like instance of ProcessModuleInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessModuleInfoPaged[~azure.mgmt.web.models.ProcessModuleInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -16019,7 +15840,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -16069,13 +15890,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessModuleInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessModuleInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16108,7 +15925,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -16153,10 +15970,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>`
-        :rtype: :class:`ProcessThreadInfoPaged
-         <azure.mgmt.web.models.ProcessThreadInfoPaged>`
+        :return: An iterator like instance of ProcessThreadInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessThreadInfoPaged[~azure.mgmt.web.models.ProcessThreadInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -16195,7 +16011,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -16243,13 +16059,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessThreadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessThreadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16281,7 +16093,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -16320,13 +16132,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteCloneability
-         <azure.mgmt.web.models.SiteCloneability>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteCloneability
-         <azure.mgmt.web.models.SiteCloneability>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteCloneability or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteCloneability or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16355,7 +16163,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -16392,13 +16200,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`FunctionSecrets
-         <azure.mgmt.web.models.FunctionSecrets>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: FunctionSecrets or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.FunctionSecrets or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16427,7 +16231,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -16466,10 +16270,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -16506,7 +16309,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -16553,10 +16356,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -16597,7 +16399,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -16636,13 +16438,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MigrateMySqlStatus
-         <azure.mgmt.web.models.MigrateMySqlStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MigrateMySqlStatus
-         <azure.mgmt.web.models.MigrateMySqlStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MigrateMySqlStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MigrateMySqlStatus or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16671,7 +16469,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -16713,13 +16511,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkFeatures
-         <azure.mgmt.web.models.NetworkFeatures>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkFeatures
-         <azure.mgmt.web.models.NetworkFeatures>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkFeatures or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.NetworkFeatures or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16749,7 +16543,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -16791,11 +16585,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16830,7 +16621,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -16866,11 +16657,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16899,7 +16687,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -16938,11 +16726,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -16971,7 +16756,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -17006,10 +16791,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PerfMonResponse
-         <azure.mgmt.web.models.PerfMonResponse>`
-        :rtype: :class:`PerfMonResponsePaged
-         <azure.mgmt.web.models.PerfMonResponsePaged>`
+        :return: An iterator like instance of PerfMonResponse
+        :rtype:
+         ~azure.mgmt.web.models.PerfMonResponsePaged[~azure.mgmt.web.models.PerfMonResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -17048,7 +16832,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -17086,13 +16870,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SitePhpErrorLogFlag
-         <azure.mgmt.web.models.SitePhpErrorLogFlag>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SitePhpErrorLogFlag
-         <azure.mgmt.web.models.SitePhpErrorLogFlag>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SitePhpErrorLogFlag or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SitePhpErrorLogFlag or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17121,7 +16901,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -17158,11 +16938,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17191,7 +16969,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -17230,11 +17008,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17264,7 +17040,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -17297,8 +17073,7 @@ class WebAppsOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier
          add-on.
-        :type premier_add_on: :class:`PremierAddOn
-         <azure.mgmt.web.models.PremierAddOn>`
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will update the named add-on for the production slot.
         :type slot: str
@@ -17307,11 +17082,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PremierAddOn <azure.mgmt.web.models.PremierAddOn>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PremierAddOn or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PremierAddOn or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17345,7 +17118,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -17384,11 +17157,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17418,7 +17188,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -17450,10 +17220,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessInfo
-         <azure.mgmt.web.models.ProcessInfo>`
-        :rtype: :class:`ProcessInfoPaged
-         <azure.mgmt.web.models.ProcessInfoPaged>`
+        :return: An iterator like instance of ProcessInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessInfoPaged[~azure.mgmt.web.models.ProcessInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -17490,7 +17259,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -17532,11 +17301,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessInfo <azure.mgmt.web.models.ProcessInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17566,7 +17333,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -17607,11 +17374,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17641,7 +17405,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -17653,7 +17417,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
     def get_process_dump_slot(
-            self, resource_group_name, name, process_id, slot, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, process_id, slot, custom_headers=None, raw=False, callback=None, **operation_config):
         """Get a memory dump of a process by its ID for a specific scaled-out
         instance in a web site.
 
@@ -17673,13 +17437,15 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: object or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17709,7 +17475,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -17719,7 +17485,7 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -17750,10 +17516,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>`
-        :rtype: :class:`ProcessModuleInfoPaged
-         <azure.mgmt.web.models.ProcessModuleInfoPaged>`
+        :return: An iterator like instance of ProcessModuleInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessModuleInfoPaged[~azure.mgmt.web.models.ProcessModuleInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -17791,7 +17556,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -17837,13 +17602,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessModuleInfo
-         <azure.mgmt.web.models.ProcessModuleInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessModuleInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessModuleInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -17875,7 +17636,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -17916,10 +17677,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>`
-        :rtype: :class:`ProcessThreadInfoPaged
-         <azure.mgmt.web.models.ProcessThreadInfoPaged>`
+        :return: An iterator like instance of ProcessThreadInfo
+        :rtype:
+         ~azure.mgmt.web.models.ProcessThreadInfoPaged[~azure.mgmt.web.models.ProcessThreadInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -17957,7 +17717,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -18001,13 +17761,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ProcessThreadInfo
-         <azure.mgmt.web.models.ProcessThreadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ProcessThreadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.ProcessThreadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18038,7 +17794,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -18075,10 +17831,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>`
-        :rtype: :class:`PublicCertificatePaged
-         <azure.mgmt.web.models.PublicCertificatePaged>`
+        :return: An iterator like instance of PublicCertificate
+        :rtype:
+         ~azure.mgmt.web.models.PublicCertificatePaged[~azure.mgmt.web.models.PublicCertificate]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -18115,7 +17870,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -18157,13 +17912,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PublicCertificate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PublicCertificate or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18193,7 +17944,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -18226,8 +17977,7 @@ class WebAppsOperations(object):
         :type public_certificate_name: str
         :param public_certificate: Public certificate details. This is the
          JSON representation of a PublicCertificate object.
-        :type public_certificate: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>`
+        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will create a binding for the production slot.
         :type slot: str
@@ -18236,13 +17986,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PublicCertificate
-         <azure.mgmt.web.models.PublicCertificate>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PublicCertificate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.PublicCertificate or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18276,7 +18022,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -18315,11 +18061,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18349,7 +18092,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -18380,8 +18123,7 @@ class WebAppsOperations(object):
          FileZilla3
          WebDeploy -- default
          Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
-        :type format: str or :class:`PublishingProfileFormat
-         <azure.mgmt.web.models.PublishingProfileFormat>`
+        :type format: str or ~azure.mgmt.web.models.PublishingProfileFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -18392,11 +18134,8 @@ class WebAppsOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: Generator or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         publishing_profile_options = models.CsmPublishingProfileOptions(format=format)
@@ -18431,7 +18170,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -18449,38 +18188,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def recover_slot(
+
+    def _recover_slot_initial(
             self, resource_group_name, name, recovery_entity, slot, custom_headers=None, raw=False, **operation_config):
-        """Recovers a web app to a previous snapshot.
-
-        Recovers a web app to a previous snapshot.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of web app.
-        :type name: str
-        :param recovery_entity: Snapshot data used for web app recovery.
-         Snapshot information can be obtained by calling GetDeletedSites or
-         GetSiteSnapshots API.
-        :type recovery_entity: :class:`SnapshotRecoveryRequest
-         <azure.mgmt.web.models.SnapshotRecoveryRequest>`
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/recover'
         path_format_arguments = {
@@ -18509,19 +18219,71 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(recovery_entity, 'SnapshotRecoveryRequest')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def recover_slot(
+            self, resource_group_name, name, recovery_entity, slot, custom_headers=None, raw=False, **operation_config):
+        """Recovers a web app to a previous snapshot.
+
+        Recovers a web app to a previous snapshot.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of web app.
+        :type name: str
+        :param recovery_entity: Snapshot data used for web app recovery.
+         Snapshot information can be obtained by calling GetDeletedSites or
+         GetSiteSnapshots API.
+        :type recovery_entity: ~azure.mgmt.web.models.SnapshotRecoveryRequest
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._recover_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            recovery_entity=recovery_entity,
+            slot=slot,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -18533,10 +18295,6 @@ class WebAppsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -18566,11 +18324,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18599,7 +18354,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -18637,11 +18392,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18674,7 +18426,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -18704,10 +18456,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>`
-        :rtype: :class:`SiteExtensionInfoPaged
-         <azure.mgmt.web.models.SiteExtensionInfoPaged>`
+        :return: An iterator like instance of SiteExtensionInfo
+        :rtype:
+         ~azure.mgmt.web.models.SiteExtensionInfoPaged[~azure.mgmt.web.models.SiteExtensionInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -18744,7 +18495,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -18788,13 +18539,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteExtensionInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteExtensionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -18825,7 +18572,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -18835,6 +18582,57 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('SiteExtensionInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+
+    def _install_site_extension_slot_initial(
+            self, resource_group_name, name, site_extension_id, slot, extension_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{extensionName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201, 429]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteExtensionInfo', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('SiteExtensionInfo', response)
 
         if raw:
@@ -18864,80 +18662,54 @@ class WebAppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SiteExtensionInfo
-         <azure.mgmt.web.models.SiteExtensionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         SiteExtensionInfo or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.SiteExtensionInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/siteextensions/{extensionName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['siteExtensionId'] = self._serialize.query("site_extension_id", site_extension_id, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        raw_result = self._install_site_extension_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_extension_id=site_extension_id,
+            slot=slot,
+            extension_name=extension_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
 
         # Construct and send request
         def long_running_send():
-
-            request = self._client.put(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 429]:
+            if response.status_code not in [200, 201, 429]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
+            deserialized = self._deserialize('SiteExtensionInfo', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -18969,11 +18741,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19004,7 +18773,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -19039,10 +18808,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SlotDifference
-         <azure.mgmt.web.models.SlotDifference>`
-        :rtype: :class:`SlotDifferencePaged
-         <azure.mgmt.web.models.SlotDifferencePaged>`
+        :return: An iterator like instance of SlotDifference
+        :rtype:
+         ~azure.mgmt.web.models.SlotDifferencePaged[~azure.mgmt.web.models.SlotDifference]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
@@ -19084,7 +18852,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, body_content, **operation_config)
+                request, header_parameters, body_content, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -19103,38 +18871,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def swap_slot_slot(
+
+    def _swap_slot_slot_initial(
             self, resource_group_name, name, slot, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
-        """Swaps two deployment slots of an app.
-
-        Swaps two deployment slots of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param slot: Name of the source slot. If a slot is not specified, the
-         production slot is used as the source slot.
-        :type slot: str
-        :param target_slot: Destination deployment slot during swap operation.
-        :type target_slot: str
-        :param preserve_vnet: <code>true</code> to preserve Virtual Network to
-         the slot during swap; otherwise, <code>false</code>.
-        :type preserve_vnet: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
         # Construct URL
@@ -19165,19 +18904,73 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def swap_slot_slot(
+            self, resource_group_name, name, slot, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
+        """Swaps two deployment slots of an app.
+
+        Swaps two deployment slots of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param slot: Name of the source slot. If a slot is not specified, the
+         production slot is used as the source slot.
+        :type slot: str
+        :param target_slot: Destination deployment slot during swap operation.
+        :type target_slot: str
+        :param preserve_vnet: <code>true</code> to preserve Virtual Network to
+         the slot during swap; otherwise, <code>false</code>.
+        :type preserve_vnet: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._swap_slot_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            slot=slot,
+            target_slot=target_slot,
+            preserve_vnet=preserve_vnet,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -19189,10 +18982,6 @@ class WebAppsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -19219,9 +19008,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Snapshot
-         <azure.mgmt.web.models.Snapshot>`
-        :rtype: :class:`SnapshotPaged <azure.mgmt.web.models.SnapshotPaged>`
+        :return: An iterator like instance of Snapshot
+        :rtype:
+         ~azure.mgmt.web.models.SnapshotPaged[~azure.mgmt.web.models.Snapshot]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -19258,7 +19047,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -19297,13 +19086,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteSourceControl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSourceControl or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19332,7 +19117,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -19350,39 +19135,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_or_update_source_control_slot(
+
+    def _create_or_update_source_control_slot_initial(
             self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
-        """Updates the source control configuration of an app.
-
-        Updates the source control configuration of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param site_source_control: JSON representation of a SiteSourceControl
-         object. See example.
-        :type site_source_control: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :param slot: Name of the deployment slot. If a slot is not specified,
-         the API will update the source control configuration for the
-         production slot.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/sourcecontrols/web'
         path_format_arguments = {
@@ -19411,19 +19166,81 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_source_control_slot(
+            self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
+        """Updates the source control configuration of an app.
+
+        Updates the source control configuration of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param site_source_control: JSON representation of a SiteSourceControl
+         object. See example.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl
+        :param slot: Name of the deployment slot. If a slot is not specified,
+         the API will update the source control configuration for the
+         production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         SiteSourceControl or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.SiteSourceControl]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_source_control_slot_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_source_control=site_source_control,
+            slot=slot,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -19432,22 +19249,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SiteSourceControl', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteSourceControl', response)
+            deserialized = self._deserialize('SiteSourceControl', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -19476,11 +19284,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19509,7 +19314,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 404]:
             exp = CloudError(response)
@@ -19539,11 +19344,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19572,7 +19374,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -19602,11 +19404,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19635,7 +19434,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -19665,11 +19464,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19698,7 +19494,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -19728,11 +19524,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19761,7 +19554,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -19791,10 +19584,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>`
-        :rtype: :class:`TriggeredWebJobPaged
-         <azure.mgmt.web.models.TriggeredWebJobPaged>`
+        :return: An iterator like instance of TriggeredWebJob
+        :rtype:
+         ~azure.mgmt.web.models.TriggeredWebJobPaged[~azure.mgmt.web.models.TriggeredWebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -19831,7 +19623,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -19873,13 +19665,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggeredWebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TriggeredWebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19910,7 +19698,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -19951,11 +19739,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -19986,7 +19771,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -20020,10 +19805,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>`
-        :rtype: :class:`TriggeredJobHistoryPaged
-         <azure.mgmt.web.models.TriggeredJobHistoryPaged>`
+        :return: An iterator like instance of TriggeredJobHistory
+        :rtype:
+         ~azure.mgmt.web.models.TriggeredJobHistoryPaged[~azure.mgmt.web.models.TriggeredJobHistory]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -20062,7 +19846,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -20108,13 +19892,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggeredJobHistory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TriggeredJobHistory or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20146,7 +19926,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -20187,11 +19967,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20222,7 +19999,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -20260,10 +20037,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CsmUsageQuota
-         <azure.mgmt.web.models.CsmUsageQuota>`
-        :rtype: :class:`CsmUsageQuotaPaged
-         <azure.mgmt.web.models.CsmUsageQuotaPaged>`
+        :return: An iterator like instance of CsmUsageQuota
+        :rtype:
+         ~azure.mgmt.web.models.CsmUsageQuotaPaged[~azure.mgmt.web.models.CsmUsageQuota]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -20302,7 +20078,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -20340,11 +20116,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.VnetInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20373,7 +20147,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20414,11 +20188,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20448,7 +20220,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20483,8 +20255,7 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfo
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -20493,11 +20264,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20531,7 +20300,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20572,11 +20341,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20606,7 +20372,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -20634,8 +20400,7 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfo
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update connections for the production slot.
         :type slot: str
@@ -20644,11 +20409,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20682,7 +20445,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20724,11 +20487,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20759,7 +20520,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -20797,8 +20558,7 @@ class WebAppsOperations(object):
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway
          with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update a gateway for the production slot's Virtual
          Network.
@@ -20808,11 +20568,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20847,7 +20605,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20885,8 +20643,7 @@ class WebAppsOperations(object):
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway
          with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway
         :param slot: Name of the deployment slot. If a slot is not specified,
          the API will add or update a gateway for the production slot's Virtual
          Network.
@@ -20896,11 +20653,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -20935,7 +20690,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -20972,9 +20727,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`WebJob
-         <azure.mgmt.web.models.WebJob>`
-        :rtype: :class:`WebJobPaged <azure.mgmt.web.models.WebJobPaged>`
+        :return: An iterator like instance of WebJob
+        :rtype:
+         ~azure.mgmt.web.models.WebJobPaged[~azure.mgmt.web.models.WebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -21011,7 +20766,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -21051,11 +20806,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`WebJob <azure.mgmt.web.models.WebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`WebJob <azure.mgmt.web.models.WebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: WebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21085,7 +20838,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -21124,10 +20877,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SlotDifference
-         <azure.mgmt.web.models.SlotDifference>`
-        :rtype: :class:`SlotDifferencePaged
-         <azure.mgmt.web.models.SlotDifferencePaged>`
+        :return: An iterator like instance of SlotDifference
+        :rtype:
+         ~azure.mgmt.web.models.SlotDifferencePaged[~azure.mgmt.web.models.SlotDifference]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
@@ -21168,7 +20920,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, body_content, **operation_config)
+                request, header_parameters, body_content, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -21187,35 +20939,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def swap_slot_with_production(
+
+    def _swap_slot_with_production_initial(
             self, resource_group_name, name, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
-        """Swaps two deployment slots of an app.
-
-        Swaps two deployment slots of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param target_slot: Destination deployment slot during swap operation.
-        :type target_slot: str
-        :param preserve_vnet: <code>true</code> to preserve Virtual Network to
-         the slot during swap; otherwise, <code>false</code>.
-        :type preserve_vnet: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
         # Construct URL
@@ -21245,19 +20971,69 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def swap_slot_with_production(
+            self, resource_group_name, name, target_slot, preserve_vnet, custom_headers=None, raw=False, **operation_config):
+        """Swaps two deployment slots of an app.
+
+        Swaps two deployment slots of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param target_slot: Destination deployment slot during swap operation.
+        :type target_slot: str
+        :param preserve_vnet: <code>true</code> to preserve Virtual Network to
+         the slot during swap; otherwise, <code>false</code>.
+        :type preserve_vnet: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._swap_slot_with_production_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            target_slot=target_slot,
+            preserve_vnet=preserve_vnet,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -21269,10 +21045,6 @@ class WebAppsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -21297,9 +21069,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Snapshot
-         <azure.mgmt.web.models.Snapshot>`
-        :rtype: :class:`SnapshotPaged <azure.mgmt.web.models.SnapshotPaged>`
+        :return: An iterator like instance of Snapshot
+        :rtype:
+         ~azure.mgmt.web.models.SnapshotPaged[~azure.mgmt.web.models.Snapshot]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -21335,7 +21107,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -21370,13 +21142,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteSourceControl or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSourceControl or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21404,7 +21172,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -21422,35 +21190,9 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def create_or_update_source_control(
+
+    def _create_or_update_source_control_initial(
             self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
-        """Updates the source control configuration of an app.
-
-        Updates the source control configuration of an app.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param name: Name of the app.
-        :type name: str
-        :param site_source_control: JSON representation of a SiteSourceControl
-         object. See example.
-        :type site_source_control: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
         path_format_arguments = {
@@ -21478,19 +21220,76 @@ class WebAppsOperations(object):
         body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_source_control(
+            self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
+        """Updates the source control configuration of an app.
+
+        Updates the source control configuration of an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the app.
+        :type name: str
+        :param site_source_control: JSON representation of a SiteSourceControl
+         object. See example.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         SiteSourceControl or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.SiteSourceControl]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_source_control_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            site_source_control=site_source_control,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -21499,22 +21298,13 @@ class WebAppsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SiteSourceControl', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteSourceControl', response)
+            deserialized = self._deserialize('SiteSourceControl', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -21539,11 +21329,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21571,7 +21358,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 404]:
             exp = CloudError(response)
@@ -21598,11 +21385,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21630,7 +21414,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -21657,11 +21441,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21689,7 +21470,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -21716,11 +21497,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21748,7 +21526,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -21775,11 +21553,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21807,7 +21582,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -21834,10 +21609,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>`
-        :rtype: :class:`TriggeredWebJobPaged
-         <azure.mgmt.web.models.TriggeredWebJobPaged>`
+        :return: An iterator like instance of TriggeredWebJob
+        :rtype:
+         ~azure.mgmt.web.models.TriggeredWebJobPaged[~azure.mgmt.web.models.TriggeredWebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -21873,7 +21647,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -21912,13 +21686,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggeredWebJob
-         <azure.mgmt.web.models.TriggeredWebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggeredWebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TriggeredWebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -21948,7 +21718,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -21986,11 +21756,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22020,7 +21787,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -22051,10 +21818,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>`
-        :rtype: :class:`TriggeredJobHistoryPaged
-         <azure.mgmt.web.models.TriggeredJobHistoryPaged>`
+        :return: An iterator like instance of TriggeredJobHistory
+        :rtype:
+         ~azure.mgmt.web.models.TriggeredJobHistoryPaged[~azure.mgmt.web.models.TriggeredJobHistory]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -22092,7 +21858,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200, 404]:
                 exp = CloudError(response)
@@ -22135,13 +21901,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TriggeredJobHistory
-         <azure.mgmt.web.models.TriggeredJobHistory>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TriggeredJobHistory or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.TriggeredJobHistory or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22172,7 +21934,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -22210,11 +21972,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22244,7 +22003,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -22279,10 +22038,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CsmUsageQuota
-         <azure.mgmt.web.models.CsmUsageQuota>`
-        :rtype: :class:`CsmUsageQuotaPaged
-         <azure.mgmt.web.models.CsmUsageQuotaPaged>`
+        :return: An iterator like instance of CsmUsageQuota
+        :rtype:
+         ~azure.mgmt.web.models.CsmUsageQuotaPaged[~azure.mgmt.web.models.CsmUsageQuota]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -22320,7 +22078,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -22355,11 +22113,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.VnetInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22387,7 +22143,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22425,11 +22181,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22458,7 +22212,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22493,18 +22247,15 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfo
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22537,7 +22288,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22575,11 +22326,8 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22608,7 +22356,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -22636,18 +22384,15 @@ class WebAppsOperations(object):
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network
          connection. See example.
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfo
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22680,7 +22425,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22719,11 +22464,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22753,7 +22496,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -22791,18 +22534,15 @@ class WebAppsOperations(object):
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway
          with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22836,7 +22576,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22874,18 +22614,15 @@ class WebAppsOperations(object):
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway
          with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VnetGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.VnetGateway or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -22919,7 +22656,7 @@ class WebAppsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -22953,9 +22690,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`WebJob
-         <azure.mgmt.web.models.WebJob>`
-        :rtype: :class:`WebJobPaged <azure.mgmt.web.models.WebJobPaged>`
+        :return: An iterator like instance of WebJob
+        :rtype:
+         ~azure.mgmt.web.models.WebJobPaged[~azure.mgmt.web.models.WebJob]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -22991,7 +22728,7 @@ class WebAppsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -23028,11 +22765,9 @@ class WebAppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`WebJob <azure.mgmt.web.models.WebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`WebJob <azure.mgmt.web.models.WebJob>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: WebJob or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WebJob or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -23061,7 +22796,7 @@ class WebAppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

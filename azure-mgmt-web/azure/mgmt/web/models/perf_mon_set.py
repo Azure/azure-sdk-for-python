@@ -24,8 +24,7 @@ class PerfMonSet(Model):
     :param time_grain: Presented time grain.
     :type time_grain: str
     :param values: Collection of workers that are active during this time.
-    :type values: list of :class:`PerfMonSample
-     <azure.mgmt.web.models.PerfMonSample>`
+    :type values: list[~azure.mgmt.web.models.PerfMonSample]
     """
 
     _attribute_map = {
@@ -37,6 +36,7 @@ class PerfMonSet(Model):
     }
 
     def __init__(self, name=None, start_time=None, end_time=None, time_grain=None, values=None):
+        super(PerfMonSet, self).__init__()
         self.name = name
         self.start_time = start_time
         self.end_time = end_time

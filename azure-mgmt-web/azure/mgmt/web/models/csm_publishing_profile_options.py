@@ -19,8 +19,7 @@ class CsmPublishingProfileOptions(Model):
      FileZilla3
      WebDeploy -- default
      Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
-    :type format: str or :class:`PublishingProfileFormat
-     <azure.mgmt.web.models.PublishingProfileFormat>`
+    :type format: str or ~azure.mgmt.web.models.PublishingProfileFormat
     """
 
     _attribute_map = {
@@ -28,4 +27,5 @@ class CsmPublishingProfileOptions(Model):
     }
 
     def __init__(self, format=None):
+        super(CsmPublishingProfileOptions, self).__init__()
         self.format = format

@@ -29,7 +29,7 @@ class Resource(Model):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -49,6 +49,7 @@ class Resource(Model):
     }
 
     def __init__(self, location, kind=None, tags=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.kind = kind

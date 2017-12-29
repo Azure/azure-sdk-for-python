@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -26,6 +27,8 @@ class AppServiceCertificateOrdersOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: API Version. Constant value: "2015-08-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -47,11 +50,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
-        :rtype: :class:`AppServiceCertificateOrderPaged
-         <azure.mgmt.web.models.AppServiceCertificateOrderPaged>`
+        :return: An iterator like instance of AppServiceCertificateOrder
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -85,7 +86,7 @@ class AppServiceCertificateOrdersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -113,18 +114,14 @@ class AppServiceCertificateOrdersOperations(object):
         :param app_service_certificate_order: Information for a certificate
          order.
         :type app_service_certificate_order:
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
+         ~azure.mgmt.web.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -154,7 +151,7 @@ class AppServiceCertificateOrdersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -179,11 +176,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
-        :rtype: :class:`AppServiceCertificateOrderPaged
-         <azure.mgmt.web.models.AppServiceCertificateOrderPaged>`
+        :return: An iterator like instance of AppServiceCertificateOrder
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -218,7 +213,7 @@ class AppServiceCertificateOrdersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -253,13 +248,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AppServiceCertificateOrder or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateOrder or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -287,7 +278,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -305,36 +296,9 @@ class AppServiceCertificateOrdersOperations(object):
 
         return deserialized
 
-    def create_or_update(
+
+    def _create_or_update_initial(
             self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
-        """Create or update a certificate purchase order.
-
-        Create or update a certificate purchase order.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param certificate_order_name: Name of the certificate order.
-        :type certificate_order_name: str
-        :param certificate_distinguished_name: Distinguished name to to use
-         for the certificate order.
-        :type certificate_distinguished_name:
-         :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceCertificateOrder
-         <azure.mgmt.web.models.AppServiceCertificateOrder>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'
         path_format_arguments = {
@@ -362,19 +326,77 @@ class AppServiceCertificateOrdersOperations(object):
         body_content = self._serialize.body(certificate_distinguished_name, 'AppServiceCertificateOrder')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceCertificateOrder', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('AppServiceCertificateOrder', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
+        """Create or update a certificate purchase order.
+
+        Create or update a certificate purchase order.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
+        :param certificate_distinguished_name: Distinguished name to to use
+         for the certificate order.
+        :type certificate_distinguished_name:
+         ~azure.mgmt.web.models.AppServiceCertificateOrder
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         AppServiceCertificateOrder or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateOrder]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            certificate_order_name=certificate_order_name,
+            certificate_distinguished_name=certificate_distinguished_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -383,22 +405,13 @@ class AppServiceCertificateOrdersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('AppServiceCertificateOrder', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('AppServiceCertificateOrder', response)
+            deserialized = self._deserialize('AppServiceCertificateOrder', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -423,11 +436,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -455,7 +465,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -482,11 +492,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>`
-        :rtype: :class:`AppServiceCertificateResourcePaged
-         <azure.mgmt.web.models.AppServiceCertificateResourcePaged>`
+        :return: An iterator like instance of AppServiceCertificateResource
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceCertificateResourcePaged[~azure.mgmt.web.models.AppServiceCertificateResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -522,7 +530,7 @@ class AppServiceCertificateOrdersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -559,13 +567,10 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: AppServiceCertificateResource or ClientRawResponse if
          raw=true
-        :rtype: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.AppServiceCertificateResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -594,7 +599,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -612,36 +617,9 @@ class AppServiceCertificateOrdersOperations(object):
 
         return deserialized
 
-    def create_or_update_certificate(
+
+    def _create_or_update_certificate_initial(
             self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a certificate and associates with key vault secret.
-
-        Creates or updates a certificate and associates with key vault secret.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param certificate_order_name: Name of the certificate order.
-        :type certificate_order_name: str
-        :param name: Name of the certificate.
-        :type name: str
-        :param key_vault_certificate: Key vault certificate resource Id.
-        :type key_vault_certificate: :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceCertificateResource
-         <azure.mgmt.web.models.AppServiceCertificateResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'
         path_format_arguments = {
@@ -670,19 +648,79 @@ class AppServiceCertificateOrdersOperations(object):
         body_content = self._serialize.body(key_vault_certificate, 'AppServiceCertificateResource')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceCertificateResource', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('AppServiceCertificateResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_certificate(
+            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a certificate and associates with key vault secret.
+
+        Creates or updates a certificate and associates with key vault secret.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
+        :param name: Name of the certificate.
+        :type name: str
+        :param key_vault_certificate: Key vault certificate resource Id.
+        :type key_vault_certificate:
+         ~azure.mgmt.web.models.AppServiceCertificateResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         AppServiceCertificateResource or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateResource]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_certificate_initial(
+            resource_group_name=resource_group_name,
+            certificate_order_name=certificate_order_name,
+            name=name,
+            key_vault_certificate=key_vault_certificate,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -691,22 +729,13 @@ class AppServiceCertificateOrdersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('AppServiceCertificateResource', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('AppServiceCertificateResource', response)
+            deserialized = self._deserialize('AppServiceCertificateResource', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -733,11 +762,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -766,7 +792,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -790,18 +816,14 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue.
         :type reissue_certificate_order_request:
-         :class:`ReissueCertificateOrderRequest
-         <azure.mgmt.web.models.ReissueCertificateOrderRequest>`
+         ~azure.mgmt.web.models.ReissueCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -833,7 +855,7 @@ class AppServiceCertificateOrdersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -857,18 +879,14 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters
         :type renew_certificate_order_request:
-         :class:`RenewCertificateOrderRequest
-         <azure.mgmt.web.models.RenewCertificateOrderRequest>`
+         ~azure.mgmt.web.models.RenewCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -900,7 +918,7 @@ class AppServiceCertificateOrdersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -927,11 +945,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -959,7 +974,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -988,11 +1003,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         name_identifier = models.NameIdentifier(name=name)
@@ -1026,7 +1038,7 @@ class AppServiceCertificateOrdersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -1057,11 +1069,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`SiteSeal <azure.mgmt.web.models.SiteSeal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`SiteSeal <azure.mgmt.web.models.SiteSeal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SiteSeal or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.SiteSeal or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         site_seal_request = models.SiteSealRequest(light_theme=light_theme, locale=locale)
@@ -1095,7 +1105,7 @@ class AppServiceCertificateOrdersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1129,11 +1139,8 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1161,7 +1168,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -1188,13 +1195,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`CertificateOrderAction
-         <azure.mgmt.web.models.CertificateOrderAction>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`CertificateOrderAction
-         <azure.mgmt.web.models.CertificateOrderAction>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.CertificateOrderAction] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1222,7 +1225,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1256,13 +1259,9 @@ class AppServiceCertificateOrdersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`CertificateEmail
-         <azure.mgmt.web.models.CertificateEmail>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`CertificateEmail
-         <azure.mgmt.web.models.CertificateEmail>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.CertificateEmail] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1290,7 +1289,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

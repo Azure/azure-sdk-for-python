@@ -27,5 +27,6 @@ class SiteSealRequest(Model):
     }
 
     def __init__(self, light_theme=None, locale=None):
+        super(SiteSealRequest, self).__init__()
         self.light_theme = light_theme
         self.locale = locale
