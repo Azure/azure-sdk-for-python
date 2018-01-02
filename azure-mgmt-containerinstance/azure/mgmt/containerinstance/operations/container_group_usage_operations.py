@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ContainerGroupUsageOperations(object):
+    """ContainerGroupUsageOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,21 +38,28 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List the operations for Azure Container Instance service.
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """Get the usage for a subscription.
 
+        :param location: The identifier for the physical azure location.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.containerinstance.models.OperationListResult or
+        :return: UsageListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.UsageListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ContainerInstance/operations'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/usages'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -80,7 +87,7 @@ class Operations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationListResult', response)
+            deserialized = self._deserialize('UsageListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -17,11 +17,14 @@ class Volume(Model):
 
     :param name: The name of the volume.
     :type name: str
-    :param azure_file: The name of the Azure File volume.
-    :type azure_file: :class:`AzureFileVolume
-     <azure.mgmt.containerinstance.models.AzureFileVolume>`
+    :param azure_file: The Azure File volume.
+    :type azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
     :param empty_dir: The empty directory volume.
     :type empty_dir: object
+    :param secret: The secret volume.
+    :type secret: dict[str, str]
+    :param git_repo: The git repo volume.
+    :type git_repo: ~azure.mgmt.containerinstance.models.GitRepoVolume
     """
 
     _validation = {
@@ -32,9 +35,14 @@ class Volume(Model):
         'name': {'key': 'name', 'type': 'str'},
         'azure_file': {'key': 'azureFile', 'type': 'AzureFileVolume'},
         'empty_dir': {'key': 'emptyDir', 'type': 'object'},
+        'secret': {'key': 'secret', 'type': '{str}'},
+        'git_repo': {'key': 'gitRepo', 'type': 'GitRepoVolume'},
     }
 
-    def __init__(self, name, azure_file=None, empty_dir=None):
+    def __init__(self, name, azure_file=None, empty_dir=None, secret=None, git_repo=None):
+        super(Volume, self).__init__()
         self.name = name
         self.azure_file = azure_file
         self.empty_dir = empty_dir
+        self.secret = secret
+        self.git_repo = git_repo
