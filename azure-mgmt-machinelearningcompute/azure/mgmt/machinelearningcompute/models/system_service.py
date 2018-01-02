@@ -41,6 +41,7 @@ class SystemService(Model):
     }
 
     def __init__(self, system_service_type):
+        super(SystemService, self).__init__()
         self.system_service_type = system_service_type
         self.public_ip_address = None
         self.version = None

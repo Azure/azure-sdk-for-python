@@ -45,6 +45,7 @@ class ContainerRegistryCredentials(Model):
     }
 
     def __init__(self):
+        super(ContainerRegistryCredentials, self).__init__()
         self.login_server = None
         self.password = None
         self.password2 = None

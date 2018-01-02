@@ -24,4 +24,5 @@ class AppInsightsProperties(Model):
     }
 
     def __init__(self, resource_id=None):
+        super(AppInsightsProperties, self).__init__()
         self.resource_id = resource_id

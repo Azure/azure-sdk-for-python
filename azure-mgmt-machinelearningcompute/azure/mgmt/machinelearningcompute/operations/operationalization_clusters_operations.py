@@ -27,6 +27,8 @@ class OperationalizationClustersOperations(object):
     :ivar api_version: The version of the Microsoft.MachineLearningCompute resource provider API to use. Constant value: "2017-08-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -269,7 +271,7 @@ class OperationalizationClustersOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, delete_all=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified cluster.
 
         :param resource_group_name: Name of the resource group in which the
@@ -277,6 +279,9 @@ class OperationalizationClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
+        :param delete_all: If true, deletes all resources associated with this
+         cluster.
+        :type delete_all: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -299,6 +304,8 @@ class OperationalizationClustersOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if delete_all is not None:
+            query_parameters['deleteAll'] = self._serialize.query("delete_all", delete_all, 'bool')
 
         # Construct headers
         header_parameters = {}

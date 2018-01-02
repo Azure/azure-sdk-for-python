@@ -47,6 +47,7 @@ class OperationalizationClusterCredentials(Model):
     }
 
     def __init__(self, storage_account=None, container_registry=None, container_service=None, app_insights=None, service_auth_configuration=None, ssl_configuration=None):
+        super(OperationalizationClusterCredentials, self).__init__()
         self.storage_account = storage_account
         self.container_registry = container_registry
         self.container_service = container_service
