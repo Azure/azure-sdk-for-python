@@ -30,6 +30,7 @@ class ErrorDetails(Model):
     }
 
     def __init__(self, code=None, target=None, message=None):
+        super(ErrorDetails, self).__init__()
         self.code = code
         self.target = target
         self.message = message
