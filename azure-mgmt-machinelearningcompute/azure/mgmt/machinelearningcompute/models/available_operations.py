@@ -25,4 +25,5 @@ class AvailableOperations(Model):
     }
 
     def __init__(self, value=None):
+        super(AvailableOperations, self).__init__()
         self.value = value

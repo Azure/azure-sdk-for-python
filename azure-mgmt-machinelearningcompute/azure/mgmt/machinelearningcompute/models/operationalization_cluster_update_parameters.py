@@ -28,4 +28,5 @@ class OperationalizationClusterUpdateParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(OperationalizationClusterUpdateParameters, self).__init__()
         self.tags = tags

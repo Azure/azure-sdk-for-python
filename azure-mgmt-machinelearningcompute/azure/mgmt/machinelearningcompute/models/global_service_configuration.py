@@ -41,6 +41,7 @@ class GlobalServiceConfiguration(Model):
     }
 
     def __init__(self, additional_properties=None, etag=None, ssl=None, service_auth=None, auto_scale=None):
+        super(GlobalServiceConfiguration, self).__init__()
         self.additional_properties = additional_properties
         self.etag = etag
         self.ssl = ssl

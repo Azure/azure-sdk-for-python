@@ -35,6 +35,7 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, code, message, details=None):
+        super(ErrorResponse, self).__init__()
         self.code = code
         self.message = message
         self.details = details

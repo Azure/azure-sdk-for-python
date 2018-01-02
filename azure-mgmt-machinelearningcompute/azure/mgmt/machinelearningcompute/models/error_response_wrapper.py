@@ -25,6 +25,7 @@ class ErrorResponseWrapper(Model):
     }
 
     def __init__(self, error=None):
+        super(ErrorResponseWrapper, self).__init__()
         self.error = error
 
 

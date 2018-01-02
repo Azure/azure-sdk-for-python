@@ -26,4 +26,5 @@ class StorageAccountProperties(Model):
     }
 
     def __init__(self, resource_id=None):
+        super(StorageAccountProperties, self).__init__()
         self.resource_id = resource_id
