@@ -40,6 +40,7 @@ class ExpressRouteCircuitRoutesTable(Model):
     }
 
     def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None):
+        super(ExpressRouteCircuitRoutesTable, self).__init__()
         self.address_prefix = address_prefix
         self.next_hop_type = next_hop_type
         self.next_hop_ip = next_hop_ip

@@ -26,4 +26,5 @@ class DhcpOptions(Model):
     }
 
     def __init__(self, dns_servers=None):
+        super(DhcpOptions, self).__init__()
         self.dns_servers = dns_servers

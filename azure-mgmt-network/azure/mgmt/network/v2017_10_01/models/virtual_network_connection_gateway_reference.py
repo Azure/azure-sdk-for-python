@@ -29,4 +29,5 @@ class VirtualNetworkConnectionGatewayReference(Model):
     }
 
     def __init__(self, id):
+        super(VirtualNetworkConnectionGatewayReference, self).__init__()
         self.id = id

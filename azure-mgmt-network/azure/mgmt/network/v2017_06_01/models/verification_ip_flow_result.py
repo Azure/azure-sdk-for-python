@@ -29,5 +29,6 @@ class VerificationIPFlowResult(Model):
     }
 
     def __init__(self, access=None, rule_name=None):
+        super(VerificationIPFlowResult, self).__init__()
         self.access = access
         self.rule_name = rule_name

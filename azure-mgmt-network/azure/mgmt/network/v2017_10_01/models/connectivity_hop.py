@@ -52,6 +52,7 @@ class ConnectivityHop(Model):
     }
 
     def __init__(self):
+        super(ConnectivityHop, self).__init__()
         self.type = None
         self.id = None
         self.address = None

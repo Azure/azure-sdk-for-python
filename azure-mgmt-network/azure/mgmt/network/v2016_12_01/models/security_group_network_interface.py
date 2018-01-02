@@ -28,5 +28,6 @@ class SecurityGroupNetworkInterface(Model):
     }
 
     def __init__(self, id=None, security_rule_associations=None):
+        super(SecurityGroupNetworkInterface, self).__init__()
         self.id = id
         self.security_rule_associations = security_rule_associations

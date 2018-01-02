@@ -39,6 +39,7 @@ class PublicIPAddressDnsSettings(Model):
     }
 
     def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None):
+        super(PublicIPAddressDnsSettings, self).__init__()
         self.domain_name_label = domain_name_label
         self.fqdn = fqdn
         self.reverse_fqdn = reverse_fqdn
