@@ -37,9 +37,10 @@ def travis_build_package():
         return
 
     name, version = matching.groups()
-    create_package(name, '../dist')
+    abs_dist_path = Path(os.environ['TRAVIS_BUILD_DIR'], 'dist')
+    create_package(name, str(abs_dist_path))
 
-    print("Produced:\n{}".format(list(Path('./dist').glob('*'))))
+    print("Produced:\n{}".format(list(abs_dist_path.glob('*'))))
 
     pattern = "*{}*".format(version)
     packages = list(Path('./dist').glob(pattern))
