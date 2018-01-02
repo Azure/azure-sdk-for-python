@@ -3,12 +3,12 @@
 Release History
 ===============
 
-0.4.0 (2017-12-15)
+0.4.0 (2018-01-02)
 ++++++++++++++++++
 
 **Features**
 
-- Delete all resources associated withe cluster with the optional deleteAll paramater.
+- Delete all resources associated with cluster with the optional deleteAll paramater.
 
 0.3.0 (2017-10-25)
 ++++++++++++++++++
