@@ -98,6 +98,7 @@ class EventHubClient(object):
 
         @param offset: the initial L{Offset} to receive events.
         """
+        self._check_client(receiver, "Receiver already registered")
         source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
         selector = None
         if offset is not None:
@@ -115,6 +116,7 @@ class EventHubClient(object):
         @param partition: the id of the destination event hub partition. If not specified, events will
         be distributed across partitions based on the default distribution logic.
         """
+        self._check_client(sender, "Sender already registered")
         target = self.address.path
         if partition:
             target += "/Partitions/" + partition
@@ -243,6 +245,10 @@ class EventHubClient(object):
         container.allowed_mechs = 'PLAIN MSCBS'
         container.selectable(self.injector)
         return container
+
+    def _check_client(self, client, message):
+        if client in self.clients:
+            raise EventHubError(message)
 
     def _close_connection(self):
         if self.connection:
