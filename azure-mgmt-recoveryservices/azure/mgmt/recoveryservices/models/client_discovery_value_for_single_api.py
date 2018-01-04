@@ -19,14 +19,13 @@ class ClientDiscoveryValueForSingleApi(Model):
     :type name: str
     :param display: Contains the localized display information for this
      particular operation
-    :type display: :class:`ClientDiscoveryDisplay
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay>`
+    :type display: ~azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay
     :param origin: The intended executor of the operation;governs the display
      of the operation in the RBAC UX and the audit logs UX
     :type origin: str
     :param properties: Properties
-    :type properties: :class:`ClientDiscoveryForProperties
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties>`
+    :type properties:
+     ~azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties
     """
 
     _attribute_map = {
@@ -37,6 +36,7 @@ class ClientDiscoveryValueForSingleApi(Model):
     }
 
     def __init__(self, name=None, display=None, origin=None, properties=None):
+        super(ClientDiscoveryValueForSingleApi, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

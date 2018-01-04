@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class MakeupProperties(Model):
+class Makeup(Model):
     """Properties describing present makeups on a given face.
 
     :param eye_makeup: A boolean value describing whether eye makeup is
@@ -29,5 +29,6 @@ class MakeupProperties(Model):
     }
 
     def __init__(self, eye_makeup=None, lip_makeup=None):
+        super(Makeup, self).__init__()
         self.eye_makeup = eye_makeup
         self.lip_makeup = lip_makeup

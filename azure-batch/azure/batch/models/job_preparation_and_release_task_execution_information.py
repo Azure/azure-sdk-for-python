@@ -42,6 +42,7 @@ class JobPreparationAndReleaseTaskExecutionInformation(Model):
     }
 
     def __init__(self, pool_id=None, node_id=None, node_url=None, job_preparation_task_execution_info=None, job_release_task_execution_info=None):
+        super(JobPreparationAndReleaseTaskExecutionInformation, self).__init__()
         self.pool_id = pool_id
         self.node_id = node_id
         self.node_url = node_url

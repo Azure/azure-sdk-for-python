@@ -15,7 +15,11 @@ from msrest.serialization import Model
 class OperationStatusExtendedInfo(Model):
     """Base class for additional information of operation status.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: OperationStatusJobExtendedInfo,
+    OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo
+
+    :param object_type: Constant filled by server.
     :type object_type: str
     """
 
@@ -32,4 +36,5 @@ class OperationStatusExtendedInfo(Model):
     }
 
     def __init__(self):
+        super(OperationStatusExtendedInfo, self).__init__()
         self.object_type = None

@@ -12,20 +12,23 @@
 from msrest.serialization import Model
 
 
-class ColorProperty(Model):
+class HairColor(Model):
     """Hair color and associated confidence.
 
-    :param color: Name of the color.
-    :type color: str
-    :param confidence:
+    :param color: Name of the hair color. Possible values include: 'unknown',
+     'white', 'gray', 'blond', 'brown', 'red', 'black', 'other'
+    :type color: str or
+     ~azure.cognitiveservices.vision.face.models.HairColorType
+    :param confidence: Confidence level of the color
     :type confidence: float
     """
 
     _attribute_map = {
-        'color': {'key': 'color', 'type': 'str'},
+        'color': {'key': 'color', 'type': 'HairColorType'},
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
     def __init__(self, color=None, confidence=None):
+        super(HairColor, self).__init__()
         self.color = color
         self.confidence = confidence

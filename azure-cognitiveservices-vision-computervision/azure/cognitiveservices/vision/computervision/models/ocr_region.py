@@ -34,5 +34,6 @@ class OcrRegion(Model):
     }
 
     def __init__(self, bounding_box=None, lines=None):
+        super(OcrRegion, self).__init__()
         self.bounding_box = bounding_box
         self.lines = lines

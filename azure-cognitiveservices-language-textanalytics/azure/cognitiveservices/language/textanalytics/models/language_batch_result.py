@@ -37,5 +37,6 @@ class LanguageBatchResult(Model):
     }
 
     def __init__(self):
+        super(LanguageBatchResult, self).__init__()
         self.documents = None
         self.errors = None

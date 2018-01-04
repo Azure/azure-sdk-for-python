@@ -23,8 +23,8 @@ class AzureSqlContainer(ProtectionContainer):
     :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Status of registration of the container with
      the Recovery Services Vault.
     :type registration_status: str
@@ -38,9 +38,9 @@ class AzureSqlContainer(ProtectionContainer):
      'IaasVMContainer', 'IaasVMServiceContainer', 'DPMContainer',
      'AzureBackupServerContainer', 'MABContainer', 'Cluster',
      'AzureSqlContainer', 'Windows', 'VCenter'
-    :vartype container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
-    :param protectable_object_type: Polymorphic Discriminator
+    :vartype container_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ContainerType
+    :param protectable_object_type: Constant filled by server.
     :type protectable_object_type: str
     """
 

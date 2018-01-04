@@ -30,6 +30,7 @@ class ClientDiscoveryForLogSpecification(Model):
     }
 
     def __init__(self, name=None, display_name=None, blob_duration=None):
+        super(ClientDiscoveryForLogSpecification, self).__init__()
         self.name = name
         self.display_name = display_name
         self.blob_duration = blob_duration

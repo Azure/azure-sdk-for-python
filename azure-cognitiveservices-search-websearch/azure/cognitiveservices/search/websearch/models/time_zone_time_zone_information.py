@@ -38,6 +38,7 @@ class TimeZoneTimeZoneInformation(Model):
     }
 
     def __init__(self, location, time, utc_offset):
+        super(TimeZoneTimeZoneInformation, self).__init__()
         self.location = location
         self.time = time
         self.utc_offset = utc_offset

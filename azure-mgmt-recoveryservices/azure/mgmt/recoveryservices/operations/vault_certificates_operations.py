@@ -26,6 +26,8 @@ class VaultCertificatesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -47,20 +49,16 @@ class VaultCertificatesOperations(object):
         :param certificate_name: Certificate friendly name.
         :type certificate_name: str
         :param properties:
-        :type properties: :class:`RawCertificateData
-         <azure.mgmt.recoveryservices.models.RawCertificateData>`
+        :type properties:
+         ~azure.mgmt.recoveryservices.models.RawCertificateData
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VaultCertificateResponse
-         <azure.mgmt.recoveryservices.models.VaultCertificateResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VaultCertificateResponse
-         <azure.mgmt.recoveryservices.models.VaultCertificateResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VaultCertificateResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         certificate_request = models.CertificateRequest(properties=properties)
@@ -95,7 +93,7 @@ class VaultCertificatesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

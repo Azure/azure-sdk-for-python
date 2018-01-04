@@ -15,6 +15,10 @@ from .workload_protectable_item import WorkloadProtectableItem
 class IaaSVMProtectableItem(WorkloadProtectableItem):
     """IaaS VM workload-specific backup item.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureIaaSClassicComputeVMProtectableItem,
+    AzureIaaSComputeVMProtectableItem
+
     :param backup_management_type: Type of backup managemenent to backup an
      item.
     :type backup_management_type: str
@@ -22,9 +26,9 @@ class IaaSVMProtectableItem(WorkloadProtectableItem):
     :type friendly_name: str
     :param protection_state: State of the back up item. Possible values
      include: 'Invalid', 'NotProtected', 'Protecting', 'Protected'
-    :type protection_state: str or :class:`ProtectionStatus
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionStatus>`
-    :param protectable_item_type: Polymorphic Discriminator
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
+    :param protectable_item_type: Constant filled by server.
     :type protectable_item_type: str
     :param virtual_machine_id: Fully qualified ARM ID of the virtual machine.
     :type virtual_machine_id: str

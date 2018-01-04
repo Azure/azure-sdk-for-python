@@ -12,20 +12,28 @@
 from msrest.serialization import Model
 
 
-class CreatePersonResult(Model):
-    """Result of creating person.
+class IdentifyCandidate(Model):
+    """All possible faces that may qualify.
 
-    :param person_id: personID of the new created person.
+    :param person_id: Id of candidate
     :type person_id: str
+    :param confidence: Confidence threshold of identification, used to judge
+     whether one face belong to one person. The range of confidenceThreshold is
+     [0, 1] (default specified by algorithm).
+    :type confidence: float
     """
 
     _validation = {
         'person_id': {'required': True},
+        'confidence': {'required': True},
     }
 
     _attribute_map = {
         'person_id': {'key': 'personId', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, person_id):
+    def __init__(self, person_id, confidence):
+        super(IdentifyCandidate, self).__init__()
         self.person_id = person_id
+        self.confidence = confidence

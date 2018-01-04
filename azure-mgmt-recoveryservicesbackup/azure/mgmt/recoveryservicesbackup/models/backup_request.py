@@ -16,7 +16,10 @@ class BackupRequest(Model):
     """Base class for backup request. Workload-specific backup requests are
     derived from this class.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaasVMBackupRequest
+
+    :param object_type: Constant filled by server.
     :type object_type: str
     """
 
@@ -33,4 +36,5 @@ class BackupRequest(Model):
     }
 
     def __init__(self):
+        super(BackupRequest, self).__init__()
         self.object_type = None

@@ -72,6 +72,7 @@ class PoolUsageMetrics(Model):
     }
 
     def __init__(self, pool_id, start_time, end_time, vm_size, total_core_hours, data_ingress_gi_b, data_egress_gi_b):
+        super(PoolUsageMetrics, self).__init__()
         self.pool_id = pool_id
         self.start_time = start_time
         self.end_time = end_time

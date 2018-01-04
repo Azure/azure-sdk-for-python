@@ -18,14 +18,14 @@ class AzureSqlProtectedItem(ProtectedItem):
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
      'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +36,7 @@ class AzureSqlProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param protected_item_data_id: Internal ID of a backup item. Used by Azure
      SQL Backup engine to contact Recovery Services.
@@ -44,11 +44,11 @@ class AzureSqlProtectedItem(ProtectedItem):
     :param protection_state: Backup state of the backed up item. Possible
      values include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
-    :type protection_state: str or :class:`ProtectedItemState
-     <azure.mgmt.recoveryservicesbackup.models.ProtectedItemState>`
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemState
     :param extended_info: Additional information for this backup item.
-    :type extended_info: :class:`AzureSqlProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.AzureSqlProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.AzureSqlProtectedItemExtendedInfo
     """
 
     _validation = {

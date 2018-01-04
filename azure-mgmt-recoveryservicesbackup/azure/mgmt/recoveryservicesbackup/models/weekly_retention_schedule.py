@@ -16,13 +16,13 @@ class WeeklyRetentionSchedule(Model):
     """Weekly retention schedule.
 
     :param days_of_the_week: List of days of week for weekly retention policy.
-    :type days_of_the_week: list of str or :class:`DayOfWeek
-     <azure.mgmt.recoveryservicesbackup.models.DayOfWeek>`
+    :type days_of_the_week: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.DayOfWeek]
     :param retention_times: Retention times of retention policy.
-    :type retention_times: list of datetime
+    :type retention_times: list[datetime]
     :param retention_duration: Retention duration of retention Policy.
-    :type retention_duration: :class:`RetentionDuration
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDuration>`
+    :type retention_duration:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDuration
     """
 
     _attribute_map = {
@@ -32,6 +32,7 @@ class WeeklyRetentionSchedule(Model):
     }
 
     def __init__(self, days_of_the_week=None, retention_times=None, retention_duration=None):
+        super(WeeklyRetentionSchedule, self).__init__()
         self.days_of_the_week = days_of_the_week
         self.retention_times = retention_times
         self.retention_duration = retention_duration

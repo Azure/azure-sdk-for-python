@@ -26,6 +26,8 @@ class BackupUsageSummariesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -53,10 +55,9 @@ class BackupUsageSummariesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackupManagementUsage
-         <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage>`
-        :rtype: :class:`BackupManagementUsagePaged
-         <azure.mgmt.recoveryservicesbackup.models.BackupManagementUsagePaged>`
+        :return: An iterator like instance of BackupManagementUsage
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsagePaged[~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -96,7 +97,7 @@ class BackupUsageSummariesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

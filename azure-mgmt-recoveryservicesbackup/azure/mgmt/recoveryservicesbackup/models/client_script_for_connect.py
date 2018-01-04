@@ -42,6 +42,7 @@ class ClientScriptForConnect(Model):
     }
 
     def __init__(self, script_content=None, script_extension=None, os_type=None, url=None, script_name_suffix=None):
+        super(ClientScriptForConnect, self).__init__()
         self.script_content = script_content
         self.script_extension = script_extension
         self.os_type = os_type

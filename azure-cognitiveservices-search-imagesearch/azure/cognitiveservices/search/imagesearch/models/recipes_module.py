@@ -32,4 +32,5 @@ class RecipesModule(Model):
     }
 
     def __init__(self):
+        super(RecipesModule, self).__init__()
         self.value = None

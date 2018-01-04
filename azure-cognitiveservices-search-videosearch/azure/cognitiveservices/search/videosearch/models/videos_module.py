@@ -32,4 +32,5 @@ class VideosModule(Model):
     }
 
     def __init__(self):
+        super(VideosModule, self).__init__()
         self.value = None

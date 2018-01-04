@@ -30,6 +30,7 @@ class BEKDetails(Model):
     }
 
     def __init__(self, secret_url=None, secret_vault_id=None, secret_data=None):
+        super(BEKDetails, self).__init__()
         self.secret_url = secret_url
         self.secret_vault_id = secret_vault_id
         self.secret_data = secret_data

@@ -27,5 +27,6 @@ class ImageTag(Model):
     }
 
     def __init__(self, name=None, confidence=None):
+        super(ImageTag, self).__init__()
         self.name = name
         self.confidence = confidence

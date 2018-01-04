@@ -70,6 +70,7 @@ class QueryContext(Model):
     }
 
     def __init__(self, original_query):
+        super(QueryContext, self).__init__()
         self.original_query = original_query
         self.altered_query = None
         self.alteration_override_query = None

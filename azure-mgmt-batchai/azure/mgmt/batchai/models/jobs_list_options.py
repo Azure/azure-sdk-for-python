@@ -27,6 +27,7 @@ class JobsListOptions(Model):
     """
 
     def __init__(self, filter=None, select=None, max_results=1000):
+        super(JobsListOptions, self).__init__()
         self.filter = filter
         self.select = select
         self.max_results = max_results

@@ -21,10 +21,10 @@ class MabContainerExtendedInfo(Model):
      container. Possible values include: 'Invalid', 'VM', 'FileFolder',
      'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM',
      'SystemState', 'Client', 'GenericDataSource'
-    :type backup_item_type: str or :class:`BackupItemType
-     <azure.mgmt.recoveryservicesbackup.models.BackupItemType>`
+    :type backup_item_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupItemType
     :param backup_items: List of backup items associated with this container.
-    :type backup_items: list of str
+    :type backup_items: list[str]
     :param policy_name: Backup policy associated with this container.
     :type policy_name: str
     :param last_backup_status: Latest backup status of this container.
@@ -40,6 +40,7 @@ class MabContainerExtendedInfo(Model):
     }
 
     def __init__(self, last_refreshed_at=None, backup_item_type=None, backup_items=None, policy_name=None, last_backup_status=None):
+        super(MabContainerExtendedInfo, self).__init__()
         self.last_refreshed_at = last_refreshed_at
         self.backup_item_type = backup_item_type
         self.backup_items = backup_items

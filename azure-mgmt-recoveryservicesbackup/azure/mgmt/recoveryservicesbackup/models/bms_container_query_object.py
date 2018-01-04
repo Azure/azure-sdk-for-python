@@ -18,14 +18,14 @@ class BMSContainerQueryObject(Model):
     :param backup_management_type: Backup management type for this container.
      Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param container_type: Type of container for filter. Possible values
      include: 'Invalid', 'Unknown', 'IaasVMContainer',
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
      'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter'
-    :type container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
+    :type container_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ContainerType
     :param backup_engine_name: Backup engine name
     :type backup_engine_name: str
     :param status: Status of registration of this container with the Recovery
@@ -48,6 +48,7 @@ class BMSContainerQueryObject(Model):
     }
 
     def __init__(self, backup_management_type, container_type=None, backup_engine_name=None, status=None, friendly_name=None):
+        super(BMSContainerQueryObject, self).__init__()
         self.backup_management_type = backup_management_type
         self.container_type = container_type
         self.backup_engine_name = backup_engine_name

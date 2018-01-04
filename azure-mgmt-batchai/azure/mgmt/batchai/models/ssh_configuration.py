@@ -18,10 +18,10 @@ class SshConfiguration(Model):
     :param public_ips_to_allow: List of source IP ranges to allow SSH
      connection to VM. Default value is '*' can be used to match all source
      IPs. Maximum number of publicIPs that can be specified are 400.
-    :type public_ips_to_allow: list of str
+    :type public_ips_to_allow: list[str]
     :param user_account_settings: Settings for user account of VMs.
-    :type user_account_settings: :class:`UserAccountSettings
-     <azure.mgmt.batchai.models.UserAccountSettings>`
+    :type user_account_settings:
+     ~azure.mgmt.batchai.models.UserAccountSettings
     """
 
     _validation = {
@@ -34,5 +34,6 @@ class SshConfiguration(Model):
     }
 
     def __init__(self, user_account_settings, public_ips_to_allow=None):
+        super(SshConfiguration, self).__init__()
         self.public_ips_to_allow = public_ips_to_allow
         self.user_account_settings = user_account_settings

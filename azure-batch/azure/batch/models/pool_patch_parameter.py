@@ -59,6 +59,7 @@ class PoolPatchParameter(Model):
     }
 
     def __init__(self, start_task=None, certificate_references=None, application_package_references=None, metadata=None):
+        super(PoolPatchParameter, self).__init__()
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references

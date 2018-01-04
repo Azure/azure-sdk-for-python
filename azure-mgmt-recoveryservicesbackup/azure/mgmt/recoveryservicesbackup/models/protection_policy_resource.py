@@ -29,12 +29,12 @@ class ProtectionPolicyResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: ProtectionPolicyResource properties
-    :type properties: :class:`ProtectionPolicy
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicy>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicy
     """
 
     _validation = {

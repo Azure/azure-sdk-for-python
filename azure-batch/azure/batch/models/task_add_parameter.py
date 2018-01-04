@@ -128,6 +128,7 @@ class TaskAddParameter(Model):
     }
 
     def __init__(self, id, command_line, display_name=None, container_settings=None, exit_conditions=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, multi_instance_settings=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
+        super(TaskAddParameter, self).__init__()
         self.id = id
         self.display_name = display_name
         self.command_line = command_line

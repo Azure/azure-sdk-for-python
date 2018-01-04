@@ -18,8 +18,8 @@ class BMSPOQueryObject(Model):
     :param backup_management_type: Backup management type. Possible values
      include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM', 'AzureBackupServer',
      'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param status: Backup status query parameter.
     :type status: str
     :param friendly_name: Friendly name.
@@ -33,6 +33,7 @@ class BMSPOQueryObject(Model):
     }
 
     def __init__(self, backup_management_type=None, status=None, friendly_name=None):
+        super(BMSPOQueryObject, self).__init__()
         self.backup_management_type = backup_management_type
         self.status = status
         self.friendly_name = friendly_name

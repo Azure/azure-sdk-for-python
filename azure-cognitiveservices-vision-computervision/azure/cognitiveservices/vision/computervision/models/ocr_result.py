@@ -48,6 +48,7 @@ class OcrResult(Model):
     }
 
     def __init__(self, language=None, text_angle=None, orientation=None, regions=None):
+        super(OcrResult, self).__init__()
         self.language = language
         self.text_angle = text_angle
         self.orientation = orientation
