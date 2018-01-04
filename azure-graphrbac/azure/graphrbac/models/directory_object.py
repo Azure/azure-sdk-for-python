@@ -21,6 +21,9 @@ class DirectoryObject(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar object_id: The object ID.
     :vartype object_id: str
     :ivar deletion_timestamp: The time at which the directory object was
@@ -37,6 +40,7 @@ class DirectoryObject(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
@@ -46,8 +50,9 @@ class DirectoryObject(Model):
         'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
         super(DirectoryObject, self).__init__()
+        self.additional_properties = additional_properties
         self.object_id = None
         self.deletion_timestamp = None
         self.object_type = None

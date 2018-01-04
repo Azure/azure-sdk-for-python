@@ -18,6 +18,9 @@ class User(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar object_id: The object ID.
     :vartype object_id: str
     :ivar deletion_timestamp: The time at which the directory object was
@@ -25,9 +28,6 @@ class User(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
      user account. It is used to associate an on-premises Active Directory user
@@ -67,10 +67,10 @@ class User(DirectoryObject):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'immutable_id': {'key': 'immutableId', 'type': 'str'},
         'usage_location': {'key': 'usageLocation', 'type': 'str'},
         'given_name': {'key': 'givenName', 'type': 'str'},
@@ -85,8 +85,7 @@ class User(DirectoryObject):
     }
 
     def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, user_principal_name=None, mail_nickname=None, mail=None, sign_in_names=None):
-        super(User, self).__init__()
-        self.additional_properties = additional_properties
+        super(User, self).__init__(additional_properties=additional_properties)
         self.immutable_id = immutable_id
         self.usage_location = usage_location
         self.given_name = given_name
