@@ -67,14 +67,12 @@ class RecoveryServicesBackupClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(RecoveryServicesBackupClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('recoveryservicesbackupclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-recoveryservicesbackup/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

@@ -9,37 +9,38 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .name_and_user_data_contract import NameAndUserDataContract
 
 
-class PersonResult(Model):
+class Person(NameAndUserDataContract):
     """Person object.
 
-    :param person_id: personId of the target face list.
+    :param name: User defined name, maximum length is 128.
+    :type name: str
+    :param user_data: User specified data. Length should not exceed 16KB.
+    :type user_data: str
+    :param person_id: PersonId of the target face list.
     :type person_id: str
-    :param persisted_face_ids: persistedFaceIds of registered faces in the
+    :param persisted_face_ids: PersistedFaceIds of registered faces in the
      person. These persistedFaceIds are returned from Person - Add a Person
      Face, and will not expire.
     :type persisted_face_ids: list[str]
-    :param name: Person's display name.
-    :type name: str
-    :param user_data: User-provided data attached to this person.
-    :type user_data: str
     """
 
     _validation = {
+        'name': {'max_length': 128},
+        'user_data': {'max_length': 16384},
         'person_id': {'required': True},
     }
 
     _attribute_map = {
-        'person_id': {'key': 'personId', 'type': 'str'},
-        'persisted_face_ids': {'key': 'persistedFaceIds', 'type': '[str]'},
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
+        'person_id': {'key': 'personId', 'type': 'str'},
+        'persisted_face_ids': {'key': 'persistedFaceIds', 'type': '[str]'},
     }
 
-    def __init__(self, person_id, persisted_face_ids=None, name=None, user_data=None):
+    def __init__(self, person_id, name=None, user_data=None, persisted_face_ids=None):
+        super(Person, self).__init__(name=name, user_data=user_data)
         self.person_id = person_id
         self.persisted_face_ids = persisted_face_ids
-        self.name = name
-        self.user_data = user_data

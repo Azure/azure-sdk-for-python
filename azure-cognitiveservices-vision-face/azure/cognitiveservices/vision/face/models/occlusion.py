@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class OcclusionProperties(Model):
-    """Properties describing occulusions on a given face.
+class Occlusion(Model):
+    """Properties describing occlusions on a given face.
 
     :param forehead_occluded: A boolean value indicating whether forehead is
      occluded.
@@ -32,6 +32,7 @@ class OcclusionProperties(Model):
     }
 
     def __init__(self, forehead_occluded=None, eye_occluded=None, mouth_occluded=None):
+        super(Occlusion, self).__init__()
         self.forehead_occluded = forehead_occluded
         self.eye_occluded = eye_occluded
         self.mouth_occluded = mouth_occluded

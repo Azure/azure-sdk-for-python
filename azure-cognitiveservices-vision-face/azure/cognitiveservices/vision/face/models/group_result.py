@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class GroupResponse(Model):
+class GroupResult(Model):
     """An array of face groups based on face similarity.
 
     :param groups: A partition of the original faces based on face similarity.
@@ -33,5 +33,6 @@ class GroupResponse(Model):
     }
 
     def __init__(self, groups, messy_group=None):
+        super(GroupResult, self).__init__()
         self.groups = groups
         self.messy_group = messy_group

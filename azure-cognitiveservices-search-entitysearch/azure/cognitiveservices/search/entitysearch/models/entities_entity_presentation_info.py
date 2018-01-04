@@ -48,6 +48,7 @@ class EntitiesEntityPresentationInfo(Model):
     }
 
     def __init__(self, entity_scenario="DominantEntity"):
+        super(EntitiesEntityPresentationInfo, self).__init__()
         self.entity_scenario = entity_scenario
         self.entity_type_hints = None
         self.entity_type_display_hint = None

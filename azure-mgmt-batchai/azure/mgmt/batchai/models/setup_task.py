@@ -19,8 +19,8 @@ class SetupTask(Model):
     :param command_line: Command Line to start Setup process.
     :type command_line: str
     :param environment_variables: Collection of environment settings.
-    :type environment_variables: list of :class:`EnvironmentSetting
-     <azure.mgmt.batchai.models.EnvironmentSetting>`
+    :type environment_variables:
+     list[~azure.mgmt.batchai.models.EnvironmentSetting]
     :param run_elevated: Specifies whether to run the setup task in elevated
      mode. The default value is false.  Default value: False .
     :type run_elevated: bool
@@ -42,6 +42,7 @@ class SetupTask(Model):
     }
 
     def __init__(self, command_line, std_out_err_path_prefix, environment_variables=None, run_elevated=False):
+        super(SetupTask, self).__init__()
         self.command_line = command_line
         self.environment_variables = environment_variables
         self.run_elevated = run_elevated

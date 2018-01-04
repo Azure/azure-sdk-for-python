@@ -25,6 +25,8 @@ class ComputeNodeOperations(object):
     :ivar api_version: Client API Version. Constant value: "2017-09-01.6.0".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -111,7 +113,7 @@ class ComputeNodeOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -185,7 +187,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -201,7 +203,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -299,7 +301,7 @@ class ComputeNodeOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -373,7 +375,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -389,7 +391,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -428,21 +430,9 @@ class ComputeNodeOperations(object):
         :type compute_node_reboot_options:
          ~azure.batch.models.ComputeNodeRebootOptions
         :param node_reboot_option: When to reboot the compute node and what to
-         do with currently running tasks. Values are:
-         requeue - Terminate running task processes and requeue the tasks. The
-         tasks will run again when a node is available. Restart the node as
-         soon as tasks have been terminated.
-         terminate - Terminate running tasks. The tasks will not run again.
-         Restart the node as soon as tasks have been terminated.
-         taskcompletion - Allow currently running tasks to complete. Schedule
-         no new tasks while waiting. Restart the node when all tasks have
-         completed.
-         retaineddata - Allow currently running tasks to complete, then wait
-         for all task data retention periods to expire. Schedule no new tasks
-         while waiting. Restart the node when all task retention periods have
-         expired.
-         The default value is requeue. Possible values include: 'requeue',
-         'terminate', 'taskCompletion', 'retainedData'
+         do with currently running tasks. The default value is requeue.
+         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+         'retainedData'
         :type node_reboot_option: str or
          ~azure.batch.models.ComputeNodeRebootOption
         :param dict custom_headers: headers that will be added to the request
@@ -510,7 +500,7 @@ class ComputeNodeOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -543,21 +533,9 @@ class ComputeNodeOperations(object):
         :type compute_node_reimage_options:
          ~azure.batch.models.ComputeNodeReimageOptions
         :param node_reimage_option: When to reimage the compute node and what
-         to do with currently running tasks. Values are:
-         requeue - Terminate running task processes and requeue the tasks. The
-         tasks will run again when a node is available. Reimage the node as
-         soon as tasks have been terminated.
-         terminate - Terminate running tasks. The tasks will not run again.
-         Reimage the node as soon as tasks have been terminated.
-         taskcompletion - Allow currently running tasks to complete. Schedule
-         no new tasks while waiting. Reimage the node when all tasks have
-         completed.
-         retaineddata - Allow currently running tasks to complete, then wait
-         for all task data retention periods to expire. Schedule no new tasks
-         while waiting. Reimage the node when all task retention periods have
-         expired.
-         The default value is requeue. Possible values include: 'requeue',
-         'terminate', 'taskCompletion', 'retainedData'
+         to do with currently running tasks. The default value is requeue.
+         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+         'retainedData'
         :type node_reimage_option: str or
          ~azure.batch.models.ComputeNodeReimageOption
         :param dict custom_headers: headers that will be added to the request
@@ -625,7 +603,7 @@ class ComputeNodeOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -658,18 +636,8 @@ class ComputeNodeOperations(object):
         :type compute_node_disable_scheduling_options:
          ~azure.batch.models.ComputeNodeDisableSchedulingOptions
         :param node_disable_scheduling_option: What to do with currently
-         running tasks when disabling task scheduling on the compute node.
-         Values are:
-         requeue - Terminate running task processes and requeue the tasks. The
-         tasks may run again on other compute nodes, or when task scheduling is
-         re-enabled on this node. Enter offline state as soon as tasks have
-         been terminated.
-         terminate - Terminate running tasks. The tasks will not run again.
-         Enter offline state as soon as tasks have been terminated.
-         taskcompletion - Allow currently running tasks to complete. Schedule
-         no new tasks while waiting. Enter offline state when all tasks have
-         completed.
-         The default value is requeue. Possible values include: 'requeue',
+         running tasks when disabling task scheduling on the compute node. The
+         default value is requeue. Possible values include: 'requeue',
          'terminate', 'taskCompletion'
         :type node_disable_scheduling_option: str or
          ~azure.batch.models.DisableComputeNodeSchedulingOption
@@ -738,7 +706,7 @@ class ComputeNodeOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -809,7 +777,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -825,7 +793,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -901,7 +869,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -917,7 +885,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1003,7 +971,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1019,7 +987,7 @@ class ComputeNodeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1114,7 +1082,7 @@ class ComputeNodeOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1131,7 +1099,7 @@ class ComputeNodeOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)

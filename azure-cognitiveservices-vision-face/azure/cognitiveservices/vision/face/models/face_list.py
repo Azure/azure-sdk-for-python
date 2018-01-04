@@ -9,38 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .name_and_user_data_contract import NameAndUserDataContract
 
 
-class GetFaceListResult(Model):
-    """Result of the GetFaceList operation.
+class FaceList(NameAndUserDataContract):
+    """Face list object.
 
-    :param face_list_id: faceListId of the target face list.
-    :type face_list_id: str
-    :param name: Face list's display name.
+    :param name: User defined name, maximum length is 128.
     :type name: str
-    :param user_data: User-provided data attached to this face list.
+    :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
+    :param face_list_id: FaceListId of the target face list.
+    :type face_list_id: str
     :param persisted_faces: Persisted faces within the face list.
     :type persisted_faces:
-     list[~azure.cognitiveservices.vision.face.models.PersonFaceResult]
+     list[~azure.cognitiveservices.vision.face.models.PersistedFace]
     """
 
     _validation = {
-        'face_list_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'name': {'max_length': 128},
         'user_data': {'max_length': 16384},
+        'face_list_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
-        'face_list_id': {'key': 'faceListId', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
-        'persisted_faces': {'key': 'persistedFaces', 'type': '[PersonFaceResult]'},
+        'face_list_id': {'key': 'faceListId', 'type': 'str'},
+        'persisted_faces': {'key': 'persistedFaces', 'type': '[PersistedFace]'},
     }
 
     def __init__(self, face_list_id, name=None, user_data=None, persisted_faces=None):
+        super(FaceList, self).__init__(name=name, user_data=user_data)
         self.face_list_id = face_list_id
-        self.name = name
-        self.user_data = user_data
         self.persisted_faces = persisted_faces

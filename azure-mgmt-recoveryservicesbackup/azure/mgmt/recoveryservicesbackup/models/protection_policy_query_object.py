@@ -18,8 +18,8 @@ class ProtectionPolicyQueryObject(Model):
     :param backup_management_type: Backup management type for the backup
      policy. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     """
 
     _attribute_map = {
@@ -27,4 +27,5 @@ class ProtectionPolicyQueryObject(Model):
     }
 
     def __init__(self, backup_management_type=None):
+        super(ProtectionPolicyQueryObject, self).__init__()
         self.backup_management_type = backup_management_type

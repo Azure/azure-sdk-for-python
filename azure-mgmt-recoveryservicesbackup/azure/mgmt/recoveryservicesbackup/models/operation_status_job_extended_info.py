@@ -15,7 +15,7 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
     """Operation status job extended info.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param job_id: ID of the job created for this protected item.
     :type job_id: str

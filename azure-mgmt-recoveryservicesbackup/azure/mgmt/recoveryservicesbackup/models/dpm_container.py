@@ -23,8 +23,8 @@ class DpmContainer(ProtectionContainer):
     :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Status of registration of the container with
      the Recovery Services Vault.
     :type registration_status: str
@@ -38,9 +38,9 @@ class DpmContainer(ProtectionContainer):
      'IaasVMContainer', 'IaasVMServiceContainer', 'DPMContainer',
      'AzureBackupServerContainer', 'MABContainer', 'Cluster',
      'AzureSqlContainer', 'Windows', 'VCenter'
-    :vartype container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
-    :param protectable_object_type: Polymorphic Discriminator
+    :vartype container_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ContainerType
+    :param protectable_object_type: Constant filled by server.
     :type protectable_object_type: str
     :param can_re_register: Specifies whether the container is re-registrable.
     :type can_re_register: bool
@@ -51,14 +51,14 @@ class DpmContainer(ProtectionContainer):
     :param dpm_agent_version: Backup engine Agent version
     :type dpm_agent_version: str
     :param dpm_servers: List of BackupEngines protecting the container
-    :type dpm_servers: list of str
+    :type dpm_servers: list[str]
     :param upgrade_available: To check if upgrade available
     :type upgrade_available: bool
     :param protection_status: Protection status of the container.
     :type protection_status: str
     :param extended_info: Extended Info of the container.
-    :type extended_info: :class:`DPMContainerExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.DPMContainerExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.DPMContainerExtendedInfo
     """
 
     _validation = {

@@ -16,10 +16,10 @@ class DpmJobExtendedInfo(Model):
     """Additional information on the DPM workload-specific job.
 
     :param tasks_list: List of tasks associated with this job.
-    :type tasks_list: list of :class:`DpmJobTaskDetails
-     <azure.mgmt.recoveryservicesbackup.models.DpmJobTaskDetails>`
+    :type tasks_list:
+     list[~azure.mgmt.recoveryservicesbackup.models.DpmJobTaskDetails]
     :param property_bag: The job properties.
-    :type property_bag: dict
+    :type property_bag: dict[str, str]
     :param dynamic_error_message: Non localized error message on job
      execution.
     :type dynamic_error_message: str
@@ -32,6 +32,7 @@ class DpmJobExtendedInfo(Model):
     }
 
     def __init__(self, tasks_list=None, property_bag=None, dynamic_error_message=None):
+        super(DpmJobExtendedInfo, self).__init__()
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.dynamic_error_message = dynamic_error_message

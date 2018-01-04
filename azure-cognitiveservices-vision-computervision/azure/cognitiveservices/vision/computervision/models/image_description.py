@@ -36,6 +36,7 @@ class ImageDescription(Model):
     }
 
     def __init__(self, tags=None, captions=None, request_id=None, metadata=None):
+        super(ImageDescription, self).__init__()
         self.tags = tags
         self.captions = captions
         self.request_id = request_id

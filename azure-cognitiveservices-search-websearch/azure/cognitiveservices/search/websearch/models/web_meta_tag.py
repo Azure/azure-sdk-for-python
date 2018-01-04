@@ -35,5 +35,6 @@ class WebMetaTag(Model):
     }
 
     def __init__(self):
+        super(WebMetaTag, self).__init__()
         self.name = None
         self.content = None

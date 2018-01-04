@@ -20,12 +20,8 @@ class DataDisk(Model):
      each data disk. If attaching multiple disks, each should have a distinct
      lun.
     :type lun: int
-    :param caching: The type of caching to be enabled for the data disks.
-     Values are:
-     none - The caching mode for the disk is not enabled.
-     readOnly - The caching mode for the disk is read only.
-     readWrite - The caching mode for the disk is read and write.
-     The default value for caching is none. For information about the caching
+    :param caching: The type of caching to be enabled for the data disks. The
+     default value for caching is none. For information about the caching
      options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
@@ -33,11 +29,8 @@ class DataDisk(Model):
     :param disk_size_gb: The initial disk size in gigabytes.
     :type disk_size_gb: int
     :param storage_account_type: The storage account type to be used for the
-     data disk. If omitted, the default is "Standard_LRS". Values are:
-     Standard_LRS - The data disk should use standard locally redundant
-     storage.
-     Premium_LRS - The data disk should use premium locally redundant storage.
-     Possible values include: 'Standard_LRS', 'Premium_LRS'
+     data disk. If omitted, the default is "standard_lrs". Possible values
+     include: 'StandardLRS', 'PremiumLRS'
     :type storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
@@ -54,6 +47,7 @@ class DataDisk(Model):
     }
 
     def __init__(self, lun, disk_size_gb, caching=None, storage_account_type=None):
+        super(DataDisk, self).__init__()
         self.lun = lun
         self.caching = caching
         self.disk_size_gb = disk_size_gb

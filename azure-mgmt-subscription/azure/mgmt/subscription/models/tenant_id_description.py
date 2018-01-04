@@ -37,5 +37,6 @@ class TenantIdDescription(Model):
     }
 
     def __init__(self):
+        super(TenantIdDescription, self).__init__()
         self.id = None
         self.tenant_id = None

@@ -33,5 +33,6 @@ class TrendingVideosTile(Model):
     }
 
     def __init__(self, query, image):
+        super(TrendingVideosTile, self).__init__()
         self.query = query
         self.image = image

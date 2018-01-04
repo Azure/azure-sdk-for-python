@@ -28,5 +28,6 @@ class ImageType(Model):
     }
 
     def __init__(self, clip_art_type=None, line_drawing_type=None):
+        super(ImageType, self).__init__()
         self.clip_art_type = clip_art_type
         self.line_drawing_type = line_drawing_type

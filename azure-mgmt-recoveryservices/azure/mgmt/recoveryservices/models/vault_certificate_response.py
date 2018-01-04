@@ -23,8 +23,8 @@ class VaultCertificateResponse(Model):
     :param id:
     :type id: str
     :param properties:
-    :type properties: :class:`ResourceCertificateDetails
-     <azure.mgmt.recoveryservices.models.ResourceCertificateDetails>`
+    :type properties:
+     ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
     """
 
     _attribute_map = {
@@ -35,6 +35,7 @@ class VaultCertificateResponse(Model):
     }
 
     def __init__(self, name=None, type=None, id=None, properties=None):
+        super(VaultCertificateResponse, self).__init__()
         self.name = name
         self.type = type
         self.id = id

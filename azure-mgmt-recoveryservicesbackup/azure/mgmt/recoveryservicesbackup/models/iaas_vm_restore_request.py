@@ -15,14 +15,14 @@ from .restore_request import RestoreRequest
 class IaasVMRestoreRequest(RestoreRequest):
     """IaaS VM workload-specific restore.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param recovery_point_id: ID of the backup copy to be recovered.
     :type recovery_point_id: str
     :param recovery_type: Type of this recovery. Possible values include:
      'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
-    :type recovery_type: str or :class:`RecoveryType
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryType>`
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM which is being
      recovered.
     :type source_resource_id: str
@@ -64,8 +64,8 @@ class IaasVMRestoreRequest(RestoreRequest):
     :type original_storage_account_option: bool
     :param encryption_details: Details needed if the VM was encrypted at the
      time of backup.
-    :type encryption_details: :class:`EncryptionDetails
-     <azure.mgmt.recoveryservicesbackup.models.EncryptionDetails>`
+    :type encryption_details:
+     ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
     """
 
     _validation = {

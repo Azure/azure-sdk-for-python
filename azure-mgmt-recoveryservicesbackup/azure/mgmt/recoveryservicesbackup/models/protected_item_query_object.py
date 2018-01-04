@@ -17,18 +17,18 @@ class ProtectedItemQueryObject(Model):
 
     :param health_state: Health State for the backed up item. Possible values
      include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
-    :type health_state: str or :class:`HealthState
-     <azure.mgmt.recoveryservicesbackup.models.HealthState>`
+    :type health_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthState
     :param backup_management_type: Backup management type for the backed up
      item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param item_type: Type of workload this item represents. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
      'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource'
-    :type item_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+    :type item_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param policy_name: Backup policy name associated with the backup item.
     :type policy_name: str
     :param container_name: Name of the container.
@@ -50,6 +50,7 @@ class ProtectedItemQueryObject(Model):
     }
 
     def __init__(self, health_state=None, backup_management_type=None, item_type=None, policy_name=None, container_name=None, backup_engine_name=None, friendly_name=None):
+        super(ProtectedItemQueryObject, self).__init__()
         self.health_state = health_state
         self.backup_management_type = backup_management_type
         self.item_type = item_type

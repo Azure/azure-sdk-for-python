@@ -58,6 +58,7 @@ class ImageAnalysis(Model):
     }
 
     def __init__(self, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, request_id=None, metadata=None):
+        super(ImageAnalysis, self).__init__()
         self.categories = categories
         self.adult = adult
         self.color = color

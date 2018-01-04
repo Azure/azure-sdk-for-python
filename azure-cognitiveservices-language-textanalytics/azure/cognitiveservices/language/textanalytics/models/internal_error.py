@@ -31,6 +31,7 @@ class InternalError(Model):
     }
 
     def __init__(self, code=None, message=None, inner_error=None):
+        super(InternalError, self).__init__()
         self.code = code
         self.message = message
         self.inner_error = inner_error

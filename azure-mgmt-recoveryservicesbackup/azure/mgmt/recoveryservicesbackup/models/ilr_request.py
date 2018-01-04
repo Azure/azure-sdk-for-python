@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ILRRequest(Model):
     """Parameters to restore file/folders API.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaasVMILRRegistrationRequest
+
+    :param object_type: Constant filled by server.
     :type object_type: str
     """
 
@@ -32,4 +35,5 @@ class ILRRequest(Model):
     }
 
     def __init__(self):
+        super(ILRRequest, self).__init__()
         self.object_type = None

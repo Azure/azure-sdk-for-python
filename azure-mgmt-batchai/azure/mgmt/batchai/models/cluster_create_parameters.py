@@ -18,7 +18,7 @@ class ClusterCreateParameters(Model):
     :param location: The region in which to create the cluster.
     :type location: str
     :param tags: The user specified tags associated with the Cluster.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param vm_size: The size of the virtual machines in the cluster. All
      virtual machines in a cluster are the same size. For information about
      available VM sizes for clusters using images from the Virtual Machines
@@ -30,23 +30,21 @@ class ClusterCreateParameters(Model):
     :param vm_priority: dedicated or lowpriority. Default is dedicated.
      Possible values include: 'dedicated', 'lowpriority'. Default value:
      "dedicated" .
-    :type vm_priority: str or :class:`VmPriority
-     <azure.mgmt.batchai.models.VmPriority>`
+    :type vm_priority: str or ~azure.mgmt.batchai.models.VmPriority
     :param scale_settings: Desired scale for the cluster.
-    :type scale_settings: :class:`ScaleSettings
-     <azure.mgmt.batchai.models.ScaleSettings>`
+    :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
     :param virtual_machine_configuration: Settings for OS image and mounted
      data volumes.
-    :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <azure.mgmt.batchai.models.VirtualMachineConfiguration>`
+    :type virtual_machine_configuration:
+     ~azure.mgmt.batchai.models.VirtualMachineConfiguration
     :param node_setup: Setup to be done on all compute nodes in the cluster.
-    :type node_setup: :class:`NodeSetup <azure.mgmt.batchai.models.NodeSetup>`
+    :type node_setup: ~azure.mgmt.batchai.models.NodeSetup
     :param user_account_settings: Settings for user account that will be
      created on all compute nodes of the cluster.
-    :type user_account_settings: :class:`UserAccountSettings
-     <azure.mgmt.batchai.models.UserAccountSettings>`
+    :type user_account_settings:
+     ~azure.mgmt.batchai.models.UserAccountSettings
     :param subnet: Specifies the identifier of the subnet. .
-    :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 
     _validation = {
@@ -68,6 +66,7 @@ class ClusterCreateParameters(Model):
     }
 
     def __init__(self, location, vm_size, user_account_settings, tags=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, subnet=None):
+        super(ClusterCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.vm_size = vm_size

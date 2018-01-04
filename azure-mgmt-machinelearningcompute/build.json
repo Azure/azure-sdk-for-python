@@ -4,91 +4,7 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4216",
-        "engines": {
-          "node": ">=7.10.0"
-        },
-        "dependencies": {},
-        "optionalDependencies": {},
-        "devDependencies": {
-          "@types/commonmark": "^0.27.0",
-          "@types/js-yaml": "^3.10.0",
-          "@types/jsonpath": "^0.1.29",
-          "@types/node": "^8.0.53",
-          "@types/source-map": "^0.5.0",
-          "@types/yargs": "^8.0.2",
-          "dts-generator": "^2.1.0",
-          "mocha": "^4.0.1",
-          "mocha-typescript": "^1.1.7",
-          "shx": "0.2.2",
-          "static-link": "^0.2.3",
-          "vscode-jsonrpc": "^3.3.1"
-        },
-        "bundleDependencies": false,
-        "peerDependencies": {},
-        "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "f6b97454df552dfa54bd0df23f8309665be5fd4c",
-        "_shrinkwrap": null,
-        "bin": {
-          "autorest-core": "./dist/app.js",
-          "autorest-language-service": "dist/language-service/language-service.js"
-        },
-        "_id": "@microsoft.azure/autorest-core@2.0.4216",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-        "_requested": {
-          "type": "directory",
-          "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core"
-        },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core"
-      },
-      "extensionManager": {
-        "installationPath": "/root/.autorest",
-        "sharedLock": {
-          "name": "/root/.autorest",
-          "exclusiveLock": {
-            "name": "_root_.autorest.exclusive-lock",
-            "options": {
-              "port": 45234,
-              "host": "2130706813",
-              "exclusive": true
-            },
-            "pipe": "/tmp/pipe__root_.autorest.exclusive-lock:45234"
-          },
-          "busyLock": {
-            "name": "_root_.autorest.busy-lock",
-            "options": {
-              "port": 37199,
-              "host": "2130756895",
-              "exclusive": true
-            },
-            "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
-          },
-          "personalLock": {
-            "name": "_root_.autorest.4917.853247711377.personal-lock",
-            "options": {
-              "port": 48709,
-              "host": "2130746962",
-              "exclusive": true
-            },
-            "pipe": "/tmp/pipe__root_.autorest.4917.853247711377.personal-lock:48709"
-          },
-          "file": "/tmp/_root_.autorest.lock"
-        },
-        "dotnetPath": "/root/.dotnet"
-      },
-      "installationPath": "/root/.autorest"
-    },
-    {
-      "resolvedInfo": null,
-      "packageMetadata": {
-        "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4227",
+        "version": "2.0.4228",
         "engines": {
           "node": ">=7.10.0"
         },
@@ -112,25 +28,25 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "d29217f10a534571f15f28ad2556c308726c5e0e",
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "b3897b8615417aa07cf9113d4bd18862b32f82f8",
         "_shrinkwrap": null,
         "bin": {
           "autorest-core": "./dist/app.js",
           "autorest-language-service": "dist/language-service/language-service.js"
         },
-        "_id": "@microsoft.azure/autorest-core@2.0.4227",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
+        "_id": "@microsoft.azure/autorest-core@2.0.4228",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
         "_requested": {
           "type": "directory",
           "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core"
+          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core"
         },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core",
-        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4227/node_modules/@microsoft.azure/autorest-core"
+        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core"
       },
       "extensionManager": {
         "installationPath": "/root/.autorest",
@@ -155,13 +71,98 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.4917.853247711377.personal-lock",
+            "name": "_root_.autorest.4414.063182213031.personal-lock",
             "options": {
-              "port": 48709,
-              "host": "2130746962",
+              "port": 13884,
+              "host": "2130739358",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.4917.853247711377.personal-lock:48709"
+            "pipe": "/tmp/pipe__root_.autorest.4414.063182213031.personal-lock:13884"
+          },
+          "file": "/tmp/_root_.autorest.lock"
+        },
+        "dotnetPath": "/root/.dotnet"
+      },
+      "installationPath": "/root/.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest-core",
+        "version": "2.0.4229",
+        "engines": {
+          "node": ">=7.10.0"
+        },
+        "dependencies": {},
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@types/commonmark": "^0.27.0",
+          "@types/js-yaml": "^3.10.0",
+          "@types/jsonpath": "^0.1.29",
+          "@types/node": "^8.0.53",
+          "@types/source-map": "^0.5.0",
+          "@types/yargs": "^8.0.2",
+          "@types/z-schema": "^3.16.31",
+          "dts-generator": "^2.1.0",
+          "mocha": "^4.0.1",
+          "mocha-typescript": "^1.1.7",
+          "shx": "0.2.2",
+          "static-link": "^0.2.3",
+          "vscode-jsonrpc": "^3.3.1"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "c19c0ee74fe38c5197be2e965cd729a633166ae0",
+        "_shrinkwrap": null,
+        "bin": {
+          "autorest-core": "./dist/app.js",
+          "autorest-language-service": "dist/language-service/language-service.js"
+        },
+        "_id": "@microsoft.azure/autorest-core@2.0.4229",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+        "_requested": {
+          "type": "directory",
+          "where": "/git-restapi",
+          "raw": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core"
+        },
+        "_spec": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core",
+        "_where": "/root/.autorest/@microsoft.azure_autorest-core@2.0.4229/node_modules/@microsoft.azure/autorest-core"
+      },
+      "extensionManager": {
+        "installationPath": "/root/.autorest",
+        "sharedLock": {
+          "name": "/root/.autorest",
+          "exclusiveLock": {
+            "name": "_root_.autorest.exclusive-lock",
+            "options": {
+              "port": 45234,
+              "host": "2130706813",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.exclusive-lock:45234"
+          },
+          "busyLock": {
+            "name": "_root_.autorest.busy-lock",
+            "options": {
+              "port": 37199,
+              "host": "2130756895",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
+          },
+          "personalLock": {
+            "name": "_root_.autorest.4414.063182213031.personal-lock",
+            "options": {
+              "port": 13884,
+              "host": "2130739358",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.4414.063182213031.personal-lock:13884"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -237,13 +238,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.4917.853247711377.personal-lock",
+            "name": "_root_.autorest.4414.063182213031.personal-lock",
             "options": {
-              "port": 48709,
-              "host": "2130746962",
+              "port": 13884,
+              "host": "2130739358",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.4917.853247711377.personal-lock:48709"
+            "pipe": "/tmp/pipe__root_.autorest.4414.063182213031.personal-lock:13884"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -321,13 +322,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.4917.853247711377.personal-lock",
+            "name": "_root_.autorest.4414.063182213031.personal-lock",
             "options": {
-              "port": 48709,
-              "host": "2130746962",
+              "port": 13884,
+              "host": "2130739358",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.4917.853247711377.personal-lock:48709"
+            "pipe": "/tmp/pipe__root_.autorest.4414.063182213031.personal-lock:13884"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -339,7 +340,7 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest.python",
-        "version": "2.1.28",
+        "version": "2.1.34",
         "dependencies": {
           "dotnet-2.0.0": "^1.4.4"
         },
@@ -365,22 +366,22 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
-        "_shasum": "864acf40daff5c5e073f0e7da55597c3a7994469",
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+        "_shasum": "b58d7e0542e081cf410fdbcdf8c14acf9cee16a7",
         "_shrinkwrap": null,
         "bin": null,
-        "_id": "@microsoft.azure/autorest.python@2.1.28",
-        "_from": "file:/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
+        "_id": "@microsoft.azure/autorest.python@2.1.34",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
         "_requested": {
           "type": "directory",
           "where": "/git-restapi",
-          "raw": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
-          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
-          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
-          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python"
+          "raw": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python"
         },
-        "_spec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python",
-        "_where": "/root/.autorest/@microsoft.azure_autorest.python@2.1.28/node_modules/@microsoft.azure/autorest.python"
+        "_spec": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+        "_where": "/root/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python"
       },
       "extensionManager": {
         "installationPath": "/root/.autorest",
@@ -405,13 +406,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.4917.853247711377.personal-lock",
+            "name": "_root_.autorest.4414.063182213031.personal-lock",
             "options": {
-              "port": 48709,
-              "host": "2130746962",
+              "port": 13884,
+              "host": "2130739358",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.4917.853247711377.personal-lock:48709"
+            "pipe": "/tmp/pipe__root_.autorest.4414.063182213031.personal-lock:13884"
           },
           "file": "/tmp/_root_.autorest.lock"
         },

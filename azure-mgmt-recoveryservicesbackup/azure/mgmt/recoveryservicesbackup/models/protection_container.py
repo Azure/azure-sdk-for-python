@@ -16,6 +16,10 @@ class ProtectionContainer(Model):
     """Base class for container with backup items. Containers with specific
     workloads are derived from this class.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureBackupServerContainer, AzureSqlContainer,
+    DpmContainer, IaaSVMContainer, MabContainer
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -24,8 +28,8 @@ class ProtectionContainer(Model):
     :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Status of registration of the container with
      the Recovery Services Vault.
     :type registration_status: str
@@ -39,9 +43,9 @@ class ProtectionContainer(Model):
      'IaasVMContainer', 'IaasVMServiceContainer', 'DPMContainer',
      'AzureBackupServerContainer', 'MABContainer', 'Cluster',
      'AzureSqlContainer', 'Windows', 'VCenter'
-    :vartype container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
-    :param protectable_object_type: Polymorphic Discriminator
+    :vartype container_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ContainerType
+    :param protectable_object_type: Constant filled by server.
     :type protectable_object_type: str
     """
 
@@ -64,6 +68,7 @@ class ProtectionContainer(Model):
     }
 
     def __init__(self, friendly_name=None, backup_management_type=None, registration_status=None, health_status=None):
+        super(ProtectionContainer, self).__init__()
         self.friendly_name = friendly_name
         self.backup_management_type = backup_management_type
         self.registration_status = registration_status

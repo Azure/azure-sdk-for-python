@@ -43,6 +43,7 @@ class NodeRemoveParameter(Model):
     }
 
     def __init__(self, node_list, resize_timeout=None, node_deallocation_option=None):
+        super(NodeRemoveParameter, self).__init__()
         self.node_list = node_list
         self.resize_timeout = resize_timeout
         self.node_deallocation_option = node_deallocation_option

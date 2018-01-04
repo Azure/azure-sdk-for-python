@@ -27,5 +27,6 @@ class ImageCaption(Model):
     }
 
     def __init__(self, text=None, confidence=None):
+        super(ImageCaption, self).__init__()
         self.text = text
         self.confidence = confidence

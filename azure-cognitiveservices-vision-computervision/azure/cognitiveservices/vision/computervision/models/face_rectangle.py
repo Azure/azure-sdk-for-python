@@ -33,6 +33,7 @@ class FaceRectangle(Model):
     }
 
     def __init__(self, left=None, top=None, width=None, height=None):
+        super(FaceRectangle, self).__init__()
         self.left = left
         self.top = top
         self.width = width

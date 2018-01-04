@@ -16,7 +16,10 @@ class RestoreRequest(Model):
     """Base class for restore request. Workload-specific restore requests are
     derived from this class.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaasVMRestoreRequest
+
+    :param object_type: Constant filled by server.
     :type object_type: str
     """
 
@@ -33,4 +36,5 @@ class RestoreRequest(Model):
     }
 
     def __init__(self):
+        super(RestoreRequest, self).__init__()
         self.object_type = None

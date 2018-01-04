@@ -26,6 +26,8 @@ class RestoresOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -57,18 +59,15 @@ class RestoresOperations(object):
          backed up data to be restored.
         :type recovery_point_id: str
         :param parameters: resource restore request
-        :type parameters: :class:`RestoreRequestResource
-         <azure.mgmt.recoveryservicesbackup.models.RestoreRequestResource>`
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.models.RestoreRequestResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -104,7 +103,7 @@ class RestoresOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)

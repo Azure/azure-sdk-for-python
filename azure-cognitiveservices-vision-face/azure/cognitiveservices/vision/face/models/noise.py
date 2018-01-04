@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class NoiseProperties(Model):
+class Noise(Model):
     """Properties describing noise level of the image.
 
     :param noise_level: An enum value indicating level of noise. Possible
      values include: 'Low', 'Medium', 'High'
     :type noise_level: str or
-     ~azure.cognitiveservices.vision.face.models.NoiseLevels
+     ~azure.cognitiveservices.vision.face.models.NoiseLevel
     :param value: A number indicating level of noise level ranging from 0 to
      1. [0, 0.25) is under exposure. [0.25, 0.75) is good exposure. [0.75, 1]
      is over exposure. [0, 0.3) is low noise level. [0.3, 0.7) is medium noise
@@ -26,15 +26,12 @@ class NoiseProperties(Model):
     :type value: float
     """
 
-    _validation = {
-        'value': {'maximum': 1, 'minimum': 0},
-    }
-
     _attribute_map = {
-        'noise_level': {'key': 'noiseLevel', 'type': 'NoiseLevels'},
+        'noise_level': {'key': 'noiseLevel', 'type': 'NoiseLevel'},
         'value': {'key': 'value', 'type': 'float'},
     }
 
     def __init__(self, noise_level=None, value=None):
+        super(Noise, self).__init__()
         self.noise_level = noise_level
         self.value = value

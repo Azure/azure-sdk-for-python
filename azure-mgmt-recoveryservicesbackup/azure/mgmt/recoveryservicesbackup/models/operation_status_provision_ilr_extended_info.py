@@ -15,11 +15,11 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for ILR provision action.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param recovery_target: Target details for file / folder restore.
-    :type recovery_target: :class:`InstantItemRecoveryTarget
-     <azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget>`
+    :type recovery_target:
+     ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
     """
 
     _validation = {

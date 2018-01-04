@@ -37,5 +37,6 @@ class KeyPhraseBatchResultItem(Model):
     }
 
     def __init__(self):
+        super(KeyPhraseBatchResultItem, self).__init__()
         self.key_phrases = None
         self.id = None

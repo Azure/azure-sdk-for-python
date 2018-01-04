@@ -12,26 +12,30 @@
 from msrest.serialization import Model
 
 
-class IdentifyResultItem(Model):
+class IdentifyResult(Model):
     """Response body for identify face operation.
 
-    :param face_id: faceId of the query face
+    :param face_id: FaceId of the query face
     :type face_id: str
-    :param candidates:
+    :param candidates: Identified person candidates for that face (ranked by
+     confidence). Array size should be no larger than input
+     maxNumOfCandidatesReturned. If no person is identified, will return an
+     empty array.
     :type candidates:
-     list[~azure.cognitiveservices.vision.face.models.IdentifyResultCandidate]
+     list[~azure.cognitiveservices.vision.face.models.IdentifyCandidate]
     """
 
     _validation = {
-        'face_id': {'required': True, 'max_length': 64},
+        'face_id': {'required': True},
         'candidates': {'required': True},
     }
 
     _attribute_map = {
         'face_id': {'key': 'faceId', 'type': 'str'},
-        'candidates': {'key': 'candidates', 'type': '[IdentifyResultCandidate]'},
+        'candidates': {'key': 'candidates', 'type': '[IdentifyCandidate]'},
     }
 
     def __init__(self, face_id, candidates):
+        super(IdentifyResult, self).__init__()
         self.face_id = face_id
         self.candidates = candidates

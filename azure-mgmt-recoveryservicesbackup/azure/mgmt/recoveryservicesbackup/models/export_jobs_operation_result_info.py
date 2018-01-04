@@ -15,7 +15,7 @@ from .operation_result_info_base import OperationResultInfoBase
 class ExportJobsOperationResultInfo(OperationResultInfoBase):
     """This class is used to send blob details after exporting jobs.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param blob_url: URL of the blob into which the serialized string of list
      of jobs is exported.

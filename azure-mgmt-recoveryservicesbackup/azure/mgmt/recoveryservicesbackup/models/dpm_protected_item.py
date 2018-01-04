@@ -18,14 +18,14 @@ class DPMProtectedItem(ProtectedItem):
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
      'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +36,7 @@ class DPMProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the managed item
     :type friendly_name: str
@@ -46,14 +46,14 @@ class DPMProtectedItem(ProtectedItem):
     :param protection_state: Protection state of the backupengine. Possible
      values include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
-    :type protection_state: str or :class:`ProtectedItemState
-     <azure.mgmt.recoveryservicesbackup.models.ProtectedItemState>`
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemState
     :param is_scheduled_for_deferred_delete: To check if backup item is
      scheduled for deferred delete
     :type is_scheduled_for_deferred_delete: bool
     :param extended_info: Extended info of the backup item.
-    :type extended_info: :class:`DPMProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.DPMProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.DPMProtectedItemExtendedInfo
     """
 
     _validation = {

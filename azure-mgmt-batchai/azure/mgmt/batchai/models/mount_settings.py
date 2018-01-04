@@ -24,8 +24,7 @@ class MountSettings(Model):
     :type file_server_internal_ip: str
     :param file_server_type: Type of the fileserver e.g. nfs, glusterfs etc.
      Possible values include: 'nfs', 'glusterfs'
-    :type file_server_type: str or :class:`FileServerType
-     <azure.mgmt.batchai.models.FileServerType>`
+    :type file_server_type: str or ~azure.mgmt.batchai.models.FileServerType
     """
 
     _attribute_map = {
@@ -36,6 +35,7 @@ class MountSettings(Model):
     }
 
     def __init__(self, mount_point=None, file_server_public_ip=None, file_server_internal_ip=None, file_server_type=None):
+        super(MountSettings, self).__init__()
         self.mount_point = mount_point
         self.file_server_public_ip = file_server_public_ip
         self.file_server_internal_ip = file_server_internal_ip

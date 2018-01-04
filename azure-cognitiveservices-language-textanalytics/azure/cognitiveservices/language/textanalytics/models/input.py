@@ -27,5 +27,6 @@ class Input(Model):
     }
 
     def __init__(self, id=None, text=None):
+        super(Input, self).__init__()
         self.id = id
         self.text = text

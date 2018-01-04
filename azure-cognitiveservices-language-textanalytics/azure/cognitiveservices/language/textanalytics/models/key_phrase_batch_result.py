@@ -37,5 +37,6 @@ class KeyPhraseBatchResult(Model):
     }
 
     def __init__(self):
+        super(KeyPhraseBatchResult, self).__init__()
         self.documents = None
         self.errors = None

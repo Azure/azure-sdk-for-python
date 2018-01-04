@@ -12,20 +12,23 @@
 from msrest.serialization import Model
 
 
-class AccessoryItem(Model):
+class Accessory(Model):
     """Accessory item and corresponding confidence level.
 
-    :param type: Description of an accessory
-    :type type: str
-    :param confidence:
+    :param type: Type of an accessory. Possible values include: 'headWear',
+     'glasses', 'mask'
+    :type type: str or
+     ~azure.cognitiveservices.vision.face.models.AccessoryType
+    :param confidence: Confidence level of an accessory
     :type confidence: float
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'AccessoryType'},
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
     def __init__(self, type=None, confidence=None):
+        super(Accessory, self).__init__()
         self.type = type
         self.confidence = confidence

@@ -24,4 +24,5 @@ class CustomToolkitSettings(Model):
     }
 
     def __init__(self, command_line=None):
+        super(CustomToolkitSettings, self).__init__()
         self.command_line = command_line

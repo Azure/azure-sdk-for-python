@@ -41,6 +41,7 @@ class ComputerVisionError(Model):
     }
 
     def __init__(self, code, message, request_id=None):
+        super(ComputerVisionError, self).__init__()
         self.code = code
         self.message = message
         self.request_id = request_id
