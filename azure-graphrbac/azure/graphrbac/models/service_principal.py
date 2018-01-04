@@ -18,6 +18,9 @@ class ServicePrincipal(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar object_id: The object ID.
     :vartype object_id: str
     :ivar deletion_timestamp: The time at which the directory object was
@@ -25,9 +28,6 @@ class ServicePrincipal(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param display_name: The display name of the service principal.
     :type display_name: str
     :param app_id: The application ID.
@@ -43,18 +43,17 @@ class ServicePrincipal(DirectoryObject):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
     def __init__(self, additional_properties=None, display_name=None, app_id=None, service_principal_names=None):
-        super(ServicePrincipal, self).__init__()
-        self.additional_properties = additional_properties
+        super(ServicePrincipal, self).__init__(additional_properties=additional_properties)
         self.display_name = display_name
         self.app_id = app_id
         self.service_principal_names = service_principal_names

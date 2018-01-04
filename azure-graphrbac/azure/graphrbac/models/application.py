@@ -18,6 +18,9 @@ class Application(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar object_id: The object ID.
     :vartype object_id: str
     :ivar deletion_timestamp: The time at which the directory object was
@@ -25,9 +28,6 @@ class Application(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param app_id: The application ID.
     :type app_id: str
     :param app_permissions: The application permissions.
@@ -55,10 +55,10 @@ class Application(DirectoryObject):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
@@ -70,8 +70,7 @@ class Application(DirectoryObject):
     }
 
     def __init__(self, additional_properties=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
-        super(Application, self).__init__()
-        self.additional_properties = additional_properties
+        super(Application, self).__init__(additional_properties=additional_properties)
         self.app_id = app_id
         self.app_permissions = app_permissions
         self.available_to_other_tenants = available_to_other_tenants

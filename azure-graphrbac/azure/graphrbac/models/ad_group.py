@@ -18,6 +18,9 @@ class ADGroup(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar object_id: The object ID.
     :vartype object_id: str
     :ivar deletion_timestamp: The time at which the directory object was
@@ -25,9 +28,6 @@ class ADGroup(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param display_name: The display name of the group.
     :type display_name: str
     :param security_enabled: Whether the group is security-enable.
@@ -43,18 +43,17 @@ class ADGroup(DirectoryObject):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
     def __init__(self, additional_properties=None, display_name=None, security_enabled=None, mail=None):
-        super(ADGroup, self).__init__()
-        self.additional_properties = additional_properties
+        super(ADGroup, self).__init__(additional_properties=additional_properties)
         self.display_name = display_name
         self.security_enabled = security_enabled
         self.mail = mail
