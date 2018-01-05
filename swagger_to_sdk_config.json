@@ -211,6 +211,10 @@
       "build_dir": "azure-mgmt-powerbiembedded",
       "markdown": "specification/powerbiembedded/resource-manager/readme.md"
     },
+    "provisioningservices.mgmt": {
+      "build_dir": "azure-mgmt-iothubprovisioningservices",
+      "markdown": "specification/provisioningservices/resource-manager/readme.md",
+    },
     "rdbms.mysql": {
       "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
       "markdown": "specification/mysql/resource-manager/readme.md"
