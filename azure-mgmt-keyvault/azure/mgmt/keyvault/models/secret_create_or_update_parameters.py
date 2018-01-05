@@ -12,31 +12,25 @@
 from msrest.serialization import Model
 
 
-class VaultCreateOrUpdateParameters(Model):
-    """Parameters for creating or updating a vault.
+class SecretCreateOrUpdateParameters(Model):
+    """Parameters for creating or updating a secret.
 
-    :param location: The supported Azure location where the key vault should
-     be created.
-    :type location: str
-    :param tags: The tags that will be assigned to the key vault.
+    :param tags: The tags that will be assigned to the secret.
     :type tags: dict[str, str]
-    :param properties: Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.models.VaultProperties
+    :param properties: Properties of the secret
+    :type properties: ~azure.mgmt.keyvault.models.SecretProperties
     """
 
     _validation = {
-        'location': {'required': True},
         'properties': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'VaultProperties'},
+        'properties': {'key': 'properties', 'type': 'SecretProperties'},
     }
 
-    def __init__(self, location, properties, tags=None):
-        super(VaultCreateOrUpdateParameters, self).__init__()
-        self.location = location
+    def __init__(self, properties, tags=None):
+        super(SecretCreateOrUpdateParameters, self).__init__()
         self.tags = tags
         self.properties = properties
