@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class ServicePrincipalCreateParameters(Model):
     """Request parameters for creating a new service principal.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param app_id: application Id
     :type app_id: str
     :param account_enabled: Whether the account is enabled
@@ -32,13 +35,16 @@ class ServicePrincipalCreateParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, app_id, account_enabled, key_credentials=None, password_credentials=None):
+    def __init__(self, app_id, account_enabled, additional_properties=None, key_credentials=None, password_credentials=None):
+        super(ServicePrincipalCreateParameters, self).__init__()
+        self.additional_properties = additional_properties
         self.app_id = app_id
         self.account_enabled = account_enabled
         self.key_credentials = key_credentials
