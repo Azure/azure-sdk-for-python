@@ -213,7 +213,7 @@
     },
     "provisioningservices.mgmt": {
       "build_dir": "azure-mgmt-iothubprovisioningservices",
-      "markdown": "specification/provisioningservices/resource-manager/readme.md",
+      "markdown": "specification/provisioningservices/resource-manager/readme.md"
     },
     "rdbms.mysql": {
       "build_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql",
