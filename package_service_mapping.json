@@ -185,6 +185,13 @@
     ],
     "service_name": "IoT"
   },
+  "azure-mgmt-iothubprovisioningservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.iothubprovisioningservices"
+    ],
+    "service_name": "IoT"
+  },
   "azure-mgmt-keyvault": {
     "category ": "Management",
     "namespaces": [
