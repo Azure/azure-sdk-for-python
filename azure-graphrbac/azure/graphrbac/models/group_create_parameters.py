@@ -18,6 +18,9 @@ class GroupCreateParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param display_name: Group display name
     :type display_name: str
     :ivar mail_enabled: Whether the group is mail-enabled. Must be false. This
@@ -40,6 +43,7 @@ class GroupCreateParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'mail_enabled': {'key': 'mailEnabled', 'type': 'bool'},
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
@@ -50,6 +54,8 @@ class GroupCreateParameters(Model):
 
     security_enabled = True
 
-    def __init__(self, display_name, mail_nickname):
+    def __init__(self, display_name, mail_nickname, additional_properties=None):
+        super(GroupCreateParameters, self).__init__()
+        self.additional_properties = additional_properties
         self.display_name = display_name
         self.mail_nickname = mail_nickname
