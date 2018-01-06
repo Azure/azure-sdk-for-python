@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .base_job_parameters import BaseJobParameters
+from .create_job_parameters import CreateJobParameters
 
 
-class CreateJobParameters(BaseJobParameters):
-    """The parameters used to submit a new Data Lake Analytics job.
+class CreateScopeJobParameters(CreateJobParameters):
+    """The parameters used to submit a new Data Lake Analytics Scope job. (Only
+    for use internally with Scope job type.).
 
     :param type: the job type of the current job (Hive, USql, or Scope (for
      internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
@@ -38,6 +39,9 @@ class CreateJobParameters(BaseJobParameters):
     :param related: the recurring job relationship information properties.
     :type related:
      ~azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties
+    :param tags: the key-value pairs used to add additional metadata to the
+     job information. (Only for use internally with Scope job type.)
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -54,12 +58,9 @@ class CreateJobParameters(BaseJobParameters):
         'priority': {'key': 'priority', 'type': 'int'},
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, type, properties, name, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None):
-        super(CreateJobParameters, self).__init__(type=type, properties=properties)
-        self.name = name
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.log_file_patterns = log_file_patterns
-        self.related = related
+    def __init__(self, type, properties, name, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None, tags=None):
+        super(CreateScopeJobParameters, self).__init__(type=type, properties=properties, name=name, degree_of_parallelism=degree_of_parallelism, priority=priority, log_file_patterns=log_file_patterns, related=related)
+        self.tags = tags

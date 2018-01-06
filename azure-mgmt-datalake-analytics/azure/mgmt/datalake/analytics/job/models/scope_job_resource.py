@@ -12,22 +12,21 @@
 from msrest.serialization import Model
 
 
-class USqlTableColumn(Model):
-    """A Data Lake Analytics catalog U-SQL table column item.
+class ScopeJobResource(Model):
+    """The Scope job resources. (Only for use internally with Scope job type.).
 
-    :param name: the name of the column in the table.
+    :param name: the name of the resource.
     :type name: str
-    :param type: the object type of the specified column (such as
-     System.String).
-    :type type: str
+    :param path: the path to the resource.
+    :type path: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
-        super(USqlTableColumn, self).__init__()
+    def __init__(self, name=None, path=None):
+        super(ScopeJobResource, self).__init__()
         self.name = name
-        self.type = type
+        self.path = path

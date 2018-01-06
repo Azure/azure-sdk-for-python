@@ -52,6 +52,7 @@ class JobRelationshipProperties(Model):
     }
 
     def __init__(self, recurrence_id, pipeline_id=None, pipeline_name=None, pipeline_uri=None, run_id=None, recurrence_name=None):
+        super(JobRelationshipProperties, self).__init__()
         self.pipeline_id = pipeline_id
         self.pipeline_name = pipeline_name
         self.pipeline_uri = pipeline_uri

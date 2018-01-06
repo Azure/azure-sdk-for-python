@@ -43,6 +43,7 @@ class JobType(Enum):
 
     usql = "USql"
     hive = "Hive"
+    scope = "Scope"
 
 
 class JobState(Enum):

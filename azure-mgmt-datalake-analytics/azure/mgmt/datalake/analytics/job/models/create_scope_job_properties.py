@@ -12,8 +12,8 @@
 from .create_job_properties import CreateJobProperties
 
 
-class CreateUSqlJobProperties(CreateJobProperties):
-    """U-SQL job properties used when submitting U-SQL jobs.
+class CreateScopeJobProperties(CreateJobProperties):
+    """Scope job properties used when submitting Scope jobs.
 
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
@@ -23,12 +23,12 @@ class CreateUSqlJobProperties(CreateJobProperties):
     :type script: str
     :param type: Constant filled by server.
     :type type: str
-    :param compile_mode: the specific compilation mode for the job used during
-     execution. If this is not specified during submission, the server will
-     determine the optimal compilation mode. Possible values include:
-     'Semantic', 'Full', 'SingleBox'
-    :type compile_mode: str or
-     ~azure.mgmt.datalake.analytics.job.models.CompileMode
+    :param resources: the list of resources that are required by the job.
+    :type resources:
+     list[~azure.mgmt.datalake.analytics.job.models.ScopeJobResource]
+    :param notifier: the list of email addresses, separated by semi-colons, to
+     notify when the job reaches a terminal state.
+    :type notifier: str
     """
 
     _validation = {
@@ -40,10 +40,12 @@ class CreateUSqlJobProperties(CreateJobProperties):
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'script': {'key': 'script', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
+        'resources': {'key': 'resources', 'type': '[ScopeJobResource]'},
+        'notifier': {'key': 'notifier', 'type': 'str'},
     }
 
-    def __init__(self, script, runtime_version=None, compile_mode=None):
-        super(CreateUSqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
-        self.compile_mode = compile_mode
-        self.type = 'USql'
+    def __init__(self, script, runtime_version=None, resources=None, notifier=None):
+        super(CreateScopeJobProperties, self).__init__(runtime_version=runtime_version, script=script)
+        self.resources = resources
+        self.notifier = notifier
+        self.type = 'Scope'
