@@ -49,7 +49,7 @@ class USqlTableStatistics(CatalogItem):
     :type filter_definition: str
     :param col_names: the list of column names associated with these
      statistics.
-    :type col_names: list of str
+    :type col_names: list[str]
     """
 
     _attribute_map = {

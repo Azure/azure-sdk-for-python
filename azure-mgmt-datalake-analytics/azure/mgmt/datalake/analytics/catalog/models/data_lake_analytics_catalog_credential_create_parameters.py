@@ -39,6 +39,7 @@ class DataLakeAnalyticsCatalogCredentialCreateParameters(Model):
     }
 
     def __init__(self, password, uri, user_id):
+        super(DataLakeAnalyticsCatalogCredentialCreateParameters, self).__init__()
         self.password = password
         self.uri = uri
         self.user_id = user_id

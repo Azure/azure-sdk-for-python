@@ -27,5 +27,6 @@ class CatalogItem(Model):
     }
 
     def __init__(self, compute_account_name=None, version=None):
+        super(CatalogItem, self).__init__()
         self.compute_account_name = compute_account_name
         self.version = version

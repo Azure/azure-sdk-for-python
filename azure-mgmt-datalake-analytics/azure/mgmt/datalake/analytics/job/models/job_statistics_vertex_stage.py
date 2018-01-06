@@ -68,6 +68,49 @@ class JobStatisticsVertexStage(Model):
     :ivar total_succeeded_time: the amount of time all successful vertices
      took in this stage.
     :vartype total_succeeded_time: timedelta
+    :ivar total_peak_mem_usage: the sum of the peak memory usage of all the
+     vertices in the stage, in bytes.
+    :vartype total_peak_mem_usage: long
+    :ivar total_execution_time: the sum of the total execution time of all the
+     vertices in the stage.
+    :vartype total_execution_time: timedelta
+    :param max_data_read_vertex: the vertex with the maximum amount of data
+     read.
+    :type max_data_read_vertex:
+     ~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertex
+    :param max_execution_time_vertex: the vertex with the maximum execution
+     time.
+    :type max_execution_time_vertex:
+     ~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertex
+    :param max_peak_mem_usage_vertex: the vertex with the maximum peak memory
+     usage.
+    :type max_peak_mem_usage_vertex:
+     ~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertex
+    :ivar estimated_vertex_cpu_core_count: the estimated vertex CPU core
+     count.
+    :vartype estimated_vertex_cpu_core_count: int
+    :ivar estimated_vertex_peak_cpu_core_count: the estimated vertex peak CPU
+     core count.
+    :vartype estimated_vertex_peak_cpu_core_count: int
+    :ivar estimated_vertex_mem_size: the estimated vertex memory size, in
+     bytes.
+    :vartype estimated_vertex_mem_size: long
+    :param allocated_container_cpu_core_count: the statistics information for
+     the allocated container CPU core count.
+    :type allocated_container_cpu_core_count:
+     ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
+    :param allocated_container_mem_size: the statistics information for the
+     allocated container memory size.
+    :type allocated_container_mem_size:
+     ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
+    :param used_vertex_cpu_core_count: the statistics information for the used
+     vertex CPU core count.
+    :type used_vertex_cpu_core_count:
+     ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
+    :param used_vertex_peak_mem_size: the statistics information for the used
+     vertex peak memory size.
+    :type used_vertex_peak_mem_size:
+     ~azure.mgmt.datalake.analytics.job.models.ResourceUsageStatistics
     """
 
     _validation = {
@@ -91,6 +134,11 @@ class JobStatisticsVertexStage(Model):
         'total_failed_time': {'readonly': True},
         'total_progress': {'readonly': True},
         'total_succeeded_time': {'readonly': True},
+        'total_peak_mem_usage': {'readonly': True},
+        'total_execution_time': {'readonly': True},
+        'estimated_vertex_cpu_core_count': {'readonly': True},
+        'estimated_vertex_peak_cpu_core_count': {'readonly': True},
+        'estimated_vertex_mem_size': {'readonly': True},
     }
 
     _attribute_map = {
@@ -114,9 +162,22 @@ class JobStatisticsVertexStage(Model):
         'total_failed_time': {'key': 'totalFailedTime', 'type': 'duration'},
         'total_progress': {'key': 'totalProgress', 'type': 'int'},
         'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'duration'},
+        'total_peak_mem_usage': {'key': 'totalPeakMemUsage', 'type': 'long'},
+        'total_execution_time': {'key': 'totalExecutionTime', 'type': 'duration'},
+        'max_data_read_vertex': {'key': 'maxDataReadVertex', 'type': 'JobStatisticsVertex'},
+        'max_execution_time_vertex': {'key': 'maxExecutionTimeVertex', 'type': 'JobStatisticsVertex'},
+        'max_peak_mem_usage_vertex': {'key': 'maxPeakMemUsageVertex', 'type': 'JobStatisticsVertex'},
+        'estimated_vertex_cpu_core_count': {'key': 'estimatedVertexCpuCoreCount', 'type': 'int'},
+        'estimated_vertex_peak_cpu_core_count': {'key': 'estimatedVertexPeakCpuCoreCount', 'type': 'int'},
+        'estimated_vertex_mem_size': {'key': 'estimatedVertexMemSize', 'type': 'long'},
+        'allocated_container_cpu_core_count': {'key': 'allocatedContainerCpuCoreCount', 'type': 'ResourceUsageStatistics'},
+        'allocated_container_mem_size': {'key': 'allocatedContainerMemSize', 'type': 'ResourceUsageStatistics'},
+        'used_vertex_cpu_core_count': {'key': 'usedVertexCpuCoreCount', 'type': 'ResourceUsageStatistics'},
+        'used_vertex_peak_mem_size': {'key': 'usedVertexPeakMemSize', 'type': 'ResourceUsageStatistics'},
     }
 
-    def __init__(self):
+    def __init__(self, max_data_read_vertex=None, max_execution_time_vertex=None, max_peak_mem_usage_vertex=None, allocated_container_cpu_core_count=None, allocated_container_mem_size=None, used_vertex_cpu_core_count=None, used_vertex_peak_mem_size=None):
+        super(JobStatisticsVertexStage, self).__init__()
         self.data_read = None
         self.data_read_cross_pod = None
         self.data_read_intra_pod = None
@@ -137,3 +198,15 @@ class JobStatisticsVertexStage(Model):
         self.total_failed_time = None
         self.total_progress = None
         self.total_succeeded_time = None
+        self.total_peak_mem_usage = None
+        self.total_execution_time = None
+        self.max_data_read_vertex = max_data_read_vertex
+        self.max_execution_time_vertex = max_execution_time_vertex
+        self.max_peak_mem_usage_vertex = max_peak_mem_usage_vertex
+        self.estimated_vertex_cpu_core_count = None
+        self.estimated_vertex_peak_cpu_core_count = None
+        self.estimated_vertex_mem_size = None
+        self.allocated_container_cpu_core_count = allocated_container_cpu_core_count
+        self.allocated_container_mem_size = allocated_container_mem_size
+        self.used_vertex_cpu_core_count = used_vertex_cpu_core_count
+        self.used_vertex_peak_mem_size = used_vertex_peak_mem_size
