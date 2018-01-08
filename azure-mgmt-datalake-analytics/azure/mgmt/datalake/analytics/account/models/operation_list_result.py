@@ -12,34 +12,30 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """The Sub Resource model definition.
+class OperationListResult(Model):
+    """The list of available operations for Data Lake Analytics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :ivar value: the results of the list operation.
+    :vartype value:
+     list[~azure.mgmt.datalake.analytics.account.models.Operation]
+    :ivar next_link: the link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'required': True},
-        'type': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        super(SubResource, self).__init__()
-        self.id = None
-        self.name = name
-        self.type = None
+    def __init__(self):
+        super(OperationListResult, self).__init__()
+        self.value = None
+        self.next_link = None
