@@ -29,4 +29,5 @@ class RedisRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_type):
+        super(RedisRegenerateKeyParameters, self).__init__()
         self.key_type = key_type
