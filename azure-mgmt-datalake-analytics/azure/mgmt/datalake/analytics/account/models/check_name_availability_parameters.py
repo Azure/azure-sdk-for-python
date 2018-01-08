@@ -12,34 +12,32 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """The Sub Resource model definition.
+class CheckNameAvailabilityParameters(Model):
+    """Data Lake Analytics account name availability check parameters.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :param name: Resource name
+    :param name: the Data Lake Analytics name to check availability for.
     :type name: str
-    :ivar type: Resource type
+    :ivar type: the Resource type. Note: This should not be set by the user,
+     as the constant value is Microsoft.DataLakeAnalytics/accounts. Default
+     value: "Microsoft.DataLakeAnalytics/accounts" .
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'required': True},
-        'type': {'readonly': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
+    type = "Microsoft.DataLakeAnalytics/accounts"
+
     def __init__(self, name):
-        super(SubResource, self).__init__()
-        self.id = None
+        super(CheckNameAvailabilityParameters, self).__init__()
         self.name = name
-        self.type = None

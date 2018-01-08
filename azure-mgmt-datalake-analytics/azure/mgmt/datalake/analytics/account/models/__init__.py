@@ -25,6 +25,12 @@ from .data_lake_analytics_account_properties_basic import DataLakeAnalyticsAccou
 from .data_lake_analytics_account_basic import DataLakeAnalyticsAccountBasic
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
 from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
+from .name_availability_information import NameAvailabilityInformation
+from .check_name_availability_parameters import CheckNameAvailabilityParameters
+from .capability_information import CapabilityInformation
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .resource import Resource
 from .optional_sub_resource import OptionalSubResource
 from .sub_resource import SubResource
@@ -42,6 +48,8 @@ from .data_lake_analytics_account_management_client_enums import (
     AADObjectType,
     DataLakeAnalyticsAccountStatus,
     DataLakeAnalyticsAccountState,
+    SubscriptionState,
+    OperationOrigin,
 )
 
 __all__ = [
@@ -61,6 +69,12 @@ __all__ = [
     'DataLakeAnalyticsAccountBasic',
     'DataLakeAnalyticsAccount',
     'UpdateFirewallRuleParameters',
+    'NameAvailabilityInformation',
+    'CheckNameAvailabilityParameters',
+    'CapabilityInformation',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'Resource',
     'OptionalSubResource',
     'SubResource',
@@ -77,4 +91,6 @@ __all__ = [
     'AADObjectType',
     'DataLakeAnalyticsAccountStatus',
     'DataLakeAnalyticsAccountState',
+    'SubscriptionState',
+    'OperationOrigin',
 ]

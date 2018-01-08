@@ -29,5 +29,6 @@ class UpdateFirewallRuleParameters(Model):
     }
 
     def __init__(self, start_ip_address=None, end_ip_address=None):
+        super(UpdateFirewallRuleParameters, self).__init__()
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address

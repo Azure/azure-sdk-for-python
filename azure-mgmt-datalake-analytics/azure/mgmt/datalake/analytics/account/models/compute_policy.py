@@ -25,8 +25,8 @@ class ComputePolicy(Model):
     :vartype object_id: str
     :ivar object_type: The type of AAD object the object identifier refers to.
      Possible values include: 'User', 'Group', 'ServicePrincipal'
-    :vartype object_type: str or :class:`AADObjectType
-     <azure.mgmt.datalake.analytics.account.models.AADObjectType>`
+    :vartype object_type: str or
+     ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :param max_degree_of_parallelism_per_job: The maximum degree of
      parallelism per job this user can use to submit jobs.
     :type max_degree_of_parallelism_per_job: int
@@ -52,6 +52,7 @@ class ComputePolicy(Model):
     }
 
     def __init__(self, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
+        super(ComputePolicy, self).__init__()
         self.name = None
         self.object_id = None
         self.object_type = None
