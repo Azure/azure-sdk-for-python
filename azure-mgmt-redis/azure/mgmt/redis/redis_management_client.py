@@ -16,8 +16,8 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.redis_operations import RedisOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.redis_firewall_rule_operations import RedisFirewallRuleOperations
 from .operations.patch_schedules_operations import PatchSchedulesOperations
+from .operations.linked_server_operations import LinkedServerOperations
 from . import models
 
 
@@ -48,7 +48,7 @@ class RedisManagementClientConfiguration(AzureConfiguration):
 
         super(RedisManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('redismanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-redis/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -67,10 +67,10 @@ class RedisManagementClient(object):
     :vartype redis: azure.mgmt.redis.operations.RedisOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.redis.operations.FirewallRulesOperations
-    :ivar redis_firewall_rule: RedisFirewallRule operations
-    :vartype redis_firewall_rule: azure.mgmt.redis.operations.RedisFirewallRuleOperations
     :ivar patch_schedules: PatchSchedules operations
     :vartype patch_schedules: azure.mgmt.redis.operations.PatchSchedulesOperations
+    :ivar linked_server: LinkedServer operations
+    :vartype linked_server: azure.mgmt.redis.operations.LinkedServerOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -89,7 +89,7 @@ class RedisManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-04-01'
+        self.api_version = '2017-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -99,7 +99,7 @@ class RedisManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.redis_firewall_rule = RedisFirewallRuleOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.patch_schedules = PatchSchedulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.linked_server = LinkedServerOperations(
             self._client, self.config, self._serialize, self._deserialize)
