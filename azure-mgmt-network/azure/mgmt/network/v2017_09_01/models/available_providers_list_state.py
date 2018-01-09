@@ -31,6 +31,7 @@ class AvailableProvidersListState(Model):
     }
 
     def __init__(self, state_name=None, providers=None, cities=None):
+        super(AvailableProvidersListState, self).__init__()
         self.state_name = state_name
         self.providers = providers
         self.cities = cities

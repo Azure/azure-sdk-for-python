@@ -32,6 +32,7 @@ class ApplicationGatewayBackendHealthServer(Model):
     }
 
     def __init__(self, address=None, ip_configuration=None, health=None):
+        super(ApplicationGatewayBackendHealthServer, self).__init__()
         self.address = address
         self.ip_configuration = ip_configuration
         self.health = health

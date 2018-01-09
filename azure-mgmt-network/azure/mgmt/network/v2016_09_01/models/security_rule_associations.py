@@ -38,6 +38,7 @@ class SecurityRuleAssociations(Model):
     }
 
     def __init__(self, network_interface_association=None, subnet_association=None, default_security_rules=None, effective_security_rules=None):
+        super(SecurityRuleAssociations, self).__init__()
         self.network_interface_association = network_interface_association
         self.subnet_association = subnet_association
         self.default_security_rules = default_security_rules

@@ -34,6 +34,7 @@ class TroubleshootingResult(Model):
     }
 
     def __init__(self, start_time=None, end_time=None, code=None, results=None):
+        super(TroubleshootingResult, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.code = code
