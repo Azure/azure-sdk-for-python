@@ -33,6 +33,7 @@ class TagResult(Model):
     }
 
     def __init__(self, tags=None, request_id=None, metadata=None):
+        super(TagResult, self).__init__()
         self.tags = tags
         self.request_id = request_id
         self.metadata = metadata

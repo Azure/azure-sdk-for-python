@@ -31,6 +31,7 @@ class CelebritiesModel(Model):
     }
 
     def __init__(self, name=None, confidence=None, face_rectangle=None):
+        super(CelebritiesModel, self).__init__()
         self.name = name
         self.confidence = confidence
         self.face_rectangle = face_rectangle
