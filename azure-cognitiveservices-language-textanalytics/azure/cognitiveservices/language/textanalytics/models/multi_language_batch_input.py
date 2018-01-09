@@ -25,4 +25,5 @@ class MultiLanguageBatchInput(Model):
     }
 
     def __init__(self, documents=None):
+        super(MultiLanguageBatchInput, self).__init__()
         self.documents = documents

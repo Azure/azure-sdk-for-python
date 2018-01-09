@@ -25,4 +25,5 @@ class BatchInput(Model):
     }
 
     def __init__(self, documents=None):
+        super(BatchInput, self).__init__()
         self.documents = documents
