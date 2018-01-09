@@ -16,8 +16,8 @@ Release History
 
 **Notes**
 
-* Added more properties to `JobStatisticsVertexStage`
-* Added two more states to `DataLakeAnalyticsAccountStatus` enum: `Undeleting` and `Canceled`
+* Added more properties to JobStatisticsVertexStage
+* Added two more states to DataLakeAnalyticsAccountStatus enum: Undeleting and Canceled
 * Added new Account APIs:
 
   * Account_CheckNameAvailability
