@@ -27,5 +27,6 @@ class Word(Model):
     }
 
     def __init__(self, bounding_box=None, text=None):
+        super(Word, self).__init__()
         self.bounding_box = bounding_box
         self.text = text

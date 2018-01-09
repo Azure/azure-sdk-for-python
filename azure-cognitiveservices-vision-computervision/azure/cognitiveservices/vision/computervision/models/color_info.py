@@ -36,6 +36,7 @@ class ColorInfo(Model):
     }
 
     def __init__(self, dominant_color_foreground=None, dominant_color_background=None, dominant_colors=None, accent_color=None, is_bw_img=None):
+        super(ColorInfo, self).__init__()
         self.dominant_color_foreground = dominant_color_foreground
         self.dominant_color_background = dominant_color_background
         self.dominant_colors = dominant_colors

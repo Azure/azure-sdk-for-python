@@ -31,6 +31,7 @@ class Line(Model):
     }
 
     def __init__(self, bounding_box=None, text=None, words=None):
+        super(Line, self).__init__()
         self.bounding_box = bounding_box
         self.text = text
         self.words = words

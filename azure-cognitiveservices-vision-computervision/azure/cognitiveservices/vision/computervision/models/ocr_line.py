@@ -34,5 +34,6 @@ class OcrLine(Model):
     }
 
     def __init__(self, bounding_box=None, words=None):
+        super(OcrLine, self).__init__()
         self.bounding_box = bounding_box
         self.words = words
