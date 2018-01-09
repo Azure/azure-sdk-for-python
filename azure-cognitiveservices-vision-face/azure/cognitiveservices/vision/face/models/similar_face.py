@@ -12,22 +12,23 @@
 from msrest.serialization import Model
 
 
-class SimilarFaceResult(Model):
+class SimilarFace(Model):
     """Response body for find similar face operation.
 
-    :param face_id: faceId of candidate face when find by faceIds. faceId is
+    :param face_id: FaceId of candidate face when find by faceIds. faceId is
      created by Face - Detect and will expire 24 hours after the detection call
     :type face_id: str
-    :param persisted_face_id: persistedFaceId of candidate face when find by
+    :param persisted_face_id: PersistedFaceId of candidate face when find by
      faceListId. persistedFaceId in face list is persisted and will not expire.
      As showed in below response
     :type persisted_face_id: str
-    :param confidence:
+    :param confidence: Similarity confidence of the candidate face. The higher
+     confidence, the more similar. Range between [0,1].
     :type confidence: float
     """
 
     _validation = {
-        'face_id': {'max_length': 64},
+        'confidence': {'required': True},
     }
 
     _attribute_map = {
@@ -36,7 +37,8 @@ class SimilarFaceResult(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, face_id=None, persisted_face_id=None, confidence=None):
+    def __init__(self, confidence, face_id=None, persisted_face_id=None):
+        super(SimilarFace, self).__init__()
         self.face_id = face_id
         self.persisted_face_id = persisted_face_id
         self.confidence = confidence

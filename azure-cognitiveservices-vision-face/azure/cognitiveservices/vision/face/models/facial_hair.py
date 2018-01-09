@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class FacialHairProperties(Model):
+class FacialHair(Model):
     """Properties describing facial hair attributes.
 
     :param moustache:
@@ -23,12 +23,6 @@ class FacialHairProperties(Model):
     :type sideburns: float
     """
 
-    _validation = {
-        'moustache': {'maximum': 1, 'minimum': 0},
-        'beard': {'maximum': 1, 'minimum': 0},
-        'sideburns': {'maximum': 1, 'minimum': 0},
-    }
-
     _attribute_map = {
         'moustache': {'key': 'moustache', 'type': 'float'},
         'beard': {'key': 'beard', 'type': 'float'},
@@ -36,6 +30,7 @@ class FacialHairProperties(Model):
     }
 
     def __init__(self, moustache=None, beard=None, sideburns=None):
+        super(FacialHair, self).__init__()
         self.moustache = moustache
         self.beard = beard
         self.sideburns = sideburns

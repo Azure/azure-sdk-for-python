@@ -12,30 +12,27 @@
 from msrest.serialization import Model
 
 
-class PersonGroupResult(Model):
-    """Person group object.
+class NameAndUserDataContract(Model):
+    """A combination of user defined name and user specified data for the person,
+    personGroup, and faceList.
 
-    :param person_group_id: faceListId of the target face list.
-    :type person_group_id: str
-    :param name: Face list's display name.
+    :param name: User defined name, maximum length is 128.
     :type name: str
-    :param user_data: User-provided data attached to this face list.
+    :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     """
 
     _validation = {
-        'person_group_id': {'required': True, 'max_length': 128},
         'name': {'max_length': 128},
         'user_data': {'max_length': 16384},
     }
 
     _attribute_map = {
-        'person_group_id': {'key': 'personGroupId', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, person_group_id, name=None, user_data=None):
-        self.person_group_id = person_group_id
+    def __init__(self, name=None, user_data=None):
+        super(NameAndUserDataContract, self).__init__()
         self.name = name
         self.user_data = user_data

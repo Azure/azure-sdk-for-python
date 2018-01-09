@@ -12,33 +12,34 @@
 from msrest.serialization import Model
 
 
-class VerifyPersonGroupRequest(Model):
+class VerifyFaceToPersonRequest(Model):
     """Request body for verify operation.
 
-    :param face_id: faceId the face, comes from Face - Detect
+    :param face_id: FaceId the face, comes from Face - Detect
     :type face_id: str
-    :param person_id: Specify a certain person in a person group. personId is
-     created in Persons.Create.
-    :type person_id: str
     :param person_group_id: Using existing personGroupId and personId for fast
      loading a specified person. personGroupId is created in Person
      Groups.Create.
     :type person_group_id: str
+    :param person_id: Specify a certain person in a person group. personId is
+     created in Persons.Create.
+    :type person_id: str
     """
 
     _validation = {
-        'face_id': {'required': True, 'max_length': 64},
+        'face_id': {'required': True},
+        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'person_id': {'required': True},
-        'person_group_id': {'required': True},
     }
 
     _attribute_map = {
         'face_id': {'key': 'faceId', 'type': 'str'},
-        'person_id': {'key': 'personId', 'type': 'str'},
         'person_group_id': {'key': 'personGroupId', 'type': 'str'},
+        'person_id': {'key': 'personId', 'type': 'str'},
     }
 
-    def __init__(self, face_id, person_id, person_group_id):
+    def __init__(self, face_id, person_group_id, person_id):
+        super(VerifyFaceToPersonRequest, self).__init__()
         self.face_id = face_id
-        self.person_id = person_id
         self.person_group_id = person_group_id
+        self.person_id = person_id

@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class TrainingStatus1(Model):
+class TrainingStatus(Model):
     """Training status object.
 
     :param status: Training status: notstarted, running, succeeded, failed. If
@@ -22,7 +22,7 @@ class TrainingStatus1(Model):
      by no person or no persisted face exist in the person group. Possible
      values include: 'nonstarted', 'running', 'succeeded', 'failed'
     :type status: str or
-     ~azure.cognitiveservices.vision.face.models.TrainingStatus
+     ~azure.cognitiveservices.vision.face.models.TrainingStatusType
     :param created: A combined UTC date and time string that describes person
      group created time.
     :type created: datetime
@@ -36,16 +36,18 @@ class TrainingStatus1(Model):
 
     _validation = {
         'status': {'required': True},
+        'created': {'required': True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'TrainingStatus'},
-        'created': {'key': 'createdDateTime', 'type': 'rfc-1123'},
-        'last_action': {'key': 'lastActionDateTime', 'type': 'rfc-1123'},
+        'status': {'key': 'status', 'type': 'TrainingStatusType'},
+        'created': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, status, created=None, last_action=None, message=None):
+    def __init__(self, status, created, last_action=None, message=None):
+        super(TrainingStatus, self).__init__()
         self.status = status
         self.created = created
         self.last_action = last_action

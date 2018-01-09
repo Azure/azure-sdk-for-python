@@ -12,26 +12,23 @@
 from msrest.serialization import Model
 
 
-class BlurProperties(Model):
+class Blur(Model):
     """Properties describing any presence of blur within the image.
 
     :param blur_level: An enum value indicating level of blurriness. Possible
      values include: 'Low', 'Medium', 'High'
     :type blur_level: str or
-     ~azure.cognitiveservices.vision.face.models.BlurLevels
+     ~azure.cognitiveservices.vision.face.models.BlurLevel
     :param value: A number indicating level of blurriness ranging from 0 to 1.
     :type value: float
     """
 
-    _validation = {
-        'value': {'maximum': 1, 'minimum': 0},
-    }
-
     _attribute_map = {
-        'blur_level': {'key': 'blurLevel', 'type': 'BlurLevels'},
+        'blur_level': {'key': 'blurLevel', 'type': 'BlurLevel'},
         'value': {'key': 'value', 'type': 'float'},
     }
 
     def __init__(self, blur_level=None, value=None):
+        super(Blur, self).__init__()
         self.blur_level = blur_level
         self.value = value
