@@ -21,6 +21,12 @@ from .update_encryption_config import UpdateEncryptionConfig
 from .data_lake_store_account_update_parameters import DataLakeStoreAccountUpdateParameters
 from .data_lake_store_account import DataLakeStoreAccount
 from .data_lake_store_account_basic import DataLakeStoreAccountBasic
+from .name_availability_information import NameAvailabilityInformation
+from .check_name_availability_parameters import CheckNameAvailabilityParameters
+from .capability_information import CapabilityInformation
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .error_details import ErrorDetails
 from .resource import Resource
 from .sub_resource import SubResource
@@ -37,6 +43,8 @@ from .data_lake_store_account_management_client_enums import (
     FirewallAllowAzureIpsState,
     DataLakeStoreAccountStatus,
     DataLakeStoreAccountState,
+    SubscriptionState,
+    OperationOrigin,
 )
 
 __all__ = [
@@ -52,6 +60,12 @@ __all__ = [
     'DataLakeStoreAccountUpdateParameters',
     'DataLakeStoreAccount',
     'DataLakeStoreAccountBasic',
+    'NameAvailabilityInformation',
+    'CheckNameAvailabilityParameters',
+    'CapabilityInformation',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'ErrorDetails',
     'Resource',
     'SubResource',
@@ -67,4 +81,6 @@ __all__ = [
     'FirewallAllowAzureIpsState',
     'DataLakeStoreAccountStatus',
     'DataLakeStoreAccountState',
+    'SubscriptionState',
+    'OperationOrigin',
 ]

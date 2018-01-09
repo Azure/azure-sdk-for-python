@@ -24,4 +24,5 @@ class UpdateTrustedIdProviderParameters(Model):
     }
 
     def __init__(self, id_provider=None):
+        super(UpdateTrustedIdProviderParameters, self).__init__()
         self.id_provider = id_provider

@@ -12,33 +12,32 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """The Resource model definition for a nested resource.
+class CheckNameAvailabilityParameters(Model):
+    """Data Lake Store account name availability check parameters.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :param name: Resource name
+    :param name: the Data Lake Store name to check availability for.
     :type name: str
-    :ivar type: Resource type
+    :ivar type: the Resource type. Note: This should not be set by the user,
+     as the constant value is Microsoft.DataLakeStore/accounts. Default value:
+     "Microsoft.DataLakeStore/accounts" .
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(SubResource, self).__init__()
-        self.id = None
+    type = "Microsoft.DataLakeStore/accounts"
+
+    def __init__(self, name):
+        super(CheckNameAvailabilityParameters, self).__init__()
         self.name = name
-        self.type = None

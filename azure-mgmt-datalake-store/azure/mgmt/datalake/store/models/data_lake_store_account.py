@@ -27,19 +27,19 @@ class DataLakeStoreAccount(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The Key Vault encryption identity, if any.
-    :type identity: :class:`EncryptionIdentity
-     <azure.mgmt.datalake.store.models.EncryptionIdentity>`
+    :type identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
     :ivar provisioning_state: the provisioning status of the Data Lake Store
      account. Possible values include: 'Failed', 'Creating', 'Running',
-     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted'
-    :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
-     <azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus>`
+     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted',
+     'Undeleting', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
     :ivar state: the state of the Data Lake Store account. Possible values
      include: 'Active', 'Suspended'
-    :vartype state: str or :class:`DataLakeStoreAccountState
-     <azure.mgmt.datalake.store.models.DataLakeStoreAccountState>`
+    :vartype state: str or
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: the account last modified time.
@@ -51,55 +51,51 @@ class DataLakeStoreAccount(Resource):
     :vartype account_id: str
     :param encryption_state: The current state of encryption for this Data
      Lake store account. Possible values include: 'Enabled', 'Disabled'
-    :type encryption_state: str or :class:`EncryptionState
-     <azure.mgmt.datalake.store.models.EncryptionState>`
+    :type encryption_state: str or
+     ~azure.mgmt.datalake.store.models.EncryptionState
     :ivar encryption_provisioning_state: The current state of encryption
      provisioning for this Data Lake store account. Possible values include:
      'Creating', 'Succeeded'
     :vartype encryption_provisioning_state: str or
-     :class:`EncryptionProvisioningState
-     <azure.mgmt.datalake.store.models.EncryptionProvisioningState>`
+     ~azure.mgmt.datalake.store.models.EncryptionProvisioningState
     :param encryption_config: The Key Vault encryption configuration.
-    :type encryption_config: :class:`EncryptionConfig
-     <azure.mgmt.datalake.store.models.EncryptionConfig>`
+    :type encryption_config:
+     ~azure.mgmt.datalake.store.models.EncryptionConfig
     :param firewall_state: The current state of the IP address firewall for
      this Data Lake store account. Possible values include: 'Enabled',
      'Disabled'
-    :type firewall_state: str or :class:`FirewallState
-     <azure.mgmt.datalake.store.models.FirewallState>`
+    :type firewall_state: str or
+     ~azure.mgmt.datalake.store.models.FirewallState
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake store account.
-    :type firewall_rules: list of :class:`FirewallRule
-     <azure.mgmt.datalake.store.models.FirewallRule>`
+    :type firewall_rules: list[~azure.mgmt.datalake.store.models.FirewallRule]
     :param trusted_id_provider_state: The current state of the trusted
      identity provider feature for this Data Lake store account. Possible
      values include: 'Enabled', 'Disabled'
-    :type trusted_id_provider_state: str or :class:`TrustedIdProviderState
-     <azure.mgmt.datalake.store.models.TrustedIdProviderState>`
+    :type trusted_id_provider_state: str or
+     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
     :param trusted_id_providers: The list of trusted identity providers
      associated with this Data Lake store account.
-    :type trusted_id_providers: list of :class:`TrustedIdProvider
-     <azure.mgmt.datalake.store.models.TrustedIdProvider>`
+    :type trusted_id_providers:
+     list[~azure.mgmt.datalake.store.models.TrustedIdProvider]
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
     :param new_tier: the commitment tier to use for next month. Possible
      values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
      'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
-    :type new_tier: str or :class:`TierType
-     <azure.mgmt.datalake.store.models.TierType>`
+    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     :ivar current_tier: the commitment tier in use for the current month.
      Possible values include: 'Consumption', 'Commitment_1TB',
      'Commitment_10TB', 'Commitment_100TB', 'Commitment_500TB',
      'Commitment_1PB', 'Commitment_5PB'
-    :vartype current_tier: str or :class:`TierType
-     <azure.mgmt.datalake.store.models.TierType>`
+    :vartype current_tier: str or ~azure.mgmt.datalake.store.models.TierType
     :param firewall_allow_azure_ips: The current state of allowing or
      disallowing IPs originating within Azure through the firewall. If the
      firewall is disabled, this is not enforced. Possible values include:
      'Enabled', 'Disabled'
-    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
-     <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
+    :type firewall_allow_azure_ips: str or
+     ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
     """
 
     _validation = {

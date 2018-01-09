@@ -27,16 +27,17 @@ class DataLakeStoreAccountBasic(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: the provisioning status of the Data Lake Store
      account. Possible values include: 'Failed', 'Creating', 'Running',
-     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted'
-    :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
-     <azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus>`
+     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted',
+     'Undeleting', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
     :ivar state: the state of the Data Lake Store account. Possible values
      include: 'Active', 'Suspended'
-    :vartype state: str or :class:`DataLakeStoreAccountState
-     <azure.mgmt.datalake.store.models.DataLakeStoreAccountState>`
+    :vartype state: str or
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: the account last modified time.
