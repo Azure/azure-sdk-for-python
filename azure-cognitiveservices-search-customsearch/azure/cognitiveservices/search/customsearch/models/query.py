@@ -48,6 +48,7 @@ class Query(Model):
     }
 
     def __init__(self, text):
+        super(Query, self).__init__()
         self.text = text
         self.display_text = None
         self.web_search_url = None
