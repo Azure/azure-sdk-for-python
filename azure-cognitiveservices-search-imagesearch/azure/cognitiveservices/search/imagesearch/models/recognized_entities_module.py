@@ -32,4 +32,5 @@ class RecognizedEntitiesModule(Model):
     }
 
     def __init__(self):
+        super(RecognizedEntitiesModule, self).__init__()
         self.value = None

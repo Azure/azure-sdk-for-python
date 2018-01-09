@@ -32,4 +32,5 @@ class ImageTagsModule(Model):
     }
 
     def __init__(self, value):
+        super(ImageTagsModule, self).__init__()
         self.value = value
