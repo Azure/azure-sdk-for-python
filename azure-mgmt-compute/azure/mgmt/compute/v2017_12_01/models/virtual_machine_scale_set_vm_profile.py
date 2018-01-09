@@ -45,6 +45,11 @@ class VirtualMachineScaleSetVMProfile(Model):
      Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Minimum api-version: 2015-06-15
     :type license_type: str
+    :param priority: Specifies the priority for the virtual machines in the
+     scale set. <br><br>Minimum api-version: 2017-10-30-preview. Possible
+     values include: 'Regular', 'Low'
+    :type priority: str or
+     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePriorityTypes
     """
 
     _attribute_map = {
@@ -54,9 +59,10 @@ class VirtualMachineScaleSetVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'str'},
     }
 
-    def __init__(self, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type=None):
+    def __init__(self, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type=None, priority=None):
         super(VirtualMachineScaleSetVMProfile, self).__init__()
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -64,3 +70,4 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile
         self.license_type = license_type
+        self.priority = priority
