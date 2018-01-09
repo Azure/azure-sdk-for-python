@@ -27,12 +27,11 @@ class USqlTablePartition(CatalogItem):
     :param name: the name of the table partition.
     :type name: str
     :param parent_name: the Ddl object of the partition's parent.
-    :type parent_name: :class:`DdlName
-     <azure.mgmt.datalake.analytics.catalog.models.DdlName>`
+    :type parent_name: ~azure.mgmt.datalake.analytics.catalog.models.DdlName
     :param index_id: the index ID for this partition.
     :type index_id: int
     :param label: the list of labels associated with this partition.
-    :type label: list of str
+    :type label: list[str]
     :param create_date: the creation time of the partition
     :type create_date: datetime
     """

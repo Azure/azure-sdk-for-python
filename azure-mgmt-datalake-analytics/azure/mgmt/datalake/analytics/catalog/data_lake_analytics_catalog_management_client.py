@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import warnings
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
@@ -37,8 +38,6 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if adla_catalog_dns_suffix is None:
             raise ValueError("Parameter 'adla_catalog_dns_suffix' must not be None.")
-        if not isinstance(adla_catalog_dns_suffix, str):
-            raise TypeError("Parameter 'adla_catalog_dns_suffix' must be str.")
         base_url = 'https://{accountName}.{adlaCatalogDnsSuffix}'
 
         super(DataLakeAnalyticsCatalogManagementClientConfiguration, self).__init__(base_url)

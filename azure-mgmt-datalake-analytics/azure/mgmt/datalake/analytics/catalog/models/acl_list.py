@@ -12,16 +12,23 @@
 from msrest.serialization import Model
 
 
-class USqlAssemblyDependencyInfo(Model):
-    """A Data Lake Analytics catalog U-SQL dependency information item.
+class AclList(Model):
+    """A Data Lake Analytics catalog access control list (ACL).
 
-    :param entity_id: the EntityId of the dependency.
-    :type entity_id: ~azure.mgmt.datalake.analytics.catalog.models.EntityId
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: the access control list (ACL).
+    :vartype value: list[~azure.mgmt.datalake.analytics.catalog.models.Acl]
     """
 
-    _attribute_map = {
-        'entity_id': {'key': 'entityId', 'type': 'EntityId'},
+    _validation = {
+        'value': {'readonly': True},
     }
 
-    def __init__(self, entity_id=None):
-        self.entity_id = entity_id
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Acl]'},
+    }
+
+    def __init__(self):
+        self.value = None

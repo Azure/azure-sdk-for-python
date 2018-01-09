@@ -17,8 +17,7 @@ class EntityId(Model):
 
     :param name: the name of the external table associated with this database,
      schema and table.
-    :type name: :class:`DdlName
-     <azure.mgmt.datalake.analytics.catalog.models.DdlName>`
+    :type name: ~azure.mgmt.datalake.analytics.catalog.models.DdlName
     :param version: the version of the external data source.
     :type version: str
     """
