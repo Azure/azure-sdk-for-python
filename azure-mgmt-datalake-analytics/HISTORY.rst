@@ -51,7 +51,7 @@ Release History
     * NOTE: The following fields are not a part of the BuildJobParameters object:
 
       * degreeOfParallelism
-	    * priority
+      * priority
       * related
 
   * When getting a list of jobs, the object type that is returned is JobInformationBasic and not JobInformation (more information on the difference is below in the Notes section)
