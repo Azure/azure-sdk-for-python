@@ -61,6 +61,7 @@ class RankingRankingItem(Model):
     }
 
     def __init__(self, answer_type="WebPages"):
+        super(RankingRankingItem, self).__init__()
         self.answer_type = answer_type
         self.result_index = None
         self.value = None
