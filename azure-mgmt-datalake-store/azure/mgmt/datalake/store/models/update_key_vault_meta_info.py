@@ -25,4 +25,5 @@ class UpdateKeyVaultMetaInfo(Model):
     }
 
     def __init__(self, encryption_key_version=None):
+        super(UpdateKeyVaultMetaInfo, self).__init__()
         self.encryption_key_version = encryption_key_version

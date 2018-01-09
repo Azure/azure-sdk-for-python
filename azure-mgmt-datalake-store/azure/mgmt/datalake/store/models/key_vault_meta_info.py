@@ -38,6 +38,7 @@ class KeyVaultMetaInfo(Model):
     }
 
     def __init__(self, key_vault_resource_id, encryption_key_name, encryption_key_version):
+        super(KeyVaultMetaInfo, self).__init__()
         self.key_vault_resource_id = key_vault_resource_id
         self.encryption_key_name = encryption_key_name
         self.encryption_key_version = encryption_key_version
