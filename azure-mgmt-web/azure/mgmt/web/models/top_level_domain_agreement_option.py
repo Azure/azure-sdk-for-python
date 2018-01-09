@@ -31,5 +31,6 @@ class TopLevelDomainAgreementOption(Model):
     }
 
     def __init__(self, include_privacy=None, for_transfer=None):
+        super(TopLevelDomainAgreementOption, self).__init__()
         self.include_privacy = include_privacy
         self.for_transfer = for_transfer

@@ -47,6 +47,7 @@ class Address(Model):
     }
 
     def __init__(self, address1, city, country, postal_code, state, address2=None):
+        super(Address, self).__init__()
         self.address1 = address1
         self.address2 = address2
         self.city = city

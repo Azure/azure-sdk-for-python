@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class ReissueCertificateOrderRequest(Resource):
+class ReissueCertificateOrderRequest(ProxyOnlyResource):
     """Class representing certificate reissue request.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,12 +24,8 @@ class ReissueCertificateOrderRequest(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param delay_existing_revoke_in_hours: Delay in hours to revoke existing
@@ -45,7 +41,6 @@ class ReissueCertificateOrderRequest(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
     }
 
@@ -53,17 +48,15 @@ class ReissueCertificateOrderRequest(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'delay_existing_revoke_in_hours': {'key': 'properties.delayExistingRevokeInHours', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, kind=None, tags=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
-        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, key_size=None, delay_existing_revoke_in_hours=None, csr=None, is_private_key_external=None):
+        super(ReissueCertificateOrderRequest, self).__init__(kind=kind)
         self.key_size = key_size
         self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
         self.csr = csr

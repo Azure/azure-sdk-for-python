@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class RenewCertificateOrderRequest(Resource):
+class RenewCertificateOrderRequest(ProxyOnlyResource):
     """Class representing certificate renew request.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,12 +24,8 @@ class RenewCertificateOrderRequest(Resource):
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param csr: Csr to be used for re-key operation.
@@ -42,7 +38,6 @@ class RenewCertificateOrderRequest(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
         'type': {'readonly': True},
     }
 
@@ -50,16 +45,14 @@ class RenewCertificateOrderRequest(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, kind=None, tags=None, key_size=None, csr=None, is_private_key_external=None):
-        super(RenewCertificateOrderRequest, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, kind=None, key_size=None, csr=None, is_private_key_external=None):
+        super(RenewCertificateOrderRequest, self).__init__(kind=kind)
         self.key_size = key_size
         self.csr = csr
         self.is_private_key_external = is_private_key_external

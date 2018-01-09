@@ -271,6 +271,25 @@ class OperationStatus(Enum):
     created = "Created"
 
 
+class IssueType(Enum):
+
+    service_incident = "ServiceIncident"
+    app_deployment = "AppDeployment"
+    app_crash = "AppCrash"
+    runtime_issue_detected = "RuntimeIssueDetected"
+    ase_deployment = "AseDeployment"
+    user_issue = "UserIssue"
+    platform_issue = "PlatformIssue"
+    other = "Other"
+
+
+class SolutionType(Enum):
+
+    quick_solution = "QuickSolution"
+    deep_investigation = "DeepInvestigation"
+    best_practices = "BestPractices"
+
+
 class ResourceScopeType(Enum):
 
     server_farm = "ServerFarm"
@@ -316,6 +335,11 @@ class CheckNameResourceTypes(Enum):
     site = "Site"
     slot = "Slot"
     hosting_environment = "HostingEnvironment"
+    publishing_user = "PublishingUser"
+    microsoft_websites = "Microsoft.Web/sites"
+    microsoft_websitesslots = "Microsoft.Web/sites/slots"
+    microsoft_webhosting_environments = "Microsoft.Web/hostingEnvironments"
+    microsoft_webpublishing_users = "Microsoft.Web/publishingUsers"
 
 
 class ValidateResourceTypes(Enum):
