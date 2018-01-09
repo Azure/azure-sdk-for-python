@@ -40,6 +40,7 @@ class ScaleCapacity(Model):
     }
 
     def __init__(self, minimum, maximum, default):
+        super(ScaleCapacity, self).__init__()
         self.minimum = minimum
         self.maximum = maximum
         self.default = default

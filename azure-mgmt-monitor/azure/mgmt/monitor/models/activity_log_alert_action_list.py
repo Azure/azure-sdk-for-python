@@ -25,4 +25,5 @@ class ActivityLogAlertActionList(Model):
     }
 
     def __init__(self, action_groups=None):
+        super(ActivityLogAlertActionList, self).__init__()
         self.action_groups = action_groups
