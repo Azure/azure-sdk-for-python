@@ -15,6 +15,7 @@ from .failover_policy import FailoverPolicy
 from .database_account import DatabaseAccount
 from .failover_policies import FailoverPolicies
 from .resource import Resource
+from .capability import Capability
 from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
 from .database_account_patch_parameters import DatabaseAccountPatchParameters
 from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
@@ -24,13 +25,24 @@ from .database_account_list_connection_strings_result import DatabaseAccountList
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
 from .operation_display import OperationDisplay
 from .operation import Operation
+from .metric_name import MetricName
+from .usage import Usage
+from .usages_result import UsagesResult
+from .metric_availability import MetricAvailability
+from .metric_definition import MetricDefinition
+from .metric_definitions_list_result import MetricDefinitionsListResult
+from .metric_value import MetricValue
+from .metric import Metric
 from .database_account_paged import DatabaseAccountPaged
+from .metric_paged import MetricPaged
 from .operation_paged import OperationPaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     KeyKind,
+    UnitType,
+    PrimaryAggregationType,
 )
 
 __all__ = [
@@ -40,6 +52,7 @@ __all__ = [
     'DatabaseAccount',
     'FailoverPolicies',
     'Resource',
+    'Capability',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
@@ -49,10 +62,21 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'OperationDisplay',
     'Operation',
+    'MetricName',
+    'Usage',
+    'UsagesResult',
+    'MetricAvailability',
+    'MetricDefinition',
+    'MetricDefinitionsListResult',
+    'MetricValue',
+    'Metric',
     'DatabaseAccountPaged',
+    'MetricPaged',
     'OperationPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'KeyKind',
+    'UnitType',
+    'PrimaryAggregationType',
 ]

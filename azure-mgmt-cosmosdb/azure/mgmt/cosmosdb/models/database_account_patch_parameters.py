@@ -24,4 +24,5 @@ class DatabaseAccountPatchParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(DatabaseAccountPatchParameters, self).__init__()
         self.tags = tags
