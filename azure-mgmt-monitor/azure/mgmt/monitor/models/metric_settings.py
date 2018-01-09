@@ -41,6 +41,7 @@ class MetricSettings(Model):
     }
 
     def __init__(self, enabled, time_grain=None, category=None, retention_policy=None):
+        super(MetricSettings, self).__init__()
         self.time_grain = time_grain
         self.category = category
         self.enabled = enabled

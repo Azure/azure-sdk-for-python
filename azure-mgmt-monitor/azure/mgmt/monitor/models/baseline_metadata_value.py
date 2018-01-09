@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class MetadataValue(Model):
-    """Represents a metric metadata value.
+class BaselineMetadataValue(Model):
+    """Represents a baseline metadata value.
 
     :param name: the name of the metadata.
     :type name: ~azure.mgmt.monitor.models.LocalizableString
@@ -27,6 +27,6 @@ class MetadataValue(Model):
     }
 
     def __init__(self, name=None, value=None):
-        super(MetadataValue, self).__init__()
+        super(BaselineMetadataValue, self).__init__()
         self.name = name
         self.value = value
