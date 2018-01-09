@@ -15,7 +15,7 @@ from .recovery_point import RecoveryPoint
 class GenericRecoveryPoint(RecoveryPoint):
     """Generic backup copy.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param friendly_name: Friendly name of the backup copy.
     :type friendly_name: str

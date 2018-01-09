@@ -29,12 +29,11 @@ class RestoreRequestResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: RestoreRequestResource properties
-    :type properties: :class:`RestoreRequest
-     <azure.mgmt.recoveryservicesbackup.models.RestoreRequest>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.RestoreRequest
     """
 
     _validation = {

@@ -16,6 +16,9 @@ class WorkloadProtectableItem(Model):
     """Base class for backup item. Workload-specific backup items are derived from
     this class.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaaSVMProtectableItem
+
     :param backup_management_type: Type of backup managemenent to backup an
      item.
     :type backup_management_type: str
@@ -23,9 +26,9 @@ class WorkloadProtectableItem(Model):
     :type friendly_name: str
     :param protection_state: State of the back up item. Possible values
      include: 'Invalid', 'NotProtected', 'Protecting', 'Protected'
-    :type protection_state: str or :class:`ProtectionStatus
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionStatus>`
-    :param protectable_item_type: Polymorphic Discriminator
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
+    :param protectable_item_type: Constant filled by server.
     :type protectable_item_type: str
     """
 
@@ -45,6 +48,7 @@ class WorkloadProtectableItem(Model):
     }
 
     def __init__(self, backup_management_type=None, friendly_name=None, protection_state=None):
+        super(WorkloadProtectableItem, self).__init__()
         self.backup_management_type = backup_management_type
         self.friendly_name = friendly_name
         self.protection_state = protection_state

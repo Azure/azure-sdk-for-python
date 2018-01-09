@@ -15,7 +15,7 @@ from .recovery_point import RecoveryPoint
 class IaasVMRecoveryPoint(RecoveryPoint):
     """IaaS VM workload specific backup copy.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param recovery_point_type: Type of the backup copy.
     :type recovery_point_type: str
@@ -32,15 +32,14 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type is_source_vm_encrypted: bool
     :param key_and_secret: Required details for recovering an encrypted VM.
      Applicable only when IsSourceVMEncrypted is true.
-    :type key_and_secret: :class:`KeyAndSecretDetails
-     <azure.mgmt.recoveryservicesbackup.models.KeyAndSecretDetails>`
+    :type key_and_secret:
+     ~azure.mgmt.recoveryservicesbackup.models.KeyAndSecretDetails
     :param is_instant_ilr_session_active: Is the session to recover items from
      this backup copy still active.
     :type is_instant_ilr_session_active: bool
     :param recovery_point_tier_details: Recovery point tier information.
-    :type recovery_point_tier_details: list of
-     :class:`RecoveryPointTierInformation
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation>`
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
     :param is_managed_virtual_machine: Whether VM is with Managed Disks
     :type is_managed_virtual_machine: bool
     :param virtual_machine_size: Virtual Machine Size

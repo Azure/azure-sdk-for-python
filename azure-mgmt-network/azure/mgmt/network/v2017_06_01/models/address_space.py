@@ -26,4 +26,5 @@ class AddressSpace(Model):
     }
 
     def __init__(self, address_prefixes=None):
+        super(AddressSpace, self).__init__()
         self.address_prefixes = address_prefixes

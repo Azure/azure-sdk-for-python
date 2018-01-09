@@ -27,5 +27,6 @@ class BMSRPQueryObject(Model):
     }
 
     def __init__(self, start_date=None, end_date=None):
+        super(BMSRPQueryObject, self).__init__()
         self.start_date = start_date
         self.end_date = end_date

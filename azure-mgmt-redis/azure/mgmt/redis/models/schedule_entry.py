@@ -38,6 +38,7 @@ class ScheduleEntry(Model):
     }
 
     def __init__(self, day_of_week, start_hour_utc, maintenance_window=None):
+        super(ScheduleEntry, self).__init__()
         self.day_of_week = day_of_week
         self.start_hour_utc = start_hour_utc
         self.maintenance_window = maintenance_window

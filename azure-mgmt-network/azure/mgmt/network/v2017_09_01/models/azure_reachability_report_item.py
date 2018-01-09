@@ -31,6 +31,7 @@ class AzureReachabilityReportItem(Model):
     }
 
     def __init__(self, provider=None, azure_location=None, latencies=None):
+        super(AzureReachabilityReportItem, self).__init__()
         self.provider = provider
         self.azure_location = azure_location
         self.latencies = latencies

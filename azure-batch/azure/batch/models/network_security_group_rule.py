@@ -46,6 +46,7 @@ class NetworkSecurityGroupRule(Model):
     }
 
     def __init__(self, priority, access, source_address_prefix):
+        super(NetworkSecurityGroupRule, self).__init__()
         self.priority = priority
         self.access = access
         self.source_address_prefix = source_address_prefix

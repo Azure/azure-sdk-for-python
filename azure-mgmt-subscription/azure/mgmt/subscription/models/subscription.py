@@ -55,6 +55,7 @@ class Subscription(Model):
     }
 
     def __init__(self, subscription_policies=None, authorization_source=None):
+        super(Subscription, self).__init__()
         self.id = None
         self.subscription_id = None
         self.display_name = None

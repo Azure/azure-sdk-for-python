@@ -31,5 +31,6 @@ class ApplicationGatewayBackendHealthPool(Model):
     }
 
     def __init__(self, backend_address_pool=None, backend_http_settings_collection=None):
+        super(ApplicationGatewayBackendHealthPool, self).__init__()
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings_collection = backend_http_settings_collection

@@ -26,6 +26,8 @@ class VaultExtendedInfoOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,13 +51,9 @@ class VaultExtendedInfoOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VaultExtendedInfoResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -83,7 +81,7 @@ class VaultExtendedInfoOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -113,20 +111,15 @@ class VaultExtendedInfoOperations(object):
         :param resource_resource_extended_info_details:
          resourceResourceExtendedInfoDetails
         :type resource_resource_extended_info_details:
-         :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>`
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VaultExtendedInfoResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -158,7 +151,7 @@ class VaultExtendedInfoOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -188,20 +181,15 @@ class VaultExtendedInfoOperations(object):
         :param resource_resource_extended_info_details:
          resourceResourceExtendedInfoDetails
         :type resource_resource_extended_info_details:
-         :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>`
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VaultExtendedInfoResource
-         <azure.mgmt.recoveryservices.models.VaultExtendedInfoResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VaultExtendedInfoResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -233,7 +221,7 @@ class VaultExtendedInfoOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

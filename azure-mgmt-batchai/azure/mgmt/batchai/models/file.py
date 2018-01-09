@@ -44,6 +44,7 @@ class File(Model):
     }
 
     def __init__(self, name, download_url, last_modified=None, content_length=None):
+        super(File, self).__init__()
         self.name = name
         self.download_url = download_url
         self.last_modified = last_modified

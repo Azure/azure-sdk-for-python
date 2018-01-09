@@ -26,6 +26,8 @@ class BackupVaultConfigsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,13 +51,9 @@ class BackupVaultConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupVaultConfig
-         <azure.mgmt.recoveryservices.models.BackupVaultConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupVaultConfig
-         <azure.mgmt.recoveryservices.models.BackupVaultConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupVaultConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.BackupVaultConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -83,7 +81,7 @@ class BackupVaultConfigsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -111,20 +109,16 @@ class BackupVaultConfigsOperations(object):
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param backup_vault_config: Backup vault config.
-        :type backup_vault_config: :class:`BackupVaultConfig
-         <azure.mgmt.recoveryservices.models.BackupVaultConfig>`
+        :type backup_vault_config:
+         ~azure.mgmt.recoveryservices.models.BackupVaultConfig
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupVaultConfig
-         <azure.mgmt.recoveryservices.models.BackupVaultConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupVaultConfig
-         <azure.mgmt.recoveryservices.models.BackupVaultConfig>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupVaultConfig or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.BackupVaultConfig or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -156,7 +150,7 @@ class BackupVaultConfigsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

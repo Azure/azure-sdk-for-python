@@ -15,17 +15,21 @@ from .protected_item import ProtectedItem
 class AzureIaaSVMProtectedItem(ProtectedItem):
     """IaaS VM workload-specific backup item.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureIaaSClassicComputeVMProtectedItem,
+    AzureIaaSComputeVMProtectedItem
+
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
      'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +40,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
      item.
@@ -49,15 +53,15 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param protection_state: Backup state of this backup item. Possible values
      include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
-    :type protection_state: str or :class:`ProtectionState
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionState>`
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
      include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
-    :type health_status: str or :class:`HealthStatus
-     <azure.mgmt.recoveryservicesbackup.models.HealthStatus>`
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
-    :type health_details: list of :class:`AzureIaaSVMHealthDetails
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails>`
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails]
     :param last_backup_status: Last backup operation status. Possible values:
      Healthy, Unhealthy.
     :type last_backup_status: str
@@ -67,8 +71,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param protected_item_data_id: Data ID of the protected item.
     :type protected_item_data_id: str
     :param extended_info: Additional information for this backup item.
-    :type extended_info: :class:`AzureIaaSVMProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
     """
 
     _validation = {

@@ -28,4 +28,5 @@ class KeyCredentialsUpdateParameters(Model):
     }
 
     def __init__(self, value):
+        super(KeyCredentialsUpdateParameters, self).__init__()
         self.value = value

@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class SchedulePolicy(Model):
     """Base class for backup schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LongTermSchedulePolicy, SimpleSchedulePolicy
+
+    :param schedule_policy_type: Constant filled by server.
     :type schedule_policy_type: str
     """
 
@@ -32,4 +35,5 @@ class SchedulePolicy(Model):
     }
 
     def __init__(self):
+        super(SchedulePolicy, self).__init__()
         self.schedule_policy_type = None

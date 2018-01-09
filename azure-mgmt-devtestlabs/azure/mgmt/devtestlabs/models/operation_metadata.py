@@ -12,26 +12,21 @@
 from msrest.serialization import Model
 
 
-class RunCommandInputParameter(Model):
-    """Describes the properties of a run command parameter.
+class OperationMetadata(Model):
+    """The REST API operation supported by DevTestLab ResourceProvider.
 
-    :param name: The run command parameter name.
+    :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
-    :param value: The run command parameter value.
-    :type value: str
+    :param display: The object that describes the operations
+    :type display: ~azure.mgmt.devtestlabs.models.OperationMetadataDisplay
     """
-
-    _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationMetadataDisplay'},
     }
 
-    def __init__(self, name, value):
-        super(RunCommandInputParameter, self).__init__()
+    def __init__(self, name=None, display=None):
+        super(OperationMetadata, self).__init__()
         self.name = name
-        self.value = value
+        self.display = display

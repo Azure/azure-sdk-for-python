@@ -27,5 +27,6 @@ class ExternalSubnet(Model):
     }
 
     def __init__(self, id=None, name=None):
+        super(ExternalSubnet, self).__init__()
         self.id = id
         self.name = name

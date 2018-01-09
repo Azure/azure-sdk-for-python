@@ -17,13 +17,13 @@ class BackupResourceConfig(Model):
 
     :param storage_type: Storage type. Possible values include: 'Invalid',
      'GeoRedundant', 'LocallyRedundant'
-    :type storage_type: str or :class:`StorageType
-     <azure.mgmt.recoveryservicesbackup.models.StorageType>`
+    :type storage_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.StorageType
     :param storage_type_state: Locked or Unlocked. Once a machine is
      registered against a resource, the storageTypeState is always Locked.
      Possible values include: 'Invalid', 'Locked', 'Unlocked'
-    :type storage_type_state: str or :class:`StorageTypeState
-     <azure.mgmt.recoveryservicesbackup.models.StorageTypeState>`
+    :type storage_type_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.StorageTypeState
     """
 
     _attribute_map = {
@@ -32,5 +32,6 @@ class BackupResourceConfig(Model):
     }
 
     def __init__(self, storage_type=None, storage_type_state=None):
+        super(BackupResourceConfig, self).__init__()
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state

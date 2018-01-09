@@ -15,10 +15,10 @@ from .operation_result_info_base import OperationResultInfoBase
 class OperationResultInfo(OperationResultInfoBase):
     """Operation result info.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param job_list: List of jobs created by this operation.
-    :type job_list: list of str
+    :type job_list: list[str]
     """
 
     _validation = {

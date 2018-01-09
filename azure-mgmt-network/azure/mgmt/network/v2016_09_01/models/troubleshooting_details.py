@@ -37,6 +37,7 @@ class TroubleshootingDetails(Model):
     }
 
     def __init__(self, id=None, reason_type=None, summary=None, detail=None, recommended_actions=None):
+        super(TroubleshootingDetails, self).__init__()
         self.id = id
         self.reason_type = reason_type
         self.summary = summary

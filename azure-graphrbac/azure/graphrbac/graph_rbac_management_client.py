@@ -47,7 +47,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
         super(GraphRbacManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('graphrbacmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-graphrbac/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

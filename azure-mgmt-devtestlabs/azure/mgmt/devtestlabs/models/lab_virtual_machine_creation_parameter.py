@@ -148,6 +148,7 @@ class LabVirtualMachineCreationParameter(Model):
     }
 
     def __init__(self, bulk_creation_parameters=None, notes=None, owner_object_id=None, owner_user_principal_name=None, created_by_user_id=None, created_by_user=None, created_date=None, custom_image_id=None, os_type=None, size=None, user_name=None, password=None, ssh_key=None, is_authentication_with_ssh_key=None, fqdn=None, lab_subnet_name=None, lab_virtual_network_id=None, disallow_public_ip_address=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, compute_vm=None, network_interface=None, applicable_schedule=None, expiration_date=None, allow_claim=None, storage_type=None, virtual_machine_creation_source=None, environment_id=None, provisioning_state=None, unique_identifier=None, name=None, location=None, tags=None):
+        super(LabVirtualMachineCreationParameter, self).__init__()
         self.bulk_creation_parameters = bulk_creation_parameters
         self.notes = notes
         self.owner_object_id = owner_object_id

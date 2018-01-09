@@ -34,5 +34,6 @@ class RetentionPolicy(Model):
     }
 
     def __init__(self, enabled, days):
+        super(RetentionPolicy, self).__init__()
         self.enabled = enabled
         self.days = days

@@ -56,6 +56,7 @@ class MetricDefinition(Model):
     }
 
     def __init__(self, is_dimension_required=None, resource_id=None, name=None, unit=None, primary_aggregation_type=None, metric_availabilities=None, id=None, dimensions=None):
+        super(MetricDefinition, self).__init__()
         self.is_dimension_required = is_dimension_required
         self.resource_id = resource_id
         self.name = name

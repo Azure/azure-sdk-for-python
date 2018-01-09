@@ -100,6 +100,7 @@ class JobReleaseTask(Model):
     }
 
     def __init__(self, command_line, id=None, container_settings=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, user_identity=None):
+        super(JobReleaseTask, self).__init__()
         self.id = id
         self.command_line = command_line
         self.container_settings = container_settings

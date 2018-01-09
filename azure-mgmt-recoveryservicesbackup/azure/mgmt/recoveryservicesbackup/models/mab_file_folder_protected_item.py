@@ -18,14 +18,14 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
      'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +36,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of this backup item.
     :type friendly_name: str
@@ -54,8 +54,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
     :type deferred_delete_sync_time_in_utc: long
     :param extended_info: Additional information with this backup item.
-    :type extended_info: :class:`MabFileFolderProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo
     """
 
     _validation = {

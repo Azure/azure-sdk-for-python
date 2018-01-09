@@ -25,4 +25,5 @@ class SubnetSharedPublicIpAddressConfiguration(Model):
     }
 
     def __init__(self, allowed_ports=None):
+        super(SubnetSharedPublicIpAddressConfiguration, self).__init__()
         self.allowed_ports = allowed_ports

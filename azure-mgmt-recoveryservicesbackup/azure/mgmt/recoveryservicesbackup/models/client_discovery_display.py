@@ -33,6 +33,7 @@ class ClientDiscoveryDisplay(Model):
     }
 
     def __init__(self, provider=None, resource=None, operation=None, description=None):
+        super(ClientDiscoveryDisplay, self).__init__()
         self.provider = provider
         self.resource = resource
         self.operation = operation

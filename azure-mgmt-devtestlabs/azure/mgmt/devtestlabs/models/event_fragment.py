@@ -26,4 +26,5 @@ class EventFragment(Model):
     }
 
     def __init__(self, event_name=None):
+        super(EventFragment, self).__init__()
         self.event_name = event_name

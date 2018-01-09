@@ -24,4 +24,5 @@ class LabCostSummaryProperties(Model):
     }
 
     def __init__(self, estimated_lab_cost=None):
+        super(LabCostSummaryProperties, self).__init__()
         self.estimated_lab_cost = estimated_lab_cost

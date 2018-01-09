@@ -25,4 +25,5 @@ class SubnetSharedPublicIpAddressConfigurationFragment(Model):
     }
 
     def __init__(self, allowed_ports=None):
+        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__()
         self.allowed_ports = allowed_ports

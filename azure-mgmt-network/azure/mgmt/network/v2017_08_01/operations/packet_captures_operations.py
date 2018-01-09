@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -38,29 +39,9 @@ class PacketCapturesOperations(object):
 
         self.config = config
 
-    def create(
-            self, resource_group_name, network_watcher_name, packet_capture_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create and start a packet capture on the specified VM.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param packet_capture_name: The name of the packet capture session.
-        :type packet_capture_name: str
-        :param parameters: Parameters that define the create packet capture
-         operation.
-        :type parameters: ~azure.mgmt.network.v2017_08_01.models.PacketCapture
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         PacketCaptureResult or ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.PacketCaptureResult]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_initial(
+            self, resource_group_name, network_watcher_name, packet_capture_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/packetCaptures/{packetCaptureName}'
         path_format_arguments = {
@@ -89,19 +70,74 @@ class PacketCapturesOperations(object):
         body_content = self._serialize.body(parameters, 'PacketCapture')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('PacketCaptureResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create(
+            self, resource_group_name, network_watcher_name, packet_capture_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Create and start a packet capture on the specified VM.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param packet_capture_name: The name of the packet capture session.
+        :type packet_capture_name: str
+        :param parameters: Parameters that define the create packet capture
+         operation.
+        :type parameters: ~azure.mgmt.network.v2017_08_01.models.PacketCapture
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         PacketCaptureResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.PacketCaptureResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            packet_capture_name=packet_capture_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -110,20 +146,13 @@ class PacketCapturesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('PacketCaptureResult', response)
+            deserialized = self._deserialize('PacketCaptureResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -178,7 +207,7 @@ class PacketCapturesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -196,25 +225,9 @@ class PacketCapturesOperations(object):
 
         return deserialized
 
-    def delete(
-            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified packet capture session.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param packet_capture_name: The name of the packet capture session.
-        :type packet_capture_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/packetCaptures/{packetCaptureName}'
         path_format_arguments = {
@@ -240,44 +253,21 @@ class PacketCapturesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
-    def stop(
+    def delete(
             self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
-        """Stops a specified packet capture session.
+        """Deletes the specified packet capture session.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,6 +284,52 @@ class PacketCapturesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            packet_capture_name=packet_capture_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [202, 204]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _stop_initial(
+            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/packetCaptures/{packetCaptureName}/stop'
         path_format_arguments = {
@@ -319,18 +355,61 @@ class PacketCapturesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def stop(
+            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
+        """Stops a specified packet capture session.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param packet_capture_name: The name of the packet capture session.
+        :type packet_capture_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._stop_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            packet_capture_name=packet_capture_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -343,10 +422,6 @@ class PacketCapturesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -354,27 +429,9 @@ class PacketCapturesOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_status(
-            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
-        """Query the status of a running packet capture session.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the Network Watcher resource.
-        :type network_watcher_name: str
-        :param packet_capture_name: The name given to the packet capture
-         session.
-        :type packet_capture_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         PacketCaptureQueryStatusResult or ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.PacketCaptureQueryStatusResult]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_status_initial(
+            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/packetCaptures/{packetCaptureName}/queryStatus'
         path_format_arguments = {
@@ -400,18 +457,72 @@ class PacketCapturesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PacketCaptureQueryStatusResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('PacketCaptureQueryStatusResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_status(
+            self, resource_group_name, network_watcher_name, packet_capture_name, custom_headers=None, raw=False, **operation_config):
+        """Query the status of a running packet capture session.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the Network Watcher resource.
+        :type network_watcher_name: str
+        :param packet_capture_name: The name given to the packet capture
+         session.
+        :type packet_capture_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         PacketCaptureQueryStatusResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.PacketCaptureQueryStatusResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_status_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            packet_capture_name=packet_capture_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -420,22 +531,13 @@ class PacketCapturesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('PacketCaptureQueryStatusResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('PacketCaptureQueryStatusResult', response)
+            deserialized = self._deserialize('PacketCaptureQueryStatusResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -495,7 +597,7 @@ class PacketCapturesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

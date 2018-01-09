@@ -34,5 +34,6 @@ class UnmanagedFileSystemReference(Model):
     }
 
     def __init__(self, mount_command, relative_mount_path):
+        super(UnmanagedFileSystemReference, self).__init__()
         self.mount_command = mount_command
         self.relative_mount_path = relative_mount_path
