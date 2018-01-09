@@ -31,6 +31,7 @@ class LabCostDetailsProperties(Model):
     }
 
     def __init__(self, date_property=None, cost=None, cost_type=None):
+        super(LabCostDetailsProperties, self).__init__()
         self.date_property = date_property
         self.cost = cost
         self.cost_type = cost_type

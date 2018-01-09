@@ -26,4 +26,5 @@ class LinuxOsInfo(Model):
     }
 
     def __init__(self, linux_os_state=None):
+        super(LinuxOsInfo, self).__init__()
         self.linux_os_state = linux_os_state

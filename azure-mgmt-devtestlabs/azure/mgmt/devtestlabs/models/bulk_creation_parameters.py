@@ -24,4 +24,5 @@ class BulkCreationParameters(Model):
     }
 
     def __init__(self, instance_count=None):
+        super(BulkCreationParameters, self).__init__()
         self.instance_count = instance_count

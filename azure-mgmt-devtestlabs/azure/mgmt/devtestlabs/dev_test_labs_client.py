@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.provider_operations import ProviderOperations
 from .operations.labs_operations import LabsOperations
 from .operations.operations import Operations
 from .operations.global_schedules_operations import GlobalSchedulesOperations
@@ -63,7 +64,7 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
 
         super(DevTestLabsClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('devtestlabsclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-devtestlabs/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -76,6 +77,8 @@ class DevTestLabsClient(object):
     :ivar config: Configuration for client.
     :vartype config: DevTestLabsClientConfiguration
 
+    :ivar provider_operations: ProviderOperations operations
+    :vartype provider_operations: azure.mgmt.devtestlabs.operations.ProviderOperations
     :ivar labs: Labs operations
     :vartype labs: azure.mgmt.devtestlabs.operations.LabsOperations
     :ivar operations: Operations operations
@@ -140,6 +143,8 @@ class DevTestLabsClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.provider_operations = ProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.labs = LabsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

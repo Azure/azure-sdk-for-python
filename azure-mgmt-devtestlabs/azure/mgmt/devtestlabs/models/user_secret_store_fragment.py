@@ -27,5 +27,6 @@ class UserSecretStoreFragment(Model):
     }
 
     def __init__(self, key_vault_uri=None, key_vault_id=None):
+        super(UserSecretStoreFragment, self).__init__()
         self.key_vault_uri = key_vault_uri
         self.key_vault_id = key_vault_id

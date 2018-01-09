@@ -33,6 +33,7 @@ class NotificationSettings(Model):
     }
 
     def __init__(self, status=None, time_in_minutes=None, webhook_url=None):
+        super(NotificationSettings, self).__init__()
         self.status = status
         self.time_in_minutes = time_in_minutes
         self.webhook_url = webhook_url

@@ -44,6 +44,7 @@ class ComputeVmProperties(Model):
     }
 
     def __init__(self, statuses=None, os_type=None, vm_size=None, network_interface_id=None, os_disk_id=None, data_disk_ids=None, data_disks=None):
+        super(ComputeVmProperties, self).__init__()
         self.statuses = statuses
         self.os_type = os_type
         self.vm_size = vm_size
