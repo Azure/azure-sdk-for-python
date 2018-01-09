@@ -29,4 +29,5 @@ class RankingRankingGroup(Model):
     }
 
     def __init__(self, items):
+        super(RankingRankingGroup, self).__init__()
         self.items = items
