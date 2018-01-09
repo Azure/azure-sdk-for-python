@@ -29,4 +29,5 @@ class GroupRequest(Model):
     }
 
     def __init__(self, face_ids):
+        super(GroupRequest, self).__init__()
         self.face_ids = face_ids

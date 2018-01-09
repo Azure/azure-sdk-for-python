@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class EmotionProperties(Model):
+class Emotion(Model):
     """Properties describing facial emotion in form of confidence ranging from 0
     to 1.
 
@@ -34,17 +34,6 @@ class EmotionProperties(Model):
     :type surprise: float
     """
 
-    _validation = {
-        'anger': {'maximum': 1, 'minimum': 0},
-        'contempt': {'maximum': 1, 'minimum': 0},
-        'disgust': {'maximum': 1, 'minimum': 0},
-        'fear': {'maximum': 1, 'minimum': 0},
-        'happiness': {'maximum': 1, 'minimum': 0},
-        'neutral': {'maximum': 1, 'minimum': 0},
-        'sadness': {'maximum': 1, 'minimum': 0},
-        'surprise': {'maximum': 1, 'minimum': 0},
-    }
-
     _attribute_map = {
         'anger': {'key': 'anger', 'type': 'float'},
         'contempt': {'key': 'contempt', 'type': 'float'},
@@ -57,6 +46,7 @@ class EmotionProperties(Model):
     }
 
     def __init__(self, anger=None, contempt=None, disgust=None, fear=None, happiness=None, neutral=None, sadness=None, surprise=None):
+        super(Emotion, self).__init__()
         self.anger = anger
         self.contempt = contempt
         self.disgust = disgust

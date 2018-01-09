@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class HairProperties(Model):
+class Hair(Model):
     """Properties describing hair attributes.
 
     :param bald: A number describing confidence level of whether the person is
@@ -21,22 +21,20 @@ class HairProperties(Model):
     :param invisible: A boolean value describing whether the hair is visible
      in the image.
     :type invisible: bool
-    :param hair_color:
+    :param hair_color: An array of candidate colors and confidence level in
+     the presence of each.
     :type hair_color:
-     list[~azure.cognitiveservices.vision.face.models.ColorProperty]
+     list[~azure.cognitiveservices.vision.face.models.HairColor]
     """
-
-    _validation = {
-        'bald': {'maximum': 1, 'minimum': 0},
-    }
 
     _attribute_map = {
         'bald': {'key': 'bald', 'type': 'float'},
         'invisible': {'key': 'invisible', 'type': 'bool'},
-        'hair_color': {'key': 'hairColor', 'type': '[ColorProperty]'},
+        'hair_color': {'key': 'hairColor', 'type': '[HairColor]'},
     }
 
     def __init__(self, bald=None, invisible=None, hair_color=None):
+        super(Hair, self).__init__()
         self.bald = bald
         self.invisible = invisible
         self.hair_color = hair_color

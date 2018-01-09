@@ -12,52 +12,50 @@
 from .error import Error
 from .api_error import APIError, APIErrorException
 from .face_rectangle import FaceRectangle
-from .position import Position
+from .coordinate import Coordinate
 from .face_landmarks import FaceLandmarks
-from .facial_hair_properties import FacialHairProperties
-from .head_pose_properties import HeadPoseProperties
-from .emotion_properties import EmotionProperties
-from .color_property import ColorProperty
-from .hair_properties import HairProperties
-from .makeup_properties import MakeupProperties
-from .occlusion_properties import OcclusionProperties
-from .accessory_item import AccessoryItem
-from .blur_properties import BlurProperties
-from .exposure_properties import ExposureProperties
-from .noise_properties import NoiseProperties
+from .facial_hair import FacialHair
+from .head_pose import HeadPose
+from .emotion import Emotion
+from .hair_color import HairColor
+from .hair import Hair
+from .makeup import Makeup
+from .occlusion import Occlusion
+from .accessory import Accessory
+from .blur import Blur
+from .exposure import Exposure
+from .noise import Noise
 from .face_attributes import FaceAttributes
 from .detected_face import DetectedFace
-from .persisted_face_result import PersistedFaceResult
 from .find_similar_request import FindSimilarRequest
-from .similar_face_result import SimilarFaceResult
+from .similar_face import SimilarFace
 from .group_request import GroupRequest
-from .group_response import GroupResponse
+from .group_result import GroupResult
 from .identify_request import IdentifyRequest
-from .identify_result_candidate import IdentifyResultCandidate
-from .identify_result_item import IdentifyResultItem
-from .verify_person_group_request import VerifyPersonGroupRequest
-from .verify_request import VerifyRequest
+from .identify_candidate import IdentifyCandidate
+from .identify_result import IdentifyResult
+from .verify_face_to_person_request import VerifyFaceToPersonRequest
+from .verify_face_to_face_request import VerifyFaceToFaceRequest
 from .verify_result import VerifyResult
-from .create_face_list_request import CreateFaceListRequest
-from .person_face_result import PersonFaceResult
-from .get_face_list_result import GetFaceListResult
-from .create_person_group_request import CreatePersonGroupRequest
-from .person_group_result import PersonGroupResult
-from .create_person_request import CreatePersonRequest
-from .create_person_result import CreatePersonResult
-from .person_result import PersonResult
-from .update_person_face_data_request import UpdatePersonFaceDataRequest
-from .training_status1 import TrainingStatus1
+from .persisted_face import PersistedFace
+from .face_list import FaceList
+from .person_group import PersonGroup
+from .person import Person
+from .update_person_face_request import UpdatePersonFaceRequest
+from .training_status import TrainingStatus
+from .name_and_user_data_contract import NameAndUserDataContract
 from .image_url import ImageUrl
 from .face_api_enums import (
     Gender,
-    GlassesTypes,
-    BlurLevels,
-    ExposureLevels,
-    NoiseLevels,
-    FaceMatchingMode,
-    TrainingStatus,
-    FaceAttributeTypes,
+    GlassesType,
+    HairColorType,
+    AccessoryType,
+    BlurLevel,
+    ExposureLevel,
+    NoiseLevel,
+    FindSimilarMatchMode,
+    TrainingStatusType,
+    FaceAttributeType,
     AzureRegions,
 )
 
@@ -65,50 +63,48 @@ __all__ = [
     'Error',
     'APIError', 'APIErrorException',
     'FaceRectangle',
-    'Position',
+    'Coordinate',
     'FaceLandmarks',
-    'FacialHairProperties',
-    'HeadPoseProperties',
-    'EmotionProperties',
-    'ColorProperty',
-    'HairProperties',
-    'MakeupProperties',
-    'OcclusionProperties',
-    'AccessoryItem',
-    'BlurProperties',
-    'ExposureProperties',
-    'NoiseProperties',
+    'FacialHair',
+    'HeadPose',
+    'Emotion',
+    'HairColor',
+    'Hair',
+    'Makeup',
+    'Occlusion',
+    'Accessory',
+    'Blur',
+    'Exposure',
+    'Noise',
     'FaceAttributes',
     'DetectedFace',
-    'PersistedFaceResult',
     'FindSimilarRequest',
-    'SimilarFaceResult',
+    'SimilarFace',
     'GroupRequest',
-    'GroupResponse',
+    'GroupResult',
     'IdentifyRequest',
-    'IdentifyResultCandidate',
-    'IdentifyResultItem',
-    'VerifyPersonGroupRequest',
-    'VerifyRequest',
+    'IdentifyCandidate',
+    'IdentifyResult',
+    'VerifyFaceToPersonRequest',
+    'VerifyFaceToFaceRequest',
     'VerifyResult',
-    'CreateFaceListRequest',
-    'PersonFaceResult',
-    'GetFaceListResult',
-    'CreatePersonGroupRequest',
-    'PersonGroupResult',
-    'CreatePersonRequest',
-    'CreatePersonResult',
-    'PersonResult',
-    'UpdatePersonFaceDataRequest',
-    'TrainingStatus1',
+    'PersistedFace',
+    'FaceList',
+    'PersonGroup',
+    'Person',
+    'UpdatePersonFaceRequest',
+    'TrainingStatus',
+    'NameAndUserDataContract',
     'ImageUrl',
     'Gender',
-    'GlassesTypes',
-    'BlurLevels',
-    'ExposureLevels',
-    'NoiseLevels',
-    'FaceMatchingMode',
-    'TrainingStatus',
-    'FaceAttributeTypes',
+    'GlassesType',
+    'HairColorType',
+    'AccessoryType',
+    'BlurLevel',
+    'ExposureLevel',
+    'NoiseLevel',
+    'FindSimilarMatchMode',
+    'TrainingStatusType',
+    'FaceAttributeType',
     'AzureRegions',
 ]

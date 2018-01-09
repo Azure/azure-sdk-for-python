@@ -16,9 +16,10 @@ class Gender(Enum):
 
     male = "male"
     female = "female"
+    genderless = "genderless"
 
 
-class GlassesTypes(Enum):
+class GlassesType(Enum):
 
     no_glasses = "noGlasses"
     reading_glasses = "readingGlasses"
@@ -26,34 +27,53 @@ class GlassesTypes(Enum):
     swimming_goggles = "swimmingGoggles"
 
 
-class BlurLevels(Enum):
+class HairColorType(Enum):
+
+    unknown = "unknown"
+    white = "white"
+    gray = "gray"
+    blond = "blond"
+    brown = "brown"
+    red = "red"
+    black = "black"
+    other = "other"
+
+
+class AccessoryType(Enum):
+
+    head_wear = "headWear"
+    glasses = "glasses"
+    mask = "mask"
+
+
+class BlurLevel(Enum):
 
     low = "Low"
     medium = "Medium"
     high = "High"
 
 
-class ExposureLevels(Enum):
+class ExposureLevel(Enum):
 
     under_exposure = "UnderExposure"
     good_exposure = "GoodExposure"
     over_exposure = "OverExposure"
 
 
-class NoiseLevels(Enum):
+class NoiseLevel(Enum):
 
     low = "Low"
     medium = "Medium"
     high = "High"
 
 
-class FaceMatchingMode(Enum):
+class FindSimilarMatchMode(Enum):
 
     match_person = "matchPerson"
     match_face = "matchFace"
 
 
-class TrainingStatus(Enum):
+class TrainingStatusType(Enum):
 
     nonstarted = "nonstarted"
     running = "running"
@@ -61,7 +81,7 @@ class TrainingStatus(Enum):
     failed = "failed"
 
 
-class FaceAttributeTypes(Enum):
+class FaceAttributeType(Enum):
 
     age = "age"
     gender = "gender"
