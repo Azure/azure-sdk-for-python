@@ -53,6 +53,7 @@ class LogProfileResourcePatch(Model):
     }
 
     def __init__(self, locations, categories, retention_policy, tags=None, storage_account_id=None, service_bus_rule_id=None):
+        super(LogProfileResourcePatch, self).__init__()
         self.tags = tags
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id

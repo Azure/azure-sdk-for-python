@@ -48,6 +48,7 @@ class Metric(Model):
     }
 
     def __init__(self, id, type, name, unit, timeseries):
+        super(Metric, self).__init__()
         self.id = id
         self.type = type
         self.name = name
