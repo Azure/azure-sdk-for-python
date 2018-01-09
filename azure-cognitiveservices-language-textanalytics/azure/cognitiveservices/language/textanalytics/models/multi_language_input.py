@@ -31,6 +31,7 @@ class MultiLanguageInput(Model):
     }
 
     def __init__(self, language=None, id=None, text=None):
+        super(MultiLanguageInput, self).__init__()
         self.language = language
         self.id = id
         self.text = text

@@ -27,5 +27,6 @@ class ErrorRecord(Model):
     }
 
     def __init__(self, id=None, message=None):
+        super(ErrorRecord, self).__init__()
         self.id = id
         self.message = message
