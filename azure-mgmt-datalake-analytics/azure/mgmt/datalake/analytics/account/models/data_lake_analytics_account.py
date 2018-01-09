@@ -28,17 +28,17 @@ class DataLakeAnalyticsAccount(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
-     'Deleted'
-    :vartype provisioning_state: str or :class:`DataLakeAnalyticsAccountStatus
-     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
+     'Deleted', 'Undeleting', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
     :ivar state: the state of the Data Lake Analytics account. Possible values
      include: 'Active', 'Suspended'
-    :vartype state: str or :class:`DataLakeAnalyticsAccountState
-     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
+    :vartype state: str or
+     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: the account last modified time.
@@ -62,7 +62,7 @@ class DataLakeAnalyticsAccount(Resource):
     :type max_job_count: int
     :ivar system_max_degree_of_parallelism: the system defined maximum
      supported degree of parallelism for this account, which restricts the
-     maximum value of parallelism the user can set for the account..
+     maximum value of parallelism the user can set for the account.
     :vartype system_max_degree_of_parallelism: int
     :ivar system_max_job_count: the system defined maximum supported jobs
      running under the account at the same time, which restricts the maximum
@@ -70,42 +70,42 @@ class DataLakeAnalyticsAccount(Resource):
     :vartype system_max_job_count: int
     :param data_lake_store_accounts: the list of Data Lake storage accounts
      associated with this account.
-    :type data_lake_store_accounts: list of :class:`DataLakeStoreAccountInfo
-     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo>`
+    :type data_lake_store_accounts:
+     list[~azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo]
     :param storage_accounts: the list of Azure Blob storage accounts
      associated with this account.
-    :type storage_accounts: list of :class:`StorageAccountInfo
-     <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
+    :type storage_accounts:
+     list[~azure.mgmt.datalake.analytics.account.models.StorageAccountInfo]
     :param new_tier: the commitment tier for the next month. Possible values
      include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
      'Commitment_1000AUHours', 'Commitment_5000AUHours',
      'Commitment_10000AUHours', 'Commitment_50000AUHours',
      'Commitment_100000AUHours', 'Commitment_500000AUHours'
-    :type new_tier: str or :class:`TierType
-     <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :type new_tier: str or
+     ~azure.mgmt.datalake.analytics.account.models.TierType
     :ivar current_tier: the commitment tier in use for the current month.
      Possible values include: 'Consumption', 'Commitment_100AUHours',
      'Commitment_500AUHours', 'Commitment_1000AUHours',
      'Commitment_5000AUHours', 'Commitment_10000AUHours',
      'Commitment_50000AUHours', 'Commitment_100000AUHours',
      'Commitment_500000AUHours'
-    :vartype current_tier: str or :class:`TierType
-     <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :vartype current_tier: str or
+     ~azure.mgmt.datalake.analytics.account.models.TierType
     :param firewall_state: The current state of the IP address firewall for
      this Data Lake Analytics account. Possible values include: 'Enabled',
      'Disabled'
-    :type firewall_state: str or :class:`FirewallState
-     <azure.mgmt.datalake.analytics.account.models.FirewallState>`
+    :type firewall_state: str or
+     ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :param firewall_allow_azure_ips: The current state of allowing or
      disallowing IPs originating within Azure through the firewall. If the
      firewall is disabled, this is not enforced. Possible values include:
      'Enabled', 'Disabled'
-    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
-     <azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState>`
+    :type firewall_allow_azure_ips: str or
+     ~azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake Analytics account.
-    :type firewall_rules: list of :class:`FirewallRule
-     <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
+    :type firewall_rules:
+     list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
     :param max_degree_of_parallelism_per_job: the maximum supported degree of
      parallelism per job for this account.
     :type max_degree_of_parallelism_per_job: int
@@ -114,9 +114,8 @@ class DataLakeAnalyticsAccount(Resource):
     :type min_priority_per_job: int
     :param compute_policies: the list of compute policies to create in this
      account.
-    :type compute_policies: list of
-     :class:`ComputePolicyAccountCreateParameters
-     <azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters>`
+    :type compute_policies:
+     list[~azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters]
     """
 
     _validation = {

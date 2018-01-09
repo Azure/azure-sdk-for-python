@@ -55,10 +55,9 @@ class PipelineOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>`
-        :rtype: :class:`JobPipelineInformationPaged
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformationPaged>`
+        :return: An iterator like instance of JobPipelineInformation
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobPipelineInformationPaged[~azure.mgmt.datalake.analytics.job.models.JobPipelineInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -138,13 +137,10 @@ class PipelineOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobPipelineInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobPipelineInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

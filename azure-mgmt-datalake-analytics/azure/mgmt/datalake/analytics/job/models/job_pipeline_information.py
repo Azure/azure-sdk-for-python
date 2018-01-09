@@ -48,13 +48,13 @@ class JobPipelineInformation(Model):
     :ivar last_submit_time: the last time a job in this pipeline was
      submitted.
     :vartype last_submit_time: datetime
-    :ivar runs: the list of recurrence identifiers representing each run of
-     this pipeline.
-    :vartype runs: list of :class:`JobPipelineRunInformation
-     <azure.mgmt.datalake.analytics.job.models.JobPipelineRunInformation>`
+    :ivar runs: the list of run identifiers representing each run of this
+     pipeline.
+    :vartype runs:
+     list[~azure.mgmt.datalake.analytics.job.models.JobPipelineRunInformation]
     :ivar recurrences: the list of recurrence identifiers representing each
-     run of this pipeline.
-    :vartype recurrences: list of str
+     recurrence in this pipeline.
+    :vartype recurrences: list[str]
     """
 
     _validation = {

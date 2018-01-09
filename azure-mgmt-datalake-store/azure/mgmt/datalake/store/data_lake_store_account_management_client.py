@@ -16,6 +16,8 @@ from .version import VERSION
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.trusted_id_providers_operations import TrustedIdProvidersOperations
 from .operations.account_operations import AccountOperations
+from .operations.locations_operations import LocationsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -41,8 +43,6 @@ class DataLakeStoreAccountManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -67,6 +67,10 @@ class DataLakeStoreAccountManagementClient(object):
     :vartype trusted_id_providers: azure.mgmt.datalake.store.operations.TrustedIdProvidersOperations
     :ivar account: Account operations
     :vartype account: azure.mgmt.datalake.store.operations.AccountOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.store.operations.LocationsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.datalake.store.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -94,4 +98,8 @@ class DataLakeStoreAccountManagementClient(object):
         self.trusted_id_providers = TrustedIdProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.account = AccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

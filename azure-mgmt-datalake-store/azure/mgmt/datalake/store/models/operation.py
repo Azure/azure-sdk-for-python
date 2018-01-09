@@ -12,42 +12,33 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """The Resource model definition.
+class Operation(Model):
+    """An available operation for Data Lake Store.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
+    :ivar name: the name of the operation.
     :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
+    :param display: the display information for the operation.
+    :type display: ~azure.mgmt.datalake.store.models.OperationDisplay
+    :ivar origin: the intended executor of the operation. Possible values
+     include: 'user', 'system', 'user,system'
+    :vartype origin: str or ~azure.mgmt.datalake.store.models.OperationOrigin
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        'origin': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None):
-        self.id = None
+    def __init__(self, display=None):
         self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+        self.display = display
+        self.origin = None

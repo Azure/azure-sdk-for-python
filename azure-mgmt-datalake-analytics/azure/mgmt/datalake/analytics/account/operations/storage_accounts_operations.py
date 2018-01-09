@@ -59,11 +59,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.AddStorageAccountParameters(access_key=access_key, suffix=suffix)
@@ -132,11 +129,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -206,11 +200,8 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -269,13 +260,10 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StorageAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StorageAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StorageAccountInfo or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.StorageAccountInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -344,13 +332,9 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`StorageContainer
-         <azure.mgmt.datalake.analytics.account.models.StorageContainer>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`StorageContainer
-         <azure.mgmt.datalake.analytics.account.models.StorageContainer>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: StorageContainer or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.account.models.StorageContainer
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -418,10 +402,9 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`StorageContainer
-         <azure.mgmt.datalake.analytics.account.models.StorageContainer>`
-        :rtype: :class:`StorageContainerPaged
-         <azure.mgmt.datalake.analytics.account.models.StorageContainerPaged>`
+        :return: An iterator like instance of StorageContainer
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.StorageContainerPaged[~azure.mgmt.datalake.analytics.account.models.StorageContainer]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -499,10 +482,9 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SasTokenInfo
-         <azure.mgmt.datalake.analytics.account.models.SasTokenInfo>`
-        :rtype: :class:`SasTokenInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
+        :return: An iterator like instance of SasTokenInfo
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged[~azure.mgmt.datalake.analytics.account.models.SasTokenInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -596,17 +578,16 @@ class StorageAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`StorageAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
-        :rtype: :class:`StorageAccountInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfoPaged>`
+        :return: An iterator like instance of StorageAccountInfo
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.StorageAccountInfoPaged[~azure.mgmt.datalake.analytics.account.models.StorageAccountInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),

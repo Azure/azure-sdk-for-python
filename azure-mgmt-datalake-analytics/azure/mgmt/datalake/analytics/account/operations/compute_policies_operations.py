@@ -53,20 +53,16 @@ class ComputePoliciesOperations(object):
         :param parameters: Parameters supplied to create or update the compute
          policy. The max degree of parallelism per job property, min priority
          per job property, or both must be present.
-        :type parameters: :class:`ComputePolicyCreateOrUpdateParameters
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicyCreateOrUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.account.models.ComputePolicyCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ComputePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.account.models.ComputePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -140,13 +136,9 @@ class ComputePoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ComputePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.account.models.ComputePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -222,11 +214,8 @@ class ComputePoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -284,13 +273,9 @@ class ComputePoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ComputePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.account.models.ComputePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -353,10 +338,9 @@ class ComputePoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ComputePolicy
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicy>`
-        :rtype: :class:`ComputePolicyPaged
-         <azure.mgmt.datalake.analytics.account.models.ComputePolicyPaged>`
+        :return: An iterator like instance of ComputePolicy
+        :rtype:
+         ~azure.mgmt.datalake.analytics.account.models.ComputePolicyPaged[~azure.mgmt.datalake.analytics.account.models.ComputePolicy]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

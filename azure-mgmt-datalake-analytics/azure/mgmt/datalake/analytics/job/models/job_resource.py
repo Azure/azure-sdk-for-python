@@ -23,8 +23,8 @@ class JobResource(Model):
      'VertexResource', 'JobManagerResource', 'StatisticsResource',
      'VertexResourceInUserFolder', 'JobManagerResourceInUserFolder',
      'StatisticsResourceInUserFolder'
-    :type type: str or :class:`JobResourceType
-     <azure.mgmt.datalake.analytics.job.models.JobResourceType>`
+    :type type: str or
+     ~azure.mgmt.datalake.analytics.job.models.JobResourceType
     """
 
     _attribute_map = {
