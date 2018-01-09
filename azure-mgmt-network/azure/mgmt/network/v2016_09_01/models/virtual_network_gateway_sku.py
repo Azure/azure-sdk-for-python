@@ -41,6 +41,7 @@ class VirtualNetworkGatewaySku(Model):
     }
 
     def __init__(self, name, tier, capacity=None):
+        super(VirtualNetworkGatewaySku, self).__init__()
         self.name = name
         self.tier = tier
         self.capacity = capacity

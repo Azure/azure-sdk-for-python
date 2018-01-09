@@ -38,6 +38,7 @@ class ApplicationGatewayFirewallRuleGroup(Model):
     }
 
     def __init__(self, rule_group_name, rules, description=None):
+        super(ApplicationGatewayFirewallRuleGroup, self).__init__()
         self.rule_group_name = rule_group_name
         self.description = description
         self.rules = rules

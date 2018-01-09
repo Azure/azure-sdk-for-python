@@ -36,6 +36,7 @@ class PacketCaptureStorageLocation(Model):
     }
 
     def __init__(self, storage_id=None, storage_path=None, file_path=None):
+        super(PacketCaptureStorageLocation, self).__init__()
         self.storage_id = storage_id
         self.storage_path = storage_path
         self.file_path = file_path

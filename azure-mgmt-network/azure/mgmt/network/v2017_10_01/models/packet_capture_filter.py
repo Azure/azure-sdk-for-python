@@ -52,6 +52,7 @@ class PacketCaptureFilter(Model):
     }
 
     def __init__(self, protocol="Any", local_ip_address=None, remote_ip_address=None, local_port=None, remote_port=None):
+        super(PacketCaptureFilter, self).__init__()
         self.protocol = protocol
         self.local_ip_address = local_ip_address
         self.remote_ip_address = remote_ip_address
