@@ -33,6 +33,7 @@ class FaceDescription(Model):
     }
 
     def __init__(self, age=None, gender=None, face_rectangle=None):
+        super(FaceDescription, self).__init__()
         self.age = age
         self.gender = gender
         self.face_rectangle = face_rectangle

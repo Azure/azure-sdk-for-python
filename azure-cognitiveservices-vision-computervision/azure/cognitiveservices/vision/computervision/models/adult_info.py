@@ -37,6 +37,7 @@ class AdultInfo(Model):
     }
 
     def __init__(self, is_adult_content=None, is_racy_content=None, adult_score=None, racy_score=None):
+        super(AdultInfo, self).__init__()
         self.is_adult_content = is_adult_content
         self.is_racy_content = is_racy_content
         self.adult_score = adult_score

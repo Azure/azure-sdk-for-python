@@ -40,10 +40,9 @@ class FaceListOperations(object):
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
-        :param name: Name of the face list, maximum length is 128.
+        :param name: User defined name, maximum length is 128.
         :type name: str
-        :param user_data: Optional user defined data for the face list. Length
-         should not exceed 16KB.
+        :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -55,7 +54,7 @@ class FaceListOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.CreateFaceListRequest(name=name, user_data=user_data)
+        body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
         url = '/facelists/{faceListId}'
@@ -75,12 +74,12 @@ class FaceListOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'CreateFaceListRequest')
+        body_content = self._serialize.body(body, 'NameAndUserDataContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -93,16 +92,16 @@ class FaceListOperations(object):
             self, face_list_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve a face list's information.
 
-        :param face_list_id: Id referencing a Face List.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GetFaceListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.GetFaceListResult
-         or ~msrest.pipeline.ClientRawResponse
+        :return: FaceList or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.FaceList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -125,7 +124,7 @@ class FaceListOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -133,7 +132,7 @@ class FaceListOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GetFaceListResult', response)
+            deserialized = self._deserialize('FaceList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -143,14 +142,13 @@ class FaceListOperations(object):
 
     def update(
             self, face_list_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Update information of a face list. .
+        """Update information of a face list.
 
-        :param face_list_id: Id referencing a Face List.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
-        :param name: Name of the face list, maximum length is 128.
+        :param name: User defined name, maximum length is 128.
         :type name: str
-        :param user_data: Optional user defined data for the face list. Length
-         should not exceed 16KB.
+        :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -162,7 +160,7 @@ class FaceListOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.CreateFaceListRequest(name=name, user_data=user_data)
+        body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
         url = '/facelists/{faceListId}'
@@ -182,12 +180,12 @@ class FaceListOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'CreateFaceListRequest')
+        body_content = self._serialize.body(body, 'NameAndUserDataContract')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -201,7 +199,7 @@ class FaceListOperations(object):
         """Delete an existing face list according to faceListId. Persisted face
         images in the face list will also be deleted.
 
-        :param face_list_id: Id referencing a Face List.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -232,7 +230,7 @@ class FaceListOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -252,8 +250,7 @@ class FaceListOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.face.models.GetFaceListResult] or
+        :rtype: list[~azure.cognitiveservices.vision.face.models.FaceList] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -276,7 +273,7 @@ class FaceListOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -284,7 +281,7 @@ class FaceListOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[GetFaceListResult]', response)
+            deserialized = self._deserialize('[FaceList]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -298,9 +295,10 @@ class FaceListOperations(object):
         and a faceListId). Persisted image related to the face will also be
         deleted.
 
-        :param face_list_id: faceListId of an existing face list.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
-        :param persisted_face_id: persistedFaceId of an existing face.
+        :param persisted_face_id: Id referencing a particular persistedFaceId
+         of an existing face.
         :type persisted_face_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -332,7 +330,7 @@ class FaceListOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -341,18 +339,18 @@ class FaceListOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def add_face(
+    def add_face_from_url(
             self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
         """Add a face to a face list. The input face is specified as an image with
         a targetFace rectangle. It returns a persistedFaceId representing the
-        added face, and persistedFaceId will not expire. .
+        added face, and persistedFaceId will not expire.
 
-        :param face_list_id: Id referencing a Face List.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
         :param url:
         :type url: str
-        :param user_data: User-specified data about the face list for any
-         purpose. The  maximum length is 1KB.
+        :param user_data: User-specified data about the face for any purpose.
+         The maximum length is 1KB.
         :type user_data: str
         :param target_face: A face rectangle to specify the target face to be
          added to a person in the format of "targetFace=left,top,width,height".
@@ -365,9 +363,8 @@ class FaceListOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PersistedFaceResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+        :return: PersistedFace or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -385,7 +382,7 @@ class FaceListOperations(object):
         # Construct parameters
         query_parameters = {}
         if user_data is not None:
-            query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
+            query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
@@ -401,7 +398,7 @@ class FaceListOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -409,7 +406,7 @@ class FaceListOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PersistedFaceResult', response)
+            deserialized = self._deserialize('PersistedFace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -423,12 +420,12 @@ class FaceListOperations(object):
         a targetFace rectangle. It returns a persistedFaceId representing the
         added face, and persistedFaceId will not expire.
 
-        :param face_list_id: Id referencing a Face List.
+        :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
         :param image: An image stream.
         :type image: Generator
-        :param user_data: User-specified data about the face list for any
-         purpose. The  maximum length is 1KB.
+        :param user_data: User-specified data about the face for any purpose.
+         The maximum length is 1KB.
         :type user_data: str
         :param target_face: A face rectangle to specify the target face to be
          added to a person in the format of "targetFace=left,top,width,height".
@@ -446,9 +443,8 @@ class FaceListOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PersistedFaceResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.face.models.PersistedFaceResult or
+        :return: PersistedFace or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -464,7 +460,7 @@ class FaceListOperations(object):
         # Construct parameters
         query_parameters = {}
         if user_data is not None:
-            query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str')
+            query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
 
@@ -480,7 +476,7 @@ class FaceListOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -488,7 +484,7 @@ class FaceListOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PersistedFaceResult', response)
+            deserialized = self._deserialize('PersistedFace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

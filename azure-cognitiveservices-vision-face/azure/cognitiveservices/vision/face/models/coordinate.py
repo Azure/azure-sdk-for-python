@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Position(Model):
+class Coordinate(Model):
     """Coordinates within an image.
 
     :param x: The horizontal component, in pixels.
@@ -32,5 +32,6 @@ class Position(Model):
     }
 
     def __init__(self, x, y):
+        super(Coordinate, self).__init__()
         self.x = x
         self.y = y

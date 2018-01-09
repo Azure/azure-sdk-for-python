@@ -31,6 +31,7 @@ class Category(Model):
     }
 
     def __init__(self, name=None, score=None, detail=None):
+        super(Category, self).__init__()
         self.name = name
         self.score = score
         self.detail = detail

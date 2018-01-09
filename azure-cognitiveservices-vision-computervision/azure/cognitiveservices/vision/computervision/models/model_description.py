@@ -27,5 +27,6 @@ class ModelDescription(Model):
     }
 
     def __init__(self, name=None, categories=None):
+        super(ModelDescription, self).__init__()
         self.name = name
         self.categories = categories

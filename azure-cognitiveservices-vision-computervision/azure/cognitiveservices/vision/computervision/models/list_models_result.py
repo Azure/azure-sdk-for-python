@@ -32,4 +32,5 @@ class ListModelsResult(Model):
     }
 
     def __init__(self):
+        super(ListModelsResult, self).__init__()
         self.models_property = None

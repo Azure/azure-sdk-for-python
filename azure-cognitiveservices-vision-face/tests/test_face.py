@@ -50,7 +50,7 @@ class FaceTest(ReplayableTest):
         )
         face_api = FaceAPI("westus2", credentials=credentials)
         with open(join(CWD, "facefindsimilar.queryface.jpg"), "rb") as face_fd:
-            result = face_api.face.detect_in_stream(
+            result = face_api.face.detect_with_stream(
                 face_fd,
                 return_face_attributes=['age','gender','headPose','smile','facialHair','glasses','emotion','hair','makeup','occlusion','accessories','blur','exposure','noise']
             )

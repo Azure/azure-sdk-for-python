@@ -32,4 +32,5 @@ class RelatedCollectionsModule(Model):
     }
 
     def __init__(self):
+        super(RelatedCollectionsModule, self).__init__()
         self.value = None

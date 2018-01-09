@@ -35,11 +35,11 @@ class FindSimilarRequest(Model):
      "matchFace". Possible values include: 'matchPerson', 'matchFace'. Default
      value: "matchPerson" .
     :type mode: str or
-     ~azure.cognitiveservices.vision.face.models.FaceMatchingMode
+     ~azure.cognitiveservices.vision.face.models.FindSimilarMatchMode
     """
 
     _validation = {
-        'face_id': {'required': True, 'max_length': 64},
+        'face_id': {'required': True},
         'face_list_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'face_ids': {'max_items': 1000},
         'max_num_of_candidates_returned': {'maximum': 1000, 'minimum': 1},
@@ -50,10 +50,11 @@ class FindSimilarRequest(Model):
         'face_list_id': {'key': 'faceListId', 'type': 'str'},
         'face_ids': {'key': 'faceIds', 'type': '[str]'},
         'max_num_of_candidates_returned': {'key': 'maxNumOfCandidatesReturned', 'type': 'int'},
-        'mode': {'key': 'mode', 'type': 'FaceMatchingMode'},
+        'mode': {'key': 'mode', 'type': 'FindSimilarMatchMode'},
     }
 
     def __init__(self, face_id, face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson"):
+        super(FindSimilarRequest, self).__init__()
         self.face_id = face_id
         self.face_list_id = face_list_id
         self.face_ids = face_ids

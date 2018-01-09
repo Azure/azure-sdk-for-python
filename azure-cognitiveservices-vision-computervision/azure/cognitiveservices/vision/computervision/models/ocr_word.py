@@ -32,5 +32,6 @@ class OcrWord(Model):
     }
 
     def __init__(self, bounding_box=None, text=None):
+        super(OcrWord, self).__init__()
         self.bounding_box = bounding_box
         self.text = text

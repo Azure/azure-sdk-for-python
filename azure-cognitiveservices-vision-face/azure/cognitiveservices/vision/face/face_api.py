@@ -13,7 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.face_operations import FaceOperations
-from .operations.person_operations import PersonOperations
+from .operations.person_group_person_operations import PersonGroupPersonOperations
 from .operations.person_group_operations import PersonGroupOperations
 from .operations.face_list_operations import FaceListOperations
 from . import models
@@ -61,8 +61,8 @@ class FaceAPI(object):
 
     :ivar face: Face operations
     :vartype face: azure.cognitiveservices.vision.face.operations.FaceOperations
-    :ivar person: Person operations
-    :vartype person: azure.cognitiveservices.vision.face.operations.PersonOperations
+    :ivar person_group_person: PersonGroupPerson operations
+    :vartype person_group_person: azure.cognitiveservices.vision.face.operations.PersonGroupPersonOperations
     :ivar person_group: PersonGroup operations
     :vartype person_group: azure.cognitiveservices.vision.face.operations.PersonGroupOperations
     :ivar face_list: FaceList operations
@@ -93,7 +93,7 @@ class FaceAPI(object):
 
         self.face = FaceOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.person = PersonOperations(
+        self.person_group_person = PersonGroupPersonOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.person_group = PersonGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)

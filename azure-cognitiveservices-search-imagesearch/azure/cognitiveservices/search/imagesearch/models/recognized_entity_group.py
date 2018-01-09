@@ -38,5 +38,6 @@ class RecognizedEntityGroup(Model):
     }
 
     def __init__(self, recognized_entity_regions, name):
+        super(RecognizedEntityGroup, self).__init__()
         self.recognized_entity_regions = recognized_entity_regions
         self.name = name

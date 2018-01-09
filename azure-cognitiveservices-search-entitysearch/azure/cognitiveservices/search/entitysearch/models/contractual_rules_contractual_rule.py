@@ -43,5 +43,6 @@ class ContractualRulesContractualRule(Model):
     }
 
     def __init__(self):
+        super(ContractualRulesContractualRule, self).__init__()
         self.target_property_name = None
         self._type = None

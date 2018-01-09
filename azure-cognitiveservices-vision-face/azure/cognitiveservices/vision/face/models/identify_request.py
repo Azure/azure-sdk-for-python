@@ -15,22 +15,27 @@ from msrest.serialization import Model
 class IdentifyRequest(Model):
     """Request body for identify face operation.
 
-    :param person_group_id: personGroupId of the target person group, created
+    :param person_group_id: PersonGroupId of the target person group, created
      by PersonGroups.Create
     :type person_group_id: str
-    :param face_ids: Array of candidate faceId created by Face - Detect.
+    :param face_ids: Array of query faces faceIds, created by the Face -
+     Detect. Each of the faces are identified independently. The valid number
+     of faceIds is between [1, 10].
     :type face_ids: list[str]
-    :param max_num_of_candidates_returned: The number of top similar faces
-     returned. Default value: 1 .
+    :param max_num_of_candidates_returned: The range of
+     maxNumOfCandidatesReturned is between 1 and 5 (default is 1). Default
+     value: 1 .
     :type max_num_of_candidates_returned: int
-    :param confidence_threshold:
+    :param confidence_threshold: Confidence threshold of identification, used
+     to judge whether one face belong to one person. The range of
+     confidenceThreshold is [0, 1] (default specified by algorithm).
     :type confidence_threshold: float
     """
 
     _validation = {
-        'person_group_id': {'required': True},
-        'face_ids': {'required': True, 'max_items': 1000},
-        'max_num_of_candidates_returned': {'maximum': 1000, 'minimum': 1},
+        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'face_ids': {'required': True, 'max_items': 10},
+        'max_num_of_candidates_returned': {'maximum': 5, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -41,6 +46,7 @@ class IdentifyRequest(Model):
     }
 
     def __init__(self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None):
+        super(IdentifyRequest, self).__init__()
         self.person_group_id = person_group_id
         self.face_ids = face_ids
         self.max_num_of_candidates_returned = max_num_of_candidates_returned

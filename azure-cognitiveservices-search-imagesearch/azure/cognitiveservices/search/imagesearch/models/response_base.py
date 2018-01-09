@@ -35,4 +35,5 @@ class ResponseBase(Model):
     }
 
     def __init__(self):
+        super(ResponseBase, self).__init__()
         self._type = None

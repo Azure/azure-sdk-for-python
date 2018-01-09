@@ -37,5 +37,6 @@ class SentimentBatchResult(Model):
     }
 
     def __init__(self):
+        super(SentimentBatchResult, self).__init__()
         self.documents = None
         self.errors = None

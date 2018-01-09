@@ -36,5 +36,6 @@ class LanguageBatchResultItem(Model):
     }
 
     def __init__(self):
+        super(LanguageBatchResultItem, self).__init__()
         self.id = None
         self.detected_languages = None

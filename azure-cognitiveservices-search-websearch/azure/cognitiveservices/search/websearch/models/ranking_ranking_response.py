@@ -44,6 +44,7 @@ class RankingRankingResponse(Model):
     }
 
     def __init__(self):
+        super(RankingRankingResponse, self).__init__()
         self.pole = None
         self.mainline = None
         self.sidebar = None
