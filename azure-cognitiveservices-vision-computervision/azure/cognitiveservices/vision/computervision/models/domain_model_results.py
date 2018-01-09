@@ -34,6 +34,7 @@ class DomainModelResults(Model):
     }
 
     def __init__(self, celebrities=None, request_id=None, metadata=None):
+        super(DomainModelResults, self).__init__()
         self.celebrities = celebrities
         self.request_id = request_id
         self.metadata = metadata

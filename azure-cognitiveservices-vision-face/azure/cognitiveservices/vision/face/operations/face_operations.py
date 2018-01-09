@@ -58,16 +58,15 @@ class FaceOperations(object):
         :param mode: Similar face searching mode. It can be "matchPerson" or
          "matchFace". Possible values include: 'matchPerson', 'matchFace'
         :type mode: str or
-         ~azure.cognitiveservices.vision.face.models.FaceMatchingMode
+         ~azure.cognitiveservices.vision.face.models.FindSimilarMatchMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.face.models.SimilarFaceResult] or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: list[~azure.cognitiveservices.vision.face.models.SimilarFace]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -95,7 +94,7 @@ class FaceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -103,7 +102,7 @@ class FaceOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[SimilarFaceResult]', response)
+            deserialized = self._deserialize('[SimilarFace]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -123,8 +122,8 @@ class FaceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GroupResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.GroupResponse or
+        :return: GroupResult or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.GroupResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -153,7 +152,7 @@ class FaceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -161,7 +160,7 @@ class FaceOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GroupResponse', response)
+            deserialized = self._deserialize('GroupResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -173,15 +172,19 @@ class FaceOperations(object):
             self, person_group_id, face_ids, max_num_of_candidates_returned=1, confidence_threshold=None, custom_headers=None, raw=False, **operation_config):
         """Identify unknown faces from a person group.
 
-        :param person_group_id: personGroupId of the target person group,
+        :param person_group_id: PersonGroupId of the target person group,
          created by PersonGroups.Create
         :type person_group_id: str
-        :param face_ids: Array of candidate faceId created by Face - Detect.
+        :param face_ids: Array of query faces faceIds, created by the Face -
+         Detect. Each of the faces are identified independently. The valid
+         number of faceIds is between [1, 10].
         :type face_ids: list[str]
-        :param max_num_of_candidates_returned: The number of top similar faces
-         returned.
+        :param max_num_of_candidates_returned: The range of
+         maxNumOfCandidatesReturned is between 1 and 5 (default is 1).
         :type max_num_of_candidates_returned: int
-        :param confidence_threshold:
+        :param confidence_threshold: Confidence threshold of identification,
+         used to judge whether one face belong to one person. The range of
+         confidenceThreshold is [0, 1] (default specified by algorithm).
         :type confidence_threshold: float
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -190,8 +193,8 @@ class FaceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
         :rtype:
-         list[~azure.cognitiveservices.vision.face.models.IdentifyResultItem]
-         or ~msrest.pipeline.ClientRawResponse
+         list[~azure.cognitiveservices.vision.face.models.IdentifyResult] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -219,7 +222,7 @@ class FaceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -227,7 +230,7 @@ class FaceOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[IdentifyResultItem]', response)
+            deserialized = self._deserialize('[IdentifyResult]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -235,14 +238,14 @@ class FaceOperations(object):
 
         return deserialized
 
-    def verify(
+    def verify_face_to_face(
             self, face_id1, face_id2, custom_headers=None, raw=False, **operation_config):
         """Verify whether two faces belong to a same person or whether one face
         belongs to a person.
 
-        :param face_id1: faceId of the first face, comes from Face - Detect
+        :param face_id1: FaceId of the first face, comes from Face - Detect
         :type face_id1: str
-        :param face_id2: faceId of the second face, comes from Face - Detect
+        :param face_id2: FaceId of the second face, comes from Face - Detect
         :type face_id2: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -255,7 +258,7 @@ class FaceOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.VerifyRequest(face_id1=face_id1, face_id2=face_id2)
+        body = models.VerifyFaceToFaceRequest(face_id1=face_id1, face_id2=face_id2)
 
         # Construct URL
         url = '/verify'
@@ -274,12 +277,12 @@ class FaceOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'VerifyRequest')
+        body_content = self._serialize.body(body, 'VerifyFaceToFaceRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -295,7 +298,7 @@ class FaceOperations(object):
 
         return deserialized
 
-    def detect(
+    def detect_with_url(
             self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, custom_headers=None, raw=False, **operation_config):
         """Detect human faces in an image and returns face locations, and
         optionally with faceIds, landmarks, and attributes.
@@ -315,7 +318,7 @@ class FaceOperations(object):
          that each face attribute analysis has additional computational and
          time cost.
         :type return_face_attributes: list[str or
-         ~azure.cognitiveservices.vision.face.models.FaceAttributeTypes]
+         ~azure.cognitiveservices.vision.face.models.FaceAttributeType]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -343,7 +346,7 @@ class FaceOperations(object):
         if return_face_landmarks is not None:
             query_parameters['returnFaceLandmarks'] = self._serialize.query("return_face_landmarks", return_face_landmarks, 'bool')
         if return_face_attributes is not None:
-            query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeTypes]', div=',')
+            query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeType]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -357,7 +360,7 @@ class FaceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -373,20 +376,20 @@ class FaceOperations(object):
 
         return deserialized
 
-    def verify_with_person_group(
-            self, face_id, person_id, person_group_id, custom_headers=None, raw=False, **operation_config):
+    def verify_face_to_person(
+            self, face_id, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
         """Verify whether two faces belong to a same person. Compares a face Id
         with a Person Id.
 
-        :param face_id: faceId the face, comes from Face - Detect
+        :param face_id: FaceId the face, comes from Face - Detect
         :type face_id: str
-        :param person_id: Specify a certain person in a person group. personId
-         is created in Persons.Create.
-        :type person_id: str
         :param person_group_id: Using existing personGroupId and personId for
          fast loading a specified person. personGroupId is created in Person
          Groups.Create.
         :type person_group_id: str
+        :param person_id: Specify a certain person in a person group. personId
+         is created in Persons.Create.
+        :type person_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -398,7 +401,7 @@ class FaceOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.VerifyPersonGroupRequest(face_id=face_id, person_id=person_id, person_group_id=person_group_id)
+        body = models.VerifyFaceToPersonRequest(face_id=face_id, person_group_id=person_group_id, person_id=person_id)
 
         # Construct URL
         url = '/verify'
@@ -417,12 +420,12 @@ class FaceOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'VerifyPersonGroupRequest')
+        body_content = self._serialize.body(body, 'VerifyFaceToPersonRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -438,7 +441,7 @@ class FaceOperations(object):
 
         return deserialized
 
-    def detect_in_stream(
+    def detect_with_stream(
             self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect human faces in an image and returns face locations, and
         optionally with faceIds, landmarks, and attributes.
@@ -458,7 +461,7 @@ class FaceOperations(object):
          that each face attribute analysis has additional computational and
          time cost.
         :type return_face_attributes: list[str or
-         ~azure.cognitiveservices.vision.face.models.FaceAttributeTypes]
+         ~azure.cognitiveservices.vision.face.models.FaceAttributeType]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -489,7 +492,7 @@ class FaceOperations(object):
         if return_face_landmarks is not None:
             query_parameters['returnFaceLandmarks'] = self._serialize.query("return_face_landmarks", return_face_landmarks, 'bool')
         if return_face_attributes is not None:
-            query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeTypes]', div=',')
+            query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeType]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -503,7 +506,7 @@ class FaceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)

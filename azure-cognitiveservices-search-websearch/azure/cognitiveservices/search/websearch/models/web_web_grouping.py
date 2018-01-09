@@ -33,5 +33,6 @@ class WebWebGrouping(Model):
     }
 
     def __init__(self, web_pages):
+        super(WebWebGrouping, self).__init__()
         self.web_pages = web_pages
         self._type = None

@@ -25,4 +25,5 @@ class CategoryDetail(Model):
     }
 
     def __init__(self, celebrities=None):
+        super(CategoryDetail, self).__init__()
         self.celebrities = celebrities

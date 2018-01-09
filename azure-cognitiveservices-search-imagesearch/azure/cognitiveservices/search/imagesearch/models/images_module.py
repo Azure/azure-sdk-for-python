@@ -32,4 +32,5 @@ class ImagesModule(Model):
     }
 
     def __init__(self):
+        super(ImagesModule, self).__init__()
         self.value = None

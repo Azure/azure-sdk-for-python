@@ -12,22 +12,29 @@
 from msrest.serialization import Model
 
 
-class PersistedFaceResult(Model):
-    """Persisted face result.
+class PersistedFace(Model):
+    """PersonFace object.
 
-    :param persisted_face_id: persistedFaceId of candidate face when find by
-     faceListId. persistedFaceId in face list is persisted and will not expire.
-     As showed in below response
+    :param persisted_face_id: The persistedFaceId of the target face, which is
+     persisted and will not expire. Different from faceId created by Face -
+     Detect and will expire in 24 hours after the detection call.
     :type persisted_face_id: str
+    :param user_data: User-provided data attached to the face. The size limit
+     is 1KB.
+    :type user_data: str
     """
 
     _validation = {
         'persisted_face_id': {'required': True},
+        'user_data': {'max_length': 1024},
     }
 
     _attribute_map = {
         'persisted_face_id': {'key': 'persistedFaceId', 'type': 'str'},
+        'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, persisted_face_id):
+    def __init__(self, persisted_face_id, user_data=None):
+        super(PersistedFace, self).__init__()
         self.persisted_face_id = persisted_face_id
+        self.user_data = user_data

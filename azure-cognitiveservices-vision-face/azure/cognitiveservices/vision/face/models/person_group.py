@@ -9,29 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .name_and_user_data_contract import NameAndUserDataContract
 
 
-class CreateFaceListRequest(Model):
-    """Request to create a face list.
+class PersonGroup(NameAndUserDataContract):
+    """Person group object.
 
-    :param name: Name of the face list, maximum length is 128.
+    :param name: User defined name, maximum length is 128.
     :type name: str
-    :param user_data: Optional user defined data for the face list. Length
-     should not exceed 16KB.
+    :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
+    :param person_group_id: PersonGroupId of the existing person groups.
+    :type person_group_id: str
     """
 
     _validation = {
         'name': {'max_length': 128},
         'user_data': {'max_length': 16384},
+        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
+        'person_group_id': {'key': 'personGroupId', 'type': 'str'},
     }
 
-    def __init__(self, name=None, user_data=None):
-        self.name = name
-        self.user_data = user_data
+    def __init__(self, person_group_id, name=None, user_data=None):
+        super(PersonGroup, self).__init__(name=name, user_data=user_data)
+        self.person_group_id = person_group_id

@@ -12,24 +12,22 @@
 from msrest.serialization import Model
 
 
-class HeadPoseProperties(Model):
-    """Properties indicating head pose of the face.
+class UpdatePersonFaceRequest(Model):
+    """Request to update person face data.
 
-    :param roll:
-    :type roll: float
-    :param yaw:
-    :type yaw: float
-    :param pitch:
-    :type pitch: float
+    :param user_data: User-provided data attached to the face. The size limit
+     is 1KB.
+    :type user_data: str
     """
 
-    _attribute_map = {
-        'roll': {'key': 'roll', 'type': 'float'},
-        'yaw': {'key': 'yaw', 'type': 'float'},
-        'pitch': {'key': 'pitch', 'type': 'float'},
+    _validation = {
+        'user_data': {'max_length': 1024},
     }
 
-    def __init__(self, roll=None, yaw=None, pitch=None):
-        self.roll = roll
-        self.yaw = yaw
-        self.pitch = pitch
+    _attribute_map = {
+        'user_data': {'key': 'userData', 'type': 'str'},
+    }
+
+    def __init__(self, user_data=None):
+        super(UpdatePersonFaceRequest, self).__init__()
+        self.user_data = user_data

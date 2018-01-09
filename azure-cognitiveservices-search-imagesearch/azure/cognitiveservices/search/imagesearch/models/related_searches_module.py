@@ -32,4 +32,5 @@ class RelatedSearchesModule(Model):
     }
 
     def __init__(self):
+        super(RelatedSearchesModule, self).__init__()
         self.value = None

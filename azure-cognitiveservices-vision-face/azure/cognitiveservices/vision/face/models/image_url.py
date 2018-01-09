@@ -28,4 +28,5 @@ class ImageUrl(Model):
     }
 
     def __init__(self, url):
+        super(ImageUrl, self).__init__()
         self.url = url

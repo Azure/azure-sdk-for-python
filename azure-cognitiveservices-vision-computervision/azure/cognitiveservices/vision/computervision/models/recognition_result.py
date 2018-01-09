@@ -25,4 +25,5 @@ class RecognitionResult(Model):
     }
 
     def __init__(self, lines=None):
+        super(RecognitionResult, self).__init__()
         self.lines = lines

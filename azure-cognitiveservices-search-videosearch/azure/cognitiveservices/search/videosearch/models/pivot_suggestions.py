@@ -33,5 +33,6 @@ class PivotSuggestions(Model):
     }
 
     def __init__(self, pivot, suggestions):
+        super(PivotSuggestions, self).__init__()
         self.pivot = pivot
         self.suggestions = suggestions

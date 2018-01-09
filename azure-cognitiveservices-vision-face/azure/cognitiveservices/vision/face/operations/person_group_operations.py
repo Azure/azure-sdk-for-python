@@ -38,12 +38,11 @@ class PersonGroupOperations(object):
         """Create a new person group with specified personGroupId, name and
         user-provided userData.
 
-        :param person_group_id: User-provided personGroupId as a string.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
-        :param name: Name of the face list, maximum length is 128.
+        :param name: User defined name, maximum length is 128.
         :type name: str
-        :param user_data: Optional user defined data for the face list. Length
-         should not exceed 16KB.
+        :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -55,7 +54,7 @@ class PersonGroupOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.CreatePersonGroupRequest(name=name, user_data=user_data)
+        body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
         url = '/persongroups/{personGroupId}'
@@ -75,12 +74,12 @@ class PersonGroupOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'CreatePersonGroupRequest')
+        body_content = self._serialize.body(body, 'NameAndUserDataContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -94,8 +93,7 @@ class PersonGroupOperations(object):
         """Delete an existing person group. Persisted face images of all people in
         the person group will also be deleted.
 
-        :param person_group_id: The personGroupId of the person group to be
-         deleted.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -111,7 +109,7 @@ class PersonGroupOperations(object):
         url = '/persongroups/{personGroupId}'
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str')
+            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -126,7 +124,7 @@ class PersonGroupOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -140,16 +138,16 @@ class PersonGroupOperations(object):
         """Retrieve the information of a person group, including its name and
         userData.
 
-        :param person_group_id: personGroupId of the target person group.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PersonGroupResult or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.PersonGroupResult
-         or ~msrest.pipeline.ClientRawResponse
+        :return: PersonGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.PersonGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -157,7 +155,7 @@ class PersonGroupOperations(object):
         url = '/persongroups/{personGroupId}'
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str')
+            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -172,7 +170,7 @@ class PersonGroupOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -180,7 +178,7 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PersonGroupResult', response)
+            deserialized = self._deserialize('PersonGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -193,13 +191,11 @@ class PersonGroupOperations(object):
         """Update an existing person group's display name and userData. The
         properties which does not appear in request body will not be updated.
 
-        :param person_group_id: personGroupId of the person group to be
-         updated.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
-        :param name: Name of the face list, maximum length is 128.
+        :param name: User defined name, maximum length is 128.
         :type name: str
-        :param user_data: Optional user defined data for the face list. Length
-         should not exceed 16KB.
+        :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -211,13 +207,13 @@ class PersonGroupOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.CreatePersonGroupRequest(name=name, user_data=user_data)
+        body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
         url = '/persongroups/{personGroupId}'
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str')
+            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -231,12 +227,12 @@ class PersonGroupOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'CreatePersonGroupRequest')
+        body_content = self._serialize.body(body, 'NameAndUserDataContract')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -249,15 +245,15 @@ class PersonGroupOperations(object):
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the training status of a person group (completed or ongoing).
 
-        :param person_group_id: personGroupId of target person group.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TrainingStatus1 or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus1 or
+        :return: TrainingStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
@@ -266,7 +262,7 @@ class PersonGroupOperations(object):
         url = '/persongroups/{personGroupId}/training'
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str')
+            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -281,7 +277,7 @@ class PersonGroupOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -289,7 +285,7 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TrainingStatus1', response)
+            deserialized = self._deserialize('TrainingStatus', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -312,9 +308,8 @@ class PersonGroupOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.face.models.PersonGroupResult] or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: list[~azure.cognitiveservices.vision.face.models.PersonGroup]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
@@ -340,7 +335,7 @@ class PersonGroupOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -348,7 +343,7 @@ class PersonGroupOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[PersonGroupResult]', response)
+            deserialized = self._deserialize('[PersonGroup]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -361,7 +356,7 @@ class PersonGroupOperations(object):
         """Queue a person group training task, the training task may not be
         started immediately.
 
-        :param person_group_id: Target person group to be trained.
+        :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -377,7 +372,7 @@ class PersonGroupOperations(object):
         url = '/persongroups/{personGroupId}/train'
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str')
+            'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -392,7 +387,7 @@ class PersonGroupOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.APIErrorException(self._deserialize, response)

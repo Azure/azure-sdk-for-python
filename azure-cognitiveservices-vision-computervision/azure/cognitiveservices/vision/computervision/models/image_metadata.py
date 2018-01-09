@@ -30,6 +30,7 @@ class ImageMetadata(Model):
     }
 
     def __init__(self, width=None, height=None, format=None):
+        super(ImageMetadata, self).__init__()
         self.width = width
         self.height = height
         self.format = format

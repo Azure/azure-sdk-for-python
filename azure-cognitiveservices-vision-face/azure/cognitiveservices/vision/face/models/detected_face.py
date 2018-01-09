@@ -29,7 +29,6 @@ class DetectedFace(Model):
     """
 
     _validation = {
-        'face_id': {'max_length': 64},
         'face_rectangle': {'required': True},
     }
 
@@ -41,6 +40,7 @@ class DetectedFace(Model):
     }
 
     def __init__(self, face_rectangle, face_id=None, face_landmarks=None, face_attributes=None):
+        super(DetectedFace, self).__init__()
         self.face_id = face_id
         self.face_rectangle = face_rectangle
         self.face_landmarks = face_landmarks

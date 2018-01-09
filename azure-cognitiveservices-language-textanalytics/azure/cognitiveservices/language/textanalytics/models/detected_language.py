@@ -32,6 +32,7 @@ class DetectedLanguage(Model):
     }
 
     def __init__(self, name=None, iso6391_name=None, score=None):
+        super(DetectedLanguage, self).__init__()
         self.name = name
         self.iso6391_name = iso6391_name
         self.score = score

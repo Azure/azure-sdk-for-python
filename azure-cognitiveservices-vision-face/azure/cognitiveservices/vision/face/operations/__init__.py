@@ -10,13 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .face_operations import FaceOperations
-from .person_operations import PersonOperations
+from .person_group_person_operations import PersonGroupPersonOperations
 from .person_group_operations import PersonGroupOperations
 from .face_list_operations import FaceListOperations
 
 __all__ = [
     'FaceOperations',
-    'PersonOperations',
+    'PersonGroupPersonOperations',
     'PersonGroupOperations',
     'FaceListOperations',
 ]

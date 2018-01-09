@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class VerifyRequest(Model):
+class VerifyFaceToFaceRequest(Model):
     """Request body for verify operation.
 
-    :param face_id1: faceId of the first face, comes from Face - Detect
+    :param face_id1: FaceId of the first face, comes from Face - Detect
     :type face_id1: str
-    :param face_id2: faceId of the second face, comes from Face - Detect
+    :param face_id2: FaceId of the second face, comes from Face - Detect
     :type face_id2: str
     """
 
     _validation = {
-        'face_id1': {'required': True, 'max_length': 64},
-        'face_id2': {'required': True, 'max_length': 64},
+        'face_id1': {'required': True},
+        'face_id2': {'required': True},
     }
 
     _attribute_map = {
@@ -32,5 +32,6 @@ class VerifyRequest(Model):
     }
 
     def __init__(self, face_id1, face_id2):
+        super(VerifyFaceToFaceRequest, self).__init__()
         self.face_id1 = face_id1
         self.face_id2 = face_id2

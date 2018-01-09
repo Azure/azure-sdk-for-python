@@ -42,6 +42,7 @@ class ImageInsightsImageCaption(Model):
     }
 
     def __init__(self, caption, data_source_url, related_searches):
+        super(ImageInsightsImageCaption, self).__init__()
         self.caption = caption
         self.data_source_url = data_source_url
         self.related_searches = related_searches

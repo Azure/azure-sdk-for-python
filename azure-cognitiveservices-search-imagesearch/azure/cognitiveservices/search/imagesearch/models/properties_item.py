@@ -42,5 +42,6 @@ class PropertiesItem(Model):
     }
 
     def __init__(self):
+        super(PropertiesItem, self).__init__()
         self.text = None
         self._type = None
