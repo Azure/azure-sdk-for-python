@@ -37,5 +37,6 @@ class TrendingImagesCategory(Model):
     }
 
     def __init__(self, title, tiles):
+        super(TrendingImagesCategory, self).__init__()
         self.title = title
         self.tiles = tiles

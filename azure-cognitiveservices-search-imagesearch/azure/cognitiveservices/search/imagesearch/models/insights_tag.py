@@ -32,4 +32,5 @@ class InsightsTag(Model):
     }
 
     def __init__(self):
+        super(InsightsTag, self).__init__()
         self.name = None

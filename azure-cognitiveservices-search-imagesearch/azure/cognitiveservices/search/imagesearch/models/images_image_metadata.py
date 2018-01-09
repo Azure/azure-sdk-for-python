@@ -47,6 +47,7 @@ class ImagesImageMetadata(Model):
     }
 
     def __init__(self):
+        super(ImagesImageMetadata, self).__init__()
         self.shopping_sources_count = None
         self.recipe_sources_count = None
         self.aggregate_offer = None
