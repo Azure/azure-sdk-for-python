@@ -26,4 +26,5 @@ class DatabaseAccountListConnectionStringsResult(Model):
     }
 
     def __init__(self, connection_strings=None):
+        super(DatabaseAccountListConnectionStringsResult, self).__init__()
         self.connection_strings = connection_strings

@@ -12,17 +12,25 @@
 from msrest.serialization import Model
 
 
-class FailoverPolicies(Model):
-    """The list of new failover policies for the failover priority change.
+class UsagesResult(Model):
+    """The response to a list usage request.
 
-    :param failover_policies: List of failover policies.
-    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of usages for the database. A usage is a point in
+     time metric
+    :vartype value: list[~azure.mgmt.cosmosdb.models.Usage]
     """
 
-    _attribute_map = {
-        'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
+    _validation = {
+        'value': {'readonly': True},
     }
 
-    def __init__(self, failover_policies=None):
-        super(FailoverPolicies, self).__init__()
-        self.failover_policies = failover_policies
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+    }
+
+    def __init__(self):
+        super(UsagesResult, self).__init__()
+        self.value = None
