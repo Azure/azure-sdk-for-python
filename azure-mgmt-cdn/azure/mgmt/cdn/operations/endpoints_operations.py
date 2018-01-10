@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -25,6 +26,8 @@ class EndpointsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -89,7 +92,7 @@ class EndpointsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -157,7 +160,7 @@ class EndpointsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -165,6 +168,59 @@ class EndpointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('Endpoint', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+
+    def _create_initial(
+            self, resource_group_name, profile_name, endpoint_name, endpoint, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(endpoint, 'Endpoint')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Endpoint', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('Endpoint', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('Endpoint', response)
 
         if raw:
@@ -200,6 +256,55 @@ class EndpointsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            endpoint=endpoint,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 201, 202]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            deserialized = self._deserialize('Endpoint', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _update_initial(
+            self, resource_group_name, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
         path_format_arguments = {
@@ -225,53 +330,28 @@ class EndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(endpoint, 'Endpoint')
+        body_content = self._serialize.body(endpoint_update_properties, 'EndpointUpdateParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Endpoint', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('Endpoint', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('Endpoint', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('Endpoint', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Endpoint', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
     def update(
             self, resource_group_name, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
@@ -304,6 +384,55 @@ class EndpointsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            endpoint_update_properties=endpoint_update_properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            deserialized = self._deserialize('Endpoint', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _delete_initial(
+            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
         path_format_arguments = {
@@ -328,52 +457,16 @@ class EndpointsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(endpoint_update_properties, 'EndpointUpdateParameters')
-
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.patch(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Endpoint', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('Endpoint', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code not in [202, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
     def delete(
             self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
@@ -399,43 +492,30 @@ class EndpointsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
 
         # Construct and send request
         def long_running_send():
-
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -446,10 +526,6 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -457,30 +533,9 @@ class EndpointsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def start(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
-        """Starts an existing CDN endpoint that is on a stopped state.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within
-         the resource group.
-        :type profile_name: str
-        :param endpoint_name: Name of the endpoint under the profile which is
-         unique globally.
-        :type endpoint_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns Endpoint or
-         ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.Endpoint]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
-        """
+    def _start_initial(
+            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/start'
         path_format_arguments = {
@@ -506,49 +561,28 @@ class EndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 202:
-                deserialized = self._deserialize('Endpoint', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('Endpoint', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Endpoint', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def stop(
+    def start(
             self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
-        """Stops an existing running CDN endpoint.
+        """Starts an existing CDN endpoint that is on a stopped state.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -570,6 +604,54 @@ class EndpointsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
+        raw_result = self._start_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            deserialized = self._deserialize('Endpoint', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _stop_initial(
+            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/stop'
         path_format_arguments = {
@@ -595,49 +677,28 @@ class EndpointsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 202:
-                deserialized = self._deserialize('Endpoint', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('Endpoint', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Endpoint', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def purge_content(
-            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
-        """Removes a content from CDN.
+    def stop(
+            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+        """Stops an existing running CDN endpoint.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -648,19 +709,65 @@ class EndpointsOperations(object):
         :param endpoint_name: Name of the endpoint under the profile which is
          unique globally.
         :type endpoint_name: str
-        :param content_paths: The path to the content to be purged. Can
-         describe a file path or a wild card directory.
-        :type content_paths: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
+        :return: An instance of AzureOperationPoller that returns Endpoint or
          ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.Endpoint]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
+        raw_result = self._stop_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            deserialized = self._deserialize('Endpoint', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _purge_content_initial(
+            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         content_file_paths = models.PurgeParameters(content_paths=content_paths)
 
         # Construct URL
@@ -691,43 +798,20 @@ class EndpointsOperations(object):
         body_content = self._serialize.body(content_file_paths, 'PurgeParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
-    def load_content(
+    def purge_content(
             self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
-        """Pre-loads a content to CDN. Available for Verizon Profiles.
+        """Removes a content from CDN.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -738,8 +822,8 @@ class EndpointsOperations(object):
         :param endpoint_name: Name of the endpoint under the profile which is
          unique globally.
         :type endpoint_name: str
-        :param content_paths: The path to the content to be loaded. Path
-         should be a relative file URL of the origin.
+        :param content_paths: The path to the content to be purged. Can
+         describe a file path or a wild card directory.
         :type content_paths: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -751,6 +835,51 @@ class EndpointsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
+        raw_result = self._purge_content_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            content_paths=content_paths,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _load_content_initial(
+            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         content_file_paths = models.LoadParameters(content_paths=content_paths)
 
         # Construct URL
@@ -781,32 +910,77 @@ class EndpointsOperations(object):
         body_content = self._serialize.body(content_file_paths, 'LoadParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def load_content(
+            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
+        """Pre-loads a content to CDN. Available for Verizon Profiles.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within
+         the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is
+         unique globally.
+        :type endpoint_name: str
+        :param content_paths: The path to the content to be loaded. Path
+         should be a relative file URL of the origin.
+        :type content_paths: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
+        """
+        raw_result = self._load_content_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            content_paths=content_paths,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -875,7 +1049,7 @@ class EndpointsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -950,7 +1124,7 @@ class EndpointsOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
