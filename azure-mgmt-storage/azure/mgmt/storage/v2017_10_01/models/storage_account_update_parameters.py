@@ -66,6 +66,7 @@ class StorageAccountUpdateParameters(Model):
     }
 
     def __init__(self, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False, network_rule_set=None, kind=None):
+        super(StorageAccountUpdateParameters, self).__init__()
         self.sku = sku
         self.tags = tags
         self.identity = identity

@@ -66,6 +66,7 @@ class Sku(Model):
     }
 
     def __init__(self, name, restrictions=None):
+        super(Sku, self).__init__()
         self.name = name
         self.tier = None
         self.resource_type = None

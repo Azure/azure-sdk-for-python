@@ -34,5 +34,6 @@ class CustomDomain(Model):
     }
 
     def __init__(self, name, use_sub_domain=None):
+        super(CustomDomain, self).__init__()
         self.name = name
         self.use_sub_domain = use_sub_domain

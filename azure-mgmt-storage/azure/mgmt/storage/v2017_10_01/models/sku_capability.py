@@ -39,5 +39,6 @@ class SKUCapability(Model):
     }
 
     def __init__(self):
+        super(SKUCapability, self).__init__()
         self.name = None
         self.value = None

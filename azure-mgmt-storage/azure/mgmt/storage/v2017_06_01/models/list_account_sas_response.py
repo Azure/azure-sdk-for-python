@@ -31,4 +31,5 @@ class ListAccountSasResponse(Model):
     }
 
     def __init__(self):
+        super(ListAccountSasResponse, self).__init__()
         self.account_sas_token = None

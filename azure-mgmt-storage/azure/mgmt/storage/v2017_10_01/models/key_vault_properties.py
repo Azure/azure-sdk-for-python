@@ -30,6 +30,7 @@ class KeyVaultProperties(Model):
     }
 
     def __init__(self, key_name=None, key_version=None, key_vault_uri=None):
+        super(KeyVaultProperties, self).__init__()
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri

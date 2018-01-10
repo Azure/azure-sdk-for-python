@@ -38,4 +38,5 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
     type = "Microsoft.Storage/storageAccounts"
 
     def __init__(self, name):
+        super(StorageAccountCheckNameAvailabilityParameters, self).__init__()
         self.name = name

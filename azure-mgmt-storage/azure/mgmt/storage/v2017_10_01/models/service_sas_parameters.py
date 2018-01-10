@@ -97,6 +97,7 @@ class ServiceSasParameters(Model):
     }
 
     def __init__(self, canonicalized_resource, resource, permissions=None, ip_address_or_range=None, protocols=None, shared_access_start_time=None, shared_access_expiry_time=None, identifier=None, partition_key_start=None, partition_key_end=None, row_key_start=None, row_key_end=None, key_to_sign=None, cache_control=None, content_disposition=None, content_encoding=None, content_language=None, content_type=None):
+        super(ServiceSasParameters, self).__init__()
         self.canonicalized_resource = canonicalized_resource
         self.resource = resource
         self.permissions = permissions
