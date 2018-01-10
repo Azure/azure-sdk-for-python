@@ -26,7 +26,7 @@ def get_cli_profile():
 
     azure_folder = get_config_dir()
     ACCOUNT.load(os.path.join(azure_folder, 'azureProfile.json'))
-    return Profile(ACCOUNT)
+    return Profile(storage=ACCOUNT)
 
 def get_azure_cli_credentials():
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
