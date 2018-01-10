@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.admin_keys_operations import AdminKeysOperations
 from .operations.query_keys_operations import QueryKeysOperations
 from .operations.services_operations import ServicesOperations
@@ -41,14 +42,12 @@ class SearchManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(SearchManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('searchmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-search/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -61,6 +60,8 @@ class SearchManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SearchManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.search.operations.Operations
     :ivar admin_keys: AdminKeys operations
     :vartype admin_keys: azure.mgmt.search.operations.AdminKeysOperations
     :ivar query_keys: QueryKeys operations
@@ -89,6 +90,8 @@ class SearchManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.admin_keys = AdminKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.query_keys = QueryKeysOperations(
