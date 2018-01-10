@@ -7,6 +7,7 @@ Release History
 
 **Breaking changes**
 
+* Changed the ODataQuery parameter type from JobInformation to JobInformationBasic for the Job_List API
 * Changed the ODataQuery parameter type from DataLakeAnalyticsAccount to DataLakeAnalyticsAccountBasic for these APIs:
 
   * Account_List
