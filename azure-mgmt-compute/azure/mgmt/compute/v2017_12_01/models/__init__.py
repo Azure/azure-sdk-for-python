@@ -113,13 +113,6 @@ from .resource import Resource
 from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
 from .operation_status_response import OperationStatusResponse
-from .run_command_input_parameter import RunCommandInputParameter
-from .run_command_input import RunCommandInput
-from .run_command_parameter_definition import RunCommandParameterDefinition
-from .run_command_document_base import RunCommandDocumentBase
-from .run_command_document import RunCommandDocument
-from .run_command_list_result import RunCommandListResult
-from .run_command_result import RunCommandResult
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
@@ -145,6 +138,7 @@ from .compute_management_client_enums import (
     UpgradeMode,
     OperatingSystemStateTypes,
     IPVersion,
+    VirtualMachinePriorityTypes,
     VirtualMachineScaleSetSkuScaleType,
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
@@ -256,13 +250,6 @@ __all__ = [
     'UpdateResource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
-    'RunCommandInputParameter',
-    'RunCommandInput',
-    'RunCommandParameterDefinition',
-    'RunCommandDocumentBase',
-    'RunCommandDocument',
-    'RunCommandListResult',
-    'RunCommandResult',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
@@ -287,6 +274,7 @@ __all__ = [
     'UpgradeMode',
     'OperatingSystemStateTypes',
     'IPVersion',
+    'VirtualMachinePriorityTypes',
     'VirtualMachineScaleSetSkuScaleType',
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
