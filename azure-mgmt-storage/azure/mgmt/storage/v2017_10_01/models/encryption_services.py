@@ -41,6 +41,7 @@ class EncryptionServices(Model):
     }
 
     def __init__(self, blob=None, file=None):
+        super(EncryptionServices, self).__init__()
         self.blob = blob
         self.file = file
         self.table = None

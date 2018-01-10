@@ -44,6 +44,7 @@ class Endpoints(Model):
     }
 
     def __init__(self):
+        super(Endpoints, self).__init__()
         self.blob = None
         self.queue = None
         self.table = None

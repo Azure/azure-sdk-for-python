@@ -38,6 +38,7 @@ class Encryption(Model):
     }
 
     def __init__(self, services=None, key_source="Microsoft.Storage", key_vault_properties=None):
+        super(Encryption, self).__init__()
         self.services = services
         self.key_source = key_source
         self.key_vault_properties = key_vault_properties

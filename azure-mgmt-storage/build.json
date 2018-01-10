@@ -4,250 +4,7 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4212",
-        "engines": {
-          "node": ">=7.10.0"
-        },
-        "dependencies": {},
-        "optionalDependencies": {},
-        "devDependencies": {
-          "@types/commonmark": "^0.27.0",
-          "@types/js-yaml": "^3.10.0",
-          "@types/jsonpath": "^0.1.29",
-          "@types/node": "^8.0.28",
-          "@types/source-map": "^0.5.0",
-          "@types/yargs": "^8.0.2",
-          "dts-generator": "^2.1.0",
-          "mocha": "^4.0.1",
-          "mocha-typescript": "^1.1.7",
-          "shx": "0.2.2",
-          "static-link": "^0.2.3",
-          "vscode-jsonrpc": "^3.3.1"
-        },
-        "bundleDependencies": false,
-        "peerDependencies": {},
-        "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4212/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "9c084a56670e5455a8d3cfe884b0f15f5b875427",
-        "_shrinkwrap": null,
-        "bin": {
-          "autorest-core": "./dist/app.js",
-          "autorest-language-service": "dist/language-service/language-service.js"
-        },
-        "_id": "@microsoft.azure/autorest-core@2.0.4212",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4212/node_modules/@microsoft.azure/autorest-core",
-        "_requested": {
-          "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4212\\node_modules\\@microsoft.azure\\autorest-core",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4212\\node_modules\\@microsoft.azure\\autorest-core",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4212/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4212/node_modules/@microsoft.azure/autorest-core"
-        },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4212\\node_modules\\@microsoft.azure\\autorest-core",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4212\\node_modules\\@microsoft.azure\\autorest-core"
-      },
-      "extensionManager": {
-        "installationPath": "C:\\Users\\lmazuel\\.autorest",
-        "sharedLock": {
-          "name": "C:\\Users\\lmazuel\\.autorest",
-          "exclusiveLock": {
-            "name": "C__Users_lmazuel_.autorest.exclusive-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-              "exclusive": true
-            }
-          },
-          "busyLock": {
-            "name": "C__Users_lmazuel_.autorest.busy-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-              "exclusive": true
-            }
-          },
-          "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-              "exclusive": true
-            }
-          },
-          "file": "C:\\Users\\lmazuel\\AppData\\Local\\Temp/C__Users_lmazuel_.autorest.lock"
-        },
-        "dotnetPath": "C:\\Users\\lmazuel\\.dotnet"
-      },
-      "installationPath": "C:\\Users\\lmazuel\\.autorest"
-    },
-    {
-      "resolvedInfo": null,
-      "packageMetadata": {
-        "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4215",
-        "engines": {
-          "node": ">=7.10.0"
-        },
-        "dependencies": {},
-        "optionalDependencies": {},
-        "devDependencies": {
-          "@types/commonmark": "^0.27.0",
-          "@types/js-yaml": "^3.10.0",
-          "@types/jsonpath": "^0.1.29",
-          "@types/node": "^8.0.53",
-          "@types/source-map": "^0.5.0",
-          "@types/yargs": "^8.0.2",
-          "dts-generator": "^2.1.0",
-          "mocha": "^4.0.1",
-          "mocha-typescript": "^1.1.7",
-          "shx": "0.2.2",
-          "static-link": "^0.2.3",
-          "vscode-jsonrpc": "^3.3.1"
-        },
-        "bundleDependencies": false,
-        "peerDependencies": {},
-        "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4215/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "e8275e3cfb9bde9e6aaeb70396119c4bd83e770c",
-        "_shrinkwrap": null,
-        "bin": {
-          "autorest-core": "./dist/app.js",
-          "autorest-language-service": "dist/language-service/language-service.js"
-        },
-        "_id": "@microsoft.azure/autorest-core@2.0.4215",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4215/node_modules/@microsoft.azure/autorest-core",
-        "_requested": {
-          "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4215\\node_modules\\@microsoft.azure\\autorest-core",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4215\\node_modules\\@microsoft.azure\\autorest-core",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4215/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4215/node_modules/@microsoft.azure/autorest-core"
-        },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4215\\node_modules\\@microsoft.azure\\autorest-core",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4215\\node_modules\\@microsoft.azure\\autorest-core"
-      },
-      "extensionManager": {
-        "installationPath": "C:\\Users\\lmazuel\\.autorest",
-        "sharedLock": {
-          "name": "C:\\Users\\lmazuel\\.autorest",
-          "exclusiveLock": {
-            "name": "C__Users_lmazuel_.autorest.exclusive-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-              "exclusive": true
-            }
-          },
-          "busyLock": {
-            "name": "C__Users_lmazuel_.autorest.busy-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-              "exclusive": true
-            }
-          },
-          "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-              "exclusive": true
-            }
-          },
-          "file": "C:\\Users\\lmazuel\\AppData\\Local\\Temp/C__Users_lmazuel_.autorest.lock"
-        },
-        "dotnetPath": "C:\\Users\\lmazuel\\.dotnet"
-      },
-      "installationPath": "C:\\Users\\lmazuel\\.autorest"
-    },
-    {
-      "resolvedInfo": null,
-      "packageMetadata": {
-        "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4216",
-        "engines": {
-          "node": ">=7.10.0"
-        },
-        "dependencies": {},
-        "optionalDependencies": {},
-        "devDependencies": {
-          "@types/commonmark": "^0.27.0",
-          "@types/js-yaml": "^3.10.0",
-          "@types/jsonpath": "^0.1.29",
-          "@types/node": "^8.0.53",
-          "@types/source-map": "^0.5.0",
-          "@types/yargs": "^8.0.2",
-          "dts-generator": "^2.1.0",
-          "mocha": "^4.0.1",
-          "mocha-typescript": "^1.1.7",
-          "shx": "0.2.2",
-          "static-link": "^0.2.3",
-          "vscode-jsonrpc": "^3.3.1"
-        },
-        "bundleDependencies": false,
-        "peerDependencies": {},
-        "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "f6b97454df552dfa54bd0df23f8309665be5fd4c",
-        "_shrinkwrap": null,
-        "bin": {
-          "autorest-core": "./dist/app.js",
-          "autorest-language-service": "dist/language-service/language-service.js"
-        },
-        "_id": "@microsoft.azure/autorest-core@2.0.4216",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-        "_requested": {
-          "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4216\\node_modules\\@microsoft.azure\\autorest-core",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4216\\node_modules\\@microsoft.azure\\autorest-core",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4216/node_modules/@microsoft.azure/autorest-core"
-        },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4216\\node_modules\\@microsoft.azure\\autorest-core",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4216\\node_modules\\@microsoft.azure\\autorest-core"
-      },
-      "extensionManager": {
-        "installationPath": "C:\\Users\\lmazuel\\.autorest",
-        "sharedLock": {
-          "name": "C:\\Users\\lmazuel\\.autorest",
-          "exclusiveLock": {
-            "name": "C__Users_lmazuel_.autorest.exclusive-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
-              "exclusive": true
-            }
-          },
-          "busyLock": {
-            "name": "C__Users_lmazuel_.autorest.busy-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
-              "exclusive": true
-            }
-          },
-          "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-              "exclusive": true
-            }
-          },
-          "file": "C:\\Users\\lmazuel\\AppData\\Local\\Temp/C__Users_lmazuel_.autorest.lock"
-        },
-        "dotnetPath": "C:\\Users\\lmazuel\\.dotnet"
-      },
-      "installationPath": "C:\\Users\\lmazuel\\.autorest"
-    },
-    {
-      "resolvedInfo": null,
-      "packageMetadata": {
-        "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4219",
+        "version": "2.0.4228",
         "engines": {
           "node": ">=7.10.0"
         },
@@ -271,25 +28,25 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4219/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "824ae6a1db5a4e0e01246c1efad458ee74d48ea0",
+        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "b3897b8615417aa07cf9113d4bd18862b32f82f8",
         "_shrinkwrap": null,
         "bin": {
           "autorest-core": "./dist/app.js",
           "autorest-language-service": "dist/language-service/language-service.js"
         },
-        "_id": "@microsoft.azure/autorest-core@2.0.4219",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4219/node_modules/@microsoft.azure/autorest-core",
+        "_id": "@microsoft.azure/autorest-core@2.0.4228",
+        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
         "_requested": {
           "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4219\\node_modules\\@microsoft.azure\\autorest-core",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4219\\node_modules\\@microsoft.azure\\autorest-core",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4219/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4219/node_modules/@microsoft.azure/autorest-core"
+          "where": "D:\\VSProjects\\swagger-to-sdk",
+          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4228\\node_modules\\@microsoft.azure\\autorest-core",
+          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4228\\node_modules\\@microsoft.azure\\autorest-core",
+          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4228/node_modules/@microsoft.azure/autorest-core"
         },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4219\\node_modules\\@microsoft.azure\\autorest-core",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4219\\node_modules\\@microsoft.azure\\autorest-core"
+        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4228\\node_modules\\@microsoft.azure\\autorest-core",
+        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4228\\node_modules\\@microsoft.azure\\autorest-core"
       },
       "extensionManager": {
         "installationPath": "C:\\Users\\lmazuel\\.autorest",
@@ -312,10 +69,10 @@
             }
           },
           "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
             "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
               "exclusive": true
             }
           },
@@ -329,7 +86,7 @@
       "resolvedInfo": null,
       "packageMetadata": {
         "name": "@microsoft.azure/autorest-core",
-        "version": "2.0.4222",
+        "version": "2.0.4230",
         "engines": {
           "node": ">=7.10.0"
         },
@@ -340,7 +97,7 @@
           "@types/js-yaml": "^3.10.0",
           "@types/jsonpath": "^0.1.29",
           "@types/node": "^8.0.53",
-          "@types/source-map": "^0.5.0",
+          "@types/source-map": "0.5.0",
           "@types/yargs": "^8.0.2",
           "@types/z-schema": "^3.16.31",
           "dts-generator": "^2.1.0",
@@ -353,25 +110,25 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4222/node_modules/@microsoft.azure/autorest-core",
-        "_shasum": "31a5ee635479256e97c3a83a17aa11f2d1aabd65",
+        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4230/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "3c9b387fbe18ce3a54b68bc0c24ddb0a4c850f25",
         "_shrinkwrap": null,
         "bin": {
           "autorest-core": "./dist/app.js",
           "autorest-language-service": "dist/language-service/language-service.js"
         },
-        "_id": "@microsoft.azure/autorest-core@2.0.4222",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4222/node_modules/@microsoft.azure/autorest-core",
+        "_id": "@microsoft.azure/autorest-core@2.0.4230",
+        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4230/node_modules/@microsoft.azure/autorest-core",
         "_requested": {
           "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4222\\node_modules\\@microsoft.azure\\autorest-core",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4222\\node_modules\\@microsoft.azure\\autorest-core",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4222/node_modules/@microsoft.azure/autorest-core",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4222/node_modules/@microsoft.azure/autorest-core"
+          "where": "D:\\VSProjects\\swagger-to-sdk",
+          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4230\\node_modules\\@microsoft.azure\\autorest-core",
+          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4230\\node_modules\\@microsoft.azure\\autorest-core",
+          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4230/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4230/node_modules/@microsoft.azure/autorest-core"
         },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4222\\node_modules\\@microsoft.azure\\autorest-core",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4222\\node_modules\\@microsoft.azure\\autorest-core"
+        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4230\\node_modules\\@microsoft.azure\\autorest-core",
+        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4230\\node_modules\\@microsoft.azure\\autorest-core"
       },
       "extensionManager": {
         "installationPath": "C:\\Users\\lmazuel\\.autorest",
@@ -394,10 +151,10 @@
             }
           },
           "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
             "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
               "exclusive": true
             }
           },
@@ -410,49 +167,50 @@
     {
       "resolvedInfo": null,
       "packageMetadata": {
-        "name": "@microsoft.azure/autorest.go",
-        "version": "2.1.47",
-        "dependencies": {
-          "dotnet-2.0.0": "^1.4.4"
+        "name": "@microsoft.azure/autorest-core",
+        "version": "2.0.4231",
+        "engines": {
+          "node": ">=7.10.0"
         },
+        "dependencies": {},
         "optionalDependencies": {},
         "devDependencies": {
-          "@microsoft.azure/autorest.testserver": "^2.3.9",
-          "autorest": "^2.0.4203",
-          "coffee-script": "^1.11.1",
-          "dotnet-sdk-2.0.0": "^1.4.4",
-          "gulp": "^3.9.1",
-          "gulp-filter": "^5.0.0",
-          "gulp-line-ending-corrector": "^1.0.1",
-          "iced-coffee-script": "^108.0.11",
-          "marked": "^0.3.6",
-          "marked-terminal": "^2.0.0",
-          "moment": "^2.17.1",
-          "run-sequence": "*",
-          "shx": "^0.2.2",
-          "through2-parallel": "^0.1.3",
-          "yargs": "^8.0.2",
-          "yarn": "^1.0.2"
+          "@types/commonmark": "^0.27.0",
+          "@types/js-yaml": "^3.10.0",
+          "@types/jsonpath": "^0.1.29",
+          "@types/node": "^8.0.53",
+          "@types/source-map": "0.5.0",
+          "@types/yargs": "^8.0.2",
+          "@types/z-schema": "^3.16.31",
+          "dts-generator": "^2.1.0",
+          "mocha": "^4.0.1",
+          "mocha-typescript": "^1.1.7",
+          "shx": "0.2.2",
+          "static-link": "^0.2.3",
+          "vscode-jsonrpc": "^3.3.1"
         },
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.go@2.1.47/node_modules/@microsoft.azure/autorest.go",
-        "_shasum": "28518524a48a50ef8c0d1294538d57faeecee7f7",
+        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4231/node_modules/@microsoft.azure/autorest-core",
+        "_shasum": "fa1b2b50cdd91bec9f04542420c3056eda202b87",
         "_shrinkwrap": null,
-        "bin": null,
-        "_id": "@microsoft.azure/autorest.go@2.1.47",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.go@2.1.47/node_modules/@microsoft.azure/autorest.go",
+        "bin": {
+          "autorest-core": "./dist/app.js",
+          "autorest-language-service": "dist/language-service/language-service.js"
+        },
+        "_id": "@microsoft.azure/autorest-core@2.0.4231",
+        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4231/node_modules/@microsoft.azure/autorest-core",
         "_requested": {
           "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.go@2.1.47\\node_modules\\@microsoft.azure\\autorest.go",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.go@2.1.47\\node_modules\\@microsoft.azure\\autorest.go",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.go@2.1.47/node_modules/@microsoft.azure/autorest.go",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.go@2.1.47/node_modules/@microsoft.azure/autorest.go"
+          "where": "D:\\VSProjects\\swagger-to-sdk",
+          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4231\\node_modules\\@microsoft.azure\\autorest-core",
+          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4231\\node_modules\\@microsoft.azure\\autorest-core",
+          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4231/node_modules/@microsoft.azure/autorest-core",
+          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest-core@2.0.4231/node_modules/@microsoft.azure/autorest-core"
         },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.go@2.1.47\\node_modules\\@microsoft.azure\\autorest.go",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.go@2.1.47\\node_modules\\@microsoft.azure\\autorest.go"
+        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4231\\node_modules\\@microsoft.azure\\autorest-core",
+        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest-core@2.0.4231\\node_modules\\@microsoft.azure\\autorest-core"
       },
       "extensionManager": {
         "installationPath": "C:\\Users\\lmazuel\\.autorest",
@@ -475,10 +233,10 @@
             }
           },
           "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
             "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
               "exclusive": true
             }
           },
@@ -526,7 +284,7 @@
         "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.38/node_modules/@microsoft.azure/autorest.modeler",
         "_requested": {
           "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
+          "where": "D:\\VSProjects\\swagger-to-sdk",
           "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.38\\node_modules\\@microsoft.azure\\autorest.modeler",
           "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.38\\node_modules\\@microsoft.azure\\autorest.modeler",
           "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.38/node_modules/@microsoft.azure/autorest.modeler",
@@ -556,10 +314,10 @@
             }
           },
           "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
             "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
               "exclusive": true
             }
           },
@@ -572,15 +330,15 @@
     {
       "resolvedInfo": null,
       "packageMetadata": {
-        "name": "@microsoft.azure/autorest.python",
-        "version": "2.1.26",
+        "name": "@microsoft.azure/autorest.modeler",
+        "version": "2.3.44",
         "dependencies": {
           "dotnet-2.0.0": "^1.4.4"
         },
         "optionalDependencies": {},
         "devDependencies": {
-          "@microsoft.azure/autorest.testserver": "2.3.12",
-          "autorest": "^2.0.4203",
+          "@microsoft.azure/autorest.testserver": "2.3.17",
+          "autorest": "^2.0.4225",
           "coffee-script": "^1.11.1",
           "dotnet-sdk-2.0.0": "^1.4.4",
           "gulp": "^3.9.1",
@@ -599,22 +357,22 @@
         "bundleDependencies": false,
         "peerDependencies": {},
         "deprecated": false,
-        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.26/node_modules/@microsoft.azure/autorest.python",
-        "_shasum": "fce552a203c4b359b3f21a194a6deacc8f40ae80",
+        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+        "_shasum": "9b5a880a77467be33a77f002f03230d3ccc21266",
         "_shrinkwrap": null,
         "bin": null,
-        "_id": "@microsoft.azure/autorest.python@2.1.26",
-        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.26/node_modules/@microsoft.azure/autorest.python",
+        "_id": "@microsoft.azure/autorest.modeler@2.3.44",
+        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
         "_requested": {
           "type": "directory",
-          "where": "C:\\Users\\lmazuel\\Git\\swagger-to-sdk",
-          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.26\\node_modules\\@microsoft.azure\\autorest.python",
-          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.26\\node_modules\\@microsoft.azure\\autorest.python",
-          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.26/node_modules/@microsoft.azure/autorest.python",
-          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.26/node_modules/@microsoft.azure/autorest.python"
+          "where": "D:\\VSProjects\\swagger-to-sdk",
+          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.44\\node_modules\\@microsoft.azure\\autorest.modeler",
+          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.44\\node_modules\\@microsoft.azure\\autorest.modeler",
+          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler"
         },
-        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.26\\node_modules\\@microsoft.azure\\autorest.python",
-        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.26\\node_modules\\@microsoft.azure\\autorest.python"
+        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.44\\node_modules\\@microsoft.azure\\autorest.modeler",
+        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.modeler@2.3.44\\node_modules\\@microsoft.azure\\autorest.modeler"
       },
       "extensionManager": {
         "installationPath": "C:\\Users\\lmazuel\\.autorest",
@@ -637,10 +395,91 @@
             }
           },
           "personalLock": {
-            "name": "C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
-            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
             "options": {
-              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.7190.398232573964.personal-lock",
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+              "exclusive": true
+            }
+          },
+          "file": "C:\\Users\\lmazuel\\AppData\\Local\\Temp/C__Users_lmazuel_.autorest.lock"
+        },
+        "dotnetPath": "C:\\Users\\lmazuel\\.dotnet"
+      },
+      "installationPath": "C:\\Users\\lmazuel\\.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest.python",
+        "version": "2.1.34",
+        "dependencies": {
+          "dotnet-2.0.0": "^1.4.4"
+        },
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@microsoft.azure/autorest.testserver": "^2.3.13",
+          "autorest": "^2.0.4203",
+          "coffee-script": "^1.11.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
+          "gulp": "^3.9.1",
+          "gulp-filter": "^5.0.0",
+          "gulp-line-ending-corrector": "^1.0.1",
+          "iced-coffee-script": "^108.0.11",
+          "marked": "^0.3.6",
+          "marked-terminal": "^2.0.0",
+          "moment": "^2.17.1",
+          "run-sequence": "*",
+          "shx": "^0.2.2",
+          "through2-parallel": "^0.1.3",
+          "yargs": "^8.0.2",
+          "yarn": "^1.0.2"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+        "_shasum": "b58d7e0542e081cf410fdbcdf8c14acf9cee16a7",
+        "_shrinkwrap": null,
+        "bin": null,
+        "_id": "@microsoft.azure/autorest.python@2.1.34",
+        "_from": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+        "_requested": {
+          "type": "directory",
+          "where": "D:\\VSProjects\\swagger-to-sdk",
+          "raw": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.34\\node_modules\\@microsoft.azure\\autorest.python",
+          "rawSpec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.34\\node_modules\\@microsoft.azure\\autorest.python",
+          "saveSpec": "file:C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python",
+          "fetchSpec": "C:/Users/lmazuel/.autorest/@microsoft.azure_autorest.python@2.1.34/node_modules/@microsoft.azure/autorest.python"
+        },
+        "_spec": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.34\\node_modules\\@microsoft.azure\\autorest.python",
+        "_where": "C:\\Users\\lmazuel\\.autorest\\@microsoft.azure_autorest.python@2.1.34\\node_modules\\@microsoft.azure\\autorest.python"
+      },
+      "extensionManager": {
+        "installationPath": "C:\\Users\\lmazuel\\.autorest",
+        "sharedLock": {
+          "name": "C:\\Users\\lmazuel\\.autorest",
+          "exclusiveLock": {
+            "name": "C__Users_lmazuel_.autorest.exclusive-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
+            "options": {
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.exclusive-lock",
+              "exclusive": true
+            }
+          },
+          "busyLock": {
+            "name": "C__Users_lmazuel_.autorest.busy-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
+            "options": {
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.busy-lock",
+              "exclusive": true
+            }
+          },
+          "personalLock": {
+            "name": "C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "pipe": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
+            "options": {
+              "path": "\\\\.\\pipe\\C__Users_lmazuel_.autorest.3740.4761653219866.personal-lock",
               "exclusive": true
             }
           },
@@ -655,7 +494,7 @@
     "dependencies": {
       "autorest": {
         "version": "2.0.4215",
-        "from": "autorest",
+        "from": "autorest@latest",
         "resolved": "https://registry.npmjs.org/autorest/-/autorest-2.0.4215.tgz"
       }
     }

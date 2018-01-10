@@ -33,4 +33,5 @@ class StorageAccountListKeysResult(Model):
     }
 
     def __init__(self):
+        super(StorageAccountListKeysResult, self).__init__()
         self.keys = None

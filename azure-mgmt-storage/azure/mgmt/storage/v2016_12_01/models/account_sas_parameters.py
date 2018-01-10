@@ -65,6 +65,7 @@ class AccountSasParameters(Model):
     }
 
     def __init__(self, services, resource_types, permissions, shared_access_expiry_time, ip_address_or_range=None, protocols=None, shared_access_start_time=None, key_to_sign=None):
+        super(AccountSasParameters, self).__init__()
         self.services = services
         self.resource_types = resource_types
         self.permissions = permissions
