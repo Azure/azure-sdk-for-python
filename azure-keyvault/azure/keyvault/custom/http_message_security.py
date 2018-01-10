@@ -61,7 +61,7 @@ class HttpMessageSecurity(object):
             # this is true for all requests which currently support message encryption, but might
             # need to be revisited when the types of
             body_dict = json.loads(plain_text)
-            body_dict['rek'] = self.client_encryption_key.to_jwk().serialize()
+            body_dict['rek'] = {'jwk': self.client_encryption_key.to_jwk().serialize()}
             plain_text = json.dumps(body_dict).encode(encoding='utf8')
 
         # build the header for the jws body
@@ -175,7 +175,7 @@ class HttpMessageSecurity(object):
         jwe_header = _JweHeader.from_compact_header(jwe.protected)
 
         # ensure the kid matches the specified client encryption key
-        # and the key wrap alg and the data encrtyption enc match the expected
+        # and the key wrap alg and the data encryption enc match the expected
         if self.client_encryption_key.kid != jwe_header.kid \
                 or jwe_header.alg != 'RSA-OAEP' \
                 or jwe_header.enc != 'A128CBC-HS256':

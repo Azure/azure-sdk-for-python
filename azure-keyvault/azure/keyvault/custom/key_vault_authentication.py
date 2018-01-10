@@ -175,7 +175,7 @@ class KeyVaultAuthBase(AuthBase):
         # if the given request can be protected add the appropriate keys to the message security
         if scheme == 'PoP':
             security.client_signature_key = token.key
-            security.client_encryption_key = token.key
+            security.client_encryption_key = _RsaKey.generate()
             security.server_encryption_key = _RsaKey.from_jwk_str(challenge.server_encryption_key)
             security.server_signature_key = _RsaKey.from_jwk_str(challenge.server_signature_key)
 
