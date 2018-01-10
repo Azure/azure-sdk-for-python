@@ -12,22 +12,24 @@
 from msrest.serialization import Model
 
 
-class DatabaseAccountRegenerateKeyParameters(Model):
-    """Parameters to regenerate the keys within the database account.
+class MetricDefinitionsListResult(Model):
+    """The response to a list metric definitions request.
 
-    :param key_kind: The access key to regenerate. Possible values include:
-     'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
-    :type key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of metric definitions for the account.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.MetricDefinition]
     """
 
     _validation = {
-        'key_kind': {'required': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'key_kind': {'key': 'keyKind', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[MetricDefinition]'},
     }
 
-    def __init__(self, key_kind):
-        super(DatabaseAccountRegenerateKeyParameters, self).__init__()
-        self.key_kind = key_kind
+    def __init__(self):
+        super(MetricDefinitionsListResult, self).__init__()
+        self.value = None

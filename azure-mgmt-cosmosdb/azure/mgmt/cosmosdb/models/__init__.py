@@ -24,13 +24,24 @@ from .database_account_list_connection_strings_result import DatabaseAccountList
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
 from .operation_display import OperationDisplay
 from .operation import Operation
+from .metric_name import MetricName
+from .usage import Usage
+from .usages_result import UsagesResult
+from .metric_availability import MetricAvailability
+from .metric_definition import MetricDefinition
+from .metric_definitions_list_result import MetricDefinitionsListResult
+from .metric_value import MetricValue
+from .metric import Metric
 from .database_account_paged import DatabaseAccountPaged
+from .metric_paged import MetricPaged
 from .operation_paged import OperationPaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     KeyKind,
+    UnitType,
+    PrimaryAggregationType,
 )
 
 __all__ = [
@@ -49,10 +60,21 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'OperationDisplay',
     'Operation',
+    'MetricName',
+    'Usage',
+    'UsagesResult',
+    'MetricAvailability',
+    'MetricDefinition',
+    'MetricDefinitionsListResult',
+    'MetricValue',
+    'Metric',
     'DatabaseAccountPaged',
+    'MetricPaged',
     'OperationPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'KeyKind',
+    'UnitType',
+    'PrimaryAggregationType',
 ]

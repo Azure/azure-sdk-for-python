@@ -11,8 +11,16 @@
 
 from .database_accounts_operations import DatabaseAccountsOperations
 from .operations import Operations
+from .database_operations import DatabaseOperations
+from .collection_operations import CollectionOperations
+from .collection_region_operations import CollectionRegionOperations
+from .database_account_region_operations import DatabaseAccountRegionOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
     'Operations',
+    'DatabaseOperations',
+    'CollectionOperations',
+    'CollectionRegionOperations',
+    'DatabaseAccountRegionOperations',
 ]
