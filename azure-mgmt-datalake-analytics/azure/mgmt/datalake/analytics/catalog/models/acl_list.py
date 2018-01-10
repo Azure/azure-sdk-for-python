@@ -12,22 +12,24 @@
 from msrest.serialization import Model
 
 
-class USqlTableColumn(Model):
-    """A Data Lake Analytics catalog U-SQL table column item.
+class AclList(Model):
+    """A Data Lake Analytics catalog access control list (ACL).
 
-    :param name: the name of the column in the table.
-    :type name: str
-    :param type: the object type of the specified column (such as
-     System.String).
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: the access control list (ACL).
+    :vartype value: list[~azure.mgmt.datalake.analytics.catalog.models.Acl]
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+    _validation = {
+        'value': {'readonly': True},
     }
 
-    def __init__(self, name=None, type=None):
-        super(USqlTableColumn, self).__init__()
-        self.name = name
-        self.type = type
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Acl]'},
+    }
+
+    def __init__(self):
+        super(AclList, self).__init__()
+        self.value = None

@@ -34,5 +34,6 @@ class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
     }
 
     def __init__(self, password, uri=None):
+        super(DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters, self).__init__()
         self.password = password
         self.uri = uri

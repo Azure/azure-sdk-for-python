@@ -12,8 +12,9 @@
 from .job_properties import JobProperties
 
 
-class USqlJobProperties(JobProperties):
-    """U-SQL job properties used when retrieving U-SQL jobs.
+class ScopeJobProperties(JobProperties):
+    """Scope job properties used when submitting and retrieving Scope jobs. (Only
+    for use internally with Scope job type.).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,16 +29,12 @@ class USqlJobProperties(JobProperties):
     :type type: str
     :ivar resources: the list of resources that are required by the job
     :vartype resources:
-     list[~azure.mgmt.datalake.analytics.job.models.JobResource]
-    :param statistics: the job specific statistics.
-    :type statistics: ~azure.mgmt.datalake.analytics.job.models.JobStatistics
-    :param debug_data: the job specific debug data locations.
-    :type debug_data: ~azure.mgmt.datalake.analytics.job.models.JobDataPath
-    :ivar diagnostics: the diagnostics for the job.
-    :vartype diagnostics:
-     list[~azure.mgmt.datalake.analytics.job.models.Diagnostics]
-    :ivar algebra_file_path: the algebra file path after the job has completed
-    :vartype algebra_file_path: str
+     list[~azure.mgmt.datalake.analytics.job.models.ScopeJobResource]
+    :ivar user_algebra_path: the algebra file path after the job has completed
+    :vartype user_algebra_path: str
+    :param notifier: the list of email addresses, separated by semi-colons, to
+     notify when the job reaches a terminal state.
+    :type notifier: str
     :ivar total_compilation_time: the total time this job spent compiling.
      This value should not be set by the user and will be ignored if it is.
     :vartype total_compilation_time: timedelta
@@ -58,66 +55,45 @@ class USqlJobProperties(JobProperties):
      executing the job. This value should not be set by the user and will be
      ignored if it is.
     :vartype yarn_application_id: str
-    :ivar yarn_application_time_stamp: the timestamp (in ticks) for the yarn
-     application executing the job. This value should not be set by the user
-     and will be ignored if it is.
-    :vartype yarn_application_time_stamp: long
-    :ivar compile_mode: the specific compilation mode for the job used during
-     execution. If this is not specified during submission, the server will
-     determine the optimal compilation mode. Possible values include:
-     'Semantic', 'Full', 'SingleBox'
-    :vartype compile_mode: str or
-     ~azure.mgmt.datalake.analytics.job.models.CompileMode
     """
 
     _validation = {
         'script': {'required': True},
         'type': {'required': True},
         'resources': {'readonly': True},
-        'diagnostics': {'readonly': True},
-        'algebra_file_path': {'readonly': True},
+        'user_algebra_path': {'readonly': True},
         'total_compilation_time': {'readonly': True},
         'total_paused_time': {'readonly': True},
         'total_queued_time': {'readonly': True},
         'total_running_time': {'readonly': True},
         'root_process_node_id': {'readonly': True},
         'yarn_application_id': {'readonly': True},
-        'yarn_application_time_stamp': {'readonly': True},
-        'compile_mode': {'readonly': True},
     }
 
     _attribute_map = {
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'script': {'key': 'script', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': '[JobResource]'},
-        'statistics': {'key': 'statistics', 'type': 'JobStatistics'},
-        'debug_data': {'key': 'debugData', 'type': 'JobDataPath'},
-        'diagnostics': {'key': 'diagnostics', 'type': '[Diagnostics]'},
-        'algebra_file_path': {'key': 'algebraFilePath', 'type': 'str'},
+        'resources': {'key': 'resources', 'type': '[ScopeJobResource]'},
+        'user_algebra_path': {'key': 'userAlgebraPath', 'type': 'str'},
+        'notifier': {'key': 'notifier', 'type': 'str'},
         'total_compilation_time': {'key': 'totalCompilationTime', 'type': 'duration'},
         'total_paused_time': {'key': 'totalPausedTime', 'type': 'duration'},
         'total_queued_time': {'key': 'totalQueuedTime', 'type': 'duration'},
         'total_running_time': {'key': 'totalRunningTime', 'type': 'duration'},
         'root_process_node_id': {'key': 'rootProcessNodeId', 'type': 'str'},
         'yarn_application_id': {'key': 'yarnApplicationId', 'type': 'str'},
-        'yarn_application_time_stamp': {'key': 'yarnApplicationTimeStamp', 'type': 'long'},
-        'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, statistics=None, debug_data=None):
-        super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
+    def __init__(self, script, runtime_version=None, notifier=None):
+        super(ScopeJobProperties, self).__init__(runtime_version=runtime_version, script=script)
         self.resources = None
-        self.statistics = statistics
-        self.debug_data = debug_data
-        self.diagnostics = None
-        self.algebra_file_path = None
+        self.user_algebra_path = None
+        self.notifier = notifier
         self.total_compilation_time = None
         self.total_paused_time = None
         self.total_queued_time = None
         self.total_running_time = None
         self.root_process_node_id = None
         self.yarn_application_id = None
-        self.yarn_application_time_stamp = None
-        self.compile_mode = None
-        self.type = 'USql'
+        self.type = 'Scope'

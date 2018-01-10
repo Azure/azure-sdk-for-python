@@ -26,4 +26,5 @@ class DataLakeAnalyticsCatalogCredentialDeleteParameters(Model):
     }
 
     def __init__(self, password=None):
+        super(DataLakeAnalyticsCatalogCredentialDeleteParameters, self).__init__()
         self.password = password
