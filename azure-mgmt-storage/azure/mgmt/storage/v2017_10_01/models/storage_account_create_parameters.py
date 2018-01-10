@@ -15,16 +15,18 @@ from msrest.serialization import Model
 class StorageAccountCreateParameters(Model):
     """The parameters used when creating a storage account.
 
-    :param sku: Required. Gets or sets the sku name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param sku: Required. Required. Gets or sets the sku name.
     :type sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-    :param kind: Required. Indicates the type of storage account. Possible
-     values include: 'Storage', 'StorageV2', 'BlobStorage'
+    :param kind: Required. Required. Indicates the type of storage account.
+     Possible values include: 'Storage', 'StorageV2', 'BlobStorage'
     :type kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
-    :param location: Required. Gets or sets the location of the resource. This
-     will be one of the supported and registered Azure Geo Regions (e.g. West
-     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
-     changed once it is created, but if an identical geo region is specified on
-     update, the request will succeed.
+    :param location: Required. Required. Gets or sets the location of the
+     resource. This will be one of the supported and registered Azure Geo
+     Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
+     resource cannot be changed once it is created, but if an identical geo
+     region is specified on update, the request will succeed.
     :type location: str
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used for viewing and grouping this resource
@@ -75,15 +77,15 @@ class StorageAccountCreateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, sku, kind, location, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, enable_https_traffic_only=False):
-        super(StorageAccountCreateParameters, self).__init__()
-        self.sku = sku
-        self.kind = kind
-        self.location = location
-        self.tags = tags
-        self.identity = identity
-        self.custom_domain = custom_domain
-        self.encryption = encryption
-        self.network_rule_set = network_rule_set
-        self.access_tier = access_tier
-        self.enable_https_traffic_only = enable_https_traffic_only
+    def __init__(self, **kwargs):
+        super(StorageAccountCreateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
+        self.custom_domain = kwargs.get('custom_domain', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.network_rule_set = kwargs.get('network_rule_set', None)
+        self.access_tier = kwargs.get('access_tier', None)
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)

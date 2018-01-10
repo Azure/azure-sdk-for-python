@@ -30,6 +30,6 @@ class ListAccountSasResponse(Model):
         'account_sas_token': {'key': 'accountSasToken', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ListAccountSasResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(ListAccountSasResponse, self).__init__(**kwargs)
         self.account_sas_token = None

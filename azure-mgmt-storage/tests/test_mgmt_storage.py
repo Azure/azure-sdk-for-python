@@ -36,7 +36,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertFalse(result_check.message)
 
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            sku=azure.mgmt.storage.models.Sku(
+                name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location,
         )
@@ -93,7 +94,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             resource_group.name,
             account_name,
             azure.mgmt.storage.models.StorageAccountUpdateParameters(
-                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
+                sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_grs)
             )
         )
 
