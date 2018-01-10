@@ -40,9 +40,9 @@ class EncryptionServices(Model):
         'queue': {'key': 'queue', 'type': 'EncryptionService'},
     }
 
-    def __init__(self, blob=None, file=None):
-        super(EncryptionServices, self).__init__()
-        self.blob = blob
-        self.file = file
+    def __init__(self, **kwargs):
+        super(EncryptionServices, self).__init__(**kwargs)
+        self.blob = kwargs.get('blob', None)
+        self.file = kwargs.get('file', None)
         self.table = None
         self.queue = None
