@@ -33,7 +33,6 @@ from .event_type_paged import EventTypePaged
 from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     EventSubscriptionProvisioningState,
-    OperationOrigin,
     TopicProvisioningState,
     ResourceRegionType,
     TopicTypeProvisioningState,
@@ -63,7 +62,6 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'EventSubscriptionProvisioningState',
-    'OperationOrigin',
     'TopicProvisioningState',
     'ResourceRegionType',
     'TopicTypeProvisioningState',

@@ -33,6 +33,7 @@ class OperationInfo(Model):
     }
 
     def __init__(self, provider=None, resource=None, operation=None, description=None):
+        super(OperationInfo, self).__init__()
         self.provider = provider
         self.resource = resource
         self.operation = operation
