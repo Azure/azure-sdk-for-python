@@ -82,7 +82,6 @@ class ComputeManagementClient(object):
         'disks': '2017-03-30',
         'resource_skus': '2017-09-01',
         'snapshots': '2017-03-30',
-        'virtual_machine_run_commands': '2017-03-30'
     }
 
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
