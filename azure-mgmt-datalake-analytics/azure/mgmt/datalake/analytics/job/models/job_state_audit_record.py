@@ -44,6 +44,7 @@ class JobStateAuditRecord(Model):
     }
 
     def __init__(self):
+        super(JobStateAuditRecord, self).__init__()
         self.new_state = None
         self.time_stamp = None
         self.requested_by_user = None

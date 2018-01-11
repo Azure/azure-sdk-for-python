@@ -28,5 +28,6 @@ class USqlDirectedColumn(Model):
     }
 
     def __init__(self, name=None, descending=None):
+        super(USqlDirectedColumn, self).__init__()
         self.name = name
         self.descending = descending

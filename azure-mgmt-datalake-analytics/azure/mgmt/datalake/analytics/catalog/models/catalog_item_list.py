@@ -24,4 +24,5 @@ class CatalogItemList(Model):
     }
 
     def __init__(self, next_link=None):
+        super(CatalogItemList, self).__init__()
         self.next_link = next_link

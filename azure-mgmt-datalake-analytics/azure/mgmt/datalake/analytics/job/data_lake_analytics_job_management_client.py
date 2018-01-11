@@ -27,8 +27,8 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param adla_job_dns_suffix: Gets the DNS suffix used as the base for all
-     Azure Data Lake Analytics Job service requests.
+    :param adla_job_dns_suffix: The DNS suffix used as the base for all Azure
+     Data Lake Analytics Job service requests.
     :type adla_job_dns_suffix: str
     """
 
@@ -39,13 +39,11 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if adla_job_dns_suffix is None:
             raise ValueError("Parameter 'adla_job_dns_suffix' must not be None.")
-        if not isinstance(adla_job_dns_suffix, str):
-            raise TypeError("Parameter 'adla_job_dns_suffix' must be str.")
         base_url = 'https://{accountName}.{adlaJobDnsSuffix}'
 
         super(DataLakeAnalyticsJobManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('datalakeanalyticsjobmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-datalake-analytics/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -68,8 +66,8 @@ class DataLakeAnalyticsJobManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param adla_job_dns_suffix: Gets the DNS suffix used as the base for all
-     Azure Data Lake Analytics Job service requests.
+    :param adla_job_dns_suffix: The DNS suffix used as the base for all Azure
+     Data Lake Analytics Job service requests.
     :type adla_job_dns_suffix: str
     """
 
@@ -80,7 +78,7 @@ class DataLakeAnalyticsJobManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-11-01'
+        self.api_version = '2017-09-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

@@ -32,4 +32,5 @@ class SasTokenInfo(Model):
     }
 
     def __init__(self):
+        super(SasTokenInfo, self).__init__()
         self.access_token = None

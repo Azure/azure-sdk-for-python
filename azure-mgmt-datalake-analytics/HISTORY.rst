@@ -2,6 +2,38 @@
 
 Release History
 ===============
+0.3.0 (2018-01-09)
+++++++++++++++++++
+
+**Breaking changes**
+
+* Changed the ODataQuery parameter type from JobInformation to JobInformationBasic for the Job_List API
+* Changed the ODataQuery parameter type from DataLakeAnalyticsAccount to DataLakeAnalyticsAccountBasic for these APIs:
+
+  * Account_List
+  * Account_ListByResourceGroup
+
+* For USqlJobProperties, fixed the property name of TotalPauseTime to TotalPausedTime
+
+**Notes**
+
+* Added more properties to JobStatisticsVertexStage
+* Added two more states to DataLakeAnalyticsAccountStatus enum: Undeleting and Canceled
+* Added new Account APIs:
+
+  * Account_CheckNameAvailability
+  * Location_GetCapability
+  * Operation_List
+
+* Added new Catalog APIs:
+
+  * Catalog_ListAclsByDatabase
+  * Catalog_ListAcls
+  * Catalog_GrantAclToDatabase
+  * Catalog_RevokeAclFromDatabase
+  * Catalog_GrantAcl
+  * Catalog_RevokeAcl
+
 0.2.0 (2017-08-17)
 ++++++++++++++++++
 
@@ -11,51 +43,51 @@ Release History
 
   * NOTE: Only U-SQL is supported in this change; therefore, Hive is not supported.
   * When submitting jobs, change JobInformation objects to CreateJobParameters.
-  
+
     * When setting the properties for the CreateJobParameters object, be sure to change the USqlJobProperties object to a CreateUSqlJobProperties object.
-	
+    
   * When building jobs, change JobInformation objects to BuildJobParameters objects.
   
     * When setting the properties for the BuildJobParameters object, be sure to change the USqlJobProperties object to a CreateUSqlJobProperties object.
     * NOTE: The following fields are not a part of the BuildJobParameters object:
-	
-	  * degreeOfParallelism
-	  * priority
-	  * related
+
+      * degreeOfParallelism
+      * priority
+      * related
 
   * When getting a list of jobs, the object type that is returned is JobInformationBasic and not JobInformation (more information on the difference is below in the Notes section)
 
 * When getting a list of accounts, the object type that is returned is DataLakeAnalyticsAccountBasic and not DataLakeAnalyticsAccount (more information on the difference is below in the Notes section)
 
 **Notes**
-	  
+
 * When getting a list of jobs, the job information for each job now includes a strict subset of the job information that is returned when getting a single job
-  
+
   * The following fields are included in the job information when getting a single job but are not included in the job information when getting a list of jobs:
-    
-	* errorMessage
-	* stateAuditRecords
-	* properties
-	  
-	  * runtimeVersion
-	  * script
-	  * type
-	  
+
+    * errorMessage
+    * stateAuditRecords
+    * properties
+
+      * runtimeVersion
+      * script
+      * type
+
 * When getting a list of accounts, the account information for each account now includes a strict subset of the account information that is returned when getting a single account
-  
+
   * There are two ways to get a list of accounts: List and ListByResource methods
   * The following fields are included in the account information when getting a list of accounts, which is less than the account information retrieved for a single account:
-    
-	* provisioningState
-	* state
-	* creationTime
-	* lastModifiedTime
-	* endpoint
-	
+
+    * provisioningState
+    * state
+    * creationTime
+    * lastModifiedTime
+    * endpoint
+
 * When retrieving account information, an account id field called "accountId" is now included.
-  
+
   * accountId's description: The unique identifier associated with this Data Lake Analytics account.
-  
+    
 0.1.6 (2017-06-19)
 ++++++++++++++++++
 * Fixing a regression discovered in 0.1.5. Please update to 0.1.6 to avoid any issues caused by that regression.

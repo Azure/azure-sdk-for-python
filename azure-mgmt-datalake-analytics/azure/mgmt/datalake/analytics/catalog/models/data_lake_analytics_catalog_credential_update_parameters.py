@@ -38,6 +38,7 @@ class DataLakeAnalyticsCatalogCredentialUpdateParameters(Model):
     }
 
     def __init__(self, password=None, new_password=None, uri=None, user_id=None):
+        super(DataLakeAnalyticsCatalogCredentialUpdateParameters, self).__init__()
         self.password = password
         self.new_password = new_password
         self.uri = uri
