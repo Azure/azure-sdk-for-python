@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .admin_keys_operations import AdminKeysOperations
 from .query_keys_operations import QueryKeysOperations
 from .services_operations import ServicesOperations
 
 __all__ = [
+    'Operations',
     'AdminKeysOperations',
     'QueryKeysOperations',
     'ServicesOperations',

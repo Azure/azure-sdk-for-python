@@ -36,5 +36,6 @@ class AdminKeyResult(Model):
     }
 
     def __init__(self):
+        super(AdminKeyResult, self).__init__()
         self.primary_key = None
         self.secondary_key = None

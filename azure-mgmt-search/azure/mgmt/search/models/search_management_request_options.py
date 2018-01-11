@@ -22,4 +22,5 @@ class SearchManagementRequestOptions(Model):
     """
 
     def __init__(self, client_request_id=None):
+        super(SearchManagementRequestOptions, self).__init__()
         self.client_request_id = client_request_id
