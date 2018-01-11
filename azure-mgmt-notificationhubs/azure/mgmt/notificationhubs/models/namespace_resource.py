@@ -9,27 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .nh_resource import NHResource
 
 
-class NamespaceResource(Resource):
+class NamespaceResource(NHResource):
     """Description of a Namespace resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param namespace_resource_name: The name of the namespace.
     :type namespace_resource_name: str
     :param provisioning_state: Provisioning state of the Namespace.
@@ -59,8 +61,8 @@ class NamespaceResource(Resource):
     :type critical: bool
     :param namespace_type: The namespace type. Possible values include:
      'Messaging', 'NotificationHub'
-    :type namespace_type: str or :class:`NamespaceType
-     <azure.mgmt.notificationhubs.models.NamespaceType>`
+    :type namespace_type: str or
+     ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
@@ -74,8 +76,8 @@ class NamespaceResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'namespace_resource_name': {'key': 'properties.name', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -91,7 +93,7 @@ class NamespaceResource(Resource):
     }
 
     def __init__(self, location, tags=None, sku=None, namespace_resource_name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None):
-        super(NamespaceResource, self).__init__(location=location, tags=tags, sku=sku)
+        super(NamespaceResource, self).__init__(tags=tags, location=location, sku=sku)
         self.namespace_resource_name = namespace_resource_name
         self.provisioning_state = provisioning_state
         self.region = region

@@ -31,10 +31,11 @@ class CheckNameAvailabilityRequestParameters(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'type': {'key': 'Type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, name):
+        super(CheckNameAvailabilityRequestParameters, self).__init__()
         self.name = name
         self.type = None

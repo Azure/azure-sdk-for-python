@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityResponse(Model):
-    """CheckNameAvailabilityResponse.
+    """Response containing the status of namespace availability.
 
     :param name_available: Checks if the namespace name is available
     :type name_available: bool
@@ -26,12 +26,13 @@ class CheckNameAvailabilityResponse(Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'NameAvailable', 'type': 'bool'},
-        'reason': {'key': 'Reason', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(CheckNameAvailabilityResponse, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message

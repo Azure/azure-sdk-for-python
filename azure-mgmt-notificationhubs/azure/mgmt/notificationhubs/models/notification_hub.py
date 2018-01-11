@@ -9,56 +9,52 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .nh_resource import NHResource
 
 
-class NotificationHubResource(Resource):
+class NotificationHub(NHResource):
     """Description of a NotificationHub Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    :param notification_hub_resource_name: The NotificationHub name.
-    :type notification_hub_resource_name: str
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
+    :param notification_hub_name: The NotificationHub name.
+    :type notification_hub_name: str
     :param registration_ttl: The RegistrationTtl of the created
      NotificationHub
     :type registration_ttl: str
     :param authorization_rules: The AuthorizationRules of the created
      NotificationHub
-    :type authorization_rules: list of
-     :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    :type authorization_rules:
+     list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
     :param apns_credential: The ApnsCredential of the created NotificationHub
-    :type apns_credential: :class:`ApnsCredential
-     <azure.mgmt.notificationhubs.models.ApnsCredential>`
+    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
     :param wns_credential: The WnsCredential of the created NotificationHub
-    :type wns_credential: :class:`WnsCredential
-     <azure.mgmt.notificationhubs.models.WnsCredential>`
+    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
     :param gcm_credential: The GcmCredential of the created NotificationHub
-    :type gcm_credential: :class:`GcmCredential
-     <azure.mgmt.notificationhubs.models.GcmCredential>`
+    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
     :param mpns_credential: The MpnsCredential of the created NotificationHub
-    :type mpns_credential: :class:`MpnsCredential
-     <azure.mgmt.notificationhubs.models.MpnsCredential>`
+    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
     :param adm_credential: The AdmCredential of the created NotificationHub
-    :type adm_credential: :class:`AdmCredential
-     <azure.mgmt.notificationhubs.models.AdmCredential>`
+    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
-    :type baidu_credential: :class:`BaiduCredential
-     <azure.mgmt.notificationhubs.models.BaiduCredential>`
+    :type baidu_credential:
+     ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -72,10 +68,10 @@ class NotificationHubResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'notification_hub_resource_name': {'key': 'properties.name', 'type': 'str'},
+        'notification_hub_name': {'key': 'properties.name', 'type': 'str'},
         'registration_ttl': {'key': 'properties.registrationTtl', 'type': 'str'},
         'authorization_rules': {'key': 'properties.authorizationRules', 'type': '[SharedAccessAuthorizationRuleProperties]'},
         'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
@@ -86,9 +82,9 @@ class NotificationHubResource(Resource):
         'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, location, tags=None, sku=None, notification_hub_resource_name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
-        super(NotificationHubResource, self).__init__(location=location, tags=tags, sku=sku)
-        self.notification_hub_resource_name = notification_hub_resource_name
+    def __init__(self, location, tags=None, sku=None, notification_hub_name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
+        super(NotificationHub, self).__init__(tags=tags, location=location, sku=sku)
+        self.notification_hub_name = notification_hub_name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules
         self.apns_credential = apns_credential

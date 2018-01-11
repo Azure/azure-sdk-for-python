@@ -9,46 +9,43 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .nh_resource import NHResource
 
 
-class PnsCredentialsResource(Resource):
+class PnsCredentialsResource(NHResource):
     """Description of a NotificationHub PNS Credentials.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param apns_credential: The ApnsCredential of the created NotificationHub
-    :type apns_credential: :class:`ApnsCredential
-     <azure.mgmt.notificationhubs.models.ApnsCredential>`
+    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
     :param wns_credential: The WnsCredential of the created NotificationHub
-    :type wns_credential: :class:`WnsCredential
-     <azure.mgmt.notificationhubs.models.WnsCredential>`
+    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
     :param gcm_credential: The GcmCredential of the created NotificationHub
-    :type gcm_credential: :class:`GcmCredential
-     <azure.mgmt.notificationhubs.models.GcmCredential>`
+    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
     :param mpns_credential: The MpnsCredential of the created NotificationHub
-    :type mpns_credential: :class:`MpnsCredential
-     <azure.mgmt.notificationhubs.models.MpnsCredential>`
+    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
     :param adm_credential: The AdmCredential of the created NotificationHub
-    :type adm_credential: :class:`AdmCredential
-     <azure.mgmt.notificationhubs.models.AdmCredential>`
+    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
-    :type baidu_credential: :class:`BaiduCredential
-     <azure.mgmt.notificationhubs.models.BaiduCredential>`
+    :type baidu_credential:
+     ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -62,8 +59,8 @@ class PnsCredentialsResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
         'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
@@ -74,7 +71,7 @@ class PnsCredentialsResource(Resource):
     }
 
     def __init__(self, location, tags=None, sku=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
-        super(PnsCredentialsResource, self).__init__(location=location, tags=tags, sku=sku)
+        super(PnsCredentialsResource, self).__init__(tags=tags, location=location, sku=sku)
         self.apns_credential = apns_credential
         self.wns_credential = wns_credential
         self.gcm_credential = gcm_credential

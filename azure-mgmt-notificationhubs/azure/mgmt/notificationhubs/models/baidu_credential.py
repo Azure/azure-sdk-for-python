@@ -30,6 +30,7 @@ class BaiduCredential(Model):
     }
 
     def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None):
+        super(BaiduCredential, self).__init__()
         self.baidu_api_key = baidu_api_key
         self.baidu_end_point = baidu_end_point
         self.baidu_secret_key = baidu_secret_key
