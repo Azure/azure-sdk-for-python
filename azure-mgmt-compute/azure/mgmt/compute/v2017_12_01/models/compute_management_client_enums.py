@@ -203,6 +203,12 @@ class IPVersion(Enum):
     ipv6 = "IPv6"
 
 
+class VirtualMachinePriorityTypes(Enum):
+
+    regular = "Regular"
+    low = "Low"
+
+
 class VirtualMachineScaleSetSkuScaleType(Enum):
 
     automatic = "Automatic"

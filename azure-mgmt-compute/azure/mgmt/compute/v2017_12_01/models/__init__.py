@@ -118,7 +118,6 @@ from .run_command_input import RunCommandInput
 from .run_command_parameter_definition import RunCommandParameterDefinition
 from .run_command_document_base import RunCommandDocumentBase
 from .run_command_document import RunCommandDocument
-from .run_command_list_result import RunCommandListResult
 from .run_command_result import RunCommandResult
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
@@ -129,6 +128,7 @@ from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .virtual_machine_scale_set_extension_paged import VirtualMachineScaleSetExtensionPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
+from .run_command_document_base_paged import RunCommandDocumentBasePaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
     OperatingSystemTypes,
@@ -145,6 +145,7 @@ from .compute_management_client_enums import (
     UpgradeMode,
     OperatingSystemStateTypes,
     IPVersion,
+    VirtualMachinePriorityTypes,
     VirtualMachineScaleSetSkuScaleType,
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
@@ -261,7 +262,6 @@ __all__ = [
     'RunCommandParameterDefinition',
     'RunCommandDocumentBase',
     'RunCommandDocument',
-    'RunCommandListResult',
     'RunCommandResult',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
@@ -272,6 +272,7 @@ __all__ = [
     'VirtualMachineScaleSetSkuPaged',
     'VirtualMachineScaleSetExtensionPaged',
     'VirtualMachineScaleSetVMPaged',
+    'RunCommandDocumentBasePaged',
     'StatusLevelTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
@@ -287,6 +288,7 @@ __all__ = [
     'UpgradeMode',
     'OperatingSystemStateTypes',
     'IPVersion',
+    'VirtualMachinePriorityTypes',
     'VirtualMachineScaleSetSkuScaleType',
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
