@@ -37,6 +37,7 @@ class DdlName(Model):
     }
 
     def __init__(self, first_part=None, second_part=None, third_part=None, server=None):
+        super(DdlName, self).__init__()
         self.first_part = first_part
         self.second_part = second_part
         self.third_part = third_part

@@ -23,15 +23,17 @@ class PipelineOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-11-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-11-01"
+        self.api_version = "2017-09-01-preview"
 
         self.config = config
 
@@ -55,10 +57,9 @@ class PipelineOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>`
-        :rtype: :class:`JobPipelineInformationPaged
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformationPaged>`
+        :return: An iterator like instance of JobPipelineInformation
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobPipelineInformationPaged[~azure.mgmt.datalake.analytics.job.models.JobPipelineInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -97,7 +98,7 @@ class PipelineOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -138,13 +139,10 @@ class PipelineOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobPipelineInformation
-         <azure.mgmt.datalake.analytics.job.models.JobPipelineInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobPipelineInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobPipelineInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -176,7 +174,7 @@ class PipelineOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

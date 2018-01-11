@@ -15,13 +15,12 @@ from .base_job_parameters import BaseJobParameters
 class BuildJobParameters(BaseJobParameters):
     """The parameters used to build a new Data Lake Analytics job.
 
-    :param type: the job type of the current job (Hive or USql). Possible
-     values include: 'USql', 'Hive'
-    :type type: str or :class:`JobType
-     <azure.mgmt.datalake.analytics.job.models.JobType>`
+    :param type: the job type of the current job (Hive, USql, or Scope (for
+     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
     :param properties: the job specific properties.
-    :type properties: :class:`CreateJobProperties
-     <azure.mgmt.datalake.analytics.job.models.CreateJobProperties>`
+    :type properties:
+     ~azure.mgmt.datalake.analytics.job.models.CreateJobProperties
     :param name: the friendly name of the job to build.
     :type name: str
     """

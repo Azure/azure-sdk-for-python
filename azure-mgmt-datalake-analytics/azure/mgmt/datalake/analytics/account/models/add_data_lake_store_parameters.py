@@ -24,4 +24,5 @@ class AddDataLakeStoreParameters(Model):
     }
 
     def __init__(self, suffix=None):
+        super(AddDataLakeStoreParameters, self).__init__()
         self.suffix = suffix

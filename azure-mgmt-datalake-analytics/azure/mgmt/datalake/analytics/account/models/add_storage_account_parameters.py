@@ -33,5 +33,6 @@ class AddStorageAccountParameters(Model):
     }
 
     def __init__(self, access_key, suffix=None):
+        super(AddStorageAccountParameters, self).__init__()
         self.access_key = access_key
         self.suffix = suffix

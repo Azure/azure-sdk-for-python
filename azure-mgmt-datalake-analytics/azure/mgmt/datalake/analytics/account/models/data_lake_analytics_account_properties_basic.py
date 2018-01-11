@@ -22,13 +22,13 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     :ivar provisioning_state: the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
-     'Deleted'
-    :vartype provisioning_state: str or :class:`DataLakeAnalyticsAccountStatus
-     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
+     'Deleted', 'Undeleting', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
     :ivar state: the state of the Data Lake Analytics account. Possible values
      include: 'Active', 'Suspended'
-    :vartype state: str or :class:`DataLakeAnalyticsAccountState
-     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
+    :vartype state: str or
+     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: the account last modified time.
@@ -59,6 +59,7 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     }
 
     def __init__(self):
+        super(DataLakeAnalyticsAccountPropertiesBasic, self).__init__()
         self.provisioning_state = None
         self.state = None
         self.creation_time = None

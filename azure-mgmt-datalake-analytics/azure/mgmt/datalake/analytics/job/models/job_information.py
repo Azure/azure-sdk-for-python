@@ -23,10 +23,9 @@ class JobInformation(JobInformationBasic):
     :vartype job_id: str
     :param name: the friendly name of the job.
     :type name: str
-    :param type: the job type of the current job (Hive or USql). Possible
-     values include: 'USql', 'Hive'
-    :type type: str or :class:`JobType
-     <azure.mgmt.datalake.analytics.job.models.JobType>`
+    :param type: the job type of the current job (Hive, USql, or Scope (for
+     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
     :ivar submitter: the user or account that submitted the job.
     :vartype submitter: str
     :param degree_of_parallelism: the degree of parallelism used for this job.
@@ -47,34 +46,35 @@ class JobInformation(JobInformationBasic):
      Result and ErrorMessage for details. Possible values include: 'Accepted',
      'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
      'Starting', 'Paused', 'WaitingForCapacity'
-    :vartype state: str or :class:`JobState
-     <azure.mgmt.datalake.analytics.job.models.JobState>`
+    :vartype state: str or ~azure.mgmt.datalake.analytics.job.models.JobState
     :ivar result: the result of job execution or the current result of the
      running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
      'Failed'
-    :vartype result: str or :class:`JobResult
-     <azure.mgmt.datalake.analytics.job.models.JobResult>`
+    :vartype result: str or
+     ~azure.mgmt.datalake.analytics.job.models.JobResult
     :ivar log_folder: the log folder path to use in the following format:
      adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
     :vartype log_folder: str
     :param log_file_patterns: the list of log file name patterns to find in
      the logFolder. '*' is the only matching character allowed. Example format:
      jobExecution*.log or *mylog*.txt
-    :type log_file_patterns: list of str
+    :type log_file_patterns: list[str]
     :param related: the recurring job relationship information properties.
-    :type related: :class:`JobRelationshipProperties
-     <azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties>`
+    :type related:
+     ~azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties
+    :param tags: the key-value pairs used to add additional metadata to the
+     job information. (Only for use internally with Scope job type.)
+    :type tags: dict[str, str]
     :ivar error_message: the error message details for the job, if the job
      failed.
-    :vartype error_message: list of :class:`JobErrorDetails
-     <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
+    :vartype error_message:
+     list[~azure.mgmt.datalake.analytics.job.models.JobErrorDetails]
     :ivar state_audit_records: the job state audit records, indicating when
      various operations have been performed on this job.
-    :vartype state_audit_records: list of :class:`JobStateAuditRecord
-     <azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord>`
+    :vartype state_audit_records:
+     list[~azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord]
     :param properties: the job specific properties.
-    :type properties: :class:`JobProperties
-     <azure.mgmt.datalake.analytics.job.models.JobProperties>`
+    :type properties: ~azure.mgmt.datalake.analytics.job.models.JobProperties
     """
 
     _validation = {
@@ -108,13 +108,14 @@ class JobInformation(JobInformationBasic):
         'log_folder': {'key': 'logFolder', 'type': 'str'},
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'error_message': {'key': 'errorMessage', 'type': '[JobErrorDetails]'},
         'state_audit_records': {'key': 'stateAuditRecords', 'type': '[JobStateAuditRecord]'},
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None):
-        super(JobInformation, self).__init__(name=name, type=type, degree_of_parallelism=degree_of_parallelism, priority=priority, log_file_patterns=log_file_patterns, related=related)
+    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None, tags=None):
+        super(JobInformation, self).__init__(name=name, type=type, degree_of_parallelism=degree_of_parallelism, priority=priority, log_file_patterns=log_file_patterns, related=related, tags=tags)
         self.error_message = None
         self.state_audit_records = None
         self.properties = properties

@@ -23,15 +23,17 @@ class RecurrenceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-11-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-11-01"
+        self.api_version = "2017-09-01-preview"
 
         self.config = config
 
@@ -55,10 +57,9 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-        :rtype: :class:`JobRecurrenceInformationPaged
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformationPaged>`
+        :return: An iterator like instance of JobRecurrenceInformation
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformationPaged[~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -97,7 +98,7 @@ class RecurrenceOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -138,13 +139,10 @@ class RecurrenceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`JobRecurrenceInformation
-         <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: JobRecurrenceInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -176,7 +174,7 @@ class RecurrenceOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

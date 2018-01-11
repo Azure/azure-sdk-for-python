@@ -28,8 +28,8 @@ class Diagnostics(Model):
     :vartype message: str
     :ivar severity: the severity of the error. Possible values include:
      'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated', 'UserWarning'
-    :vartype severity: str or :class:`SeverityTypes
-     <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
+    :vartype severity: str or
+     ~azure.mgmt.datalake.analytics.job.models.SeverityTypes
     :ivar start: the starting index of the error.
     :vartype start: int
     """
@@ -53,6 +53,7 @@ class Diagnostics(Model):
     }
 
     def __init__(self):
+        super(Diagnostics, self).__init__()
         self.column_number = None
         self.end = None
         self.line_number = None
