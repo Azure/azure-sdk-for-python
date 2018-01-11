@@ -26,4 +26,5 @@ class VpnClientParameters(Model):
     }
 
     def __init__(self, processor_architecture=None):
+        super(VpnClientParameters, self).__init__()
         self.processor_architecture = processor_architecture

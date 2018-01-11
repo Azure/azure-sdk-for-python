@@ -58,6 +58,7 @@ class ConnectivityInformation(Model):
     }
 
     def __init__(self):
+        super(ConnectivityInformation, self).__init__()
         self.hops = None
         self.connection_status = None
         self.avg_latency_in_ms = None

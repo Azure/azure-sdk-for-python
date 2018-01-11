@@ -103,8 +103,8 @@ class DatabaseAccountsOperations(object):
 
 
     def _patch_initial(
-            self, resource_group_name, account_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        update_parameters = models.DatabaseAccountPatchParameters(tags=tags)
+            self, resource_group_name, account_name, tags=None, capabilities=None, custom_headers=None, raw=False, **operation_config):
+        update_parameters = models.DatabaseAccountPatchParameters(tags=tags, capabilities=capabilities)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}'
@@ -154,7 +154,7 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, account_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, tags=None, capabilities=None, custom_headers=None, raw=False, **operation_config):
         """Patches the properties of an existing Azure Cosmos DB database account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -163,6 +163,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param tags:
         :type tags: dict[str, str]
+        :param capabilities: List of Cosmos DB capabilities for the account
+        :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -177,6 +179,7 @@ class DatabaseAccountsOperations(object):
             resource_group_name=resource_group_name,
             account_name=account_name,
             tags=tags,
+            capabilities=capabilities,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1037,7 +1040,7 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def list_metrics(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, filter, custom_headers=None, raw=False, **operation_config):
         """Retrieves the metrics determined by the given filter for the given
         database account.
 
@@ -1045,6 +1048,11 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
+        :param filter: An OData filter expression that describes a subset of
+         metrics to return. The parameters that can be filtered are name.value
+         (name of the metric, can have an or of multiple names), startTime,
+         endTime, and timeGrain. The supported operator is eq.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1070,7 +1078,7 @@ class DatabaseAccountsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['$filter'] = self._serialize.query("self.config.filter", self.config.filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -1109,13 +1117,17 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def list_usages(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the usages (most recent data) for the given database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
+        :param filter: An OData filter expression that describes a subset of
+         usages to return. The supported parameter is name.value (name of the
+         metric, can have an or of multiple names).
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1138,8 +1150,8 @@ class DatabaseAccountsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if self.config.filter is not None:
-            query_parameters['$filter'] = self._serialize.query("self.config.filter", self.config.filter, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}

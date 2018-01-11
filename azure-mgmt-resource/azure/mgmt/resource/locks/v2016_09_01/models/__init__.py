@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_lock_owner import ManagementLockOwner
 from .management_lock_object import ManagementLockObject
 from .management_lock_object_paged import ManagementLockObjectPaged
 from .management_lock_client_enums import (
@@ -17,7 +16,6 @@ from .management_lock_client_enums import (
 )
 
 __all__ = [
-    'ManagementLockOwner',
     'ManagementLockObject',
     'ManagementLockObjectPaged',
     'LockLevel',

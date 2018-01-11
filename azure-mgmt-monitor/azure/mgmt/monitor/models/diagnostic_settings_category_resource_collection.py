@@ -25,4 +25,5 @@ class DiagnosticSettingsCategoryResourceCollection(Model):
     }
 
     def __init__(self, value=None):
+        super(DiagnosticSettingsCategoryResourceCollection, self).__init__()
         self.value = value

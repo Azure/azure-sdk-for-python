@@ -44,6 +44,17 @@ class ActionGroupResource(Resource):
     :param webhook_receivers: The list of webhook receivers that are part of
      this action group.
     :type webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiver]
+    :param itsm_receivers: The list of ITSM receivers that are part of this
+     action group.
+    :type itsm_receivers: list[~azure.mgmt.monitor.models.ItsmReceiver]
+    :param azure_app_push_receivers: The list of AzureAppPush receivers that
+     are part of this action group.
+    :type azure_app_push_receivers:
+     list[~azure.mgmt.monitor.models.AzureAppPushReceiver]
+    :param automation_runbook_receivers: The list of AutomationRunbook
+     receivers that are part of this action group.
+    :type automation_runbook_receivers:
+     list[~azure.mgmt.monitor.models.AutomationRunbookReceiver]
     """
 
     _validation = {
@@ -66,12 +77,18 @@ class ActionGroupResource(Resource):
         'email_receivers': {'key': 'properties.emailReceivers', 'type': '[EmailReceiver]'},
         'sms_receivers': {'key': 'properties.smsReceivers', 'type': '[SmsReceiver]'},
         'webhook_receivers': {'key': 'properties.webhookReceivers', 'type': '[WebhookReceiver]'},
+        'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
+        'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
+        'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
     }
 
-    def __init__(self, location, group_short_name, tags=None, enabled=True, email_receivers=None, sms_receivers=None, webhook_receivers=None):
+    def __init__(self, location, group_short_name, tags=None, enabled=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None):
         super(ActionGroupResource, self).__init__(location=location, tags=tags)
         self.group_short_name = group_short_name
         self.enabled = enabled
         self.email_receivers = email_receivers
         self.sms_receivers = sms_receivers
         self.webhook_receivers = webhook_receivers
+        self.itsm_receivers = itsm_receivers
+        self.azure_app_push_receivers = azure_app_push_receivers
+        self.automation_runbook_receivers = automation_runbook_receivers

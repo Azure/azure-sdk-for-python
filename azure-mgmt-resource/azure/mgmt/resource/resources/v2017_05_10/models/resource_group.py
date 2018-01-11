@@ -51,6 +51,7 @@ class ResourceGroup(Model):
     }
 
     def __init__(self, location, name=None, properties=None, managed_by=None, tags=None):
+        super(ResourceGroup, self).__init__()
         self.id = None
         self.name = name
         self.properties = properties

@@ -42,6 +42,7 @@ class NextHopParameters(Model):
     }
 
     def __init__(self, target_resource_id, source_ip_address, destination_ip_address, target_nic_resource_id=None):
+        super(NextHopParameters, self).__init__()
         self.target_resource_id = target_resource_id
         self.source_ip_address = source_ip_address
         self.destination_ip_address = destination_ip_address

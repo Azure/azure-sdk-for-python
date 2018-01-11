@@ -39,6 +39,7 @@ class Ipv6ExpressRouteCircuitPeeringConfig(Model):
     }
 
     def __init__(self, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, microsoft_peering_config=None, route_filter=None, state=None):
+        super(Ipv6ExpressRouteCircuitPeeringConfig, self).__init__()
         self.primary_peer_address_prefix = primary_peer_address_prefix
         self.secondary_peer_address_prefix = secondary_peer_address_prefix
         self.microsoft_peering_config = microsoft_peering_config

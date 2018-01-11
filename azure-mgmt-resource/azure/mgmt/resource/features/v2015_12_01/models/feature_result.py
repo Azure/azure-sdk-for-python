@@ -34,6 +34,7 @@ class FeatureResult(Model):
     }
 
     def __init__(self, name=None, properties=None, id=None, type=None):
+        super(FeatureResult, self).__init__()
         self.name = name
         self.properties = properties
         self.id = id

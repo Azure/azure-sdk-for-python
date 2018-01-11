@@ -27,5 +27,6 @@ class TypeFieldInfo(Model):
     }
 
     def __init__(self, name=None, type=None):
+        super(TypeFieldInfo, self).__init__()
         self.name = name
         self.type = type

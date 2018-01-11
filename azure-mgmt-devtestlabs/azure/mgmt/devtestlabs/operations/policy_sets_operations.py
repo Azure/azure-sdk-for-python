@@ -26,6 +26,8 @@ class PolicySetsOperations(object):
     :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -90,7 +92,7 @@ class PolicySetsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

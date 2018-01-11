@@ -50,6 +50,7 @@ class PacketCapture(Model):
     }
 
     def __init__(self, target, storage_location, bytes_to_capture_per_packet=0, total_bytes_per_session=1073741824, time_limit_in_seconds=18000, filters=None):
+        super(PacketCapture, self).__init__()
         self.target = target
         self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
         self.total_bytes_per_session = total_bytes_per_session

@@ -33,6 +33,7 @@ class Plan(Model):
     }
 
     def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
+        super(Plan, self).__init__()
         self.name = name
         self.publisher = publisher
         self.product = product

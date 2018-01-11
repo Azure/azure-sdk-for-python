@@ -24,4 +24,5 @@ class LabVhd(Model):
     }
 
     def __init__(self, id=None):
+        super(LabVhd, self).__init__()
         self.id = id

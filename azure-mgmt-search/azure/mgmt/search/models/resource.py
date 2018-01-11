@@ -27,17 +27,17 @@ class Resource(Model):
     :vartype type: str
     :param location: The geographic location of the resource. This must be one
      of the supported and registered Azure Geo Regions (for example, West US,
-     East US, Southeast Asia, and so forth).
+     East US, Southeast Asia, and so forth). This property is required when
+     creating a new resource.
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -48,7 +48,8 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, location=None, tags=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

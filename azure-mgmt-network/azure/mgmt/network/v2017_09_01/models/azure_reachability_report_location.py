@@ -34,6 +34,7 @@ class AzureReachabilityReportLocation(Model):
     }
 
     def __init__(self, country, state=None, city=None):
+        super(AzureReachabilityReportLocation, self).__init__()
         self.country = country
         self.state = state
         self.city = city

@@ -29,5 +29,6 @@ class Port(Model):
     }
 
     def __init__(self, transport_protocol=None, backend_port=None):
+        super(Port, self).__init__()
         self.transport_protocol = transport_protocol
         self.backend_port = backend_port

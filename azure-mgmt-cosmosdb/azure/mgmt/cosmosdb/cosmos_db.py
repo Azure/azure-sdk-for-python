@@ -32,40 +32,16 @@ class CosmosDBConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param filter: An OData filter expression that describes a subset of
-     metrics to return. The parameters that can be filtered are name.value
-     (name of the metric, can have an or of multiple names), startTime,
-     endTime, and timeGrain. The supported operator is eq.
-    :type filter: str
-    :param filter1: An OData filter expression that describes a subset of
-     usages to return. The supported parameter is name.value (name of the
-     metric, can have an or of multiple names).
-    :type filter1: str
-    :param database_rid: Cosmos DB database rid.
-    :type database_rid: str
-    :param collection_rid: Cosmos DB collection rid.
-    :type collection_rid: str
-    :param region: Cosmos DB region, with spaces between words and each word
-     capitalized.
-    :type region: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, filter, database_rid, collection_rid, region, filter1=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if filter is None:
-            raise ValueError("Parameter 'filter' must not be None.")
-        if database_rid is None:
-            raise ValueError("Parameter 'database_rid' must not be None.")
-        if collection_rid is None:
-            raise ValueError("Parameter 'collection_rid' must not be None.")
-        if region is None:
-            raise ValueError("Parameter 'region' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -76,11 +52,6 @@ class CosmosDBConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.filter = filter
-        self.filter1 = filter1
-        self.database_rid = database_rid
-        self.collection_rid = collection_rid
-        self.region = region
 
 
 class CosmosDB(object):
@@ -107,29 +78,13 @@ class CosmosDB(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param filter: An OData filter expression that describes a subset of
-     metrics to return. The parameters that can be filtered are name.value
-     (name of the metric, can have an or of multiple names), startTime,
-     endTime, and timeGrain. The supported operator is eq.
-    :type filter: str
-    :param filter1: An OData filter expression that describes a subset of
-     usages to return. The supported parameter is name.value (name of the
-     metric, can have an or of multiple names).
-    :type filter1: str
-    :param database_rid: Cosmos DB database rid.
-    :type database_rid: str
-    :param collection_rid: Cosmos DB collection rid.
-    :type collection_rid: str
-    :param region: Cosmos DB region, with spaces between words and each word
-     capitalized.
-    :type region: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, filter, database_rid, collection_rid, region, filter1=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = CosmosDBConfiguration(credentials, subscription_id, filter, database_rid, collection_rid, region, filter1, base_url)
+        self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

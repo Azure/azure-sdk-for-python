@@ -33,5 +33,6 @@ class ActivityLogAlertActionGroup(Model):
     }
 
     def __init__(self, action_group_id, webhook_properties=None):
+        super(ActivityLogAlertActionGroup, self).__init__()
         self.action_group_id = action_group_id
         self.webhook_properties = webhook_properties

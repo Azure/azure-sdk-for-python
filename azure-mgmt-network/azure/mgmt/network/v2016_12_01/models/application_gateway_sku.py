@@ -36,6 +36,7 @@ class ApplicationGatewaySku(Model):
     }
 
     def __init__(self, name=None, tier=None, capacity=None):
+        super(ApplicationGatewaySku, self).__init__()
         self.name = name
         self.tier = tier
         self.capacity = capacity

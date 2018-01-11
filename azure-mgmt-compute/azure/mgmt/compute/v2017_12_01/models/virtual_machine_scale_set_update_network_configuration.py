@@ -35,6 +35,8 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations:
      list[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetUpdateIPConfiguration]
+    :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
+    :type enable_ip_forwarding: bool
     """
 
     _attribute_map = {
@@ -45,9 +47,10 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'SubResource'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetNetworkConfigurationDnsSettings'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetUpdateIPConfiguration]'},
+        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, name=None, primary=None, enable_accelerated_networking=None, network_security_group=None, dns_settings=None, ip_configurations=None):
+    def __init__(self, id=None, name=None, primary=None, enable_accelerated_networking=None, network_security_group=None, dns_settings=None, ip_configurations=None, enable_ip_forwarding=None):
         super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(id=id)
         self.name = name
         self.primary = primary
@@ -55,3 +58,4 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         self.network_security_group = network_security_group
         self.dns_settings = dns_settings
         self.ip_configurations = ip_configurations
+        self.enable_ip_forwarding = enable_ip_forwarding

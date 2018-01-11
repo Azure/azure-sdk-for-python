@@ -36,6 +36,7 @@ class VpnClientConfiguration(Model):
     }
 
     def __init__(self, vpn_client_address_pool=None, vpn_client_root_certificates=None, vpn_client_revoked_certificates=None):
+        super(VpnClientConfiguration, self).__init__()
         self.vpn_client_address_pool = vpn_client_address_pool
         self.vpn_client_root_certificates = vpn_client_root_certificates
         self.vpn_client_revoked_certificates = vpn_client_revoked_certificates

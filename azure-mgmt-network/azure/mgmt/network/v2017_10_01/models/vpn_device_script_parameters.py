@@ -30,6 +30,7 @@ class VpnDeviceScriptParameters(Model):
     }
 
     def __init__(self, vendor=None, device_family=None, firmware_version=None):
+        super(VpnDeviceScriptParameters, self).__init__()
         self.vendor = vendor
         self.device_family = device_family
         self.firmware_version = firmware_version
