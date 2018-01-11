@@ -12,6 +12,26 @@
 from enum import Enum
 
 
+class AclType(Enum):
+
+    user_obj = "UserObj"
+    group_obj = "GroupObj"
+    other = "Other"
+    user = "User"
+    group = "Group"
+
+
+class PermissionType(Enum):
+
+    none = "None"
+    use = "Use"
+    create = "Create"
+    drop = "Drop"
+    alter = "Alter"
+    write = "Write"
+    all = "All"
+
+
 class FileType(Enum):
 
     assembly = "Assembly"
