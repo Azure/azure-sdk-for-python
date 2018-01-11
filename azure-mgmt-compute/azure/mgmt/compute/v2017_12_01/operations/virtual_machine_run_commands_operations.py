@@ -23,7 +23,7 @@ class VirtualMachineRunCommandsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-03-30".
+    :ivar api_version: Client Api Version. Constant value: "2017-12-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class VirtualMachineRunCommandsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-30"
+        self.api_version = "2017-12-01"
 
         self.config = config
 
@@ -50,7 +50,7 @@ class VirtualMachineRunCommandsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of RunCommandDocumentBase
         :rtype:
-         ~azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBasePaged[~azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBase]
+         ~azure.mgmt.compute.v2017_12_01.models.RunCommandDocumentBasePaged[~azure.mgmt.compute.v2017_12_01.models.RunCommandDocumentBase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -118,7 +118,7 @@ class VirtualMachineRunCommandsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: RunCommandDocument or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2017_03_30.models.RunCommandDocument or
+        :rtype: ~azure.mgmt.compute.v2017_12_01.models.RunCommandDocument or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
