@@ -3,6 +3,16 @@
 Release History
 ===============
 
+3.1.0rc3 (2018-11-01)
++++++++++++++++++++++
+
+**Features**
+
+- Add VirtualMachineScaleSetNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetUpdateNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetVMProfile -> priority
+- Add ApiVersion 2017-12-01 of virtual_machine_run_commands (new default)
+
 3.1.0rc2 (2017-12-14)
 +++++++++++++++++++++
 
