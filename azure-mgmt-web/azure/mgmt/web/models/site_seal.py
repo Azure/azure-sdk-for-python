@@ -28,4 +28,5 @@ class SiteSeal(Model):
     }
 
     def __init__(self, html):
+        super(SiteSeal, self).__init__()
         self.html = html
