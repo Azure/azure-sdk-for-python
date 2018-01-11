@@ -17,8 +17,8 @@ class UpdateEncryptionConfig(Model):
 
     :param key_vault_meta_info: The updated Key Vault key to use in user
      managed key rotation.
-    :type key_vault_meta_info: :class:`UpdateKeyVaultMetaInfo
-     <azure.mgmt.datalake.store.models.UpdateKeyVaultMetaInfo>`
+    :type key_vault_meta_info:
+     ~azure.mgmt.datalake.store.models.UpdateKeyVaultMetaInfo
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class UpdateEncryptionConfig(Model):
     }
 
     def __init__(self, key_vault_meta_info=None):
+        super(UpdateEncryptionConfig, self).__init__()
         self.key_vault_meta_info = key_vault_meta_info
