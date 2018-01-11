@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class DatabaseAccountRegionOperations(object):
+    """DatabaseAccountRegionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,29 +37,42 @@ class Operations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Cosmos DB Resource Provider operations.
+    def list_metrics(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the metrics determined by the given filter for the given
+        database account and region.
 
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of Metric
         :rtype:
-         ~azure.mgmt.cosmosdb.models.OperationPaged[~azure.mgmt.cosmosdb.models.Operation]
+         ~azure.mgmt.cosmosdb.models.MetricPaged[~azure.mgmt.cosmosdb.models.Metric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.DocumentDB/operations'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/region/{region}/metrics'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'region': self._serialize.url("self.config.region", self.config.region, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['$filter'] = self._serialize.query("self.config.filter", self.config.filter, 'str')
 
             else:
                 url = next_link
@@ -88,11 +101,11 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MetricPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class DatabaseAccountConnectionString(Model):
-    """Connection string for the Cosmos DB account.
+class MetricAvailability(Model):
+    """The availability of the metric.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar connection_string: Value of the connection string
-    :vartype connection_string: str
-    :ivar description: Description of the connection string
-    :vartype description: str
+    :ivar time_grain: The time grain to be used to summarize the metric
+     values.
+    :vartype time_grain: str
+    :ivar retention: The retention for the metric values.
+    :vartype retention: str
     """
 
     _validation = {
-        'connection_string': {'readonly': True},
-        'description': {'readonly': True},
+        'time_grain': {'readonly': True},
+        'retention': {'readonly': True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        'time_grain': {'key': 'timeGrain', 'type': 'str'},
+        'retention': {'key': 'retention', 'type': 'str'},
     }
 
     def __init__(self):
-        super(DatabaseAccountConnectionString, self).__init__()
-        self.connection_string = None
-        self.description = None
+        super(MetricAvailability, self).__init__()
+        self.time_grain = None
+        self.retention = None

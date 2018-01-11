@@ -47,6 +47,7 @@ class DatabaseAccountListKeysResult(Model):
     }
 
     def __init__(self):
+        super(DatabaseAccountListKeysResult, self).__init__()
         self.primary_master_key = None
         self.secondary_master_key = None
         self.primary_readonly_master_key = None
