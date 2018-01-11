@@ -26,18 +26,16 @@ class PremierAddOnOffer(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param sku: SKU.
+    :param sku: Premier add on SKU.
     :type sku: str
-    :param product: Product.
+    :param product: Premier add on offer Product.
     :type product: str
-    :param vendor: Vendor.
+    :param vendor: Premier add on offer Vendor.
     :type vendor: str
-    :param premier_add_on_offer_name: Name.
-    :type premier_add_on_offer_name: str
     :param promo_code_required: <code>true</code> if promotion code is
      required; otherwise, <code>false</code>.
     :type promo_code_required: bool
-    :param quota: Quota.
+    :param quota: Premier add on offer Quota.
     :type quota: int
     :param web_hosting_plan_restrictions: App Service plans this offer is
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',
@@ -68,7 +66,6 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_offer_name': {'key': 'properties.name', 'type': 'str'},
         'promo_code_required': {'key': 'properties.promoCodeRequired', 'type': 'bool'},
         'quota': {'key': 'properties.quota', 'type': 'int'},
         'web_hosting_plan_restrictions': {'key': 'properties.webHostingPlanRestrictions', 'type': 'AppServicePlanRestrictions'},
@@ -78,12 +75,11 @@ class PremierAddOnOffer(ProxyOnlyResource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
+    def __init__(self, kind=None, sku=None, product=None, vendor=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
         super(PremierAddOnOffer, self).__init__(kind=kind)
         self.sku = sku
         self.product = product
         self.vendor = vendor
-        self.premier_add_on_offer_name = premier_add_on_offer_name
         self.promo_code_required = promo_code_required
         self.quota = quota
         self.web_hosting_plan_restrictions = web_hosting_plan_restrictions

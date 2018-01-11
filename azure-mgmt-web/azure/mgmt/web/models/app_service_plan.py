@@ -30,8 +30,6 @@ class AppServicePlan(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param app_service_plan_name: Name for the App Service plan.
-    :type app_service_plan_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -66,7 +64,8 @@ class AppServicePlan(Resource):
     :type spot_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: Reserved. Default value: False .
+    :param reserved: If Linux app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
     :type reserved: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
@@ -102,7 +101,6 @@ class AppServicePlan(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_plan_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -122,9 +120,8 @@ class AppServicePlan(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, kind=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
+    def __init__(self, location, kind=None, tags=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
         super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags)
-        self.app_service_plan_name = app_service_plan_name
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None

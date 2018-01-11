@@ -32,9 +32,6 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type history_url: str
     :param scheduler_logs_url: Scheduler Logs URL.
     :type scheduler_logs_url: str
-    :ivar triggered_web_job_name: Job name. Used as job identifier in ARM
-     resource URI.
-    :vartype triggered_web_job_name: str
     :param run_command: Run command.
     :type run_command: str
     :param url: Job URL.
@@ -56,7 +53,6 @@ class TriggeredWebJob(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'triggered_web_job_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,8 +63,7 @@ class TriggeredWebJob(ProxyOnlyResource):
         'latest_run': {'key': 'properties.latestRun', 'type': 'TriggeredJobRun'},
         'history_url': {'key': 'properties.historyUrl', 'type': 'str'},
         'scheduler_logs_url': {'key': 'properties.schedulerLogsUrl', 'type': 'str'},
-        'triggered_web_job_name': {'key': 'properties.name', 'type': 'str'},
-        'run_command': {'key': 'properties.runCommand', 'type': 'str'},
+        'run_command': {'key': 'properties.run_command', 'type': 'str'},
         'url': {'key': 'properties.url', 'type': 'str'},
         'extra_info_url': {'key': 'properties.extraInfoUrl', 'type': 'str'},
         'job_type': {'key': 'properties.jobType', 'type': 'WebJobType'},
@@ -82,7 +77,6 @@ class TriggeredWebJob(ProxyOnlyResource):
         self.latest_run = latest_run
         self.history_url = history_url
         self.scheduler_logs_url = scheduler_logs_url
-        self.triggered_web_job_name = None
         self.run_command = run_command
         self.url = url
         self.extra_info_url = extra_info_url

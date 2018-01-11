@@ -94,6 +94,7 @@ class Certificate(Resource):
         'issuer': {'readonly': True},
         'issue_date': {'readonly': True},
         'expiration_date': {'readonly': True},
+        'password': {'required': True},
         'thumbprint': {'readonly': True},
         'valid': {'readonly': True},
         'cer_blob': {'readonly': True},
@@ -132,7 +133,7 @@ class Certificate(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, location, kind=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+    def __init__(self, location, password, kind=None, tags=None, host_names=None, pfx_blob=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
         super(Certificate, self).__init__(kind=kind, location=location, tags=tags)
         self.friendly_name = None
         self.subject_name = None

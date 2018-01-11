@@ -26,9 +26,6 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar resource_metric_definition_name: Name of the metric.
-    :vartype resource_metric_definition_name:
-     ~azure.mgmt.web.models.ResourceMetricName
     :ivar unit: Unit of the metric.
     :vartype unit: str
     :ivar primary_aggregation_type: Primary aggregation type.
@@ -39,9 +36,7 @@ class ResourceMetricDefinition(ProxyOnlyResource):
      list[~azure.mgmt.web.models.ResourceMetricAvailability]
     :ivar resource_uri: Resource URI.
     :vartype resource_uri: str
-    :ivar resource_metric_definition_id: Resource ID.
-    :vartype resource_metric_definition_id: str
-    :ivar properties: Properties.
+    :ivar properties: Resource metric definition properties.
     :vartype properties: dict[str, str]
     """
 
@@ -49,12 +44,10 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'resource_metric_definition_name': {'readonly': True},
         'unit': {'readonly': True},
         'primary_aggregation_type': {'readonly': True},
         'metric_availabilities': {'readonly': True},
         'resource_uri': {'readonly': True},
-        'resource_metric_definition_id': {'readonly': True},
         'properties': {'readonly': True},
     }
 
@@ -63,21 +56,17 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'resource_metric_definition_name': {'key': 'properties.name', 'type': 'ResourceMetricName'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
         'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[ResourceMetricAvailability]'},
         'resource_uri': {'key': 'properties.resourceUri', 'type': 'str'},
-        'resource_metric_definition_id': {'key': 'properties.id', 'type': 'str'},
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
     def __init__(self, kind=None):
         super(ResourceMetricDefinition, self).__init__(kind=kind)
-        self.resource_metric_definition_name = None
         self.unit = None
         self.primary_aggregation_type = None
         self.metric_availabilities = None
         self.resource_uri = None
-        self.resource_metric_definition_id = None
         self.properties = None

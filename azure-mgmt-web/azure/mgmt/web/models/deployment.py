@@ -26,8 +26,6 @@ class Deployment(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param deployment_id: Identifier for deployment.
-    :type deployment_id: str
     :param status: Deployment status.
     :type status: int
     :param message: Details about deployment status.
@@ -60,7 +58,6 @@ class Deployment(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'deployment_id': {'key': 'properties.id', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'int'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'author': {'key': 'properties.author', 'type': 'str'},
@@ -72,9 +69,8 @@ class Deployment(ProxyOnlyResource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
+    def __init__(self, kind=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
         super(Deployment, self).__init__(kind=kind)
-        self.deployment_id = deployment_id
         self.status = status
         self.message = message
         self.author = author

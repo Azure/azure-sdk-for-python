@@ -26,8 +26,6 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar function_envelope_name: Function name.
-    :vartype function_envelope_name: str
     :ivar function_app_id: Function App ID.
     :vartype function_app_id: str
     :param script_root_path_href: Script root path URI.
@@ -52,7 +50,6 @@ class FunctionEnvelope(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'function_envelope_name': {'readonly': True},
         'function_app_id': {'readonly': True},
     }
 
@@ -61,8 +58,7 @@ class FunctionEnvelope(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'function_envelope_name': {'key': 'properties.name', 'type': 'str'},
-        'function_app_id': {'key': 'properties.functionAppId', 'type': 'str'},
+        'function_app_id': {'key': 'properties.function_app_id', 'type': 'str'},
         'script_root_path_href': {'key': 'properties.scriptRootPathHref', 'type': 'str'},
         'script_href': {'key': 'properties.scriptHref', 'type': 'str'},
         'config_href': {'key': 'properties.configHref', 'type': 'str'},
@@ -75,7 +71,6 @@ class FunctionEnvelope(ProxyOnlyResource):
 
     def __init__(self, kind=None, script_root_path_href=None, script_href=None, config_href=None, secrets_file_href=None, href=None, config=None, files=None, test_data=None):
         super(FunctionEnvelope, self).__init__(kind=kind)
-        self.function_envelope_name = None
         self.function_app_id = None
         self.script_root_path_href = script_root_path_href
         self.script_href = script_href

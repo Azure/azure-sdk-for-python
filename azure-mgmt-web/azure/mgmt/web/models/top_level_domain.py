@@ -26,8 +26,6 @@ class TopLevelDomain(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar domain_name: Name of the top level domain.
-    :vartype domain_name: str
     :param privacy: If <code>true</code>, then the top level domain supports
      domain privacy; otherwise, <code>false</code>.
     :type privacy: bool
@@ -37,7 +35,6 @@ class TopLevelDomain(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'domain_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,11 +42,9 @@ class TopLevelDomain(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'domain_name': {'key': 'properties.name', 'type': 'str'},
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
     def __init__(self, kind=None, privacy=None):
         super(TopLevelDomain, self).__init__(kind=kind)
-        self.domain_name = None
         self.privacy = privacy

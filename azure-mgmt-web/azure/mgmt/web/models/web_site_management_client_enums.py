@@ -271,6 +271,25 @@ class OperationStatus(Enum):
     created = "Created"
 
 
+class IssueType(Enum):
+
+    service_incident = "ServiceIncident"
+    app_deployment = "AppDeployment"
+    app_crash = "AppCrash"
+    runtime_issue_detected = "RuntimeIssueDetected"
+    ase_deployment = "AseDeployment"
+    user_issue = "UserIssue"
+    platform_issue = "PlatformIssue"
+    other = "Other"
+
+
+class SolutionType(Enum):
+
+    quick_solution = "QuickSolution"
+    deep_investigation = "DeepInvestigation"
+    best_practices = "BestPractices"
+
+
 class ResourceScopeType(Enum):
 
     server_farm = "ServerFarm"
@@ -316,6 +335,11 @@ class CheckNameResourceTypes(Enum):
     site = "Site"
     slot = "Slot"
     hosting_environment = "HostingEnvironment"
+    publishing_user = "PublishingUser"
+    microsoft_websites = "Microsoft.Web/sites"
+    microsoft_websitesslots = "Microsoft.Web/sites/slots"
+    microsoft_webhosting_environments = "Microsoft.Web/hostingEnvironments"
+    microsoft_webpublishing_users = "Microsoft.Web/publishingUsers"
 
 
 class ValidateResourceTypes(Enum):
@@ -359,14 +383,6 @@ class FrequencyUnit(Enum):
 
     day = "Day"
     hour = "Hour"
-
-
-class BackupRestoreOperationType(Enum):
-
-    default = "Default"
-    clone = "Clone"
-    relocation = "Relocation"
-    snapshot = "Snapshot"
 
 
 class ContinuousWebJobStatus(Enum):
@@ -425,6 +441,14 @@ class PublicCertificateLocation(Enum):
     current_user_my = "CurrentUserMy"
     local_machine_my = "LocalMachineMy"
     unknown = "Unknown"
+
+
+class BackupRestoreOperationType(Enum):
+
+    default = "Default"
+    clone = "Clone"
+    relocation = "Relocation"
+    snapshot = "Snapshot"
 
 
 class UnauthenticatedClientAction(Enum):

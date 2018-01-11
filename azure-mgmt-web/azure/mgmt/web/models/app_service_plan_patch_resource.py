@@ -26,9 +26,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param app_service_plan_patch_resource_name: Name for the App Service
-     plan.
-    :type app_service_plan_patch_resource_name: str
     :param worker_tier_name: Target worker tier assigned to the App Service
      plan.
     :type worker_tier_name: str
@@ -63,7 +60,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type spot_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: Reserved. Default value: False .
+    :param reserved: If Linux app service plan <code>true</code>,
+     <code>false</code> otherwise. Default value: False .
     :type reserved: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
@@ -94,7 +92,6 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'app_service_plan_patch_resource_name': {'key': 'properties.name', 'type': 'str'},
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
@@ -113,9 +110,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, kind=None, app_service_plan_patch_resource_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None):
+    def __init__(self, kind=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, is_spot=None, spot_expiration_time=None, reserved=False, target_worker_count=None, target_worker_size_id=None):
         super(AppServicePlanPatchResource, self).__init__(kind=kind)
-        self.app_service_plan_patch_resource_name = app_service_plan_patch_resource_name
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None
