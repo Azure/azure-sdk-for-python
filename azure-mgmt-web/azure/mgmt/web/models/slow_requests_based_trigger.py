@@ -17,7 +17,7 @@ class SlowRequestsBasedTrigger(Model):
 
     :param time_taken: Time taken.
     :type time_taken: str
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str

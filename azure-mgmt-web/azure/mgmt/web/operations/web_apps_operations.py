@@ -27,6 +27,8 @@ class WebAppsOperations(object):
     :ivar api_version: API Version. Constant value: "2016-08-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -2957,7 +2959,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -2973,7 +2975,7 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def get_container_logs_zip(
+    def get_web_site_container_logs_zip(
             self, resource_group_name, name, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the ZIP archived docker log files for the given site.
 
@@ -3025,7 +3027,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -7477,7 +7479,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -8895,7 +8897,7 @@ class WebAppsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -9246,16 +9248,16 @@ class WebAppsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 429]:
+            if response.status_code not in [200, 201, 429]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
             if response.status_code == 200:
+                deserialized = self._deserialize('SiteExtensionInfo', response)
+            if response.status_code == 201:
                 deserialized = self._deserialize('SiteExtensionInfo', response)
 
             if raw:
@@ -12195,7 +12197,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -12211,7 +12213,7 @@ class WebAppsOperations(object):
 
         return deserialized
 
-    def get_container_logs_zip_slot(
+    def get_web_site_container_logs_zip_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the ZIP archived docker log files for the given site.
 
@@ -12267,7 +12269,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -16761,7 +16763,7 @@ class WebAppsOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -18259,7 +18261,7 @@ class WebAppsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -18630,16 +18632,16 @@ class WebAppsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200, 429]:
+            if response.status_code not in [200, 201, 429]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
-            if response.status_code == 201:
-                deserialized = self._deserialize('SiteExtensionInfo', response)
             if response.status_code == 200:
+                deserialized = self._deserialize('SiteExtensionInfo', response)
+            if response.status_code == 201:
                 deserialized = self._deserialize('SiteExtensionInfo', response)
 
             if raw:

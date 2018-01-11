@@ -12,9 +12,8 @@
 from .proxy_only_resource import ProxyOnlyResource
 
 
-class VnetGateway(ProxyOnlyResource):
-    """The Virtual Network gateway contract. This is used to give the Virtual
-    Network gateway access to the VPN package.
+class DiagnosticCategory(ProxyOnlyResource):
+    """Class representing detector definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,17 +26,15 @@ class VnetGateway(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param vnet_name: The Virtual Network name.
-    :type vnet_name: str
-    :param vpn_package_uri: The URI where the VPN package can be downloaded.
-    :type vpn_package_uri: str
+    :ivar description: Description of the diagnostic category
+    :vartype description: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'vpn_package_uri': {'required': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,11 +42,9 @@ class VnetGateway(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, vpn_package_uri, kind=None, vnet_name=None):
-        super(VnetGateway, self).__init__(kind=kind)
-        self.vnet_name = vnet_name
-        self.vpn_package_uri = vpn_package_uri
+    def __init__(self, kind=None):
+        super(DiagnosticCategory, self).__init__(kind=kind)
+        self.description = None
