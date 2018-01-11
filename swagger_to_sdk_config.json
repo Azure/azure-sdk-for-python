@@ -111,7 +111,7 @@
       "markdown": "specification/containerinstance/resource-manager/readme.md"
     },
     "containerregistry": {
-      "build_dir": "azure-mgmt-containerregistry.",
+      "build_dir": "azure-mgmt-containerregistry",
       "markdown": "specification/containerregistry/resource-manager/readme.md"
     },
     "containerservice": {
