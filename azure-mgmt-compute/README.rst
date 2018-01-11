@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `Compute and Network Resource Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementcomputenetwork.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/virtualmachines>`__
+on docs.microsoft.com.
 
 
 Provide Feedback
