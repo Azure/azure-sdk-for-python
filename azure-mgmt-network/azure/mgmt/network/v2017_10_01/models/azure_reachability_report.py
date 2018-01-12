@@ -39,6 +39,7 @@ class AzureReachabilityReport(Model):
     }
 
     def __init__(self, aggregation_level, provider_location, reachability_report):
+        super(AzureReachabilityReport, self).__init__()
         self.aggregation_level = aggregation_level
         self.provider_location = provider_location
         self.reachability_report = reachability_report

@@ -35,5 +35,6 @@ class ApplicationGatewayConnectionDraining(Model):
     }
 
     def __init__(self, enabled, drain_timeout_in_sec):
+        super(ApplicationGatewayConnectionDraining, self).__init__()
         self.enabled = enabled
         self.drain_timeout_in_sec = drain_timeout_in_sec

@@ -43,6 +43,7 @@ class VpnClientParameters(Model):
     }
 
     def __init__(self, processor_architecture=None, authentication_method=None, radius_server_auth_certificate=None, client_root_certificates=None):
+        super(VpnClientParameters, self).__init__()
         self.processor_architecture = processor_architecture
         self.authentication_method = authentication_method
         self.radius_server_auth_certificate = radius_server_auth_certificate

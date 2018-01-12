@@ -60,6 +60,7 @@ class BgpPeerStatus(Model):
     }
 
     def __init__(self):
+        super(BgpPeerStatus, self).__init__()
         self.local_address = None
         self.neighbor = None
         self.asn = None

@@ -30,5 +30,6 @@ class ApplicationGatewayBackendHealthHttpSettings(Model):
     }
 
     def __init__(self, backend_http_settings=None, servers=None):
+        super(ApplicationGatewayBackendHealthHttpSettings, self).__init__()
         self.backend_http_settings = backend_http_settings
         self.servers = servers
