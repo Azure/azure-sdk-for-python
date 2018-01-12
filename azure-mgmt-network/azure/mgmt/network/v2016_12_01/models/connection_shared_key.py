@@ -28,4 +28,5 @@ class ConnectionSharedKey(Model):
     }
 
     def __init__(self, value):
+        super(ConnectionSharedKey, self).__init__()
         self.value = value

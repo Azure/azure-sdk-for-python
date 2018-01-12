@@ -34,6 +34,7 @@ class AvailableProvidersListParameters(Model):
     }
 
     def __init__(self, azure_locations=None, country=None, state=None, city=None):
+        super(AvailableProvidersListParameters, self).__init__()
         self.azure_locations = azure_locations
         self.country = country
         self.state = state

@@ -32,5 +32,6 @@ class ApplicationGatewayFirewallDisabledRuleGroup(Model):
     }
 
     def __init__(self, rule_group_name, rules=None):
+        super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__()
         self.rule_group_name = rule_group_name
         self.rules = rules

@@ -63,6 +63,7 @@ class EffectiveNetworkSecurityRule(Model):
     }
 
     def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_address_prefix=None, destination_address_prefix=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
+        super(EffectiveNetworkSecurityRule, self).__init__()
         self.name = name
         self.protocol = protocol
         self.source_port_range = source_port_range

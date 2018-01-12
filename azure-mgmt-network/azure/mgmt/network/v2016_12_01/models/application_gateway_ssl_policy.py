@@ -26,4 +26,5 @@ class ApplicationGatewaySslPolicy(Model):
     }
 
     def __init__(self, disabled_ssl_protocols=None):
+        super(ApplicationGatewaySslPolicy, self).__init__()
         self.disabled_ssl_protocols = disabled_ssl_protocols

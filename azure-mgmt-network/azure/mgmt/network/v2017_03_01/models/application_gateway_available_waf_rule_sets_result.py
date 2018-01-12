@@ -25,4 +25,5 @@ class ApplicationGatewayAvailableWafRuleSetsResult(Model):
     }
 
     def __init__(self, value=None):
+        super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__()
         self.value = value

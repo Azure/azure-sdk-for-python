@@ -34,5 +34,6 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     }
 
     def __init__(self, enabled, firewall_mode=None):
+        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__()
         self.enabled = enabled
         self.firewall_mode = firewall_mode

@@ -46,6 +46,7 @@ class Usage(Model):
     unit = "Count"
 
     def __init__(self, current_value, limit, name):
+        super(Usage, self).__init__()
         self.current_value = current_value
         self.limit = limit
         self.name = name
