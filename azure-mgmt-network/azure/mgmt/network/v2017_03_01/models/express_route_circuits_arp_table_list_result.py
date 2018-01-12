@@ -28,5 +28,6 @@ class ExpressRouteCircuitsArpTableListResult(Model):
     }
 
     def __init__(self, value=None, next_link=None):
+        super(ExpressRouteCircuitsArpTableListResult, self).__init__()
         self.value = value
         self.next_link = next_link

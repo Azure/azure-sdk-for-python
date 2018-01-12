@@ -25,4 +25,5 @@ class SecurityGroupViewResult(Model):
     }
 
     def __init__(self, network_interfaces=None):
+        super(SecurityGroupViewResult, self).__init__()
         self.network_interfaces = network_interfaces

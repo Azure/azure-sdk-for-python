@@ -31,6 +31,7 @@ from .security_rules_operations import SecurityRulesOperations
 from .default_security_rules_operations import DefaultSecurityRulesOperations
 from .network_watchers_operations import NetworkWatchersOperations
 from .packet_captures_operations import PacketCapturesOperations
+from .connection_monitors_operations import ConnectionMonitorsOperations
 from .operations import Operations
 from .public_ip_addresses_operations import PublicIPAddressesOperations
 from .route_filters_operations import RouteFiltersOperations
@@ -69,6 +70,7 @@ __all__ = [
     'DefaultSecurityRulesOperations',
     'NetworkWatchersOperations',
     'PacketCapturesOperations',
+    'ConnectionMonitorsOperations',
     'Operations',
     'PublicIPAddressesOperations',
     'RouteFiltersOperations',

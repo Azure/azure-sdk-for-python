@@ -31,6 +31,7 @@ class AvailableProvidersListCountry(Model):
     }
 
     def __init__(self, country_name=None, providers=None, states=None):
+        super(AvailableProvidersListCountry, self).__init__()
         self.country_name = country_name
         self.providers = providers
         self.states = states

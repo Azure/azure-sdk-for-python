@@ -28,4 +28,5 @@ class SecurityGroupViewParameters(Model):
     }
 
     def __init__(self, target_resource_id):
+        super(SecurityGroupViewParameters, self).__init__()
         self.target_resource_id = target_resource_id

@@ -27,5 +27,6 @@ class EffectiveRouteListResult(Model):
     }
 
     def __init__(self, value=None, next_link=None):
+        super(EffectiveRouteListResult, self).__init__()
         self.value = value
         self.next_link = next_link

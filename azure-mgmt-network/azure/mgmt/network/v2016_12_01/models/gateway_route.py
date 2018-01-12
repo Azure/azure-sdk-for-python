@@ -55,6 +55,7 @@ class GatewayRoute(Model):
     }
 
     def __init__(self):
+        super(GatewayRoute, self).__init__()
         self.local_address = None
         self.network = None
         self.next_hop = None
