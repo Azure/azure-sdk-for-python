@@ -32,6 +32,7 @@ class EventSubscriptionUpdateParameters(Model):
     }
 
     def __init__(self, destination=None, filter=None, labels=None):
+        super(EventSubscriptionUpdateParameters, self).__init__()
         self.destination = destination
         self.filter = filter
         self.labels = labels

@@ -36,4 +36,5 @@ class EventSubscriptionDestination(Model):
     }
 
     def __init__(self):
+        super(EventSubscriptionDestination, self).__init__()
         self.endpoint_type = None
