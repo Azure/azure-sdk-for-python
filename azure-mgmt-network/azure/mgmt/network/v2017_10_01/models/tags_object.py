@@ -24,4 +24,5 @@ class TagsObject(Model):
     }
 
     def __init__(self, tags=None):
+        super(TagsObject, self).__init__()
         self.tags = tags

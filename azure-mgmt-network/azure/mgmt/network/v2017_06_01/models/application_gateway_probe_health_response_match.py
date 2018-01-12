@@ -29,5 +29,6 @@ class ApplicationGatewayProbeHealthResponseMatch(Model):
     }
 
     def __init__(self, body=None, status_codes=None):
+        super(ApplicationGatewayProbeHealthResponseMatch, self).__init__()
         self.body = body
         self.status_codes = status_codes

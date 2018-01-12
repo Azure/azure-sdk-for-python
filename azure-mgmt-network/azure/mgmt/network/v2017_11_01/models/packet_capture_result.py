@@ -71,6 +71,7 @@ class PacketCaptureResult(Model):
     }
 
     def __init__(self, target, storage_location, etag="A unique read-only string that changes whenever the resource is updated.", bytes_to_capture_per_packet=0, total_bytes_per_session=1073741824, time_limit_in_seconds=18000, filters=None, provisioning_state=None):
+        super(PacketCaptureResult, self).__init__()
         self.name = None
         self.id = None
         self.etag = etag

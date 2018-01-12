@@ -24,4 +24,5 @@ class ConnectionResetSharedKey(Model):
     }
 
     def __init__(self, key_length=None):
+        super(ConnectionResetSharedKey, self).__init__()
         self.key_length = key_length

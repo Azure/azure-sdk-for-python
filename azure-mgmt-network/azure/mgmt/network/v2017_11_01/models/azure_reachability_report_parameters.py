@@ -43,6 +43,7 @@ class AzureReachabilityReportParameters(Model):
     }
 
     def __init__(self, provider_location, start_time, end_time, providers=None, azure_locations=None):
+        super(AzureReachabilityReportParameters, self).__init__()
         self.provider_location = provider_location
         self.providers = providers
         self.azure_locations = azure_locations

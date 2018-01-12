@@ -28,5 +28,6 @@ class IPAddressAvailabilityResult(Model):
     }
 
     def __init__(self, available=None, available_ip_addresses=None):
+        super(IPAddressAvailabilityResult, self).__init__()
         self.available = available
         self.available_ip_addresses = available_ip_addresses

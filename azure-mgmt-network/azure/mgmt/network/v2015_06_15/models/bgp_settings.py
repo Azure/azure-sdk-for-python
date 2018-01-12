@@ -32,6 +32,7 @@ class BgpSettings(Model):
     }
 
     def __init__(self, asn=None, bgp_peering_address=None, peer_weight=None):
+        super(BgpSettings, self).__init__()
         self.asn = asn
         self.bgp_peering_address = bgp_peering_address
         self.peer_weight = peer_weight

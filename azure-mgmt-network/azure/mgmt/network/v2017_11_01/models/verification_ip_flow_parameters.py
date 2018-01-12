@@ -66,6 +66,7 @@ class VerificationIPFlowParameters(Model):
     }
 
     def __init__(self, target_resource_id, direction, protocol, local_port, remote_port, local_ip_address, remote_ip_address, target_nic_resource_id=None):
+        super(VerificationIPFlowParameters, self).__init__()
         self.target_resource_id = target_resource_id
         self.direction = direction
         self.protocol = protocol

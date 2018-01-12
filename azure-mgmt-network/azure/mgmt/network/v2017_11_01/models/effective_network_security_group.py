@@ -38,6 +38,7 @@ class EffectiveNetworkSecurityGroup(Model):
     }
 
     def __init__(self, network_security_group=None, association=None, effective_security_rules=None, tag_map=None):
+        super(EffectiveNetworkSecurityGroup, self).__init__()
         self.network_security_group = network_security_group
         self.association = association
         self.effective_security_rules = effective_security_rules
