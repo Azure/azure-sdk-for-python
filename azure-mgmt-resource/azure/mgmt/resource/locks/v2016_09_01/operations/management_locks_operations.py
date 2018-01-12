@@ -23,33 +23,27 @@ class ManagementLocksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
+    :ivar api_version: Client Api Version. Constant value: "2015-01-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2015-01-01"
 
         self.config = config
 
     def create_or_update_at_resource_group_level(
             self, resource_group_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a management lock at the resource group level.
+        """Create or update a management lock at the resource group level.
 
-        When you apply a lock at a parent scope, all child resources inherit
-        the same lock. To create management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param resource_group_name: The name of the resource group to lock.
+        :param resource_group_name: The resource group name.
         :type resource_group_name: str
-        :param lock_name: The lock name. The lock name can be a maximum of 260
-         characters. It cannot contain <, > %, &, :, \\, ?, /, or any control
-         characters.
+        :param lock_name: The lock name.
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters:
@@ -94,7 +88,7 @@ class ManagementLocksOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -116,17 +110,11 @@ class ManagementLocksOperations(object):
 
     def delete_at_resource_group_level(
             self, resource_group_name, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a management lock at the resource group level.
+        """Deletes the management lock of a resource group.
 
-        To delete management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param resource_group_name: The name of the resource group containing
-         the lock.
+        :param resource_group_name: The resource group name.
         :type resource_group_name: str
-        :param lock_name: The name of lock to delete.
+        :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -162,9 +150,9 @@ class ManagementLocksOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -177,9 +165,9 @@ class ManagementLocksOperations(object):
             self, resource_group_name, lock_name, custom_headers=None, raw=False, **operation_config):
         """Gets a management lock at the resource group level.
 
-        :param resource_group_name: The name of the locked resource group.
+        :param resource_group_name: The resource group name.
         :type resource_group_name: str
-        :param lock_name: The name of the lock to get.
+        :param lock_name: The lock name.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -217,195 +205,7 @@ class ManagementLocksOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ManagementLockObject', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_by_scope(
-            self, scope, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update a management lock by scope.
-
-        :param scope: The scope for the lock. When providing a scope for the
-         assignment, use '/subscriptions/{subscriptionId}' for subscriptions,
-         '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
-         for resource groups, and
-         '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePathIfPresent}/{resourceType}/{resourceName}'
-         for resources.
-        :type scope: str
-        :param lock_name: The name of lock.
-        :type lock_name: str
-        :param parameters: Create or update management lock parameters.
-        :type parameters:
-         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ManagementLockObject or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
-        path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
-            'lockName': self._serialize.url("lock_name", lock_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'ManagementLockObject')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ManagementLockObject', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('ManagementLockObject', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete_by_scope(
-            self, scope, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a management lock by scope.
-
-        :param scope: The scope for the lock.
-        :type scope: str
-        :param lock_name: The name of lock.
-        :type lock_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
-        path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
-            'lockName': self._serialize.url("lock_name", lock_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [204, 200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def get_by_scope(
-            self, scope, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Get a management lock by scope.
-
-        :param scope: The scope for the lock.
-        :type scope: str
-        :param lock_name: The name of lock.
-        :type lock_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ManagementLockObject or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/locks/{lockName}'
-        path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str'),
-            'lockName': self._serialize.url("lock_name", lock_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -425,33 +225,22 @@ class ManagementLocksOperations(object):
 
     def create_or_update_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a management lock at the resource level or any level
-        below the resource.
+        """Create or update a management lock at the resource level or any level
+        below resource.
 
-        When you apply a lock at a parent scope, all child resources inherit
-        the same lock. To create management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param resource_group_name: The name of the resource group containing
-         the resource to lock.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_provider_namespace: The resource provider namespace of
-         the resource to lock.
+        :param resource_provider_namespace: Resource identity.
         :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource identity.
+        :param parent_resource_path: Resource identity.
         :type parent_resource_path: str
-        :param resource_type: The resource type of the resource to lock.
+        :param resource_type: Resource identity.
         :type resource_type: str
-        :param resource_name: The name of the resource to lock.
+        :param resource_name: Resource identity.
         :type resource_name: str
-        :param lock_name: The name of lock. The lock name can be a maximum of
-         260 characters. It cannot contain <, > %, &, :, \\, ?, /, or any
-         control characters.
+        :param lock_name: The name of lock.
         :type lock_name: str
-        :param parameters: Parameters for creating or updating a  management
-         lock.
+        :param parameters: Create or update management lock parameters.
         :type parameters:
          ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :param dict custom_headers: headers that will be added to the request
@@ -498,7 +287,7 @@ class ManagementLocksOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -520,29 +309,19 @@ class ManagementLocksOperations(object):
 
     def delete_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the management lock of a resource or any level below the
-        resource.
+        """Deletes the management lock of a resource or any level below resource.
 
-        To delete management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param resource_group_name: The name of the resource group containing
-         the resource with the lock to delete.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_provider_namespace: The resource provider namespace of
-         the resource with the lock to delete.
+        :param resource_provider_namespace: Resource identity.
         :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource identity.
+        :param parent_resource_path: Resource identity.
         :type parent_resource_path: str
-        :param resource_type: The resource type of the resource with the lock
-         to delete.
+        :param resource_type: Resource identity.
         :type resource_type: str
-        :param resource_name: The name of the resource with the lock to
-         delete.
+        :param resource_name: Resource identity.
         :type resource_name: str
-        :param lock_name: The name of the lock to delete.
+        :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -582,9 +361,9 @@ class ManagementLocksOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -593,95 +372,11 @@ class ManagementLocksOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get_at_resource_level(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Get the management lock of a resource or any level below resource.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param parent_resource_path: An extra path parameter needed in some
-         services, like SQL Databases.
-        :type parent_resource_path: str
-        :param resource_type: The type of the resource.
-        :type resource_type: str
-        :param resource_name: The name of the resource.
-        :type resource_name: str
-        :param lock_name: The name of lock.
-        :type lock_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ManagementLockObject or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'lockName': self._serialize.url("lock_name", lock_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ManagementLockObject', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def create_or_update_at_subscription_level(
             self, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a management lock at the subscription level.
+        """Create or update a management lock at the subscription level.
 
-        When you apply a lock at a parent scope, all child resources inherit
-        the same lock. To create management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param lock_name: The name of lock. The lock name can be a maximum of
-         260 characters. It cannot contain <, > %, &, :, \\, ?, /, or any
-         control characters.
+        :param lock_name: The name of lock.
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters:
@@ -725,18 +420,18 @@ class ManagementLocksOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('ManagementLockObject', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('ManagementLockObject', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('ManagementLockObject', response)
 
         if raw:
@@ -747,14 +442,9 @@ class ManagementLocksOperations(object):
 
     def delete_at_subscription_level(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the management lock at the subscription level.
+        """Deletes the management lock of a subscription.
 
-        To delete management locks, you must have access to
-        Microsoft.Authorization/* or Microsoft.Authorization/locks/* actions.
-        Of the built-in roles, only Owner and User Access Administrator are
-        granted those actions.
-
-        :param lock_name: The name of lock to delete.
+        :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -789,9 +479,9 @@ class ManagementLocksOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -800,11 +490,11 @@ class ManagementLocksOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get_at_subscription_level(
+    def get(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a management lock at the subscription level.
+        """Gets the management lock of a scope.
 
-        :param lock_name: The name of the lock to get.
+        :param lock_name: Name of the management lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -841,7 +531,7 @@ class ManagementLocksOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -861,10 +551,9 @@ class ManagementLocksOperations(object):
 
     def list_at_resource_group_level(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the management locks for a resource group.
+        """Gets all the management locks of a resource group.
 
-        :param resource_group_name: The name of the resource group containing
-         the locks to get.
+        :param resource_group_name: Resource group name.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -912,7 +601,7 @@ class ManagementLocksOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -933,20 +622,19 @@ class ManagementLocksOperations(object):
 
     def list_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the management locks for a resource or any level below
+        """Gets all the management locks of a resource or any level below
         resource.
 
-        :param resource_group_name: The name of the resource group containing
-         the locked resource. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
+        :param resource_provider_namespace: Resource identity.
         :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource identity.
+        :param parent_resource_path: Resource identity.
         :type parent_resource_path: str
-        :param resource_type: The resource type of the locked resource.
+        :param resource_type: Resource identity.
         :type resource_type: str
-        :param resource_name: The name of the locked resource.
+        :param resource_name: Resource identity.
         :type resource_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -998,7 +686,7 @@ class ManagementLocksOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1019,7 +707,7 @@ class ManagementLocksOperations(object):
 
     def list_at_subscription_level(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the management locks for a subscription.
+        """Gets all the management locks of a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -1066,7 +754,7 @@ class ManagementLocksOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

@@ -24,4 +24,5 @@ class HttpMessage(Model):
     }
 
     def __init__(self, content=None):
+        super(HttpMessage, self).__init__()
         self.content = content

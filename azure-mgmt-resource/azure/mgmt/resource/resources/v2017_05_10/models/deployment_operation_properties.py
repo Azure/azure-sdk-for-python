@@ -62,6 +62,7 @@ class DeploymentOperationProperties(Model):
     }
 
     def __init__(self):
+        super(DeploymentOperationProperties, self).__init__()
         self.provisioning_state = None
         self.timestamp = None
         self.service_request_id = None

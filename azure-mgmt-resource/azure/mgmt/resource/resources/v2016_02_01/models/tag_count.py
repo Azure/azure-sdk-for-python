@@ -27,5 +27,6 @@ class TagCount(Model):
     }
 
     def __init__(self, type=None, value=None):
+        super(TagCount, self).__init__()
         self.type = type
         self.value = value
