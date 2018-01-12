@@ -43,6 +43,7 @@ class FailoverPolicy(Model):
     }
 
     def __init__(self, location_name=None, failover_priority=None):
+        super(FailoverPolicy, self).__init__()
         self.id = None
         self.location_name = location_name
         self.failover_priority = failover_priority

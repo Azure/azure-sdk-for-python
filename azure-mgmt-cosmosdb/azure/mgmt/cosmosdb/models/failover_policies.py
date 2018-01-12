@@ -24,4 +24,5 @@ class FailoverPolicies(Model):
     }
 
     def __init__(self, failover_policies=None):
+        super(FailoverPolicies, self).__init__()
         self.failover_policies = failover_policies
