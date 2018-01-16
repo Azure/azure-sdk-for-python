@@ -55,10 +55,10 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         self.assertEqual(eventsubscription_name, event_subscription.name)
 
         # Delete the event subscription
-        es_result_delete = self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).result()
+        self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).wait()
 
         # Delete the topic
-        self.eventgrid_client.topics.delete(resource_group.name, topic_name).result()
+        self.eventgrid_client.topics.delete(resource_group.name, topic_name).wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
