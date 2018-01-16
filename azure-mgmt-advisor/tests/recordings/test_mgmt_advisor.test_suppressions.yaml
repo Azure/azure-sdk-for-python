@@ -7,40 +7,28 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations?api-version=2017-04-19
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/8c93b64d-bdcf-0edf-d373-9a4988706e1b","name":"8c93b64d-bdcf-0edf-d373-9a4988706e1b","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/44025f03-7487-d0e5-2144-51ccb40718e5","name":"44025f03-7487-d0e5-2144-51ccb40718e5","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/ad10e536-f84a-4c61-9b97-5e73ac8fb6c4","name":"ad10e536-f84a-4c61-9b97-5e73ac8fb6c4","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/308832bc-279c-9523-1501-061e55297871","name":"308832bc-279c-9523-1501-061e55297871","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.4845586Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/64dcbaba-cee7-8d05-62bc-3646b96d7504","name":"64dcbaba-cee7-8d05-62bc-3646b96d7504","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/4063ec37-acc6-b626-c0ae-c6be33b0ca9e","name":"4063ec37-acc6-b626-c0ae-c6be33b0ca9e","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/350a2a51-edf7-1da0-eaee-2542e12ff11f","name":"350a2a51-edf7-1da0-eaee-2542e12ff11f","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGEUS/providers/Microsoft.Compute/virtualMachines/EUS-Test/providers/Microsoft.Advisor/recommendations/d6be9aac-f74a-f756-3487-4fcd892d3aae","name":"d6be9aac-f74a-f756-3487-4fcd892d3aae","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"EUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/fd3c5cb3-5795-9458-f86d-fe15023f8e85","name":"fd3c5cb3-5795-9458-f86d-fe15023f8e85","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/ec09a5f6-dcbf-8d7a-6580-de3f6ebb0fa9","name":"ec09a5f6-dcbf-8d7a-6580-de3f6ebb0fa9","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/ec93a091-8822-1fce-6c63-fbf037fbc1d9","name":"ec93a091-8822-1fce-6c63-fbf037fbc1d9","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/08088e38-47c8-1e4e-a9ac-d1f5386459bf","name":"08088e38-47c8-1e4e-a9ac-d1f5386459bf","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGEUS/providers/Microsoft.Compute/virtualMachines/EUS-Test/providers/Microsoft.Advisor/recommendations/489d64a3-f6a1-c68b-314b-da93c630bf6d","name":"489d64a3-f6a1-c68b-314b-da93c630bf6d","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"EUS-Test","lastUpdated":"2017-11-04T00:15:20.5001885Z","risk":"None","shortDescription":{"problem":"Improve
-        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/331a8015-ee80-fd70-9f85-545b859f32a5","name":"331a8015-ee80-fd70-9f85-545b859f32a5","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-04T00:15:20.5158218Z","risk":"None","shortDescription":{"problem":"Your
-        virtual machine is not configured for backup","solution":"Enable virtual machine
-        backup to protect your data from corruption and accidental deletion"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/54c68408-eaa3-488d-7732-79c356c96a47","name":"54c68408-eaa3-488d-7732-79c356c96a47","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-04T00:15:20.5158218Z","risk":"None","shortDescription":{"problem":"Your
-        virtual machine is not configured for backup","solution":"Enable virtual machine
-        backup to protect your data from corruption and accidental deletion"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/49d1cd7f-a804-06eb-8631-34573df13e2c","name":"49d1cd7f-a804-06eb-8631-34573df13e2c","properties":{"category":"Cost","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2017-11-03T22:39:15.8303005Z","risk":"None","shortDescription":{"problem":"Your
-        virtual machine has low usage","solution":"Right-size or shutdown underutilized
-        virtual machines"}},"type":"Microsoft.Advisor/recommendations","hardwareDetails":{"resourceId":"y8fx4nayf4ptcckwy6pri8bbx5z4mwufo9ax4nayrti71j3x5pdwtc7y4imyqeyy6a","size":"Standard_D1_v2"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/functionaltest/providers/Microsoft.Compute/availabilitySets/avset1/providers/Microsoft.Advisor/recommendations/d92a7f6b-4193-116a-82e2-ba9c8e176d99","name":"d92a7f6b-4193-116a-82e2-ba9c8e176d99","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/availabilitySets","impactedValue":"avset1","lastUpdated":"2017-11-03T22:36:28.3999278Z","risk":"Warning","shortDescription":{"problem":"This
-        availability set is not configured for fault tolerance","solution":"Add more
-        virtual machines for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4","name":"2ba630b2-9211-5563-a8e1-1319b209c7c4","properties":{"category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-03T22:36:16.806205Z","risk":"None","shortDescription":{"problem":"This
-        virtual machine is not configured for fault tolerance","solution":"Use availability
-        sets for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/3733dec6-65bd-f94e-2917-45429da0a155","name":"3733dec6-65bd-f94e-2917-45429da0a155","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/f2a42c50-9f22-efad-fe71-06b6ee4a619a","name":"f2a42c50-9f22-efad-fe71-06b6ee4a619a","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/ab2efa2f-22a1-7a43-0609-c1a069ee7bb2","name":"ab2efa2f-22a1-7a43-0609-c1a069ee7bb2","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/9fde7905-7416-352d-2c0d-23cbf2525109","name":"9fde7905-7416-352d-2c0d-23cbf2525109","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/f4c3fd5c-1ada-7805-8a3d-44f61ad0c5cf","name":"f4c3fd5c-1ada-7805-8a3d-44f61ad0c5cf","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/9214d42a-0b1e-58f5-9f1d-ab33a95b8f43","name":"9214d42a-0b1e-58f5-9f1d-ab33a95b8f43","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/31017e0b-c4d7-59bd-48c3-b4587f791bc0","name":"31017e0b-c4d7-59bd-48c3-b4587f791bc0","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/e42b8922-3f01-5682-d37e-8a51a04b7f89","name":"e42b8922-3f01-5682-d37e-8a51a04b7f89","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9","name":"f72c4f2b-596b-746e-de95-f25a1d3276c9","properties":{"category":"Cost","impact":"Medium","impactedField":"Microsoft.Network/expressRouteCircuits","impactedValue":"test","lastUpdated":"2018-01-16T18:27:19.4852364Z","risk":"None","shortDescription":{"problem":"Your
+        ExpressRoute circuit is in the provider status of Not Provisioned for more
+        than one month","solution":"Delete ExpressRoute circuits in the provider status
+        of Not Provisioned"}},"type":"Microsoft.Advisor/recommendations"}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['11433']
+      content-length: ['5571']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:50 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:50 GMT']
       expires: ['-1']
       iscutoff: ['False']
       pragma: [no-cache]
@@ -49,6 +37,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -58,23 +47,26 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4?api-version=2017-04-19
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9?api-version=2017-04-19
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4","name":"2ba630b2-9211-5563-a8e1-1319b209c7c4","properties":{"description":"Group
-        two or more virtual machines in an availability set to ensure at least one
-        virtual machine is available during an outage.","label":"Use availability
-        sets","learnMoreLink":"http://aka.ms/aa_sivmrec_learnmore","potentialBenefits":"Ensure
-        business continuity through virtual machine resilience","category":"HighAvailability","impact":"Medium","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2017-11-03T22:36:16.806205Z","risk":"None","shortDescription":{"problem":"This
-        virtual machine is not configured for fault tolerance","solution":"Use availability
-        sets for improved fault tolerance"}},"type":"Microsoft.Advisor/recommendations"}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9","name":"f72c4f2b-596b-746e-de95-f25a1d3276c9","properties":{"description":"We
+        noticed that your ExpressRoute circuit is in the provider status of Not Provisioned
+        for more than one month. This circuit is currently billed hourly to your subscription.
+        We recommend that you delete the circuit if you aren''t planning to provision
+        the circuit with your connectivity provider.","label":"Delete ExpressRoute
+        circuit in Not Provisioned state","learnMoreLink":"https://aka.ms/expressroute","potentialBenefits":"Cost
+        savings","category":"Cost","impact":"Medium","impactedField":"Microsoft.Network/expressRouteCircuits","impactedValue":"test","lastUpdated":"2018-01-16T18:27:19.4852364Z","risk":"None","shortDescription":{"problem":"Your
+        ExpressRoute circuit is in the provider status of Not Provisioned for more
+        than one month","solution":"Delete ExpressRoute circuits in the provider status
+        of Not Provisioned"}},"type":"Microsoft.Advisor/recommendations"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['980']
+      content-length: ['1169']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:51 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:51 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -82,6 +74,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"ttl": "00:01:00:00"}}'
@@ -92,17 +85,17 @@ interactions:
       Content-Length: ['38']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
   response:
-    body: {string: '{"properties":{"suppressionId":"6b805033-201d-c2da-1532-df4e9840ba92","ttl":"00:01:00:00"}}'}
+    body: {string: '{"properties":{"suppressionId":"8aced6b1-5a49-daff-be0e-89ada2bf6bd4","ttl":"00:01:00:00"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['91']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:52 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:53 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -120,17 +113,17 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test","name":"Python_SDK_Test","type":"Microsoft.Advisor/suppressions","properties":{"suppressionId":"6b805033-201d-c2da-1532-df4e9840ba92","ttl":"01:00:00"}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test","name":"Python_SDK_Test","type":"Microsoft.Advisor/suppressions","properties":{"suppressionId":"8aced6b1-5a49-daff-be0e-89ada2bf6bd4","ttl":"01:00:00"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['402']
+      content-length: ['403']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:53 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:53 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -148,15 +141,15 @@ interactions:
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fcosmosdata%2Fproviders%2FMicrosoft.Compute%2FvirtualMachines%2Fazatestvm/providers/Microsoft.Advisor/recommendations/2ba630b2-9211-5563-a8e1-1319b209c7c4/suppressions/Python_SDK_Test?api-version=2017-04-19
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Sat, 04 Nov 2017 00:17:55 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:55 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -172,7 +165,7 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/suppressions?api-version=2017-04-19
@@ -182,7 +175,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['12']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:55 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -190,5 +183,6 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
     status: {code: 200, message: OK}
 version: 1
