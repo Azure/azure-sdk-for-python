@@ -64,6 +64,7 @@ class DeploymentProperties(Model):
     }
 
     def __init__(self, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None):
+        super(DeploymentProperties, self).__init__()
         self.template = template
         self.template_link = template_link
         self.parameters = parameters

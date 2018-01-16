@@ -38,6 +38,7 @@ class ProviderResourceType(Model):
     }
 
     def __init__(self, resource_type=None, locations=None, aliases=None, api_versions=None, properties=None):
+        super(ProviderResourceType, self).__init__()
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases

@@ -36,6 +36,7 @@ class TagDetails(Model):
     }
 
     def __init__(self, id=None, tag_name=None, count=None, values=None):
+        super(TagDetails, self).__init__()
         self.id = id
         self.tag_name = tag_name
         self.count = count

@@ -25,7 +25,9 @@ class ManagementLockClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -42,7 +44,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
 
         super(ManagementLockClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('managementlockclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -50,7 +52,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
 
 
 class ManagementLockClient(object):
-    """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
+    """ManagementLockClient
 
     :ivar config: Configuration for client.
     :vartype config: ManagementLockClientConfiguration
@@ -61,7 +63,9 @@ class ManagementLockClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -73,7 +77,7 @@ class ManagementLockClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-09-01'
+        self.api_version = '2015-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
