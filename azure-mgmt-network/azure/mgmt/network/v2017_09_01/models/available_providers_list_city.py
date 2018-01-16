@@ -27,5 +27,6 @@ class AvailableProvidersListCity(Model):
     }
 
     def __init__(self, city_name=None, providers=None):
+        super(AvailableProvidersListCity, self).__init__()
         self.city_name = city_name
         self.providers = providers
