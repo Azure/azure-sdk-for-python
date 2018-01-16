@@ -74,6 +74,7 @@ class IpsecPolicy(Model):
     }
 
     def __init__(self, sa_life_time_seconds, sa_data_size_kilobytes, ipsec_encryption, ipsec_integrity, ike_encryption, ike_integrity, dh_group, pfs_group):
+        super(IpsecPolicy, self).__init__()
         self.sa_life_time_seconds = sa_life_time_seconds
         self.sa_data_size_kilobytes = sa_data_size_kilobytes
         self.ipsec_encryption = ipsec_encryption
