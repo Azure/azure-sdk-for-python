@@ -36,6 +36,7 @@ class Error(Model):
     }
 
     def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
+        super(Error, self).__init__()
         self.code = code
         self.message = message
         self.target = target

@@ -28,5 +28,6 @@ class IpTag(Model):
     }
 
     def __init__(self, ip_tag_type=None, tag=None):
+        super(IpTag, self).__init__()
         self.ip_tag_type = ip_tag_type
         self.tag = tag
