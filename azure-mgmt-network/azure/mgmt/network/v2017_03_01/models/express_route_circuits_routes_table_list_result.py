@@ -29,5 +29,6 @@ class ExpressRouteCircuitsRoutesTableListResult(Model):
     }
 
     def __init__(self, value=None, next_link=None):
+        super(ExpressRouteCircuitsRoutesTableListResult, self).__init__()
         self.value = value
         self.next_link = next_link
