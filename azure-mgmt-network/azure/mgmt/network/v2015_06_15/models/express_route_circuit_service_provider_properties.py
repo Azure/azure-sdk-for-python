@@ -30,6 +30,7 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
     }
 
     def __init__(self, service_provider_name=None, peering_location=None, bandwidth_in_mbps=None):
+        super(ExpressRouteCircuitServiceProviderProperties, self).__init__()
         self.service_provider_name = service_provider_name
         self.peering_location = peering_location
         self.bandwidth_in_mbps = bandwidth_in_mbps

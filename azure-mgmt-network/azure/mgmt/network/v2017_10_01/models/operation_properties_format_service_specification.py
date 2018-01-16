@@ -29,5 +29,6 @@ class OperationPropertiesFormatServiceSpecification(Model):
     }
 
     def __init__(self, metric_specifications=None, log_specifications=None):
+        super(OperationPropertiesFormatServiceSpecification, self).__init__()
         self.metric_specifications = metric_specifications
         self.log_specifications = log_specifications

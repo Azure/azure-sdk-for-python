@@ -48,6 +48,7 @@ class ConnectivityIssue(Model):
     }
 
     def __init__(self):
+        super(ConnectivityIssue, self).__init__()
         self.origin = None
         self.severity = None
         self.type = None

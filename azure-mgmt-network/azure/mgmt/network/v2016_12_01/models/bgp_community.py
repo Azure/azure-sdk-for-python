@@ -36,6 +36,7 @@ class BGPCommunity(Model):
     }
 
     def __init__(self, service_supported_region=None, community_name=None, community_value=None, community_prefixes=None):
+        super(BGPCommunity, self).__init__()
         self.service_supported_region = service_supported_region
         self.community_name = community_name
         self.community_value = community_value

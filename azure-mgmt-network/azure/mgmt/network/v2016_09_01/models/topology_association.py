@@ -34,6 +34,7 @@ class TopologyAssociation(Model):
     }
 
     def __init__(self, name=None, resource_id=None, association_type=None):
+        super(TopologyAssociation, self).__init__()
         self.name = name
         self.resource_id = resource_id
         self.association_type = association_type
