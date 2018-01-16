@@ -30,6 +30,7 @@ class ServiceEndpointPropertiesFormat(Model):
     }
 
     def __init__(self, service=None, locations=None, provisioning_state=None):
+        super(ServiceEndpointPropertiesFormat, self).__init__()
         self.service = service
         self.locations = locations
         self.provisioning_state = provisioning_state
