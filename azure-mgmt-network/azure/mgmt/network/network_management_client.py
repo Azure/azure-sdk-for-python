@@ -303,6 +303,22 @@ class NetworkManagementClient(object):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def connection_monitors(self):
+        """Instance depends on the API version:
+
+           * 2017-10-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2017_10_01.operations.ConnectionMonitorsOperations>`
+           * 2017-11-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2017_11_01.operations.ConnectionMonitorsOperations>`
+        """
+        api_version = self.profile.get('connection_monitors', self.api_version)
+        if api_version == '2017-10-01':
+            from .v2017_10_01.operations import ConnectionMonitorsOperations as OperationClass
+        elif api_version == '2017-11-01':
+            from .v2017_11_01.operations import ConnectionMonitorsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def default_security_rules(self):
         """Instance depends on the API version:
 
