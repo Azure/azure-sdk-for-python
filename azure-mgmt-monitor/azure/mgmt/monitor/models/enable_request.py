@@ -28,4 +28,5 @@ class EnableRequest(Model):
     }
 
     def __init__(self, receiver_name):
+        super(EnableRequest, self).__init__()
         self.receiver_name = receiver_name

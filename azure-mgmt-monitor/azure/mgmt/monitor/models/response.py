@@ -46,6 +46,7 @@ class Response(Model):
     }
 
     def __init__(self, timespan, value, cost=None, interval=None):
+        super(Response, self).__init__()
         self.cost = cost
         self.timespan = timespan
         self.interval = interval

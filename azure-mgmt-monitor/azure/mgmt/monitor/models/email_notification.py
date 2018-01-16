@@ -33,6 +33,7 @@ class EmailNotification(Model):
     }
 
     def __init__(self, send_to_subscription_administrator=None, send_to_subscription_co_administrators=None, custom_emails=None):
+        super(EmailNotification, self).__init__()
         self.send_to_subscription_administrator = send_to_subscription_administrator
         self.send_to_subscription_co_administrators = send_to_subscription_co_administrators
         self.custom_emails = custom_emails
