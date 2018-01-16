@@ -35,5 +35,6 @@ class VirtualNetworkUsageName(Model):
     }
 
     def __init__(self):
+        super(VirtualNetworkUsageName, self).__init__()
         self.localized_value = None
         self.value = None

@@ -27,5 +27,6 @@ class RetentionPolicyParameters(Model):
     }
 
     def __init__(self, days=0, enabled=False):
+        super(RetentionPolicyParameters, self).__init__()
         self.days = days
         self.enabled = enabled
