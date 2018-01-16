@@ -18,15 +18,22 @@ class TopologyParameters(Model):
     :param target_resource_group_name: The name of the target resource group
      to perform topology on.
     :type target_resource_group_name: str
+    :param target_virtual_network: The reference of the Virtual Network
+     resource.
+    :type target_virtual_network:
+     ~azure.mgmt.network.v2017_11_01.models.SubResource
+    :param target_subnet: The reference of the Subnet resource.
+    :type target_subnet: ~azure.mgmt.network.v2017_11_01.models.SubResource
     """
-
-    _validation = {
-        'target_resource_group_name': {'required': True},
-    }
 
     _attribute_map = {
         'target_resource_group_name': {'key': 'targetResourceGroupName', 'type': 'str'},
+        'target_virtual_network': {'key': 'targetVirtualNetwork', 'type': 'SubResource'},
+        'target_subnet': {'key': 'targetSubnet', 'type': 'SubResource'},
     }
 
-    def __init__(self, target_resource_group_name):
+    def __init__(self, target_resource_group_name=None, target_virtual_network=None, target_subnet=None):
+        super(TopologyParameters, self).__init__()
         self.target_resource_group_name = target_resource_group_name
+        self.target_virtual_network = target_virtual_network
+        self.target_subnet = target_subnet
