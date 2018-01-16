@@ -24,4 +24,5 @@ class GatewayRouteListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(GatewayRouteListResult, self).__init__()
         self.value = value

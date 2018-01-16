@@ -30,6 +30,7 @@ class Dimension(Model):
     }
 
     def __init__(self, name=None, display_name=None, internal_name=None):
+        super(Dimension, self).__init__()
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name

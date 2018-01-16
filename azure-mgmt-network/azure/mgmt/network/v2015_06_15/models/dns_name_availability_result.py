@@ -24,4 +24,5 @@ class DnsNameAvailabilityResult(Model):
     }
 
     def __init__(self, available=None):
+        super(DnsNameAvailabilityResult, self).__init__()
         self.available = available

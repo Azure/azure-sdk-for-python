@@ -29,4 +29,5 @@ class TopologyParameters(Model):
     }
 
     def __init__(self, target_resource_group_name):
+        super(TopologyParameters, self).__init__()
         self.target_resource_group_name = target_resource_group_name

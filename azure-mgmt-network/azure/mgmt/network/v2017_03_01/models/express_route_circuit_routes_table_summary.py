@@ -38,6 +38,7 @@ class ExpressRouteCircuitRoutesTableSummary(Model):
     }
 
     def __init__(self, neighbor=None, v=None, as_property=None, up_down=None, state_pfx_rcd=None):
+        super(ExpressRouteCircuitRoutesTableSummary, self).__init__()
         self.neighbor = neighbor
         self.v = v
         self.as_property = as_property

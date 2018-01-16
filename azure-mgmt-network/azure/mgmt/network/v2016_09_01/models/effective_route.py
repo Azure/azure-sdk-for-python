@@ -51,6 +51,7 @@ class EffectiveRoute(Model):
     }
 
     def __init__(self, name=None, source=None, state=None, address_prefix=None, next_hop_ip_address=None, next_hop_type=None):
+        super(EffectiveRoute, self).__init__()
         self.name = name
         self.source = source
         self.state = state
