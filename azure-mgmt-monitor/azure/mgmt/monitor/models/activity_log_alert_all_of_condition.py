@@ -30,4 +30,5 @@ class ActivityLogAlertAllOfCondition(Model):
     }
 
     def __init__(self, all_of):
+        super(ActivityLogAlertAllOfCondition, self).__init__()
         self.all_of = all_of
