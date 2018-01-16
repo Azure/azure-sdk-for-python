@@ -24,9 +24,9 @@ class Usage(Model):
      "Count" .
     :vartype unit: str
     :param current_value: The current value of the usage.
-    :type current_value: long
+    :type current_value: float
     :param limit: The limit of usage.
-    :type limit: long
+    :type limit: float
     :param name: The name of the type of usage.
     :type name: ~azure.mgmt.network.v2017_08_01.models.UsageName
     """
@@ -42,8 +42,8 @@ class Usage(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
+        'current_value': {'key': 'currentValue', 'type': 'float'},
+        'limit': {'key': 'limit', 'type': 'float'},
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
