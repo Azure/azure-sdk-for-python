@@ -8,7 +8,7 @@ interactions:
       Content-Length: ['43']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
@@ -16,13 +16,13 @@ interactions:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Sat, 04 Nov 2017 00:17:45 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:43 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['199']
     status: {code: 204, message: No Content}
 - request:
     body: null
@@ -32,17 +32,17 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"20","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"20","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1690']
+      content-length: ['751']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:46 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:44 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -50,6 +50,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"low_cpu_threshold": "5"}}'
@@ -60,7 +61,7 @@ interactions:
       Content-Length: ['42']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
@@ -68,13 +69,13 @@ interactions:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
-      date: ['Sat, 04 Nov 2017 00:17:46 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:45 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['199']
     status: {code: 204, message: No Content}
 - request:
     body: null
@@ -84,17 +85,17 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.15 azure-mgmt-advisor/0.1.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"5","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cosmosdata/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cosmosdata","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cosmosdata","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FunctionalTest/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-FunctionalTest","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-FunctionalTest","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzExpertStg/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-AzExpertStg","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-AzExpertStg","properties":{"exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"5","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1689']
+      content-length: ['750']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 04 Nov 2017 00:17:47 GMT']
+      date: ['Tue, 16 Jan 2018 21:49:46 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -102,5 +103,6 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
     status: {code: 200, message: OK}
 version: 1
