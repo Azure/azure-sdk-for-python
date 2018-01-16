@@ -35,6 +35,7 @@ class TopologyResource(Model):
     }
 
     def __init__(self, name=None, id=None, location=None, associations=None):
+        super(TopologyResource, self).__init__()
         self.name = name
         self.id = id
         self.location = location

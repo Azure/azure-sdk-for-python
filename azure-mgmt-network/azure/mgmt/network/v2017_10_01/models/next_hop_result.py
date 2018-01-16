@@ -36,6 +36,7 @@ class NextHopResult(Model):
     }
 
     def __init__(self, next_hop_type=None, next_hop_ip_address=None, route_table_id=None):
+        super(NextHopResult, self).__init__()
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.route_table_id = route_table_id

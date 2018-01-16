@@ -26,4 +26,5 @@ class LoadBalancerSku(Model):
     }
 
     def __init__(self, name=None):
+        super(LoadBalancerSku, self).__init__()
         self.name = name
