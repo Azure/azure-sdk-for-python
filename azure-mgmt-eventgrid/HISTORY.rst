@@ -10,6 +10,7 @@ Release History
 
 - EventSubscription create is renamed to create_or_update.
 - Regenerated SDK based on 2018-01-01 API version.
+- OperationOrigin enum is removed. Origin of the operation is now a string.
 
 0.3.0 (2017-11-02)
 ++++++++++++++++++
