@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.4.0 (2018-01-16)
+++++++++++++++++++
+
+**Breaking changes**
+
+- EventSubscription create is renamed to create_or_update.
+- Regenerated SDK based on 2018-01-01 API version.
+
 0.3.0 (2017-11-02)
 ++++++++++++++++++
 

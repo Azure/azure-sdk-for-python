@@ -24,4 +24,5 @@ class TopicUpdateParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(TopicUpdateParameters, self).__init__()
         self.tags = tags
