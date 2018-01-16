@@ -25,4 +25,5 @@ class EventSubscriptionFullUrl(Model):
     }
 
     def __init__(self, endpoint_url=None):
+        super(EventSubscriptionFullUrl, self).__init__()
         self.endpoint_url = endpoint_url

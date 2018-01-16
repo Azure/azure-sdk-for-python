@@ -42,12 +42,15 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         self.assertEqual(topic.name, topic_name)
 
         # Create a new event subscription to this topic
+        # Use this for recording mode
+        # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name        
         scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+
         destination = azure.mgmt.eventgrid.models.WebHookEventSubscriptionDestination("https://requestb.in/upue0lup")
         filter = azure.mgmt.eventgrid.models.EventSubscriptionFilter()
 
         event_subscription_info = azure.mgmt.eventgrid.models.EventSubscription(destination, filter)
-        es_result_create = self.eventgrid_client.event_subscriptions.create(scope, eventsubscription_name, event_subscription_info)
+        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
         event_subscription = es_result_create.result()
         self.assertEqual(eventsubscription_name, event_subscription.name)
 

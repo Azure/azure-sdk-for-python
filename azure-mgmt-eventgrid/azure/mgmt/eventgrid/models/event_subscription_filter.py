@@ -43,6 +43,7 @@ class EventSubscriptionFilter(Model):
     }
 
     def __init__(self, subject_begins_with=None, subject_ends_with=None, included_event_types=None, is_subject_case_sensitive=False):
+        super(EventSubscriptionFilter, self).__init__()
         self.subject_begins_with = subject_begins_with
         self.subject_ends_with = subject_ends_with
         self.included_event_types = included_event_types
