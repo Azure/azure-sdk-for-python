@@ -38,6 +38,7 @@ class TroubleshootingParameters(Model):
     }
 
     def __init__(self, target_resource_id, storage_id, storage_path):
+        super(TroubleshootingParameters, self).__init__()
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.storage_path = storage_path

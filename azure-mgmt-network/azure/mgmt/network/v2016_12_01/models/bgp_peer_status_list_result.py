@@ -24,4 +24,5 @@ class BgpPeerStatusListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(BgpPeerStatusListResult, self).__init__()
         self.value = value

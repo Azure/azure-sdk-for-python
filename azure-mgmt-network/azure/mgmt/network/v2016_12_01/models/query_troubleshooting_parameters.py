@@ -29,4 +29,5 @@ class QueryTroubleshootingParameters(Model):
     }
 
     def __init__(self, target_resource_id):
+        super(QueryTroubleshootingParameters, self).__init__()
         self.target_resource_id = target_resource_id
