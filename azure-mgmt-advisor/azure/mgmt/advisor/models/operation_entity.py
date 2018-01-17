@@ -18,8 +18,7 @@ class OperationEntity(Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: The operation supported by Advisor.
-    :type display: :class:`OperationDisplayInfo
-     <azure.mgmt.advisor.models.OperationDisplayInfo>`
+    :type display: ~azure.mgmt.advisor.models.OperationDisplayInfo
     """
 
     _attribute_map = {
@@ -28,5 +27,6 @@ class OperationEntity(Model):
     }
 
     def __init__(self, name=None, display=None):
+        super(OperationEntity, self).__init__()
         self.name = name
         self.display = display

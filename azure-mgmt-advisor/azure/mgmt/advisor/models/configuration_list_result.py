@@ -16,8 +16,7 @@ class ConfigurationListResult(Model):
     """The list of Advisor configurations.
 
     :param value: The list of configurations.
-    :type value: list of :class:`ConfigData
-     <azure.mgmt.advisor.models.ConfigData>`
+    :type value: list[~azure.mgmt.advisor.models.ConfigData]
     :param next_link: The link used to get the next page of configurations.
     :type next_link: str
     """
@@ -28,5 +27,6 @@ class ConfigurationListResult(Model):
     }
 
     def __init__(self, value=None, next_link=None):
+        super(ConfigurationListResult, self).__init__()
         self.value = value
         self.next_link = next_link
