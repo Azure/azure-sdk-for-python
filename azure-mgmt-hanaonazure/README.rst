@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `SAP Hana on Azure Management
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-hanaonazure.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com//python/azure/>`__
+on docs.microsoft.com.
 
 
 Provide Feedback

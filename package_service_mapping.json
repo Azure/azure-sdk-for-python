@@ -171,6 +171,13 @@
     ],
     "service_name": "Event Hubs"
   },
+  "azure-mgmt-hanaonazure": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.hanaonazure"
+    ],
+    "service_name": "SAP Hana on Azure"
+  },
   "azure-mgmt-hdinsight": {
     "category": "Management",
     "namespaces": [
