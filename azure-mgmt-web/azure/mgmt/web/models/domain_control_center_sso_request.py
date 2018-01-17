@@ -40,6 +40,7 @@ class DomainControlCenterSsoRequest(Model):
     }
 
     def __init__(self):
+        super(DomainControlCenterSsoRequest, self).__init__()
         self.url = None
         self.post_parameter_key = None
         self.post_parameter_value = None
