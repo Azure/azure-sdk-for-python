@@ -34,6 +34,7 @@ class OperationDisplayInfo(Model):
     }
 
     def __init__(self, description=None, operation=None, provider=None, resource=None):
+        super(OperationDisplayInfo, self).__init__()
         self.description = description
         self.operation = operation
         self.provider = provider

@@ -27,5 +27,6 @@ class ShortDescription(Model):
     }
 
     def __init__(self, problem=None, solution=None):
+        super(ShortDescription, self).__init__()
         self.problem = problem
         self.solution = solution
