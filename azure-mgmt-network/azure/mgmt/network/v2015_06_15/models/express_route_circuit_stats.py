@@ -27,5 +27,6 @@ class ExpressRouteCircuitStats(Model):
     }
 
     def __init__(self, bytes_in=None, bytes_out=None):
+        super(ExpressRouteCircuitStats, self).__init__()
         self.bytes_in = bytes_in
         self.bytes_out = bytes_out

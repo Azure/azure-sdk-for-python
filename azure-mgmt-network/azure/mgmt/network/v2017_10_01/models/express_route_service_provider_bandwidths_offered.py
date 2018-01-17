@@ -27,5 +27,6 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
     }
 
     def __init__(self, offer_name=None, value_in_mbps=None):
+        super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__()
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps

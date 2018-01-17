@@ -35,6 +35,7 @@ class TroubleshootingRecommendedActions(Model):
     }
 
     def __init__(self, action_id=None, action_text=None, action_uri=None, action_uri_text=None):
+        super(TroubleshootingRecommendedActions, self).__init__()
         self.action_id = action_id
         self.action_text = action_text
         self.action_uri = action_uri

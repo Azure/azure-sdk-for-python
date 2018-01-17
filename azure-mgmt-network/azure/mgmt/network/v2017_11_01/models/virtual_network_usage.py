@@ -48,6 +48,7 @@ class VirtualNetworkUsage(Model):
     }
 
     def __init__(self):
+        super(VirtualNetworkUsage, self).__init__()
         self.current_value = None
         self.id = None
         self.limit = None

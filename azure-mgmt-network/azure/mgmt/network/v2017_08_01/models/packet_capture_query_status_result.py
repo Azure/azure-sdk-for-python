@@ -44,6 +44,7 @@ class PacketCaptureQueryStatusResult(Model):
     }
 
     def __init__(self, name=None, id=None, capture_start_time=None, packet_capture_status=None, stop_reason=None, packet_capture_error=None):
+        super(PacketCaptureQueryStatusResult, self).__init__()
         self.name = name
         self.id = id
         self.capture_start_time = capture_start_time

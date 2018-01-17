@@ -29,4 +29,5 @@ class AvailableProvidersList(Model):
     }
 
     def __init__(self, countries):
+        super(AvailableProvidersList, self).__init__()
         self.countries = countries

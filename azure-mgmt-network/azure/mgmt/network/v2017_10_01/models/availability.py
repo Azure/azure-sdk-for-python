@@ -30,6 +30,7 @@ class Availability(Model):
     }
 
     def __init__(self, time_grain=None, retention=None, blob_duration=None):
+        super(Availability, self).__init__()
         self.time_grain = time_grain
         self.retention = retention
         self.blob_duration = blob_duration
