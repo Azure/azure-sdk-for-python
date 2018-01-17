@@ -32,5 +32,6 @@ class AzureReachabilityReportLatencyInfo(Model):
     }
 
     def __init__(self, time_stamp=None, score=None):
+        super(AzureReachabilityReportLatencyInfo, self).__init__()
         self.time_stamp = time_stamp
         self.score = score

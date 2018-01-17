@@ -26,4 +26,5 @@ class PublicIPAddressSku(Model):
     }
 
     def __init__(self, name=None):
+        super(PublicIPAddressSku, self).__init__()
         self.name = name

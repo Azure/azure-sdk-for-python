@@ -33,5 +33,6 @@ class ConnectivityParameters(Model):
     }
 
     def __init__(self, source, destination):
+        super(ConnectivityParameters, self).__init__()
         self.source = source
         self.destination = destination

@@ -32,6 +32,7 @@ class ConnectivityDestination(Model):
     }
 
     def __init__(self, resource_id=None, address=None, port=None):
+        super(ConnectivityDestination, self).__init__()
         self.resource_id = resource_id
         self.address = address
         self.port = port
