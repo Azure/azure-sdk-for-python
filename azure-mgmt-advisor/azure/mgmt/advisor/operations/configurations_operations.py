@@ -26,6 +26,8 @@ class ConfigurationsOperations(object):
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -47,13 +49,9 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConfigurationListResult
-         <azure.mgmt.advisor.models.ConfigurationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConfigurationListResult
-         <azure.mgmt.advisor.models.ConfigurationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConfigurationListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.advisor.models.ConfigurationListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -79,7 +77,7 @@ class ConfigurationsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -106,20 +104,15 @@ class ConfigurationsOperations(object):
 
         :param config_contract: The Azure Advisor configuration data
          structure.
-        :type config_contract: :class:`ConfigData
-         <azure.mgmt.advisor.models.ConfigData>`
+        :type config_contract: ~azure.mgmt.advisor.models.ConfigData
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ARMErrorResponseBody
-         <azure.mgmt.advisor.models.ARMErrorResponseBody>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ARMErrorResponseBody
-         <azure.mgmt.advisor.models.ARMErrorResponseBody>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ARMErrorResponseBody or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.advisor.models.ARMErrorResponseBody or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -149,7 +142,7 @@ class ConfigurationsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204, 400]:
             exp = CloudError(response)
@@ -178,13 +171,9 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ConfigurationListResult
-         <azure.mgmt.advisor.models.ConfigurationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ConfigurationListResult
-         <azure.mgmt.advisor.models.ConfigurationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ConfigurationListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.advisor.models.ConfigurationListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -211,7 +200,7 @@ class ConfigurationsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -235,8 +224,7 @@ class ConfigurationsOperations(object):
 
         :param config_contract: The Azure Advisor configuration data
          structure.
-        :type config_contract: :class:`ConfigData
-         <azure.mgmt.advisor.models.ConfigData>`
+        :type config_contract: ~azure.mgmt.advisor.models.ConfigData
         :param resource_group: The name of the Azure resource group.
         :type resource_group: str
         :param dict custom_headers: headers that will be added to the request
@@ -244,13 +232,9 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ARMErrorResponseBody
-         <azure.mgmt.advisor.models.ARMErrorResponseBody>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ARMErrorResponseBody
-         <azure.mgmt.advisor.models.ARMErrorResponseBody>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ARMErrorResponseBody or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.advisor.models.ARMErrorResponseBody or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -281,7 +265,7 @@ class ConfigurationsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204, 400]:
             exp = CloudError(response)
