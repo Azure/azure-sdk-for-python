@@ -23,6 +23,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-mgmt-advisor": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.advisor"
+    ],
+    "service_name": "Advisor"
+  },
   "azure-mgmt-authorization": {
     "category ": "Management",
     "namespaces": [

@@ -19,7 +19,7 @@ except ImportError:
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-advisor"
-PACKAGE_PPRINT_NAME = "Azure Advisor"
+PACKAGE_PPRINT_NAME = "Advisor"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -69,7 +69,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -78,7 +77,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure~=0.4.11',
+        'msrestazure>=0.4.20,<2.0.0',
         'azure-common~=1.1',
     ],
     cmdclass=cmdclass
