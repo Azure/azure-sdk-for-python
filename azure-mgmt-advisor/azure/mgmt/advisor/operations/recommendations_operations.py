@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -26,6 +27,8 @@ class RecommendationsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -47,11 +50,8 @@ class RecommendationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -77,7 +77,7 @@ class RecommendationsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)
@@ -92,29 +92,9 @@ class RecommendationsOperations(object):
             })
             return client_raw_response
 
-    def get_generate_status(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the status of the recommendation computation or generation
-        process. Invoke this API after calling the generation recommendation.
-        The URI of this API is returned in the Location field of the response
-        header.
 
-        :param operation_id: The operation ID, which can be found from the
-         Location field in the generate recommendation response header.
-        :type operation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_generate_status_initial(
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}'
         path_format_arguments = {
@@ -138,18 +118,59 @@ class RecommendationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.get(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_generate_status(
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the status of the recommendation computation or generation
+        process. Invoke this API after calling the generation recommendation.
+        The URI of this API is returned in the Location field of the response
+        header.
+
+        :param operation_id: The operation ID, which can be found from the
+         Location field in the generate recommendation response header.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_generate_status_initial(
+            operation_id=operation_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -161,10 +182,6 @@ class RecommendationsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -191,11 +208,9 @@ class RecommendationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ResourceRecommendationBase
-         <azure.mgmt.advisor.models.ResourceRecommendationBase>`
-        :rtype: :class:`ResourceRecommendationBasePaged
-         <azure.mgmt.advisor.models.ResourceRecommendationBasePaged>`
+        :return: An iterator like instance of ResourceRecommendationBase
+        :rtype:
+         ~azure.mgmt.advisor.models.ResourceRecommendationBasePaged[~azure.mgmt.advisor.models.ResourceRecommendationBase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -235,7 +250,7 @@ class RecommendationsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -268,13 +283,9 @@ class RecommendationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceRecommendationBase
-         <azure.mgmt.advisor.models.ResourceRecommendationBase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceRecommendationBase
-         <azure.mgmt.advisor.models.ResourceRecommendationBase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceRecommendationBase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -301,7 +312,7 @@ class RecommendationsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

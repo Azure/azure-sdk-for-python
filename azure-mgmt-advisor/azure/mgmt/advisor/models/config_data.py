@@ -22,8 +22,7 @@ class ConfigData(Model):
     :param name: The name of the configuration resource.
     :type name: str
     :param properties: The list of property name/value pairs.
-    :type properties: :class:`ConfigDataProperties
-     <azure.mgmt.advisor.models.ConfigDataProperties>`
+    :type properties: ~azure.mgmt.advisor.models.ConfigDataProperties
     """
 
     _attribute_map = {
@@ -34,6 +33,7 @@ class ConfigData(Model):
     }
 
     def __init__(self, id=None, type=None, name=None, properties=None):
+        super(ConfigData, self).__init__()
         self.id = id
         self.type = type
         self.name = name

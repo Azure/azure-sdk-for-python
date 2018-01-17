@@ -17,7 +17,7 @@ class ConfigDataProperties(Model):
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
-    :type additional_properties: dict
+    :type additional_properties: dict[str, object]
     :param exclude: Exclude the resource from Advisor evaluations. Valid
      values: False (default) or True.
     :type exclude: bool
@@ -34,6 +34,7 @@ class ConfigDataProperties(Model):
     }
 
     def __init__(self, additional_properties=None, exclude=None, low_cpu_threshold=None):
+        super(ConfigDataProperties, self).__init__()
         self.additional_properties = additional_properties
         self.exclude = exclude
         self.low_cpu_threshold = low_cpu_threshold
