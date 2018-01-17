@@ -29,5 +29,6 @@ class ARMErrorResponseBody(Model):
     }
 
     def __init__(self, message=None, code=None):
+        super(ARMErrorResponseBody, self).__init__()
         self.message = message
         self.code = code
