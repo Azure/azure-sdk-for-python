@@ -26,11 +26,10 @@ class ResourceRecommendationBase(Resource):
     :vartype type: str
     :param category: The category of the recommendation. Possible values
      include: 'HighAvailability', 'Security', 'Performance', 'Cost'
-    :type category: str or :class:`Category
-     <azure.mgmt.advisor.models.Category>`
+    :type category: str or ~azure.mgmt.advisor.models.Category
     :param impact: The business impact of the recommendation. Possible values
      include: 'High', 'Medium', 'Low'
-    :type impact: str or :class:`Impact <azure.mgmt.advisor.models.Impact>`
+    :type impact: str or ~azure.mgmt.advisor.models.Impact
     :param impacted_field: The resource type identified by Advisor.
     :type impacted_field: str
     :param impacted_value: The resource identified by Advisor.
@@ -39,18 +38,17 @@ class ResourceRecommendationBase(Resource):
      validity of the recommendation.
     :type last_updated: datetime
     :param metadata: The recommendation metadata.
-    :type metadata: dict
+    :type metadata: dict[str, object]
     :param recommendation_type_id: The recommendation-type GUID.
     :type recommendation_type_id: str
     :param risk: The potential risk of not implementing the recommendation.
      Possible values include: 'Error', 'Warning', 'None'
-    :type risk: str or :class:`Risk <azure.mgmt.advisor.models.Risk>`
+    :type risk: str or ~azure.mgmt.advisor.models.Risk
     :param short_description: A summary of the recommendation.
-    :type short_description: :class:`ShortDescription
-     <azure.mgmt.advisor.models.ShortDescription>`
+    :type short_description: ~azure.mgmt.advisor.models.ShortDescription
     :param suppression_ids: The list of snoozed and dismissed rules for the
      recommendation.
-    :type suppression_ids: list of str
+    :type suppression_ids: list[str]
     """
 
     _validation = {
