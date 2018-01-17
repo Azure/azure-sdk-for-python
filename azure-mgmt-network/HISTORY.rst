@@ -3,6 +3,19 @@
 Release History
 ===============
 
+1.8.0a1 (2017-XX-XX)
+++++++++++++++++++++
+
+**Features**
+
+- Add ConnectionMonitor operation group (2017-10/11-01)
+- Add target_virtual_network / target_subet to topology_parameter (2017-10/11-01)
+- Add idle_timeout_in_minutes / enable_floating_ip to inbound_nat_pool (2017-11-01)
+
+**Bugfixes**
+
+- Fix peer_asn validation rules (2017-10/11-01)
+
 1.7.1 (2017-12-20)
 ++++++++++++++++++
 

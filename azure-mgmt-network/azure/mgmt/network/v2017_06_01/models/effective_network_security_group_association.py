@@ -28,5 +28,6 @@ class EffectiveNetworkSecurityGroupAssociation(Model):
     }
 
     def __init__(self, subnet=None, network_interface=None):
+        super(EffectiveNetworkSecurityGroupAssociation, self).__init__()
         self.subnet = subnet
         self.network_interface = network_interface

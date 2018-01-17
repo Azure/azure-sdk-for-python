@@ -47,6 +47,7 @@ class NetworkInterfaceDnsSettings(Model):
     }
 
     def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, internal_domain_name_suffix=None):
+        super(NetworkInterfaceDnsSettings, self).__init__()
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label
