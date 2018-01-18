@@ -9,5 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.8.3"
+from msrest.serialization import Model
 
+
+class ResourceMoveDefinition(Model):
+    """Contains the information necessary to perform a resource move (rename).
+
+    :param id: The target ID for the resource
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id):
+        self.id = id
