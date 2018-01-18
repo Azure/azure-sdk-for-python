@@ -71,6 +71,7 @@ class RecommendationRule(Model):
     }
 
     def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
+        super(RecommendationRule, self).__init__()
         self.name = name
         self.display_name = display_name
         self.message = message

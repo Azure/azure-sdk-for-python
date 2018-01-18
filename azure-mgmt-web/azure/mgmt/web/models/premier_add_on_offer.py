@@ -26,18 +26,18 @@ class PremierAddOnOffer(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param sku: SKU.
+    :param sku: Premier add on SKU.
     :type sku: str
-    :param product: Product.
+    :param product: Premier add on offer Product.
     :type product: str
-    :param vendor: Vendor.
+    :param vendor: Premier add on offer Vendor.
     :type vendor: str
-    :param premier_add_on_offer_name: Name.
+    :param premier_add_on_offer_name: Premier add on offer Name.
     :type premier_add_on_offer_name: str
     :param promo_code_required: <code>true</code> if promotion code is
      required; otherwise, <code>false</code>.
     :type promo_code_required: bool
-    :param quota: Quota.
+    :param quota: Premier add on offer Quota.
     :type quota: int
     :param web_hosting_plan_restrictions: App Service plans this offer is
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',

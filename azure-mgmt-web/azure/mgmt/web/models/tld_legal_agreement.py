@@ -39,6 +39,7 @@ class TldLegalAgreement(Model):
     }
 
     def __init__(self, agreement_key, title, content, url=None):
+        super(TldLegalAgreement, self).__init__()
         self.agreement_key = agreement_key
         self.title = title
         self.content = content

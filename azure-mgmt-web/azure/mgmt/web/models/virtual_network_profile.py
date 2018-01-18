@@ -41,6 +41,7 @@ class VirtualNetworkProfile(Model):
     }
 
     def __init__(self, id=None, subnet=None):
+        super(VirtualNetworkProfile, self).__init__()
         self.id = id
         self.name = None
         self.type = None

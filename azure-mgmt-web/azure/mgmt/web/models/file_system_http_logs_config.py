@@ -40,6 +40,7 @@ class FileSystemHttpLogsConfig(Model):
     }
 
     def __init__(self, retention_in_mb=None, retention_in_days=None, enabled=None):
+        super(FileSystemHttpLogsConfig, self).__init__()
         self.retention_in_mb = retention_in_mb
         self.retention_in_days = retention_in_days
         self.enabled = enabled

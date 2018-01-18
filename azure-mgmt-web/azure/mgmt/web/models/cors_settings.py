@@ -26,4 +26,5 @@ class CorsSettings(Model):
     }
 
     def __init__(self, allowed_origins=None):
+        super(CorsSettings, self).__init__()
         self.allowed_origins = allowed_origins
