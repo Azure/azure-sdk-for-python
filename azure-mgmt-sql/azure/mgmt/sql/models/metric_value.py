@@ -51,6 +51,7 @@ class MetricValue(Model):
     }
 
     def __init__(self):
+        super(MetricValue, self).__init__()
         self.count = None
         self.average = None
         self.maximum = None

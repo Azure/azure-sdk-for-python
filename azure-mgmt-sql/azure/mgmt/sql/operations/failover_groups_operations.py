@@ -27,6 +27,8 @@ class FailoverGroupsOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -172,7 +174,7 @@ class FailoverGroupsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp

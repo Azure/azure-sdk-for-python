@@ -50,6 +50,7 @@ class ServerUpdate(Model):
     }
 
     def __init__(self, administrator_login=None, administrator_login_password=None, version=None, tags=None):
+        super(ServerUpdate, self).__init__()
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version

@@ -28,5 +28,6 @@ class SyncGroupSchema(Model):
     }
 
     def __init__(self, tables=None, master_sync_member_name=None):
+        super(SyncGroupSchema, self).__init__()
         self.tables = tables
         self.master_sync_member_name = master_sync_member_name

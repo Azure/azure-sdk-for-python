@@ -9,27 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SyncDatabaseIdProperties(Model):
-    """Properties of the sync database id.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: ARM resource id of sync database.
-    :vartype id: str
+class BackupLongTermRetentionVaultPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BackupLongTermRetentionVault <azure.mgmt.sql.models.BackupLongTermRetentionVault>` object
     """
 
-    _validation = {
-        'id': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BackupLongTermRetentionVault]'}
     }
 
-    def __init__(self):
-        super(SyncDatabaseIdProperties, self).__init__()
-        self.id = None
+    def __init__(self, *args, **kwargs):
+
+        super(BackupLongTermRetentionVaultPaged, self).__init__(*args, **kwargs)

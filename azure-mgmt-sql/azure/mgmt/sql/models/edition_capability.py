@@ -47,6 +47,7 @@ class EditionCapability(Model):
     }
 
     def __init__(self):
+        super(EditionCapability, self).__init__()
         self.name = None
         self.status = None
         self.supported_service_level_objectives = None

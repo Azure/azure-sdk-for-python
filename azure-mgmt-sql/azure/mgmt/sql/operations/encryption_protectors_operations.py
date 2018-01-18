@@ -28,6 +28,8 @@ class EncryptionProtectorsOperations(object):
     :ivar encryption_protector_name: The name of the encryption protector to be retrieved. Constant value: "current".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

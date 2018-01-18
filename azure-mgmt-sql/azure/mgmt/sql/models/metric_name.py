@@ -35,5 +35,6 @@ class MetricName(Model):
     }
 
     def __init__(self):
+        super(MetricName, self).__init__()
         self.value = None
         self.localized_value = None
