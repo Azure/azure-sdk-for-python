@@ -27,19 +27,60 @@ class RecurrenceSchedule(Model):
     :param monthly_occurrences: The monthly occurrences.
     :type monthly_occurrences: list of :class:`RecurrenceScheduleOccurrence
      <azure.mgmt.logic.models.RecurrenceScheduleOccurrence>`
+    :param time_zone: the timezone of the start and end times for the profile.
+     Some examples of valid timezones are: Dateline Standard Time, UTC-11,
+     Hawaiian Standard Time, Alaskan Standard Time, Pacific Standard Time
+     (Mexico), Pacific Standard Time, US Mountain Standard Time, Mountain
+     Standard Time (Mexico), Mountain Standard Time, Central America Standard
+     Time, Central Standard Time, Central Standard Time (Mexico), Canada
+     Central Standard Time, SA Pacific Standard Time, Eastern Standard Time, US
+     Eastern Standard Time, Venezuela Standard Time, Paraguay Standard Time,
+     Atlantic Standard Time, Central Brazilian Standard Time, SA Western
+     Standard Time, Pacific SA Standard Time, Newfoundland Standard Time, E.
+     South America Standard Time, Argentina Standard Time, SA Eastern Standard
+     Time, Greenland Standard Time, Montevideo Standard Time, Bahia Standard
+     Time, UTC-02, Mid-Atlantic Standard Time, Azores Standard Time, Cape Verde
+     Standard Time, Morocco Standard Time, UTC, GMT Standard Time, Greenwich
+     Standard Time, W. Europe Standard Time, Central Europe Standard Time,
+     Romance Standard Time, Central European Standard Time, W. Central Africa
+     Standard Time, Namibia Standard Time, Jordan Standard Time, GTB Standard
+     Time, Middle East Standard Time, Egypt Standard Time, Syria Standard Time,
+     E. Europe Standard Time, South Africa Standard Time, FLE Standard Time,
+     Turkey Standard Time, Israel Standard Time, Kaliningrad Standard Time,
+     Libya Standard Time, Arabic Standard Time, Arab Standard Time, Belarus
+     Standard Time, Russian Standard Time, E. Africa Standard Time, Iran
+     Standard Time, Arabian Standard Time, Azerbaijan Standard Time, Russia
+     Time Zone 3, Mauritius Standard Time, Georgian Standard Time, Caucasus
+     Standard Time, Afghanistan Standard Time, West Asia Standard Time,
+     Ekaterinburg Standard Time, Pakistan Standard Time, India Standard Time,
+     Sri Lanka Standard Time, Nepal Standard Time, Central Asia Standard Time,
+     Bangladesh Standard Time, N. Central Asia Standard Time, Myanmar Standard
+     Time, SE Asia Standard Time, North Asia Standard Time, China Standard
+     Time, North Asia East Standard Time, Singapore Standard Time, W. Australia
+     Standard Time, Taipei Standard Time, Ulaanbaatar Standard Time, Tokyo
+     Standard Time, Korea Standard Time, Yakutsk Standard Time, Cen. Australia
+     Standard Time, AUS Central Standard Time, E. Australia Standard Time, AUS
+     Eastern Standard Time, West Pacific Standard Time, Tasmania Standard Time,
+     Magadan Standard Time, Vladivostok Standard Time, Russia Time Zone 10,
+     Central Pacific Standard Time, Russia Time Zone 11, New Zealand Standard
+     Time, UTC+12, Fiji Standard Time, Kamchatka Standard Time, Tonga Standard
+     Time, Samoa Standard Time, Line Islands Standard Time
+    :type time_zone: str
     """
 
     _attribute_map = {
         'minutes': {'key': 'minutes', 'type': '[int]'},
         'hours': {'key': 'hours', 'type': '[int]'},
-        'week_days': {'key': 'weekDays', 'type': '[DaysOfWeek]'},
+        'week_days': {'key': 'days', 'type': '[DaysOfWeek]'},
         'month_days': {'key': 'monthDays', 'type': '[int]'},
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+    def __init__(self, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None, time_zone=None):
         self.minutes = minutes
         self.hours = hours
         self.week_days = week_days
         self.month_days = month_days
         self.monthly_occurrences = monthly_occurrences
+        self.time_zone = time_zone
