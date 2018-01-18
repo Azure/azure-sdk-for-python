@@ -47,6 +47,7 @@ class StorageAccountCreateParameters(Model):
     }
 
     def __init__(self, location, account_type, tags=None):
+        super(StorageAccountCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.account_type = account_type

@@ -41,6 +41,7 @@ class StorageAccountKey(Model):
     }
 
     def __init__(self):
+        super(StorageAccountKey, self).__init__()
         self.key_name = None
         self.value = None
         self.permissions = None

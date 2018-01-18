@@ -39,5 +39,6 @@ class Sku(Model):
     }
 
     def __init__(self, name):
+        super(Sku, self).__init__()
         self.name = name
         self.tier = None

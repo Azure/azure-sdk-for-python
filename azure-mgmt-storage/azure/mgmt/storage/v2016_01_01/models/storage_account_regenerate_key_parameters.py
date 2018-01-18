@@ -28,4 +28,5 @@ class StorageAccountRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_name):
+        super(StorageAccountRegenerateKeyParameters, self).__init__()
         self.key_name = key_name
