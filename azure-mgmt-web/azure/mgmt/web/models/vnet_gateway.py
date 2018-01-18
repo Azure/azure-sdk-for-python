@@ -37,6 +37,7 @@ class VnetGateway(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'vpn_package_uri': {'required': True},
     }
 
     _attribute_map = {
@@ -48,7 +49,7 @@ class VnetGateway(ProxyOnlyResource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, vnet_name=None, vpn_package_uri=None):
+    def __init__(self, vpn_package_uri, kind=None, vnet_name=None):
         super(VnetGateway, self).__init__(kind=kind)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

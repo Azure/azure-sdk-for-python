@@ -39,6 +39,7 @@ class ErrorEntity(Model):
     }
 
     def __init__(self, extended_code=None, message_template=None, parameters=None, inner_errors=None, code=None, message=None):
+        super(ErrorEntity, self).__init__()
         self.extended_code = extended_code
         self.message_template = message_template
         self.parameters = parameters

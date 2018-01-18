@@ -43,6 +43,7 @@ class AppServiceCertificate(Model):
     }
 
     def __init__(self, key_vault_id=None, key_vault_secret_name=None):
+        super(AppServiceCertificate, self).__init__()
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None

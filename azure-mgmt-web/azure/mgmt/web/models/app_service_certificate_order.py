@@ -89,6 +89,7 @@ class AppServiceCertificateOrder(Resource):
         'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
         'validity_in_years': {'maximum': 3, 'minimum': 1},
+        'product_type': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'signed_certificate': {'readonly': True},
@@ -130,7 +131,7 @@ class AppServiceCertificateOrder(Resource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, kind=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
+    def __init__(self, location, product_type, kind=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, auto_renew=True, csr=None):
         super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags)
         self.certificates = certificates
         self.distinguished_name = distinguished_name

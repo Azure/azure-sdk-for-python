@@ -34,6 +34,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
     }
 
     def __init__(self, level=None, sas_url=None, retention_in_days=None):
+        super(AzureBlobStorageApplicationLogsConfig, self).__init__()
         self.level = level
         self.sas_url = sas_url
         self.retention_in_days = retention_in_days

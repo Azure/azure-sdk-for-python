@@ -25,4 +25,5 @@ class FileSystemApplicationLogsConfig(Model):
     }
 
     def __init__(self, level="Off"):
+        super(FileSystemApplicationLogsConfig, self).__init__()
         self.level = level
