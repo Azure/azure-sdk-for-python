@@ -44,6 +44,7 @@ class OperationImpact(Model):
     }
 
     def __init__(self):
+        super(OperationImpact, self).__init__()
         self.name = None
         self.unit = None
         self.change_value_absolute = None

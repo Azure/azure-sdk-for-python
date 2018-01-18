@@ -35,13 +35,19 @@ class ImportRequest(ExportRequest):
     :param database_name: The name of the database to import.
     :type database_name: str
     :param edition: The edition for the database being created. Possible
-     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
-     'Stretch', 'DataWarehouse', 'System', 'System2'
+     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium',
+     'PremiumRS', 'Free', 'Stretch', 'DataWarehouse', 'System', 'System2'
     :type edition: str or ~azure.mgmt.sql.models.DatabaseEdition
     :param service_objective_name: The name of the service objective to assign
-     to the database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3',
-     'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2',
-     'ElasticPool'
+     to the database. Possible values include: 'System', 'System0', 'System1',
+     'System2', 'System3', 'System4', 'System2L', 'System3L', 'System4L',
+     'Free', 'Basic', 'S0', 'S1', 'S2', 'S3', 'S4', 'S6', 'S7', 'S9', 'S12',
+     'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'PRS1', 'PRS2', 'PRS4',
+     'PRS6', 'DW100', 'DW200', 'DW300', 'DW400', 'DW500', 'DW600', 'DW1000',
+     'DW1200', 'DW1000c', 'DW1500', 'DW1500c', 'DW2000', 'DW2000c', 'DW3000',
+     'DW2500c', 'DW3000c', 'DW6000', 'DW5000c', 'DW6000c', 'DW7500c',
+     'DW10000c', 'DW15000c', 'DW30000c', 'DS100', 'DS200', 'DS300', 'DS400',
+     'DS500', 'DS600', 'DS1000', 'DS1200', 'DS1500', 'DS2000', 'ElasticPool'
     :type service_objective_name: str or
      ~azure.mgmt.sql.models.ServiceObjectiveName
     :param max_size_bytes: The maximum size for the newly imported database.

@@ -27,6 +27,8 @@ class ServerConnectionPoliciesOperations(object):
     :ivar connection_policy_name: The name of the connection policy. Constant value: "default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

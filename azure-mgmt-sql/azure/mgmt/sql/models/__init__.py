@@ -92,8 +92,11 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .resource_move_definition import ResourceMoveDefinition
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+from .backup_long_term_retention_policy_paged import BackupLongTermRetentionPolicyPaged
+from .backup_long_term_retention_vault_paged import BackupLongTermRetentionVaultPaged
 from .restore_point_paged import RestorePointPaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
@@ -268,8 +271,11 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'ResourceMoveDefinition',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'BackupLongTermRetentionPolicyPaged',
+    'BackupLongTermRetentionVaultPaged',
     'RestorePointPaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',

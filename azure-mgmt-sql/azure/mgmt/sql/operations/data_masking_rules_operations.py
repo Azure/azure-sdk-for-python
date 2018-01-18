@@ -27,6 +27,8 @@ class DataMaskingRulesOperations(object):
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
