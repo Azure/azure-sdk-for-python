@@ -36,5 +36,6 @@ class UsageName(Model):
     }
 
     def __init__(self):
+        super(UsageName, self).__init__()
         self.value = None
         self.localized_value = None

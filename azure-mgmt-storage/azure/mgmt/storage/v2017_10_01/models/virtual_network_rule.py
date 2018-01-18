@@ -38,6 +38,7 @@ class VirtualNetworkRule(Model):
     }
 
     def __init__(self, virtual_network_resource_id, action="Allow", state=None):
+        super(VirtualNetworkRule, self).__init__()
         self.virtual_network_resource_id = virtual_network_resource_id
         self.action = action
         self.state = state

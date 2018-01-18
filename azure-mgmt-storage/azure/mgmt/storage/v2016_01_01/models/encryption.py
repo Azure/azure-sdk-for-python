@@ -38,4 +38,5 @@ class Encryption(Model):
     key_source = "Microsoft.Storage"
 
     def __init__(self, services=None):
+        super(Encryption, self).__init__()
         self.services = services

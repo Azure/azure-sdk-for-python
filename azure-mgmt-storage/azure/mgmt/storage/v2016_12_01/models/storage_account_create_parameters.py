@@ -69,6 +69,7 @@ class StorageAccountCreateParameters(Model):
     }
 
     def __init__(self, sku, kind, location, tags=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False):
+        super(StorageAccountCreateParameters, self).__init__()
         self.sku = sku
         self.kind = kind
         self.location = location

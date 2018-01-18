@@ -32,4 +32,5 @@ class ListServiceSasResponse(Model):
     }
 
     def __init__(self):
+        super(ListServiceSasResponse, self).__init__()
         self.service_sas_token = None

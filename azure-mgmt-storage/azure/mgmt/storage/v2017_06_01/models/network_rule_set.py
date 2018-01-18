@@ -45,6 +45,7 @@ class NetworkRuleSet(Model):
     }
 
     def __init__(self, bypass="AzureServices", virtual_network_rules=None, ip_rules=None, default_action="Allow"):
+        super(NetworkRuleSet, self).__init__()
         self.bypass = bypass
         self.virtual_network_rules = virtual_network_rules
         self.ip_rules = ip_rules

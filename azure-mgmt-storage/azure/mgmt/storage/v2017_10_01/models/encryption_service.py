@@ -38,5 +38,6 @@ class EncryptionService(Model):
     }
 
     def __init__(self, enabled=None):
+        super(EncryptionService, self).__init__()
         self.enabled = enabled
         self.last_enabled_time = None

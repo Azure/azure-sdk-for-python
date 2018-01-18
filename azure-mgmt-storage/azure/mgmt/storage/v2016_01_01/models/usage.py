@@ -47,6 +47,7 @@ class Usage(Model):
     }
 
     def __init__(self):
+        super(Usage, self).__init__()
         self.unit = None
         self.current_value = None
         self.limit = None

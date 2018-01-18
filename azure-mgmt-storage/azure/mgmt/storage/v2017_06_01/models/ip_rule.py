@@ -33,5 +33,6 @@ class IPRule(Model):
     }
 
     def __init__(self, ip_address_or_range, action="Allow"):
+        super(IPRule, self).__init__()
         self.ip_address_or_range = ip_address_or_range
         self.action = action

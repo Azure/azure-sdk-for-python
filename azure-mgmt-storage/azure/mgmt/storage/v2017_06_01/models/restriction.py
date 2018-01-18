@@ -45,6 +45,7 @@ class Restriction(Model):
     }
 
     def __init__(self, reason_code=None):
+        super(Restriction, self).__init__()
         self.type = None
         self.values = None
         self.reason_code = reason_code

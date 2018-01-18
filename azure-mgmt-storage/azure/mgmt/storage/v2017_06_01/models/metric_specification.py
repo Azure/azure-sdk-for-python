@@ -51,6 +51,7 @@ class MetricSpecification(Model):
     }
 
     def __init__(self, name=None, display_name=None, display_description=None, unit=None, dimensions=None, aggregation_type=None, fill_gap_with_zero=None, category=None, resource_id_dimension_name_override=None):
+        super(MetricSpecification, self).__init__()
         self.name = name
         self.display_name = display_name
         self.display_description = display_description

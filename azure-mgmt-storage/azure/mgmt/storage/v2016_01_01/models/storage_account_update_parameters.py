@@ -50,6 +50,7 @@ class StorageAccountUpdateParameters(Model):
     }
 
     def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None):
+        super(StorageAccountUpdateParameters, self).__init__()
         self.sku = sku
         self.tags = tags
         self.custom_domain = custom_domain
