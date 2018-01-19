@@ -30,6 +30,7 @@ class IpAddressGroup(Model):
     }
 
     def __init__(self, delivery_region=None, ipv4_addresses=None, ipv6_addresses=None):
+        super(IpAddressGroup, self).__init__()
         self.delivery_region = delivery_region
         self.ipv4_addresses = ipv4_addresses
         self.ipv6_addresses = ipv6_addresses
