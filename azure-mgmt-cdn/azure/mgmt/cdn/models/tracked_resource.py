@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource import Resource
 
 
-class Profile(TrackedResource):
-    """CDN profile is a logical grouping of endpoints that share the same
-    settings, such as CDN provider and pricing tier.
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,15 +28,6 @@ class Profile(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param sku: The pricing tier (defines a CDN provider, feature list and
-     rate) of the CDN profile.
-    :type sku: ~azure.mgmt.cdn.models.Sku
-    :ivar resource_state: Resource status of the profile. Possible values
-     include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :vartype resource_state: str or
-     ~azure.mgmt.cdn.models.ProfileResourceState
-    :ivar provisioning_state: Provisioning status of the profile.
-    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -45,9 +35,6 @@ class Profile(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'sku': {'required': True},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -56,13 +43,9 @@ class Profile(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, sku, tags=None):
-        super(Profile, self).__init__(location=location, tags=tags)
-        self.sku = sku
-        self.resource_state = None
-        self.provisioning_state = None
+    def __init__(self, location, tags=None):
+        super(TrackedResource, self).__init__()
+        self.location = location
+        self.tags = tags
