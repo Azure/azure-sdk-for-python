@@ -17,18 +17,20 @@ class ProtectedItemQueryObject(Model):
 
     :param health_state: Health State for the backed up item. Possible values
      include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
-    :type health_state: str or :class:`HealthState
-     <azure.mgmt.recoveryservicesbackup.models.HealthState>`
+    :type health_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthState
     :param backup_management_type: Backup management type for the backed up
      item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param item_type: Type of workload this item represents. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
-     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource'
-    :type item_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
+     'SQLDataBase', 'AzureFileShare'
+    :type item_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param policy_name: Backup policy name associated with the backup item.
     :type policy_name: str
     :param container_name: Name of the container.
@@ -37,6 +39,10 @@ class ProtectedItemQueryObject(Model):
     :type backup_engine_name: str
     :param friendly_name: Friendly name of protected item
     :type friendly_name: str
+    :param fabric_name: Name of the fabric.
+    :type fabric_name: str
+    :param backup_set_name: Name of the backup set.
+    :type backup_set_name: str
     """
 
     _attribute_map = {
@@ -47,9 +53,12 @@ class ProtectedItemQueryObject(Model):
         'container_name': {'key': 'containerName', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
+        'fabric_name': {'key': 'fabricName', 'type': 'str'},
+        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, backup_management_type=None, item_type=None, policy_name=None, container_name=None, backup_engine_name=None, friendly_name=None):
+    def __init__(self, health_state=None, backup_management_type=None, item_type=None, policy_name=None, container_name=None, backup_engine_name=None, friendly_name=None, fabric_name=None, backup_set_name=None):
+        super(ProtectedItemQueryObject, self).__init__()
         self.health_state = health_state
         self.backup_management_type = backup_management_type
         self.item_type = item_type
@@ -57,3 +66,5 @@ class ProtectedItemQueryObject(Model):
         self.container_name = container_name
         self.backup_engine_name = backup_engine_name
         self.friendly_name = friendly_name
+        self.fabric_name = fabric_name
+        self.backup_set_name = backup_set_name

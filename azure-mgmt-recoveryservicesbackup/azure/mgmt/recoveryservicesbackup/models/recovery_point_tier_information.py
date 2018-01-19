@@ -17,12 +17,12 @@ class RecoveryPointTierInformation(Model):
 
     :param type: Recovery point tier type. Possible values include: 'Invalid',
      'InstantRP', 'HardenedRP'
-    :type type: str or :class:`RecoveryPointTierType
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType>`
+    :type type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :param status: Recovery point tier status. Possible values include:
      'Invalid', 'Valid', 'Disabled', 'Deleted'
-    :type status: str or :class:`RecoveryPointTierStatus
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierStatus>`
+    :type status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierStatus
     """
 
     _attribute_map = {
@@ -31,5 +31,6 @@ class RecoveryPointTierInformation(Model):
     }
 
     def __init__(self, type=None, status=None):
+        super(RecoveryPointTierInformation, self).__init__()
         self.type = type
         self.status = status

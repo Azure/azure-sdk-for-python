@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class RetentionPolicy(Model):
     """Base class for retention policy.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LongTermRetentionPolicy, SimpleRetentionPolicy
+
+    :param retention_policy_type: Constant filled by server.
     :type retention_policy_type: str
     """
 
@@ -32,4 +35,5 @@ class RetentionPolicy(Model):
     }
 
     def __init__(self):
+        super(RetentionPolicy, self).__init__()
         self.retention_policy_type = None

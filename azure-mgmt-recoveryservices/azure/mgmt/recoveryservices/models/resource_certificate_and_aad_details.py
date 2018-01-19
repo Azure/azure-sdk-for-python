@@ -31,7 +31,7 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Constant filled by server.
     :type auth_type: str
     :param aad_authority: AAD tenant authority.
     :type aad_authority: str

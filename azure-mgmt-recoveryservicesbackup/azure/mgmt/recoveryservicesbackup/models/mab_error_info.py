@@ -18,7 +18,7 @@ class MabErrorInfo(Model):
     :param error_string: Localized error string.
     :type error_string: str
     :param recommendations: List of localized recommendations.
-    :type recommendations: list of str
+    :type recommendations: list[str]
     """
 
     _attribute_map = {
@@ -27,5 +27,6 @@ class MabErrorInfo(Model):
     }
 
     def __init__(self, error_string=None, recommendations=None):
+        super(MabErrorInfo, self).__init__()
         self.error_string = error_string
         self.recommendations = recommendations
