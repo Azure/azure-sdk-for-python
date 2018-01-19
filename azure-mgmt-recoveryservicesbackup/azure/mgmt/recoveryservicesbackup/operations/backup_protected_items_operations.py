@@ -23,15 +23,17 @@ class BackupProtectedItemsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
@@ -54,10 +56,9 @@ class BackupProtectedItemsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ProtectedItemResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource>`
-        :rtype: :class:`ProtectedItemResourcePaged
-         <azure.mgmt.recoveryservicesbackup.models.ProtectedItemResourcePaged>`
+        :return: An iterator like instance of ProtectedItemResource
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResourcePaged[~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -97,7 +98,7 @@ class BackupProtectedItemsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

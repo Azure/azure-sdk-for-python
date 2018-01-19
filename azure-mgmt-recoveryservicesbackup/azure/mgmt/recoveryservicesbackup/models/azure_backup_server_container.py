@@ -15,33 +15,21 @@ from .protection_container import ProtectionContainer
 class AzureBackupServerContainer(ProtectionContainer):
     """AzureBackupServer (DPMVenus) workload-specific protection container.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param friendly_name: Friendly name of the container.
     :type friendly_name: str
     :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Status of registration of the container with
      the Recovery Services Vault.
     :type registration_status: str
     :param health_status: Status of health of the container.
     :type health_status: str
-    :ivar container_type: Type of the container. The value of this property
-     for: 1. Compute Azure VM is Microsoft.Compute/virtualMachines 2. Classic
-     Compute Azure VM is Microsoft.ClassicCompute/virtualMachines 3. Windows
-     machines (like MAB, DPM etc) is Windows 4. Azure SQL instance is
-     AzureSqlContainer. Possible values include: 'Invalid', 'Unknown',
-     'IaasVMContainer', 'IaasVMServiceContainer', 'DPMContainer',
-     'AzureBackupServerContainer', 'MABContainer', 'Cluster',
-     'AzureSqlContainer', 'Windows', 'VCenter'
-    :vartype container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
-    :param protectable_object_type: Polymorphic Discriminator
-    :type protectable_object_type: str
+    :param container_type: Constant filled by server.
+    :type container_type: str
     :param can_re_register: Specifies whether the container is re-registrable.
     :type can_re_register: bool
     :param container_id: ID of container.
@@ -51,19 +39,18 @@ class AzureBackupServerContainer(ProtectionContainer):
     :param dpm_agent_version: Backup engine Agent version
     :type dpm_agent_version: str
     :param dpm_servers: List of BackupEngines protecting the container
-    :type dpm_servers: list of str
+    :type dpm_servers: list[str]
     :param upgrade_available: To check if upgrade available
     :type upgrade_available: bool
     :param protection_status: Protection status of the container.
     :type protection_status: str
     :param extended_info: Extended Info of the container.
-    :type extended_info: :class:`DPMContainerExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.DPMContainerExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.DPMContainerExtendedInfo
     """
 
     _validation = {
-        'container_type': {'readonly': True},
-        'protectable_object_type': {'required': True},
+        'container_type': {'required': True},
     }
 
     _attribute_map = {
@@ -72,13 +59,12 @@ class AzureBackupServerContainer(ProtectionContainer):
         'registration_status': {'key': 'registrationStatus', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
         'container_type': {'key': 'containerType', 'type': 'str'},
-        'protectable_object_type': {'key': 'protectableObjectType', 'type': 'str'},
         'can_re_register': {'key': 'canReRegister', 'type': 'bool'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'protected_item_count': {'key': 'protectedItemCount', 'type': 'long'},
         'dpm_agent_version': {'key': 'dpmAgentVersion', 'type': 'str'},
-        'dpm_servers': {'key': 'DPMServers', 'type': '[str]'},
-        'upgrade_available': {'key': 'UpgradeAvailable', 'type': 'bool'},
+        'dpm_servers': {'key': 'dpmServers', 'type': '[str]'},
+        'upgrade_available': {'key': 'upgradeAvailable', 'type': 'bool'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMContainerExtendedInfo'},
     }
@@ -93,4 +79,4 @@ class AzureBackupServerContainer(ProtectionContainer):
         self.upgrade_available = upgrade_available
         self.protection_status = protection_status
         self.extended_info = extended_info
-        self.protectable_object_type = 'AzureBackupServerContainer'
+        self.container_type = 'AzureBackupServerContainer'

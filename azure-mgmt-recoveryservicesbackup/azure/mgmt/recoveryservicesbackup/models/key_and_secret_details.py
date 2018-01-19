@@ -21,11 +21,9 @@ class KeyAndSecretDetails(Model):
     BEK and KEK can potentiallty have different vault ids.
 
     :param kek_details: KEK is encryption key for BEK.
-    :type kek_details: :class:`KEKDetails
-     <azure.mgmt.recoveryservicesbackup.models.KEKDetails>`
+    :type kek_details: ~azure.mgmt.recoveryservicesbackup.models.KEKDetails
     :param bek_details: BEK is bitlocker encrpytion key.
-    :type bek_details: :class:`BEKDetails
-     <azure.mgmt.recoveryservicesbackup.models.BEKDetails>`
+    :type bek_details: ~azure.mgmt.recoveryservicesbackup.models.BEKDetails
     """
 
     _attribute_map = {
@@ -34,5 +32,6 @@ class KeyAndSecretDetails(Model):
     }
 
     def __init__(self, kek_details=None, bek_details=None):
+        super(KeyAndSecretDetails, self).__init__()
         self.kek_details = kek_details
         self.bek_details = bek_details
