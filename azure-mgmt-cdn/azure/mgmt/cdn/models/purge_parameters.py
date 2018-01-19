@@ -29,4 +29,5 @@ class PurgeParameters(Model):
     }
 
     def __init__(self, content_paths):
+        super(PurgeParameters, self).__init__()
         self.content_paths = content_paths

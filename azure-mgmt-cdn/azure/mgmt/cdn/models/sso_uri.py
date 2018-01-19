@@ -31,4 +31,5 @@ class SsoUri(Model):
     }
 
     def __init__(self):
+        super(SsoUri, self).__init__()
         self.sso_uri_value = None
