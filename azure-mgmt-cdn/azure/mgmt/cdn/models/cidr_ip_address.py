@@ -27,5 +27,6 @@ class CidrIpAddress(Model):
     }
 
     def __init__(self, base_ip_address=None, prefix_length=None):
+        super(CidrIpAddress, self).__init__()
         self.base_ip_address = base_ip_address
         self.prefix_length = prefix_length

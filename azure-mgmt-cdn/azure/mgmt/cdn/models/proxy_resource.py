@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .resource import Resource
 
 
-class EdgeNode(ProxyResource):
-    """Edgenode is a global Point of Presence (POP) location used to deliver CDN
-    content to end users.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,24 +25,13 @@ class EdgeNode(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param ip_address_groups: List of ip address groups.
-    :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'ip_address_groups': {'required': True},
     }
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
-    }
-
-    def __init__(self, ip_address_groups):
-        super(EdgeNode, self).__init__()
-        self.ip_address_groups = ip_address_groups
+    def __init__(self):
+        super(ProxyResource, self).__init__()
