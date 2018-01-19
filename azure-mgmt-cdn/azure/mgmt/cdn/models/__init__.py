@@ -37,6 +37,8 @@ from .cidr_ip_address import CidrIpAddress
 from .ip_address_group import IpAddressGroup
 from .edge_node import EdgeNode
 from .resource import Resource
+from .tracked_resource import TrackedResource
+from .proxy_resource import ProxyResource
 from .error_response import ErrorResponse, ErrorResponseException
 from .profile_paged import ProfilePaged
 from .resource_usage_paged import ResourceUsagePaged
@@ -88,6 +90,8 @@ __all__ = [
     'IpAddressGroup',
     'EdgeNode',
     'Resource',
+    'TrackedResource',
+    'ProxyResource',
     'ErrorResponse', 'ErrorResponseException',
     'ProfilePaged',
     'ResourceUsagePaged',
