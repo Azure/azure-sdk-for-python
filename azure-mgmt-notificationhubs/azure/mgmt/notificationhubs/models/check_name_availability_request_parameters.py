@@ -26,16 +26,15 @@ class CheckNameAvailabilityRequestParameters(Model):
     """
 
     _validation = {
-        'name': {'required': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         super(CheckNameAvailabilityRequestParameters, self).__init__()
         self.name = name
         self.type = None

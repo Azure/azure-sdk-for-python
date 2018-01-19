@@ -38,7 +38,7 @@ class NotificationHubsOperations(object):
         self.config = config
 
     def check_availability(
-            self, resource_group_name, namespace_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, name=None, custom_headers=None, raw=False, **operation_config):
         """Checks the availability of the given notificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.

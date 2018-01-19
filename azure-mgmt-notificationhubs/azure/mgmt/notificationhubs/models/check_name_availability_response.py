@@ -26,9 +26,9 @@ class CheckNameAvailabilityResponse(Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name_available': {'key': 'NameAvailable', 'type': 'bool'},
+        'reason': {'key': 'Reason', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
     def __init__(self, name_available=None, reason=None, message=None):

@@ -40,7 +40,7 @@ class NamespacesOperations(object):
         self.config = config
 
     def check_availability(
-            self, name, custom_headers=None, raw=False, **operation_config):
+            self, name=None, custom_headers=None, raw=False, **operation_config):
         """Checks the availability of the given service namespace across all Azure
         subscriptions. This is useful because the domain name is created based
         on the service namespace name.
