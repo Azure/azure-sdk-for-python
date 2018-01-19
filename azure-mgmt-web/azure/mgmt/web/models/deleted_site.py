@@ -50,6 +50,7 @@ class DeletedSite(Model):
     }
 
     def __init__(self, id=None):
+        super(DeletedSite, self).__init__()
         self.id = id
         self.deleted_timestamp = None
         self.subscription = None

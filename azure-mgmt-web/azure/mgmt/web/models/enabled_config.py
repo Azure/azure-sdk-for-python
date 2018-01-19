@@ -25,4 +25,5 @@ class EnabledConfig(Model):
     }
 
     def __init__(self, enabled=None):
+        super(EnabledConfig, self).__init__()
         self.enabled = enabled

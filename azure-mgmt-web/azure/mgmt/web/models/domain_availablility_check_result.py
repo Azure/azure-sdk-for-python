@@ -34,6 +34,7 @@ class DomainAvailablilityCheckResult(Model):
     }
 
     def __init__(self, name=None, available=None, domain_type=None):
+        super(DomainAvailablilityCheckResult, self).__init__()
         self.name = name
         self.available = available
         self.domain_type = domain_type

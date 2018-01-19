@@ -33,6 +33,7 @@ class AutoHealTriggers(Model):
     }
 
     def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
+        super(AutoHealTriggers, self).__init__()
         self.requests = requests
         self.private_bytes_in_kb = private_bytes_in_kb
         self.status_codes = status_codes
