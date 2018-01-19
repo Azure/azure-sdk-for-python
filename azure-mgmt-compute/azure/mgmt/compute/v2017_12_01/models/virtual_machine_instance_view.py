@@ -15,22 +15,19 @@ from msrest.serialization import Model
 class VirtualMachineInstanceView(Model):
     """The instance view of a virtual machine.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param platform_update_domain: Specifies the update domain of the virtual
      machine.
     :type platform_update_domain: int
     :param platform_fault_domain: Specifies the fault domain of the virtual
      machine.
     :type platform_fault_domain: int
-    :ivar computer_name: The computer name assigned to the virtual machine.
-    :vartype computer_name: str
-    :ivar os_name: The Operating System running on the virtual machine.
-    :vartype os_name: str
-    :ivar os_version: The version of Operating System running on the virtual
+    :param computer_name: The computer name assigned to the virtual machine.
+    :type computer_name: str
+    :param os_name: The Operating System running on the virtual machine.
+    :type os_name: str
+    :param os_version: The version of Operating System running on the virtual
      machine.
-    :vartype os_version: str
+    :type os_version: str
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
@@ -57,12 +54,6 @@ class VirtualMachineInstanceView(Model):
      list[~azure.mgmt.compute.v2017_12_01.models.InstanceViewStatus]
     """
 
-    _validation = {
-        'computer_name': {'readonly': True},
-        'os_name': {'readonly': True},
-        'os_version': {'readonly': True},
-    }
-
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
@@ -78,13 +69,13 @@ class VirtualMachineInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
+    def __init__(self, platform_update_domain=None, platform_fault_domain=None, computer_name=None, os_name=None, os_version=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
         super(VirtualMachineInstanceView, self).__init__()
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
-        self.computer_name = None
-        self.os_name = None
-        self.os_version = None
+        self.computer_name = computer_name
+        self.os_name = os_name
+        self.os_version = os_version
         self.rdp_thumb_print = rdp_thumb_print
         self.vm_agent = vm_agent
         self.maintenance_redeploy_status = maintenance_redeploy_status
