@@ -37,6 +37,7 @@ class OriginUpdateParameters(Model):
     }
 
     def __init__(self, host_name=None, http_port=None, https_port=None):
+        super(OriginUpdateParameters, self).__init__()
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
