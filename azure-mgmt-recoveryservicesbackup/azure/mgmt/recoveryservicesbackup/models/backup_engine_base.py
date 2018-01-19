@@ -16,13 +16,17 @@ class BackupEngineBase(Model):
     """The base backup engine class. All workload specific backup engines derive
     from this class.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureBackupServerEngine, DpmBackupEngine
+
     :param friendly_name: Friendly name of the backup engine.
     :type friendly_name: str
     :param backup_management_type: Type of backup management for the backup
      engine. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Registration status of the backup engine with
      the Recovery Services Vault.
     :type registration_status: str
@@ -47,9 +51,9 @@ class BackupEngineBase(Model):
      available
     :type is_dpm_upgrade_available: bool
     :param extended_info: Extended info of the backupengine
-    :type extended_info: :class:`BackupEngineExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.BackupEngineExtendedInfo>`
-    :param backup_engine_type: Polymorphic Discriminator
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupEngineExtendedInfo
+    :param backup_engine_type: Constant filled by server.
     :type backup_engine_type: str
     """
 
@@ -68,7 +72,7 @@ class BackupEngineBase(Model):
         'dpm_version': {'key': 'dpmVersion', 'type': 'str'},
         'azure_backup_agent_version': {'key': 'azureBackupAgentVersion', 'type': 'str'},
         'is_azure_backup_agent_upgrade_available': {'key': 'isAzureBackupAgentUpgradeAvailable', 'type': 'bool'},
-        'is_dpm_upgrade_available': {'key': 'isDPMUpgradeAvailable', 'type': 'bool'},
+        'is_dpm_upgrade_available': {'key': 'isDpmUpgradeAvailable', 'type': 'bool'},
         'extended_info': {'key': 'extendedInfo', 'type': 'BackupEngineExtendedInfo'},
         'backup_engine_type': {'key': 'backupEngineType', 'type': 'str'},
     }
@@ -78,6 +82,7 @@ class BackupEngineBase(Model):
     }
 
     def __init__(self, friendly_name=None, backup_management_type=None, registration_status=None, backup_engine_state=None, health_status=None, can_re_register=None, backup_engine_id=None, dpm_version=None, azure_backup_agent_version=None, is_azure_backup_agent_upgrade_available=None, is_dpm_upgrade_available=None, extended_info=None):
+        super(BackupEngineBase, self).__init__()
         self.friendly_name = friendly_name
         self.backup_management_type = backup_management_type
         self.registration_status = registration_status

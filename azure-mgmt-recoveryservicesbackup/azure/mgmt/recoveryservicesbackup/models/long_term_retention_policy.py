@@ -15,23 +15,23 @@ from .retention_policy import RetentionPolicy
 class LongTermRetentionPolicy(RetentionPolicy):
     """Long term retention policy.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    :param retention_policy_type: Constant filled by server.
     :type retention_policy_type: str
     :param daily_schedule: Daily retention schedule of the protection policy.
-    :type daily_schedule: :class:`DailyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.DailyRetentionSchedule>`
+    :type daily_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.DailyRetentionSchedule
     :param weekly_schedule: Weekly retention schedule of the protection
      policy.
-    :type weekly_schedule: :class:`WeeklyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionSchedule>`
+    :type weekly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.WeeklyRetentionSchedule
     :param monthly_schedule: Monthly retention schedule of the protection
      policy.
-    :type monthly_schedule: :class:`MonthlyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.MonthlyRetentionSchedule>`
+    :type monthly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.MonthlyRetentionSchedule
     :param yearly_schedule: Yearly retention schedule of the protection
      policy.
-    :type yearly_schedule: :class:`YearlyRetentionSchedule
-     <azure.mgmt.recoveryservicesbackup.models.YearlyRetentionSchedule>`
+    :type yearly_schedule:
+     ~azure.mgmt.recoveryservicesbackup.models.YearlyRetentionSchedule
     """
 
     _validation = {

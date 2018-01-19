@@ -17,7 +17,7 @@ class DPMProtectedItemExtendedInfo(Model):
 
     :param protectable_object_load_path: Attribute to provide information on
      various DBs.
-    :type protectable_object_load_path: dict
+    :type protectable_object_load_path: dict[str, str]
     :param protected: To check if backup item is disk protected.
     :type protected: bool
     :param is_present_on_cloud: To check if backup item is cloud protected.
@@ -64,6 +64,7 @@ class DPMProtectedItemExtendedInfo(Model):
     }
 
     def __init__(self, protectable_object_load_path=None, protected=None, is_present_on_cloud=None, last_backup_status=None, last_refreshed_at=None, oldest_recovery_point=None, recovery_point_count=None, on_premise_oldest_recovery_point=None, on_premise_latest_recovery_point=None, on_premise_recovery_point_count=None, is_collocated=None, protection_group_name=None, disk_storage_used_in_bytes=None, total_disk_storage_size_in_bytes=None):
+        super(DPMProtectedItemExtendedInfo, self).__init__()
         self.protectable_object_load_path = protectable_object_load_path
         self.protected = protected
         self.is_present_on_cloud = is_present_on_cloud

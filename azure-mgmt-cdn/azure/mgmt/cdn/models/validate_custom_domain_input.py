@@ -29,4 +29,5 @@ class ValidateCustomDomainInput(Model):
     }
 
     def __init__(self, host_name):
+        super(ValidateCustomDomainInput, self).__init__()
         self.host_name = host_name

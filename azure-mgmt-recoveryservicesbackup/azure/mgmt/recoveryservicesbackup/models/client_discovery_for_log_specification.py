@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ClientDiscoveryForLogSpecification(Model):
     """Class to represent shoebox log specification in json client discovery.
 
-    :param name: Name
+    :param name: Name for shoebox log specification.
     :type name: str
     :param display_name: Localized display name
     :type display_name: str
-    :param blob_duration: blob duration
+    :param blob_duration: blob duration of shoebox log specification
     :type blob_duration: str
     """
 
@@ -30,6 +30,7 @@ class ClientDiscoveryForLogSpecification(Model):
     }
 
     def __init__(self, name=None, display_name=None, blob_duration=None):
+        super(ClientDiscoveryForLogSpecification, self).__init__()
         self.name = name
         self.display_name = display_name
         self.blob_duration = blob_duration

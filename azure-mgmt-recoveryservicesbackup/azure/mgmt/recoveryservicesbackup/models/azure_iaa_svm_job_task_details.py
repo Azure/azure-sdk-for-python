@@ -42,6 +42,7 @@ class AzureIaaSVMJobTaskDetails(Model):
     }
 
     def __init__(self, task_id=None, start_time=None, end_time=None, instance_id=None, duration=None, status=None, progress_percentage=None):
+        super(AzureIaaSVMJobTaskDetails, self).__init__()
         self.task_id = task_id
         self.start_time = start_time
         self.end_time = end_time

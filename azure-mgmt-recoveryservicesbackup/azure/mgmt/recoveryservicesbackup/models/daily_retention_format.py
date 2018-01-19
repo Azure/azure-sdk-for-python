@@ -16,8 +16,8 @@ class DailyRetentionFormat(Model):
     """Daily retention format.
 
     :param days_of_the_month: List of days of the month.
-    :type days_of_the_month: list of :class:`Day
-     <azure.mgmt.recoveryservicesbackup.models.Day>`
+    :type days_of_the_month:
+     list[~azure.mgmt.recoveryservicesbackup.models.Day]
     """
 
     _attribute_map = {
@@ -25,4 +25,5 @@ class DailyRetentionFormat(Model):
     }
 
     def __init__(self, days_of_the_month=None):
+        super(DailyRetentionFormat, self).__init__()
         self.days_of_the_month = days_of_the_month

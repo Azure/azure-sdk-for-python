@@ -15,14 +15,19 @@ from msrest.serialization import Model
 class Job(Model):
     """Defines workload agnostic properties for a job.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureIaaSVMJob, AzureStorageJob, AzureWorkloadJob, DpmJob,
+    MabJob
+
     :param entity_friendly_name: Friendly name of the entity on which the
      current job is executing.
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,7 +38,7 @@ class Job(Model):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Constant filled by server.
     :type job_type: str
     """
 
@@ -53,10 +58,11 @@ class Job(Model):
     }
 
     _subtype_map = {
-        'job_type': {'AzureIaaSVMJob': 'AzureIaaSVMJob', 'DpmJob': 'DpmJob', 'MabJob': 'MabJob'}
+        'job_type': {'AzureIaaSVMJob': 'AzureIaaSVMJob', 'AzureStorageJob': 'AzureStorageJob', 'AzureWorkloadJob': 'AzureWorkloadJob', 'DpmJob': 'DpmJob', 'MabJob': 'MabJob'}
     }
 
     def __init__(self, entity_friendly_name=None, backup_management_type=None, operation=None, status=None, start_time=None, end_time=None, activity_id=None):
+        super(Job, self).__init__()
         self.entity_friendly_name = entity_friendly_name
         self.backup_management_type = backup_management_type
         self.operation = operation

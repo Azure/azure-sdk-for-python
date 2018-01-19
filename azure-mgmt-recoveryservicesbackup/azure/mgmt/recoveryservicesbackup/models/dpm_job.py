@@ -20,9 +20,10 @@ class DpmJob(Job):
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,7 +34,7 @@ class DpmJob(Job):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Constant filled by server.
     :type job_type: str
     :param duration: Time elapsed for job.
     :type duration: timedelta
@@ -49,14 +50,14 @@ class DpmJob(Job):
     :type workload_type: str
     :param actions_info: The state/actions applicable on this job like
      cancel/retry.
-    :type actions_info: list of str or :class:`JobSupportedAction
-     <azure.mgmt.recoveryservicesbackup.models.JobSupportedAction>`
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
     :param error_details: The errors.
-    :type error_details: list of :class:`DpmErrorInfo
-     <azure.mgmt.recoveryservicesbackup.models.DpmErrorInfo>`
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.DpmErrorInfo]
     :param extended_info: Additional information for this job.
-    :type extended_info: :class:`DpmJobExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.DpmJobExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.DpmJobExtendedInfo
     """
 
     _validation = {

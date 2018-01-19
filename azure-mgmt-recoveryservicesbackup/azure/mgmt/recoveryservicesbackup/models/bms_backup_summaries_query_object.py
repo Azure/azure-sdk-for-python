@@ -18,8 +18,7 @@ class BMSBackupSummariesQueryObject(Model):
     :param type: Backup management type for this container. Possible values
      include: 'Invalid', 'BackupProtectedItemCountSummary',
      'BackupProtectionContainerCountSummary'
-    :type type: str or :class:`Type
-     <azure.mgmt.recoveryservicesbackup.models.Type>`
+    :type type: str or ~azure.mgmt.recoveryservicesbackup.models.Type
     """
 
     _attribute_map = {
@@ -27,4 +26,5 @@ class BMSBackupSummariesQueryObject(Model):
     }
 
     def __init__(self, type=None):
+        super(BMSBackupSummariesQueryObject, self).__init__()
         self.type = type
