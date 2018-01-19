@@ -21,18 +21,18 @@ class OperationStatus(Model):
     :type name: str
     :param status: Operation status. Possible values include: 'Invalid',
      'InProgress', 'Succeeded', 'Failed', 'Canceled'
-    :type status: str or :class:`OperationStatusValues
-     <azure.mgmt.recoveryservicesbackup.models.OperationStatusValues>`
+    :type status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.OperationStatusValues
     :param start_time: Operation start time. Format: ISO-8601.
     :type start_time: datetime
     :param end_time: Operation end time. Format: ISO-8601.
     :type end_time: datetime
     :param error: Error information related to this operation.
-    :type error: :class:`OperationStatusError
-     <azure.mgmt.recoveryservicesbackup.models.OperationStatusError>`
+    :type error:
+     ~azure.mgmt.recoveryservicesbackup.models.OperationStatusError
     :param properties: Additional information associated with this operation.
-    :type properties: :class:`OperationStatusExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.OperationStatusExtendedInfo>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.OperationStatusExtendedInfo
     """
 
     _attribute_map = {
@@ -46,6 +46,7 @@ class OperationStatus(Model):
     }
 
     def __init__(self, id=None, name=None, status=None, start_time=None, end_time=None, error=None, properties=None):
+        super(OperationStatus, self).__init__()
         self.id = id
         self.name = name
         self.status = status

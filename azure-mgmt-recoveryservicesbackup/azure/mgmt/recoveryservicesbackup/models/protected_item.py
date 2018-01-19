@@ -15,17 +15,23 @@ from msrest.serialization import Model
 class ProtectedItem(Model):
     """Base class for backup items.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureFileshareProtectedItem, AzureIaaSVMProtectedItem,
+    AzureSqlProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
+    DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem
+
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +42,9 @@ class ProtectedItem(Model):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param backup_set_name: Name of the backup set the backup item belongs to
+    :type backup_set_name: str
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     """
 
@@ -51,18 +59,21 @@ class ProtectedItem(Model):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
+        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
+        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
-    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None):
+    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None, backup_set_name=None):
+        super(ProtectedItem, self).__init__()
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
         self.container_name = container_name
         self.source_resource_id = source_resource_id
         self.policy_id = policy_id
         self.last_recovery_point = last_recovery_point
+        self.backup_set_name = backup_set_name
         self.protected_item_type = None

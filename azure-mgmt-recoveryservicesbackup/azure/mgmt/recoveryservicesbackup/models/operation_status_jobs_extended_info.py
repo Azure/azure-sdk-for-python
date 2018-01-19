@@ -15,13 +15,13 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for list of jobs.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param job_ids: IDs of the jobs created for the protected item.
-    :type job_ids: list of str
+    :type job_ids: list[str]
     :param failed_jobs_error: Stores all the failed jobs along with the
      corresponding error codes.
-    :type failed_jobs_error: dict
+    :type failed_jobs_error: dict[str, str]
     """
 
     _validation = {

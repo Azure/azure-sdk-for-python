@@ -28,12 +28,11 @@ class JobResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: JobResource properties
-    :type properties: :class:`Job
-     <azure.mgmt.recoveryservicesbackup.models.Job>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.Job
     """
 
     _validation = {
