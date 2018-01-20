@@ -16,10 +16,10 @@ class AzureIaaSVMJobExtendedInfo(Model):
     """Azure IaaS VM workload-specific additional information for job.
 
     :param tasks_list: List of tasks associated with this job.
-    :type tasks_list: list of :class:`AzureIaaSVMJobTaskDetails
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMJobTaskDetails>`
+    :type tasks_list:
+     list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMJobTaskDetails]
     :param property_bag: Job properties.
-    :type property_bag: dict
+    :type property_bag: dict[str, str]
     :param progress_percentage: Indicates progress of the job. Null if it has
      not started or completed.
     :type progress_percentage: float
@@ -36,6 +36,7 @@ class AzureIaaSVMJobExtendedInfo(Model):
     }
 
     def __init__(self, tasks_list=None, property_bag=None, progress_percentage=None, dynamic_error_message=None):
+        super(AzureIaaSVMJobExtendedInfo, self).__init__()
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.progress_percentage = progress_percentage

@@ -46,6 +46,7 @@ class SkuDescription(Model):
     }
 
     def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
+        super(SkuDescription, self).__init__()
         self.name = name
         self.tier = tier
         self.size = size

@@ -32,7 +32,7 @@ class Contact(Model):
     :type name_last: str
     :param name_middle: Middle name.
     :type name_middle: str
-    :param organization: Organization.
+    :param organization: Organization contact belongs to.
     :type organization: str
     :param phone: Phone number.
     :type phone: str
@@ -58,6 +58,7 @@ class Contact(Model):
     }
 
     def __init__(self, email, name_first, name_last, phone, address_mailing=None, fax=None, job_title=None, name_middle=None, organization=None):
+        super(Contact, self).__init__()
         self.address_mailing = address_mailing
         self.email = email
         self.fax = fax

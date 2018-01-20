@@ -19,9 +19,10 @@ class DpmBackupEngine(BackupEngineBase):
     :type friendly_name: str
     :param backup_management_type: Type of backup management for the backup
      engine. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param registration_status: Registration status of the backup engine with
      the Recovery Services Vault.
     :type registration_status: str
@@ -46,9 +47,9 @@ class DpmBackupEngine(BackupEngineBase):
      available
     :type is_dpm_upgrade_available: bool
     :param extended_info: Extended info of the backupengine
-    :type extended_info: :class:`BackupEngineExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.BackupEngineExtendedInfo>`
-    :param backup_engine_type: Polymorphic Discriminator
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupEngineExtendedInfo
+    :param backup_engine_type: Constant filled by server.
     :type backup_engine_type: str
     """
 

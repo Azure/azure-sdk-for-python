@@ -34,5 +34,6 @@ class ConnStringValueTypePair(Model):
     }
 
     def __init__(self, value, type):
+        super(ConnStringValueTypePair, self).__init__()
         self.value = value
         self.type = type

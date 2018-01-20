@@ -77,6 +77,7 @@ class CloningInfo(Model):
     }
 
     def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None, ignore_quotas=None):
+        super(CloningInfo, self).__init__()
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names

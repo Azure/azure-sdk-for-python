@@ -17,15 +17,16 @@ class MabFileFolderProtectedItem(ProtectedItem):
 
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +37,9 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param backup_set_name: Name of the backup set the backup item belongs to
+    :type backup_set_name: str
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of this backup item.
     :type friendly_name: str
@@ -54,8 +57,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :param deferred_delete_sync_time_in_utc: Sync time for deferred deletion.
     :type deferred_delete_sync_time_in_utc: long
     :param extended_info: Additional information with this backup item.
-    :type extended_info: :class:`MabFileFolderProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.MabFileFolderProtectedItemExtendedInfo
     """
 
     _validation = {
@@ -69,6 +72,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
+        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'computer_name': {'key': 'computerName', 'type': 'str'},
@@ -79,8 +83,8 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None, friendly_name=None, computer_name=None, last_backup_status=None, protection_state=None, is_scheduled_for_deferred_delete=None, deferred_delete_sync_time_in_utc=None, extended_info=None):
-        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point)
+    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None, backup_set_name=None, friendly_name=None, computer_name=None, last_backup_status=None, protection_state=None, is_scheduled_for_deferred_delete=None, deferred_delete_sync_time_in_utc=None, extended_info=None):
+        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name)
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status

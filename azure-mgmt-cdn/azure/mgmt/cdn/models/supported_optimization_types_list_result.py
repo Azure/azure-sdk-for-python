@@ -33,4 +33,5 @@ class SupportedOptimizationTypesListResult(Model):
     }
 
     def __init__(self):
+        super(SupportedOptimizationTypesListResult, self).__init__()
         self.supported_optimization_types = None

@@ -22,8 +22,8 @@ class RetentionDuration(Model):
     :type count: int
     :param duration_type: Retention duration type of retention policy.
      Possible values include: 'Invalid', 'Days', 'Weeks', 'Months', 'Years'
-    :type duration_type: str or :class:`RetentionDurationType
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDurationType>`
+    :type duration_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDurationType
     """
 
     _attribute_map = {
@@ -32,5 +32,6 @@ class RetentionDuration(Model):
     }
 
     def __init__(self, count=None, duration_type=None):
+        super(RetentionDuration, self).__init__()
         self.count = count
         self.duration_type = duration_type

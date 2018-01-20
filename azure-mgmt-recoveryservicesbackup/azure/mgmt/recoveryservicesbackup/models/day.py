@@ -27,5 +27,6 @@ class Day(Model):
     }
 
     def __init__(self, date_property=None, is_last=None):
+        super(Day, self).__init__()
         self.date_property = date_property
         self.is_last = is_last

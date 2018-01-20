@@ -61,6 +61,7 @@ class RampUpRule(Model):
     }
 
     def __init__(self, action_host_name=None, reroute_percentage=None, change_step=None, change_interval_in_minutes=None, min_reroute_percentage=None, max_reroute_percentage=None, change_decision_callback_url=None, name=None):
+        super(RampUpRule, self).__init__()
         self.action_host_name = action_host_name
         self.reroute_percentage = reroute_percentage
         self.change_step = change_step

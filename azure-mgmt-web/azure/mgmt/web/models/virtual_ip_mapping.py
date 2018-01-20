@@ -33,6 +33,7 @@ class VirtualIPMapping(Model):
     }
 
     def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None):
+        super(VirtualIPMapping, self).__init__()
         self.virtual_ip = virtual_ip
         self.internal_http_port = internal_http_port
         self.internal_https_port = internal_https_port

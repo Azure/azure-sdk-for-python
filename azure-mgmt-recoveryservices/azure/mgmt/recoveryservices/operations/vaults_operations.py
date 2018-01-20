@@ -26,6 +26,8 @@ class VaultsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,10 +46,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Vault
-         <azure.mgmt.recoveryservices.models.Vault>`
-        :rtype: :class:`VaultPaged
-         <azure.mgmt.recoveryservices.models.VaultPaged>`
+        :return: An iterator like instance of Vault
+        :rtype:
+         ~azure.mgmt.recoveryservices.models.VaultPaged[~azure.mgmt.recoveryservices.models.Vault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -81,7 +82,7 @@ class VaultsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -112,10 +113,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Vault
-         <azure.mgmt.recoveryservices.models.Vault>`
-        :rtype: :class:`VaultPaged
-         <azure.mgmt.recoveryservices.models.VaultPaged>`
+        :return: An iterator like instance of Vault
+        :rtype:
+         ~azure.mgmt.recoveryservices.models.VaultPaged[~azure.mgmt.recoveryservices.models.Vault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -150,7 +150,7 @@ class VaultsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -183,11 +183,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Vault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.Vault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -215,7 +213,7 @@ class VaultsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -243,17 +241,15 @@ class VaultsOperations(object):
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param vault: Recovery Services Vault to be created.
-        :type vault: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>`
+        :type vault: ~azure.mgmt.recoveryservices.models.Vault
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Vault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.Vault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -285,7 +281,7 @@ class VaultsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -319,11 +315,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -351,7 +344,7 @@ class VaultsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -372,17 +365,15 @@ class VaultsOperations(object):
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param vault: Recovery Services Vault to be created.
-        :type vault: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>`
+        :type vault: ~azure.mgmt.recoveryservices.models.PatchVault
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Vault <azure.mgmt.recoveryservices.models.Vault>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Vault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.Vault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -409,12 +400,12 @@ class VaultsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(vault, 'Vault')
+        body_content = self._serialize.body(vault, 'PatchVault')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)

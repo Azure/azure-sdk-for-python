@@ -28,12 +28,11 @@ class ProtectedItemResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: ProtectedItemResource properties
-    :type properties: :class:`ProtectedItem
-     <azure.mgmt.recoveryservicesbackup.models.ProtectedItem>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItem
     """
 
     _validation = {

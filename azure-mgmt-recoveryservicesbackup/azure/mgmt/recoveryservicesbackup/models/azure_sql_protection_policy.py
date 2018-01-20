@@ -17,11 +17,11 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
 
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
-    :param backup_management_type: Polymorphic Discriminator
+    :param backup_management_type: Constant filled by server.
     :type backup_management_type: str
     :param retention_policy: Retention policy details.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.recoveryservicesbackup.models.RetentionPolicy>`
+    :type retention_policy:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionPolicy
     """
 
     _validation = {

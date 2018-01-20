@@ -28,12 +28,12 @@ class BackupResourceVaultConfigResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: BackupResourceVaultConfigResource properties
-    :type properties: :class:`BackupResourceVaultConfig
-     <azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfig>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfig
     """
 
     _validation = {
