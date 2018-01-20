@@ -26,6 +26,7 @@ class CheckNameAvailabilityRequestParameters(Model):
     """
 
     _validation = {
+        'name': {'required': True},
         'type': {'readonly': True},
     }
 
@@ -34,7 +35,7 @@ class CheckNameAvailabilityRequestParameters(Model):
         'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name):
         super(CheckNameAvailabilityRequestParameters, self).__init__()
         self.name = name
         self.type = None
