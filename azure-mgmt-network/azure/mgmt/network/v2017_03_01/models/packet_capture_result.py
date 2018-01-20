@@ -18,6 +18,8 @@ class PacketCaptureResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar name: Name of the packet capture session.
     :vartype name: str
     :ivar id: ID of the packet capture operation.
@@ -25,8 +27,8 @@ class PacketCaptureResult(Model):
     :param etag:  Default value: "A unique read-only string that changes
      whenever the resource is updated." .
     :type etag: str
-    :param target: The ID of the targeted resource, only VM is currently
-     supported.
+    :param target: Required. The ID of the targeted resource, only VM is
+     currently supported.
     :type target: str
     :param bytes_to_capture_per_packet: Number of bytes captured per packet,
      the remaining bytes are truncated. Default value: 0 .
@@ -37,7 +39,7 @@ class PacketCaptureResult(Model):
     :param time_limit_in_seconds: Maximum duration of the capture session in
      seconds. Default value: 18000 .
     :type time_limit_in_seconds: int
-    :param storage_location:
+    :param storage_location: Required.
     :type storage_location:
      ~azure.mgmt.network.v2017_03_01.models.PacketCaptureStorageLocation
     :param filters:
@@ -70,15 +72,15 @@ class PacketCaptureResult(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, target, storage_location, etag="A unique read-only string that changes whenever the resource is updated.", bytes_to_capture_per_packet=0, total_bytes_per_session=1073741824, time_limit_in_seconds=18000, filters=None, provisioning_state=None):
-        super(PacketCaptureResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(PacketCaptureResult, self).__init__(**kwargs)
         self.name = None
         self.id = None
-        self.etag = etag
-        self.target = target
-        self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
-        self.total_bytes_per_session = total_bytes_per_session
-        self.time_limit_in_seconds = time_limit_in_seconds
-        self.storage_location = storage_location
-        self.filters = filters
-        self.provisioning_state = provisioning_state
+        self.etag = kwargs.get('etag', "A unique read-only string that changes whenever the resource is updated.")
+        self.target = kwargs.get('target', None)
+        self.bytes_to_capture_per_packet = kwargs.get('bytes_to_capture_per_packet', 0)
+        self.total_bytes_per_session = kwargs.get('total_bytes_per_session', 1073741824)
+        self.time_limit_in_seconds = kwargs.get('time_limit_in_seconds', 18000)
+        self.storage_location = kwargs.get('storage_location', None)
+        self.filters = kwargs.get('filters', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)

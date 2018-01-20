@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -211,7 +211,7 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the specified network watcher resource.
 
         :param resource_group_name: The name of the resource group.
@@ -219,12 +219,14 @@ class NetworkWatchersOperations(object):
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -234,40 +236,19 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     def update_tags(
             self, resource_group_name, network_watcher_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -591,7 +572,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def verify_ip_flow(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Verify IP flow from the specified VM to a location given the currently
         configured NSG rules.
 
@@ -603,13 +584,17 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.VerificationIPFlowParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         VerificationIPFlowResult or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         VerificationIPFlowResult or
+         ClientRawResponse<VerificationIPFlowResult> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.VerificationIPFlowResult]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.VerificationIPFlowResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._verify_ip_flow_initial(
@@ -620,30 +605,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('VerificationIPFlowResult', response)
 
             if raw:
@@ -652,12 +615,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_next_hop_initial(
@@ -712,7 +676,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_next_hop(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gets the next hop from the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -724,13 +688,16 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.NextHopParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         NextHopResult or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns NextHopResult or
+         ClientRawResponse<NextHopResult> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.NextHopResult]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.NextHopResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_next_hop_initial(
@@ -741,30 +708,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('NextHopResult', response)
 
             if raw:
@@ -773,12 +718,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_vm_security_rules_initial(
@@ -835,7 +781,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_vm_security_rules(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gets the configured and effective security group rules on the specified
         VM.
 
@@ -846,13 +792,16 @@ class NetworkWatchersOperations(object):
         :param target_resource_id: ID of the target VM.
         :type target_resource_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         SecurityGroupViewResult or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns SecurityGroupViewResult
+         or ClientRawResponse<SecurityGroupViewResult> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.SecurityGroupViewResult]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.SecurityGroupViewResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_vm_security_rules_initial(
@@ -863,30 +812,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('SecurityGroupViewResult', response)
 
             if raw:
@@ -895,12 +822,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_troubleshooting_initial(
@@ -955,7 +883,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_troubleshooting(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Initiate troubleshooting on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -967,13 +895,16 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.TroubleshootingParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         TroubleshootingResult or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns TroubleshootingResult
+         or ClientRawResponse<TroubleshootingResult> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.TroubleshootingResult]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.TroubleshootingResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_troubleshooting_initial(
@@ -984,30 +915,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('TroubleshootingResult', response)
 
             if raw:
@@ -1016,12 +925,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_troubleshooting_result_initial(
@@ -1078,7 +988,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_troubleshooting_result(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get the last completed troubleshooting result on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -1089,13 +999,16 @@ class NetworkWatchersOperations(object):
          troubleshooting result.
         :type target_resource_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         TroubleshootingResult or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns TroubleshootingResult
+         or ClientRawResponse<TroubleshootingResult> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.TroubleshootingResult]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.TroubleshootingResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_troubleshooting_result_initial(
@@ -1106,30 +1019,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('TroubleshootingResult', response)
 
             if raw:
@@ -1138,12 +1029,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _set_flow_log_configuration_initial(
@@ -1198,7 +1090,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def set_flow_log_configuration(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Configures flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource
@@ -1211,13 +1103,16 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.FlowLogInformation
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         FlowLogInformation or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns FlowLogInformation or
+         ClientRawResponse<FlowLogInformation> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.FlowLogInformation]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.FlowLogInformation]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._set_flow_log_configuration_initial(
@@ -1228,30 +1123,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('FlowLogInformation', response)
 
             if raw:
@@ -1260,12 +1133,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_flow_log_status_initial(
@@ -1322,7 +1196,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_flow_log_status(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Queries status of flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource
@@ -1334,13 +1208,16 @@ class NetworkWatchersOperations(object):
          logging status.
         :type target_resource_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         FlowLogInformation or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns FlowLogInformation or
+         ClientRawResponse<FlowLogInformation> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.FlowLogInformation]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.FlowLogInformation]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_flow_log_status_initial(
@@ -1351,30 +1228,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('FlowLogInformation', response)
 
             if raw:
@@ -1383,12 +1238,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _check_connectivity_initial(
@@ -1445,7 +1301,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def check_connectivity(
-            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, polling=True, **operation_config):
         """Verifies the possibility of establishing a direct TCP connection from a
         virtual machine to a given endpoint including another VM or an
         arbitrary remote server.
@@ -1462,13 +1318,16 @@ class NetworkWatchersOperations(object):
         :type destination:
          ~azure.mgmt.network.v2017_10_01.models.ConnectivityDestination
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ConnectivityInformation or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ConnectivityInformation
+         or ClientRawResponse<ConnectivityInformation> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.ConnectivityInformation]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.ConnectivityInformation]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._check_connectivity_initial(
@@ -1480,30 +1339,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('ConnectivityInformation', response)
 
             if raw:
@@ -1512,12 +1349,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _get_azure_reachability_report_initial(
@@ -1572,7 +1410,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_azure_reachability_report(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gets the relative latency score for internet service providers from a
         specified location to Azure regions.
 
@@ -1586,13 +1424,16 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.AzureReachabilityReportParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         AzureReachabilityReport or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns AzureReachabilityReport
+         or ClientRawResponse<AzureReachabilityReport> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.AzureReachabilityReport]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.AzureReachabilityReport]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_azure_reachability_report_initial(
@@ -1603,30 +1444,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('AzureReachabilityReport', response)
 
             if raw:
@@ -1635,12 +1454,13 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
 
     def _list_available_providers_initial(
@@ -1695,7 +1515,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def list_available_providers(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Lists all available internet service providers for a specified Azure
         region.
 
@@ -1709,13 +1529,16 @@ class NetworkWatchersOperations(object):
         :type parameters:
          ~azure.mgmt.network.v2017_10_01.models.AvailableProvidersListParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         AvailableProvidersList or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns AvailableProvidersList
+         or ClientRawResponse<AvailableProvidersList> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_10_01.models.AvailableProvidersList]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2017_10_01.models.AvailableProvidersList]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._list_available_providers_initial(
@@ -1726,30 +1549,8 @@ class NetworkWatchersOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('AvailableProvidersList', response)
 
             if raw:
@@ -1758,9 +1559,10 @@ class NetworkWatchersOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)

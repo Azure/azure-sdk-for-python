@@ -31,8 +31,8 @@ class ConnectivityDestination(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, resource_id=None, address=None, port=None):
-        super(ConnectivityDestination, self).__init__()
-        self.resource_id = resource_id
-        self.address = address
-        self.port = port
+    def __init__(self, **kwargs):
+        super(ConnectivityDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.address = kwargs.get('address', None)
+        self.port = kwargs.get('port', None)

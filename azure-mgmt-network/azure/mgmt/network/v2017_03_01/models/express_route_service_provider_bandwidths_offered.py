@@ -26,7 +26,7 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
         'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
     }
 
-    def __init__(self, offer_name=None, value_in_mbps=None):
-        super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__()
-        self.offer_name = offer_name
-        self.value_in_mbps = value_in_mbps
+    def __init__(self, **kwargs):
+        super(ExpressRouteServiceProviderBandwidthsOffered, self).__init__(**kwargs)
+        self.offer_name = kwargs.get('offer_name', None)
+        self.value_in_mbps = kwargs.get('value_in_mbps', None)
