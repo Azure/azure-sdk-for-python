@@ -41,6 +41,7 @@ class SqlFilter(Model):
     }
 
     def __init__(self, sql_expression=None, requires_preprocessing=True):
+        super(SqlFilter, self).__init__()
         self.sql_expression = sql_expression
         self.compatibility_level = None
         self.requires_preprocessing = requires_preprocessing

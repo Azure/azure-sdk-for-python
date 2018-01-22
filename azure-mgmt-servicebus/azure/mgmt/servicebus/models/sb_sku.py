@@ -37,6 +37,7 @@ class SBSku(Model):
     }
 
     def __init__(self, name, tier=None, capacity=None):
+        super(SBSku, self).__init__()
         self.name = name
         self.tier = tier
         self.capacity = capacity
