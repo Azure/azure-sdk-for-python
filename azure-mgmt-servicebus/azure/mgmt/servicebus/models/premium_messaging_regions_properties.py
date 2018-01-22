@@ -35,5 +35,6 @@ class PremiumMessagingRegionsProperties(Model):
     }
 
     def __init__(self):
+        super(PremiumMessagingRegionsProperties, self).__init__()
         self.code = None
         self.full_name = None
