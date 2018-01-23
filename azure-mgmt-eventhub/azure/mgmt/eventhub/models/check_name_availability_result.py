@@ -41,6 +41,7 @@ class CheckNameAvailabilityResult(Model):
     }
 
     def __init__(self, name_available=None, reason=None):
+        super(CheckNameAvailabilityResult, self).__init__()
         self.message = None
         self.name_available = name_available
         self.reason = reason
