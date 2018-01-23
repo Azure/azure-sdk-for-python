@@ -47,7 +47,7 @@ class EventGridManagementClientConfiguration(AzureConfiguration):
 
         super(EventGridManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('eventgridmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-eventgrid/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -86,7 +86,7 @@ class EventGridManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-15-preview'
+        self.api_version = '2018-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
