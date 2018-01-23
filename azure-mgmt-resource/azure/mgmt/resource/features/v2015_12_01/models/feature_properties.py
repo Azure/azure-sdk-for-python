@@ -24,4 +24,5 @@ class FeatureProperties(Model):
     }
 
     def __init__(self, state=None):
+        super(FeatureProperties, self).__init__()
         self.state = state

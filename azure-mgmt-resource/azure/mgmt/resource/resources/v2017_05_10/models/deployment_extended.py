@@ -35,6 +35,7 @@ class DeploymentExtended(Model):
     }
 
     def __init__(self, name, id=None, properties=None):
+        super(DeploymentExtended, self).__init__()
         self.id = id
         self.name = name
         self.properties = properties

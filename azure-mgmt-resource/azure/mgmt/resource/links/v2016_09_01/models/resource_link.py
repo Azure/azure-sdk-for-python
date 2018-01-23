@@ -39,6 +39,7 @@ class ResourceLink(Model):
     }
 
     def __init__(self, properties=None):
+        super(ResourceLink, self).__init__()
         self.id = None
         self.name = None
         self.properties = properties

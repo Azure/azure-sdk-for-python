@@ -38,6 +38,7 @@ class ManagementLockObject(Model):
     }
 
     def __init__(self, level=None, notes=None, id=None, type=None, name=None):
+        super(ManagementLockObject, self).__init__()
         self.level = level
         self.notes = notes
         self.id = id

@@ -32,6 +32,7 @@ class ApplicationArtifact(Model):
     }
 
     def __init__(self, name=None, uri=None, type=None):
+        super(ApplicationArtifact, self).__init__()
         self.name = name
         self.uri = uri
         self.type = type
