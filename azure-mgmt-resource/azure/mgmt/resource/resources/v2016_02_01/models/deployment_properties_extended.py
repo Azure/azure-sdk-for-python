@@ -69,6 +69,7 @@ class DeploymentPropertiesExtended(Model):
     }
 
     def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
+        super(DeploymentPropertiesExtended, self).__init__()
         self.provisioning_state = provisioning_state
         self.correlation_id = correlation_id
         self.timestamp = timestamp

@@ -37,5 +37,6 @@ class ApplicationProviderAuthorization(Model):
     }
 
     def __init__(self, principal_id, role_definition_id):
+        super(ApplicationProviderAuthorization, self).__init__()
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id

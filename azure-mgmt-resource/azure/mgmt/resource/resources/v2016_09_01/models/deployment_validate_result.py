@@ -29,5 +29,6 @@ class DeploymentValidateResult(Model):
     }
 
     def __init__(self, error=None, properties=None):
+        super(DeploymentValidateResult, self).__init__()
         self.error = error
         self.properties = properties
