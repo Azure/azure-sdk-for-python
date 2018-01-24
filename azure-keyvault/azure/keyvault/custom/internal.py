@@ -8,6 +8,7 @@ import uuid
 import hmac
 import hashlib
 import codecs
+import six
 from base64 import b64encode, b64decode
 import cryptography
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -15,20 +16,9 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateNumbers, RSAPublicNumbers, \
     generate_private_key, rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp, RSAPrivateKey, RSAPublicKey
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, constant_time
 
 from ..models import JsonWebKey
-
-
-def _const_time_compare(bstr_1, bstr_2):
-    eq = len(bstr_1) == len(bstr_2)
-
-    for i in range(min(len(bstr_1), len(bstr_2))):
-        eq &= bstr_1[i] == bstr_2[i]
-
-    return eq
-
-
 
 def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
     if not key or not len(key) >= 32:
@@ -74,6 +64,8 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
         raise ValueError('ciphertext must be specified')
     if not authdata:
         raise ValueError('authdata must be specified')
+    if not authtag or len(authtag) != 16:
+        raise ValueError('authtag must be be 128 bits for algorithm "A128CBC-HS256"')
 
     hmac_key = key[:16]
     aes_key = key[16:32]
@@ -86,7 +78,7 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
     hashdata = authdata + iv + ciphertext + auth_data_length
     tag = hmac.new(key=hmac_key, msg=hashdata, digestmod=hashlib.sha256).digest()[:16]
 
-    if not _const_time_compare(tag, authtag):
+    if not constant_time.bytes_eq(tag, authtag):
         raise ValueError('"ciphertext" is not authentic')
 
     cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
@@ -101,6 +93,9 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
 
 
 def _bytes_to_int(b):
+    if not b or not isinstance(b, bytes):
+        raise ValueError('b must be non-empty byte string')
+
     return int(codecs.encode(b, 'hex'), 16)
 
 
@@ -118,7 +113,7 @@ def _int_to_bytes(i):
 
 
 def _bstr_to_b64url(bstr, **kwargs):
-    """Serialize str into base-64 string.
+    """Serialize bytes into base-64 string.
     :param str: Object to be serialized.
     :rtype: str
     """
@@ -149,7 +144,7 @@ def _b64_to_bstr(b64str):
 def _b64_to_str(b64str):
     """Deserialize base64 encoded string into string.
     :param str b64str: response string to be deserialized.
-    :rtype: bytearray
+    :rtype: str
     :raises: TypeError if string format invalid.
     """
     return _b64_to_bstr(b64str).decode('utf8')
@@ -157,6 +152,9 @@ def _b64_to_str(b64str):
 
 def _int_to_bigendian_8_bytes(i):
     b = _int_to_bytes(i)
+
+    if len(b) > 8:
+        raise ValueError('the specified integer is to large to be represented by 8 bytes')
 
     if len(b) < 8:
         b = (b'\0' * (8 - len(b))) + b
@@ -281,8 +279,8 @@ class _RsaKey(object):
         return _int_to_bytes(self._private_key_material().q) if self.is_private_key() else None
 
     @property
-    def b(self):
-        return _int_to_bytes(self._private_key_material().b) if self.is_private_key() else None
+    def p(self):
+        return _int_to_bytes(self._private_key_material().p) if self.is_private_key() else None
 
     @property
     def d(self):
@@ -317,11 +315,6 @@ class _RsaKey(object):
         key._rsa_impl = generate_private_key(public_exponent=e,
                                              key_size=size,
                                              backend=cryptography.hazmat.backends.default_backend())
-
-        # set the appropriate callbacks for retrieving the public and private key material
-        key._private_key_material = key._rsa_impl.private_numbers
-        key._public_key_material = key._rsa_impl.public_key().public_numbers
-
         return key
 
     @staticmethod
@@ -358,7 +351,7 @@ class _RsaKey(object):
 
             # convert or compute the remaining private key numbers
             dmp1 = _bytes_to_int(jwk.dp) if jwk.dp else rsa_crt_dmp1(private_exponent=d, p=p)
-            dmq1 = _bytes_to_int(jwk.dq) if jwk.dq else rsa_crt_dmq1(private_exponent=d, p=q)
+            dmq1 = _bytes_to_int(jwk.dq) if jwk.dq else rsa_crt_dmq1(private_exponent=d, q=q)
             iqmp = _bytes_to_int(jwk.qi) if jwk.qi else rsa_crt_iqmp(p=p, q=q)
 
             # create the private key from the jwk key values
@@ -412,7 +405,7 @@ class _RsaKey(object):
         return isinstance(self._rsa_impl, RSAPrivateKey)
 
     def _public_key_material(self):
-        self.public_key.public_numbers()
+        return self.public_key.public_numbers()
 
     def _private_key_material(self):
-        self.private_key.private_numbers() if self.private_key else None
+        return self.private_key.private_numbers() if self.private_key else None
