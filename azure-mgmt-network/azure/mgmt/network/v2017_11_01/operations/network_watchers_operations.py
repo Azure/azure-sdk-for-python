@@ -40,7 +40,7 @@ class NetworkWatchersOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, network_watcher_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a network watcher in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -85,10 +85,7 @@ class NetworkWatchersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if parameters is not None:
-            body_content = self._serialize.body(parameters, 'NetworkWatcher')
-        else:
-            body_content = None
+        body_content = self._serialize.body(parameters, 'NetworkWatcher')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
