@@ -21,7 +21,8 @@ from .custom.key_vault_id import (KeyVaultId,
                                   CertificateOperationId,
                                   StorageAccountId,
                                   StorageSasDefinitionId)
-from .custom.key_vault_authentication import KeyVaultAuthentication, KeyVaultAuthBase
+from .custom.key_vault_authentication import KeyVaultAuthentication, KeyVaultAuthBase, AccessToken
+from .custom.http_message_security import generate_pop_key
 from .version import VERSION
 
 __all__ = ['KeyVaultClient',
@@ -37,7 +38,9 @@ __all__ = ['KeyVaultClient',
            'HttpBearerChallenge',
            'HttpChallenge',
            'KeyVaultAuthentication',
-           'KeyVaultAuthBase']
+           'KeyVaultAuthBase',
+           'generate_pop_key',
+           'AccessToken']
 
 __version__ = VERSION
 
