@@ -5,18 +5,15 @@
 
 import json
 import uuid
-import hmac
-import hashlib
 import codecs
-import six
 from base64 import b64encode, b64decode
 import cryptography
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateNumbers, RSAPublicNumbers, \
     generate_private_key, rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp, RSAPrivateKey, RSAPublicKey
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes, constant_time
+from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
+from cryptography.hazmat.primitives import hashes, constant_time, padding, hmac
 
 from ..models import JsonWebKey
 
@@ -37,11 +34,9 @@ def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
     # calculate the length of authdata and store as bytes
     auth_data_length = _int_to_bigendian_8_bytes(len(authdata) * 8)
 
-    # pad the data so it is a multiple of blocksize
-    # pkcs7 padding dictates the pad bytes are the value of the number of pad bytes added
-    padlen = 16 - len(plaintext) % 16
-    padval = _int_to_bytes(padlen)
-    plaintext += padval * padlen
+    # pad the plaintext with pkcs7
+    padder = padding.PKCS7(128).padder()
+    plaintext = padder.update(plaintext) + padder.finalize()
 
     # create the cipher and encrypt the plaintext
     cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
@@ -50,7 +45,9 @@ def _a128cbc_hs256_encrypt(key, iv, plaintext, authdata):
 
     # get the data to hash with HMAC, hash the data and take the first 16 bytes
     hashdata = authdata + iv + ciphertext + auth_data_length
-    tag = hmac.new(key=hmac_key, msg=hashdata, digestmod=hashlib.sha256).digest()[:16]
+    hmac_hash = hmac.HMAC(hmac_key, hashes.SHA256(), backend=default_backend())
+    hmac_hash.update(hashdata)
+    tag = hmac_hash.finalize()[:16]
 
     return ciphertext, tag
 
@@ -76,7 +73,9 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
         raise ValueError('invalid tag')
 
     hashdata = authdata + iv + ciphertext + auth_data_length
-    tag = hmac.new(key=hmac_key, msg=hashdata, digestmod=hashlib.sha256).digest()[:16]
+    hmac_hash = hmac.HMAC(hmac_key, hashes.SHA256(), backend=default_backend())
+    hmac_hash.update(hashdata)
+    tag = hmac_hash.finalize()[:16]
 
     if not constant_time.bytes_eq(tag, authtag):
         raise ValueError('"ciphertext" is not authentic')
@@ -85,9 +84,9 @@ def _a128cbc_hs256_decrypt(key, iv, ciphertext, authdata, authtag):
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
-    # remove the pad bytes (for pkcs7 the # of pad bytes == the value of the last byte)
-    padlen = plaintext[-1]
-    plaintext = plaintext[:-1 * padlen]
+    # unpad the decrypted plaintext
+    padder = padding.PKCS7(128).unpadder()
+    plaintext = padder.update(plaintext) + padder.finalize()
 
     return plaintext
 
@@ -245,11 +244,11 @@ class _JwsObject(_JoseObject):
 
 
 def _default_encryption_padding():
-    return padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA1()), algorithm=hashes.SHA1(), label=None)
+    return asym_padding.OAEP(mgf=asym_padding.MGF1(algorithm=hashes.SHA1()), algorithm=hashes.SHA1(), label=None)
 
 
 def _default_signature_padding():
-    return padding.PKCS1v15()
+    return asym_padding.PKCS1v15()
 
 
 def _default_signature_algorithm():
