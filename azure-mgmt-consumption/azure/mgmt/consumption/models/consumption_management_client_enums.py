@@ -12,6 +12,20 @@
 from enum import Enum
 
 
+class TimeGrainType(Enum):
+
+    monthly = "Monthly"
+    quarterly = "Quarterly"
+    annually = "Annually"
+
+
+class OperatorType(Enum):
+
+    equal_to = "EqualTo"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+
+
 class Datagrain(Enum):
 
     daily_grain = "daily"

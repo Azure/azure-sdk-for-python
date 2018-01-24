@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_details_operations import UsageDetailsOperations
-from .reservations_summaries_operations import ReservationsSummariesOperations
-from .reservations_details_operations import ReservationsDetailsOperations
-from .budgets_operations import BudgetsOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'UsageDetailsOperations',
-    'ReservationsSummariesOperations',
-    'ReservationsDetailsOperations',
-    'BudgetsOperations',
-    'Operations',
-]
+
+class BudgetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Budget]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BudgetPaged, self).__init__(*args, **kwargs)
