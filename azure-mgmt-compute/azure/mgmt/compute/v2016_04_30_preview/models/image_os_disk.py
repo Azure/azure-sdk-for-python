@@ -15,28 +15,32 @@ from msrest.serialization import Model
 class ImageOSDisk(Model):
     """Describes an Operating System disk.
 
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes>`
+    :param os_type: This property allows you to specify the type of the OS
+     that is included in the disk if creating a VM from a custom image.
+     <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
+     Possible values include: 'Windows', 'Linux'
+    :type os_type: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemTypes
     :param os_state: The OS State. Possible values include: 'Generalized',
      'Specialized'
-    :type os_state: str or :class:`OperatingSystemStateTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemStateTypes>`
+    :type os_state: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.OperatingSystemStateTypes
     :param snapshot: The snapshot.
-    :type snapshot: :class:`SubResource
-     <azure.mgmt.compute.v2016_04_30_preview.models.SubResource>`
+    :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: :class:`SubResource
-     <azure.mgmt.compute.v2016_04_30_preview.models.SubResource>`
+    :type managed_disk:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
-    :param caching: The caching type. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes>`
-    :param disk_size_gb: The initial managed disk size in GB for blank data
-     disks, and the new desired size for existing OS and Data disks.
+    :param caching: Specifies the caching requirements. <br><br> Possible
+     values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
+     <br><br> Default: **None for Standard storage. ReadOnly for Premium
+     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
+    :type caching: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.CachingTypes
+    :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
+     This element can be used to overwrite the name of the disk in a virtual
+     machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     """
 
@@ -56,6 +60,7 @@ class ImageOSDisk(Model):
     }
 
     def __init__(self, os_type, os_state, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None):
+        super(ImageOSDisk, self).__init__()
         self.os_type = os_type
         self.os_state = os_state
         self.snapshot = snapshot

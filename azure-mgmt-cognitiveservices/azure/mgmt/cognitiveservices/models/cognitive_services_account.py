@@ -21,37 +21,40 @@ class CognitiveServicesAccount(Model):
 
     :param etag: Entity Tag
     :type etag: str
-    :param id: The id of the created account
-    :type id: str
+    :ivar id: The id of the created account
+    :vartype id: str
     :param kind: Type of cognitive service account.
     :type kind: str
     :param location: The location of the resource
     :type location: str
-    :param name: The name of the created account
-    :type name: str
+    :ivar name: The name of the created account
+    :vartype name: str
     :ivar provisioning_state: Gets the status of the cognitive services
      account at the time the operation was called. Possible values include:
      'Creating', 'ResolvingDNS', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cognitiveservices.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :param endpoint: Endpoint of the created account.
     :type endpoint: str
     :param internal_id: The internal identifier.
     :type internal_id: str
     :param sku: The SKU of Cognitive Services account.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
-    :type tags: dict
-    :param type: Resource type
-    :type type: str
+    :type tags: dict[str, str]
+    :ivar type: Resource type
+    :vartype type: str
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,15 +71,15 @@ class CognitiveServicesAccount(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, etag=None, id=None, kind=None, location=None, name=None, endpoint=None, internal_id=None, sku=None, tags=None, type=None):
+    def __init__(self, etag=None, kind=None, location=None, endpoint=None, internal_id=None, sku=None, tags=None):
         self.etag = etag
-        self.id = id
+        self.id = None
         self.kind = kind
         self.location = location
-        self.name = name
+        self.name = None
         self.provisioning_state = None
         self.endpoint = endpoint
         self.internal_id = internal_id
         self.sku = sku
         self.tags = tags
-        self.type = type
+        self.type = None

@@ -18,8 +18,8 @@ class WinRMListener(Model):
     :param protocol: Specifies the protocol of listener. <br><br> Possible
      values are: <br>**http** <br><br> **https**. Possible values include:
      'Http', 'Https'
-    :type protocol: str or :class:`ProtocolTypes
-     <azure.mgmt.compute.v2017_03_30.models.ProtocolTypes>`
+    :type protocol: str or
+     ~azure.mgmt.compute.v2017_03_30.models.ProtocolTypes
     :param certificate_url: This is the URL of a certificate that has been
      uploaded to Key Vault as a secret. For adding a secret to the Key Vault,
      see [Add a key or secret to the key
@@ -37,5 +37,6 @@ class WinRMListener(Model):
     }
 
     def __init__(self, protocol=None, certificate_url=None):
+        super(WinRMListener, self).__init__()
         self.protocol = protocol
         self.certificate_url = certificate_url

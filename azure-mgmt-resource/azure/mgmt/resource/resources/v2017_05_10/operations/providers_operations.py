@@ -47,13 +47,9 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Provider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.Provider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -110,13 +106,9 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Provider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.Provider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -178,10 +170,9 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>`
-        :rtype: :class:`ProviderPaged
-         <azure.mgmt.resource.resources.v2017_05_10.models.ProviderPaged>`
+        :return: An iterator like instance of Provider
+        :rtype:
+         ~azure.mgmt.resource.resources.v2017_05_10.models.ProviderPaged[~azure.mgmt.resource.resources.v2017_05_10.models.Provider]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -253,13 +244,9 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v2017_05_10.models.Provider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Provider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.Provider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

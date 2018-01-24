@@ -27,16 +27,14 @@ class JobScheduleAddParameter(Model):
      length of 1024.
     :type display_name: str
     :param schedule: The schedule according to which jobs will be created.
-    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
+    :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the jobs to be created on this
      schedule.
-    :type job_specification: :class:`JobSpecification
-     <azure.batch.models.JobSpecification>`
+    :type job_specification: ~azure.batch.models.JobSpecification
     :param metadata: A list of name-value pairs associated with the schedule
      as metadata. The Batch service does not assign any meaning to metadata; it
      is solely for the use of user code.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _validation = {

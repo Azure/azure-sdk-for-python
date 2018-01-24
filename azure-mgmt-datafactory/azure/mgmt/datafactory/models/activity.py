@@ -15,14 +15,19 @@ from msrest.serialization import Model
 class Activity(Model):
     """A pipeline activity.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExecutionActivity, ControlActivity
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -32,6 +37,7 @@ class Activity(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -42,7 +48,8 @@ class Activity(Model):
         'type': {'Execution': 'ExecutionActivity', 'Container': 'ControlActivity'}
     }
 
-    def __init__(self, name, description=None, depends_on=None):
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None):
+        self.additional_properties = additional_properties
         self.name = name
         self.description = description
         self.depends_on = depends_on

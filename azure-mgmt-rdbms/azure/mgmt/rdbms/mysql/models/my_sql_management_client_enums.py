@@ -37,6 +37,15 @@ class SkuTier(Enum):
     standard = "Standard"
 
 
+class VirtualNetworkRuleState(Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    deleting = "Deleting"
+    unknown = "Unknown"
+
+
 class OperationOrigin(Enum):
 
     not_specified = "NotSpecified"

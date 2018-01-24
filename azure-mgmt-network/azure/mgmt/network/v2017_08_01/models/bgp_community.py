@@ -25,7 +25,7 @@ class BGPCommunity(Model):
      https://docs.microsoft.com/en-us/azure/expressroute/expressroute-routing.
     :type community_value: str
     :param community_prefixes: The prefixes that the bgp community contains.
-    :type community_prefixes: list of str
+    :type community_prefixes: list[str]
     :param is_authorized_to_use: Customer is authorized to use bgp community
      or not.
     :type is_authorized_to_use: bool
@@ -43,6 +43,7 @@ class BGPCommunity(Model):
     }
 
     def __init__(self, service_supported_region=None, community_name=None, community_value=None, community_prefixes=None, is_authorized_to_use=None, service_group=None):
+        super(BGPCommunity, self).__init__()
         self.service_supported_region = service_supported_region
         self.community_name = community_name
         self.community_value = community_value

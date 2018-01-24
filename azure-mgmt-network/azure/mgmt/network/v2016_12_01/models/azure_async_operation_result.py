@@ -25,10 +25,10 @@ class AzureAsyncOperationResult(Model):
     :param status: Status of the Azure async operation. Possible values are:
      'InProgress', 'Succeeded', and 'Failed'. Possible values include:
      'InProgress', 'Succeeded', 'Failed'
-    :type status: str or :class:`NetworkOperationStatus
-     <azure.mgmt.network.v2016_12_01.models.NetworkOperationStatus>`
+    :type status: str or
+     ~azure.mgmt.network.v2016_12_01.models.NetworkOperationStatus
     :param error:
-    :type error: :class:`Error <azure.mgmt.network.v2016_12_01.models.Error>`
+    :type error: ~azure.mgmt.network.v2016_12_01.models.Error
     """
 
     _attribute_map = {
@@ -37,5 +37,6 @@ class AzureAsyncOperationResult(Model):
     }
 
     def __init__(self, status=None, error=None):
+        super(AzureAsyncOperationResult, self).__init__()
         self.status = status
         self.error = error

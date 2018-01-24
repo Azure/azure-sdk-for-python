@@ -34,5 +34,6 @@ class ImageDiskReference(Model):
     }
 
     def __init__(self, id, lun=None):
+        super(ImageDiskReference, self).__init__()
         self.id = id
         self.lun = lun

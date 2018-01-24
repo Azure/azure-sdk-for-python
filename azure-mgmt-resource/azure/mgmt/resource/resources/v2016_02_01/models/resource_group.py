@@ -23,14 +23,14 @@ class ResourceGroup(Model):
     :param name: The Name of the resource group.
     :type name: str
     :param properties:
-    :type properties: :class:`ResourceGroupProperties
-     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupProperties
     :param location: The location of the resource group. It cannot be changed
      after the resource group has been created. Has to be one of the supported
      Azure Locations, such as West US, East US, West Europe, East Asia, etc.
     :type location: str
     :param tags: The tags attached to the resource group.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

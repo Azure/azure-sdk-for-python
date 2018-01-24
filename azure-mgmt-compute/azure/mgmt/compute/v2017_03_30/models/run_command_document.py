@@ -21,17 +21,17 @@ class RunCommandDocument(RunCommandDocumentBase):
     :type id: str
     :param os_type: The Operating System type. Possible values include:
      'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     :param label: The VM run command label.
     :type label: str
     :param description: The VM run command description.
     :type description: str
     :param script: The script to be executed.
-    :type script: list of str
+    :type script: list[str]
     :param parameters: The parameters used by the script.
-    :type parameters: list of :class:`RunCommandParameterDefinition
-     <azure.mgmt.compute.v2017_03_30.models.RunCommandParameterDefinition>`
+    :type parameters:
+     list[~azure.mgmt.compute.v2017_03_30.models.RunCommandParameterDefinition]
     """
 
     _validation = {

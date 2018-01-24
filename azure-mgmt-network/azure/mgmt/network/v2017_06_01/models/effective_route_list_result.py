@@ -19,8 +19,7 @@ class EffectiveRouteListResult(Model):
     sending a request.
 
     :param value: A list of effective routes.
-    :type value: list of :class:`EffectiveRoute
-     <azure.mgmt.network.v2017_06_01.models.EffectiveRoute>`
+    :type value: list[~azure.mgmt.network.v2017_06_01.models.EffectiveRoute]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -35,5 +34,6 @@ class EffectiveRouteListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(EffectiveRouteListResult, self).__init__()
         self.value = value
         self.next_link = None

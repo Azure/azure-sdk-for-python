@@ -125,7 +125,7 @@ class MgmtACRTest(AzureMgmtTestCase):
             resource_group_name, registry_name, PasswordName.password)
         self.assertEqual(len(credentials.passwords), 2)
 
-        if registry.sku.tier == SkuTier.managed.value:
+        if registry.sku.name == SkuName.premium.value:
             usages = self.client.registries.list_usages(resource_group_name, registry_name)
             self.assertTrue(len(usages.value) > 1)
 
@@ -139,14 +139,14 @@ class MgmtACRTest(AzureMgmtTestCase):
             registry=Registry(
                 location=location,
                 sku=Sku(
-                    name=SkuName.managed_premium
+                    name=SkuName.premium
                 )
             )
         ).result()
         self.assertEqual(registry.name, registry_name)
         self.assertEqual(registry.location, location)
-        self.assertEqual(registry.sku.name, SkuName.managed_premium.value)
-        self.assertEqual(registry.sku.tier, SkuTier.managed.value)
+        self.assertEqual(registry.sku.name, SkuName.premium.value)
+        self.assertEqual(registry.sku.tier, SkuTier.premium.value)
         self.assertEqual(registry.provisioning_state, ProvisioningState.succeeded.value)
         self.assertEqual(registry.admin_user_enabled, False)
         self.assertEqual(registry.storage_account, None)

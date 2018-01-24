@@ -23,15 +23,17 @@ class TopicTypesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-09-15-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-15-preview"
+        self.api_version = "2018-01-01"
 
         self.config = config
 
@@ -46,10 +48,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>`
-        :rtype: :class:`TopicTypeInfoPaged
-         <azure.mgmt.eventgrid.models.TopicTypeInfoPaged>`
+        :return: An iterator like instance of TopicTypeInfo
+        :rtype:
+         ~azure.mgmt.eventgrid.models.TopicTypeInfoPaged[~azure.mgmt.eventgrid.models.TopicTypeInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -79,7 +80,7 @@ class TopicTypesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -111,13 +112,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TopicTypeInfo
-         <azure.mgmt.eventgrid.models.TopicTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TopicTypeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -143,7 +140,7 @@ class TopicTypesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -174,10 +171,9 @@ class TopicTypesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`EventType
-         <azure.mgmt.eventgrid.models.EventType>`
-        :rtype: :class:`EventTypePaged
-         <azure.mgmt.eventgrid.models.EventTypePaged>`
+        :return: An iterator like instance of EventType
+        :rtype:
+         ~azure.mgmt.eventgrid.models.EventTypePaged[~azure.mgmt.eventgrid.models.EventType]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -211,7 +207,7 @@ class TopicTypesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

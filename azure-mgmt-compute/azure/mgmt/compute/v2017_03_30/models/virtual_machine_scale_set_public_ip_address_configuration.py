@@ -23,8 +23,7 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     :param dns_settings: The dns settings to be applied on the publicIP
      addresses .
     :type dns_settings:
-     :class:`VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings>`
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     """
 
     _validation = {
@@ -38,6 +37,7 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     }
 
     def __init__(self, name, idle_timeout_in_minutes=None, dns_settings=None):
+        super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__()
         self.name = name
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.dns_settings = dns_settings

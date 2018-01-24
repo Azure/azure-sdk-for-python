@@ -59,6 +59,7 @@ from .application_gateway_available_waf_rule_sets_result import ApplicationGatew
 from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
 from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
 from .resource import Resource
+from .tags_object import TagsObject
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .endpoint_service_result import EndpointServiceResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
@@ -140,14 +141,21 @@ from .available_providers_list_city import AvailableProvidersListCity
 from .available_providers_list_state import AvailableProvidersListState
 from .available_providers_list_country import AvailableProvidersListCountry
 from .available_providers_list import AvailableProvidersList
+from .operation_display import OperationDisplay
+from .availability import Availability
+from .dimension import Dimension
+from .metric_specification import MetricSpecification
+from .log_specification import LogSpecification
+from .operation_properties_format_service_specification import OperationPropertiesFormatServiceSpecification
+from .operation import Operation
 from .patch_route_filter_rule import PatchRouteFilterRule
 from .patch_route_filter import PatchRouteFilter
 from .bgp_community import BGPCommunity
 from .bgp_service_community import BgpServiceCommunity
 from .usage_name import UsageName
 from .usage import Usage
-from .virtual_network_peering import VirtualNetworkPeering
 from .address_space import AddressSpace
+from .virtual_network_peering import VirtualNetworkPeering
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .ip_address_availability_result import IPAddressAvailabilityResult
@@ -194,6 +202,7 @@ from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
 from .packet_capture_result_paged import PacketCaptureResultPaged
+from .operation_paged import OperationPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_filter_paged import RouteFilterPaged
 from .route_filter_rule_paged import RouteFilterRulePaged
@@ -328,6 +337,7 @@ __all__ = [
     'ApplicationGatewayAvailableSslOptions',
     'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
+    'TagsObject',
     'DnsNameAvailabilityResult',
     'EndpointServiceResult',
     'ExpressRouteCircuitAuthorization',
@@ -409,14 +419,21 @@ __all__ = [
     'AvailableProvidersListState',
     'AvailableProvidersListCountry',
     'AvailableProvidersList',
+    'OperationDisplay',
+    'Availability',
+    'Dimension',
+    'MetricSpecification',
+    'LogSpecification',
+    'OperationPropertiesFormatServiceSpecification',
+    'Operation',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
     'BgpServiceCommunity',
     'UsageName',
     'Usage',
-    'VirtualNetworkPeering',
     'AddressSpace',
+    'VirtualNetworkPeering',
     'DhcpOptions',
     'VirtualNetwork',
     'IPAddressAvailabilityResult',
@@ -463,6 +480,7 @@ __all__ = [
     'SecurityRulePaged',
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
+    'OperationPaged',
     'PublicIPAddressPaged',
     'RouteFilterPaged',
     'RouteFilterRulePaged',

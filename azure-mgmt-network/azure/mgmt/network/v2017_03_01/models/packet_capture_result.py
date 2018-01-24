@@ -38,16 +38,16 @@ class PacketCaptureResult(Model):
      seconds. Default value: 18000 .
     :type time_limit_in_seconds: int
     :param storage_location:
-    :type storage_location: :class:`PacketCaptureStorageLocation
-     <azure.mgmt.network.v2017_03_01.models.PacketCaptureStorageLocation>`
+    :type storage_location:
+     ~azure.mgmt.network.v2017_03_01.models.PacketCaptureStorageLocation
     :param filters:
-    :type filters: list of :class:`PacketCaptureFilter
-     <azure.mgmt.network.v2017_03_01.models.PacketCaptureFilter>`
+    :type filters:
+     list[~azure.mgmt.network.v2017_03_01.models.PacketCaptureFilter]
     :param provisioning_state: The provisioning state of the packet capture
      session. Possible values include: 'Succeeded', 'Updating', 'Deleting',
      'Failed'
-    :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.network.v2017_03_01.models.ProvisioningState>`
+    :type provisioning_state: str or
+     ~azure.mgmt.network.v2017_03_01.models.ProvisioningState
     """
 
     _validation = {
@@ -71,6 +71,7 @@ class PacketCaptureResult(Model):
     }
 
     def __init__(self, target, storage_location, etag="A unique read-only string that changes whenever the resource is updated.", bytes_to_capture_per_packet=0, total_bytes_per_session=1073741824, time_limit_in_seconds=18000, filters=None, provisioning_state=None):
+        super(PacketCaptureResult, self).__init__()
         self.name = None
         self.id = None
         self.etag = etag

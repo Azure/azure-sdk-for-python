@@ -19,8 +19,8 @@ class OutputFileUploadOptions(Model):
     :param upload_condition: The conditions under which the task output file
      or set of files should be uploaded. The default is taskCompletion.
      Possible values include: 'taskSuccess', 'taskFailure', 'taskCompletion'
-    :type upload_condition: str or :class:`OutputFileUploadCondition
-     <azure.batch.models.OutputFileUploadCondition>`
+    :type upload_condition: str or
+     ~azure.batch.models.OutputFileUploadCondition
     """
 
     _validation = {

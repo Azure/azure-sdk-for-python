@@ -23,13 +23,13 @@ class ManagementLockObject(Model):
      read and modify the resources, but not delete. ReadOnly means authorized
      users can only read from a resource, but they can't modify or delete it.
      Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :type level: str or :class:`LockLevel
-     <azure.mgmt.resource.locks.v2016_09_01.models.LockLevel>`
+    :type level: str or
+     ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
     :param notes: Notes about the lock. Maximum of 512 characters.
     :type notes: str
     :param owners: The owners of the lock.
-    :type owners: list of :class:`ManagementLockOwner
-     <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner>`
+    :type owners:
+     list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
     :ivar id: The resource ID of the lock.
     :vartype id: str
     :ivar type: The resource type of the lock - Microsoft.Authorization/locks.

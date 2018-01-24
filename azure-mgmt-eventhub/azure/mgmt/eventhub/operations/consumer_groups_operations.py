@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class ConsumerGroupsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -58,10 +60,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -72,7 +73,7 @@ class ConsumerGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -98,7 +99,7 @@ class ConsumerGroupsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -133,9 +134,8 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -144,7 +144,7 @@ class ConsumerGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -166,9 +166,9 @@ class ConsumerGroupsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -193,10 +193,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -205,7 +204,7 @@ class ConsumerGroupsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -227,7 +226,7 @@ class ConsumerGroupsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -260,8 +259,9 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroupPaged
-         <azure.mgmt.eventhub.models.ConsumerGroupPaged>`
+        :return: An iterator like instance of ConsumerGroup
+        :rtype:
+         ~azure.mgmt.eventhub.models.ConsumerGroupPaged[~azure.mgmt.eventhub.models.ConsumerGroup]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -273,7 +273,7 @@ class ConsumerGroupsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -299,7 +299,7 @@ class ConsumerGroupsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)

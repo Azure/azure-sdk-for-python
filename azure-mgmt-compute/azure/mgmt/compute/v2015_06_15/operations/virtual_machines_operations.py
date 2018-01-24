@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -27,6 +28,8 @@ class VirtualMachinesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2015-06-15".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -36,33 +39,9 @@ class VirtualMachinesOperations(object):
 
         self.config = config
 
-    def capture(
-            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Captures the VM by copying virtual hard disks of the VM and outputs a
-        template that can be used to create similar VMs.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param parameters: Parameters supplied to the Capture Virtual Machine
-         operation.
-        :type parameters: :class:`VirtualMachineCaptureParameters
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineCaptureParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineCaptureResult
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineCaptureResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _capture_initial(
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/capture'
         path_format_arguments = {
@@ -90,19 +69,73 @@ class VirtualMachinesOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualMachineCaptureParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineCaptureResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def capture(
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Captures the VM by copying virtual hard disks of the VM and outputs a
+        template that can be used to create similar VMs.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_name: The name of the virtual machine.
+        :type vm_name: str
+        :param parameters: Parameters supplied to the Capture Virtual Machine
+         operation.
+        :type parameters:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineCaptureParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachineCaptureResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineCaptureResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._capture_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -111,20 +144,13 @@ class VirtualMachinesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualMachineCaptureResult', response)
+            deserialized = self._deserialize('VirtualMachineCaptureResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -133,32 +159,9 @@ class VirtualMachinesOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def create_or_update(
-            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The operation to create or update a virtual machine.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param parameters: Parameters supplied to the Create Virtual Machine
-         operation.
-        :type parameters: :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}'
         path_format_arguments = {
@@ -186,19 +189,74 @@ class VirtualMachinesOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualMachine')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachine', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('VirtualMachine', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """The operation to create or update a virtual machine.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_name: The name of the virtual machine.
+        :type vm_name: str
+        :param parameters: Parameters supplied to the Create Virtual Machine
+         operation.
+        :type parameters:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachine
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachine or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.VirtualMachine]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -207,22 +265,13 @@ class VirtualMachinesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualMachine', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('VirtualMachine', response)
+            deserialized = self._deserialize('VirtualMachine', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -231,28 +280,9 @@ class VirtualMachinesOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def delete(
-            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete a virtual machine.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}'
         path_format_arguments = {
@@ -277,18 +307,66 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
+        """The operation to delete a virtual machine.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_name: The name of the virtual machine.
+        :type vm_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -297,20 +375,13 @@ class VirtualMachinesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -330,20 +401,16 @@ class VirtualMachinesOperations(object):
         :type vm_name: str
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'instanceView'
-        :type expand: str or :class:`InstanceViewTypes
-         <azure.mgmt.compute.v2015_06_15.models.InstanceViewTypes>`
+        :type expand: str or
+         ~azure.mgmt.compute.v2015_06_15.models.InstanceViewTypes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachine or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2015_06_15.models.VirtualMachine or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -373,7 +440,7 @@ class VirtualMachinesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -391,30 +458,9 @@ class VirtualMachinesOperations(object):
 
         return deserialized
 
-    def deallocate(
-            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Shuts down the virtual machine and releases the compute resources. You
-        are not billed for the compute resources that this virtual machine
-        uses.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _deallocate_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/deallocate'
         path_format_arguments = {
@@ -439,18 +485,68 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def deallocate(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
+        """Shuts down the virtual machine and releases the compute resources. You
+        are not billed for the compute resources that this virtual machine
+        uses.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_name: The name of the virtual machine.
+        :type vm_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._deallocate_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -459,20 +555,13 @@ class VirtualMachinesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -494,13 +583,9 @@ class VirtualMachinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -528,7 +613,7 @@ class VirtualMachinesOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -559,10 +644,9 @@ class VirtualMachinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>`
-        :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachinePaged>`
+        :return: An iterator like instance of VirtualMachine
+        :rtype:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachinePaged[~azure.mgmt.compute.v2015_06_15.models.VirtualMachine]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -597,7 +681,7 @@ class VirtualMachinesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -627,10 +711,9 @@ class VirtualMachinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachine
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachine>`
-        :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachinePaged>`
+        :return: An iterator like instance of VirtualMachine
+        :rtype:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachinePaged[~azure.mgmt.compute.v2015_06_15.models.VirtualMachine]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -664,7 +747,7 @@ class VirtualMachinesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -697,10 +780,9 @@ class VirtualMachinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSize>`
-        :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizePaged>`
+        :return: An iterator like instance of VirtualMachineSize
+        :rtype:
+         ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -736,7 +818,7 @@ class VirtualMachinesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -755,30 +837,9 @@ class VirtualMachinesOperations(object):
 
         return deserialized
 
-    def power_off(
-            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to power off (stop) a virtual machine. The virtual
-        machine can be restarted with the same provisioned resources. You are
-        still charged for this virtual machine.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_name: The name of the virtual machine.
-        :type vm_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _power_off_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/powerOff'
         path_format_arguments = {
@@ -803,51 +864,30 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def restart(
+    def power_off(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to restart a virtual machine.
+        """The operation to power off (stop) a virtual machine. The virtual
+        machine can be restarted with the same provisioned resources. You are
+        still charged for this virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -856,17 +896,62 @@ class VirtualMachinesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._power_off_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _restart_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/restart'
         path_format_arguments = {
@@ -891,51 +976,28 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def start(
+    def restart(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to start a virtual machine.
+        """The operation to restart a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -944,17 +1006,62 @@ class VirtualMachinesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._restart_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _start_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/start'
         path_format_arguments = {
@@ -979,51 +1086,28 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def redeploy(
+    def start(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to redeploy a virtual machine.
+        """The operation to start a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1032,17 +1116,62 @@ class VirtualMachinesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._start_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _redeploy_initial(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/redeploy'
         path_format_arguments = {
@@ -1067,18 +1196,66 @@ class VirtualMachinesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def redeploy(
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
+        """The operation to redeploy a virtual machine.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_name: The name of the virtual machine.
+        :type vm_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._redeploy_initial(
+            resource_group_name=resource_group_name,
+            vm_name=vm_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1087,20 +1264,13 @@ class VirtualMachinesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',

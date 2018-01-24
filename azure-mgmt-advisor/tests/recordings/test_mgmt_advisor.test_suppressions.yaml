@@ -1,0 +1,188 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/3733dec6-65bd-f94e-2917-45429da0a155","name":"3733dec6-65bd-f94e-2917-45429da0a155","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/recommendations/f2a42c50-9f22-efad-fe71-06b6ee4a619a","name":"f2a42c50-9f22-efad-fe71-06b6ee4a619a","properties":{"category":"Security","impact":"High","impactedField":"","impactedValue":"","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/ab2efa2f-22a1-7a43-0609-c1a069ee7bb2","name":"ab2efa2f-22a1-7a43-0609-c1a069ee7bb2","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AZEXPERTSTGWCUS/providers/Microsoft.Compute/virtualMachines/WCUS-Test/providers/Microsoft.Advisor/recommendations/9fde7905-7416-352d-2c0d-23cbf2525109","name":"9fde7905-7416-352d-2c0d-23cbf2525109","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"WCUS-Test","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/f4c3fd5c-1ada-7805-8a3d-44f61ad0c5cf","name":"f4c3fd5c-1ada-7805-8a3d-44f61ad0c5cf","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/COSMOSDATA/providers/Microsoft.Compute/virtualMachines/azatestvm/providers/Microsoft.Advisor/recommendations/9214d42a-0b1e-58f5-9f1d-ab33a95b8f43","name":"9214d42a-0b1e-58f5-9f1d-ab33a95b8f43","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"azatestvm","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/31017e0b-c4d7-59bd-48c3-b4587f791bc0","name":"31017e0b-c4d7-59bd-48c3-b4587f791bc0","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FUNCTIONALTEST/providers/Microsoft.Compute/virtualMachines/vmnobackup1/providers/Microsoft.Advisor/recommendations/e42b8922-3f01-5682-d37e-8a51a04b7f89","name":"e42b8922-3f01-5682-d37e-8a51a04b7f89","properties":{"category":"Security","impact":"High","impactedField":"Microsoft.Compute/virtualMachines","impactedValue":"vmnobackup1","lastUpdated":"2018-01-16T21:44:23.5133404Z","risk":"None","shortDescription":{"problem":"Improve
+        the security of your Azure resources","solution":"Follow Security Center recommendations"}},"type":"Microsoft.Advisor/recommendations"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9","name":"f72c4f2b-596b-746e-de95-f25a1d3276c9","properties":{"category":"Cost","impact":"Medium","impactedField":"Microsoft.Network/expressRouteCircuits","impactedValue":"test","lastUpdated":"2018-01-16T18:27:19.4852364Z","risk":"None","shortDescription":{"problem":"Your
+        ExpressRoute circuit is in the provider status of Not Provisioned for more
+        than one month","solution":"Delete ExpressRoute circuits in the provider status
+        of Not Provisioned"}},"type":"Microsoft.Advisor/recommendations"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['5571']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:50 GMT']
+      expires: ['-1']
+      iscutoff: ['False']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9?api-version=2017-04-19
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9","name":"f72c4f2b-596b-746e-de95-f25a1d3276c9","properties":{"description":"We
+        noticed that your ExpressRoute circuit is in the provider status of Not Provisioned
+        for more than one month. This circuit is currently billed hourly to your subscription.
+        We recommend that you delete the circuit if you aren''t planning to provision
+        the circuit with your connectivity provider.","label":"Delete ExpressRoute
+        circuit in Not Provisioned state","learnMoreLink":"https://aka.ms/expressroute","potentialBenefits":"Cost
+        savings","category":"Cost","impact":"Medium","impactedField":"Microsoft.Network/expressRouteCircuits","impactedValue":"test","lastUpdated":"2018-01-16T18:27:19.4852364Z","risk":"None","shortDescription":{"problem":"Your
+        ExpressRoute circuit is in the provider status of Not Provisioned for more
+        than one month","solution":"Delete ExpressRoute circuits in the provider status
+        of Not Provisioned"}},"type":"Microsoft.Advisor/recommendations"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1169']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:51 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"ttl": "00:01:00:00"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['38']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: '{"properties":{"suppressionId":"8aced6b1-5a49-daff-be0e-89ada2bf6bd4","ttl":"00:01:00:00"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['91']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaoyuh-dev/providers/Microsoft.Network/expressRouteCircuits/test/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test","name":"Python_SDK_Test","type":"Microsoft.Advisor/suppressions","properties":{"suppressionId":"8aced6b1-5a49-daff-be0e-89ada2bf6bd4","ttl":"01:00:00"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['403']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2Fxiaoyuh-dev%2Fproviders%2FMicrosoft.Network%2FexpressRouteCircuits%2Ftest/providers/Microsoft.Advisor/recommendations/f72c4f2b-596b-746e-de95-f25a1d3276c9/suppressions/Python_SDK_Test?api-version=2017-04-19
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      date: ['Tue, 16 Jan 2018 21:49:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/suppressions?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['12']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
+    status: {code: 200, message: OK}
+version: 1

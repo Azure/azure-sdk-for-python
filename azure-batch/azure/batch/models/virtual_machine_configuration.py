@@ -18,11 +18,10 @@ class VirtualMachineConfiguration(Model):
 
     :param image_reference: A reference to the Azure Virtual Machines
      Marketplace image or the custom Virtual Machine image to use.
-    :type image_reference: :class:`ImageReference
-     <azure.batch.models.ImageReference>`
+    :type image_reference: ~azure.batch.models.ImageReference
     :param os_disk: Settings for the operating system disk of the Virtual
      Machine.
-    :type os_disk: :class:`OSDisk <azure.batch.models.OSDisk>`
+    :type os_disk: ~azure.batch.models.OSDisk
     :param node_agent_sku_id: The SKU of the Batch node agent to be
      provisioned on compute nodes in the pool. The Batch node agent is a
      program that runs on each node in the pool, and provides the
@@ -36,13 +35,12 @@ class VirtualMachineConfiguration(Model):
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the imageReference
      or osDisk property specifies a Linux OS image.
-    :type windows_configuration: :class:`WindowsConfiguration
-     <azure.batch.models.WindowsConfiguration>`
+    :type windows_configuration: ~azure.batch.models.WindowsConfiguration
     :param data_disks: The configuration for data disks attached to the
      comptue nodes in the pool. This property must be specified if the compute
      nodes in the pool need to have empty data disks attached to them. This
      cannot be updated.
-    :type data_disks: list of :class:`DataDisk <azure.batch.models.DataDisk>`
+    :type data_disks: list[~azure.batch.models.DataDisk]
     :param license_type: The type of on-premises license to be used when
      deploying the operating system. This only applies to images that contain
      the Windows operating system, and should only be used when you hold valid
@@ -56,8 +54,7 @@ class VirtualMachineConfiguration(Model):
      to run in containers. All regular tasks and job manager tasks run on this
      pool must specify the containerSettings property, and all other tasks may
      specify it.
-    :type container_configuration: :class:`ContainerConfiguration
-     <azure.batch.models.ContainerConfiguration>`
+    :type container_configuration: ~azure.batch.models.ContainerConfiguration
     """
 
     _validation = {

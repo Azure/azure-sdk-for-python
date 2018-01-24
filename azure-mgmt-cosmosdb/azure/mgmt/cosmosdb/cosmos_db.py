@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.database_accounts_operations import DatabaseAccountsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -37,8 +38,6 @@ class CosmosDBConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,6 +58,8 @@ class CosmosDB(object):
 
     :ivar database_accounts: DatabaseAccounts operations
     :vartype database_accounts: azure.mgmt.cosmosdb.operations.DatabaseAccountsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.cosmosdb.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -80,4 +81,6 @@ class CosmosDB(object):
         self._deserialize = Deserializer(client_models)
 
         self.database_accounts = DatabaseAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

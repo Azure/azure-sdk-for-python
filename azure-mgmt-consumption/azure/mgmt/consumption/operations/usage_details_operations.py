@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,38 +22,40 @@ class UsageDetailsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-02-27-preview. Constant value: "2017-04-24-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-11-30. Constant value: "2017-11-30".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-24-preview"
+        self.api_version = "2017-11-30"
 
         self.config = config
 
     def list(
             self, scope, expand=None, filter=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage details for a scope in reverse chronological order by
-        billing period. Usage details are available via this API only for
-        January 1, 2017 or later.
+        """Lists the usage details for a scope by billing period. Usage details
+        are available via this API only for May 1, 2014 or later.
 
         :param scope: The scope of the usage details. The scope can be
          '/subscriptions/{subscriptionId}' for a subscription, or
-         '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/{invoiceName}'
-         for an invoice or
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
          for a billing perdiod.
         :type scope: str
-        :param expand: May be used to expand the additionalProperties or
-         meterDetails property within a list of usage details. By default,
-         these fields are not included when listing usage details.
+        :param expand: May be used to expand the
+         properties/additionalProperties or properties/meterDetails within a
+         list of usage details. By default, these fields are not included when
+         listing usage details.
         :type expand: str
-        :param filter: May be used to filter usageDetails by usageEnd (Utc
-         time). The filter supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It
-         does not currently support 'ne', 'or', or 'not'.
+        :param filter: May be used to filter usageDetails by
+         properties/usageEnd (Utc time), properties/usageStart (Utc time),
+         properties/resourceGroup, properties/instanceName or
+         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
+         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
@@ -68,8 +70,9 @@ class UsageDetailsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`UsageDetailPaged
-         <azure.mgmt.consumption.models.UsageDetailPaged>`
+        :return: An iterator like instance of UsageDetail
+        :rtype:
+         ~azure.mgmt.consumption.models.UsageDetailPaged[~azure.mgmt.consumption.models.UsageDetail]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """

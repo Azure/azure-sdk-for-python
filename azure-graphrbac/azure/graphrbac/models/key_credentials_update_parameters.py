@@ -16,8 +16,7 @@ class KeyCredentialsUpdateParameters(Model):
     """Request parameters for a KeyCredentials update operation.
 
     :param value: A collection of KeyCredentials.
-    :type value: list of :class:`KeyCredential
-     <azure.graphrbac.models.KeyCredential>`
+    :type value: list[~azure.graphrbac.models.KeyCredential]
     """
 
     _validation = {

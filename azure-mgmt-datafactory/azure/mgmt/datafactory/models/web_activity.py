@@ -15,25 +15,25 @@ from .execution_activity import ExecutionActivity
 class WebActivity(ExecutionActivity):
     """Web activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param method: Rest API method for target endpoint. Possible values
      include: 'GET', 'POST', 'PUT'
-    :type method: str or :class:`WebActivityMethod
-     <azure.mgmt.datafactory.models.WebActivityMethod>`
+    :type method: str or ~azure.mgmt.datafactory.models.WebActivityMethod
     :param url: Web activity target endpoint and path. Type: string (or
      Expression with resultType string).
     :type url: object
@@ -48,14 +48,13 @@ class WebActivity(ExecutionActivity):
     :type body: object
     :param authentication: Authentication method used for calling the
      endpoint.
-    :type authentication: :class:`WebActivityAuthentication
-     <azure.mgmt.datafactory.models.WebActivityAuthentication>`
+    :type authentication:
+     ~azure.mgmt.datafactory.models.WebActivityAuthentication
     :param datasets: List of datasets passed to web endpoint.
-    :type datasets: list of :class:`DatasetReference
-     <azure.mgmt.datafactory.models.DatasetReference>`
+    :type datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param linked_services: List of linked services passed to web endpoint.
-    :type linked_services: list of :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     """
 
     _validation = {
@@ -66,6 +65,7 @@ class WebActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -81,8 +81,8 @@ class WebActivity(ExecutionActivity):
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
     }
 
-    def __init__(self, name, method, url, description=None, depends_on=None, linked_service_name=None, policy=None, headers=None, body=None, authentication=None, datasets=None, linked_services=None):
-        super(WebActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, method, url, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, headers=None, body=None, authentication=None, datasets=None, linked_services=None):
+        super(WebActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.method = method
         self.url = url
         self.headers = headers

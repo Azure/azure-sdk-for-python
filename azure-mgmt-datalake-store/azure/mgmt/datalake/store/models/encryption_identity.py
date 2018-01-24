@@ -43,5 +43,6 @@ class EncryptionIdentity(Model):
     type = "SystemAssigned"
 
     def __init__(self):
+        super(EncryptionIdentity, self).__init__()
         self.principal_id = None
         self.tenant_id = None

@@ -22,13 +22,11 @@ class ElasticPoolPerDatabaseMaxDtuCapability(Model):
     :vartype limit: long
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_per_database_min_dtus: The list of supported min database
      DTUs.
-    :vartype supported_per_database_min_dtus: list of
-     :class:`ElasticPoolPerDatabaseMinDtuCapability
-     <azure.mgmt.sql.models.ElasticPoolPerDatabaseMinDtuCapability>`
+    :vartype supported_per_database_min_dtus:
+     list[~azure.mgmt.sql.models.ElasticPoolPerDatabaseMinDtuCapability]
     """
 
     _validation = {
@@ -44,6 +42,7 @@ class ElasticPoolPerDatabaseMaxDtuCapability(Model):
     }
 
     def __init__(self):
+        super(ElasticPoolPerDatabaseMaxDtuCapability, self).__init__()
         self.limit = None
         self.status = None
         self.supported_per_database_min_dtus = None

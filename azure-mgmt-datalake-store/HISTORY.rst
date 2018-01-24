@@ -2,6 +2,25 @@
 
 Release History
 ===============
+0.3.0 (2018-01-09)
+++++++++++++++++++
+
+**Breaking changes**
+
+* Changed the ODataQuery parameter type from DataLakeStoreAccount to DataLakeStoreAccountBasic for these APIs:
+
+  * Account_List
+  * Account_ListByResourceGroup
+
+**Notes**
+
+* Added two more states to DataLakeStoreAccountStatus enum: Undeleting and Canceled
+* Added new Account APIs:
+
+  * Account_CheckNameAvailability
+  * Location_GetCapability
+  * Operation_List
+
 0.2.0 (2017-08-17)
 ++++++++++++++++++
 

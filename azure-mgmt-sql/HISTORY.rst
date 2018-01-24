@@ -3,6 +3,37 @@
 Release History
 ===============
 
+0.8.5 (2018-01-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for renaming databases
+- Added missing database editions and service objectives
+- Added ability to list long term retention vaults & policies
+
+0.8.4 (2017-11-14)
+++++++++++++++++++
+
+**Features**
+
+- Added support for subscription usages
+
+0.8.3 (2017-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Added support for database zone redundant property
+- Added support for server dns aliases
+
+0.8.2 (2017-10-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for state and migration flag properties for SQL Vnet rules
+
 0.8.1 (2017-10-04)
 ++++++++++++++++++
 

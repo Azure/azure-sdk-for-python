@@ -16,10 +16,9 @@ class TriggerPipelineReference(Model):
     """Pipeline that needs to be triggered with the given parameters.
 
     :param pipeline_reference: Pipeline reference.
-    :type pipeline_reference: :class:`PipelineReference
-     <azure.mgmt.datafactory.models.PipelineReference>`
+    :type pipeline_reference: ~azure.mgmt.datafactory.models.PipelineReference
     :param parameters: Pipeline parameters.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     """
 
     _attribute_map = {

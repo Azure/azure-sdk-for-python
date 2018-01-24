@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class ActivityPolicy(Model):
     """Execution policy for an activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param timeout: Specifies the timeout for the activity to run. The default
      timeout is 7 days. Type: string (or Expression with resultType string),
      pattern: ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
@@ -32,12 +35,14 @@ class ActivityPolicy(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'timeout': {'key': 'timeout', 'type': 'object'},
         'retry': {'key': 'retry', 'type': 'object'},
         'retry_interval_in_seconds': {'key': 'retryIntervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, timeout=None, retry=None, retry_interval_in_seconds=None):
+    def __init__(self, additional_properties=None, timeout=None, retry=None, retry_interval_in_seconds=None):
+        self.additional_properties = additional_properties
         self.timeout = timeout
         self.retry = retry
         self.retry_interval_in_seconds = retry_interval_in_seconds

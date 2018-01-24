@@ -19,12 +19,11 @@ class VirtualMachineAgentInstanceView(Model):
     :type vm_agent_version: str
     :param extension_handlers: The virtual machine extension handler instance
      view.
-    :type extension_handlers: list of
-     :class:`VirtualMachineExtensionHandlerInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionHandlerInstanceView>`
+    :type extension_handlers:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionHandlerInstanceView]
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -34,6 +33,7 @@ class VirtualMachineAgentInstanceView(Model):
     }
 
     def __init__(self, vm_agent_version=None, extension_handlers=None, statuses=None):
+        super(VirtualMachineAgentInstanceView, self).__init__()
         self.vm_agent_version = vm_agent_version
         self.extension_handlers = extension_handlers
         self.statuses = statuses

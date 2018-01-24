@@ -23,7 +23,7 @@ class DatasetReference(Model):
     :param reference_name: Reference dataset name.
     :type reference_name: str
     :param parameters: Arguments for dataset.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     """
 
     _validation = {

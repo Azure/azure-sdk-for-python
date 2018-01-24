@@ -15,38 +15,39 @@ from .execution_activity import ExecutionActivity
 class HDInsightHiveActivity(ExecutionActivity):
     """HDInsight Hive activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param storage_linked_services: Storage linked service references.
-    :type storage_linked_services: list of :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type storage_linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list of object
+    :type arguments: list[object]
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
-    :type get_debug_info: str or :class:`HDInsightActivityDebugInfoOption
-     <azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption>`
+    :type get_debug_info: str or
+     ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :param script_path: Script path. Type: string (or Expression with
      resultType string).
     :type script_path: object
     :param script_linked_service: Script linked service reference.
-    :type script_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type script_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param defines: Allows user to specify defines for Hive job request.
-    :type defines: dict
+    :type defines: dict[str, object]
     """
 
     _validation = {
@@ -55,6 +56,7 @@ class HDInsightHiveActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -69,8 +71,8 @@ class HDInsightHiveActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, script_path=None, script_linked_service=None, defines=None):
-        super(HDInsightHiveActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, script_path=None, script_linked_service=None, defines=None):
+        super(HDInsightHiveActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info

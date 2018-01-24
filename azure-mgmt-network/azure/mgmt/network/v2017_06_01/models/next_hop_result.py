@@ -18,8 +18,8 @@ class NextHopResult(Model):
     :param next_hop_type: Next hop type. Possible values include: 'Internet',
      'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal',
      'HyperNetGateway', 'None'
-    :type next_hop_type: str or :class:`NextHopType
-     <azure.mgmt.network.v2017_06_01.models.NextHopType>`
+    :type next_hop_type: str or
+     ~azure.mgmt.network.v2017_06_01.models.NextHopType
     :param next_hop_ip_address: Next hop IP Address
     :type next_hop_ip_address: str
     :param route_table_id: The resource identifier for the route table
@@ -36,6 +36,7 @@ class NextHopResult(Model):
     }
 
     def __init__(self, next_hop_type=None, next_hop_ip_address=None, route_table_id=None):
+        super(NextHopResult, self).__init__()
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.route_table_id = route_table_id

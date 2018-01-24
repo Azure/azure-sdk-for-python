@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -27,6 +28,8 @@ class VirtualMachineScaleSetsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -36,32 +39,9 @@ class VirtualMachineScaleSetsOperations(object):
 
         self.config = config
 
-    def create_or_update(
-            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set to create or
-         update.
-        :type vm_scale_set_name: str
-        :param parameters: The scale set object.
-        :type parameters: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
         path_format_arguments = {
@@ -89,19 +69,74 @@ class VirtualMachineScaleSetsOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSet')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineScaleSet', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('VirtualMachineScaleSet', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Create or update a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set to create or
+         update.
+        :type vm_scale_set_name: str
+        :param parameters: The scale set object.
+        :type parameters:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachineScaleSet or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -110,22 +145,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualMachineScaleSet', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('VirtualMachineScaleSet', response)
+            deserialized = self._deserialize('VirtualMachineScaleSet', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -134,32 +160,9 @@ class VirtualMachineScaleSetsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def update(
-            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Update a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set to create or
-         update.
-        :type vm_scale_set_name: str
-        :param parameters: The scale set object.
-        :type parameters: :class:`VirtualMachineScaleSetUpdate
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdate>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_initial(
+            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
         path_format_arguments = {
@@ -187,19 +190,72 @@ class VirtualMachineScaleSetsOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSetUpdate')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.patch(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineScaleSet', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, vm_scale_set_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Update a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set to create or
+         update.
+        :type vm_scale_set_name: str
+        :param parameters: The scale set object.
+        :type parameters:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdate
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualMachineScaleSet or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -208,20 +264,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualMachineScaleSet', response)
+            deserialized = self._deserialize('VirtualMachineScaleSet', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -230,28 +279,9 @@ class VirtualMachineScaleSetsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def delete(
-            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
         path_format_arguments = {
@@ -276,18 +306,66 @@ class VirtualMachineScaleSetsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete(
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -296,20 +374,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -331,13 +402,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachineScaleSet or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -365,7 +432,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -383,36 +450,9 @@ class VirtualMachineScaleSetsOperations(object):
 
         return deserialized
 
-    def deallocate(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Deallocates specific virtual machines in a VM scale set. Shuts down the
-        virtual machines and releases the compute resources. You are not billed
-        for the compute resources that this virtual machine scale set
-        deallocates.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-         Omitting the virtual machine scale set instance ids will result in the
-         operation being performed on all virtual machines in the virtual
-         machine scale set.
-        :type instance_ids: list of str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _deallocate_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -447,19 +487,76 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def deallocate(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
+        """Deallocates specific virtual machines in a VM scale set. Shuts down the
+        virtual machines and releases the compute resources. You are not billed
+        for the compute resources that this virtual machine scale set
+        deallocates.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_ids: The virtual machine scale set instance ids.
+         Omitting the virtual machine scale set instance ids will result in the
+         operation being performed on all virtual machines in the virtual
+         machine scale set.
+        :type instance_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._deallocate_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -468,20 +565,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -490,30 +580,9 @@ class VirtualMachineScaleSetsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def delete_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
-        """Deletes virtual machines in a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-        :type instance_ids: list of str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_instances_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
         # Construct URL
@@ -543,19 +612,70 @@ class VirtualMachineScaleSetsOperations(object):
         body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_instances(
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
+        """Deletes virtual machines in a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_ids: The virtual machine scale set instance ids.
+        :type instance_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_instances_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -564,20 +684,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -599,13 +712,11 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineScaleSetInstanceView
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: VirtualMachineScaleSetInstanceView or ClientRawResponse if
          raw=true
-        :rtype: :class:`VirtualMachineScaleSetInstanceView
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetInstanceView
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -633,7 +744,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -662,10 +773,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
-        :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSet
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -700,7 +810,7 @@ class VirtualMachineScaleSetsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -723,18 +833,17 @@ class VirtualMachineScaleSetsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all VM Scale Sets in the subscription, regardless of the
         associated resource group. Use nextLink property in the response to get
-        the next page of VM Scale Sets. Do this till nextLink is not null to
-        fetch all the VM Scale Sets.
+        the next page of VM Scale Sets. Do this till nextLink is null to fetch
+        all the VM Scale Sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet>`
-        :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSet
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -768,7 +877,7 @@ class VirtualMachineScaleSetsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -801,11 +910,9 @@ class VirtualMachineScaleSetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`VirtualMachineScaleSetSku
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSku>`
-        :rtype: :class:`VirtualMachineScaleSetSkuPaged
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSkuPaged>`
+        :return: An iterator like instance of VirtualMachineScaleSetSku
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSkuPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -841,7 +948,7 @@ class VirtualMachineScaleSetsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -860,36 +967,9 @@ class VirtualMachineScaleSetsOperations(object):
 
         return deserialized
 
-    def power_off(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Power off (stop) one or more virtual machines in a VM scale set. Note
-        that resources are still attached and you are getting charged for the
-        resources. Instead, use deallocate to release resources and avoid
-        charges.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-         Omitting the virtual machine scale set instance ids will result in the
-         operation being performed on all virtual machines in the virtual
-         machine scale set.
-        :type instance_ids: list of str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _power_off_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -924,52 +1004,32 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def restart(
+    def power_off(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Restarts one or more virtual machines in a VM scale set.
+        """Power off (stop) one or more virtual machines in a VM scale set. Note
+        that resources are still attached and you are getting charged for the
+        resources. Instead, use deallocate to release resources and avoid
+        charges.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -979,21 +1039,67 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._power_off_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _restart_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -1028,52 +1134,29 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def start(
+    def restart(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Starts one or more virtual machines in a VM scale set.
+        """Restarts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1083,21 +1166,67 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._restart_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _start_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -1132,19 +1261,73 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def start(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
+        """Starts one or more virtual machines in a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_ids: The virtual machine scale set instance ids.
+         Omitting the virtual machine scale set instance ids will result in the
+         operation being performed on all virtual machines in the virtual
+         machine scale set.
+        :type instance_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._start_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1153,20 +1336,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -1175,31 +1351,9 @@ class VirtualMachineScaleSetsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def update_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
-        """Upgrades one or more virtual machines to the latest SKU set in the VM
-        scale set model.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-        :type instance_ids: list of str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_instances_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
         # Construct URL
@@ -1229,19 +1383,71 @@ class VirtualMachineScaleSetsOperations(object):
         body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_instances(
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
+        """Upgrades one or more virtual machines to the latest SKU set in the VM
+        scale set model.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_ids: The virtual machine scale set instance ids.
+        :type instance_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_instances_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1250,20 +1456,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -1272,34 +1471,9 @@ class VirtualMachineScaleSetsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Reimages (upgrade the operating system) one or more virtual machines in
-        a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
-        :type vm_scale_set_name: str
-        :param instance_ids: The virtual machine scale set instance ids.
-         Omitting the virtual machine scale set instance ids will result in the
-         operation being performed on all virtual machines in the virtual
-         machine scale set.
-        :type instance_ids: list of str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _reimage_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -1334,53 +1508,30 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def reimage_all(
+    def reimage(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Reimages all the disks ( including data disks ) in the virtual machines
-        in a VM scale set. This operation is only supported for managed disks.
+        """Reimages (upgrade the operating system) one or more virtual machines in
+        a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1390,21 +1541,67 @@ class VirtualMachineScaleSetsOperations(object):
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
          machine scale set.
-        :type instance_ids: list of str
+        :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._reimage_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _reimage_all_initial(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
@@ -1439,19 +1636,74 @@ class VirtualMachineScaleSetsOperations(object):
             body_content = None
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def reimage_all(
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
+        """Reimages all the disks ( including data disks ) in the virtual machines
+        in a VM scale set. This operation is only supported for managed disks.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_ids: The virtual machine scale set instance ids.
+         Omitting the virtual machine scale set instance ids will result in the
+         operation being performed on all virtual machines in the virtual
+         machine scale set.
+        :type instance_ids: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_03_30.models.OperationStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._reimage_all_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_ids=instance_ids,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1460,20 +1712,13 @@ class VirtualMachineScaleSetsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('OperationStatusResponse', response)
+            deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',

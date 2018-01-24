@@ -16,8 +16,7 @@ class GatewayRouteListResult(Model):
     """List of virtual network gateway routes.
 
     :param value: List of gateway routes
-    :type value: list of :class:`GatewayRoute
-     <azure.mgmt.network.v2016_12_01.models.GatewayRoute>`
+    :type value: list[~azure.mgmt.network.v2016_12_01.models.GatewayRoute]
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class GatewayRouteListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(GatewayRouteListResult, self).__init__()
         self.value = value

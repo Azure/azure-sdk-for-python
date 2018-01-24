@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -27,6 +28,8 @@ class RouteFiltersOperations(object):
     :ivar api_version: Client API version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -36,27 +39,9 @@ class RouteFiltersOperations(object):
 
         self.config = config
 
-    def delete(
-            self, resource_group_name, route_filter_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified route filter.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param route_filter_name: The name of the route filter.
-        :type route_filter_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, route_filter_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}'
         path_format_arguments = {
@@ -81,22 +66,62 @@ class RouteFiltersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, route_filter_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified route filter.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            route_filter_name=route_filter_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200, 204]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -104,10 +129,6 @@ class RouteFiltersOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -131,13 +152,9 @@ class RouteFiltersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RouteFilter or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2016_12_01.models.RouteFilter or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -167,7 +184,7 @@ class RouteFiltersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -185,32 +202,9 @@ class RouteFiltersOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a route filter in a specified resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param route_filter_name: The name of the route filter.
-        :type route_filter_name: str
-        :param route_filter_parameters: Parameters supplied to the create or
-         update route filter operation.
-        :type route_filter_parameters: :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}'
         path_format_arguments = {
@@ -238,19 +232,74 @@ class RouteFiltersOperations(object):
         body_content = self._serialize.body(route_filter_parameters, 'RouteFilter')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RouteFilter', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('RouteFilter', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a route filter in a specified resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param route_filter_parameters: Parameters supplied to the create or
+         update route filter operation.
+        :type route_filter_parameters:
+         ~azure.mgmt.network.v2016_12_01.models.RouteFilter
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns RouteFilter
+         or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2016_12_01.models.RouteFilter]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            route_filter_name=route_filter_name,
+            route_filter_parameters=route_filter_parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -259,22 +308,13 @@ class RouteFiltersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('RouteFilter', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('RouteFilter', response)
+            deserialized = self._deserialize('RouteFilter', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -283,32 +323,9 @@ class RouteFiltersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def update(
-            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates a route filter in a specified resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param route_filter_name: The name of the route filter.
-        :type route_filter_name: str
-        :param route_filter_parameters: Parameters supplied to the update
-         route filter operation.
-        :type route_filter_parameters: :class:`PatchRouteFilter
-         <azure.mgmt.network.v2016_12_01.models.PatchRouteFilter>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_initial(
+            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}'
         path_format_arguments = {
@@ -336,19 +353,72 @@ class RouteFiltersOperations(object):
         body_content = self._serialize.body(route_filter_parameters, 'PatchRouteFilter')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.patch(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RouteFilter', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, route_filter_name, route_filter_parameters, custom_headers=None, raw=False, **operation_config):
+        """Updates a route filter in a specified resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param route_filter_parameters: Parameters supplied to the update
+         route filter operation.
+        :type route_filter_parameters:
+         ~azure.mgmt.network.v2016_12_01.models.PatchRouteFilter
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns RouteFilter
+         or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2016_12_01.models.RouteFilter]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            route_filter_name=route_filter_name,
+            route_filter_parameters=route_filter_parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -357,20 +427,13 @@ class RouteFiltersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('RouteFilter', response)
+            deserialized = self._deserialize('RouteFilter', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -390,10 +453,9 @@ class RouteFiltersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>`
-        :rtype: :class:`RouteFilterPaged
-         <azure.mgmt.network.v2016_12_01.models.RouteFilterPaged>`
+        :return: An iterator like instance of RouteFilter
+        :rtype:
+         ~azure.mgmt.network.v2016_12_01.models.RouteFilterPaged[~azure.mgmt.network.v2016_12_01.models.RouteFilter]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -428,7 +490,7 @@ class RouteFiltersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -456,10 +518,9 @@ class RouteFiltersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RouteFilter
-         <azure.mgmt.network.v2016_12_01.models.RouteFilter>`
-        :rtype: :class:`RouteFilterPaged
-         <azure.mgmt.network.v2016_12_01.models.RouteFilterPaged>`
+        :return: An iterator like instance of RouteFilter
+        :rtype:
+         ~azure.mgmt.network.v2016_12_01.models.RouteFilterPaged[~azure.mgmt.network.v2016_12_01.models.RouteFilter]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -493,7 +554,7 @@ class RouteFiltersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

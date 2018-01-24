@@ -26,8 +26,8 @@ class ResourceSkuCapacity(Model):
     :vartype default: long
     :ivar scale_type: The scale type applicable to the sku. Possible values
      include: 'Automatic', 'Manual', 'None'
-    :vartype scale_type: str or :class:`ResourceSkuCapacityScaleType
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapacityScaleType>`
+    :vartype scale_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuCapacityScaleType
     """
 
     _validation = {
@@ -45,6 +45,7 @@ class ResourceSkuCapacity(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuCapacity, self).__init__()
         self.minimum = None
         self.maximum = None
         self.default = None

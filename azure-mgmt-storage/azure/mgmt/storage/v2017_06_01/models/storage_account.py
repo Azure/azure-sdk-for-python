@@ -28,34 +28,32 @@ class StorageAccount(Resource):
     :type location: str
     :param tags: Tags assigned to a resource; can be used for viewing and
      grouping a resource (across resource groups).
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar sku: Gets the SKU.
-    :vartype sku: :class:`Sku <azure.mgmt.storage.v2017_06_01.models.Sku>`
+    :vartype sku: ~azure.mgmt.storage.v2017_06_01.models.Sku
     :ivar kind: Gets the Kind. Possible values include: 'Storage',
      'BlobStorage'
-    :vartype kind: str or :class:`Kind
-     <azure.mgmt.storage.v2017_06_01.models.Kind>`
+    :vartype kind: str or ~azure.mgmt.storage.v2017_06_01.models.Kind
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.storage.v2017_06_01.models.Identity>`
+    :type identity: ~azure.mgmt.storage.v2017_06_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the
      time the operation was called. Possible values include: 'Creating',
      'ResolvingDNS', 'Succeeded'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.storage.v2017_06_01.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storage.v2017_06_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a
      retrieval of a public blob, queue, or table object. Note that Standard_ZRS
      and Premium_LRS accounts only return the blob endpoint.
-    :vartype primary_endpoints: :class:`Endpoints
-     <azure.mgmt.storage.v2017_06_01.models.Endpoints>`
+    :vartype primary_endpoints:
+     ~azure.mgmt.storage.v2017_06_01.models.Endpoints
     :ivar primary_location: Gets the location of the primary data center for
      the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary
      location of the storage account is available or unavailable. Possible
      values include: 'available', 'unavailable'
-    :vartype status_of_primary: str or :class:`AccountStatus
-     <azure.mgmt.storage.v2017_06_01.models.AccountStatus>`
+    :vartype status_of_primary: str or
+     ~azure.mgmt.storage.v2017_06_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent
      instance of a failover to the secondary location. Only the most recent
      timestamp is retained. This element is not returned if there has never
@@ -70,35 +68,34 @@ class StorageAccount(Resource):
      secondary location of the storage account is available or unavailable.
      Only available if the SKU name is Standard_GRS or Standard_RAGRS. Possible
      values include: 'available', 'unavailable'
-    :vartype status_of_secondary: str or :class:`AccountStatus
-     <azure.mgmt.storage.v2017_06_01.models.AccountStatus>`
+    :vartype status_of_secondary: str or
+     ~azure.mgmt.storage.v2017_06_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage
      account in UTC.
     :vartype creation_time: datetime
     :ivar custom_domain: Gets the custom domain the user assigned to this
      storage account.
-    :vartype custom_domain: :class:`CustomDomain
-     <azure.mgmt.storage.v2017_06_01.models.CustomDomain>`
+    :vartype custom_domain:
+     ~azure.mgmt.storage.v2017_06_01.models.CustomDomain
     :ivar secondary_endpoints: Gets the URLs that are used to perform a
      retrieval of a public blob, queue, or table object from the secondary
      location of the storage account. Only available if the SKU name is
      Standard_RAGRS.
-    :vartype secondary_endpoints: :class:`Endpoints
-     <azure.mgmt.storage.v2017_06_01.models.Endpoints>`
+    :vartype secondary_endpoints:
+     ~azure.mgmt.storage.v2017_06_01.models.Endpoints
     :ivar encryption: Gets the encryption settings on the account. If
      unspecified, the account is unencrypted.
-    :vartype encryption: :class:`Encryption
-     <azure.mgmt.storage.v2017_06_01.models.Encryption>`
+    :vartype encryption: ~azure.mgmt.storage.v2017_06_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage.
      The access tier used for billing. Possible values include: 'Hot', 'Cool'
-    :vartype access_tier: str or :class:`AccessTier
-     <azure.mgmt.storage.v2017_06_01.models.AccessTier>`
+    :vartype access_tier: str or
+     ~azure.mgmt.storage.v2017_06_01.models.AccessTier
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true. Default value: False .
     :type enable_https_traffic_only: bool
     :ivar network_rule_set: Network rule set
-    :vartype network_rule_set: :class:`NetworkRuleSet
-     <azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet>`
+    :vartype network_rule_set:
+     ~azure.mgmt.storage.v2017_06_01.models.NetworkRuleSet
     """
 
     _validation = {

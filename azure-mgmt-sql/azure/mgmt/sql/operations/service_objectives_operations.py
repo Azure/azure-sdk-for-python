@@ -26,6 +26,8 @@ class ServiceObjectivesOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -53,13 +55,9 @@ class ServiceObjectivesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceObjective
-         <azure.mgmt.sql.models.ServiceObjective>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceObjective
-         <azure.mgmt.sql.models.ServiceObjective>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceObjective or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServiceObjective or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -121,10 +119,9 @@ class ServiceObjectivesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ServiceObjective
-         <azure.mgmt.sql.models.ServiceObjective>`
-        :rtype: :class:`ServiceObjectivePaged
-         <azure.mgmt.sql.models.ServiceObjectivePaged>`
+        :return: An iterator like instance of ServiceObjective
+        :rtype:
+         ~azure.mgmt.sql.models.ServiceObjectivePaged[~azure.mgmt.sql.models.ServiceObjective]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

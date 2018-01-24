@@ -15,28 +15,27 @@ from .execution_activity import ExecutionActivity
 class LookupActivity(ExecutionActivity):
     """Lookup activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param source: Dataset-specific source properties, same as copy activity
      source.
-    :type source: :class:`CopySource
-     <azure.mgmt.datafactory.models.CopySource>`
+    :type source: ~azure.mgmt.datafactory.models.CopySource
     :param dataset: Lookup activity dataset reference.
-    :type dataset: :class:`DatasetReference
-     <azure.mgmt.datafactory.models.DatasetReference>`
+    :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     :param first_row_only: Whether to return first row or all rows. Default
      value is true. Type: boolean (or Expression with resultType boolean).
     :type first_row_only: object
@@ -50,6 +49,7 @@ class LookupActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -61,8 +61,8 @@ class LookupActivity(ExecutionActivity):
         'first_row_only': {'key': 'typeProperties.firstRowOnly', 'type': 'object'},
     }
 
-    def __init__(self, name, source, dataset, description=None, depends_on=None, linked_service_name=None, policy=None, first_row_only=None):
-        super(LookupActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, source, dataset, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, first_row_only=None):
+        super(LookupActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.source = source
         self.dataset = dataset
         self.first_row_only = first_row_only

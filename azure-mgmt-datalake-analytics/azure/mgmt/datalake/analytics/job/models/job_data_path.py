@@ -23,7 +23,7 @@ class JobDataPath(Model):
     :ivar command: the command that this job data relates to.
     :vartype command: str
     :ivar paths: the list of paths to all of the job data.
-    :vartype paths: list of str
+    :vartype paths: list[str]
     """
 
     _validation = {
@@ -39,6 +39,7 @@ class JobDataPath(Model):
     }
 
     def __init__(self):
+        super(JobDataPath, self).__init__()
         self.job_id = None
         self.command = None
         self.paths = None

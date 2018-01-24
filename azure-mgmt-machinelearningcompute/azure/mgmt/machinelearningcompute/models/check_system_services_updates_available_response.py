@@ -20,8 +20,8 @@ class CheckSystemServicesUpdatesAvailableResponse(Model):
 
     :ivar updates_available: Yes if updates are available for the system
      services, No if not. Possible values include: 'Yes', 'No'
-    :vartype updates_available: str or :class:`UpdatesAvailable
-     <azure.mgmt.machinelearningcompute.models.UpdatesAvailable>`
+    :vartype updates_available: str or
+     ~azure.mgmt.machinelearningcompute.models.UpdatesAvailable
     """
 
     _validation = {
@@ -33,4 +33,5 @@ class CheckSystemServicesUpdatesAvailableResponse(Model):
     }
 
     def __init__(self):
+        super(CheckSystemServicesUpdatesAvailableResponse, self).__init__()
         self.updates_available = None

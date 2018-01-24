@@ -3,6 +3,52 @@
 Release History
 ===============
 
+3.1.0rc3 (2018-11-01)
++++++++++++++++++++++
+
+**Features**
+
+- Add VirtualMachineScaleSetNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetUpdateNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetVMProfile -> priority
+- Add ApiVersion 2017-12-01 of virtual_machine_run_commands (new default)
+
+3.1.0rc2 (2017-12-14)
++++++++++++++++++++++
+
+**Features**
+
+- Add User Assigned Identity parameters to VM/VMSS creation
+
+**Bugfixes**
+
+- Add RestrictionInfo to SKUs list (2017-09-01)
+- Restore virtual_machines.run_commands (broken in rc1)
+
+3.1.0rc1 (2017-11-27)
++++++++++++++++++++++
+
+**Disclaimer**
+
+This version supports Azure Profile. Meaning, you can specify specific API versions to support for each operation groups.
+
+The default API versions of this package are now:
+- 2017-03-30 for 'disks', 'virtual_machine_run_commands' and 'snapshots'
+- 2017-09-01 for 'resource_skus'
+- 2017-12-01 for everything else
+
+**Python features**
+
+- ComputeManagementClient has now a "profile" parameter, which is a dict from operation groups name to API version
+- Operation groups now have access to their own models. For instance, assuming you have variable called "client",
+  you can access the models for this opeations groups (according to your loaded profiles) using
+  `client.virtual_machines.models`
+- azure.mgmt.compute.models is deprecated. See https://aka.ms/pysdkmodels for details.
+
+**Azure features**
+
+- 'resource_skus' has improved 'location_info' field
+
 3.0.1 (2017-09-26)
 ++++++++++++++++++
 

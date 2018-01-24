@@ -49,13 +49,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckGroupMembershipResult
-         <azure.graphrbac.models.CheckGroupMembershipResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckGroupMembershipResult
-         <azure.graphrbac.models.CheckGroupMembershipResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckGroupMembershipResult or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.CheckGroupMembershipResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -118,19 +114,16 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
         path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
-            'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str', skip_quote=True),
+            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
+            'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,11 +171,8 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -191,7 +181,7 @@ class GroupsOperations(object):
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members'
         path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
+            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -225,58 +215,6 @@ class GroupsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete(
-            self, group_object_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a group from the directory.
-
-        :param group_object_id: The object ID of the group to delete.
-        :type group_object_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises:
-         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
-        """
-        # Construct URL
-        url = '/{tenantID}/groups/{groupObjectId}'
-        path_format_arguments = {
-            'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str', skip_quote=True),
-            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [204]:
-            raise models.GraphErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
     def create(
             self, display_name, mail_nickname, custom_headers=None, raw=False, **operation_config):
         """Create a group in the directory.
@@ -290,11 +228,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ADGroup <azure.graphrbac.models.ADGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ADGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.ADGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -354,9 +290,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ADGroup
-         <azure.graphrbac.models.ADGroup>`
-        :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
+        :return: An iterator like instance of ADGroup
+        :rtype:
+         ~azure.graphrbac.models.ADGroupPaged[~azure.graphrbac.models.ADGroup]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -428,10 +364,9 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AADObject
-         <azure.graphrbac.models.AADObject>`
-        :rtype: :class:`AADObjectPaged
-         <azure.graphrbac.models.AADObjectPaged>`
+        :return: An iterator like instance of AADObject
+        :rtype:
+         ~azure.graphrbac.models.AADObjectPaged[~azure.graphrbac.models.AADObject]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -441,7 +376,7 @@ class GroupsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/groups/{objectId}/members'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -502,18 +437,16 @@ class GroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ADGroup <azure.graphrbac.models.ADGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ADGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.ADGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -550,6 +483,55 @@ class GroupsOperations(object):
 
         return deserialized
 
+    def delete(
+            self, object_id, custom_headers=None, raw=False, **operation_config):
+        """Delete a group from the directory.
+
+        :param object_id: The object ID of the group to delete.
+        :type object_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = '/{tenantID}/groups/{objectId}'
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def get_member_groups(
             self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
         """Gets a collection of object IDs of groups of which the specified group
@@ -568,7 +550,7 @@ class GroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of str
-        :rtype: :class:`StrPaged <azure.graphrbac.models.StrPaged>`
+        :rtype: ~azure.graphrbac.models.StrPaged[str]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -580,7 +562,7 @@ class GroupsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/groups/{objectId}/getMemberGroups'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

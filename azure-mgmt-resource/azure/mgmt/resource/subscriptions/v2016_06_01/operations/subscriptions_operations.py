@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -50,8 +50,9 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LocationPaged
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged>`
+        :return: An iterator like instance of Location
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.Location]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -115,10 +116,10 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Subscription
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Subscription or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -171,8 +172,9 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SubscriptionPaged
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged>`
+        :return: An iterator like instance of Subscription
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

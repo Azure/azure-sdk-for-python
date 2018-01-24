@@ -15,7 +15,10 @@ from .copy_translator import CopyTranslator
 class TabularTranslator(CopyTranslator):
     """A copy activity tabular translator.
 
-    :param type: Polymorphic Discriminator
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Constant filled by server.
     :type type: str
     :param column_mappings: Column mappings. Type: string (or Expression with
      resultType string).
@@ -27,11 +30,12 @@ class TabularTranslator(CopyTranslator):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'column_mappings': {'key': 'columnMappings', 'type': 'object'},
     }
 
-    def __init__(self, column_mappings=None):
-        super(TabularTranslator, self).__init__()
+    def __init__(self, additional_properties=None, column_mappings=None):
+        super(TabularTranslator, self).__init__(additional_properties=additional_properties)
         self.column_mappings = column_mappings
         self.type = 'TabularTranslator'

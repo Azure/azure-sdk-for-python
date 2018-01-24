@@ -38,4 +38,5 @@ class CheckNameAvailabilityRequest(Model):
     type = "Microsoft.Sql/servers"
 
     def __init__(self, name):
+        super(CheckNameAvailabilityRequest, self).__init__()
         self.name = name

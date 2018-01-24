@@ -22,8 +22,8 @@ class TroubleshootingResult(Model):
     :param code: The result code of the troubleshooting.
     :type code: str
     :param results: Information from troubleshooting.
-    :type results: list of :class:`TroubleshootingDetails
-     <azure.mgmt.network.v2017_09_01.models.TroubleshootingDetails>`
+    :type results:
+     list[~azure.mgmt.network.v2017_09_01.models.TroubleshootingDetails]
     """
 
     _attribute_map = {
@@ -34,6 +34,7 @@ class TroubleshootingResult(Model):
     }
 
     def __init__(self, start_time=None, end_time=None, code=None, results=None):
+        super(TroubleshootingResult, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.code = code

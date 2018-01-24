@@ -19,8 +19,7 @@ class KeyVaultSecretReference(Model):
     :type secret_url: str
     :param source_vault: The relative URL of the Key Vault containing the
      secret.
-    :type source_vault: :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type source_vault: ~azure.mgmt.compute.v2017_03_30.models.SubResource
     """
 
     _validation = {
@@ -34,5 +33,6 @@ class KeyVaultSecretReference(Model):
     }
 
     def __init__(self, secret_url, source_vault):
+        super(KeyVaultSecretReference, self).__init__()
         self.secret_url = secret_url
         self.source_vault = source_vault

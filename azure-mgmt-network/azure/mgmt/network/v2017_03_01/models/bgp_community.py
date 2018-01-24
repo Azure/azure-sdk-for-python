@@ -25,7 +25,7 @@ class BGPCommunity(Model):
      https://docs.microsoft.com/en-us/azure/expressroute/expressroute-routing.
     :type community_value: str
     :param community_prefixes: The prefixes that the bgp community contains.
-    :type community_prefixes: list of str
+    :type community_prefixes: list[str]
     """
 
     _attribute_map = {
@@ -36,6 +36,7 @@ class BGPCommunity(Model):
     }
 
     def __init__(self, service_supported_region=None, community_name=None, community_value=None, community_prefixes=None):
+        super(BGPCommunity, self).__init__()
         self.service_supported_region = service_supported_region
         self.community_name = community_name
         self.community_value = community_value

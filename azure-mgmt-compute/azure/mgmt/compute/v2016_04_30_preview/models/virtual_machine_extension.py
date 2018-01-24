@@ -27,30 +27,34 @@ class VirtualMachineExtension(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param force_update_tag: How the extension handler should be forced to
      update even if the extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param virtual_machine_extension_type: The type of the extension handler.
+    :param virtual_machine_extension_type: Specifies the type of the
+     extension; an example is "CustomScriptExtension".
     :type virtual_machine_extension_type: str
-    :param type_handler_version: The type version of the extension handler.
+    :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: Whether the extension handler should be
-     automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: Indicates whether the extension should
+     use a newer minor version if one is available at deployment time. Once
+     deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
-    :param protected_settings: Json formatted protected settings for the
-     extension.
+    :param protected_settings: The extension can contain either
+     protectedSettings or protectedSettingsFromKeyVault or no protected
+     settings at all.
     :type protected_settings: object
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
-    :type instance_view: :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView>`
+    :type instance_view:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionInstanceView
     """
 
     _validation = {

@@ -20,7 +20,7 @@ class OperationalizationClusterUpdateParameters(Model):
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater in length than 128
      characters and a value no greater in length than 256 characters.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -28,4 +28,5 @@ class OperationalizationClusterUpdateParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(OperationalizationClusterUpdateParameters, self).__init__()
         self.tags = tags

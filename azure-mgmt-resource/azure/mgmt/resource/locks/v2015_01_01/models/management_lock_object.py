@@ -17,8 +17,8 @@ class ManagementLockObject(Model):
 
     :param level: The lock level of the management lock. Possible values
      include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :type level: str or :class:`LockLevel
-     <azure.mgmt.resource.locks.v2015_01_01.models.LockLevel>`
+    :type level: str or
+     ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
     :param notes: The notes of the management lock.
     :type notes: str
     :param id: The Id of the lock.

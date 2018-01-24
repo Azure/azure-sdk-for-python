@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -52,23 +52,23 @@ class ManagementLocksOperations(object):
          characters.
         :type lock_name: str
         :param parameters: The management lock parameters.
-        :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
+        :type parameters:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -133,15 +133,14 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -187,16 +186,16 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'lockName': self._serialize.url("lock_name", lock_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -250,17 +249,17 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param parameters: Create or update management lock parameters.
-        :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
+        :type parameters:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -324,9 +323,8 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -377,10 +375,10 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -454,23 +452,23 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: Parameters for creating or updating a  management
          lock.
-        :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
+        :type parameters:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -551,15 +549,14 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -619,16 +616,16 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -687,17 +684,17 @@ class ManagementLocksOperations(object):
          control characters.
         :type lock_name: str
         :param parameters: The management lock parameters.
-        :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
+        :type parameters:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -764,9 +761,8 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -815,10 +811,10 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ManagementLockObject or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -877,8 +873,9 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
+        :return: An iterator like instance of ManagementLockObject
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -887,7 +884,7 @@ class ManagementLocksOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -958,8 +955,9 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
+        :return: An iterator like instance of ManagementLockObject
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -968,7 +966,7 @@ class ManagementLocksOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
@@ -1030,8 +1028,9 @@ class ManagementLocksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
+        :return: An iterator like instance of ManagementLockObject
+        :rtype:
+         ~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

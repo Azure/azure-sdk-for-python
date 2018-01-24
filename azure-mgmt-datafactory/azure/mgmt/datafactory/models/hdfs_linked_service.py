@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class HdfsLinkedService(LinkedService):
     """Hadoop Distributed File System (HDFS) linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param url: The URL of the HDFS service endpoint, e.g.
      http://myhostname:50070/webhdfs/v1 . Type: string (or Expression with
@@ -38,8 +41,7 @@ class HdfsLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password for Windows authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     """
 
     _validation = {
@@ -48,6 +50,7 @@ class HdfsLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -58,8 +61,8 @@ class HdfsLinkedService(LinkedService):
         'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
     }
 
-    def __init__(self, url, connect_via=None, description=None, authentication_type=None, encrypted_credential=None, user_name=None, password=None):
-        super(HdfsLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, authentication_type=None, encrypted_credential=None, user_name=None, password=None):
+        super(HdfsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.url = url
         self.authentication_type = authentication_type
         self.encrypted_credential = encrypted_credential

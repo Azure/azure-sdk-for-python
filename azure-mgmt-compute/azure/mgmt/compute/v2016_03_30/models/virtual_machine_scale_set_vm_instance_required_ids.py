@@ -16,7 +16,7 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     :param instance_ids: The virtual machine scale set instance ids.
-    :type instance_ids: list of str
+    :type instance_ids: list[str]
     """
 
     _validation = {
@@ -28,4 +28,5 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
     }
 
     def __init__(self, instance_ids):
+        super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__()
         self.instance_ids = instance_ids

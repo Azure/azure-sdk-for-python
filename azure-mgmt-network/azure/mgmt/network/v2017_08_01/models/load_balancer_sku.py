@@ -17,8 +17,8 @@ class LoadBalancerSku(Model):
 
     :param name: Name of a load balancer SKU. Possible values include:
      'Basic', 'Standard'
-    :type name: str or :class:`LoadBalancerSkuName
-     <azure.mgmt.network.v2017_08_01.models.LoadBalancerSkuName>`
+    :type name: str or
+     ~azure.mgmt.network.v2017_08_01.models.LoadBalancerSkuName
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class LoadBalancerSku(Model):
     }
 
     def __init__(self, name=None):
+        super(LoadBalancerSku, self).__init__()
         self.name = name

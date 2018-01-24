@@ -26,13 +26,12 @@ class Metric(Model):
     :vartype time_grain: str
     :ivar unit: The unit of the metric. Possible values include: 'count',
      'bytes', 'seconds', 'percent', 'countPerSecond', 'bytesPerSecond'
-    :vartype unit: str or :class:`UnitType <azure.mgmt.sql.models.UnitType>`
+    :vartype unit: str or ~azure.mgmt.sql.models.UnitType
     :ivar name: The name information for the metric.
-    :vartype name: :class:`MetricName <azure.mgmt.sql.models.MetricName>`
+    :vartype name: ~azure.mgmt.sql.models.MetricName
     :ivar metric_values: The metric values for the specified time window and
      timestep.
-    :vartype metric_values: list of :class:`MetricValue
-     <azure.mgmt.sql.models.MetricValue>`
+    :vartype metric_values: list[~azure.mgmt.sql.models.MetricValue]
     """
 
     _validation = {
@@ -54,6 +53,7 @@ class Metric(Model):
     }
 
     def __init__(self):
+        super(Metric, self).__init__()
         self.start_time = None
         self.end_time = None
         self.time_grain = None

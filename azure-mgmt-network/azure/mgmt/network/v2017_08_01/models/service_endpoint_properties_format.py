@@ -18,7 +18,7 @@ class ServiceEndpointPropertiesFormat(Model):
     :param service: The type of the endpoint service.
     :type service: str
     :param locations: A list of locations.
-    :type locations: list of str
+    :type locations: list[str]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     """
@@ -30,6 +30,7 @@ class ServiceEndpointPropertiesFormat(Model):
     }
 
     def __init__(self, service=None, locations=None, provisioning_state=None):
+        super(ServiceEndpointPropertiesFormat, self).__init__()
         self.service = service
         self.locations = locations
         self.provisioning_state = provisioning_state

@@ -21,8 +21,7 @@ class IntegrationRuntimeStatusResponse(Model):
     :ivar name: The integration runtime name.
     :vartype name: str
     :param properties: Integration runtime properties.
-    :type properties: :class:`IntegrationRuntimeStatus
-     <azure.mgmt.datafactory.models.IntegrationRuntimeStatus>`
+    :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatus
     """
 
     _validation = {

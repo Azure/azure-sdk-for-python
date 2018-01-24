@@ -26,6 +26,8 @@ class VirtualMachineImagesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -54,13 +56,9 @@ class VirtualMachineImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineImage
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImage>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachineImage
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImage>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachineImage or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineImage or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -91,7 +89,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -133,13 +131,10 @@ class VirtualMachineImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -175,7 +170,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -207,13 +202,10 @@ class VirtualMachineImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -241,7 +233,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -271,13 +263,10 @@ class VirtualMachineImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -304,7 +293,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -338,13 +327,10 @@ class VirtualMachineImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineImageResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -373,7 +359,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

@@ -26,13 +26,13 @@ class StorageAccountCreateParameters(Model):
      groups). A maximum of 15 tags can be provided for a resource. Each tag
      must have a key with a length no greater than 128 characters and a value
      with a length no greater than 256 characters.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param account_type: The sku name. Required for account creation; optional
      for update. Note that in older versions, sku name was called accountType.
      Possible values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
      'Standard_RAGRS', 'Premium_LRS'
-    :type account_type: str or :class:`AccountType
-     <azure.mgmt.storage.v2015_06_15.models.AccountType>`
+    :type account_type: str or
+     ~azure.mgmt.storage.v2015_06_15.models.AccountType
     """
 
     _validation = {
@@ -47,6 +47,7 @@ class StorageAccountCreateParameters(Model):
     }
 
     def __init__(self, location, account_type, tags=None):
+        super(StorageAccountCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.account_type = account_type

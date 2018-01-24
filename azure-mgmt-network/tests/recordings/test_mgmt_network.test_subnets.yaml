@@ -9,33 +9,33 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['243']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"a7881cec-ff03-4a33-a9f9-2315d8a10572\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"90db46de-e32b-495c-980e-c84073536145\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"e76f8489-932b-4099-8467-47dbbe3679a8\",\r\n    \"\
+        \   \"resourceGuid\": \"35c063aa-b92a-44b0-83a5-bb959ed9d7a1\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
-        ,\r\n        \"etag\": \"W/\\\"a7881cec-ff03-4a33-a9f9-2315d8a10572\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"90db46de-e32b-495c-980e-c84073536145\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\"\r\n        }\r\n      }\r\
         \n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
         : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/6f6987aa-0e1c-4acc-a7c2-4bfc8352fc1a?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5f4ec251-c4ab-4a8c-8bcf-6ce1550ed560?api-version=2017-11-01']
       cache-control: [no-cache]
       content-length: ['1247']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:23 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:39 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -49,18 +49,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/6f6987aa-0e1c-4acc-a7c2-4bfc8352fc1a?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5f4ec251-c4ab-4a8c-8bcf-6ce1550ed560?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['29']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:27 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:43 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -75,23 +75,23 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"378c467c-7a53-4a8c-97cb-0e19985ae772\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"d995f171-3599-424a-b006-6dd1b9377a69\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"e76f8489-932b-4099-8467-47dbbe3679a8\",\r\n    \"\
+        \    \"resourceGuid\": \"35c063aa-b92a-44b0-83a5-bb959ed9d7a1\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
-        ,\r\n        \"etag\": \"W/\\\"378c467c-7a53-4a8c-97cb-0e19985ae772\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"d995f171-3599-424a-b006-6dd1b9377a69\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\"\r\n        }\r\n      }\r\
         \n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
@@ -100,8 +100,8 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1249']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:28 GMT']
-      etag: [W/"378c467c-7a53-4a8c-97cb-0e19985ae772"]
+      date: ['Thu, 14 Dec 2017 18:27:43 GMT']
+      etag: [W/"d995f171-3599-424a-b006-6dd1b9377a69"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -117,22 +117,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['79']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"305f1df3-0961-4528-84bc-e0cbdb32ac26\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"3db9f508-24ba-4ed7-b803-272990445c23\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\"\r\n  }\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7d229749-cd03-42ab-a0f9-ba532baa1ecf?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5d8aa9d0-6b3f-405b-8b20-b34e235e3410?api-version=2017-11-01']
       cache-control: [no-cache]
       content-length: ['400']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:29 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:45 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -146,18 +146,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7d229749-cd03-42ab-a0f9-ba532baa1ecf?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/5d8aa9d0-6b3f-405b-8b20-b34e235e3410?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['29']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:32 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:49 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -172,22 +172,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\"\r\n  }\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['401']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:33 GMT']
-      etag: [W/"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b"]
+      date: ['Thu, 14 Dec 2017 18:27:50 GMT']
+      etag: [W/"f9cb68dc-5441-4aaf-a500-e79c824750df"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -202,28 +202,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"e76f8489-932b-4099-8467-47dbbe3679a8\",\r\n    \"\
+        \    \"resourceGuid\": \"35c063aa-b92a-44b0-83a5-bb959ed9d7a1\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pysubnetonec2cc0c8f\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
-        ,\r\n        \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\"\r\n        }\r\n      },\r\
         \n      {\r\n        \"name\": \"pysubnettwoc2cc0c8f\",\r\n        \"id\"\
         : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
-        ,\r\n        \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.2.0/24\"\r\n        }\r\n      }\r\
         \n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
@@ -232,8 +232,8 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1707']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:33 GMT']
-      etag: [W/"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b"]
+      date: ['Thu, 14 Dec 2017 18:27:51 GMT']
+      etag: [W/"f9cb68dc-5441-4aaf-a500-e79c824750df"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -248,22 +248,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnettwoc2cc0c8f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
-        ,\r\n  \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.2.0/24\"\r\n  }\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['401']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:35 GMT']
-      etag: [W/"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b"]
+      date: ['Thu, 14 Dec 2017 18:27:52 GMT']
+      etag: [W/"f9cb68dc-5441-4aaf-a500-e79c824750df"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -278,19 +278,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pysubnetonec2cc0c8f\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnetonec2cc0c8f\"\
-        ,\r\n      \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.0.1.0/24\"\r\n      }\r\n    },\r\n \
         \   {\r\n      \"name\": \"pysubnettwoc2cc0c8f\",\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f\"\
-        ,\r\n      \"etag\": \"W/\\\"d5222ccd-aaa1-4fd3-a0a4-4b9a11580d2b\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"f9cb68dc-5441-4aaf-a500-e79c824750df\\\"\",\r\
         \n      \"properties\": {\r\n        \"provisioningState\": \"Succeeded\"\
         ,\r\n        \"addressPrefix\": \"10.0.2.0/24\"\r\n      }\r\n    }\r\n  ]\r\
         \n}"}
@@ -298,7 +298,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['902']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:35 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:53 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -314,24 +314,24 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualNetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2017-11-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/02b57b0a-12a9-4d33-b430-53037284750c?api-version=2017-09-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e1a1ecf8-4418-42c0-b878-254e364970ab?api-version=2017-11-01']
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Mon, 18 Sep 2017 17:42:36 GMT']
+      date: ['Thu, 14 Dec 2017 18:27:53 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/02b57b0a-12a9-4d33-b430-53037284750c?api-version=2017-09-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/e1a1ecf8-4418-42c0-b878-254e364970ab?api-version=2017-11-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -340,18 +340,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.2 (Windows-10-10.0.15063-SP0) requests/2.18.3 msrest/0.4.14
-          msrest_azure/0.4.11 networkmanagementclient/1.4.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.20
+          msrest_azure/0.4.16 networkmanagementclient/1.6.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/02b57b0a-12a9-4d33-b430-53037284750c?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e1a1ecf8-4418-42c0-b878-254e364970ab?api-version=2017-11-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['29']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 18 Sep 2017 17:42:47 GMT']
+      date: ['Thu, 14 Dec 2017 18:28:05 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]

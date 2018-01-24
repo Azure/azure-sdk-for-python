@@ -15,24 +15,25 @@ from msrest.serialization import Model
 class CreationData(Model):
     """Data used when creating a disk.
 
-    :param create_option: Possible values include: 'Empty', 'Attach',
-     'FromImage', 'Import', 'Copy', 'Restore'
-    :type create_option: str or :class:`DiskCreateOption
-     <azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption>`
+    :param create_option: This enumerates the possible sources of a disk's
+     creation. Possible values include: 'Empty', 'Attach', 'FromImage',
+     'Import', 'Copy', 'Restore'
+    :type create_option: str or
+     ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
     :param storage_account_id: If createOption is Import, the Azure Resource
      Manager identifier of the storage account containing the blob to import as
      a disk. Required only if the blob is in a different subscription
     :type storage_account_id: str
     :param image_reference: Disk source information.
-    :type image_reference: :class:`ImageDiskReference
-     <azure.mgmt.compute.v2016_04_30_preview.models.ImageDiskReference>`
-    :param source_uri: If creationOption is Import, this is a SAS URI to a
-     blob to be imported into a managed disk. If creationOption is Copy, this
-     is a relative Uri containing the id of the source snapshot to be copied
-     into a managed disk.
+    :type image_reference:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.ImageDiskReference
+    :param source_uri: If createOption is Import, this is a SAS URI to a blob
+     to be imported into a managed disk. If createOption is Copy, this is a
+     relative Uri containing the id of the source snapshot to be copied into a
+     managed disk.
     :type source_uri: str
     :param source_resource_id: If createOption is Copy, this is the ARM id of
-     the source snapshot or disk. If creationOption is Restore, this is the
+     the source snapshot or disk. If createOption is Restore, this is the
      ARM-like id of the source disk restore point.
     :type source_resource_id: str
     """
@@ -50,6 +51,7 @@ class CreationData(Model):
     }
 
     def __init__(self, create_option, storage_account_id=None, image_reference=None, source_uri=None, source_resource_id=None):
+        super(CreationData, self).__init__()
         self.create_option = create_option
         self.storage_account_id = storage_account_id
         self.image_reference = image_reference

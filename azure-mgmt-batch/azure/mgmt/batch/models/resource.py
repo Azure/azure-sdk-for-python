@@ -27,7 +27,7 @@ class Resource(Model):
     :ivar location: The location of the resource.
     :vartype location: str
     :ivar tags: The tags of the resource.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {

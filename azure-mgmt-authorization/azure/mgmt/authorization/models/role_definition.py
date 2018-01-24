@@ -22,8 +22,8 @@ class RoleDefinition(Model):
     :param type: The role definition type.
     :type type: str
     :param properties: Role definition properties.
-    :type properties: :class:`RoleDefinitionProperties
-     <azure.mgmt.authorization.models.RoleDefinitionProperties>`
+    :type properties:
+     ~azure.mgmt.authorization.models.RoleDefinitionProperties
     """
 
     _attribute_map = {

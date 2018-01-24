@@ -18,8 +18,8 @@ class ConsistencyPolicy(Model):
     :param default_consistency_level: The default consistency level and
      configuration settings of the Cosmos DB account. Possible values include:
      'Eventual', 'Session', 'BoundedStaleness', 'Strong', 'ConsistentPrefix'
-    :type default_consistency_level: str or :class:`DefaultConsistencyLevel
-     <azure.mgmt.cosmosdb.models.DefaultConsistencyLevel>`
+    :type default_consistency_level: str or
+     ~azure.mgmt.cosmosdb.models.DefaultConsistencyLevel
     :param max_staleness_prefix: When used with the Bounded Staleness
      consistency level, this value represents the number of stale requests
      tolerated. Accepted range for this value is 1 – 2,147,483,647. Required
@@ -27,7 +27,7 @@ class ConsistencyPolicy(Model):
     :type max_staleness_prefix: long
     :param max_interval_in_seconds: When used with the Bounded Staleness
      consistency level, this value represents the time amount of staleness (in
-     seconds) tolerated. Accepted range for this value is 1 - 100. Required
+     seconds) tolerated. Accepted range for this value is 5 - 86400. Required
      when defaultConsistencyPolicy is set to 'BoundedStaleness'.
     :type max_interval_in_seconds: int
     """
@@ -35,7 +35,7 @@ class ConsistencyPolicy(Model):
     _validation = {
         'default_consistency_level': {'required': True},
         'max_staleness_prefix': {'maximum': 2147483647, 'minimum': 1},
-        'max_interval_in_seconds': {'maximum': 100, 'minimum': 1},
+        'max_interval_in_seconds': {'maximum': 86400, 'minimum': 5},
     }
 
     _attribute_map = {

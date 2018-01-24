@@ -26,8 +26,7 @@ class TaskContainerSettings(Model):
     :type image_name: str
     :param registry: The private registry which contains the container image.
      This setting can be omitted if was already provided at pool creation.
-    :type registry: :class:`ContainerRegistry
-     <azure.batch.models.ContainerRegistry>`
+    :type registry: ~azure.batch.models.ContainerRegistry
     """
 
     _validation = {

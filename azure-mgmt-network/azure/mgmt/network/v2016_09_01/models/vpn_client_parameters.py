@@ -17,8 +17,8 @@ class VpnClientParameters(Model):
 
     :param processor_architecture: VPN client Processor Architecture. Possible
      values are: 'AMD64' and 'X86'. Possible values include: 'Amd64', 'X86'
-    :type processor_architecture: str or :class:`ProcessorArchitecture
-     <azure.mgmt.network.v2016_09_01.models.ProcessorArchitecture>`
+    :type processor_architecture: str or
+     ~azure.mgmt.network.v2016_09_01.models.ProcessorArchitecture
     """
 
     _validation = {
@@ -30,4 +30,5 @@ class VpnClientParameters(Model):
     }
 
     def __init__(self, processor_architecture):
+        super(VpnClientParameters, self).__init__()
         self.processor_architecture = processor_architecture

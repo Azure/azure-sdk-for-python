@@ -22,12 +22,12 @@ class OutboundNatRule(SubResource):
     :type allocated_outbound_ports: int
     :param frontend_ip_configurations: The Frontend IP addresses of the load
      balancer.
-    :type frontend_ip_configurations: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type frontend_ip_configurations:
+     list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param backend_address_pool: A reference to a pool of DIPs. Outbound
      traffic is randomly load balanced across IPs in the backend IPs.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param provisioning_state: Gets the provisioning state of the PublicIP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

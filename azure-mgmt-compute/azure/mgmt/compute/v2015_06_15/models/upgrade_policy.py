@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class UpgradePolicy(Model):
     """Describes an upgrade policy - automatic or manual.
 
-    :param mode: The upgrade mode. Possible values include: 'Automatic',
-     'Manual'
-    :type mode: str or :class:`UpgradeMode
-     <azure.mgmt.compute.v2015_06_15.models.UpgradeMode>`
+    :param mode: Specifies the mode of an upgrade to virtual machines in the
+     scale set.<br /><br /> Possible values are:<br /><br /> **Manual** - You
+     control the application of updates to virtual machines in the scale set.
+     You do this by using the manualUpgrade action.<br /><br /> **Automatic** -
+     All virtual machines in the scale set are  automatically updated at the
+     same time. Possible values include: 'Automatic', 'Manual'
+    :type mode: str or ~azure.mgmt.compute.v2015_06_15.models.UpgradeMode
     """
 
     _attribute_map = {
@@ -26,4 +29,5 @@ class UpgradePolicy(Model):
     }
 
     def __init__(self, mode=None):
+        super(UpgradePolicy, self).__init__()
         self.mode = mode

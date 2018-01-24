@@ -19,8 +19,7 @@ class SyncFullSchemaProperties(Model):
     sending a request.
 
     :ivar tables: List of tables in the database full schema.
-    :vartype tables: list of :class:`SyncFullSchemaTable
-     <azure.mgmt.sql.models.SyncFullSchemaTable>`
+    :vartype tables: list[~azure.mgmt.sql.models.SyncFullSchemaTable]
     :ivar last_update_time: Last update time of the database schema.
     :vartype last_update_time: datetime
     """
@@ -36,5 +35,6 @@ class SyncFullSchemaProperties(Model):
     }
 
     def __init__(self):
+        super(SyncFullSchemaProperties, self).__init__()
         self.tables = None
         self.last_update_time = None

@@ -18,16 +18,18 @@ class PipelineRun(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar run_id: Identifier of a run.
     :vartype run_id: str
     :ivar pipeline_name: The pipeline name.
     :vartype pipeline_name: str
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
-    :vartype parameters: dict
+    :vartype parameters: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
-    :vartype invoked_by: :class:`PipelineRunInvokedBy
-     <azure.mgmt.datafactory.models.PipelineRunInvokedBy>`
+    :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
      in ISO8601 format.
     :vartype last_updated: datetime
@@ -57,6 +59,7 @@ class PipelineRun(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'run_id': {'key': 'runId', 'type': 'str'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
@@ -69,7 +72,8 @@ class PipelineRun(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.run_id = None
         self.pipeline_name = None
         self.parameters = None

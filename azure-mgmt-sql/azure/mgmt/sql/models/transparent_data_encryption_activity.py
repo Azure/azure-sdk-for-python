@@ -28,8 +28,8 @@ class TransparentDataEncryptionActivity(ProxyResource):
     :vartype location: str
     :ivar status: The status of the database. Possible values include:
      'Encrypting', 'Decrypting'
-    :vartype status: str or :class:`TransparentDataEncryptionActivityStatus
-     <azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus>`
+    :vartype status: str or
+     ~azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus
     :ivar percent_complete: The percent complete of the transparent data
      encryption scan for a database.
     :vartype percent_complete: float

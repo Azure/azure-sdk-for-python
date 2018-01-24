@@ -17,10 +17,10 @@ class SBSku(Model):
 
     :param name: Name of this SKU. Possible values include: 'Basic',
      'Standard', 'Premium'
-    :type name: str or :class:`SkuName <azure.mgmt.servicebus.models.SkuName>`
+    :type name: str or ~azure.mgmt.servicebus.models.SkuName
     :param tier: The billing tier of this particular SKU. Possible values
      include: 'Basic', 'Standard', 'Premium'
-    :type tier: str or :class:`SkuTier <azure.mgmt.servicebus.models.SkuTier>`
+    :type tier: str or ~azure.mgmt.servicebus.models.SkuTier
     :param capacity: The specified messaging units for the tier. For Premium
      tier, capacity are 1,2 and 4.
     :type capacity: int

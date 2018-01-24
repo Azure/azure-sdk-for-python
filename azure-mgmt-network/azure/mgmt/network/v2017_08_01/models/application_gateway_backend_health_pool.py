@@ -17,13 +17,12 @@ class ApplicationGatewayBackendHealthPool(Model):
 
     :param backend_address_pool: Reference of an
      ApplicationGatewayBackendAddressPool resource.
-    :type backend_address_pool: :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendAddressPool>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendAddressPool
     :param backend_http_settings_collection: List of
      ApplicationGatewayBackendHealthHttpSettings resources.
-    :type backend_http_settings_collection: list of
-     :class:`ApplicationGatewayBackendHealthHttpSettings
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthHttpSettings>`
+    :type backend_http_settings_collection:
+     list[~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthHttpSettings]
     """
 
     _attribute_map = {
@@ -32,5 +31,6 @@ class ApplicationGatewayBackendHealthPool(Model):
     }
 
     def __init__(self, backend_address_pool=None, backend_http_settings_collection=None):
+        super(ApplicationGatewayBackendHealthPool, self).__init__()
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings_collection = backend_http_settings_collection

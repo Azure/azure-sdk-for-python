@@ -10,9 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .usage_details_operations import UsageDetailsOperations
+from .reservations_summaries_operations import ReservationsSummariesOperations
+from .reservations_details_operations import ReservationsDetailsOperations
 from .operations import Operations
 
 __all__ = [
     'UsageDetailsOperations',
+    'ReservationsSummariesOperations',
+    'ReservationsDetailsOperations',
     'Operations',
 ]

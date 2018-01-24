@@ -47,10 +47,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AppServiceEnvironment
-         <azure.mgmt.web.models.AppServiceEnvironment>`
-        :rtype: :class:`AppServiceEnvironmentPaged
-         <azure.mgmt.web.models.AppServiceEnvironmentPaged>`
+        :return: An iterator like instance of AppServiceEnvironmentResource
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -94,11 +93,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -117,10 +116,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AppServiceEnvironment
-         <azure.mgmt.web.models.AppServiceEnvironment>`
-        :rtype: :class:`AppServiceEnvironmentPaged
-         <azure.mgmt.web.models.AppServiceEnvironmentPaged>`
+        :return: An iterator like instance of AppServiceEnvironmentResource
+        :rtype:
+         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -165,11 +163,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AppServiceEnvironmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.AppServiceEnvironmentResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -190,13 +188,10 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: AppServiceEnvironmentResource or ClientRawResponse if
          raw=true
-        :rtype: :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -256,20 +251,15 @@ class AppServiceEnvironmentsOperations(object):
         :param hosting_environment_envelope: Configuration details of the App
          Service Environment.
         :type hosting_environment_envelope:
-         :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>`
+         ~azure.mgmt.web.models.AppServiceEnvironmentResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         AppServiceEnvironmentResource or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceEnvironmentResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -362,14 +352,10 @@ class AppServiceEnvironmentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -433,6 +419,81 @@ class AppServiceEnvironmentsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
+    def update(
+            self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update an App Service Environment.
+
+        Create or update an App Service Environment.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param hosting_environment_envelope: Configuration details of the App
+         Service Environment.
+        :type hosting_environment_envelope:
+         ~azure.mgmt.web.models.AppServiceEnvironmentPatchResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AppServiceEnvironmentResource or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(hosting_environment_envelope, 'AppServiceEnvironmentPatchResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_capacities(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the used, available, and total worker capacity an App Service
@@ -451,10 +512,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`StampCapacity
-         <azure.mgmt.web.models.StampCapacity>`
-        :rtype: :class:`StampCapacityPaged
-         <azure.mgmt.web.models.StampCapacityPaged>`
+        :return: An iterator like instance of StampCapacity
+        :rtype:
+         ~azure.mgmt.web.models.StampCapacityPaged[~azure.mgmt.web.models.StampCapacity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -525,13 +585,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AddressResponse
-         <azure.mgmt.web.models.AddressResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AddressResponse
-         <azure.mgmt.web.models.AddressResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AddressResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.AddressResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -593,13 +649,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`HostingEnvironmentDiagnostics
-         <azure.mgmt.web.models.HostingEnvironmentDiagnostics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`HostingEnvironmentDiagnostics
-         <azure.mgmt.web.models.HostingEnvironmentDiagnostics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.HostingEnvironmentDiagnostics] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -663,13 +715,10 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`HostingEnvironmentDiagnostics
-         <azure.mgmt.web.models.HostingEnvironmentDiagnostics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: HostingEnvironmentDiagnostics or ClientRawResponse if
          raw=true
-        :rtype: :class:`HostingEnvironmentDiagnostics
-         <azure.mgmt.web.models.HostingEnvironmentDiagnostics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.web.models.HostingEnvironmentDiagnostics or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -732,13 +781,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MetricDefinition
-         <azure.mgmt.web.models.MetricDefinition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MetricDefinition
-         <azure.mgmt.web.models.MetricDefinition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MetricDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.MetricDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -809,10 +854,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -887,10 +931,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
-        :rtype: :class:`WorkerPoolResourcePaged
-         <azure.mgmt.web.models.WorkerPoolResourcePaged>`
+        :return: An iterator like instance of WorkerPoolResource
+        :rtype:
+         ~azure.mgmt.web.models.WorkerPoolResourcePaged[~azure.mgmt.web.models.WorkerPoolResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -961,13 +1004,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1025,20 +1064,16 @@ class AppServiceEnvironmentsOperations(object):
         :param name: Name of the App Service Environment.
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool.
-        :type multi_role_pool_envelope: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :type multi_role_pool_envelope:
+         ~azure.mgmt.web.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         WorkerPoolResource or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1113,6 +1148,79 @@ class AppServiceEnvironmentsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
+    def update_multi_role_pool(
+            self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update a multi-role pool.
+
+        Create or update a multi-role pool.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param multi_role_pool_envelope: Properties of the multi-role pool.
+        :type multi_role_pool_envelope:
+         ~azure.mgmt.web.models.WorkerPoolResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(multi_role_pool_envelope, 'WorkerPoolResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_multi_role_pool_instance_metric_definitions(
             self, resource_group_name, name, instance, custom_headers=None, raw=False, **operation_config):
         """Get metric definitions for a specific instance of a multi-role pool of
@@ -1133,10 +1241,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1215,10 +1322,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1294,10 +1400,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1383,10 +1488,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1467,9 +1571,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SkuInfo
-         <azure.mgmt.web.models.SkuInfo>`
-        :rtype: :class:`SkuInfoPaged <azure.mgmt.web.models.SkuInfoPaged>`
+        :return: An iterator like instance of SkuInfo
+        :rtype:
+         ~azure.mgmt.web.models.SkuInfoPaged[~azure.mgmt.web.models.SkuInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1540,9 +1644,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Usage
-         <azure.mgmt.web.models.Usage>`
-        :rtype: :class:`UsagePaged <azure.mgmt.web.models.UsagePaged>`
+        :return: An iterator like instance of Usage
+        :rtype:
+         ~azure.mgmt.web.models.UsagePaged[~azure.mgmt.web.models.Usage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1613,11 +1717,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`Operation <azure.mgmt.web.models.Operation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`Operation <azure.mgmt.web.models.Operation>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.web.models.Operation] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1679,11 +1781,8 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1736,64 +1835,80 @@ class AppServiceEnvironmentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An instance of AzureOperationPoller that returns
+         WebAppCollection or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WebAppCollection]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        def long_running_send():
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
             request = self._client.post(url, query_parameters)
-            response = self._client.send(
+            return self._client.send(request, header_parameters, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
                 request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
 
             if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            return response
+            deserialized = None
 
-        # Deserialize response
-        deserialized = models.SitePaged(internal_paging, self._deserialize.dependencies)
+            if response.status_code == 200:
+                deserialized = self._deserialize('WebAppCollection', response)
+            if response.status_code == 202:
+                deserialized = self._deserialize('WebAppCollection', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.SitePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+            response = long_running_send()
+            return get_long_running_output(response)
 
-        return deserialized
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def list_app_service_plans(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1811,10 +1926,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AppServicePlan
-         <azure.mgmt.web.models.AppServicePlan>`
-        :rtype: :class:`AppServicePlanPaged
-         <azure.mgmt.web.models.AppServicePlanPaged>`
+        :return: An iterator like instance of AppServicePlan
+        :rtype:
+         ~azure.mgmt.web.models.AppServicePlanPaged[~azure.mgmt.web.models.AppServicePlan]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1888,9 +2002,8 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An iterator like instance of Site
+        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1961,64 +2074,80 @@ class AppServiceEnvironmentsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Site
-         <azure.mgmt.web.models.Site>`
-        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :return: An instance of AzureOperationPoller that returns
+         WebAppCollection or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WebAppCollection]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        def long_running_send():
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
             request = self._client.post(url, query_parameters)
-            response = self._client.send(
+            return self._client.send(request, header_parameters, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
                 request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
 
             if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            return response
+            deserialized = None
 
-        # Deserialize response
-        deserialized = models.SitePaged(internal_paging, self._deserialize.dependencies)
+            if response.status_code == 200:
+                deserialized = self._deserialize('WebAppCollection', response)
+            if response.status_code == 202:
+                deserialized = self._deserialize('WebAppCollection', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.SitePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+            response = long_running_send()
+            return get_long_running_output(response)
 
-        return deserialized
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def list_usages(
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -2042,10 +2171,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CsmUsageQuota
-         <azure.mgmt.web.models.CsmUsageQuota>`
-        :rtype: :class:`CsmUsageQuotaPaged
-         <azure.mgmt.web.models.CsmUsageQuotaPaged>`
+        :return: An iterator like instance of CsmUsageQuota
+        :rtype:
+         ~azure.mgmt.web.models.CsmUsageQuotaPaged[~azure.mgmt.web.models.CsmUsageQuota]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2118,10 +2246,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
-        :rtype: :class:`WorkerPoolResourcePaged
-         <azure.mgmt.web.models.WorkerPoolResourcePaged>`
+        :return: An iterator like instance of WorkerPoolResource
+        :rtype:
+         ~azure.mgmt.web.models.WorkerPoolResourcePaged[~azure.mgmt.web.models.WorkerPoolResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2194,13 +2321,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2261,20 +2384,15 @@ class AppServiceEnvironmentsOperations(object):
         :param worker_pool_name: Name of the worker pool.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool.
-        :type worker_pool_envelope: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         WorkerPoolResource or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -2350,6 +2468,81 @@ class AppServiceEnvironmentsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
+    def update_worker_pool(
+            self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
+        """Create or update a worker pool.
+
+        Create or update a worker pool.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Name of the App Service Environment.
+        :type name: str
+        :param worker_pool_name: Name of the worker pool.
+        :type worker_pool_name: str
+        :param worker_pool_envelope: Properties of the worker pool.
+        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WorkerPoolResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'workerPoolName': self._serialize.url("worker_pool_name", worker_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(worker_pool_envelope, 'WorkerPoolResource')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200, 202, 400, 404, 409]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('WorkerPoolResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_worker_pool_instance_metric_definitions(
             self, resource_group_name, name, worker_pool_name, instance, custom_headers=None, raw=False, **operation_config):
         """Get metric definitions for a specific instance of a worker pool of an
@@ -2372,10 +2565,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2463,10 +2655,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2545,10 +2736,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetricDefinition
-         <azure.mgmt.web.models.ResourceMetricDefinition>`
-        :rtype: :class:`ResourceMetricDefinitionPaged
-         <azure.mgmt.web.models.ResourceMetricDefinitionPaged>`
+        :return: An iterator like instance of ResourceMetricDefinition
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2633,10 +2823,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceMetric
-         <azure.mgmt.web.models.ResourceMetric>`
-        :rtype: :class:`ResourceMetricPaged
-         <azure.mgmt.web.models.ResourceMetricPaged>`
+        :return: An iterator like instance of ResourceMetric
+        :rtype:
+         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2714,9 +2903,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`SkuInfo
-         <azure.mgmt.web.models.SkuInfo>`
-        :rtype: :class:`SkuInfoPaged <azure.mgmt.web.models.SkuInfoPaged>`
+        :return: An iterator like instance of SkuInfo
+        :rtype:
+         ~azure.mgmt.web.models.SkuInfoPaged[~azure.mgmt.web.models.SkuInfo]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2790,9 +2979,9 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Usage
-         <azure.mgmt.web.models.Usage>`
-        :rtype: :class:`UsagePaged <azure.mgmt.web.models.UsagePaged>`
+        :return: An iterator like instance of Usage
+        :rtype:
+         ~azure.mgmt.web.models.UsagePaged[~azure.mgmt.web.models.Usage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

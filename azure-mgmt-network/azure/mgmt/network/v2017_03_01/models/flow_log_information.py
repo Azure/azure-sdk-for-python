@@ -24,8 +24,8 @@ class FlowLogInformation(Model):
     :param enabled: Flag to enable/disable flow logging.
     :type enabled: bool
     :param retention_policy:
-    :type retention_policy: :class:`RetentionPolicyParameters
-     <azure.mgmt.network.v2017_03_01.models.RetentionPolicyParameters>`
+    :type retention_policy:
+     ~azure.mgmt.network.v2017_03_01.models.RetentionPolicyParameters
     """
 
     _validation = {
@@ -42,6 +42,7 @@ class FlowLogInformation(Model):
     }
 
     def __init__(self, target_resource_id, storage_id, enabled, retention_policy=None):
+        super(FlowLogInformation, self).__init__()
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.enabled = enabled

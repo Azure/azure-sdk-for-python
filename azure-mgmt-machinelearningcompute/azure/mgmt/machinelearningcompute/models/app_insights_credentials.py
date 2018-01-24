@@ -29,5 +29,6 @@ class AppInsightsCredentials(Model):
     }
 
     def __init__(self, app_id=None, instrumentation_key=None):
+        super(AppInsightsCredentials, self).__init__()
         self.app_id = app_id
         self.instrumentation_key = instrumentation_key

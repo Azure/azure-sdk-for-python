@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class VaultSecretGroup(Model):
     """Describes a set of certificates which are all in the same Key Vault.
 
-    :param source_vault: The Relative URL of the Key Vault containing all of
+    :param source_vault: The relative URL of the Key Vault containing all of
      the certificates in VaultCertificates.
-    :type source_vault: :class:`SubResource
-     <azure.mgmt.compute.v2015_06_15.models.SubResource>`
+    :type source_vault: ~azure.mgmt.compute.v2015_06_15.models.SubResource
     :param vault_certificates: The list of key vault references in SourceVault
      which contain certificates.
-    :type vault_certificates: list of :class:`VaultCertificate
-     <azure.mgmt.compute.v2015_06_15.models.VaultCertificate>`
+    :type vault_certificates:
+     list[~azure.mgmt.compute.v2015_06_15.models.VaultCertificate]
     """
 
     _attribute_map = {
@@ -31,5 +30,6 @@ class VaultSecretGroup(Model):
     }
 
     def __init__(self, source_vault=None, vault_certificates=None):
+        super(VaultSecretGroup, self).__init__()
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates

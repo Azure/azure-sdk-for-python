@@ -20,8 +20,8 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     :param firewall_mode: Web application firewall mode. Possible values are:
      'Detection' and 'Prevention'. Possible values include: 'Detection',
      'Prevention'
-    :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
-     <azure.mgmt.network.v2016_12_01.models.ApplicationGatewayFirewallMode>`
+    :type firewall_mode: str or
+     ~azure.mgmt.network.v2016_12_01.models.ApplicationGatewayFirewallMode
     """
 
     _validation = {
@@ -34,5 +34,6 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     }
 
     def __init__(self, enabled, firewall_mode=None):
+        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__()
         self.enabled = enabled
         self.firewall_mode = firewall_mode

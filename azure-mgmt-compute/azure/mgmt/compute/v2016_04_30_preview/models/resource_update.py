@@ -16,7 +16,7 @@ class ResourceUpdate(Model):
     """The Resource model definition.
 
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -24,4 +24,5 @@ class ResourceUpdate(Model):
     }
 
     def __init__(self, tags=None):
+        super(ResourceUpdate, self).__init__()
         self.tags = tags

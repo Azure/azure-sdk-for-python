@@ -25,7 +25,7 @@ class DatabaseUpdate(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param collation: The collation of the database. If createMode is not
      Default, this value is ignored.
     :type collation: str
@@ -71,8 +71,7 @@ class DatabaseUpdate(Resource):
      edition. Possible values include: 'Copy', 'Default',
      'NonReadableSecondary', 'OnlineSecondary', 'PointInTimeRestore',
      'Recovery', 'Restore', 'RestoreLongTermRetentionBackup'
-    :type create_mode: str or :class:`CreateMode
-     <azure.mgmt.sql.models.CreateMode>`
+    :type create_mode: str or ~azure.mgmt.sql.models.CreateMode
     :param source_database_id: Conditional. If createMode is Copy,
      NonReadableSecondary, OnlineSecondary, PointInTimeRestore, Recovery, or
      Restore, then this value is required. Specifies the resource ID of the
@@ -101,11 +100,12 @@ class DatabaseUpdate(Resource):
      NonReadableSecondary or OnlineSecondary, this value is ignored. To see
      possible values, query the capabilities API
      (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
-     referred to by operationId: "Capabilities_ListByLocation.". Possible
-     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
-     'Stretch', 'DataWarehouse', 'System', 'System2'
-    :type edition: str or :class:`DatabaseEdition
-     <azure.mgmt.sql.models.DatabaseEdition>`
+     referred to by operationId: "Capabilities_ListByLocation." or use the
+     Azure CLI command `az sql db list-editions -l westus --query [].name`.
+     Possible values include: 'Web', 'Business', 'Basic', 'Standard',
+     'Premium', 'PremiumRS', 'Free', 'Stretch', 'DataWarehouse', 'System',
+     'System2'
+    :type edition: str or ~azure.mgmt.sql.models.DatabaseEdition
     :param max_size_bytes: The max size of the database expressed in bytes. If
      createMode is not Default, this value is ignored. To see possible values,
      query the capabilities API
@@ -121,7 +121,9 @@ class DatabaseUpdate(Resource):
      requestedServiceObjectiveName. To see possible values, query the
      capabilities API
      (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
-     referred to by operationId: "Capabilities_ListByLocation."
+     referred to by operationId: "Capabilities_ListByLocation." or use the
+     Azure CLI command `az sql db list-editions --location <location> --query
+     [].supportedServiceLevelObjectives[].name` .
     :type requested_service_objective_id: str
     :param requested_service_objective_name: The name of the configured
      service level objective of the database. This is the service level
@@ -129,16 +131,32 @@ class DatabaseUpdate(Resource):
      successfully updated, it will match the value of serviceLevelObjective
      property. To see possible values, query the capabilities API
      (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
-     referred to by operationId: "Capabilities_ListByLocation.". Possible
-     values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1', 'P2', 'P3', 'P4',
-     'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
+     referred to by operationId: "Capabilities_ListByLocation." or use the
+     Azure CLI command `az sql db list-editions --location <location> --query
+     [].supportedServiceLevelObjectives[].name`. Possible values include:
+     'System', 'System0', 'System1', 'System2', 'System3', 'System4',
+     'System2L', 'System3L', 'System4L', 'Free', 'Basic', 'S0', 'S1', 'S2',
+     'S3', 'S4', 'S6', 'S7', 'S9', 'S12', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11',
+     'P15', 'PRS1', 'PRS2', 'PRS4', 'PRS6', 'DW100', 'DW200', 'DW300', 'DW400',
+     'DW500', 'DW600', 'DW1000', 'DW1200', 'DW1000c', 'DW1500', 'DW1500c',
+     'DW2000', 'DW2000c', 'DW3000', 'DW2500c', 'DW3000c', 'DW6000', 'DW5000c',
+     'DW6000c', 'DW7500c', 'DW10000c', 'DW15000c', 'DW30000c', 'DS100',
+     'DS200', 'DS300', 'DS400', 'DS500', 'DS600', 'DS1000', 'DS1200', 'DS1500',
+     'DS2000', 'ElasticPool'
     :type requested_service_objective_name: str or
-     :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
+     ~azure.mgmt.sql.models.ServiceObjectiveName
     :ivar service_level_objective: The current service level objective of the
-     database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
-     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
-    :vartype service_level_objective: str or :class:`ServiceObjectiveName
-     <azure.mgmt.sql.models.ServiceObjectiveName>`
+     database. Possible values include: 'System', 'System0', 'System1',
+     'System2', 'System3', 'System4', 'System2L', 'System3L', 'System4L',
+     'Free', 'Basic', 'S0', 'S1', 'S2', 'S3', 'S4', 'S6', 'S7', 'S9', 'S12',
+     'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'PRS1', 'PRS2', 'PRS4',
+     'PRS6', 'DW100', 'DW200', 'DW300', 'DW400', 'DW500', 'DW600', 'DW1000',
+     'DW1200', 'DW1000c', 'DW1500', 'DW1500c', 'DW2000', 'DW2000c', 'DW3000',
+     'DW2500c', 'DW3000c', 'DW6000', 'DW5000c', 'DW6000c', 'DW7500c',
+     'DW10000c', 'DW15000c', 'DW30000c', 'DS100', 'DS200', 'DS300', 'DS400',
+     'DS500', 'DS600', 'DS1000', 'DS1200', 'DS1500', 'DS2000', 'ElasticPool'
+    :vartype service_level_objective: str or
+     ~azure.mgmt.sql.models.ServiceObjectiveName
     :ivar status: The status of the database.
     :vartype status: str
     :param elastic_pool_name: The name of the elastic pool the database is in.
@@ -151,16 +169,14 @@ class DatabaseUpdate(Resource):
     :vartype default_secondary_location: str
     :ivar service_tier_advisors: The list of service tier advisors for this
      database. Expanded property
-    :vartype service_tier_advisors: list of :class:`ServiceTierAdvisor
-     <azure.mgmt.sql.models.ServiceTierAdvisor>`
+    :vartype service_tier_advisors:
+     list[~azure.mgmt.sql.models.ServiceTierAdvisor]
     :ivar transparent_data_encryption: The transparent data encryption info
      for this database.
-    :vartype transparent_data_encryption: list of
-     :class:`TransparentDataEncryption
-     <azure.mgmt.sql.models.TransparentDataEncryption>`
+    :vartype transparent_data_encryption:
+     list[~azure.mgmt.sql.models.TransparentDataEncryption]
     :ivar recommended_index: The recommended indices for this database.
-    :vartype recommended_index: list of :class:`RecommendedIndex
-     <azure.mgmt.sql.models.RecommendedIndex>`
+    :vartype recommended_index: list[~azure.mgmt.sql.models.RecommendedIndex]
     :ivar failover_group_id: The resource identifier of the failover group
      containing this database.
     :vartype failover_group_id: str
@@ -168,14 +184,16 @@ class DatabaseUpdate(Resource):
      readScale indicates whether read-only connections are allowed to this
      database or not. Not supported for DataWarehouse edition. Possible values
      include: 'Enabled', 'Disabled'
-    :type read_scale: str or :class:`ReadScale
-     <azure.mgmt.sql.models.ReadScale>`
+    :type read_scale: str or ~azure.mgmt.sql.models.ReadScale
     :param sample_name: Indicates the name of the sample schema to apply when
      creating this database. If createMode is not Default, this value is
      ignored. Not supported for DataWarehouse edition. Possible values include:
      'AdventureWorksLT'
-    :type sample_name: str or :class:`SampleName
-     <azure.mgmt.sql.models.SampleName>`
+    :type sample_name: str or ~azure.mgmt.sql.models.SampleName
+    :param zone_redundant: Whether or not this database is zone redundant,
+     which means the replicas of this database will be spread across multiple
+     availability zones.
+    :type zone_redundant: bool
     """
 
     _validation = {
@@ -226,9 +244,10 @@ class DatabaseUpdate(Resource):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'read_scale': {'key': 'properties.readScale', 'type': 'ReadScale'},
         'sample_name': {'key': 'properties.sampleName', 'type': 'str'},
+        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
+    def __init__(self, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None, zone_redundant=None):
         super(DatabaseUpdate, self).__init__()
         self.tags = tags
         self.collation = collation
@@ -256,3 +275,4 @@ class DatabaseUpdate(Resource):
         self.failover_group_id = None
         self.read_scale = read_scale
         self.sample_name = sample_name
+        self.zone_redundant = zone_redundant

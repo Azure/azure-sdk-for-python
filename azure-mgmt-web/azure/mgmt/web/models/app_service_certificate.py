@@ -28,8 +28,8 @@ class AppServiceCertificate(Model):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
-    :vartype provisioning_state: str or :class:`KeyVaultSecretStatus
-     <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.KeyVaultSecretStatus
     """
 
     _validation = {

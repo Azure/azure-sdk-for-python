@@ -23,7 +23,7 @@ class EmailNotification(Model):
     :type send_to_subscription_co_administrators: bool
     :param custom_emails: the custom e-mails list. This value can be null or
      empty, in which case this attribute will be ignored.
-    :type custom_emails: list of str
+    :type custom_emails: list[str]
     """
 
     _attribute_map = {

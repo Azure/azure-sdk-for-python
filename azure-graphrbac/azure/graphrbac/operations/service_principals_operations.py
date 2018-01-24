@@ -39,20 +39,16 @@ class ServicePrincipalsOperations(object):
         """Creates a service principal in the directory.
 
         :param parameters: Parameters to create a service principal.
-        :type parameters: :class:`ServicePrincipalCreateParameters
-         <azure.graphrbac.models.ServicePrincipalCreateParameters>`
+        :type parameters:
+         ~azure.graphrbac.models.ServicePrincipalCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServicePrincipal
-         <azure.graphrbac.models.ServicePrincipal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServicePrincipal
-         <azure.graphrbac.models.ServicePrincipal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServicePrincipal or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.ServicePrincipal or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -110,10 +106,9 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ServicePrincipal
-         <azure.graphrbac.models.ServicePrincipal>`
-        :rtype: :class:`ServicePrincipalPaged
-         <azure.graphrbac.models.ServicePrincipalPaged>`
+        :return: An iterator like instance of ServicePrincipal
+        :rtype:
+         ~azure.graphrbac.models.ServicePrincipalPaged[~azure.graphrbac.models.ServicePrincipal]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -184,18 +179,15 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -236,20 +228,16 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServicePrincipal
-         <azure.graphrbac.models.ServicePrincipal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServicePrincipal
-         <azure.graphrbac.models.ServicePrincipal>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServicePrincipal or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.ServicePrincipal or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -298,10 +286,9 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`KeyCredential
-         <azure.graphrbac.models.KeyCredential>`
-        :rtype: :class:`KeyCredentialPaged
-         <azure.graphrbac.models.KeyCredentialPaged>`
+        :return: An iterator like instance of KeyCredential
+        :rtype:
+         ~azure.graphrbac.models.KeyCredentialPaged[~azure.graphrbac.models.KeyCredential]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -311,7 +298,7 @@ class ServicePrincipalsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -362,18 +349,14 @@ class ServicePrincipalsOperations(object):
          information.
         :type object_id: str
         :param value: A collection of KeyCredentials.
-        :type value: list of :class:`KeyCredential
-         <azure.graphrbac.models.KeyCredential>`
+        :type value: list[~azure.graphrbac.models.KeyCredential]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -382,7 +365,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -427,10 +410,9 @@ class ServicePrincipalsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PasswordCredential
-         <azure.graphrbac.models.PasswordCredential>`
-        :rtype: :class:`PasswordCredentialPaged
-         <azure.graphrbac.models.PasswordCredentialPaged>`
+        :return: An iterator like instance of PasswordCredential
+        :rtype:
+         ~azure.graphrbac.models.PasswordCredentialPaged[~azure.graphrbac.models.PasswordCredential]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -440,7 +422,7 @@ class ServicePrincipalsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -490,18 +472,14 @@ class ServicePrincipalsOperations(object):
         :param object_id: The object ID of the service principal.
         :type object_id: str
         :param value: A collection of PasswordCredentials.
-        :type value: list of :class:`PasswordCredential
-         <azure.graphrbac.models.PasswordCredential>`
+        :type value: list[~azure.graphrbac.models.PasswordCredential]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -510,7 +488,7 @@ class ServicePrincipalsOperations(object):
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
         path_format_arguments = {
-            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

@@ -16,10 +16,9 @@ class FactoryUpdateParameters(Model):
     """Parameters for updating a factory resource.
 
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: Managed service identity of the factory.
-    :type identity: :class:`FactoryIdentity
-     <azure.mgmt.datafactory.models.FactoryIdentity>`
+    :type identity: ~azure.mgmt.datafactory.models.FactoryIdentity
     """
 
     _attribute_map = {

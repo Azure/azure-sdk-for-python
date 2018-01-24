@@ -23,9 +23,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :param primary: Whether this is a primary NIC on a virtual machine.
     :type primary: bool
     :param ip_configurations: The virtual machine scale set IP Configuration.
-    :type ip_configurations: list of
-     :class:`VirtualMachineScaleSetIPConfiguration
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetIPConfiguration>`
+    :type ip_configurations:
+     list[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetIPConfiguration]
     """
 
     _validation = {

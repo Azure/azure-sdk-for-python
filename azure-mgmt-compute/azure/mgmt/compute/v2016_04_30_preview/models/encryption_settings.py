@@ -23,12 +23,12 @@ class EncryptionSettings(Model):
     :type enabled: bool
     :param disk_encryption_key: Key Vault Secret Url and vault id of the disk
      encryption key
-    :type disk_encryption_key: :class:`KeyVaultAndSecretReference
-     <azure.mgmt.compute.v2016_04_30_preview.models.KeyVaultAndSecretReference>`
+    :type disk_encryption_key:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.KeyVaultAndSecretReference
     :param key_encryption_key: Key Vault Key Url and vault id of the key
      encryption key
-    :type key_encryption_key: :class:`KeyVaultAndKeyReference
-     <azure.mgmt.compute.v2016_04_30_preview.models.KeyVaultAndKeyReference>`
+    :type key_encryption_key:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.KeyVaultAndKeyReference
     """
 
     _attribute_map = {
@@ -38,6 +38,7 @@ class EncryptionSettings(Model):
     }
 
     def __init__(self, enabled=None, disk_encryption_key=None, key_encryption_key=None):
+        super(EncryptionSettings, self).__init__()
         self.enabled = enabled
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key

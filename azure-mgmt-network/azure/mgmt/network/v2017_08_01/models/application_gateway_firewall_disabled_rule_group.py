@@ -19,7 +19,7 @@ class ApplicationGatewayFirewallDisabledRuleGroup(Model):
     :type rule_group_name: str
     :param rules: The list of rules that will be disabled. If null, all rules
      of the rule group will be disabled.
-    :type rules: list of int
+    :type rules: list[int]
     """
 
     _validation = {
@@ -32,5 +32,6 @@ class ApplicationGatewayFirewallDisabledRuleGroup(Model):
     }
 
     def __init__(self, rule_group_name, rules=None):
+        super(ApplicationGatewayFirewallDisabledRuleGroup, self).__init__()
         self.rule_group_name = rule_group_name
         self.rules = rules

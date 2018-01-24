@@ -50,8 +50,8 @@ class HardwareProfile(Model):
      'Standard_H16mr', 'Standard_L4s', 'Standard_L8s', 'Standard_L16s',
      'Standard_L32s', 'Standard_NC6', 'Standard_NC12', 'Standard_NC24',
      'Standard_NC24r', 'Standard_NV6', 'Standard_NV12', 'Standard_NV24'
-    :type vm_size: str or :class:`VirtualMachineSizeTypes
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineSizeTypes>`
+    :type vm_size: str or
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineSizeTypes
     """
 
     _attribute_map = {
@@ -59,4 +59,5 @@ class HardwareProfile(Model):
     }
 
     def __init__(self, vm_size=None):
+        super(HardwareProfile, self).__init__()
         self.vm_size = vm_size

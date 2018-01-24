@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class RulesOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -52,7 +54,9 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RulePaged <azure.mgmt.servicebus.models.RulePaged>`
+        :return: An iterator like instance of Rule
+        :rtype:
+         ~azure.mgmt.servicebus.models.RulePaged[~azure.mgmt.servicebus.models.Rule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -64,7 +68,7 @@ class RulesOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
                     'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -124,15 +128,15 @@ class RulesOperations(object):
         :param rule_name: The rule name.
         :type rule_name: str
         :param parameters: Parameters supplied to create a rule.
-        :type parameters: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
+        :type parameters: ~azure.mgmt.servicebus.models.Rule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Rule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.Rule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -141,7 +145,7 @@ class RulesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -204,9 +208,8 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -215,7 +218,7 @@ class RulesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -240,7 +243,7 @@ class RulesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -267,9 +270,9 @@ class RulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Rule <azure.mgmt.servicebus.models.Rule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Rule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.Rule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -278,7 +281,7 @@ class RulesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

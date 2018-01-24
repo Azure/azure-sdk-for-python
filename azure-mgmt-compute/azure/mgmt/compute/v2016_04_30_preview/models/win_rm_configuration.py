@@ -16,8 +16,8 @@ class WinRMConfiguration(Model):
     """Describes Windows Remote Management configuration of the VM.
 
     :param listeners: The list of Windows Remote Management listeners
-    :type listeners: list of :class:`WinRMListener
-     <azure.mgmt.compute.v2016_04_30_preview.models.WinRMListener>`
+    :type listeners:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.WinRMListener]
     """
 
     _attribute_map = {
@@ -25,4 +25,5 @@ class WinRMConfiguration(Model):
     }
 
     def __init__(self, listeners=None):
+        super(WinRMConfiguration, self).__init__()
         self.listeners = listeners

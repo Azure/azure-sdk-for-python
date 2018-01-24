@@ -58,8 +58,8 @@ class USqlTableType(USqlType):
      complex type.
     :type is_complex_type: bool
     :ivar columns: the type field information associated with this table type.
-    :vartype columns: list of :class:`TypeFieldInfo
-     <azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo>`
+    :vartype columns:
+     list[~azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo]
     """
 
     _validation = {

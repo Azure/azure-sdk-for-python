@@ -1,382 +1,427 @@
 {
-	"azure-batch": {
-		"service_name": "Batch",
-		"category ": "Client",
-		"namespaces": [
-			"azure.batch"
-		]
-	},
-	"azure-graphrbac": {
-		"service_name": "Active Directory",
-		"category ": "Client",
-		"namespaces": [
-			"azure.graphrbac"
-		]
-	},
-	"azure-keyvault": {
-		"service_name": "Key Vault",
-		"category ": "Client",
-		"namespaces": [
-			"azure.keyvault"
-		]
-	},
-	"azure-monitor": {
-		"service_name": "Monitoring",
-		"category ": "Client",
-		"namespaces": [
-			"azure.monitor"
-		]
-	},
-	"azure-servicebus": {
-		"service_name": "Service Bus",
-		"category ": "Client"
-	},
-	"azure-servicefabric": {
-		"service_name": "Service Fabric",
-		"category ": "Client",
-		"namespaces": [
-			"azure.servicefabric"
-		]
-	},	
-
-	"azure-mgmt-authorization": {
-		"service_name": "Authorization",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.authorization"
-		]
-	},
-	"azure-mgmt-batch": {
-		"service_name": "Batch",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.batch"
-		]
-	},
-	"azure-mgmt-batchai": {
-		"service_name": "Batch AI",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.batchai"
-		]
-	},
-	"azure-mgmt-billing": {
-		"service_name": "Billing",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.billing"
-		]
-	},
-	"azure-mgmt-cdn": {
-		"service_name": "CDN",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.cdn"
-		]
-	},
-	"azure-mgmt-cognitiveservices": {
-		"service_name": "Cognitive Services",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.cognitiveservices"
-		]
-	},
-	"azure-mgmt-commerce": {
-		"service_name": "Commerce",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.commerce"
-		]
-	},
-	"azure-mgmt-compute/azure.mgmt.compute.compute": {
-		"service_name": "Virtual Machines",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.compute.v2015_06_15",
-			"azure.mgmt.compute.v2016_03_30",
-			"azure.mgmt.compute.v2016_04_30_preview",
-			"azure.mgmt.compute.v2017_03_30"
-		]
-	},
-	"azure-mgmt-containerservice": {
-		"service_name": "Container Service",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.containerservice"
-		]
-	},
-	"azure-mgmt-consumption": {
-		"service_name": "Consumption",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.consumption"
-		]
-	},
-	"azure-mgmt-containerinstance": {
-		"service_name": "Container Instance",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.containerinstance"
-		]
-	},
-	"azure-mgmt-containerregistry": {
-		"service_name": "Container Registry",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.containerregistry.v2017_03_01",
-			"azure.mgmt.containerregistry.v2017_10_01"
-		]
-	},
-	"azure-mgmt-datafactory": {
-		"service_name": "Data Factory",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.datafactory"
-		]
-	},
-	"azure-mgmt-datalake-analytics": {
-		"service_name": "Data Lake Analytics",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.datalake.analytics.account",
-			"azure.mgmt.datalake.analytics.catalog",
-			"azure.mgmt.datalake.analytics.job"
-		]
-	},
-	"azure-mgmt-datalake-store": {
-		"service_name": "Data Lake Store",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.datalake.store"
-		]
-	},
-	"azure-mgmt-devtestlabs": {
-		"service_name": "Dev Test Labs",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.devtestlabs"
-		]
-	},
-	"azure-mgmt-dns": {
-		"service_name": "DNS",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.dns"
-		]
-	},
-	"azure-mgmt-cosmosdb": {
-		"service_name": "Cosmos DB",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.cosmosdb"
-		]
-	},
-	"azure-mgmt-eventgrid": {
-		"service_name": "Event Grid",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.eventgrid"
-		]
-	},
-	"azure-mgmt-eventhub": {
-		"service_name": "Event Hubs",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.eventhub"
-		]
-	},
-	"azure-mgmt-iothub": {
-		"service_name": "IoT",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.iothub"
-		]
-	},
-	"azure-mgmt-keyvault": {
-		"service_name": "Key Vault",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.keyvault"
-		]
-	},
-	"azure-mgmt-logic": {
-		"service_name": "Logic Apps",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.logic"
-		]
-	},
-	"azure-mgmt-machinelearningcompute": {
-		"service_name": "Machine Learning Compute",
-		"category": "Management",
-		"namespaces": [
-			"azure.mgmt.machinelearningcompute"
-		]
-	},
-	"azure-mgmt-media": {
-		"service_name": "Media Services",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.media"
-		]
-	},
-	"azure-mgmt-monitor": {
-		"service_name": "Monitoring",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.monitor"
-		]
-	},
-	"azure-mgmt-network": {
-		"service_name": "Network",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.network.v2015_06_15",
-			"azure.mgmt.network.v2016_09_01",
-			"azure.mgmt.network.v2016_12_01",
-			"azure.mgmt.network.v2017_03_01",
-			"azure.mgmt.network.v2017_06_01",
-			"azure.mgmt.network.v2017_08_01",
-			"azure.mgmt.network.v2017_09_01"
-		]
-	},
-	"azure-mgmt-notificationhubs": {
-		"service_name": "Notification Hubs",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.notificationhubs"
-		]
-	},
-	"azure-mgmt-powerbiembedded": {
-		"service_name": "Power BI Embedded",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.powerbiembedded"
-		]
-	},
-	"azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
-		"service_name": "MySQL",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.rdbms.mysql"
-		]
-	},
-	"azure-mgmt-rdbms/azure.mgmt.rdbms.postgresql": {
-		"service_name": "PostgreSQL",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.rdbms.postgresql"
-		]
-	},
-	"azure-mgmt-recoveryservices": {
-		"service_name": "Recovery Services",
-		"category": "Management",
-		"namespaces": [
-			"azure.mgmt.recoveryservices"
-		]
-	},
-	"azure-mgmt-recoveryservicesbackup": {
-		"service_name": "Recovery Services Backup",
-		"category": "Management",
-		"namespaces": [
-			"azure.mgmt.recoveryservicesbackup"
-		]
-	},
-	"azure-mgmt-redis": {
-		"service_name": "Redis Cache",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.redis"
-		]
-	},
-	"azure-mgmt-resource": {
-		"service_name": "Resource Management",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.resource.managedapplications",
-			"azure.mgmt.resource.features.v2015_12_01",
-			"azure.mgmt.resource.subscriptions.v2016_06_01",
-			"azure.mgmt.resource.locks.v2015_01_01",
-			"azure.mgmt.resource.locks.v2016_09_01",
-			"azure.mgmt.resource.resources.v2016_02_01",
-			"azure.mgmt.resource.resources.v2016_09_01",
-			"azure.mgmt.resource.resources.v2017_05_10",
-			"azure.mgmt.resource.policy.v2015_10_01_preview",
-			"azure.mgmt.resource.policy.v2016_04_01",
-			"azure.mgmt.resource.policy.v2016_12_01",
-			"azure.mgmt.resource.links.v2016_09_01"
-		]
-	},
-	"azure-mgmt-scheduler": {
-		"service_name": "Scheduler",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.scheduler"
-		]
-	},
-	"azure-mgmt-search": {
-		"service_name": "Search Management",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.search"
-		]
-	},
-	"azure-mgmt-servermanager": {
-		"service_name": "Server Management",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.servermanager"
-		]
-	},
-	"azure-mgmt-servicebus": {
-		"service_name": "Service Bus",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.servicebus"
-		]
-	},
-	"azure-mgmt-servicefabric": {
-		"service_name": "Service Fabric",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.servicefabric"
-		]
-	},	
-	"azure-mgmt-sql": {
-		"service_name": "SQL",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.sql"
-		]
-	},
-	"azure-mgmt-storage": {
-		"service_name": "Storage",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.storage.v2015_06_15",
-			"azure.mgmt.storage.v2016_01_01",			
-			"azure.mgmt.storage.v2016_12_01",
-			"azure.mgmt.storage.v2017_06_01"
-		]
-	},
-	"azure-mgmt-trafficmanager": {
-		"service_name": "Traffic Manager",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.trafficmanager"
-		]
-	},
-	"azure-mgmt-web": {
-		"service_name": "Web Apps",
-		"category ": "Management",
-		"namespaces": [
-			"azure.mgmt.web"
-		]
-	},
-	"azure-common": {
-		"service_name": "Other"
-	},
-	"azure-servicemanagement-legacy": {
-		"service_name": "Other"
-	}
+  "azure-batch": {
+    "category ": "Client",
+    "namespaces": [
+      "azure.batch"
+    ],
+    "service_name": "Batch"
+  },
+  "azure-common": {
+    "service_name": "Other"
+  },
+  "azure-graphrbac": {
+    "category ": "Client",
+    "namespaces": [
+      "azure.graphrbac"
+    ],
+    "service_name": "Active Directory"
+  },
+  "azure-keyvault": {
+    "category ": "Client",
+    "namespaces": [
+      "azure.keyvault"
+    ],
+    "service_name": "Key Vault"
+  },
+  "azure-mgmt-advisor": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.advisor"
+    ],
+    "service_name": "Advisor"
+  },
+  "azure-mgmt-authorization": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.authorization"
+    ],
+    "service_name": "Authorization"
+  },
+  "azure-mgmt-batch": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.batch"
+    ],
+    "service_name": "Batch"
+  },
+  "azure-mgmt-batchai": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.batchai"
+    ],
+    "service_name": "Batch AI"
+  },
+  "azure-mgmt-billing": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.billing"
+    ],
+    "service_name": "Billing"
+  },
+  "azure-mgmt-cdn": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.cdn"
+    ],
+    "service_name": "CDN"
+  },
+  "azure-mgmt-cognitiveservices": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.cognitiveservices"
+    ],
+    "service_name": "Cognitive Services"
+  },
+  "azure-mgmt-commerce": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.commerce"
+    ],
+    "service_name": "Commerce"
+  },
+  "azure-mgmt-compute/azure.mgmt.compute.compute": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.compute.v2015_06_15",
+      "azure.mgmt.compute.v2016_03_30",
+      "azure.mgmt.compute.v2016_04_30_preview",
+      "azure.mgmt.compute.v2017_03_30",
+      "azure.mgmt.compute.v2017_09_01",
+      "azure.mgmt.compute.v2017_12_01"
+    ],
+    "service_name": "Virtual Machines"
+  },
+  "azure-mgmt-consumption": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.consumption"
+    ],
+    "service_name": "Consumption"
+  },
+  "azure-mgmt-containerinstance": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.containerinstance"
+    ],
+    "service_name": "Container Instance"
+  },
+  "azure-mgmt-containerregistry": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.containerregistry.v2017_03_01",
+      "azure.mgmt.containerregistry.v2017_10_01"
+    ],
+    "service_name": "Container Registry"
+  },
+  "azure-mgmt-containerservice": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.containerservice"
+    ],
+    "service_name": "Container Service"
+  },
+  "azure-mgmt-cosmosdb": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.cosmosdb"
+    ],
+    "service_name": "Cosmos DB"
+  },
+  "azure-mgmt-datafactory": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.datafactory"
+    ],
+    "service_name": "Data Factory"
+  },
+  "azure-mgmt-datalake-analytics": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.datalake.analytics.account",
+      "azure.mgmt.datalake.analytics.catalog",
+      "azure.mgmt.datalake.analytics.job"
+    ],
+    "service_name": "Data Lake Analytics"
+  },
+  "azure-mgmt-datalake-store": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.datalake.store"
+    ],
+    "service_name": "Data Lake Store"
+  },
+  "azure-mgmt-devtestlabs": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.devtestlabs"
+    ],
+    "service_name": "Dev Test Labs"
+  },
+  "azure-mgmt-dns": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.dns"
+    ],
+    "service_name": "DNS"
+  },
+  "azure-mgmt-eventgrid": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.eventgrid"
+    ],
+    "service_name": "Event Grid"
+  },
+  "azure-mgmt-eventhub": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.eventhub"
+    ],
+    "service_name": "Event Hubs"
+  },
+  "azure-mgmt-hanaonazure": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.hanaonazure"
+    ],
+    "service_name": "SAP Hana on Azure"
+  },
+  "azure-mgmt-hdinsight": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.hdinsight"
+    ],
+    "service_name": "HDInsight"
+  },
+  "azure-mgmt-iothub": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.iothub"
+    ],
+    "service_name": "IoT"
+  },
+  "azure-mgmt-iothubprovisioningservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.iothubprovisioningservices"
+    ],
+    "service_name": "IoT"
+  },
+  "azure-mgmt-keyvault": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.keyvault"
+    ],
+    "service_name": "Key Vault"
+  },
+  "azure-mgmt-logic": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.logic"
+    ],
+    "service_name": "Logic Apps"
+  },
+  "azure-mgmt-machinelearningcompute": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.machinelearningcompute"
+    ],
+    "service_name": "Machine Learning Compute"
+  },
+  "azure-mgmt-media": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.media"
+    ],
+    "service_name": "Media Services"
+  },
+  "azure-mgmt-monitor": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.monitor"
+    ],
+    "service_name": "Monitoring"
+  },
+  "azure-mgmt-msi": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.msi"
+    ],
+    "service_name": "MSI"
+  },
+  "azure-mgmt-network": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.network.v2015_06_15",
+      "azure.mgmt.network.v2016_09_01",
+      "azure.mgmt.network.v2016_12_01",
+      "azure.mgmt.network.v2017_03_01",
+      "azure.mgmt.network.v2017_06_01",
+      "azure.mgmt.network.v2017_08_01",
+      "azure.mgmt.network.v2017_09_01",
+      "azure.mgmt.network.v2017_10_01"
+    ],
+    "service_name": "Network"
+  },
+  "azure-mgmt-notificationhubs": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.notificationhubs"
+    ],
+    "service_name": "Notification Hubs"
+  },
+  "azure-mgmt-powerbiembedded": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.powerbiembedded"
+    ],
+    "service_name": "Power BI Embedded"
+  },
+  "azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.rdbms.mysql"
+    ],
+    "service_name": "MySQL"
+  },
+  "azure-mgmt-rdbms/azure.mgmt.rdbms.postgresql": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.rdbms.postgresql"
+    ],
+    "service_name": "PostgreSQL"
+  },
+  "azure-mgmt-recoveryservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.recoveryservices"
+    ],
+    "service_name": "Recovery Services"
+  },
+  "azure-mgmt-recoveryservicesbackup": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.recoveryservicesbackup"
+    ],
+    "service_name": "Recovery Services Backup"
+  },
+  "azure-mgmt-redis": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.redis"
+    ],
+    "service_name": "Redis Cache"
+  },
+  "azure-mgmt-relay": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.relay"
+    ],
+    "service_name": "Relay"
+  },
+  "azure-mgmt-resource": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.resource.managedapplications",
+      "azure.mgmt.resource.features.v2015_12_01",
+      "azure.mgmt.resource.subscriptions.v2016_06_01",
+      "azure.mgmt.resource.locks.v2015_01_01",
+      "azure.mgmt.resource.locks.v2016_09_01",
+      "azure.mgmt.resource.resources.v2016_02_01",
+      "azure.mgmt.resource.resources.v2016_09_01",
+      "azure.mgmt.resource.resources.v2017_05_10",
+      "azure.mgmt.resource.policy.v2015_10_01_preview",
+      "azure.mgmt.resource.policy.v2016_04_01",
+      "azure.mgmt.resource.policy.v2016_12_01",
+      "azure.mgmt.resource.links.v2016_09_01"
+    ],
+    "service_name": "Resource Management"
+  },
+  "azure-mgmt-scheduler": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.scheduler"
+    ],
+    "service_name": "Scheduler"
+  },
+  "azure-mgmt-search": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.search"
+    ],
+    "service_name": "Search Management"
+  },
+  "azure-mgmt-servermanager": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.servermanager"
+    ],
+    "service_name": "Server Management"
+  },
+  "azure-mgmt-servicebus": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.servicebus"
+    ],
+    "service_name": "Service Bus"
+  },
+  "azure-mgmt-servicefabric": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.servicefabric"
+    ],
+    "service_name": "Service Fabric"
+  },
+  "azure-mgmt-sql": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.sql"
+    ],
+    "service_name": "SQL"
+  },
+  "azure-mgmt-storage": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.storage.v2015_06_15",
+      "azure.mgmt.storage.v2016_01_01",
+      "azure.mgmt.storage.v2016_12_01",
+      "azure.mgmt.storage.v2017_06_01",
+      "azure.mgmt.storage.v2017_10_01"
+    ],
+    "service_name": "Storage"
+  },
+  "azure-mgmt-subscription": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.subscription"
+    ],
+    "service_name": "Subscription"
+  },
+  "azure-mgmt-trafficmanager": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.trafficmanager"
+    ],
+    "service_name": "Traffic Manager"
+  },
+  "azure-mgmt-web": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.web"
+    ],
+    "service_name": "Web Apps"
+  },
+  "azure-servicebus": {
+    "category ": "Client",
+    "service_name": "Service Bus"
+  },
+  "azure-servicefabric": {
+    "category ": "Client",
+    "namespaces": [
+      "azure.servicefabric"
+    ],
+    "service_name": "Service Fabric"
+  },
+  "azure-servicemanagement-legacy": {
+    "service_name": "Other"
+  }
 }

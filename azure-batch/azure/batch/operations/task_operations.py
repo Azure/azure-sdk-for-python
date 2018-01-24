@@ -46,21 +46,16 @@ class TaskOperations(object):
         :param job_id: The ID of the job to which the task is to be added.
         :type job_id: str
         :param task: The task to be added.
-        :type task: :class:`TaskAddParameter
-         <azure.batch.models.TaskAddParameter>`
+        :type task: ~azure.batch.models.TaskAddParameter
         :param task_add_options: Additional parameters for the operation
-        :type task_add_options: :class:`TaskAddOptions
-         <azure.batch.models.TaskAddOptions>`
+        :type task_add_options: ~azure.batch.models.TaskAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -139,16 +134,15 @@ class TaskOperations(object):
         :param job_id: The ID of the job.
         :type job_id: str
         :param task_list_options: Additional parameters for the operation
-        :type task_list_options: :class:`TaskListOptions
-         <azure.batch.models.TaskListOptions>`
+        :type task_list_options: ~azure.batch.models.TaskListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`CloudTask
-         <azure.batch.models.CloudTask>`
-        :rtype: :class:`CloudTaskPaged <azure.batch.models.CloudTaskPaged>`
+        :return: An iterator like instance of CloudTask
+        :rtype:
+         ~azure.batch.models.CloudTaskPaged[~azure.batch.models.CloudTask]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -270,24 +264,19 @@ class TaskOperations(object):
          4MB (for example if each task has 100's of resource files or
          environment variables), the request will fail with code
          'RequestBodyTooLarge' and should be retried again with fewer tasks.
-        :type value: list of :class:`TaskAddParameter
-         <azure.batch.models.TaskAddParameter>`
+        :type value: list[~azure.batch.models.TaskAddParameter]
         :param task_add_collection_options: Additional parameters for the
          operation
-        :type task_add_collection_options: :class:`TaskAddCollectionOptions
-         <azure.batch.models.TaskAddCollectionOptions>`
+        :type task_add_collection_options:
+         ~azure.batch.models.TaskAddCollectionOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TaskAddCollectionResult
-         <azure.batch.models.TaskAddCollectionResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TaskAddCollectionResult
-         <azure.batch.models.TaskAddCollectionResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TaskAddCollectionResult or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.TaskAddCollectionResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -377,18 +366,14 @@ class TaskOperations(object):
         :param task_id: The ID of the task to delete.
         :type task_id: str
         :param task_delete_options: Additional parameters for the operation
-        :type task_delete_options: :class:`TaskDeleteOptions
-         <azure.batch.models.TaskDeleteOptions>`
+        :type task_delete_options: ~azure.batch.models.TaskDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -483,18 +468,15 @@ class TaskOperations(object):
         :param task_id: The ID of the task to get information about.
         :type task_id: str
         :param task_get_options: Additional parameters for the operation
-        :type task_get_options: :class:`TaskGetOptions
-         <azure.batch.models.TaskGetOptions>`
+        :type task_get_options: ~azure.batch.models.TaskGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CloudTask <azure.batch.models.CloudTask>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CloudTask <azure.batch.models.CloudTask>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CloudTask or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudTask or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -607,24 +589,19 @@ class TaskOperations(object):
         :param task_id: The ID of the task to update.
         :type task_id: str
         :param task_update_options: Additional parameters for the operation
-        :type task_update_options: :class:`TaskUpdateOptions
-         <azure.batch.models.TaskUpdateOptions>`
+        :type task_update_options: ~azure.batch.models.TaskUpdateOptions
         :param constraints: Constraints that apply to this task. If omitted,
          the task is given the default constraints. For multi-instance tasks,
          updating the retention time applies only to the primary task and not
          subtasks.
-        :type constraints: :class:`TaskConstraints
-         <azure.batch.models.TaskConstraints>`
+        :type constraints: ~azure.batch.models.TaskConstraints
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -728,20 +705,16 @@ class TaskOperations(object):
         :type task_id: str
         :param task_list_subtasks_options: Additional parameters for the
          operation
-        :type task_list_subtasks_options: :class:`TaskListSubtasksOptions
-         <azure.batch.models.TaskListSubtasksOptions>`
+        :type task_list_subtasks_options:
+         ~azure.batch.models.TaskListSubtasksOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CloudTaskListSubtasksResult
-         <azure.batch.models.CloudTaskListSubtasksResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CloudTaskListSubtasksResult
-         <azure.batch.models.CloudTaskListSubtasksResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CloudTaskListSubtasksResult or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudTaskListSubtasksResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -833,18 +806,14 @@ class TaskOperations(object):
         :param task_id: The ID of the task to terminate.
         :type task_id: str
         :param task_terminate_options: Additional parameters for the operation
-        :type task_terminate_options: :class:`TaskTerminateOptions
-         <azure.batch.models.TaskTerminateOptions>`
+        :type task_terminate_options: ~azure.batch.models.TaskTerminateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -949,18 +918,15 @@ class TaskOperations(object):
         :type task_id: str
         :param task_reactivate_options: Additional parameters for the
          operation
-        :type task_reactivate_options: :class:`TaskReactivateOptions
-         <azure.batch.models.TaskReactivateOptions>`
+        :type task_reactivate_options:
+         ~azure.batch.models.TaskReactivateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """

@@ -18,18 +18,16 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
 
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2017_03_30.models.CachingTypes>`
+    :type caching: str or ~azure.mgmt.compute.v2017_03_30.models.CachingTypes
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not exist.
-    :type image: :class:`VirtualHardDisk
-     <azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk>`
+    :type image: ~azure.mgmt.compute.v2017_03_30.models.VirtualHardDisk
     :param vhd_containers: The list of virtual hard disk container uris.
-    :type vhd_containers: list of str
+    :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: :class:`VirtualMachineScaleSetManagedDiskParameters
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetManagedDiskParameters>`
+    :type managed_disk:
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _attribute_map = {
@@ -40,6 +38,7 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     }
 
     def __init__(self, caching=None, image=None, vhd_containers=None, managed_disk=None):
+        super(VirtualMachineScaleSetUpdateOSDisk, self).__init__()
         self.caching = caching
         self.image = image
         self.vhd_containers = vhd_containers

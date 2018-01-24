@@ -34,5 +34,6 @@ class ServicePrincipalProperties(Model):
     }
 
     def __init__(self, client_id, secret):
+        super(ServicePrincipalProperties, self).__init__()
         self.client_id = client_id
         self.secret = secret

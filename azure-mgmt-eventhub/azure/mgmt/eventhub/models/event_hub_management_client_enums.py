@@ -50,6 +50,12 @@ class EntityStatus(Enum):
     unknown = "Unknown"
 
 
+class EncodingCaptureDescription(Enum):
+
+    avro = "Avro"
+    avro_deflate = "AvroDeflate"
+
+
 class UnavailableReason(Enum):
 
     none = "None"
@@ -58,3 +64,17 @@ class UnavailableReason(Enum):
     name_in_use = "NameInUse"
     name_in_lockdown = "NameInLockdown"
     too_many_namespace_in_current_subscription = "TooManyNamespaceInCurrentSubscription"
+
+
+class ProvisioningStateDR(Enum):
+
+    accepted = "Accepted"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class RoleDisasterRecovery(Enum):
+
+    primary = "Primary"
+    primary_not_replicating = "PrimaryNotReplicating"
+    secondary = "Secondary"

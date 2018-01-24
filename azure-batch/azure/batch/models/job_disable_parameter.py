@@ -22,8 +22,7 @@ class JobDisableParameter(Model):
      terminate - Terminate running tasks. The tasks will not run again.
      wait - Allow currently running tasks to complete. Possible values include:
      'requeue', 'terminate', 'wait'
-    :type disable_tasks: str or :class:`DisableJobOption
-     <azure.batch.models.DisableJobOption>`
+    :type disable_tasks: str or ~azure.batch.models.DisableJobOption
     """
 
     _validation = {

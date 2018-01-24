@@ -28,6 +28,8 @@ class DeletedSite(Model):
     :vartype resource_group: str
     :ivar name: Name of the deleted site
     :vartype name: str
+    :ivar slot: Slot of the deleted site
+    :vartype slot: str
     """
 
     _validation = {
@@ -35,6 +37,7 @@ class DeletedSite(Model):
         'subscription': {'readonly': True},
         'resource_group': {'readonly': True},
         'name': {'readonly': True},
+        'slot': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,6 +46,7 @@ class DeletedSite(Model):
         'subscription': {'key': 'subscription', 'type': 'str'},
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'slot': {'key': 'slot', 'type': 'str'},
     }
 
     def __init__(self, id=None):
@@ -51,3 +55,4 @@ class DeletedSite(Model):
         self.subscription = None
         self.resource_group = None
         self.name = None
+        self.slot = None

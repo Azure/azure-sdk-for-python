@@ -17,17 +17,17 @@ class VirtualMachineExtensionInstanceView(Model):
 
     :param name: The virtual machine extension name.
     :type name: str
-    :param type: The full type of the extension handler which includes both
-     publisher and type.
+    :param type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
     :type type: str
-    :param type_handler_version: The type version of the extension handler.
+    :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param substatuses: The resource status information.
-    :type substatuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :type substatuses:
+     list[~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus]
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -39,6 +39,7 @@ class VirtualMachineExtensionInstanceView(Model):
     }
 
     def __init__(self, name=None, type=None, type_handler_version=None, substatuses=None, statuses=None):
+        super(VirtualMachineExtensionInstanceView, self).__init__()
         self.name = name
         self.type = type
         self.type_handler_version = type_handler_version

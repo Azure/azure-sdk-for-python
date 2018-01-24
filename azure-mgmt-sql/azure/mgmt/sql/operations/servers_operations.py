@@ -26,6 +26,8 @@ class ServersOperations(object):
     :param deserializer: An objec model deserializer.
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -45,13 +47,10 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityResponse
-         <azure.mgmt.sql.models.CheckNameAvailabilityResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: CheckNameAvailabilityResponse or ClientRawResponse if
          raw=true
-        :rtype: :class:`CheckNameAvailabilityResponse
-         <azure.mgmt.sql.models.CheckNameAvailabilityResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.sql.models.CheckNameAvailabilityResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckNameAvailabilityRequest(name=name)
@@ -112,9 +111,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Server
-         <azure.mgmt.sql.models.Server>`
-        :rtype: :class:`ServerPaged <azure.mgmt.sql.models.ServerPaged>`
+        :return: An iterator like instance of Server
+        :rtype:
+         ~azure.mgmt.sql.models.ServerPaged[~azure.mgmt.sql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -182,9 +181,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Server
-         <azure.mgmt.sql.models.Server>`
-        :rtype: :class:`ServerPaged <azure.mgmt.sql.models.ServerPaged>`
+        :return: An iterator like instance of Server
+        :rtype:
+         ~azure.mgmt.sql.models.ServerPaged[~azure.mgmt.sql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -255,11 +254,9 @@ class ServersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Server <azure.mgmt.sql.models.Server>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Server <azure.mgmt.sql.models.Server>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Server or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.Server or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -318,18 +315,15 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The requested server resource state.
-        :type parameters: :class:`Server <azure.mgmt.sql.models.Server>`
+        :type parameters: ~azure.mgmt.sql.models.Server
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Server <azure.mgmt.sql.models.Server>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Server or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.Server]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -377,7 +371,7 @@ class ServersOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -419,14 +413,10 @@ class ServersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"
@@ -501,19 +491,15 @@ class ServersOperations(object):
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The requested server resource state.
-        :type parameters: :class:`ServerUpdate
-         <azure.mgmt.sql.models.ServerUpdate>`
+        :type parameters: ~azure.mgmt.sql.models.ServerUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Server <azure.mgmt.sql.models.Server>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns Server or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.Server]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-05-01-preview"

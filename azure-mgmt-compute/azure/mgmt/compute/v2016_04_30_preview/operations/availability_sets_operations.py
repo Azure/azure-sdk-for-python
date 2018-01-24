@@ -26,6 +26,8 @@ class AvailabilitySetsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -45,27 +47,23 @@ class AvailabilitySetsOperations(object):
         :type name: str
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
-        :type parameters: :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>`
+        :type parameters:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AvailabilitySet or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'availabilitySetName': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -90,7 +88,7 @@ class AvailabilitySetsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -121,13 +119,10 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationStatusResponse
-         <azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationStatusResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -155,7 +150,7 @@ class AvailabilitySetsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -186,13 +181,9 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AvailabilitySet or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -220,7 +211,7 @@ class AvailabilitySetsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -249,10 +240,9 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`AvailabilitySet
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet>`
-        :rtype: :class:`AvailabilitySetPaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySetPaged>`
+        :return: An iterator like instance of AvailabilitySet
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySetPaged[~azure.mgmt.compute.v2016_04_30_preview.models.AvailabilitySet]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -287,7 +277,7 @@ class AvailabilitySetsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -320,10 +310,9 @@ class AvailabilitySetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize>`
-        :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged>`
+        :return: An iterator like instance of VirtualMachineSize
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -359,7 +348,7 @@ class AvailabilitySetsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

@@ -38,8 +38,6 @@ class FeatureClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if api_version is not None and not isinstance(api_version, str):
             raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
@@ -81,6 +79,8 @@ class FeatureClient(object):
         self.api_version = api_version
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
+
+############ Generated from here ############
 
     @classmethod
     def models(cls, api_version='2015-12-01'):

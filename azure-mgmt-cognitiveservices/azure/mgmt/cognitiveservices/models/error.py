@@ -17,8 +17,7 @@ class Error(Model):
     """Cognitive Services error object.
 
     :param error: The error body.
-    :type error: :class:`ErrorBody
-     <azure.mgmt.cognitiveservices.models.ErrorBody>`
+    :type error: ~azure.mgmt.cognitiveservices.models.ErrorBody
     """
 
     _attribute_map = {

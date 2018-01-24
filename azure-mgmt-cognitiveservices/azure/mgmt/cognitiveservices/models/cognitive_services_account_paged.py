@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CognitiveServicesAccountPaged(Paged):
     """
-    A paging container for iterating over a list of CognitiveServicesAccount object
+    A paging container for iterating over a list of :class:`CognitiveServicesAccount <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>` object
     """
 
     _attribute_map = {

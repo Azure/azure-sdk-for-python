@@ -19,26 +19,23 @@ class ImageOSDisk(Model):
      that is included in the disk if creating a VM from a custom image.
      <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
      Possible values include: 'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
     :param os_state: The OS State. Possible values include: 'Generalized',
      'Specialized'
-    :type os_state: str or :class:`OperatingSystemStateTypes
-     <azure.mgmt.compute.v2017_03_30.models.OperatingSystemStateTypes>`
+    :type os_state: str or
+     ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemStateTypes
     :param snapshot: The snapshot.
-    :type snapshot: :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type snapshot: ~azure.mgmt.compute.v2017_03_30.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type managed_disk: ~azure.mgmt.compute.v2017_03_30.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or :class:`CachingTypes
-     <azure.mgmt.compute.v2017_03_30.models.CachingTypes>`
+    :type caching: str or ~azure.mgmt.compute.v2017_03_30.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
      This element can be used to overwrite the name of the disk in a virtual
      machine image. <br><br> This value cannot be larger than 1023 GB
@@ -46,8 +43,8 @@ class ImageOSDisk(Model):
     :param storage_account_type: Specifies the storage account type for the
      managed disk. Possible values are: Standard_LRS or Premium_LRS. Possible
      values include: 'Standard_LRS', 'Premium_LRS'
-    :type storage_account_type: str or :class:`StorageAccountTypes
-     <azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes>`
+    :type storage_account_type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes
     """
 
     _validation = {
@@ -67,6 +64,7 @@ class ImageOSDisk(Model):
     }
 
     def __init__(self, os_type, os_state, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
+        super(ImageOSDisk, self).__init__()
         self.os_type = os_type
         self.os_state = os_state
         self.snapshot = snapshot

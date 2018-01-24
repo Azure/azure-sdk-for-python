@@ -49,16 +49,14 @@ class ComputeNode(Model):
      'rebooting', 'reimaging', 'running', 'unusable', 'creating', 'starting',
      'waitingForStartTask', 'startTaskFailed', 'unknown', 'leavingPool',
      'offline', 'preempted'
-    :type state: str or :class:`ComputeNodeState
-     <azure.batch.models.ComputeNodeState>`
+    :type state: str or ~azure.batch.models.ComputeNodeState
     :param scheduling_state: Whether the compute node is available for task
      scheduling. Values are:
      enabled - Tasks can be scheduled on the node.
      disabled - No new tasks will be scheduled on the node. Tasks already
      running on the node may still run to completion. All nodes start with
      scheduling enabled. Possible values include: 'enabled', 'disabled'
-    :type scheduling_state: str or :class:`SchedulingState
-     <azure.batch.models.SchedulingState>`
+    :type scheduling_state: str or ~azure.batch.models.SchedulingState
     :param state_transition_time: The time at which the compute node entered
      its current state.
     :type state_transition_time: datetime
@@ -95,30 +93,28 @@ class ComputeNode(Model):
      premium storage (STANDARD_GS, STANDARD_DS, and STANDARD_DSV2 series).
     :type vm_size: str
     :param total_tasks_run: The total number of job tasks completed on the
-     compute node. This includes Job Preparation, Job Release and Job Manager
-     tasks, but not the pool start task.
+     compute node. This includes Job Manager tasks and normal tasks, but not
+     Job Preparation, Job Release or Start tasks.
     :type total_tasks_run: int
     :param running_tasks_count: The total number of currently running job
-     tasks on the compute node. This includes Job Preparation, Job Release, and
-     Job Manager tasks, but not the pool start task.
+     tasks on the compute node. This includes Job Manager tasks and normal
+     tasks, but not Job Preparation, Job Release or Start tasks.
     :type running_tasks_count: int
     :param total_tasks_succeeded: The total number of job tasks which
      completed successfully (with exitCode 0) on the compute node. This
-     includes Job Preparation, Job Release, and Job Manager tasks, but not the
-     pool start task.
+     includes Job Manager tasks and normal tasks, but not Job Preparation, Job
+     Release or Start tasks.
     :type total_tasks_succeeded: int
     :param recent_tasks: A list of tasks whose state has recently changed.
      This property is present only if at least one task has run on this node
      since it was assigned to the pool.
-    :type recent_tasks: list of :class:`TaskInformation
-     <azure.batch.models.TaskInformation>`
+    :type recent_tasks: list[~azure.batch.models.TaskInformation]
     :param start_task: The task specified to run on the compute node as it
      joins the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: ~azure.batch.models.StartTask
     :param start_task_info: Runtime information about the execution of the
      start task on the compute node.
-    :type start_task_info: :class:`StartTaskInformation
-     <azure.batch.models.StartTaskInformation>`
+    :type start_task_info: ~azure.batch.models.StartTaskInformation
     :param certificate_references: The list of certificates installed on the
      compute node. For Windows compute nodes, the Batch service installs the
      certificates to the specified certificate store and location. For Linux
@@ -128,19 +124,18 @@ class ComputeNode(Model):
      visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and certificates are placed
      in that directory.
-    :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+    :type certificate_references:
+     list[~azure.batch.models.CertificateReference]
     :param errors: The list of errors that are currently being encountered by
      the compute node.
-    :type errors: list of :class:`ComputeNodeError
-     <azure.batch.models.ComputeNodeError>`
+    :type errors: list[~azure.batch.models.ComputeNodeError]
     :param is_dedicated: Whether this compute node is a dedicated node. If
      false, the node is a low-priority node.
     :type is_dedicated: bool
     :param endpoint_configuration: The endpoint configuration for the compute
      node.
-    :type endpoint_configuration: :class:`ComputeNodeEndpointConfiguration
-     <azure.batch.models.ComputeNodeEndpointConfiguration>`
+    :type endpoint_configuration:
+     ~azure.batch.models.ComputeNodeEndpointConfiguration
     """
 
     _attribute_map = {

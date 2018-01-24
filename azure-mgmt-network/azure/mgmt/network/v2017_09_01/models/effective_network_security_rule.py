@@ -21,8 +21,8 @@ class EffectiveNetworkSecurityRule(Model):
     :param protocol: The network protocol this rule applies to. Possible
      values are: 'Tcp', 'Udp', and 'All'. Possible values include: 'Tcp',
      'Udp', 'All'
-    :type protocol: str or :class:`EffectiveSecurityRuleProtocol
-     <azure.mgmt.network.v2017_09_01.models.EffectiveSecurityRuleProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2017_09_01.models.EffectiveSecurityRuleProtocol
     :param source_port_range: The source port or range.
     :type source_port_range: str
     :param destination_port_range: The destination port or range.
@@ -30,11 +30,11 @@ class EffectiveNetworkSecurityRule(Model):
     :param source_port_ranges: The source port ranges. Expected values include
      a single integer between 0 and 65535, a range using '-' as seperator (e.g.
      100-400), or an asterix (*)
-    :type source_port_ranges: list of str
+    :type source_port_ranges: list[str]
     :param destination_port_ranges: The destination port ranges. Expected
      values include a single integer between 0 and 65535, a range using '-' as
      seperator (e.g. 100-400), or an asterix (*)
-    :type destination_port_ranges: list of str
+    :type destination_port_ranges: list[str]
     :param source_address_prefix: The source address prefix.
     :type source_address_prefix: str
     :param destination_address_prefix: The destination address prefix.
@@ -42,26 +42,26 @@ class EffectiveNetworkSecurityRule(Model):
     :param source_address_prefixes: The source address prefixes. Expected
      values include CIDR IP ranges, Default Tags (VirtualNetwork,
      AureLoadBalancer, Internet), System Tags, and the asterix (*).
-    :type source_address_prefixes: list of str
+    :type source_address_prefixes: list[str]
     :param destination_address_prefixes: The destination address prefixes.
      Expected values include CIDR IP ranges, Default Tags (VirtualNetwork,
      AureLoadBalancer, Internet), System Tags, and the asterix (*).
-    :type destination_address_prefixes: list of str
+    :type destination_address_prefixes: list[str]
     :param expanded_source_address_prefix: The expanded source address prefix.
-    :type expanded_source_address_prefix: list of str
+    :type expanded_source_address_prefix: list[str]
     :param expanded_destination_address_prefix: Expanded destination address
      prefix.
-    :type expanded_destination_address_prefix: list of str
+    :type expanded_destination_address_prefix: list[str]
     :param access: Whether network traffic is allowed or denied. Possible
      values are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`SecurityRuleAccess
-     <azure.mgmt.network.v2017_09_01.models.SecurityRuleAccess>`
+    :type access: str or
+     ~azure.mgmt.network.v2017_09_01.models.SecurityRuleAccess
     :param priority: The priority of the rule.
     :type priority: int
     :param direction: The direction of the rule. Possible values are: 'Inbound
      and Outbound'. Possible values include: 'Inbound', 'Outbound'
-    :type direction: str or :class:`SecurityRuleDirection
-     <azure.mgmt.network.v2017_09_01.models.SecurityRuleDirection>`
+    :type direction: str or
+     ~azure.mgmt.network.v2017_09_01.models.SecurityRuleDirection
     """
 
     _attribute_map = {
@@ -83,6 +83,7 @@ class EffectiveNetworkSecurityRule(Model):
     }
 
     def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_port_ranges=None, destination_port_ranges=None, source_address_prefix=None, destination_address_prefix=None, source_address_prefixes=None, destination_address_prefixes=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
+        super(EffectiveNetworkSecurityRule, self).__init__()
         self.name = name
         self.protocol = protocol
         self.source_port_range = source_port_range

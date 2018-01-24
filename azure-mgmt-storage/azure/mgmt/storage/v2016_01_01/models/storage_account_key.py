@@ -24,8 +24,8 @@ class StorageAccountKey(Model):
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full
      permissions. Possible values include: 'READ', 'FULL'
-    :vartype permissions: str or :class:`KeyPermission
-     <azure.mgmt.storage.v2016_01_01.models.KeyPermission>`
+    :vartype permissions: str or
+     ~azure.mgmt.storage.v2016_01_01.models.KeyPermission
     """
 
     _validation = {
@@ -41,6 +41,7 @@ class StorageAccountKey(Model):
     }
 
     def __init__(self):
+        super(StorageAccountKey, self).__init__()
         self.key_name = None
         self.value = None
         self.permissions = None

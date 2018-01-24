@@ -3,6 +3,20 @@
 Release History
 ===============
 
+6.0.2 (2017-10-26)
+++++++++++++++++++
+
+**Bugfixes**
+
+- remove application_type_version in get_application_type_info_list_by_name
+- fix application_type_definition_kind_filter default value from 65535 to 0
+
+**Features**
+
+- add create_name, get_name_exists_info, delete_name, get_sub_name_info_list,
+  get_property_info_list, put_property, get_property_info, delete_property,
+  submit_property_batch
+
 6.0.1 (2017-09-28)
 ++++++++++++++++++
 

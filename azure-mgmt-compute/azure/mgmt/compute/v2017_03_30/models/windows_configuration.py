@@ -30,13 +30,11 @@ class WindowsConfiguration(Model):
     :param additional_unattend_content: Specifies additional base-64 encoded
      XML formatted information that can be included in the Unattend.xml file,
      which is used by Windows Setup.
-    :type additional_unattend_content: list of
-     :class:`AdditionalUnattendContent
-     <azure.mgmt.compute.v2017_03_30.models.AdditionalUnattendContent>`
+    :type additional_unattend_content:
+     list[~azure.mgmt.compute.v2017_03_30.models.AdditionalUnattendContent]
     :param win_rm: Specifies the Windows Remote Management listeners. This
      enables remote Windows PowerShell.
-    :type win_rm: :class:`WinRMConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.WinRMConfiguration>`
+    :type win_rm: ~azure.mgmt.compute.v2017_03_30.models.WinRMConfiguration
     """
 
     _attribute_map = {
@@ -48,6 +46,7 @@ class WindowsConfiguration(Model):
     }
 
     def __init__(self, provision_vm_agent=None, enable_automatic_updates=None, time_zone=None, additional_unattend_content=None, win_rm=None):
+        super(WindowsConfiguration, self).__init__()
         self.provision_vm_agent = provision_vm_agent
         self.enable_automatic_updates = enable_automatic_updates
         self.time_zone = time_zone

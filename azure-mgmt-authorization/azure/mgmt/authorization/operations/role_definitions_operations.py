@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -48,10 +48,9 @@ class RoleDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoleDefinition
-         <azure.mgmt.authorization.models.RoleDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: RoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -109,10 +108,9 @@ class RoleDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoleDefinition
-         <azure.mgmt.authorization.models.RoleDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: RoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -166,17 +164,15 @@ class RoleDefinitionsOperations(object):
         :param role_definition_id: The ID of the role definition.
         :type role_definition_id: str
         :param role_definition: The values for the role definition.
-        :type role_definition: :class:`RoleDefinition
-         <azure.mgmt.authorization.models.RoleDefinition>`
+        :type role_definition: ~azure.mgmt.authorization.models.RoleDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoleDefinition
-         <azure.mgmt.authorization.models.RoleDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: RoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -229,18 +225,21 @@ class RoleDefinitionsOperations(object):
             self, role_definition_id, custom_headers=None, raw=False, **operation_config):
         """Gets a role definition by ID.
 
-        :param role_definition_id: The fully qualified role definition ID to
-         get.
+        :param role_definition_id: The fully qualified role definition ID. Use
+         the format,
+         /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
+         for subscription level role definitions, or
+         /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
+         for tenant level role definitions.
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoleDefinition
-         <azure.mgmt.authorization.models.RoleDefinition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: RoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -298,8 +297,9 @@ class RoleDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoleDefinitionPaged
-         <azure.mgmt.authorization.models.RoleDefinitionPaged>`
+        :return: An iterator like instance of RoleDefinition
+        :rtype:
+         ~azure.mgmt.authorization.models.RoleDefinitionPaged[~azure.mgmt.authorization.models.RoleDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -29,5 +29,6 @@ class UpdateStorageAccountParameters(Model):
     }
 
     def __init__(self, access_key=None, suffix=None):
+        super(UpdateStorageAccountParameters, self).__init__()
         self.access_key = access_key
         self.suffix = suffix

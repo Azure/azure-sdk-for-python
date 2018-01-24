@@ -24,7 +24,7 @@ class BatchAccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class BatchAccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -53,26 +53,22 @@ class BatchAccountOperations(object):
          example: http://accountname.region.batch.azure.com/.
         :type account_name: str
         :param parameters: Additional parameters for account creation.
-        :type parameters: :class:`BatchAccountCreateParameters
-         <azure.mgmt.batch.models.BatchAccountCreateParameters>`
+        :type parameters:
+         ~azure.mgmt.batch.models.BatchAccountCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`BatchAccount
-         <azure.mgmt.batch.models.BatchAccount>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns BatchAccount
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.BatchAccount]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -155,21 +151,18 @@ class BatchAccountOperations(object):
         :param account_name: The name of the Batch account.
         :type account_name: str
         :param tags: The user-specified tags associated with the account.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param auto_storage: The properties related to the auto-storage
          account.
-        :type auto_storage: :class:`AutoStorageBaseProperties
-         <azure.mgmt.batch.models.AutoStorageBaseProperties>`
+        :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchAccount or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
@@ -177,7 +170,7 @@ class BatchAccountOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -233,20 +226,16 @@ class BatchAccountOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -320,17 +309,15 @@ class BatchAccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchAccount or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -380,10 +367,9 @@ class BatchAccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BatchAccount
-         <azure.mgmt.batch.models.BatchAccount>`
-        :rtype: :class:`BatchAccountPaged
-         <azure.mgmt.batch.models.BatchAccountPaged>`
+        :return: An iterator like instance of BatchAccount
+        :rtype:
+         ~azure.mgmt.batch.models.BatchAccountPaged[~azure.mgmt.batch.models.BatchAccount]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -449,10 +435,9 @@ class BatchAccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BatchAccount
-         <azure.mgmt.batch.models.BatchAccount>`
-        :rtype: :class:`BatchAccountPaged
-         <azure.mgmt.batch.models.BatchAccountPaged>`
+        :return: An iterator like instance of BatchAccount
+        :rtype:
+         ~azure.mgmt.batch.models.BatchAccountPaged[~azure.mgmt.batch.models.BatchAccount]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -461,7 +446,7 @@ class BatchAccountOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -521,17 +506,14 @@ class BatchAccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/syncAutoStorageKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -575,20 +557,15 @@ class BatchAccountOperations(object):
         :type account_name: str
         :param key_name: The type of account key to regenerate. Possible
          values include: 'Primary', 'Secondary'
-        :type key_name: str or :class:`AccountKeyType
-         <azure.mgmt.batch.models.AccountKeyType>`
+        :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchAccountKeys
-         <azure.mgmt.batch.models.BatchAccountKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchAccountKeys
-         <azure.mgmt.batch.models.BatchAccountKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchAccountKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchAccountKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BatchAccountRegenerateKeyParameters(key_name=key_name)
@@ -596,7 +573,7 @@ class BatchAccountOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/regenerateKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -660,19 +637,15 @@ class BatchAccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchAccountKeys
-         <azure.mgmt.batch.models.BatchAccountKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchAccountKeys
-         <azure.mgmt.batch.models.BatchAccountKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchAccountKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchAccountKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/listKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

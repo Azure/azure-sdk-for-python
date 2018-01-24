@@ -15,17 +15,21 @@ from .dataset import Dataset
 class WebTableDataset(Dataset):
     """The dataset points to a HTML table in the web page.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param index: The zero-based index of the table in the web page. Type:
      integer (or Expression with resultType integer), minimum: 0.
@@ -42,6 +46,7 @@ class WebTableDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -51,8 +56,8 @@ class WebTableDataset(Dataset):
         'path': {'key': 'typeProperties.path', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, index, description=None, structure=None, parameters=None, path=None):
-        super(WebTableDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, index, additional_properties=None, description=None, structure=None, parameters=None, path=None):
+        super(WebTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.index = index
         self.path = path
         self.type = 'WebTable'

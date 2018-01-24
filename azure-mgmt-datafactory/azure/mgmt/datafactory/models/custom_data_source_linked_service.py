@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class CustomDataSourceLinkedService(LinkedService):
     """Custom linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param type_properties: Custom linked service properties.
     :type type_properties: object
@@ -32,13 +35,14 @@ class CustomDataSourceLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'type_properties': {'key': 'typeProperties', 'type': 'object'},
     }
 
-    def __init__(self, type_properties, connect_via=None, description=None):
-        super(CustomDataSourceLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, type_properties, additional_properties=None, connect_via=None, description=None):
+        super(CustomDataSourceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.type_properties = type_properties
         self.type = 'CustomDataSource'

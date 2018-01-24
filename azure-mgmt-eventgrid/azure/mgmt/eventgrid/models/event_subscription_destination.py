@@ -15,7 +15,11 @@ from msrest.serialization import Model
 class EventSubscriptionDestination(Model):
     """Information about the destination for an event subscription.
 
-    :param endpoint_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: WebHookEventSubscriptionDestination,
+    EventHubEventSubscriptionDestination
+
+    :param endpoint_type: Constant filled by server.
     :type endpoint_type: str
     """
 
@@ -32,4 +36,5 @@ class EventSubscriptionDestination(Model):
     }
 
     def __init__(self):
+        super(EventSubscriptionDestination, self).__init__()
         self.endpoint_type = None

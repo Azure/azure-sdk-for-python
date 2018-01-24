@@ -24,24 +24,21 @@ class ElasticPoolDtuCapability(Model):
     :vartype max_database_count: long
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     :ivar supported_max_sizes: The list of supported max sizes.
-    :vartype supported_max_sizes: list of :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
+    :vartype supported_max_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeCapability]
     :ivar included_max_size: The included (free) max size for this service
      level objective.
-    :vartype included_max_size: :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
+    :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
     :ivar supported_per_database_max_sizes: The list of supported max database
      sizes.
-    :vartype supported_per_database_max_sizes: list of
-     :class:`MaxSizeCapability <azure.mgmt.sql.models.MaxSizeCapability>`
+    :vartype supported_per_database_max_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeCapability]
     :ivar supported_per_database_max_dtus: The list of supported max database
      DTUs.
-    :vartype supported_per_database_max_dtus: list of
-     :class:`ElasticPoolPerDatabaseMaxDtuCapability
-     <azure.mgmt.sql.models.ElasticPoolPerDatabaseMaxDtuCapability>`
+    :vartype supported_per_database_max_dtus:
+     list[~azure.mgmt.sql.models.ElasticPoolPerDatabaseMaxDtuCapability]
     """
 
     _validation = {
@@ -65,6 +62,7 @@ class ElasticPoolDtuCapability(Model):
     }
 
     def __init__(self):
+        super(ElasticPoolDtuCapability, self).__init__()
         self.limit = None
         self.max_database_count = None
         self.status = None

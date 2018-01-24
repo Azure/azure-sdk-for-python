@@ -16,25 +16,25 @@ class OperationalizationClusterCredentials(Model):
     """Credentials to resources in the cluster.
 
     :param storage_account: Credentials for the Storage Account.
-    :type storage_account: :class:`StorageAccountCredentials
-     <azure.mgmt.machinelearningcompute.models.StorageAccountCredentials>`
+    :type storage_account:
+     ~azure.mgmt.machinelearningcompute.models.StorageAccountCredentials
     :param container_registry: Credentials for Azure Container Registry.
-    :type container_registry: :class:`ContainerRegistryCredentials
-     <azure.mgmt.machinelearningcompute.models.ContainerRegistryCredentials>`
+    :type container_registry:
+     ~azure.mgmt.machinelearningcompute.models.ContainerRegistryCredentials
     :param container_service: Credentials for Azure Container Service.
-    :type container_service: :class:`ContainerServiceCredentials
-     <azure.mgmt.machinelearningcompute.models.ContainerServiceCredentials>`
+    :type container_service:
+     ~azure.mgmt.machinelearningcompute.models.ContainerServiceCredentials
     :param app_insights: Credentials for Azure AppInsights.
-    :type app_insights: :class:`AppInsightsCredentials
-     <azure.mgmt.machinelearningcompute.models.AppInsightsCredentials>`
+    :type app_insights:
+     ~azure.mgmt.machinelearningcompute.models.AppInsightsCredentials
     :param service_auth_configuration: Global authorization keys for all user
      services deployed in cluster. These are used if the service does not have
      auth keys.
-    :type service_auth_configuration: :class:`ServiceAuthConfiguration
-     <azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration>`
+    :type service_auth_configuration:
+     ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
     :param ssl_configuration: The SSL configuration for the services.
-    :type ssl_configuration: :class:`SslConfiguration
-     <azure.mgmt.machinelearningcompute.models.SslConfiguration>`
+    :type ssl_configuration:
+     ~azure.mgmt.machinelearningcompute.models.SslConfiguration
     """
 
     _attribute_map = {
@@ -47,6 +47,7 @@ class OperationalizationClusterCredentials(Model):
     }
 
     def __init__(self, storage_account=None, container_registry=None, container_service=None, app_insights=None, service_auth_configuration=None, ssl_configuration=None):
+        super(OperationalizationClusterCredentials, self).__init__()
         self.storage_account = storage_account
         self.container_registry = container_registry
         self.container_service = container_service

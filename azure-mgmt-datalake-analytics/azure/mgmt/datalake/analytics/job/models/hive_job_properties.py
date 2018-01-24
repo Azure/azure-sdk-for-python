@@ -21,9 +21,10 @@ class HiveJobProperties(JobProperties):
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run
+    :param script: the script to run. Please note that the maximum script size
+     is 3 MB.
     :type script: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :ivar logs_location: the Hive logs location
     :vartype logs_location: str

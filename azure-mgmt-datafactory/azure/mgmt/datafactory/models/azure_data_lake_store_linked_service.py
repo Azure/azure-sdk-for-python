@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class AzureDataLakeStoreLinkedService(LinkedService):
     """Azure Data Lake Store linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param data_lake_store_uri: Data Lake Store service URI. Type: string (or
      Expression with resultType string).
@@ -31,8 +34,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):
     :type service_principal_id: object
     :param service_principal_key: The Key of the application used to
      authenticate against the Azure Data Lake Store account.
-    :type service_principal_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
     :type tenant: object
@@ -59,6 +61,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -72,8 +75,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, data_lake_store_uri, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, tenant=None, account_name=None, subscription_id=None, resource_group_name=None, encrypted_credential=None):
-        super(AzureDataLakeStoreLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, data_lake_store_uri, additional_properties=None, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, tenant=None, account_name=None, subscription_id=None, resource_group_name=None, encrypted_credential=None):
+        super(AzureDataLakeStoreLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.data_lake_store_uri = data_lake_store_uri
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key

@@ -15,27 +15,28 @@ from .execution_activity import ExecutionActivity
 class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     """Data Lake Analytics U-SQL activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param script_path: Case-sensitive path to folder that contains the U-SQL
      script. Type: string (or Expression with resultType string).
     :type script_path: object
     :param script_linked_service: Script linked service reference.
-    :type script_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type script_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param degree_of_parallelism: The maximum number of nodes simultaneously
      used to run the job. Default value is 1. Type: integer (or Expression with
      resultType integer), minimum: 1.
@@ -46,7 +47,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
      integer), minimum: 1.
     :type priority: object
     :param parameters: Parameters for U-SQL job request.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     :param runtime_version: Runtime version of the U-SQL engine to use. Type:
      string (or Expression with resultType string).
     :type runtime_version: object
@@ -64,6 +65,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -79,8 +81,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         'compilation_mode': {'key': 'typeProperties.compilationMode', 'type': 'object'},
     }
 
-    def __init__(self, name, script_path, script_linked_service, description=None, depends_on=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None):
-        super(DataLakeAnalyticsUSQLActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, script_path, script_linked_service, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None):
+        super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism

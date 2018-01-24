@@ -20,7 +20,8 @@ class PurchasePlan(Model):
     :type publisher: str
     :param name: The plan ID.
     :type name: str
-    :param product: The product ID.
+    :param product: Specifies the product of the image from the marketplace.
+     This is the same value as Offer under the imageReference element.
     :type product: str
     """
 
@@ -37,6 +38,7 @@ class PurchasePlan(Model):
     }
 
     def __init__(self, publisher, name, product):
+        super(PurchasePlan, self).__init__()
         self.publisher = publisher
         self.name = name
         self.product = product

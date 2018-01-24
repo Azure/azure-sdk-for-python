@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class SqlDWSource(CopySource):
     """A copy activity SQL Data Warehouse source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,7 +25,7 @@ class SqlDWSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or
      Expression with resultType string).
@@ -43,6 +46,7 @@ class SqlDWSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -51,8 +55,8 @@ class SqlDWSource(CopySource):
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None):
-        super(SqlDWSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None):
+        super(SqlDWSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters

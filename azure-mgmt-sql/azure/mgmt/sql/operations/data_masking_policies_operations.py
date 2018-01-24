@@ -27,6 +27,8 @@ class DataMaskingPoliciesOperations(object):
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -51,8 +53,8 @@ class DataMaskingPoliciesOperations(object):
         :type database_name: str
         :param data_masking_state: The state of the data masking policy.
          Possible values include: 'Disabled', 'Enabled'
-        :type data_masking_state: str or :class:`DataMaskingState
-         <azure.mgmt.sql.models.DataMaskingState>`
+        :type data_masking_state: str or
+         ~azure.mgmt.sql.models.DataMaskingState
         :param exempt_principals: The list of the exempt principals. Specifies
          the semicolon-separated list of database users for which the data
          masking policy does not apply. The specified users receive data
@@ -63,13 +65,9 @@ class DataMaskingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DataMaskingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataMaskingPolicy(data_masking_state=data_masking_state, exempt_principals=exempt_principals)
@@ -140,13 +138,9 @@ class DataMaskingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DataMaskingPolicy
-         <azure.mgmt.sql.models.DataMaskingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DataMaskingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

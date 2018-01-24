@@ -20,14 +20,14 @@ class RollingUpgradeRunningStatus(Model):
 
     :ivar code: Code indicating the current status of the upgrade. Possible
      values include: 'RollingForward', 'Cancelled', 'Completed', 'Faulted'
-    :vartype code: str or :class:`RollingUpgradeStatusCode
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeStatusCode>`
+    :vartype code: str or
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: datetime
     :ivar last_action: The last action performed on the rolling upgrade.
      Possible values include: 'Start', 'Cancel'
-    :vartype last_action: str or :class:`RollingUpgradeActionType
-     <azure.mgmt.compute.v2017_03_30.models.RollingUpgradeActionType>`
+    :vartype last_action: str or
+     ~azure.mgmt.compute.v2017_03_30.models.RollingUpgradeActionType
     :ivar last_action_time: Last action time of the upgrade.
     :vartype last_action_time: datetime
     """
@@ -47,6 +47,7 @@ class RollingUpgradeRunningStatus(Model):
     }
 
     def __init__(self):
+        super(RollingUpgradeRunningStatus, self).__init__()
         self.code = None
         self.start_time = None
         self.last_action = None

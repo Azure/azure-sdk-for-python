@@ -28,7 +28,7 @@ class EventSubscriptionFilter(Model):
      be part of the event subscription.
      If it is desired to subscribe to all event types, the string "all" needs
      to be specified as an element in this list.
-    :type included_event_types: list of str
+    :type included_event_types: list[str]
     :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
      SubjectEndsWith properties of the filter
      should be compared in a case sensitive manner. Default value: False .
@@ -43,6 +43,7 @@ class EventSubscriptionFilter(Model):
     }
 
     def __init__(self, subject_begins_with=None, subject_ends_with=None, included_event_types=None, is_subject_case_sensitive=False):
+        super(EventSubscriptionFilter, self).__init__()
         self.subject_begins_with = subject_begins_with
         self.subject_ends_with = subject_ends_with
         self.included_event_types = included_event_types

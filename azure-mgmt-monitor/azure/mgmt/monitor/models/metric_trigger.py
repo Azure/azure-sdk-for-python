@@ -28,8 +28,7 @@ class MetricTrigger(Model):
     :param statistic: the metric statistic type. How the metrics from multiple
      instances are combined. Possible values include: 'Average', 'Min', 'Max',
      'Sum'
-    :type statistic: str or :class:`MetricStatisticType
-     <azure.mgmt.monitor.models.MetricStatisticType>`
+    :type statistic: str or ~azure.mgmt.monitor.models.MetricStatisticType
     :param time_window: the range of time in which instance data is collected.
      This value must be greater than the delay in metric collection, which can
      vary from resource-to-resource. Must be between 12 hours and 5 minutes.
@@ -37,13 +36,12 @@ class MetricTrigger(Model):
     :param time_aggregation: time aggregation type. How the data that is
      collected should be combined over time. The default value is Average.
      Possible values include: 'Average', 'Minimum', 'Maximum', 'Total', 'Count'
-    :type time_aggregation: str or :class:`TimeAggregationType
-     <azure.mgmt.monitor.models.TimeAggregationType>`
+    :type time_aggregation: str or
+     ~azure.mgmt.monitor.models.TimeAggregationType
     :param operator: the operator that is used to compare the metric data and
      the threshold. Possible values include: 'Equals', 'NotEquals',
      'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'
-    :type operator: str or :class:`ComparisonOperationType
-     <azure.mgmt.monitor.models.ComparisonOperationType>`
+    :type operator: str or ~azure.mgmt.monitor.models.ComparisonOperationType
     :param threshold: the threshold of the metric that triggers the scale
      action.
     :type threshold: float

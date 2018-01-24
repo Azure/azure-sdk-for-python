@@ -26,6 +26,8 @@ class BgpServiceCommunitiesOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,10 +46,9 @@ class BgpServiceCommunitiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BgpServiceCommunity
-         <azure.mgmt.network.v2017_06_01.models.BgpServiceCommunity>`
-        :rtype: :class:`BgpServiceCommunityPaged
-         <azure.mgmt.network.v2017_06_01.models.BgpServiceCommunityPaged>`
+        :return: An iterator like instance of BgpServiceCommunity
+        :rtype:
+         ~azure.mgmt.network.v2017_06_01.models.BgpServiceCommunityPaged[~azure.mgmt.network.v2017_06_01.models.BgpServiceCommunity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -81,7 +82,7 @@ class BgpServiceCommunitiesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

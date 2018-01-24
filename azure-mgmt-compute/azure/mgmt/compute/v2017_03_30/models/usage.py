@@ -26,8 +26,7 @@ class Usage(Model):
     :param limit: The maximum permitted usage of the resource.
     :type limit: long
     :param name: The name of the type of usage.
-    :type name: :class:`UsageName
-     <azure.mgmt.compute.v2017_03_30.models.UsageName>`
+    :type name: ~azure.mgmt.compute.v2017_03_30.models.UsageName
     """
 
     _validation = {
@@ -47,6 +46,7 @@ class Usage(Model):
     unit = "Count"
 
     def __init__(self, current_value, limit, name):
+        super(Usage, self).__init__()
         self.current_value = current_value
         self.limit = limit
         self.name = name

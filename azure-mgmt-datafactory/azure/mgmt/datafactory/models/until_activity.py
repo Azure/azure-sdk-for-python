@@ -16,19 +16,20 @@ class UntilActivity(ControlActivity):
     """This activity executes inner activities until the specified boolean
     expression results to true or timeout is reached, whichever is earlier.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param expression: An expression that would evaluate to Boolean. The loop
      will continue until this expression evaluates to true
-    :type expression: :class:`Expression
-     <azure.mgmt.datafactory.models.Expression>`
+    :type expression: ~azure.mgmt.datafactory.models.Expression
     :param timeout: Specifies the timeout for the activity to run. If there is
      no value specified, it takes the value of TimeSpan.FromDays(7) which is 1
      week as default. Type: string (or Expression with resultType string),
@@ -37,8 +38,7 @@ class UntilActivity(ControlActivity):
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type timeout: object
     :param activities: List of activities to execute.
-    :type activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
     _validation = {
@@ -49,6 +49,7 @@ class UntilActivity(ControlActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -58,8 +59,8 @@ class UntilActivity(ControlActivity):
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, name, expression, activities, description=None, depends_on=None, timeout=None):
-        super(UntilActivity, self).__init__(name=name, description=description, depends_on=depends_on)
+    def __init__(self, name, expression, activities, additional_properties=None, description=None, depends_on=None, timeout=None):
+        super(UntilActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.expression = expression
         self.timeout = timeout
         self.activities = activities

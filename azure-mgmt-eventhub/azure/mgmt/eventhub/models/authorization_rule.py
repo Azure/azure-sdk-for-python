@@ -25,14 +25,14 @@ class AuthorizationRule(Resource):
     :ivar type: Resource type
     :vartype type: str
     :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.eventhub.models.AccessRights>`
+    :type rights: list[str or ~azure.mgmt.eventhub.models.AccessRights]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'rights': {'required': True},
     }
 
     _attribute_map = {
@@ -42,6 +42,6 @@ class AuthorizationRule(Resource):
         'rights': {'key': 'properties.rights', 'type': '[str]'},
     }
 
-    def __init__(self, rights=None):
+    def __init__(self, rights):
         super(AuthorizationRule, self).__init__()
         self.rights = rights

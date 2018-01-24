@@ -16,20 +16,23 @@ class Trigger(Model):
     """Azure data factory nested object which contains information about creating
     pipeline run.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TumblingWindowTrigger, MultiplePipelineTrigger
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Trigger description.
     :type description: str
-    :param pipelines: Pipelines that need to be started.
-    :type pipelines: list of :class:`TriggerPipelineReference
-     <azure.mgmt.datafactory.models.TriggerPipelineReference>`
     :ivar runtime_state: Indicates if trigger is running or not. Updated when
      Start/Stop APIs are called on the Trigger. Possible values include:
      'Started', 'Stopped', 'Disabled'
-    :vartype runtime_state: str or :class:`TriggerRuntimeState
-     <azure.mgmt.datafactory.models.TriggerRuntimeState>`
-    :param type: Polymorphic Discriminator
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -39,18 +42,18 @@ class Trigger(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
-        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'type': {'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
+        'type': {'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
-    def __init__(self, description=None, pipelines=None):
+    def __init__(self, additional_properties=None, description=None):
+        self.additional_properties = additional_properties
         self.description = description
-        self.pipelines = pipelines
         self.runtime_state = None
         self.type = None

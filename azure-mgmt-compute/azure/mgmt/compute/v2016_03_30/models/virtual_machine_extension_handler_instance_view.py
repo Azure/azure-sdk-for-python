@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class VirtualMachineExtensionHandlerInstanceView(Model):
     """The instance view of a virtual machine extension handler.
 
-    :param type: Full type of the extension handler which includes both
-     publisher and type.
+    :param type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
     :type type: str
-    :param type_handler_version: The type version of the extension handler.
+    :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param status: The extension handler status.
-    :type status: :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :type status: ~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus
     """
 
     _attribute_map = {
@@ -32,6 +31,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
     }
 
     def __init__(self, type=None, type_handler_version=None, status=None):
+        super(VirtualMachineExtensionHandlerInstanceView, self).__init__()
         self.type = type
         self.type_handler_version = type_handler_version
         self.status = status

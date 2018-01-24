@@ -6,43 +6,42 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
-          msrest_azure/0.4.3 insightsclient/0.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.16299-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.11 monitormanagementclient/0.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [53ee6b76-ad02-11e6-8527-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricDefinitions?api-version=2016-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricDefinitions?api-version=2017-05-01-preview
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions","value":[{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Percentage
-        CPU","localizedValue":"Percentage CPU"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"Percent","primaryAggregationType":"Average","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Percentage
-        CPU"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Network
-        In","localizedValue":"Network In"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"Bytes","primaryAggregationType":"Total","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Network
-        In"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Network
-        Out","localizedValue":"Network Out"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"Bytes","primaryAggregationType":"Total","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Network
-        Out"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Disk
-        Read Bytes","localizedValue":"Disk Read Bytes"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"Bytes","primaryAggregationType":"Total","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Disk
-        Read Bytes"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Disk
-        Write Bytes","localizedValue":"Disk Write Bytes"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"Bytes","primaryAggregationType":"Total","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Disk
-        Write Bytes"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Disk
-        Read Operations/Sec","localizedValue":"Disk Read Operations/Sec"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"CountPerSecond","primaryAggregationType":"Average","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Disk
-        Read Operations/Sec"},{"resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","name":{"value":"Disk
-        Write Operations/Sec","localizedValue":"Disk Write Operations/Sec"},"startTime":"0001-01-01T00:00:00Z","endTime":"0001-01-01T00:00:00Z","unit":"CountPerSecond","primaryAggregationType":"Average","ResourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","ResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P30D"},{"timeGrain":"PT1H","retention":"P30D"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metricdefinitions/Disk
-        Write Operations/Sec"}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Percentage
+        CPU","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Percentage
+        CPU","localizedValue":"Percentage CPU"},"isDimensionRequired":false,"unit":"Percent","primaryAggregationType":"Average","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Network
+        In","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Network
+        In","localizedValue":"Network In"},"isDimensionRequired":false,"unit":"Bytes","primaryAggregationType":"Total","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Network
+        Out","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Network
+        Out","localizedValue":"Network Out"},"isDimensionRequired":false,"unit":"Bytes","primaryAggregationType":"Total","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Disk
+        Read Bytes","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Disk
+        Read Bytes","localizedValue":"Disk Read Bytes"},"isDimensionRequired":false,"unit":"Bytes","primaryAggregationType":"Total","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Disk
+        Write Bytes","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Disk
+        Write Bytes","localizedValue":"Disk Write Bytes"},"isDimensionRequired":false,"unit":"Bytes","primaryAggregationType":"Total","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Disk
+        Read Operations/Sec","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Disk
+        Read Operations/Sec","localizedValue":"Disk Read Operations/Sec"},"isDimensionRequired":false,"unit":"CountPerSecond","primaryAggregationType":"Average","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/Disk
+        Write Operations/Sec","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"Disk
+        Write Operations/Sec","localizedValue":"Disk Write Operations/Sec"},"isDimensionRequired":false,"unit":"CountPerSecond","primaryAggregationType":"Average","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/CPU
+        Credits Remaining","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"CPU
+        Credits Remaining","localizedValue":"CPU Credits Remaining"},"isDimensionRequired":false,"unit":"Count","primaryAggregationType":"Average","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metricdefinitions/CPU
+        Credits Consumed","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632","name":{"value":"CPU
+        Credits Consumed","localizedValue":"CPU Credits Consumed"},"isDimensionRequired":false,"unit":"Count","primaryAggregationType":"Average","metricAvailabilities":[{"timeGrain":"PT1M","retention":"P93D"},{"timeGrain":"PT1H","retention":"P93D"}]}]}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 17 Nov 2016 20:13:39 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['8568']
-      x-ms-correlation-request-id: [06008d44-7664-4140-9570-76bffae32064]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [c0500c03-1ca0-4728-8f15-321624802a6f]
-      x-ms-routing-request-id: ['WESTUS2:20161117T201339Z:06008d44-7664-4140-9570-76bffae32064']
+      __handlingserverid__: [shoeboxproxyprod_shoeboxproxyprod-red_MetricsMP_IN_11]
+      cache-control: [no-cache]
+      content-length: ['5468']
+      content-type: [application/json]
+      date: ['Mon, 23 Oct 2017 21:39:43 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -51,31 +50,24 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
-          msrest_azure/0.4.3 insightsclient/0.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.16299-SP0) requests/2.17.3 msrest/0.4.11
+          msrest_azure/0.4.11 monitormanagementclient/0.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [542992b8-ad02-11e6-9e65-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/microsoft.insights/metrics?api-version=2016-09-01&$filter=%28name.value%20eq%20%27Percentage%20CPU%27%29%20and%20%28aggregationType%20eq%20%27Total%27%29%20and%20startTime%20eq%202016-11-16%20and%20endTime%20eq%202016-11-17%20and%20timeGrain%20eq%20duration%27PT1H%27
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/microsoft.insights/metrics?timespan=2017-10-22%2F2017-10-23&metric=Percentage%20CPU&aggregation=Total&api-version=2017-05-01-preview&interval=PT1H
   response:
-    body: {string: '{"value":[{"data":[{"timeStamp":"2016-11-16T00:00:00Z","total":72.0},{"timeStamp":"2016-11-16T01:00:00Z","total":90.59},{"timeStamp":"2016-11-16T02:00:00Z","total":60.58},{"timeStamp":"2016-11-16T03:00:00Z","total":65.78},{"timeStamp":"2016-11-16T04:00:00Z","total":43.96},{"timeStamp":"2016-11-16T05:00:00Z","total":43.96},{"timeStamp":"2016-11-16T06:00:00Z","total":114.9},{"timeStamp":"2016-11-16T07:00:00Z","total":45.4},{"timeStamp":"2016-11-16T08:00:00Z","total":57.59},{"timeStamp":"2016-11-16T09:00:00Z","total":67.85},{"timeStamp":"2016-11-16T10:00:00Z","total":76.36},{"timeStamp":"2016-11-16T11:00:00Z","total":87.41},{"timeStamp":"2016-11-16T12:00:00Z","total":67.53},{"timeStamp":"2016-11-16T13:00:00Z","total":64.78},{"timeStamp":"2016-11-16T14:00:00Z","total":66.55},{"timeStamp":"2016-11-16T15:00:00Z","total":69.82},{"timeStamp":"2016-11-16T16:00:00Z","total":96.02},{"timeStamp":"2016-11-16T17:00:00Z","total":272.52},{"timeStamp":"2016-11-16T18:00:00Z","total":96.41},{"timeStamp":"2016-11-16T19:00:00Z","total":83.92},{"timeStamp":"2016-11-16T20:00:00Z","total":95.57},{"timeStamp":"2016-11-16T21:00:00Z","total":146.73},{"timeStamp":"2016-11-16T22:00:00Z","total":73.86},{"timeStamp":"2016-11-16T23:00:00Z","total":84.7}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete/providers/Microsoft.Insights/metrics/Percentage
-        CPU","name":{"value":"Percentage CPU","localizedValue":"Percentage CPU"},"type":"Microsoft.Insights/metrics","unit":"Percent"}]}'}
+    body: {string: '{"cost":0,"timespan":"2017-10-22T00:00:00Z/2017-10-23T00:00:00Z","interval":"PT1H","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azvmc632/providers/Microsoft.Compute/virtualMachines/azvmc632/providers/Microsoft.Insights/metrics/Percentage
+        CPU","type":"Microsoft.Insights/metrics","name":{"value":"Percentage CPU","localizedValue":"Percentage
+        CPU"},"unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2017-10-22T00:00:00Z","total":57.290000000000006},{"timeStamp":"2017-10-22T01:00:00Z","total":59.339999999999996},{"timeStamp":"2017-10-22T02:00:00Z","total":58.43},{"timeStamp":"2017-10-22T03:00:00Z","total":98.329999999999956},{"timeStamp":"2017-10-22T04:00:00Z","total":66.79},{"timeStamp":"2017-10-22T05:00:00Z","total":68.859999999999985},{"timeStamp":"2017-10-22T06:00:00Z","total":126.61999999999999},{"timeStamp":"2017-10-22T07:00:00Z","total":131.33000000000007},{"timeStamp":"2017-10-22T08:00:00Z","total":58.01},{"timeStamp":"2017-10-22T09:00:00Z","total":68.04},{"timeStamp":"2017-10-22T10:00:00Z","total":84.659999999999982},{"timeStamp":"2017-10-22T11:00:00Z","total":98.449999999999989},{"timeStamp":"2017-10-22T12:00:00Z","total":100.99999999999994},{"timeStamp":"2017-10-22T13:00:00Z","total":115.09000000000002},{"timeStamp":"2017-10-22T14:00:00Z","total":122.99999999999999},{"timeStamp":"2017-10-22T15:00:00Z","total":114.44999999999999},{"timeStamp":"2017-10-22T16:00:00Z","total":107.05},{"timeStamp":"2017-10-22T17:00:00Z","total":104.34},{"timeStamp":"2017-10-22T18:00:00Z","total":60.229999999999983},{"timeStamp":"2017-10-22T19:00:00Z","total":69.700000000000017},{"timeStamp":"2017-10-22T20:00:00Z","total":79.639999999999986},{"timeStamp":"2017-10-22T21:00:00Z","total":48.460000000000008},{"timeStamp":"2017-10-22T22:00:00Z","total":51.980000000000004},{"timeStamp":"2017-10-22T23:00:00Z","total":56.930000000000021}]}]}]}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json]
-      Date: ['Thu, 17 Nov 2016 20:13:39 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: ['Accept-Encoding,Accept-Encoding']
-      X-Powered-By: [ASP.NET]
-      __HandlingServerId__: [shoeboxproxyprod_shoeboxproxyprod-black_MetricsMP_IN_0]
-      content-length: ['1577']
-      x-ms-correlation-request-id: [ef70224b-4230-43b9-9124-112b2a1d16f9]
-      x-ms-ratelimit-remaining-subscription-reads: ['14992']
-      x-ms-request-id: ['{ef70224b-4230-43b9-9124-112b2a1d16f9}']
-      x-ms-routing-request-id: ['WESTUS2:20161117T201340Z:ef70224b-4230-43b9-9124-112b2a1d16f9']
+      __handlingserverid__: [shoeboxproxyprod_shoeboxproxyprod-red_MetricsMP_IN_9]
+      cache-control: [no-cache]
+      content-length: ['1910']
+      content-type: [application/json]
+      date: ['Mon, 23 Oct 2017 21:39:55 GMT']
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 version: 1

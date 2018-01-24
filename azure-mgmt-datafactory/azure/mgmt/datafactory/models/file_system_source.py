@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class FileSystemSource(CopySource):
     """A copy activity file system source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,7 +25,7 @@ class FileSystemSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
@@ -35,13 +38,14 @@ class FileSystemSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, recursive=None):
-        super(FileSystemSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, recursive=None):
+        super(FileSystemSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.recursive = recursive
         self.type = 'FileSystemSource'

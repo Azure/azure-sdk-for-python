@@ -18,8 +18,8 @@ class ArtifactInstallProperties(Model):
     :param artifact_id: The artifact's identifier.
     :type artifact_id: str
     :param parameters: The parameters of the artifact.
-    :type parameters: list of :class:`ArtifactParameterProperties
-     <azure.mgmt.devtestlabs.models.ArtifactParameterProperties>`
+    :type parameters:
+     list[~azure.mgmt.devtestlabs.models.ArtifactParameterProperties]
     :param status: The status of the artifact.
     :type status: str
     :param deployment_status_message: The status message from the deployment.

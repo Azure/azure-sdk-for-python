@@ -16,8 +16,7 @@ class PasswordCredentialsUpdateParameters(Model):
     """Request parameters for a PasswordCredentials update operation.
 
     :param value: A collection of PasswordCredentials.
-    :type value: list of :class:`PasswordCredential
-     <azure.graphrbac.models.PasswordCredential>`
+    :type value: list[~azure.graphrbac.models.PasswordCredential]
     """
 
     _validation = {

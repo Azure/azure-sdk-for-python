@@ -15,20 +15,23 @@ from .linked_service import LinkedService
 class MongoDbLinkedService(LinkedService):
     """Linked service for MongoDb data source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param server: The IP address or server name of the MongoDB server. Type:
      string (or Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the MongoDB database. Possible values include: 'Basic', 'Anonymous'
-    :type authentication_type: str or :class:`MongoDbAuthenticationType
-     <azure.mgmt.datafactory.models.MongoDbAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.MongoDbAuthenticationType
     :param database_name: The name of the MongoDB database that you want to
      access. Type: string (or Expression with resultType string).
     :type database_name: object
@@ -36,8 +39,7 @@ class MongoDbLinkedService(LinkedService):
      with resultType string).
     :type username: object
     :param password: Password for authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param auth_source: Database to verify the username and password. Type:
      string (or Expression with resultType string).
     :type auth_source: object
@@ -58,6 +60,7 @@ class MongoDbLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -71,8 +74,8 @@ class MongoDbLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database_name, connect_via=None, description=None, authentication_type=None, username=None, password=None, auth_source=None, port=None, encrypted_credential=None):
-        super(MongoDbLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, server, database_name, additional_properties=None, connect_via=None, description=None, authentication_type=None, username=None, password=None, auth_source=None, port=None, encrypted_credential=None):
+        super(MongoDbLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.server = server
         self.authentication_type = authentication_type
         self.database_name = database_name

@@ -26,6 +26,8 @@ class VirtualMachineExtensionImagesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -39,7 +41,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, type, version, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual machine extension image.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -52,13 +54,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualMachineExtensionImage or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -88,7 +87,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -110,7 +109,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine extension image types.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -119,13 +118,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -153,7 +149,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -175,7 +171,7 @@ class VirtualMachineExtensionImagesOperations(object):
             self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine extension image versions.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param publisher_name:
         :type publisher_name: str
@@ -192,13 +188,10 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`VirtualMachineExtensionImage
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineExtensionImage]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -233,7 +226,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

@@ -39,8 +39,7 @@ class DatabaseOperation(ProxyResource):
     :vartype start_time: datetime
     :ivar state: The operation state. Possible values include: 'Pending',
      'InProgress', 'Succeeded', 'Failed', 'CancelInProgress', 'Cancelled'
-    :vartype state: str or :class:`ManagementOperationState
-     <azure.mgmt.sql.models.ManagementOperationState>`
+    :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
     :ivar error_code: The operation error code.
     :vartype error_code: int
     :ivar error_description: The operation error description.

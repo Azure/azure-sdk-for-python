@@ -24,4 +24,5 @@ class ComputeLongRunningOperationProperties(Model):
     }
 
     def __init__(self, output=None):
+        super(ComputeLongRunningOperationProperties, self).__init__()
         self.output = output

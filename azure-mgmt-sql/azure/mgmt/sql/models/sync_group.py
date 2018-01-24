@@ -31,8 +31,7 @@ class SyncGroup(ProxyResource):
     :param conflict_resolution_policy: Conflict resolution policy of the sync
      group. Possible values include: 'HubWin', 'MemberWin'
     :type conflict_resolution_policy: str or
-     :class:`SyncConflictResolutionPolicy
-     <azure.mgmt.sql.models.SyncConflictResolutionPolicy>`
+     ~azure.mgmt.sql.models.SyncConflictResolutionPolicy
     :param sync_database_id: ARM resource id of the sync database in the sync
      group.
     :type sync_database_id: str
@@ -44,11 +43,9 @@ class SyncGroup(ProxyResource):
     :type hub_database_password: str
     :ivar sync_state: Sync state of the sync group. Possible values include:
      'NotReady', 'Error', 'Warning', 'Progressing', 'Good'
-    :vartype sync_state: str or :class:`SyncGroupState
-     <azure.mgmt.sql.models.SyncGroupState>`
+    :vartype sync_state: str or ~azure.mgmt.sql.models.SyncGroupState
     :param schema: Sync schema of the sync group.
-    :type schema: :class:`SyncGroupSchema
-     <azure.mgmt.sql.models.SyncGroupSchema>`
+    :type schema: ~azure.mgmt.sql.models.SyncGroupSchema
     """
 
     _validation = {

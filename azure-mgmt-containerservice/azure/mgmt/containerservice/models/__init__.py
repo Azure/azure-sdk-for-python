@@ -11,6 +11,7 @@
 
 from .resource import Resource
 from .container_service_custom_profile import ContainerServiceCustomProfile
+from .key_vault_secret_ref import KeyVaultSecretRef
 from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
 from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
 from .container_service_master_profile import ContainerServiceMasterProfile
@@ -22,15 +23,26 @@ from .container_service_linux_profile import ContainerServiceLinuxProfile
 from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
 from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
 from .container_service import ContainerService
+from .managed_cluster import ManagedCluster
+from .orchestrator_profile import OrchestratorProfile
+from .managed_cluster_access_profile import ManagedClusterAccessProfile
+from .managed_cluster_pool_upgrade_profile import ManagedClusterPoolUpgradeProfile
+from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
+from .orchestrator_version_profile import OrchestratorVersionProfile
+from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .container_service_paged import ContainerServicePaged
+from .managed_cluster_paged import ManagedClusterPaged
 from .container_service_client_enums import (
-    ContainerServiceOrchestratorTypes,
+    ContainerServiceStorageProfileTypes,
     ContainerServiceVMSizeTypes,
+    ContainerServiceOrchestratorTypes,
+    OSType,
 )
 
 __all__ = [
     'Resource',
     'ContainerServiceCustomProfile',
+    'KeyVaultSecretRef',
     'ContainerServiceServicePrincipalProfile',
     'ContainerServiceOrchestratorProfile',
     'ContainerServiceMasterProfile',
@@ -42,7 +54,17 @@ __all__ = [
     'ContainerServiceVMDiagnostics',
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
+    'ManagedCluster',
+    'OrchestratorProfile',
+    'ManagedClusterAccessProfile',
+    'ManagedClusterPoolUpgradeProfile',
+    'ManagedClusterUpgradeProfile',
+    'OrchestratorVersionProfile',
+    'OrchestratorVersionProfileListResult',
     'ContainerServicePaged',
-    'ContainerServiceOrchestratorTypes',
+    'ManagedClusterPaged',
+    'ContainerServiceStorageProfileTypes',
     'ContainerServiceVMSizeTypes',
+    'ContainerServiceOrchestratorTypes',
+    'OSType',
 ]

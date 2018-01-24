@@ -16,11 +16,11 @@ class VirtualMachineScaleSetStorageProfile(Model):
     """Describes a virtual machine scale set storage profile.
 
     :param image_reference: The image reference.
-    :type image_reference: :class:`ImageReference
-     <azure.mgmt.compute.v2016_03_30.models.ImageReference>`
+    :type image_reference:
+     ~azure.mgmt.compute.v2016_03_30.models.ImageReference
     :param os_disk: The OS disk.
-    :type os_disk: :class:`VirtualMachineScaleSetOSDisk
-     <azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetOSDisk>`
+    :type os_disk:
+     ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSetOSDisk
     """
 
     _attribute_map = {
@@ -29,5 +29,6 @@ class VirtualMachineScaleSetStorageProfile(Model):
     }
 
     def __init__(self, image_reference=None, os_disk=None):
+        super(VirtualMachineScaleSetStorageProfile, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk

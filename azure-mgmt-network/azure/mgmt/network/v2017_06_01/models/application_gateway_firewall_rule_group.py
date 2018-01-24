@@ -22,8 +22,8 @@ class ApplicationGatewayFirewallRuleGroup(Model):
      group.
     :type description: str
     :param rules: The rules of the web application firewall rule group.
-    :type rules: list of :class:`ApplicationGatewayFirewallRule
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallRule>`
+    :type rules:
+     list[~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallRule]
     """
 
     _validation = {
@@ -38,6 +38,7 @@ class ApplicationGatewayFirewallRuleGroup(Model):
     }
 
     def __init__(self, rule_group_name, rules, description=None):
+        super(ApplicationGatewayFirewallRuleGroup, self).__init__()
         self.rule_group_name = rule_group_name
         self.description = description
         self.rules = rules

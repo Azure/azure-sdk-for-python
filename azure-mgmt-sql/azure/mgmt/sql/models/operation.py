@@ -23,14 +23,12 @@ class Operation(Model):
     :vartype name: str
     :ivar display: The localized display information for this particular
      operation / action.
-    :vartype display: :class:`OperationDisplay
-     <azure.mgmt.sql.models.OperationDisplay>`
+    :vartype display: ~azure.mgmt.sql.models.OperationDisplay
     :ivar origin: The intended executor of the operation. Possible values
      include: 'user', 'system'
-    :vartype origin: str or :class:`OperationOrigin
-     <azure.mgmt.sql.models.OperationOrigin>`
+    :vartype origin: str or ~azure.mgmt.sql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict
+    :vartype properties: dict[str, object]
     """
 
     _validation = {
@@ -48,6 +46,7 @@ class Operation(Model):
     }
 
     def __init__(self):
+        super(Operation, self).__init__()
         self.name = None
         self.display = None
         self.origin = None

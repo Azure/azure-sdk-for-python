@@ -15,38 +15,39 @@ from .execution_activity import ExecutionActivity
 class CustomActivity(ExecutionActivity):
     """Custom activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param command: Command for custom activity Type: string (or Expression
      with resultType string).
     :type command: object
     :param resource_linked_service: Resource linked service reference.
-    :type resource_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type resource_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param folder_path: Folder path for resource files Type: string (or
      Expression with resultType string).
     :type folder_path: object
     :param reference_objects: Reference objects
-    :type reference_objects: :class:`CustomActivityReferenceObject
-     <azure.mgmt.datafactory.models.CustomActivityReferenceObject>`
+    :type reference_objects:
+     ~azure.mgmt.datafactory.models.CustomActivityReferenceObject
     :param extended_properties: User defined property bag. There is no
      restriction on the keys or values that can be used. The user specified
      custom activity has the full responsibility to consume and interpret the
      content defined.
-    :type extended_properties: dict
+    :type extended_properties: dict[str, object]
     """
 
     _validation = {
@@ -56,6 +57,7 @@ class CustomActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -69,8 +71,8 @@ class CustomActivity(ExecutionActivity):
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': '{object}'},
     }
 
-    def __init__(self, name, command, description=None, depends_on=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None):
-        super(CustomActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, command, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None):
+        super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.command = command
         self.resource_linked_service = resource_linked_service
         self.folder_path = folder_path

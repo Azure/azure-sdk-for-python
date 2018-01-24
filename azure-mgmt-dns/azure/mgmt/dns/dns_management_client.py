@@ -39,8 +39,6 @@ class DnsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -60,9 +58,9 @@ class DnsManagementClient(object):
     :vartype config: DnsManagementClientConfiguration
 
     :ivar record_sets: RecordSets operations
-    :vartype record_sets: .operations.RecordSetsOperations
+    :vartype record_sets: azure.mgmt.dns.operations.RecordSetsOperations
     :ivar zones: Zones operations
-    :vartype zones: .operations.ZonesOperations
+    :vartype zones: azure.mgmt.dns.operations.ZonesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -80,7 +78,7 @@ class DnsManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-04-01'
+        self.api_version = '2017-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

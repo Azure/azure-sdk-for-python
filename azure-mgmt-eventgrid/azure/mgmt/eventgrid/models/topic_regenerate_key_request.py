@@ -28,4 +28,5 @@ class TopicRegenerateKeyRequest(Model):
     }
 
     def __init__(self, key_name):
+        super(TopicRegenerateKeyRequest, self).__init__()
         self.key_name = key_name

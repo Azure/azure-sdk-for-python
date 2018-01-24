@@ -27,10 +27,9 @@ class GenericResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param plan: The plan of the resource.
-    :type plan: :class:`Plan
-     <azure.mgmt.resource.resources.v2016_02_01.models.Plan>`
+    :type plan: ~azure.mgmt.resource.resources.v2016_02_01.models.Plan
     :param properties: The resource properties.
     :type properties: object
     :param kind: The kind of the resource.
@@ -38,11 +37,9 @@ class GenericResource(Resource):
     :param managed_by: Id of the resource that manages this resource.
     :type managed_by: str
     :param sku: The sku of the resource.
-    :type sku: :class:`Sku
-     <azure.mgmt.resource.resources.v2016_02_01.models.Sku>`
+    :type sku: ~azure.mgmt.resource.resources.v2016_02_01.models.Sku
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.resource.resources.v2016_02_01.models.Identity>`
+    :type identity: ~azure.mgmt.resource.resources.v2016_02_01.models.Identity
     """
 
     _validation = {

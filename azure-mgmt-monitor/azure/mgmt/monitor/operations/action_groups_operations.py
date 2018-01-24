@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -44,21 +43,17 @@ class ActionGroupsOperations(object):
         :param action_group_name: The name of the action group.
         :type action_group_name: str
         :param action_group: The action group to create or use for the update.
-        :type action_group: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
+        :type action_group: ~azure.mgmt.monitor.models.ActionGroupResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: ActionGroupResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
@@ -92,9 +87,7 @@ class ActionGroupsOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -122,14 +115,11 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: ActionGroupResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
@@ -159,9 +149,7 @@ class ActionGroupsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -187,12 +175,10 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
@@ -222,9 +208,7 @@ class ActionGroupsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -239,11 +223,11 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
-        :rtype: :class:`ActionGroupResourcePaged
-         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of ActionGroupResource
+        :rtype:
+         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -279,9 +263,7 @@ class ActionGroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -306,11 +288,11 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
-        :rtype: :class:`ActionGroupResourcePaged
-         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of ActionGroupResource
+        :rtype:
+         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -347,9 +329,7 @@ class ActionGroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -379,12 +359,10 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         enable_request = models.EnableRequest(receiver_name=receiver_name)
 
@@ -419,10 +397,8 @@ class ActionGroupsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 409]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

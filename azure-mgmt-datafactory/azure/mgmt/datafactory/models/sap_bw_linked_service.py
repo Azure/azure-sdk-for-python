@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class SapBWLinkedService(LinkedService):
     """SAP Business Warehouse Linked Service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param server: Host name of the SAP BW instance. Type: string (or
      Expression with resultType string).
@@ -37,8 +40,7 @@ class SapBWLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password to access the SAP BW server.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -53,6 +55,7 @@ class SapBWLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -64,8 +67,8 @@ class SapBWLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, system_number, client_id, connect_via=None, description=None, user_name=None, password=None, encrypted_credential=None):
-        super(SapBWLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, server, system_number, client_id, additional_properties=None, connect_via=None, description=None, user_name=None, password=None, encrypted_credential=None):
+        super(SapBWLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.server = server
         self.system_number = system_number
         self.client_id = client_id

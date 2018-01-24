@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -24,7 +24,7 @@ class ZonesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2016-04-01".
+    :ivar api_version: Specifies the API version. Constant value: "2017-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class ZonesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-04-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -48,7 +48,7 @@ class ZonesOperations(object):
         :type zone_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate
          operation.
-        :type parameters: :class:`Zone <azure.mgmt.dns.models.Zone>`
+        :type parameters: ~azure.mgmt.dns.models.Zone
         :param if_match: The etag of the DNS zone. Omit this value to always
          overwrite the current zone. Specify the last-seen etag value to
          prevent accidentally overwritting any concurrent changes.
@@ -62,9 +62,9 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Zone <azure.mgmt.dns.models.Zone>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Zone or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.dns.models.Zone or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -137,12 +137,10 @@ class ZonesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ZoneDeleteResult
-         <azure.mgmt.dns.models.ZoneDeleteResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -191,16 +189,9 @@ class ZonesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('ZoneDeleteResult', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-            return deserialized
 
         if raw:
             response = long_running_send()
@@ -228,9 +219,9 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Zone <azure.mgmt.dns.models.Zone>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Zone or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.dns.models.Zone or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -290,7 +281,8 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ZonePaged <azure.mgmt.dns.models.ZonePaged>`
+        :return: An iterator like instance of Zone
+        :rtype: ~azure.mgmt.dns.models.ZonePaged[~azure.mgmt.dns.models.Zone]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -358,7 +350,8 @@ class ZonesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ZonePaged <azure.mgmt.dns.models.ZonePaged>`
+        :return: An iterator like instance of Zone
+        :rtype: ~azure.mgmt.dns.models.ZonePaged[~azure.mgmt.dns.models.Zone]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

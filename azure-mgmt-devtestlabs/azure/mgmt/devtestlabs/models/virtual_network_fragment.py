@@ -27,21 +27,20 @@ class VirtualNetworkFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param allowed_subnets: The allowed subnets of the virtual network.
-    :type allowed_subnets: list of :class:`SubnetFragment
-     <azure.mgmt.devtestlabs.models.SubnetFragment>`
+    :type allowed_subnets: list[~azure.mgmt.devtestlabs.models.SubnetFragment]
     :param description: The description of the virtual network.
     :type description: str
     :param external_provider_resource_id: The Microsoft.Network resource
      identifier of the virtual network.
     :type external_provider_resource_id: str
     :param external_subnets: The external subnet properties.
-    :type external_subnets: list of :class:`ExternalSubnetFragment
-     <azure.mgmt.devtestlabs.models.ExternalSubnetFragment>`
+    :type external_subnets:
+     list[~azure.mgmt.devtestlabs.models.ExternalSubnetFragment]
     :param subnet_overrides: The subnet overrides of the virtual network.
-    :type subnet_overrides: list of :class:`SubnetOverrideFragment
-     <azure.mgmt.devtestlabs.models.SubnetOverrideFragment>`
+    :type subnet_overrides:
+     list[~azure.mgmt.devtestlabs.models.SubnetOverrideFragment]
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

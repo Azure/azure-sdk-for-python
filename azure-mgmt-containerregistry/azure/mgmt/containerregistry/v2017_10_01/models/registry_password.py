@@ -17,8 +17,8 @@ class RegistryPassword(Model):
 
     :param name: The password name. Possible values include: 'password',
      'password2'
-    :type name: str or :class:`PasswordName
-     <azure.mgmt.containerregistry.v2017_10_01.models.PasswordName>`
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.PasswordName
     :param value: The password value.
     :type value: str
     """

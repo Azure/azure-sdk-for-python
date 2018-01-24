@@ -18,11 +18,9 @@ class IpAddressGroup(Model):
     :param delivery_region: The delivery region of the ip address group
     :type delivery_region: str
     :param ipv4_addresses: The list of ip v4 addresses.
-    :type ipv4_addresses: list of :class:`CidrIpAddress
-     <azure.mgmt.cdn.models.CidrIpAddress>`
+    :type ipv4_addresses: list[~azure.mgmt.cdn.models.CidrIpAddress]
     :param ipv6_addresses: The list of ip v6 addresses.
-    :type ipv6_addresses: list of :class:`CidrIpAddress
-     <azure.mgmt.cdn.models.CidrIpAddress>`
+    :type ipv6_addresses: list[~azure.mgmt.cdn.models.CidrIpAddress]
     """
 
     _attribute_map = {

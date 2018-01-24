@@ -23,8 +23,8 @@ class JobResource(Model):
      'VertexResource', 'JobManagerResource', 'StatisticsResource',
      'VertexResourceInUserFolder', 'JobManagerResourceInUserFolder',
      'StatisticsResourceInUserFolder'
-    :type type: str or :class:`JobResourceType
-     <azure.mgmt.datalake.analytics.job.models.JobResourceType>`
+    :type type: str or
+     ~azure.mgmt.datalake.analytics.job.models.JobResourceType
     """
 
     _attribute_map = {
@@ -34,6 +34,7 @@ class JobResource(Model):
     }
 
     def __init__(self, name=None, resource_path=None, type=None):
+        super(JobResource, self).__init__()
         self.name = name
         self.resource_path = resource_path
         self.type = type

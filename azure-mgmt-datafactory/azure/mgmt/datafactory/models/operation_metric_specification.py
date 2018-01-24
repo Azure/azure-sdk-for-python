@@ -34,8 +34,8 @@ class OperationMetricSpecification(Model):
     :type source_mdm_namespace: str
     :param availabilities: Defines how often data for metrics becomes
      available.
-    :type availabilities: list of :class:`OperationMetricAvailability
-     <azure.mgmt.datafactory.models.OperationMetricAvailability>`
+    :type availabilities:
+     list[~azure.mgmt.datafactory.models.OperationMetricAvailability]
     """
 
     _attribute_map = {

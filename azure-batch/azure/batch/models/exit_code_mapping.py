@@ -20,7 +20,7 @@ class ExitCodeMapping(Model):
     :type code: int
     :param exit_options: How the Batch service should respond if the task
      exits with this exit code.
-    :type exit_options: :class:`ExitOptions <azure.batch.models.ExitOptions>`
+    :type exit_options: ~azure.batch.models.ExitOptions
     """
 
     _validation = {

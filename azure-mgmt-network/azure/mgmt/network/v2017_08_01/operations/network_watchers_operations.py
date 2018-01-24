@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -26,6 +27,8 @@ class NetworkWatchersOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -46,20 +49,16 @@ class NetworkWatchersOperations(object):
         :type network_watcher_name: str
         :param parameters: Parameters that define the network watcher
          resource.
-        :type parameters: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>`
+        :type parameters:
+         ~azure.mgmt.network.v2017_08_01.models.NetworkWatcher
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkWatcher or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_08_01.models.NetworkWatcher or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -91,7 +90,7 @@ class NetworkWatchersOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -124,13 +123,9 @@ class NetworkWatchersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkWatcher or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_08_01.models.NetworkWatcher or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -158,7 +153,7 @@ class NetworkWatchersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -176,27 +171,9 @@ class NetworkWatchersOperations(object):
 
         return deserialized
 
-    def delete(
-            self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified network watcher resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'
         path_format_arguments = {
@@ -221,18 +198,58 @@ class NetworkWatchersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified network watcher resource.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -244,10 +261,6 @@ class NetworkWatchersOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -267,10 +280,9 @@ class NetworkWatchersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>`
-        :rtype: :class:`NetworkWatcherPaged
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcherPaged>`
+        :return: An iterator like instance of NetworkWatcher
+        :rtype:
+         ~azure.mgmt.network.v2017_08_01.models.NetworkWatcherPaged[~azure.mgmt.network.v2017_08_01.models.NetworkWatcher]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -305,7 +317,7 @@ class NetworkWatchersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -333,10 +345,9 @@ class NetworkWatchersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkWatcher
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcher>`
-        :rtype: :class:`NetworkWatcherPaged
-         <azure.mgmt.network.v2017_08_01.models.NetworkWatcherPaged>`
+        :return: An iterator like instance of NetworkWatcher
+        :rtype:
+         ~azure.mgmt.network.v2017_08_01.models.NetworkWatcherPaged[~azure.mgmt.network.v2017_08_01.models.NetworkWatcher]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -370,7 +381,7 @@ class NetworkWatchersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -405,13 +416,9 @@ class NetworkWatchersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Topology
-         <azure.mgmt.network.v2017_08_01.models.Topology>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Topology
-         <azure.mgmt.network.v2017_08_01.models.Topology>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Topology or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_08_01.models.Topology or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TopologyParameters(target_resource_group_name=target_resource_group_name)
@@ -445,7 +452,7 @@ class NetworkWatchersOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -463,32 +470,9 @@ class NetworkWatchersOperations(object):
 
         return deserialized
 
-    def verify_ip_flow(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Verify IP flow from the specified VM to a location given the currently
-        configured NSG rules.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param parameters: Parameters that define the IP flow to be verified.
-        :type parameters: :class:`VerificationIPFlowParameters
-         <azure.mgmt.network.v2017_08_01.models.VerificationIPFlowParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VerificationIPFlowResult
-         <azure.mgmt.network.v2017_08_01.models.VerificationIPFlowResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _verify_ip_flow_initial(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'
         path_format_arguments = {
@@ -516,19 +500,74 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'VerificationIPFlowParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VerificationIPFlowResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('VerificationIPFlowResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def verify_ip_flow(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Verify IP flow from the specified VM to a location given the currently
+        configured NSG rules.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param parameters: Parameters that define the IP flow to be verified.
+        :type parameters:
+         ~azure.mgmt.network.v2017_08_01.models.VerificationIPFlowParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VerificationIPFlowResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.VerificationIPFlowResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._verify_ip_flow_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -537,22 +576,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VerificationIPFlowResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('VerificationIPFlowResult', response)
+            deserialized = self._deserialize('VerificationIPFlowResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -561,32 +591,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_next_hop(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Gets the next hop from the specified VM.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param parameters: Parameters that define the source and destination
-         endpoint.
-        :type parameters: :class:`NextHopParameters
-         <azure.mgmt.network.v2017_08_01.models.NextHopParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`NextHopResult
-         <azure.mgmt.network.v2017_08_01.models.NextHopResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_next_hop_initial(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'
         path_format_arguments = {
@@ -614,19 +621,74 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'NextHopParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NextHopResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('NextHopResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_next_hop(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Gets the next hop from the specified VM.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param parameters: Parameters that define the source and destination
+         endpoint.
+        :type parameters:
+         ~azure.mgmt.network.v2017_08_01.models.NextHopParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         NextHopResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.NextHopResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_next_hop_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -635,22 +697,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('NextHopResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('NextHopResult', response)
+            deserialized = self._deserialize('NextHopResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -659,31 +712,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_vm_security_rules(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the configured and effective security group rules on the specified
-        VM.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher.
-        :type network_watcher_name: str
-        :param target_resource_id: ID of the target VM.
-        :type target_resource_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`SecurityGroupViewResult
-         <azure.mgmt.network.v2017_08_01.models.SecurityGroupViewResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_vm_security_rules_initial(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
         parameters = models.SecurityGroupViewParameters(target_resource_id=target_resource_id)
 
         # Construct URL
@@ -713,19 +744,73 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'SecurityGroupViewParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SecurityGroupViewResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('SecurityGroupViewResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_vm_security_rules(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the configured and effective security group rules on the specified
+        VM.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param target_resource_id: ID of the target VM.
+        :type target_resource_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         SecurityGroupViewResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.SecurityGroupViewResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_vm_security_rules_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            target_resource_id=target_resource_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -734,22 +819,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SecurityGroupViewResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('SecurityGroupViewResult', response)
+            deserialized = self._deserialize('SecurityGroupViewResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -758,32 +834,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_troubleshooting(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Initiate troubleshooting on a specified resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher resource.
-        :type network_watcher_name: str
-        :param parameters: Parameters that define the resource to
-         troubleshoot.
-        :type parameters: :class:`TroubleshootingParameters
-         <azure.mgmt.network.v2017_08_01.models.TroubleshootingParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`TroubleshootingResult
-         <azure.mgmt.network.v2017_08_01.models.TroubleshootingResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_troubleshooting_initial(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'
         path_format_arguments = {
@@ -811,19 +864,74 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'TroubleshootingParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TroubleshootingResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('TroubleshootingResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_troubleshooting(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Initiate troubleshooting on a specified resource.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher resource.
+        :type network_watcher_name: str
+        :param parameters: Parameters that define the resource to
+         troubleshoot.
+        :type parameters:
+         ~azure.mgmt.network.v2017_08_01.models.TroubleshootingParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         TroubleshootingResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.TroubleshootingResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_troubleshooting_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -832,22 +940,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('TroubleshootingResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('TroubleshootingResult', response)
+            deserialized = self._deserialize('TroubleshootingResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -856,31 +955,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_troubleshooting_result(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
-        """Get the last completed troubleshooting result on a specified resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher resource.
-        :type network_watcher_name: str
-        :param target_resource_id: The target resource ID to query the
-         troubleshooting result.
-        :type target_resource_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`TroubleshootingResult
-         <azure.mgmt.network.v2017_08_01.models.TroubleshootingResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_troubleshooting_result_initial(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
         parameters = models.QueryTroubleshootingParameters(target_resource_id=target_resource_id)
 
         # Construct URL
@@ -910,19 +987,73 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'QueryTroubleshootingParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TroubleshootingResult', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('TroubleshootingResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_troubleshooting_result(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+        """Get the last completed troubleshooting result on a specified resource.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher resource.
+        :type network_watcher_name: str
+        :param target_resource_id: The target resource ID to query the
+         troubleshooting result.
+        :type target_resource_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         TroubleshootingResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.TroubleshootingResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_troubleshooting_result_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            target_resource_id=target_resource_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -931,22 +1062,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('TroubleshootingResult', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('TroubleshootingResult', response)
+            deserialized = self._deserialize('TroubleshootingResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -955,33 +1077,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def set_flow_log_configuration(
-            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Configures flow log on a specified resource.
 
-        :param resource_group_name: The name of the network watcher resource
-         group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher resource.
-        :type network_watcher_name: str
-        :param parameters: Parameters that define the configuration of flow
-         log.
-        :type parameters: :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_08_01.models.FlowLogInformation>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_08_01.models.FlowLogInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _set_flow_log_configuration_initial(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'
         path_format_arguments = {
@@ -1009,19 +1107,75 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'FlowLogInformation')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('FlowLogInformation', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('FlowLogInformation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def set_flow_log_configuration(
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Configures flow log on a specified resource.
+
+        :param resource_group_name: The name of the network watcher resource
+         group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher resource.
+        :type network_watcher_name: str
+        :param parameters: Parameters that define the configuration of flow
+         log.
+        :type parameters:
+         ~azure.mgmt.network.v2017_08_01.models.FlowLogInformation
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         FlowLogInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.FlowLogInformation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._set_flow_log_configuration_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1030,22 +1184,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('FlowLogInformation', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('FlowLogInformation', response)
+            deserialized = self._deserialize('FlowLogInformation', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -1054,32 +1199,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get_flow_log_status(
-            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
-        """Queries status of flow log on a specified resource.
 
-        :param resource_group_name: The name of the network watcher resource
-         group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher resource.
-        :type network_watcher_name: str
-        :param target_resource_id: The target resource where getting the flow
-         logging status.
-        :type target_resource_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`FlowLogInformation
-         <azure.mgmt.network.v2017_08_01.models.FlowLogInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_flow_log_status_initial(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
         parameters = models.FlowLogStatusParameters(target_resource_id=target_resource_id)
 
         # Construct URL
@@ -1109,19 +1231,74 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'FlowLogStatusParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('FlowLogInformation', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('FlowLogInformation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_flow_log_status(
+            self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, **operation_config):
+        """Queries status of flow log on a specified resource.
+
+        :param resource_group_name: The name of the network watcher resource
+         group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher resource.
+        :type network_watcher_name: str
+        :param target_resource_id: The target resource where getting the flow
+         logging status.
+        :type target_resource_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         FlowLogInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.FlowLogInformation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._get_flow_log_status_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            target_resource_id=target_resource_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1130,22 +1307,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('FlowLogInformation', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('FlowLogInformation', response)
+            deserialized = self._deserialize('FlowLogInformation', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -1154,37 +1322,9 @@ class NetworkWatchersOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def check_connectivity(
-            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, **operation_config):
-        """Verifies the possibility of establishing a direct TCP connection from a
-        virtual machine to a given endpoint including another VM or an
-        arbitrary remote server.
 
-        :param resource_group_name: The name of the network watcher resource
-         group.
-        :type resource_group_name: str
-        :param network_watcher_name: The name of the network watcher resource.
-        :type network_watcher_name: str
-        :param source:
-        :type source: :class:`ConnectivitySource
-         <azure.mgmt.network.v2017_08_01.models.ConnectivitySource>`
-        :param destination:
-        :type destination: :class:`ConnectivityDestination
-         <azure.mgmt.network.v2017_08_01.models.ConnectivityDestination>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ConnectivityInformation
-         <azure.mgmt.network.v2017_08_01.models.ConnectivityInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _check_connectivity_initial(
+            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, **operation_config):
         parameters = models.ConnectivityParameters(source=source, destination=destination)
 
         # Construct URL
@@ -1214,19 +1354,80 @@ class NetworkWatchersOperations(object):
         body_content = self._serialize.body(parameters, 'ConnectivityParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConnectivityInformation', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('ConnectivityInformation', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def check_connectivity(
+            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, **operation_config):
+        """Verifies the possibility of establishing a direct TCP connection from a
+        virtual machine to a given endpoint including another VM or an
+        arbitrary remote server.
+
+        :param resource_group_name: The name of the network watcher resource
+         group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher resource.
+        :type network_watcher_name: str
+        :param source:
+        :type source:
+         ~azure.mgmt.network.v2017_08_01.models.ConnectivitySource
+        :param destination:
+        :type destination:
+         ~azure.mgmt.network.v2017_08_01.models.ConnectivityDestination
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         ConnectivityInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_08_01.models.ConnectivityInformation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._check_connectivity_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            source=source,
+            destination=destination,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -1235,22 +1436,13 @@ class NetworkWatchersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('ConnectivityInformation', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('ConnectivityInformation', response)
+            deserialized = self._deserialize('ConnectivityInformation', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',

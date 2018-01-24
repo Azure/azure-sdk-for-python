@@ -19,8 +19,8 @@ class InstanceViewStatus(Model):
     :type code: str
     :param level: The level code. Possible values include: 'Info', 'Warning',
      'Error'
-    :type level: str or :class:`StatusLevelTypes
-     <azure.mgmt.compute.v2016_03_30.models.StatusLevelTypes>`
+    :type level: str or
+     ~azure.mgmt.compute.v2016_03_30.models.StatusLevelTypes
     :param display_status: The short localizable label for the status.
     :type display_status: str
     :param message: The detailed status message, including for alerts and
@@ -39,6 +39,7 @@ class InstanceViewStatus(Model):
     }
 
     def __init__(self, code=None, level=None, display_status=None, message=None, time=None):
+        super(InstanceViewStatus, self).__init__()
         self.code = code
         self.level = level
         self.display_status = display_status

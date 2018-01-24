@@ -3,6 +3,66 @@
 Release History
 ===============
 
+1.8.0a1 (2017-XX-XX)
+++++++++++++++++++++
+
+**Features**
+
+- Add ConnectionMonitor operation group (2017-10/11-01)
+- Add target_virtual_network / target_subet to topology_parameter (2017-10/11-01)
+- Add idle_timeout_in_minutes / enable_floating_ip to inbound_nat_pool (2017-11-01)
+
+**Bugfixes**
+
+- Fix peer_asn validation rules (2017-10/11-01)
+
+1.7.1 (2017-12-20)
+++++++++++++++++++
+
+**Bugfixes**
+
+Fix `SecurityRule` constructor parameters order to respect the one used until 1.5.0.
+This indeed introduces a breaking change for users of 1.6.0 and 1.7.0, but this constructor signature change was
+not expected, and following semantic versionning all 1.x versions should follow the same signature.
+
+This fixes third party library, like Ansible, that expects (for excellent reasons) this SDK to follow strictly semantic versionning
+with regards to breaking changes and have their dependency system asking for `>=1.0;<2.0`
+
+1.7.0 (2017-12-14)
+++++++++++++++++++
+
+**Features**
+
+- Add iptag. IpTag is way to restrict the range of IPaddresses to be allocated.
+- Default API version is now 2017-11-01
+
+**Bug fixes**
+
+- Added valid ASN range in ExpressRouteCircuitPeering (#1672)
+
+1.6.0 (2017-11-28)
+++++++++++++++++++
+
+**Bug fixes**
+
+- Accept space in location for "usage" (i.e. "west us").
+- sourceAddressPrefix, sourceAddressPrefixes and sourceApplicationSecurityGroups 
+  are mutually exclusive and one only is needed, meaning none of them is required 
+  by itself. Thus, sourceAddressPrefix is not required anymore.
+- destinationAddressPrefix, destinationAddressPrefixes and destinationApplicationSecurityGroups 
+  are mutually exclusive and one only is needed, meaning none of them is required 
+  by itself. Thus, destinationAddressPrefix is not required anymore.
+- Client now accept unicode string as a valid subscription_id parameter
+- Restore missing azure.mgmt.network.__version__
+
+**Features**
+
+- Client now accept a "profile" parameter to define API version per operation group.
+- Add update_tags to most of the resources
+- Add operations group to list all available rest API operations
+- NetworkInterfaces_ListVirtualMachineScaleSetIpConfigurations
+- NetworkInterfaces_GetVirtualMachineScaleSetIpConfiguration
+
 1.5.0 (2017-09-26)
 ++++++++++++++++++
 

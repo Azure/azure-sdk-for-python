@@ -20,13 +20,11 @@ class VirtualNetworkRule(Model):
     :type virtual_network_resource_id: str
     :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
-    :type action: str or :class:`Action
-     <azure.mgmt.storage.v2017_06_01.models.Action>`
+    :type action: str or ~azure.mgmt.storage.v2017_06_01.models.Action
     :param state: Gets the state of virtual network rule. Possible values
      include: 'provisioning', 'deprovisioning', 'succeeded', 'failed',
      'networkSourceDeleted'
-    :type state: str or :class:`State
-     <azure.mgmt.storage.v2017_06_01.models.State>`
+    :type state: str or ~azure.mgmt.storage.v2017_06_01.models.State
     """
 
     _validation = {
@@ -40,6 +38,7 @@ class VirtualNetworkRule(Model):
     }
 
     def __init__(self, virtual_network_resource_id, action="Allow", state=None):
+        super(VirtualNetworkRule, self).__init__()
         self.virtual_network_resource_id = virtual_network_resource_id
         self.action = action
         self.state = state

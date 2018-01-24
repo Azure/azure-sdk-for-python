@@ -20,8 +20,8 @@ class AzureReachabilityReportItem(Model):
     :param azure_location: The Azure region.
     :type azure_location: str
     :param latencies: List of latency details for each of the time series.
-    :type latencies: list of :class:`AzureReachabilityReportLatencyInfo
-     <azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLatencyInfo>`
+    :type latencies:
+     list[~azure.mgmt.network.v2017_09_01.models.AzureReachabilityReportLatencyInfo]
     """
 
     _attribute_map = {
@@ -31,6 +31,7 @@ class AzureReachabilityReportItem(Model):
     }
 
     def __init__(self, provider=None, azure_location=None, latencies=None):
+        super(AzureReachabilityReportItem, self).__init__()
         self.provider = provider
         self.azure_location = azure_location
         self.latencies = latencies

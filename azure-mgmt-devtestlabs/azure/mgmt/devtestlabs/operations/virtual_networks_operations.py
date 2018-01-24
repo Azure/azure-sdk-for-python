@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -60,8 +60,9 @@ class VirtualNetworksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VirtualNetworkPaged
-         <azure.mgmt.devtestlabs.models.VirtualNetworkPaged>`
+        :return: An iterator like instance of VirtualNetwork
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.VirtualNetworkPaged[~azure.mgmt.devtestlabs.models.VirtualNetwork]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -142,10 +143,9 @@ class VirtualNetworksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VirtualNetwork
-         <azure.mgmt.devtestlabs.models.VirtualNetwork>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: VirtualNetwork or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.VirtualNetwork or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -206,17 +206,15 @@ class VirtualNetworksOperations(object):
         :param name: The name of the virtual network.
         :type name: str
         :param virtual_network: A virtual network.
-        :type virtual_network: :class:`VirtualNetwork
-         <azure.mgmt.devtestlabs.models.VirtualNetwork>`
+        :type virtual_network: ~azure.mgmt.devtestlabs.models.VirtualNetwork
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetwork or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetwork
-         <azure.mgmt.devtestlabs.models.VirtualNetwork>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.devtestlabs.models.VirtualNetwork]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -305,11 +303,10 @@ class VirtualNetworksOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -383,17 +380,16 @@ class VirtualNetworksOperations(object):
         :param name: The name of the virtual network.
         :type name: str
         :param virtual_network: A virtual network.
-        :type virtual_network: :class:`VirtualNetworkFragment
-         <azure.mgmt.devtestlabs.models.VirtualNetworkFragment>`
+        :type virtual_network:
+         ~azure.mgmt.devtestlabs.models.VirtualNetworkFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VirtualNetwork
-         <azure.mgmt.devtestlabs.models.VirtualNetwork>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: VirtualNetwork or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.VirtualNetwork or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

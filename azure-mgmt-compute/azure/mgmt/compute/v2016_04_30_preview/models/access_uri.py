@@ -31,4 +31,5 @@ class AccessUri(Model):
     }
 
     def __init__(self):
+        super(AccessUri, self).__init__()
         self.access_sas = None

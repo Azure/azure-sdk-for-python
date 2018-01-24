@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class CassandraSource(CopySource):
     """A copy activity source for a Cassandra database.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,7 +25,7 @@ class CassandraSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
@@ -37,8 +40,7 @@ class CassandraSource(CopySource):
      'LOCAL_QUORUM', 'ONE', 'TWO', 'THREE', 'LOCAL_ONE', 'SERIAL',
      'LOCAL_SERIAL'
     :type consistency_level: str or
-     :class:`CassandraSourceReadConsistencyLevels
-     <azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels>`
+     ~azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels
     """
 
     _validation = {
@@ -46,6 +48,7 @@ class CassandraSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -53,8 +56,8 @@ class CassandraSource(CopySource):
         'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, query=None, consistency_level=None):
-        super(CassandraSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None, consistency_level=None):
+        super(CassandraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.query = query
         self.consistency_level = consistency_level
         self.type = 'CassandraSource'

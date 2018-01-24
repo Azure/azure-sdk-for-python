@@ -27,6 +27,8 @@ class DataMaskingRulesOperations(object):
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -53,20 +55,15 @@ class DataMaskingRulesOperations(object):
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a
          data masking rule.
-        :type parameters: :class:`DataMaskingRule
-         <azure.mgmt.sql.models.DataMaskingRule>`
+        :type parameters: ~azure.mgmt.sql.models.DataMaskingRule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DataMaskingRule
-         <azure.mgmt.sql.models.DataMaskingRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DataMaskingRule
-         <azure.mgmt.sql.models.DataMaskingRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DataMaskingRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DataMaskingRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -138,10 +135,9 @@ class DataMaskingRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`DataMaskingRule
-         <azure.mgmt.sql.models.DataMaskingRule>`
-        :rtype: :class:`DataMaskingRulePaged
-         <azure.mgmt.sql.models.DataMaskingRulePaged>`
+        :return: An iterator like instance of DataMaskingRule
+        :rtype:
+         ~azure.mgmt.sql.models.DataMaskingRulePaged[~azure.mgmt.sql.models.DataMaskingRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

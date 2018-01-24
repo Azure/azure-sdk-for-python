@@ -21,6 +21,7 @@ from .operation_info import OperationInfo
 from .operation import Operation
 from .tracked_resource import TrackedResource
 from .topic import Topic
+from .topic_update_parameters import TopicUpdateParameters
 from .topic_shared_access_keys import TopicSharedAccessKeys
 from .topic_regenerate_key_request import TopicRegenerateKeyRequest
 from .event_type import EventType
@@ -32,7 +33,6 @@ from .event_type_paged import EventTypePaged
 from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     EventSubscriptionProvisioningState,
-    OperationOrigin,
     TopicProvisioningState,
     ResourceRegionType,
     TopicTypeProvisioningState,
@@ -51,6 +51,7 @@ __all__ = [
     'Operation',
     'TrackedResource',
     'Topic',
+    'TopicUpdateParameters',
     'TopicSharedAccessKeys',
     'TopicRegenerateKeyRequest',
     'EventType',
@@ -61,7 +62,6 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'EventSubscriptionProvisioningState',
-    'OperationOrigin',
     'TopicProvisioningState',
     'ResourceRegionType',
     'TopicTypeProvisioningState',

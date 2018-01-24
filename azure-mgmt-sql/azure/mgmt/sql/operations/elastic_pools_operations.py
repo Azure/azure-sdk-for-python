@@ -27,6 +27,8 @@ class ElasticPoolsOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -56,9 +58,9 @@ class ElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Metric
-         <azure.mgmt.sql.models.Metric>`
-        :rtype: :class:`MetricPaged <azure.mgmt.sql.models.MetricPaged>`
+        :return: An iterator like instance of Metric
+        :rtype:
+         ~azure.mgmt.sql.models.MetricPaged[~azure.mgmt.sql.models.Metric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -132,10 +134,9 @@ class ElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`MetricDefinition
-         <azure.mgmt.sql.models.MetricDefinition>`
-        :rtype: :class:`MetricDefinitionPaged
-         <azure.mgmt.sql.models.MetricDefinitionPaged>`
+        :return: An iterator like instance of MetricDefinition
+        :rtype:
+         ~azure.mgmt.sql.models.MetricDefinitionPaged[~azure.mgmt.sql.models.MetricDefinition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -206,20 +207,15 @@ class ElasticPoolsOperations(object):
         :type elastic_pool_name: str
         :param parameters: The required parameters for creating or updating an
          elastic pool.
-        :type parameters: :class:`ElasticPool
-         <azure.mgmt.sql.models.ElasticPool>`
+        :type parameters: ~azure.mgmt.sql.models.ElasticPool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ElasticPool
-         <azure.mgmt.sql.models.ElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns ElasticPool
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ElasticPool]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -309,20 +305,15 @@ class ElasticPoolsOperations(object):
         :type elastic_pool_name: str
         :param parameters: The required parameters for updating an elastic
          pool.
-        :type parameters: :class:`ElasticPoolUpdate
-         <azure.mgmt.sql.models.ElasticPoolUpdate>`
+        :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ElasticPool
-         <azure.mgmt.sql.models.ElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns ElasticPool
+         or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ElasticPool]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -413,11 +404,8 @@ class ElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -475,11 +463,9 @@ class ElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ElasticPool <azure.mgmt.sql.models.ElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ElasticPool <azure.mgmt.sql.models.ElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ElasticPool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ElasticPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -541,10 +527,9 @@ class ElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ElasticPool
-         <azure.mgmt.sql.models.ElasticPool>`
-        :rtype: :class:`ElasticPoolPaged
-         <azure.mgmt.sql.models.ElasticPoolPaged>`
+        :return: An iterator like instance of ElasticPool
+        :rtype:
+         ~azure.mgmt.sql.models.ElasticPoolPaged[~azure.mgmt.sql.models.ElasticPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

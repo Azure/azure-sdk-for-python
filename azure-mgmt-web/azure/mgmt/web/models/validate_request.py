@@ -19,8 +19,7 @@ class ValidateRequest(Model):
     :type name: str
     :param type: Resource type used for verification. Possible values include:
      'ServerFarm', 'Site'
-    :type type: str or :class:`ValidateResourceTypes
-     <azure.mgmt.web.models.ValidateResourceTypes>`
+    :type type: str or ~azure.mgmt.web.models.ValidateResourceTypes
     :param location: Expected location of the resource.
     :type location: str
     :param server_farm_id: ARM resource ID of an App Service plan that would
@@ -31,6 +30,9 @@ class ValidateRequest(Model):
     :param need_linux_workers: <code>true</code> if App Service plan is for
      Linux workers; otherwise, <code>false</code>.
     :type need_linux_workers: bool
+    :param is_spot: <code>true</code> if App Service plan is for Spot
+     instances; otherwise, <code>false</code>.
+    :type is_spot: bool
     :param capacity: Target capacity of the App Service plan (number of VM's).
     :type capacity: int
     :param hosting_environment: Name of App Service Environment where app or
@@ -52,16 +54,18 @@ class ValidateRequest(Model):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'sku_name': {'key': 'properties.skuName', 'type': 'str'},
         'need_linux_workers': {'key': 'properties.needLinuxWorkers', 'type': 'bool'},
+        'is_spot': {'key': 'properties.isSpot', 'type': 'bool'},
         'capacity': {'key': 'properties.capacity', 'type': 'int'},
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, name, type, location, server_farm_id=None, sku_name=None, need_linux_workers=None, capacity=None, hosting_environment=None):
+    def __init__(self, name, type, location, server_farm_id=None, sku_name=None, need_linux_workers=None, is_spot=None, capacity=None, hosting_environment=None):
         self.name = name
         self.type = type
         self.location = location
         self.server_farm_id = server_farm_id
         self.sku_name = sku_name
         self.need_linux_workers = need_linux_workers
+        self.is_spot = is_spot
         self.capacity = capacity
         self.hosting_environment = hosting_environment

@@ -32,12 +32,11 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     :ivar custom_domain_verification_test: DNS verification test result.
      Possible values include: 'Passed', 'Failed', 'Skipped'
     :vartype custom_domain_verification_test: str or
-     :class:`DnsVerificationTestResult
-     <azure.mgmt.web.models.DnsVerificationTestResult>`
+     ~azure.mgmt.web.models.DnsVerificationTestResult
     :ivar custom_domain_verification_failure_info: Raw failure information if
      DNS verification fails.
-    :vartype custom_domain_verification_failure_info: :class:`ErrorEntity
-     <azure.mgmt.web.models.ErrorEntity>`
+    :vartype custom_domain_verification_failure_info:
+     ~azure.mgmt.web.models.ErrorEntity
     :ivar has_conflict_on_scale_unit: <code>true</code> if there is a conflict
      on a scale unit; otherwise, <code>false</code>.
     :vartype has_conflict_on_scale_unit: bool
@@ -48,17 +47,17 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
      unit if it's within the same subscription.
     :vartype conflicting_app_resource_id: str
     :param c_name_records: CName records controller can see for this hostname.
-    :type c_name_records: list of str
+    :type c_name_records: list[str]
     :param txt_records: TXT records controller can see for this hostname.
-    :type txt_records: list of str
+    :type txt_records: list[str]
     :param a_records: A records controller can see for this hostname.
-    :type a_records: list of str
+    :type a_records: list[str]
     :param alternate_cname_records: Alternate CName records controller can see
      for this hostname.
-    :type alternate_cname_records: list of str
+    :type alternate_cname_records: list[str]
     :param alternate_txt_records: Alternate TXT records controller can see for
      this hostname.
-    :type alternate_txt_records: list of str
+    :type alternate_txt_records: list[str]
     """
 
     _validation = {

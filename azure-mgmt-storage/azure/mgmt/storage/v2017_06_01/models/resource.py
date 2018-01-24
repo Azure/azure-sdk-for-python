@@ -28,7 +28,7 @@ class Resource(Model):
     :type location: str
     :param tags: Tags assigned to a resource; can be used for viewing and
      grouping a resource (across resource groups).
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -46,6 +46,7 @@ class Resource(Model):
     }
 
     def __init__(self, location=None, tags=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

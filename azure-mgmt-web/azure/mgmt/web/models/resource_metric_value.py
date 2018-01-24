@@ -31,8 +31,7 @@ class ResourceMetricValue(Model):
     :ivar count: Value count.
     :vartype count: float
     :ivar properties: Properties.
-    :vartype properties: list of :class:`ResourceMetricProperty
-     <azure.mgmt.web.models.ResourceMetricProperty>`
+    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
     """
 
     _validation = {

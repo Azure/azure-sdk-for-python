@@ -28,8 +28,8 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :vartype type: str
     :ivar migration_operation_status: Status of the migration task. Possible
      values include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
-    :vartype migration_operation_status: str or :class:`OperationStatus
-     <azure.mgmt.web.models.OperationStatus>`
+    :vartype migration_operation_status: str or
+     ~azure.mgmt.web.models.OperationStatus
     :ivar operation_id: Operation ID for the migration task.
     :vartype operation_id: str
     :ivar local_my_sql_enabled: True if the web app has in app MySql enabled

@@ -38,6 +38,7 @@ class SubResource(Model):
     }
 
     def __init__(self, name=None):
+        super(SubResource, self).__init__()
         self.id = None
         self.name = name
         self.type = None

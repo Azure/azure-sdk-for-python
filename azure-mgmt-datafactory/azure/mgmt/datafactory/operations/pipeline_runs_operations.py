@@ -25,6 +25,8 @@ class PipelineRunsOperations(object):
     :ivar api_version: The API version. Constant value: "2017-09-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -43,20 +45,16 @@ class PipelineRunsOperations(object):
         :param factory_name: The factory name.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the pipeline run.
-        :type filter_parameters: :class:`PipelineRunFilterParameters
-         <azure.mgmt.datafactory.models.PipelineRunFilterParameters>`
+        :type filter_parameters:
+         ~azure.mgmt.datafactory.models.PipelineRunFilterParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PipelineRunQueryResponse
-         <azure.mgmt.datafactory.models.PipelineRunQueryResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PipelineRunQueryResponse
-         <azure.mgmt.datafactory.models.PipelineRunQueryResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PipelineRunQueryResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.PipelineRunQueryResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -120,13 +118,9 @@ class PipelineRunsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PipelineRun
-         <azure.mgmt.datafactory.models.PipelineRun>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PipelineRun
-         <azure.mgmt.datafactory.models.PipelineRun>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PipelineRun or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.PipelineRun or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

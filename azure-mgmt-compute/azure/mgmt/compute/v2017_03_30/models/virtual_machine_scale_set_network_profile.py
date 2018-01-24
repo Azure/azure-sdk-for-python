@@ -19,13 +19,12 @@ class VirtualMachineScaleSetNetworkProfile(Model):
      determine the health of an instance in the virtual machine scale set. The
      reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
-    :type health_probe: :class:`ApiEntityReference
-     <azure.mgmt.compute.v2017_03_30.models.ApiEntityReference>`
+    :type health_probe:
+     ~azure.mgmt.compute.v2017_03_30.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
-    :type network_interface_configurations: list of
-     :class:`VirtualMachineScaleSetNetworkConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfiguration>`
+    :type network_interface_configurations:
+     list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -34,5 +33,6 @@ class VirtualMachineScaleSetNetworkProfile(Model):
     }
 
     def __init__(self, health_probe=None, network_interface_configurations=None):
+        super(VirtualMachineScaleSetNetworkProfile, self).__init__()
         self.health_probe = health_probe
         self.network_interface_configurations = network_interface_configurations

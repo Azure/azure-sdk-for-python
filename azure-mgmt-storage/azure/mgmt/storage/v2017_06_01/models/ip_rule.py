@@ -20,8 +20,7 @@ class IPRule(Model):
     :type ip_address_or_range: str
     :param action: The action of IP ACL rule. Possible values include:
      'Allow'. Default value: "Allow" .
-    :type action: str or :class:`Action
-     <azure.mgmt.storage.v2017_06_01.models.Action>`
+    :type action: str or ~azure.mgmt.storage.v2017_06_01.models.Action
     """
 
     _validation = {
@@ -34,5 +33,6 @@ class IPRule(Model):
     }
 
     def __init__(self, ip_address_or_range, action="Allow"):
+        super(IPRule, self).__init__()
         self.ip_address_or_range = ip_address_or_range
         self.action = action

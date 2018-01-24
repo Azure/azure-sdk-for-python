@@ -25,8 +25,8 @@ class VirtualNetworkUsage(Model):
     :ivar limit: Indicates the size of the subnet.
     :vartype limit: float
     :ivar name: The name containing common and localized value for usage.
-    :vartype name: :class:`VirtualNetworkUsageName
-     <azure.mgmt.network.v2017_03_01.models.VirtualNetworkUsageName>`
+    :vartype name:
+     ~azure.mgmt.network.v2017_03_01.models.VirtualNetworkUsageName
     :ivar unit: Usage units. Returns 'Count'
     :vartype unit: str
     """
@@ -48,6 +48,7 @@ class VirtualNetworkUsage(Model):
     }
 
     def __init__(self):
+        super(VirtualNetworkUsage, self).__init__()
         self.current_value = None
         self.id = None
         self.limit = None

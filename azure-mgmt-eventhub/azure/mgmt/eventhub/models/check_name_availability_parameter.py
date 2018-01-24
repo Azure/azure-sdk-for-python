@@ -28,4 +28,5 @@ class CheckNameAvailabilityParameter(Model):
     }
 
     def __init__(self, name):
+        super(CheckNameAvailabilityParameter, self).__init__()
         self.name = name

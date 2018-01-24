@@ -13,17 +13,20 @@ from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 import uuid
 
-
 class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtDataLakeAnalyticsTest, self).setUp()
-        self.region = 'East US 2' # this is the ADL produciton region for now.
+        
+        # 'East US 2' is the ADL produciton region for now
+        self.region = 'East US 2'
+
         self.adls_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient
         )
         self.adla_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.analytics.account.DataLakeAnalyticsAccountManagementClient
         )
+
         # use create_basic_client for job and catalog because they don't take a subscriptionId as a parameter.
         self.adla_job_client = self.create_basic_client(
             azure.mgmt.datalake.analytics.job.DataLakeAnalyticsJobManagementClient,
@@ -47,10 +50,8 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         self.tvf_name = self.get_resource_name('adlatvf')
         self.proc_name = self.get_resource_name('adlaproc')
         self.view_name = self.get_resource_name('adlaview')
-        self.secret_name = self.get_resource_name('adlasecret')
         self.secret_pwd = self.get_resource_name('adlapwd')
         self.credential_name = self.get_resource_name('adlacredential')
-        self.secret_cred_name = self.get_resource_name('adlasecretcred')
         self.credential_id = self.get_resource_name('adlacredid')
         self.schema_name = 'dbo'
         
@@ -156,6 +157,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.recurrence_id = self.fake_settings.ADLA_JOB_ID
             self.run_id_2 = self.fake_settings.ADLA_JOB_ID
             self.run_id_3 = self.fake_settings.ADLA_JOB_ID
+            self.principal_id = self.fake_settings.ADLA_JOB_ID
         else:
             self.cancel_id = str(uuid.uuid1())
             self.run_id = str(uuid.uuid1())
@@ -166,6 +168,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.recurrence_id = str(uuid.uuid1())
             self.run_id_2 = str(uuid.uuid1())
             self.run_id_3 = str(uuid.uuid1())
+            self.principal_id = str(uuid.uuid1())
 
     def _scrub(self, val):
         val = super(MgmtDataLakeAnalyticsTest, self)._scrub(val)
@@ -178,7 +181,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.pipeline_id: self.fake_settings.ADLA_JOB_ID,
             self.recurrence_id: self.fake_settings.ADLA_JOB_ID,
             self.run_id_2: self.fake_settings.ADLA_JOB_ID,
-            self.run_id_3: self.fake_settings.ADLA_JOB_ID
+            self.run_id_3: self.fake_settings.ADLA_JOB_ID,
+            self.principal_id: self.fake_settings.ADLA_JOB_ID
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
@@ -191,40 +195,36 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         params_create = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
             location = self.region
         )
-        result_create = self.adls_account_client.account.create(
+        adls_account = self.adls_account_client.account.create(
             self.group_name,
             self.adls_account_name,
             params_create,
-        )
-
-        adls_account = result_create.result()
+        ).result()
         
         # validation of the create
         self.assertEqual(adls_account.name, self.adls_account_name)
 
         # construct an ADLA account for use with catalog and job tests
-        if(create_job_acct):
+        if create_job_acct:
             params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
                 location = self.region,
                 default_data_lake_store_account = self.adls_account_name,
                 data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
             )
 
-            result_create = self.adla_account_client.account.create(
+            adla_account = self.adla_account_client.account.create(
                 self.group_name,
                 self.job_account_name,
                 params_create,
-            )
-
-            adla_account = result_create.result()
+            ).result()
         
             # full validation of the create
             self.assertEqual(adla_account.name, self.job_account_name)
 
-            # wait two minutes for the account to be fully provisioned with a queue.
-            self.sleep(120)
+            # wait five minutes for the account to be fully provisioned with a queue.
+            self.sleep(300)
     
-            if(create_catalog):
+            if create_catalog:
                 self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
 
     def run_job_to_completion(self, adla_account_name, job_id, script_to_run, job_params=None):
@@ -237,12 +237,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                     script = script_to_run,
                 )
             )
+
         create_response = self.adla_job_client.job.create(
             adla_account_name,
             job_id,
             job_params
         )
         self.assertIsNotNone(create_response)
+        
         max_wait_in_seconds = 180
         cur_wait_in_seconds = 0
         adla_job = self.adla_job_client.job.get(
@@ -250,7 +252,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             job_id
         )
         self.assertIsNotNone(adla_job)
-        while (adla_job.state != azure.mgmt.datalake.analytics.job.models.JobState.ended and cur_wait_in_seconds < max_wait_in_seconds):
+        
+        while adla_job.state != azure.mgmt.datalake.analytics.job.models.JobState.ended and cur_wait_in_seconds < max_wait_in_seconds:
             self.sleep(5)
             cur_wait_in_seconds += 5
             adla_job = self.adla_job_client.job.get(
@@ -266,6 +269,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     @record
     def test_adla_jobs(self):
         self.run_prereqs(create_job_acct= True, create_catalog = False)
+
         # define some static GUIDs
         job_to_submit = azure.mgmt.datalake.analytics.job.models.CreateJobParameters(
             name = 'azure python sdk job test',
@@ -290,7 +294,6 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.cancel_id,
             job_to_submit
         )
-        
         self.assertIsNotNone(create_response)
 
         # cancel it right away
@@ -304,17 +307,18 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.job_account_name,
             self.cancel_id
         )
+
         self.assertEqual(azure.mgmt.datalake.analytics.job.models.JobResult.cancelled, adla_job.result)
         self.assertIsNotNone(adla_job.error_message)
 
-        # resubmit and allow to run to completion.
-        # before hand, update the runId.
+        # resubmit and allow to run to completion -- update the runId beforehand
         job_to_submit.related.run_id = self.run_id_3
         self.run_job_to_completion(self.job_account_name, self.run_id, job_to_submit.properties.script, job_params=job_to_submit)
 
         # list the jobs that have been submitted
         list_of_jobs = self.adla_job_client.job.list(self.job_account_name)
         self.assertIsNotNone(list_of_jobs)
+
         list_of_jobs = list(list_of_jobs)
         self.assertGreater(len(list_of_jobs), 1)
 
@@ -323,7 +327,6 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.job_account_name,
             self.run_id
         )
-
         self.assertEqual(self.run_id_3, adla_job.related.run_id)
         self.assertEqual(self.recurrence_id, adla_job.related.recurrence_id)
         self.assertEqual(self.pipeline_id, adla_job.related.pipeline_id)
@@ -338,6 +341,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         recurrence_list =  self.adla_job_client.recurrence.list(self.job_account_name)
         self.assertIsNotNone(recurrence_list)
+
         recurrence_list = list(recurrence_list)
         self.assertEqual(1, len(recurrence_list))
 
@@ -349,6 +353,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         pipeline_list =  self.adla_job_client.pipeline.list(self.job_account_name)
         self.assertIsNotNone(pipeline_list)
+
         pipeline_list = list(pipeline_list)
         self.assertEqual(1, len(pipeline_list))
 
@@ -380,8 +385,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_catalog_items(self):
-        self.run_prereqs(create_job_acct= True, create_catalog = True)
-        
+        self.run_prereqs(create_job_acct = True, create_catalog = True)
+
         # get all databases, there should be at least 2 and the specific database
         dbList = list(self.adla_catalog_client.catalog.list_databases(self.job_account_name))
         self.assertGreater(len(dbList), 1)
@@ -491,10 +496,68 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         type_list = list(self.adla_catalog_client.catalog.list_types(self.job_account_name, self.db_name, self.schema_name))
         self.assertIsNotNone(type_list)
         self.assertGreater(len(type_list), 0)
-    
+
+        # prepare to grant/revoke ACLs
+        grant_acl_param = azure.mgmt.datalake.analytics.catalog.models.AclCreateOrUpdateParameters(
+            ace_type = azure.mgmt.datalake.analytics.catalog.models.AclType.user,
+            principal_id = self.principal_id,
+            permission = azure.mgmt.datalake.analytics.catalog.models.PermissionType.use
+        )
+        revoke_ace_type = azure.mgmt.datalake.analytics.catalog.models.AclType.user
+        revoke_principal_id = self.principal_id
+
+        # get the initial number of ACLs by db
+        # TODO: make 'list_acls_by_database' pageable in Swagger so that the object becomes iterable
+        acl_by_db_list = self.adla_catalog_client.catalog.list_acls_by_database(self.job_account_name, self.db_name).value
+        acl_by_db_count = len(acl_by_db_list)
+
+        # get the initial number of ACLs by catalog
+        # TODO: make 'list_acls' pageable in Swagger so that the object becomes iterable
+        acl_list = self.adla_catalog_client.catalog.list_acls(self.job_account_name).value
+        acl_count = len(acl_list)
+
+        # grant ACL to the db
+        self.adla_catalog_client.catalog.grant_acl_to_database(self.job_account_name, self.db_name, grant_acl_param)
+        # TODO: make 'list_acls_by_database' pageable in Swagger so that the object becomes iterable
+        acl_by_db_list = self.adla_catalog_client.catalog.list_acls_by_database(self.job_account_name, self.db_name).value
+        granted_acl = acl_by_db_list[-1]
+
+        # confirm the ACL's information
+        self.assertEqual(acl_by_db_count + 1, len(acl_by_db_list))
+        self.assertEqual('User', granted_acl.ace_type)
+        self.assertEqual(self.principal_id, granted_acl.principal_id)
+        self.assertEqual('Use', granted_acl.permission)
+
+        # revoke ACL from the db
+        self.adla_catalog_client.catalog.revoke_acl_from_database(self.job_account_name, self.db_name, revoke_ace_type, revoke_principal_id)
+        # TODO: make 'list_acls_by_database' pageable in Swagger so that the object becomes iterable
+        acl_by_db_list = self.adla_catalog_client.catalog.list_acls_by_database(self.job_account_name, self.db_name).value
+
+        self.assertEqual(acl_by_db_count, len(acl_by_db_list))
+
+        # grant ACL to the catalog
+        self.adla_catalog_client.catalog.grant_acl(self.job_account_name, grant_acl_param)
+        # TODO: make 'list_acls' pageable in Swagger so that the object becomes iterable
+        acl_list = self.adla_catalog_client.catalog.list_acls(self.job_account_name).value
+        granted_acl = acl_list[-1]
+
+        # confirm the ACL's information
+        self.assertEqual(acl_count + 1, len(acl_list))
+        self.assertEqual('User', granted_acl.ace_type)
+        self.assertEqual(self.principal_id, granted_acl.principal_id)
+        self.assertEqual('Use', granted_acl.permission)
+
+        # revoke ACL from the catalog
+        self.adla_catalog_client.catalog.revoke_acl(self.job_account_name, revoke_ace_type, revoke_principal_id)
+        # TODO: make 'list_acls' pageable in Swagger so that the object becomes iterable
+        acl_list = self.adla_catalog_client.catalog.list_acls(self.job_account_name).value
+
+        self.assertEqual(acl_count, len(acl_list))
+
     @record
     def test_adla_catalog_credentials(self):
         self.run_prereqs(create_job_acct= True, create_catalog = True)
+
         self.adla_catalog_client.catalog.create_credential(
             self.job_account_name,
             self.db_name,
@@ -532,10 +595,12 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(cred_response.name)
 
         # list credentials
-        cred_list = list(self.adla_catalog_client.catalog.list_credentials(
-            self.job_account_name,
-            self.db_name
-        ))
+        cred_list = list(
+            self.adla_catalog_client.catalog.list_credentials(
+                self.job_account_name,
+                self.db_name
+            )
+        )
         
         self.assertIsNotNone(cred_list)
         self.assertGreater(len(cred_list), 0)
@@ -562,100 +627,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.assertTrue(True)
 
     @record
-    def test_adla_catalog_secret(self):
-        self.run_prereqs(create_job_acct= True, create_catalog = True)
-
-        self.adla_catalog_client.catalog.create_secret(
-            self.job_account_name,
-            self.db_name,
-            self.secret_name,
-            azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(
-                password = self.secret_pwd,
-                uri = 'https://adlapysecrettest.contoso.com:443'
-            )
-        )
-
-        # try to create the secret again
-        try:
-            self.adla_catalog_client.catalog.create_secret(
-                self.job_account_name,
-                self.db_name,
-                self.secret_name,
-                azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(
-                    password = self.secret_pwd,
-                    uri = 'https://adlapysecrettest.contoso.com:443'
-                )
-            )
-            self.assertTrue(False, 'should not have made it here')
-        except Exception as e:
-            self.assertTrue(True)
-
-        # get the secret
-        secret_response = self.adla_catalog_client.catalog.get_secret(
-            self.job_account_name,
-            self.db_name,
-            self.secret_name
-        )
-        self.assertIsNotNone(secret_response)
-        self.assertIsNotNone(secret_response.creation_time)
-
-        # create a credential with the secret
-        cred_script = 'USE {0}; CREATE CREDENTIAL {1} WITH USER_NAME = "scope@rkm4grspxa", IDENTITY = "{2}";'.format(self.db_name, self.secret_cred_name, self.secret_name)
-        self.run_job_to_completion(self.job_account_name, self.cred_create_id, cred_script)
-
-        # get the credential just created
-        cred_response = self.adla_catalog_client.catalog.get_credential(
-            self.job_account_name,
-            self.db_name,
-            self.secret_cred_name
-        )
-        self.assertIsNotNone(cred_response)
-        self.assertIsNotNone(cred_response.name)
-
-        # list credentials
-        cred_list = list(self.adla_catalog_client.catalog.list_credentials(
-            self.job_account_name,
-            self.db_name
-        ))
-        
-        self.assertIsNotNone(cred_list)
-        self.assertGreater(len(cred_list), 0)
-        specific_cred = [item for item in cred_list if item.name == self.secret_cred_name]
-        self.assertIsNotNone(specific_cred)
-        self.assertEqual(specific_cred[0].name, cred_response.name)
-
-        # drop the credential using a job
-        cred_script = 'USE {0}; DROP CREDENTIAL {1};'.format(self.db_name, self.secret_cred_name)
-        self.run_job_to_completion(self.job_account_name, self.cred_drop_id, cred_script)
-
-        # delete the secret
-        self.adla_catalog_client.catalog.delete_secret(
-            self.job_account_name,
-            self.db_name,
-            self.secret_name
-        )
-
-        # try to get the secret again which should fail
-        try:
-            self.adla_catalog_client.catalog.get_secret(
-                self.job_account_name,
-                self.db_name,
-                self.secret_name
-            )
-            self.assertTrue(False, 'should not have made it here')
-        except Exception as e:
-            self.assertTrue(True)
-
-        # delete all secrets in the db, which should just be a no-op
-        self.adla_catalog_client.catalog.delete_all_secrets(
-            self.job_account_name,
-            self.db_name
-        )
-
-    @record
     def test_adla_compute_policy(self):
-        
-        # create resource group and store account
         self.run_prereqs()
 
         # define account params
@@ -669,26 +641,26 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             location = self.region,
             default_data_lake_store_account = self.adls_account_name,
             data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)],
-            compute_policies = [azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters(
-                max_degree_of_parallelism_per_job = 1,
-                min_priority_per_job = 1,
-                object_id = user_id,
-                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.user,
-                name = user_policy_name)]
+            compute_policies = [
+                azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters(
+                    max_degree_of_parallelism_per_job = 1,
+                    min_priority_per_job = 1,
+                    object_id = user_id,
+                    object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.user,
+                    name = user_policy_name
+                )
+            ]
         )
 
         # create and validate an ADLA account
-        result_create = self.adla_account_client.account.create(
+        adla_account = self.adla_account_client.account.create(
             self.group_name,
             account_name,
             params_create,
-        )
-
-        adla_account = result_create.result()
+        ).result()
         
         # full validation of the create
         self.assertEqual(adla_account.name, account_name)
-        
         self.assertIsNotNone(adla_account.id)
         self.assertIn(account_name, adla_account.id)
         self.assertEqual(self.region, adla_account.location)
@@ -714,7 +686,9 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                 max_degree_of_parallelism_per_job = 1,
                 min_priority_per_job = 1,
                 object_id = group_id,
-                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.group))
+                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.group
+            )
+        )
         
         self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
         self.assertEqual(1, new_policy.min_priority_per_job)
@@ -725,7 +699,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         new_policy = self.adla_account_client.compute_policies.get(
             self.group_name,
             account_name,
-            group_policy_name)
+            group_policy_name
+        )
 
         self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
         self.assertEqual(1, new_policy.min_priority_per_job)
@@ -733,9 +708,12 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
 
         # list all policies
-        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
-            self.group_name,
-            account_name))
+        list_policy = list(
+            self.adla_account_client.compute_policies.list_by_account(
+                self.group_name,
+                account_name
+            )
+        )
 
         self.assertEqual(2, len(list_policy))
 
@@ -745,9 +723,12 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             account_name,
             group_policy_name)
 
-        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
-            self.group_name,
-            account_name))
+        list_policy = list(
+            self.adla_account_client.compute_policies.list_by_account(
+                self.group_name,
+                account_name
+            )
+        )
 
         self.assertEqual(1, len(list_policy))
 
@@ -759,8 +740,6 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_accounts(self):
-        
-        # create resource group and store account
         self.run_prereqs()
 
         # define account params
@@ -769,25 +748,29 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             location = self.region,
             default_data_lake_store_account = self.adls_account_name,
             data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)],
-            tags={
+            tags = {
                 'tag1': 'value1'
             }
         )
 
+        # ensure that the account name is available
+        name_availability = self.adla_account_client.account.check_name_availability('EastUS2', account_name)
+        self.assertTrue(name_availability.name_available)
+
         # create and validate an ADLA account
-        result_create = self.adla_account_client.account.create(
+        adla_account = self.adla_account_client.account.create(
             self.group_name,
             account_name,
-            params_create,
-        )
-
-        adla_account = result_create.result()
+            params_create
+        ).result()
         
+        # ensure that the account name is no longer available
+        name_availability = self.adla_account_client.account.check_name_availability('EastUS2', account_name)
+        self.assertFalse(name_availability.name_available)
+
         # full validation of the create
         self.assertEqual(adla_account.name, account_name)
-        
-        # TODO: re-enable once it is determined why this property is still in "creating" state.
-        # self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.provisioning_state)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.provisioning_state)
         self.assertIsNotNone(adla_account.id)
         self.assertIn(account_name, adla_account.id)
         self.assertEqual(self.region, adla_account.location)
@@ -802,7 +785,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             account_name
         )
 
-        # full validation
+        # full validation of the create
         self.assertEqual(adla_account.name, account_name)
         self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.provisioning_state)
         self.assertIsNotNone(adla_account.id)
@@ -813,18 +796,13 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertEqual(1, len(adla_account.data_lake_store_accounts))
         self.assertEqual(self.adls_account_name, adla_account.default_data_lake_store_account)
 
-        # list all the accounts (there should always be at least 2).
-        result_list = self.adla_account_client.account.list_by_resource_group(
-            self.group_name,
-        )
-        result_list = list(result_list)
-        self.assertGreater(len(result_list), 0)
+        # list all the accounts (there should always be at least 2)
+        account_list_by_rg = list(self.adla_account_client.account.list_by_resource_group(self.group_name))
+        self.assertGreater(len(account_list_by_rg), 0)
 
-        result_list = self.adla_account_client.account.list()
-        result_list = list(result_list)
-        self.assertGreater(len(result_list), 0)
+        account_list = list(self.adla_account_client.account.list())
+        self.assertGreater(len(account_list), 0)
 
-        
         # update the tags
         adla_account = self.adla_account_client.account.update(
             self.group_name,
@@ -837,6 +815,15 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         ).result()
 
         self.assertEqual(adla_account.tags['tag2'], 'value2')
+
+        # confirm that 'locations.get_capability' is functional 
+        get_capability = self.adla_account_client.locations.get_capability('EastUS2')
+        self.assertIsNotNone(get_capability)
+
+        # confirm that 'operations.list' is functional
+        operations_list = self.adla_account_client.operations.list()
+        self.assertIsNotNone(operations_list)
+
         self.adla_account_client.account.delete(
             self.group_name,
             account_name

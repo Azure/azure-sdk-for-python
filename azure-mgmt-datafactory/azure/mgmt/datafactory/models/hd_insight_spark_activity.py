@@ -15,21 +15,22 @@ from .execution_activity import ExecutionActivity
 class HDInsightSparkActivity(ExecutionActivity):
     """HDInsight Spark activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param root_path: The root path in 'sparkJobLinkedService' for all the
      job’s files. Type: string (or Expression with resultType string).
     :type root_path: object
@@ -38,22 +39,22 @@ class HDInsightSparkActivity(ExecutionActivity):
      string).
     :type entry_file_path: object
     :param arguments: The user-specified arguments to HDInsightSparkActivity.
-    :type arguments: list of object
+    :type arguments: list[object]
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
-    :type get_debug_info: str or :class:`HDInsightActivityDebugInfoOption
-     <azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption>`
+    :type get_debug_info: str or
+     ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :param spark_job_linked_service: The storage linked service for uploading
      the entry file and dependencies, and for receiving logs.
-    :type spark_job_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type spark_job_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param class_name: The application's Java/Spark main class.
     :type class_name: str
     :param proxy_user: The user to impersonate that will execute the job.
      Type: string (or Expression with resultType string).
     :type proxy_user: object
     :param spark_config: Spark configuration property.
-    :type spark_config: dict
+    :type spark_config: dict[str, object]
     """
 
     _validation = {
@@ -64,6 +65,7 @@ class HDInsightSparkActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -80,8 +82,8 @@ class HDInsightSparkActivity(ExecutionActivity):
         'spark_config': {'key': 'typeProperties.sparkConfig', 'type': '{object}'},
     }
 
-    def __init__(self, name, root_path, entry_file_path, description=None, depends_on=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name=None, proxy_user=None, spark_config=None):
-        super(HDInsightSparkActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, root_path, entry_file_path, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, arguments=None, get_debug_info=None, spark_job_linked_service=None, class_name=None, proxy_user=None, spark_config=None):
+        super(HDInsightSparkActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.root_path = root_path
         self.entry_file_path = entry_file_path
         self.arguments = arguments

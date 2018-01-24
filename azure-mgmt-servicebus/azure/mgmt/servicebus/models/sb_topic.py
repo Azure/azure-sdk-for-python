@@ -36,8 +36,7 @@ class SBTopic(Resource):
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
     :ivar count_details: Message count deatils
-    :vartype count_details: :class:`MessageCountDetails
-     <azure.mgmt.servicebus.models.MessageCountDetails>`
+    :vartype count_details: ~azure.mgmt.servicebus.models.MessageCountDetails
     :param default_message_time_to_live: ISO 8601 Default message timespan to
      live value. This is the duration after which the message expires, starting
      from when the message is sent to Service Bus. This is the default value
@@ -60,8 +59,7 @@ class SBTopic(Resource):
      messaging entity. Possible values include: 'Active', 'Disabled',
      'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting',
      'Renaming', 'Unknown'
-    :type status: str or :class:`EntityStatus
-     <azure.mgmt.servicebus.models.EntityStatus>`
+    :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
     :param support_ordering: Value that indicates whether the topic supports
      ordering.
     :type support_ordering: bool

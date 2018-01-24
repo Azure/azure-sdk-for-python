@@ -19,8 +19,8 @@ class FailoverGroupReadWriteEndpoint(Model):
      failover group. If failoverPolicy is Automatic then
      failoverWithDataLossGracePeriodMinutes is required. Possible values
      include: 'Manual', 'Automatic'
-    :type failover_policy: str or :class:`ReadWriteEndpointFailoverPolicy
-     <azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy>`
+    :type failover_policy: str or
+     ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
     :param failover_with_data_loss_grace_period_minutes: Grace period before
      failover with data loss is attempted for the read-write endpoint. If
      failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is
@@ -38,5 +38,6 @@ class FailoverGroupReadWriteEndpoint(Model):
     }
 
     def __init__(self, failover_policy, failover_with_data_loss_grace_period_minutes=None):
+        super(FailoverGroupReadWriteEndpoint, self).__init__()
         self.failover_policy = failover_policy
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes

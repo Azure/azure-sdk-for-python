@@ -16,11 +16,9 @@ class ScaleRule(Model):
     """A rule that provide the triggers and parameters for the scaling action.
 
     :param metric_trigger: the trigger that results in a scaling action.
-    :type metric_trigger: :class:`MetricTrigger
-     <azure.mgmt.monitor.models.MetricTrigger>`
+    :type metric_trigger: ~azure.mgmt.monitor.models.MetricTrigger
     :param scale_action: the parameters for the scaling action.
-    :type scale_action: :class:`ScaleAction
-     <azure.mgmt.monitor.models.ScaleAction>`
+    :type scale_action: ~azure.mgmt.monitor.models.ScaleAction
     """
 
     _validation = {

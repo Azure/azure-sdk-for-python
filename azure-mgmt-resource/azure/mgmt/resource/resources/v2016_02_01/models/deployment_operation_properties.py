@@ -26,14 +26,14 @@ class DeploymentOperationProperties(Model):
     :param status_message: Operation status message.
     :type status_message: object
     :param target_resource: The target resource.
-    :type target_resource: :class:`TargetResource
-     <azure.mgmt.resource.resources.v2016_02_01.models.TargetResource>`
+    :type target_resource:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.TargetResource
     :param request: The HTTP request message.
-    :type request: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v2016_02_01.models.HttpMessage>`
+    :type request:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.HttpMessage
     :param response: The HTTP response message.
-    :type response: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v2016_02_01.models.HttpMessage>`
+    :type response:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.HttpMessage
     """
 
     _attribute_map = {

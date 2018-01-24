@@ -18,10 +18,10 @@ class AvailableProvidersListCountry(Model):
     :param country_name: The country name.
     :type country_name: str
     :param providers: A list of Internet service providers.
-    :type providers: list of str
+    :type providers: list[str]
     :param states: List of available states in the country.
-    :type states: list of :class:`AvailableProvidersListState
-     <azure.mgmt.network.v2017_09_01.models.AvailableProvidersListState>`
+    :type states:
+     list[~azure.mgmt.network.v2017_09_01.models.AvailableProvidersListState]
     """
 
     _attribute_map = {
@@ -31,6 +31,7 @@ class AvailableProvidersListCountry(Model):
     }
 
     def __init__(self, country_name=None, providers=None, states=None):
+        super(AvailableProvidersListCountry, self).__init__()
         self.country_name = country_name
         self.providers = providers
         self.states = states

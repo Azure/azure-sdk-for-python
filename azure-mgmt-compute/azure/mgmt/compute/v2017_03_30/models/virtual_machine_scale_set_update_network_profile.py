@@ -17,9 +17,8 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
 
     :param network_interface_configurations: The list of network
      configurations.
-    :type network_interface_configurations: list of
-     :class:`VirtualMachineScaleSetUpdateNetworkConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateNetworkConfiguration>`
+    :type network_interface_configurations:
+     list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -27,4 +26,5 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     }
 
     def __init__(self, network_interface_configurations=None):
+        super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__()
         self.network_interface_configurations = network_interface_configurations
