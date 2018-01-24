@@ -61,6 +61,7 @@ class AccessKeys(Model):
     }
 
     def __init__(self):
+        super(AccessKeys, self).__init__()
         self.primary_connection_string = None
         self.secondary_connection_string = None
         self.alias_primary_connection_string = None

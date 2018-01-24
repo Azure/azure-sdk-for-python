@@ -19,7 +19,8 @@ class CaptureDescription(Model):
      enabled.
     :type enabled: bool
     :param encoding: Enumerates the possible values for the encoding format of
-     capture description. Possible values include: 'Avro', 'AvroDeflate'
+     capture description. Note: 'AvroDeflate' will be deprecated in New API
+     Version. Possible values include: 'Avro', 'AvroDeflate'
     :type encoding: str or
      ~azure.mgmt.eventhub.models.EncodingCaptureDescription
     :param interval_in_seconds: The time window allows you to set the
@@ -49,6 +50,7 @@ class CaptureDescription(Model):
     }
 
     def __init__(self, enabled=None, encoding=None, interval_in_seconds=None, size_limit_in_bytes=None, destination=None):
+        super(CaptureDescription, self).__init__()
         self.enabled = enabled
         self.encoding = encoding
         self.interval_in_seconds = interval_in_seconds
